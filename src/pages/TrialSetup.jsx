@@ -264,7 +264,7 @@ export default function TrialSetup() {
       
       if (!canMakePaymentResult || !canMakePaymentResult.applePay) {
         setIsSaving(false);
-        alert("Apple Pay non è disponibile su questo dispositivo. Per favore, usa la carta di credito.");
+        alert("Apple Pay non è disponibile su questo dispositivo. Per favor, usa la carta di credito.");
         setPaymentMethod('card'); // Fallback to card
         return;
       }
@@ -530,6 +530,18 @@ export default function TrialSetup() {
                   <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
                   <span className="text-sm text-gray-800 font-medium">Piano nutrizionale personalizzato completo</span>
                 </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                  <span className="text-sm text-gray-800 font-medium">Ricette con foto AI e istruzioni dettagliate</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                  <span className="text-sm text-gray-800 font-medium">Dashboard scientifica con BMR e massa grassa</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                  <span className="text-sm text-gray-800 font-medium">Lista della spesa automatica</span>
+                </div>
                 {(selectedPlan === 'pro' || selectedPlan === 'premium') && (
                   <>
                     <div className="flex items-center gap-3">
@@ -543,10 +555,16 @@ export default function TrialSetup() {
                   </>
                 )}
                 {selectedPlan === 'premium' && (
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                    <span className="text-sm text-gray-800 font-medium">Supporto prioritario</span>
-                  </div>
+                  <>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                      <span className="text-sm text-gray-800 font-medium">Sostituzione ingredienti AI</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                      <span className="text-sm text-gray-800 font-medium">Supporto prioritario</span>
+                    </div>
+                  </>
                 )}
               </div>
             </div>
