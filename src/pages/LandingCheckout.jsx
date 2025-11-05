@@ -13,28 +13,7 @@ import { cn } from "@/lib/utils";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { loadStripe } from '@stripe/stripe-js';
 
-// Icona Apple Pay
-const ApplePayIcon = () => (
-  <img 
-    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3c3389941_apple-pay-payment-mark-logo-svgrepo-com.png" 
-    alt="Apple Pay" 
-    className="h-8 w-auto"
-  />
-);
-
-// Icona Google Pay
-const GooglePayIcon = () => (
-  <img 
-    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3e5e3e485_google-pay-svgrepo-com.png" 
-    alt="Google Pay" 
-    className="h-8 w-auto"
-  />
-);
-
-
-const stripePromise = loadStripe('pk_live_51SIgep2OXBs6ZYwlVznC6972UnXoiD0IGS0Rvo1Iw1wS0RX8tAh4pCX2aTn0a7EnGxG3tOYae24oS1keGdFGxT00EJbBPciv');
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -91,175 +70,10 @@ export default function LandingCheckout() {
   const [saveCard, setSaveCard] = useState(true);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [discountError, setDiscountError] = useState('');
-  const [paymentRequest, setPaymentRequest] = useState(null);
-  const [expressPaymentType, setExpressPaymentType] = useState(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    let isMounted = true;
-    let localPr = null;
-    let localHandlePaymentMethod = null;
-    
-    const initPaymentRequest = async () => {
-      try {
-        console.log('🔍 Initializing Payment Request...');
-        const stripeInstance = await loadStripe('pk_live_51SIgep2OXBs6ZYwlVznC6972UnXoiD0IGS0Rvo1Iw1wS0RX8tAh4pCXt2aTn0a7EnGxG3tOYae24oS1keGdFGxT00EJbBPciv');
-        
-        if (!isMounted) return;
-        
-        if (!stripeInstance) {
-          console.error('❌ Stripe instance not loaded');
-          if (isMounted) {
-            setExpressPaymentType(null);
-            setPaymentRequest(null);
-          }
-          return;
-        }
-
-        console.log('✅ Stripe instance loaded');
-
-        let subtotal = LANDING_OFFER_PRICE;
-        if (orderBumpSelected) {
-          subtotal += ORDER_BUMP_PRICE;
-        }
-
-        let discount = 0;
-        if (appliedCoupon && appliedCoupon.discount_type === 'percentage') {
-          discount = subtotal * (appliedCoupon.discount_value / 100);
-        }
-
-        const total = Math.max(0, subtotal - discount);
-        const amountInCents = Math.round(total * 100);
-
-        console.log('💰 Payment amount:', amountInCents, 'cents (€' + (amountInCents/100) + ')');
-
-        const pr = stripeInstance.paymentRequest({
-          country: 'IT',
-          currency: 'eur',
-          total: {
-            label: 'MyWellness Landing Offer - 3 Mesi Premium',
-            amount: amountInCents,
-          },
-          requestPayerName: true,
-          requestPayerEmail: true,
-          requestBillingAddress: true,
-        });
-
-        localPr = pr;
-        
-        console.log('🔍 Checking if device can make payment...');
-        
-        try {
-          const canMakePaymentResult = await pr.canMakePayment();
-          
-          console.log('✅ canMakePayment result:', canMakePaymentResult);
-          
-          if (!isMounted) return;
-          
-          if (canMakePaymentResult) {
-            if (canMakePaymentResult.applePay) {
-              console.log('✅ Apple Pay is available!');
-              setExpressPaymentType('applePay');
-            } else if (canMakePaymentResult.googlePay) {
-              console.log('✅ Google Pay is available!');
-              setExpressPaymentType('googlePay');
-            }
-            setPaymentRequest(pr);
-          } else {
-            console.warn('⚠️ No express payment methods available');
-            setExpressPaymentType(null);
-            setPaymentRequest(null);
-          }
-        } catch (error) {
-          console.error('❌ canMakePayment error:', error);
-          if (isMounted) {
-            setExpressPaymentType(null);
-            setPaymentRequest(null);
-          }
-        }
-
-        const handlePaymentMethod = async (ev) => {
-          setIsSaving(true);
-          try {
-            const { paymentMethod } = ev;
-            const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
-
-            const payload = {
-              paymentMethodId: paymentMethod.id,
-              orderBumpSelected: orderBumpSelected,
-              appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
-              billingInfo: {
-                name: billingInfo.name,
-                email: billingInfo.email,
-                companyName: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.companyName : null,
-                taxId: showBillingFields ? billingInfo.taxId : null,
-                pecSdi: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.pecSdi : null,
-                billingType: billingInfo.billingType,
-                address: billingInfo.address,
-                city: billingInfo.city,
-                zip: billingInfo.zip,
-                country: billingInfo.country
-              },
-              phoneNumber: fullPhoneNumber,
-              termsAccepted: termsAccepted,
-              privacyAccepted: privacyAccepted,
-              marketingConsent: marketingConsent,
-              useExpressPayment: true
-            };
-
-            const functionUrl = `${window.location.origin}/functions/stripeCreateOneTimePayment`;
-            const response = await fetch(functionUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (!result.success) {
-              throw new Error(result.error || result.details || 'Payment failed');
-            }
-
-            ev.complete('success');
-            if (isMounted) {
-              navigate(createPageUrl('ThankYou'), { replace: true });
-            }
-
-          } catch (error) {
-            console.error('❌ Express payment error:', error);
-            alert('Errore durante il pagamento: ' + error.message);
-            ev.complete('fail');
-            if (isMounted) {
-              setIsSaving(false);
-            }
-          }
-        };
-
-        pr.on('paymentmethod', handlePaymentMethod);
-        localHandlePaymentMethod = handlePaymentMethod;
-        
-      } catch (error) {
-        console.error('loadStripe error:', error);
-        if (isMounted) {
-          setExpressPaymentType(null);
-          setPaymentRequest(null);
-        }
-      }
-    };
-    
-    initPaymentRequest();
-    
-    return () => {
-      isMounted = false;
-      if (localPr && localHandlePaymentMethod) {
-        localPr.off('paymentmethod', localHandlePaymentMethod);
-      }
-    };
-  }, [orderBumpSelected, appliedCoupon, billingInfo, phoneNumber, marketingConsent, navigate, selectedCountry, showBillingFields, termsAccepted, privacyAccepted]);
 
   const handleCardNumberChange = (e) => {
     let value = e.target.value.replace(/\s/g, '');
@@ -326,15 +140,8 @@ export default function LandingCheckout() {
   };
 
   const handleCompletePayment = async () => {
-    if (selectedPaymentMethod === 'express') {
-      if (paymentRequest) {
-        paymentRequest.show();
-      }
-      return;
-    }
-
     if (!isFormValid) {
-      alert("Per favor_e, compila tutti i campi obbligatori correttamente.");
+      alert("Per favore, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
@@ -415,30 +222,7 @@ export default function LandingCheckout() {
       (billingInfo.billingType !== 'company' || billingInfo.companyName.length > 0)
     ));
 
-  const isExpressPaymentValid = billingInfo.name.length > 0 &&
-    billingInfo.email.length > 0 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingInfo.email) &&
-    phoneNumber.length > 0 &&
-    billingInfo.address.length > 0 &&
-    billingInfo.city.length > 0 &&
-    billingInfo.zip.length > 0 &&
-    billingInfo.country.length > 0 &&
-    termsAccepted &&
-    privacyAccepted &&
-    (!showBillingFields || (
-      billingInfo.taxId.length > 0 &&
-      (billingInfo.billingType !== 'company' || billingInfo.companyName.length > 0)
-    ));
-
-  let isCtaDisabled = true;
-  if (selectedPaymentMethod === 'card') {
-    isCtaDisabled = !isFormValid;
-  } else if (selectedPaymentMethod === 'express') {
-    isCtaDisabled = !isExpressPaymentValid;
-  } else {
-    isCtaDisabled = true;
-  }
-  isCtaDisabled = isCtaDisabled || isSaving;
+  const isCtaDisabled = !isFormValid || isSaving;
 
   let subtotal = LANDING_OFFER_PRICE;
   if (orderBumpSelected) {
@@ -837,136 +621,106 @@ export default function LandingCheckout() {
               <div className="space-y-4 pt-4 border-t border-gray-200/50">
                 <div className="flex items-center gap-3 mb-4">
                   <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
-                  <h3 className="text-xl font-bold text-gray-800">Metodi di Pagamento</h3>
+                  <h3 className="text-xl font-bold text-gray-800">Dati Carta</h3>
                 </div>
-                <RadioGroup onValueChange={setSelectedPaymentMethod} value={selectedPaymentMethod} className="space-y-3">
 
-                  <Label htmlFor="r-card" className={cn("flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all", selectedPaymentMethod === 'card' ? "border-[var(--brand-primary)] bg-[var(--brand-primary-light)] ring-2 ring-[var(--brand-primary)]" : "border-gray-300 hover:border-gray-400")}>
-                    <RadioGroupItem value="card" id="r-card" className="peer sr-only" />
-                    <span className="flex-shrink-0 w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center peer-data-[state=checked]:border-[var(--brand-primary)] peer-data-[state=checked]:bg-[var(--brand-primary)]">
-                        <span className="w-2.5 h-2.5 rounded-full bg-white opacity-0 peer-data-[state=checked]:opacity-100"></span>
-                    </span>
-                    <CreditCard className="w-6 h-6 text-gray-600" />
-                    <span className="font-semibold text-gray-800">Carta di Credito / Debito</span>
+                <div>
+                  <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Numero Carta
                   </Label>
-
-                  {expressPaymentType && (
-                    <Label htmlFor="r-express" className={cn("flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all", selectedPaymentMethod === 'express' ? "border-[var(--brand-primary)] bg-[var(--brand-primary-light)] ring-2 ring-[var(--brand-primary)]" : "border-gray-300 hover:border-gray-400")}>
-                      <RadioGroupItem value="express" id="r-express" className="peer sr-only" />
-                      <span className="flex-shrink-0 w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center peer-data-[state=checked]:border-[var(--brand-primary)] peer-data-[state=checked]:bg-[var(--brand-primary)]">
-                          <span className="w-2.5 h-2.5 rounded-full bg-white opacity-0 peer-data-[state=checked]:opacity-100"></span>
-                      </span>
-                      {expressPaymentType === 'applePay' ? <ApplePayIcon /> : <GooglePayIcon />}
-                      <span className="font-semibold text-gray-800 text-base">
-                        {expressPaymentType === 'applePay' ? 'Apple Pay' : 'Google Pay'}
-                      </span>
-                    </Label>
-                  )}
-                </RadioGroup>
+                  <div className="relative">
+                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input id="cardNumber" name="cardnumber" type="tel" placeholder="1234 5678 9012 3456"
+                      value={cardData.number} onChange={handleCardNumberChange}
+                      className="h-12 text-base pl-10" autoComplete="cc-number" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
+                    <Input id="expiry" name="exp-date" type="text" placeholder="MM/YY"
+                      value={cardData.expiry} onChange={handleExpiryChange}
+                      className="h-12 text-base" autoComplete="cc-exp" />
+                  </div>
+                  <div>
+                    <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
+                    <Input id="cvc" name="cvc" type="text" placeholder="123"
+                      value={cardData.cvc} onChange={handleCvcChange}
+                      className="h-12 text-base" autoComplete="cc-csc" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2 pt-2">
+                  <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
+                  <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
+                    Salva questa carta per pagamenti futuri
+                  </Label>
+                </div>
               </div>
 
-              {selectedPaymentMethod === 'card' && (
-                <div className="space-y-4 pt-4 border-t border-gray-200/50">
-                  <div>
-                    <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
-                      Numero Carta
-                    </Label>
-                    <div className="relative">
-                      <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                      <Input id="cardNumber" name="cardnumber" type="tel" placeholder="1234 5678 9012 3456"
-                        value={cardData.number} onChange={handleCardNumberChange}
-                        className="h-12 text-base pl-10" autoComplete="cc-number" />
-                    </div>
+              <div className="space-y-6 pt-6 border-t border-gray-200/50">
+                <div className="space-y-2">
+                  <Label htmlFor="couponCode" className="text-sm font-semibold text-gray-700">
+                    Codice Sconto (Opzionale)
+                  </Label>
+                  <div className="relative">
+                    <Input id="couponCode" type="text" placeholder="Es. PROMO20" value={couponCode}
+                      onChange={(e) => setCouponCode(e.target.value)} className="h-12 text-base pr-28" />
+                    <Button type="button" onClick={handleApplyDiscount} disabled={isApplyingCoupon} className={cn("absolute right-2 top-1/2 -translate-y-1/2 h-9 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors", couponCode && "bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-hover)]")}>
+                        {isApplyingCoupon ? 'Applicando...' : 'Applica'}
+                    </Button>
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
-                      <Input id="expiry" name="exp-date" type="text" placeholder="MM/YY"
-                        value={cardData.expiry} onChange={handleExpiryChange}
-                        className="h-12 text-base" autoComplete="cc-exp" />
-                    </div>
-                    <div>
-                      <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
-                      <Input id="cvc" name="cvc" type="text" placeholder="123"
-                        value={cardData.cvc} onChange={handleCvcChange}
-                        className="h-12 text-base" autoComplete="cc-csc" />
-                    </div>
-                  </div>
-                  <div className="flex items-center space-x-2 pt-2">
-                    <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
-                    <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
-                      Salva questa carta per pagamenti futuri
-                    </Label>
-                  </div>
+                  {discountError && <p className="text-red-500 text-sm mt-1">{discountError}</p>}
                 </div>
-              )}
 
-              {selectedPaymentMethod && (
-                <div className="space-y-6 pt-6 border-t border-gray-200/50">
-                  <div className="space-y-2">
-                    <Label htmlFor="couponCode" className="text-sm font-semibold text-gray-700">
-                      Codice Sconto (Opzionale)
-                    </Label>
-                    <div className="relative">
-                      <Input id="couponCode" type="text" placeholder="Es. PROMO20" value={couponCode}
-                        onChange={(e) => setCouponCode(e.target.value)} className="h-12 text-base pr-28" />
-                      <Button type="button" onClick={handleApplyDiscount} disabled={isApplyingCoupon} className={cn("absolute right-2 top-1/2 -translate-y-1/2 h-9 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors", couponCode && "bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-hover)]")}>
-                          {isApplyingCoupon ? 'Applicando...' : 'Applica'}
-                      </Button>
-                    </div>
-                    {discountError && <p className="text-red-500 text-sm mt-1">{discountError}</p>}
-                  </div>
-
-                  <div className="pt-0">
-                    <Label htmlFor="orderBump" className="block cursor-pointer">
-                      <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex-grow">
-                            <p className="text-lg font-bold text-gray-900">
-                              Si, lo voglio!
-                            </p>
-                            <p className="text-sm text-gray-600 mt-1">
-                              Aggiungi "Mastery AI Wellness": video corso completo
-                            </p>
-                          </div>
-                          <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
-                            className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
+                <div className="pt-0">
+                  <Label htmlFor="orderBump" className="block cursor-pointer">
+                    <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-grow">
+                          <p className="text-lg font-bold text-gray-900">
+                            Si, lo voglio!
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Aggiungi "Mastery AI Wellness": video corso completo
+                          </p>
                         </div>
-                        <div className="text-right">
-                          <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
-                          <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
-                        </div>
+                        <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
+                          className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
                       </div>
+                      <div className="text-right">
+                        <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
+                        <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
+                      </div>
+                    </div>
+                  </Label>
+                </div>
+                
+                <div className="space-y-3 pt-4">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
+                    <Label htmlFor="terms" className="text-xs text-gray-600">
+                      Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
                     </Label>
                   </div>
-                  
-                  <div className="space-y-3 pt-4">
-                    <div className="flex items-start space-x-3">
-                      <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
-                      <Label htmlFor="terms" className="text-xs text-gray-600">
-                        Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
-                      </Label>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
-                      <Label htmlFor="privacy" className="text-xs text-gray-600">
-                        Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
-                      </Label>
-                    </div>
-                    <div className="flex items-start space-x-3">
-                      <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
-                      <Label htmlFor="marketing" className="text-xs text-gray-600">
-                        Acconsento a ricevere comunicazioni di marketing e newsletter.
-                      </Label>
-                    </div>
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
+                    <Label htmlFor="privacy" className="text-xs text-gray-600">
+                      Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
+                    </Label>
                   </div>
-
-                  <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
-                    <Shield className="w-4 h-4" />
-                    <span>Pagamento sicuro e crittografato</span>
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
+                    <Label htmlFor="marketing" className="text-xs text-gray-600">
+                      Acconsento a ricevere comunicazioni di marketing e newsletter.
+                    </Label>
                   </div>
                 </div>
-              )}
+
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
+                  <Shield className="w-4 h-4" />
+                  <span>Pagamento sicuro e crittografato</span>
+                </div>
+              </div>
             </CardContent>
           </Card>
 
