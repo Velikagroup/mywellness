@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -8,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase } from "lucide-react";
+import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Smartphone } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -37,8 +36,9 @@ const ORDER_BUMP_PRICE = 19.99;
 
 export default function TrialSetup() {
   const navigate = useNavigate();
-  const location = useLocation(); // Keep location if it's used elsewhere, otherwise can be removed. Not used in the provided snippet.
+  const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'card' or 'apple_pay'
   const [cardData, setCardData] = useState({
     number: '',
     expiry: '',
@@ -71,17 +71,57 @@ export default function TrialSetup() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
+  // Determine plan from location state or default to base
+  const [selectedPlan, setSelectedPlan] = useState('base');
+  const [selectedBillingPeriod, setSelectedBillingPeriod] = useState('monthly');
+
   useEffect(() => {
     const checkAuth = async () => {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+
+        // Autocompila i dati dall'utente loggato
+        setBillingInfo(prev => ({
+          ...prev,
+          name: currentUser.full_name || currentUser.billing_name || '',
+          email: currentUser.email || '',
+          address: currentUser.billing_address || '',
+          city: currentUser.billing_city || '',
+          zip: currentUser.billing_zip || '',
+          country: currentUser.billing_country || 'IT',
+          companyName: currentUser.company_name || '',
+          taxId: currentUser.tax_id || '',
+          pecSdi: currentUser.pec_sdi || '',
+          billingType: currentUser.billing_type || 'private'
+        }));
+
+        if (currentUser.phone_number) {
+          // Extract phone number without country code if possible
+          const phoneMatch = currentUser.phone_number.match(/\+\d+\s*(.+)/);
+          if (phoneMatch) {
+            setPhoneNumber(phoneMatch[1].trim());
+          } else {
+            setPhoneNumber(currentUser.phone_number);
+          }
+        }
+
         setIsLoading(false);
 
         // Se l'utente ha già una sottoscrizione attiva, reindirizza alla dashboard
         if (currentUser && currentUser.subscription_status === 'active') {
           navigate(createPageUrl('Dashboard'), { replace: true });
           return;
+        }
+
+        // Controlla se arriva dalla landing (offerta speciale) o dal quiz normale
+        const fromLanding = location.state?.fromLanding || false;
+        if (fromLanding) {
+          // Da Landing: piano premium con offerta speciale (già gestito altrove)
+          setSelectedPlan('premium');
+        } else {
+          // Dal Quiz normale: propone piano Base
+          setSelectedPlan('base');
         }
 
         // Controlla se ci sono dati del quiz da salvare
@@ -110,7 +150,7 @@ export default function TrialSetup() {
     };
 
     checkAuth();
-  }, [navigate]);
+  }, [navigate, location]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -169,6 +209,13 @@ export default function TrialSetup() {
     setIsSaving(true);
 
     try {
+      // Per Apple Pay gestione diversa (non implementata qui, da fare con Stripe Apple Pay API)
+      if (paymentMethod === 'apple_pay') {
+        alert('Apple Pay non ancora implementato. Seleziona Carta di Credito.');
+        setIsSaving(false);
+        return;
+      }
+
       const [exp_month_str, exp_year_str] = cardData.expiry.split('/');
       const exp_month = parseInt(exp_month_str, 10);
       const exp_year = parseInt('20' + exp_year_str, 10);
@@ -182,6 +229,8 @@ export default function TrialSetup() {
           exp_year: exp_year,
           cvc: cardData.cvc,
         },
+        planType: selectedPlan, // 'base', 'pro', 'premium'
+        billingPeriod: selectedBillingPeriod, // 'monthly', 'yearly'
         orderBumpSelected: orderBumpSelected,
         billingInfo: {
           name: billingInfo.name,
@@ -224,9 +273,12 @@ export default function TrialSetup() {
     }
   };
 
-  const isFormValid = cardData.number.replace(/\s/g, '').length === 16 &&
-    cardData.expiry.length === 5 &&
-    cardData.cvc.length === 3 &&
+  const isFormValid = paymentMethod && 
+    (paymentMethod === 'apple_pay' || (
+      cardData.number.replace(/\s/g, '').length === 16 &&
+      cardData.expiry.length === 5 &&
+      cardData.cvc.length === 3
+    )) &&
     billingInfo.name.length > 0 &&
     billingInfo.email.length > 0 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingInfo.email) &&
@@ -248,6 +300,15 @@ export default function TrialSetup() {
   if (orderBumpSelected) {
     total = ORDER_BUMP_PRICE;
   }
+
+  // Determine monthly price based on selected plan
+  const planPrices = {
+    base: 19,
+    pro: 29,
+    premium: 39
+  };
+
+  const monthlyPrice = planPrices[selectedPlan] || 19;
 
   return (
     <div className="min-h-screen animated-gradient-bg">
@@ -328,7 +389,9 @@ export default function TrialSetup() {
               Prova Gratuita {TRIAL_DAYS} Giorni
             </CardTitle>
             <p className="text-gray-600 text-base">
-              Accesso completo a tutte le funzionalità Premium
+              {selectedPlan === 'base' && 'Piano Base - Nutrizionale completo con dashboard scientifica'}
+              {selectedPlan === 'pro' && 'Piano Pro - Nutrizionale + Allenamento + Analisi AI'}
+              {selectedPlan === 'premium' && 'Piano Premium - Accesso completo a tutte le funzionalità'}
             </p>
           </CardHeader>
 
@@ -339,18 +402,24 @@ export default function TrialSetup() {
                   <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
                   <span className="text-sm text-gray-800 font-medium">Piano nutrizionale personalizzato completo</span>
                 </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Piano allenamento adattivo</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Analisi AI dei pasti con foto</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Supporto prioritario</span>
-                </div>
+                {(selectedPlan === 'pro' || selectedPlan === 'premium') && (
+                  <>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                      <span className="text-sm text-gray-800 font-medium">Piano allenamento adattivo</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                      <span className="text-sm text-gray-800 font-medium">Analisi AI dei pasti con foto</span>
+                    </div>
+                  </>
+                )}
+                {selectedPlan === 'premium' && (
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
+                    <span className="text-sm text-gray-800 font-medium">Supporto prioritario</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -366,7 +435,7 @@ export default function TrialSetup() {
                 <Input
                   id="billingName" name="name" type="text" placeholder="Mario Rossi"
                   value={billingInfo.name} onChange={handleBillingInfoChange}
-                  className="h-12 text-base"
+                  className="h-12 text-base bg-white"
                   autoComplete="name"
                 />
               </div>
@@ -377,7 +446,7 @@ export default function TrialSetup() {
                 <Input
                   id="email" name="email" type="email" placeholder="mario.rossi@example.com"
                   value={billingInfo.email} onChange={handleBillingInfoChange}
-                  className="h-12 text-base"
+                  className="h-12 text-base bg-white"
                   autoComplete="email"
                 />
               </div>
@@ -392,7 +461,7 @@ export default function TrialSetup() {
                         variant="outline"
                         role="combobox"
                         aria-expanded={popoverOpen}
-                        className="w-[130px] justify-start h-12"
+                        className="w-[130px] justify-start h-12 bg-white"
                       >
                         {selectedCountry ? (
                           <div className="flex items-center gap-2">
@@ -439,7 +508,7 @@ export default function TrialSetup() {
                   <Input
                     id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
                     value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="h-12 text-base"
+                    className="h-12 text-base bg-white"
                     autoComplete="tel-national"
                   />
                 </div>
@@ -449,7 +518,7 @@ export default function TrialSetup() {
                 <Label htmlFor="address" className="text-sm font-semibold text-gray-700 mb-2 block">Indirizzo di Fatturazione</Label>
                 <Input id="address" name="address" type="text" placeholder="Via Roma, 123"
                   value={billingInfo.address} onChange={handleBillingInfoChange}
-                  className="h-12 text-base" autoComplete="address-line1"
+                  className="h-12 text-base bg-white" autoComplete="address-line1"
                 />
               </div>
               <div className="grid grid-cols-2 gap-4">
@@ -457,13 +526,13 @@ export default function TrialSetup() {
                   <Label htmlFor="city" className="text-sm font-semibold text-gray-700 mb-2 block">Città</Label>
                   <Input id="city" name="city" type="text" placeholder="Milano"
                     value={billingInfo.city} onChange={handleBillingInfoChange}
-                    className="h-12 text-base" autoComplete="address-level2" />
+                    className="h-12 text-base bg-white" autoComplete="address-level2" />
                 </div>
                 <div>
                   <Label htmlFor="zip" className="text-sm font-semibold text-gray-700 mb-2 block">CAP</Label>
                   <Input id="zip" name="zip" type="text" placeholder="20121"
                     value={billingInfo.zip} onChange={handleBillingInfoChange}
-                    className="h-12 text-base" autoComplete="postal-code" />
+                    className="h-12 text-base bg-white" autoComplete="postal-code" />
                 </div>
               </div>
               <div>
@@ -474,7 +543,7 @@ export default function TrialSetup() {
                       variant="outline"
                       role="combobox"
                       aria-expanded={countryPopoverOpen}
-                      className="w-full justify-between h-12 text-base font-normal"
+                      className="w-full justify-between h-12 text-base font-normal bg-white"
                     >
                       {billingInfo.country
                         ? countries.find((country) => country.code === billingInfo.country)?.name
@@ -523,7 +592,7 @@ export default function TrialSetup() {
                 </div>
 
                 {showBillingFields && (
-                  <div className="p-4 bg-gray-50/50 border border-gray-200/50 rounded-xl space-y-4">
+                  <div className="p-4 bg-white rounded-xl border border-gray-200/50 space-y-4">
                     <RadioGroup
                       defaultValue="private"
                       onValueChange={(value) => handleBillingInfoChange({ target: { name: 'billingType', value } })}
@@ -548,7 +617,7 @@ export default function TrialSetup() {
                         <Input
                           id="companyName" name="companyName" type="text" placeholder="MyWellness S.R.L."
                           value={billingInfo.companyName} onChange={handleBillingInfoChange}
-                          className="h-12 text-base"
+                          className="h-12 text-base bg-white"
                         />
                       </div>
                     )}
@@ -561,7 +630,7 @@ export default function TrialSetup() {
                         id="taxId" name="taxId" type="text"
                         placeholder={billingInfo.billingType === 'private' ? 'RSSMRA80A01H501U' : '01234567890'}
                         value={billingInfo.taxId} onChange={handleBillingInfoChange}
-                        className="h-12 text-base"
+                        className="h-12 text-base bg-white"
                       />
                     </div>
 
@@ -573,7 +642,7 @@ export default function TrialSetup() {
                         <Input
                           id="pecSdi" name="pecSdi" type="text" placeholder="tuamail@pec.it o XXXXXXX"
                           value={billingInfo.pecSdi} onChange={handleBillingInfoChange}
-                          className="h-12 text-base"
+                          className="h-12 text-base bg-white"
                         />
                       </div>
                     )}
@@ -582,44 +651,83 @@ export default function TrialSetup() {
               </div>
             </div>
 
+            {/* Payment Method Selection */}
             <div className="space-y-4 pt-4 border-t border-gray-200/50">
               <div className="flex items-center gap-3 mb-4">
                 <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
-                <h3 className="text-xl font-bold text-gray-800">Dati Carta</h3>
+                <h3 className="text-xl font-bold text-gray-800">Metodo di Pagamento</h3>
               </div>
               
-              <div>
-                <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
-                  Numero Carta
-                </Label>
-                <div className="relative">
-                  <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                  <Input id="cardNumber" type="tel" placeholder="1234 5678 9012 3456"
-                    value={cardData.number} onChange={handleCardNumberChange}
-                    className="h-12 text-base pl-10" autoComplete="cc-number" />
-                </div>
-              </div>
               <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
-                  <Input id="expiry" type="text" placeholder="MM/YY"
-                    value={cardData.expiry} onChange={handleExpiryChange}
-                    className="h-12 text-base" autoComplete="cc-exp" />
-                </div>
-                <div>
-                  <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
-                  <Input id="cvc" type="text" placeholder="123"
-                    value={cardData.cvc} onChange={handleCvcChange}
-                    className="h-12 text-base" autoComplete="cc-csc" />
-                </div>
-              </div>
-              <div className="flex items-center space-x-2 pt-2">
-                <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
-                <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
-                  Salva questa carta per pagamenti futuri
-                </Label>
+                <button
+                  onClick={() => setPaymentMethod('card')}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    paymentMethod === 'card'
+                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                      : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                  }`}
+                >
+                  <CreditCard className={`w-8 h-8 mx-auto mb-2 ${paymentMethod === 'card' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
+                  <p className="text-sm font-semibold text-gray-800">Carta di Credito</p>
+                </button>
+                <button
+                  onClick={() => setPaymentMethod('apple_pay')}
+                  className={`p-4 rounded-xl border-2 transition-all ${
+                    paymentMethod === 'apple_pay'
+                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                      : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                  }`}
+                >
+                  <Smartphone className={`w-8 h-8 mx-auto mb-2 ${paymentMethod === 'apple_pay' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
+                  <p className="text-sm font-semibold text-gray-800">Apple Pay</p>
+                </button>
               </div>
             </div>
+
+            {/* Card Details - Show only when card is selected */}
+            {paymentMethod === 'card' && (
+              <div className="space-y-4 pt-4">
+                <div>
+                  <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Numero Carta
+                  </Label>
+                  <div className="relative">
+                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                    <Input id="cardNumber" type="tel" placeholder="1234 5678 9012 3456"
+                      value={cardData.number} onChange={handleCardNumberChange}
+                      className="h-12 text-base pl-10 bg-white" autoComplete="cc-number" />
+                  </div>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
+                    <Input id="expiry" type="text" placeholder="MM/YY"
+                      value={cardData.expiry} onChange={handleExpiryChange}
+                      className="h-12 text-base bg-white" autoComplete="cc-exp" />
+                  </div>
+                  <div>
+                    <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
+                    <Input id="cvc" type="text" placeholder="123"
+                      value={cardData.cvc} onChange={handleCvcChange}
+                      className="h-12 text-base bg-white" autoComplete="cc-csc" />
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2 pt-2">
+                  <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
+                  <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
+                    Salva questa carta per pagamenti futuri
+                  </Label>
+                </div>
+              </div>
+            )}
+
+            {paymentMethod === 'apple_pay' && (
+              <div className="p-6 bg-blue-50 rounded-xl border border-blue-200">
+                <p className="text-center text-sm text-gray-700">
+                  Cliccando sul pulsante in basso, verrai reindirizzato ad Apple Pay per completare il pagamento in modo sicuro.
+                </p>
+              </div>
+            )}
 
             <div className="pt-4 border-t border-gray-200/50">
               <Label htmlFor="orderBump" className="block cursor-pointer">
@@ -676,7 +784,7 @@ export default function TrialSetup() {
                 <span className="font-semibold">€{total.toFixed(2)}</span>
               </div>
               <p className="text-xs text-gray-500">
-                Dopo {TRIAL_DAYS} giorni: €39/mese (puoi cancellare in qualsiasi momento)
+                Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
               </p>
             </div>
 
