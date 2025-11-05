@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { User } from "@/entities/User";
 import { MealPlan } from "@/entities/MealPlan";
@@ -10,7 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess, PLANS, UpgradePrompt } from '@/components/utils/subscriptionPlans';
-import { Target, TrendingUp, Calendar, Activity, ArrowRight, BarChart3, Users, Settings, RefreshCw, Info } from "lucide-react";
+import { Target, TrendingUp, Calendar, Activity, ArrowRight, BarChart3, Users, Settings, RefreshCw, Info, Edit3 } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import TechnicalStatsCard from "../components/dashboard/TechnicalStatsCard";
 import AdvancedProgressChart from "../components/dashboard/AdvancedProgressChart";
@@ -21,6 +22,9 @@ import MealDetailModal from "../components/meals/MealDetailModal";
 import PhotoMealAnalyzer from "../components/meals/PhotoMealAnalyzer";
 import ProgressPhotoAnalyzer from "../components/training/ProgressPhotoAnalyzer";
 import UpgradeModal from "../components/meals/UpgradeModal";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -36,6 +40,12 @@ export default function Dashboard() {
   const [showProgressPhoto, setShowProgressPhoto] = React.useState(false);
   const [isMobile, setIsMobile] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showEditBMR, setShowEditBMR] = useState(false);
+  const [showEditBodyFat, setShowEditBodyFat] = useState(false);
+  const [editBMRValue, setEditBMRValue] = useState('');
+  const [editBodyFatValue, setEditBodyFatValue] = useState('');
+  const [isSavingBMR, setIsSavingBMR] = useState(false);
+  const [isSavingBodyFat, setIsSavingBodyFat] = useState(false);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -224,6 +234,56 @@ export default function Dashboard() {
     alert(message);
     setShowProgressPhoto(false);
   };
+
+  const handleOpenEditBMR = () => {
+    setEditBMRValue(user?.bmr || '');
+    setShowEditBMR(true);
+  };
+
+  const handleOpenEditBodyFat = () => {
+    setEditBodyFatValue(user?.body_fat_percentage || '');
+    setShowEditBodyFat(true);
+  };
+
+  const handleSaveBMR = async () => {
+    const newBMR = parseFloat(editBMRValue);
+    if (isNaN(newBMR) || newBMR <= 0) {
+      alert('Inserisci un valore valido per il BMR');
+      return;
+    }
+
+    setIsSavingBMR(true);
+    try {
+      await User.updateMyUserData({ bmr: Math.round(newBMR) });
+      await loadUserData();
+      setShowEditBMR(false);
+      alert('✅ Metabolismo Basale aggiornato con successo!');
+    } catch (error) {
+      console.error('Error updating BMR:', error);
+      alert('Errore durante l\'aggiornamento del BMR');
+    }
+    setIsSavingBMR(false);
+  };
+
+  const handleSaveBodyFat = async () => {
+    const newBodyFat = parseFloat(editBodyFatValue);
+    if (isNaN(newBodyFat) || newBodyFat < 0 || newBodyFat > 100) {
+      alert('Inserisci un valore valido per la Massa Grassa (0-100%)');
+      return;
+    }
+
+    setIsSavingBodyFat(true);
+    try {
+      await User.updateMyUserData({ body_fat_percentage: parseFloat(newBodyFat.toFixed(1)) });
+      await loadUserData();
+      setShowEditBodyFat(false);
+      alert('✅ Massa Grassa aggiornata con successo!');
+    } catch (error) {
+      console.error('Error updating body fat:', error);
+      alert('Errore durante l\'aggiornamento della Massa Grassa');
+    }
+    setIsSavingBodyFat(false);
+  };
     
   const { progress: goalProgress, status: goalStatus } = useMemo(() => {
     let progressValue = 0;
@@ -392,19 +452,37 @@ export default function Dashboard() {
               icon={Activity}
               info="Le calorie giornaliere raccomandate per raggiungere il tuo obiettivo. Calcolate su metabolismo, attività e ritmo desiderato."
             />
-            <TechnicalStatsCard
-              title="Metabolismo Basale (BMR)"
-              value={Math.round(user.bmr || 1500)}
-              unit="kcal"
-              icon={TrendingUp}
-            />
-            <TechnicalStatsCard
-              title="Massa Grassa"
-              value={user.body_fat_percentage || 0}
-              unit="%"
-              icon={BarChart3}
-              info="Percentuale di massa grassa calcolata con formula US Navy basata su circonferenze corporee."
-            />
+            <div className="relative">
+              <TechnicalStatsCard
+                title="Metabolismo Basale (BMR)"
+                value={Math.round(user.bmr || 1500)}
+                unit="kcal"
+                icon={TrendingUp}
+              />
+              <button
+                onClick={handleOpenEditBMR}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[var(--brand-primary)] hover:bg-gray-100 rounded-lg transition-all"
+                title="Modifica BMR"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="relative">
+              <TechnicalStatsCard
+                title="Massa Grassa"
+                value={user.body_fat_percentage || 0}
+                unit="%"
+                icon={BarChart3}
+                info="Percentuale di massa grassa calcolata con formula US Navy basata su circonferenze corporee."
+              />
+              <button
+                onClick={handleOpenEditBodyFat}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[var(--brand-primary)] hover:bg-gray-100 rounded-lg transition-all"
+                title="Modifica Massa Grassa"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
+            </div>
             <TechnicalStatsCard
               title="Avanzamento Obiettivo"
               value={goalProgress}
@@ -423,6 +501,7 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
+
       {selectedMeal && (
         <MealDetailModal
           meal={selectedMeal}
@@ -452,6 +531,97 @@ export default function Dashboard() {
           currentPlan={user?.subscription_plan}
         />
       )}
+
+      {/* Dialog Modifica BMR */}
+      <Dialog open={showEditBMR} onOpenChange={setShowEditBMR}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Modifica Metabolismo Basale (BMR)</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-gray-600">
+              Inserisci il tuo valore personalizzato di BMR se lo hai già calcolato autonomamente. Questo valore verrà utilizzato per i calcoli nutrizionali.
+            </p>
+            <div>
+              <Label htmlFor="edit-bmr" className="text-sm font-semibold text-gray-700 mb-2 block">
+                Metabolismo Basale (kcal/giorno)
+              </Label>
+              <Input
+                id="edit-bmr"
+                type="number"
+                value={editBMRValue}
+                onChange={(e) => setEditBMRValue(e.target.value)}
+                placeholder="Es: 1800"
+                className="h-12 text-base"
+                min="500"
+                max="5000"
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={handleSaveBMR}
+                disabled={isSavingBMR}
+                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+              >
+                {isSavingBMR ? 'Salvataggio...' : 'Salva'}
+              </Button>
+              <Button
+                onClick={() => setShowEditBMR(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Modifica Massa Grassa */}
+      <Dialog open={showEditBodyFat} onOpenChange={setShowEditBodyFat}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Modifica Massa Grassa</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-gray-600">
+              Inserisci la tua percentuale di massa grassa se l'hai già calcolata con altri metodi (plicometria, DEXA, bilancia impedenziometrica, ecc.).
+            </p>
+            <div>
+              <Label htmlFor="edit-bodyfat" className="text-sm font-semibold text-gray-700 mb-2 block">
+                Massa Grassa (%)
+              </Label>
+              <Input
+                id="edit-bodyfat"
+                type="number"
+                step="0.1"
+                value={editBodyFatValue}
+                onChange={(e) => setEditBodyFatValue(e.target.value)}
+                placeholder="Es: 18.5"
+                className="h-12 text-base"
+                min="3"
+                max="60"
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={handleSaveBodyFat}
+                disabled={isSavingBodyFat}
+                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+              >
+                {isSavingBodyFat ? 'Salvataggio...' : 'Salva'}
+              </Button>
+              <Button
+                onClick={() => setShowEditBodyFat(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </>
   );
 }
