@@ -1,4 +1,3 @@
-
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -9,10 +8,6 @@ import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 export default function Layout({ children }) {
   const location = useLocation();
   const [user, setUser] = React.useState(null);
-  const quizPageUrl = createPageUrl("Quiz");
-  const homePageUrl = createPageUrl("Home");
-  const landingPageUrl = createPageUrl("Landing");
-  const notFoundPageUrl = createPageUrl("NotFound");
 
   // Scroll to top on page change
   React.useEffect(() => {
@@ -69,23 +64,39 @@ export default function Layout({ children }) {
     }
   };
 
-  if (location.pathname === quizPageUrl || 
-      location.pathname === homePageUrl || 
-      location.pathname === landingPageUrl ||
-      location.pathname === notFoundPageUrl ||
-      location.pathname === createPageUrl("pricing") ||
-      location.pathname === createPageUrl("TrialSetup") ||
-      location.pathname === createPageUrl("LandingCheckout") ||
-      location.pathname === createPageUrl("ThankYou") ||
-      location.pathname === createPageUrl("ResetPassword") || 
-      location.pathname === createPageUrl("Blog") ||
-      location.pathname === createPageUrl("BlogArticle") ||
-      location.pathname === createPageUrl("OneTimeOffer") ||
-      location.pathname === createPageUrl("Terms") ||
-      location.pathname === createPageUrl("Privacy") ||
-      location.pathname === createPageUrl("ApplePayVerification") ||
+  // Lista di pagine valide che DEVONO avere il layout con menu bottom
+  const validPathsWithLayout = [
+    createPageUrl('Dashboard'),
+    createPageUrl('Meals'),
+    createPageUrl('Workouts'),
+    createPageUrl('AdminCoupons'),
+    createPageUrl('AdminBlog')
+  ];
+
+  // Pagine che NON devono avere il layout
+  const pathsWithoutLayout = [
+    createPageUrl('Quiz'),
+    createPageUrl('Home'),
+    createPageUrl('Landing'),
+    createPageUrl('pricing'),
+    createPageUrl('TrialSetup'),
+    createPageUrl('LandingCheckout'),
+    createPageUrl('ThankYou'),
+    createPageUrl('ResetPassword'),
+    createPageUrl('Blog'),
+    createPageUrl('BlogArticle'),
+    createPageUrl('OneTimeOffer'),
+    createPageUrl('Terms'),
+    createPageUrl('Privacy'),
+    createPageUrl('ApplePayVerification'),
+    '/'
+  ];
+
+  // Se il path è esplicitamente senza layout O inizia con /blog/ O non è un path valido con layout
+  // (questo include la pagina 404 e qualsiasi altra pagina non prevista)
+  if (pathsWithoutLayout.includes(location.pathname) || 
       location.pathname.startsWith('/blog/') ||
-      location.pathname === '/') {
+      !validPathsWithLayout.includes(location.pathname)) {
     return <>{children}</>;
   }
 
