@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, LogOut, Shield } from "lucide-react";
+import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -111,11 +111,11 @@ export default function Layout({ children }) {
   ];
   
   if (user && user.role === 'admin') {
-      allNavItems.push({ name: 'Coupon', icon: Shield, path: 'AdminCoupons' });
-      allNavItems.push({ name: 'Blog', icon: Shield, path: 'AdminBlog' });
-      allNavItems.push({ name: 'Email', icon: Shield, path: 'AdminEmails' });
-      allNavItems.push({ name: 'Analytics', icon: Shield, path: 'AdminAnalytics' });
-      allNavItems.push({ name: 'Marketing', icon: Shield, path: 'AdminMarketing' });
+      allNavItems.push({ name: 'Coupon', icon: Tag, path: 'AdminCoupons' });
+      allNavItems.push({ name: 'Blog', icon: FileText, path: 'AdminBlog' });
+      allNavItems.push({ name: 'Email', icon: Mail, path: 'AdminEmails' });
+      allNavItems.push({ name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' });
+      allNavItems.push({ name: 'Marketing', icon: Target, path: 'AdminMarketing' });
   }
 
   const navItems = allNavItems.filter(item => {
@@ -220,29 +220,111 @@ export default function Layout({ children }) {
 
       {/* Bottom Navigation */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xl px-4">
-        <div className="water-glass-effect rounded-full flex items-center justify-around py-2 px-2">
-          {navItems.map((item) => (
-            <Link
-              key={item.name}
-              to={createPageUrl(item.path)}
-              className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors w-20 ${
-                location.pathname === createPageUrl(item.path)
-                  ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                  : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
-              }`}
+        <div className="water-glass-effect rounded-3xl py-3 px-2">
+          {/* Desktop/Tablet - Single Row */}
+          <div className="hidden sm:flex items-center justify-around">
+            {navItems.map((item) => (
+              <Link
+                key={item.name}
+                to={createPageUrl(item.path)}
+                className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors w-20 ${
+                  location.pathname === createPageUrl(item.path)
+                    ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                    : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                }`}
+              >
+                <item.icon className="w-5 h-5" />
+                <span className="text-xs font-medium">{item.name}</span>
+              </Link>
+            ))}
+            
+            <button
+              onClick={handleLogout}
+              className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors w-20 text-gray-400 hover:text-red-600 hover:bg-red-50"
             >
-              <item.icon className="w-5 h-5" />
-              <span className="text-xs font-medium">{item.name}</span>
-            </Link>
-          ))}
-          
-          <button
-            onClick={handleLogout}
-            className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors w-20 text-gray-400 hover:text-red-600 hover:bg-red-50"
-          >
-            <LogOut className="w-5 h-5" />
-            <span className="text-xs font-medium">Esci</span>
-          </button>
+              <LogOut className="w-5 h-5" />
+              <span className="text-xs font-medium">Esci</span>
+            </button>
+          </div>
+
+          {/* Mobile - Two Rows (max 4 items per row) */}
+          <div className="sm:hidden">
+            {navItems.length <= 4 ? (
+              // Single row for 4 or fewer items
+              <div className="flex items-center justify-around">
+                {navItems.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={createPageUrl(item.path)}
+                    className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] ${
+                      location.pathname === createPageUrl(item.path)
+                        ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                        : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                    }`}
+                  >
+                    <item.icon className="w-5 h-5" />
+                    <span className="text-xs font-medium text-center">{item.name}</span>
+                  </Link>
+                ))}
+                
+                <button
+                  onClick={handleLogout}
+                  className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] text-gray-400 hover:text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="text-xs font-medium">Esci</span>
+                </button>
+              </div>
+            ) : (
+              // Two rows for more than 4 items
+              <div className="space-y-2">
+                {/* First Row - First 4 items */}
+                <div className="flex items-center justify-around">
+                  {navItems.slice(0, 4).map((item) => (
+                    <Link
+                      key={item.name}
+                      to={createPageUrl(item.path)}
+                      className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] ${
+                        location.pathname === createPageUrl(item.path)
+                          ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                          : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      <span className="text-xs font-medium text-center">{item.name}</span>
+                    </Link>
+                  ))}
+                </div>
+
+                {/* Second Row - Remaining items + Logout */}
+                <div className="flex items-center justify-around">
+                  {navItems.slice(4).map((item) => (
+                    <Link
+                      key={item.name}
+                      to={createPageUrl(item.path)}
+                      className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] ${
+                        location.pathname === createPageUrl(item.path)
+                          ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                          : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                      }`}
+                    >
+                      <item.icon className="w-5 h-5" />
+                      <span className="text-xs font-medium text-center">{item.name}</span>
+                    </Link>
+                  ))}
+                  
+                  {/* Logout button is always present in the second row for mobile if there are more than 4 items */}
+                  <button
+                    onClick={handleLogout}
+                    className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] text-gray-400 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <LogOut className="w-5 h-5" />
+                    <span className="text-xs font-medium">Esci</span>
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
