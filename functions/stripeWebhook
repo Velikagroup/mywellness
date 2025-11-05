@@ -1,155 +1,261 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
-import Stripe from 'npm:stripe@14.10.0';
 
-const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import Stripe from 'npm:stripe';
+
+const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
+    apiVersion: '2023-10-16',
+});
 const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
 
 Deno.serve(async (req) => {
-    const base44 = createClientFromRequest(req);
-    
+    console.log('🔔 Stripe Webhook - Start');
+
+    const sig = req.headers.get('stripe-signature');
+
+    if (!sig || !webhookSecret) {
+        console.error('❌ Missing signature or webhook secret');
+        return Response.json({ error: 'Webhook configuration error' }, { status: 400 });
+    }
+
+    let event;
+
     try {
-        // Ottieni la signature di Stripe
-        const signature = req.headers.get('stripe-signature');
         const body = await req.text();
+        const base44 = createClientFromRequest(req);
 
-        if (!signature) {
-            return Response.json({ error: 'No signature' }, { status: 400 });
-        }
+        // Validate Stripe signature
+        event = await stripe.webhooks.constructEventAsync(
+            body,
+            sig,
+            webhookSecret
+        );
 
-        // Verifica e costruisci l'evento
-        let event;
-        try {
-            event = await stripe.webhooks.constructEventAsync(
-                body,
-                signature,
-                webhookSecret
-            );
-        } catch (err) {
-            console.error('Webhook signature verification failed:', err.message);
-            return Response.json({ error: 'Invalid signature' }, { status: 400 });
-        }
+        console.log(`📨 Event type: ${event.type}`);
 
-        console.log('Webhook event received:', event.type);
-
-        // Gestisci i diversi tipi di eventi
+        // Handle different event types
         switch (event.type) {
-            // Subscription Events
-            case 'customer.subscription.created':
-            case 'customer.subscription.updated': {
-                const subscription = event.data.object;
-                const userId = subscription.metadata.user_id;
+            case 'checkout.session.completed': {
+                const session = event.data.object;
+                console.log('💳 Checkout completed:', session.id);
 
-                if (userId) {
-                    const status = subscription.status === 'active' || subscription.status === 'trialing' 
-                        ? 'active' 
-                        : subscription.status === 'canceled' 
-                        ? 'cancelled' 
-                        : 'expired';
+                const customerId = session.customer;
+                const paymentIntentId = session.payment_intent;
 
-                    await base44.asServiceRole.entities.User.update(userId, {
-                        subscription_status: status,
-                        stripe_subscription_id: subscription.id,
-                        subscription_period_end: new Date(subscription.current_period_end * 1000).toISOString()
+                // Find user by stripe_customer_id
+                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+
+                if (users.length > 0) {
+                    const user = users[0];
+                    const metadata = session.metadata || {};
+
+                    // Determine plan and type
+                    const isLandingOffer = metadata.type === 'landing_offer';
+                    const plan = metadata.plan_type || 'premium';
+                    const amount = session.amount_total / 100; // Convert from cents
+
+                    // Create transaction record
+                    await base44.asServiceRole.entities.Transaction.create({
+                        user_id: user.id,
+                        stripe_payment_intent_id: paymentIntentId,
+                        amount: amount,
+                        currency: session.currency || 'eur',
+                        status: 'succeeded',
+                        type: isLandingOffer ? 'one_time_payment' : 'subscription_payment',
+                        plan: isLandingOffer ? 'landing_offer' : plan,
+                        billing_period: isLandingOffer ? 'one_time' : (metadata.billing_period || 'monthly'),
+                        payment_date: new Date().toISOString(),
+                        description: isLandingOffer ? 'Landing Offer - 3 mesi Premium' : `Checkout ${plan}`,
+                        metadata: metadata
                     });
-                }
-                break;
-            }
 
-            case 'customer.subscription.deleted': {
-                const subscription = event.data.object;
-                const userId = subscription.metadata.user_id;
-
-                if (userId) {
-                    await base44.asServiceRole.entities.User.update(userId, {
-                        subscription_status: 'cancelled',
-                        subscription_plan: 'base'
-                    });
-                }
-                break;
-            }
-
-            case 'customer.subscription.trial_will_end': {
-                const subscription = event.data.object;
-                const userId = subscription.metadata.user_id;
-
-                if (userId) {
-                    // Qui puoi inviare email di reminder
-                    console.log(`Trial ending soon for user ${userId}`);
-                }
-                break;
-            }
-
-            // Payment Events
-            case 'payment_intent.succeeded': {
-                const paymentIntent = event.data.object;
-                const userId = paymentIntent.metadata.user_id;
-
-                if (userId) {
-                    await base44.asServiceRole.entities.User.update(userId, {
-                        last_payment_date: new Date().toISOString(),
-                        last_payment_amount: paymentIntent.amount / 100
-                    });
-                }
-                break;
-            }
-
-            case 'payment_intent.payment_failed': {
-                const paymentIntent = event.data.object;
-                const userId = paymentIntent.metadata.user_id;
-
-                if (userId) {
-                    // Gestisci pagamento fallito
-                    console.error(`Payment failed for user ${userId}`);
-                    // Qui potresti inviare email, mettere account in stato "payment_failed", etc.
+                    console.log(`✅ Transaction recorded for user ${user.id}: €${amount}`);
                 }
                 break;
             }
 
             case 'invoice.payment_succeeded': {
                 const invoice = event.data.object;
-                const subscription = invoice.subscription;
+                console.log('💰 Payment succeeded:', invoice.id);
 
-                if (subscription) {
-                    const sub = await stripe.subscriptions.retrieve(subscription);
-                    const userId = sub.metadata.user_id;
+                const customerId = invoice.customer;
+                const subscriptionId = invoice.subscription;
+                const amount = invoice.amount_paid / 100;
 
-                    if (userId) {
-                        await base44.asServiceRole.entities.User.update(userId, {
-                            subscription_status: 'active',
-                            last_payment_date: new Date().toISOString(),
-                            subscription_period_end: new Date(sub.current_period_end * 1000).toISOString()
-                        });
-                    }
+                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+
+                if (users.length > 0) {
+                    const user = users[0];
+
+                    // Update user payment info
+                    await base44.asServiceRole.entities.User.update(user.id, {
+                        last_payment_date: new Date(invoice.created * 1000).toISOString(),
+                        last_payment_amount: amount,
+                        subscription_status: 'active'
+                    });
+
+                    // Create transaction record
+                    await base44.asServiceRole.entities.Transaction.create({
+                        user_id: user.id,
+                        stripe_invoice_id: invoice.id,
+                        stripe_subscription_id: subscriptionId,
+                        stripe_payment_intent_id: invoice.payment_intent,
+                        amount: amount,
+                        currency: invoice.currency || 'eur',
+                        status: 'succeeded',
+                        type: 'subscription_payment',
+                        plan: user.subscription_plan || 'base',
+                        billing_period: invoice.billing_reason === 'subscription_cycle' ?
+                            (user.subscription_plan === 'premium' ? 'monthly' : 'monthly') : 'monthly', // billing_period can be more dynamic, this is a placeholder example
+                        payment_date: new Date(invoice.created * 1000).toISOString(),
+                        description: `Pagamento ${user.subscription_plan || 'subscription'}`,
+                        metadata: invoice.metadata
+                    });
+
+                    console.log(`✅ Payment recorded for user ${user.id}: €${amount}`);
                 }
                 break;
             }
 
             case 'invoice.payment_failed': {
                 const invoice = event.data.object;
-                const subscription = invoice.subscription;
+                console.log('❌ Payment failed:', invoice.id);
 
-                if (subscription) {
-                    const sub = await stripe.subscriptions.retrieve(subscription);
-                    const userId = sub.metadata.user_id;
+                const customerId = invoice.customer;
+                const amount = invoice.amount_due / 100;
 
-                    if (userId) {
-                        await base44.asServiceRole.entities.User.update(userId, {
-                            subscription_status: 'payment_failed'
-                        });
-                        // Qui potresti inviare email di alert
+                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+
+                if (users.length > 0) {
+                    const user = users[0];
+
+                    // Update user status
+                    await base44.asServiceRole.entities.User.update(user.id, {
+                        subscription_status: 'payment_failed'
+                    });
+
+                    // Create failed transaction record
+                    await base44.asServiceRole.entities.Transaction.create({
+                        user_id: user.id,
+                        stripe_invoice_id: invoice.id,
+                        stripe_subscription_id: invoice.subscription,
+                        amount: amount,
+                        currency: invoice.currency || 'eur',
+                        status: 'failed',
+                        type: 'subscription_payment',
+                        plan: user.subscription_plan || 'base',
+                        payment_date: new Date(invoice.created * 1000).toISOString(),
+                        description: `Pagamento fallito - ${user.subscription_plan || 'subscription'}`,
+                        metadata: invoice.metadata
+                    });
+
+                    console.log(`❌ Failed payment recorded for user ${user.id}`);
+                }
+                break;
+            }
+
+            case 'customer.subscription.created':
+            case 'customer.subscription.updated': {
+                const subscription = event.data.object;
+                console.log(`📋 Subscription ${event.type}:`, subscription.id);
+
+                const customerId = subscription.customer;
+                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+
+                if (users.length > 0) {
+                    const user = users[0];
+
+                    const updateData: Record<string, any> = {
+                        stripe_subscription_id: subscription.id,
+                        subscription_status: subscription.status === 'active' ? 'active' :
+                                           subscription.status === 'trialing' ? 'trial' :
+                                           subscription.status === 'canceled' ? 'cancelled' : 'expired',
+                        subscription_period_end: new Date(subscription.current_period_end * 1000).toISOString()
+                    };
+
+                    // Determine plan from price
+                    if (subscription.items?.data?.[0]?.price) {
+                        const priceId = subscription.items.data[0].price.id;
+                        const PRICE_MAP: Record<string, string> = {
+                            // Example price IDs, replace with your actual Stripe price IDs
+                            'price_1SNDMW2OXBs6ZYwlp5UgCO8Y': 'base', // Monthly Base
+                            'price_1SNDMW2OXBs6ZYwlUfiZP4Su': 'base', // Annual Base
+                            'price_1SNDMX2OXBs6ZYwlx6jXOgFf': 'pro',    // Monthly Pro
+                            'price_1SNDMX2OXBs6ZYwlvGtzkQKA': 'pro',    // Annual Pro
+                            'price_1SNDMX2OXBs6ZYwlKR7FIudX': 'premium',// Monthly Premium
+                            'price_1SNDMY2OXBs6ZYwlcZzmNSnk': 'premium' // Annual Premium
+                        };
+
+                        if (PRICE_MAP[priceId]) {
+                            updateData.subscription_plan = PRICE_MAP[priceId];
+                        }
                     }
+
+                    await base44.asServiceRole.entities.User.update(user.id, updateData);
+                    console.log(`✅ Subscription updated for user ${user.id}`);
+                }
+                break;
+            }
+
+            case 'customer.subscription.deleted': {
+                const subscription = event.data.object;
+                console.log('🗑️ Subscription deleted:', subscription.id);
+
+                const customerId = subscription.customer;
+                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+
+                if (users.length > 0) {
+                    const user = users[0];
+
+                    await base44.asServiceRole.entities.User.update(user.id, {
+                        subscription_status: 'cancelled',
+                        stripe_subscription_id: null
+                    });
+
+                    console.log(`✅ Subscription cancelled for user ${user.id}`);
+                }
+                break;
+            }
+
+            case 'charge.refunded': {
+                const charge = event.data.object;
+                console.log('💸 Refund processed:', charge.id);
+
+                const customerId = charge.customer;
+                const refundAmount = charge.amount_refunded / 100;
+
+                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+
+                if (users.length > 0) {
+                    const user = users[0];
+
+                    // Create refund transaction
+                    await base44.asServiceRole.entities.Transaction.create({
+                        user_id: user.id,
+                        stripe_payment_intent_id: charge.payment_intent,
+                        amount: -refundAmount, // Negative for refund
+                        currency: charge.currency || 'eur',
+                        status: 'refunded',
+                        type: 'refund',
+                        payment_date: new Date(charge.created * 1000).toISOString(),
+                        description: 'Rimborso',
+                        metadata: charge.metadata
+                    });
+
+                    console.log(`✅ Refund recorded for user ${user.id}: €${refundAmount}`);
                 }
                 break;
             }
 
             default:
-                console.log(`Unhandled event type: ${event.type}`);
+                console.log(`⚠️ Unhandled event type: ${event.type}`);
         }
 
         return Response.json({ received: true });
 
     } catch (error) {
-        console.error('Webhook error:', error);
-        return Response.json({ error: error.message }, { status: 500 });
+        console.error('❌ Webhook error:', error);
+        return Response.json({
+            error: error.message
+        }, { status: 400 });
     }
 });

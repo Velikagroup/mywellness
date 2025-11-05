@@ -9,10 +9,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { 
-  TrendingUp, 
+import {
+  TrendingUp,
   TrendingDown,
-  Users, 
+  Users,
   DollarSign,
   Activity,
   Calendar as CalendarIcon, // Renamed to avoid conflict with CalendarComponent
@@ -38,16 +38,17 @@ export default function AdminAnalytics() {
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [isSavingExpense, setIsSavingExpense] = useState(false);
-  
+
   // Date range state
   const [dateRange, setDateRange] = useState({
     from: subMonths(new Date(), 3),
     to: new Date()
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
-  
+
   // Expense form state
   const [expenseForm, setExpenseForm] = useState({
     category: 'server',
@@ -80,12 +81,14 @@ export default function AdminAnalytics() {
 
   const loadData = async () => {
     try {
-      const [usersData, expensesData] = await Promise.all([
+      const [usersData, expensesData, transactionsData] = await Promise.all([
         base44.entities.User.list(),
-        base44.entities.Expense.list()
+        base44.entities.Expense.list(),
+        base44.entities.Transaction.list()
       ]);
       setUsers(usersData);
       setExpenses(expensesData);
+      setTransactions(transactionsData);
     } catch (error) {
       console.error('Error loading data:', error);
     }
@@ -103,7 +106,7 @@ export default function AdminAnalytics() {
         ...expenseForm,
         amount: parseFloat(expenseForm.amount)
       });
-      
+
       await loadData();
       setShowAddExpense(false);
       setExpenseForm({
@@ -135,12 +138,19 @@ export default function AdminAnalytics() {
     return isWithinInterval(expenseDate, { start: dateRange.from, end: dateRange.to });
   });
 
+  // Filter transactions by date range
+  const filteredTransactions = transactions.filter(t => {
+    if (!t.payment_date) return false; // Transactions must have a payment_date
+    const transactionDate = parseISO(t.payment_date);
+    return isWithinInterval(transactionDate, { start: dateRange.from, end: dateRange.to });
+  });
+
   // Analytics Calculations (updated to use filteredUsers/filteredExpenses)
   const activeSubscriptions = filteredUsers.filter(u => u.subscription_status === 'active').length;
   const trialUsers = filteredUsers.filter(u => u.subscription_status === 'trial').length;
   const cancelledUsers = filteredUsers.filter(u => u.subscription_status === 'cancelled').length;
   const expiredUsers = filteredUsers.filter(u => u.subscription_status === 'expired').length;
-  
+
   // MRR Calculation
   const PRICE_MAP = {
     base: { monthly: 19, yearly: 15.2 },
@@ -148,18 +158,33 @@ export default function AdminAnalytics() {
     premium: { monthly: 39, yearly: 31.2 }
   };
 
+  // Calculate MRR from actual Stripe data (transactions + subscriptions)
   const calculateMRR = () => {
-    return filteredUsers
-      .filter(u => u.subscription_status === 'active')
+    // Get recurring revenue from active subscriptions
+    const recurringRevenue = filteredUsers
+      .filter(u => u.subscription_status === 'active' && u.subscription_plan)
       .reduce((sum, u) => {
         const plan = u.subscription_plan || 'base';
-        // Assume monthly for MRR calculation
-        return sum + (PRICE_MAP[plan]?.monthly || 19);
+        const monthlyValue = PRICE_MAP[plan]?.monthly || 19;
+        return sum + monthlyValue;
       }, 0);
+
+    return recurringRevenue;
   };
 
   const mrr = calculateMRR();
   const arr = mrr * 12;
+
+  // Calculate actual revenue from transactions
+  const totalRevenue = filteredTransactions
+    .filter(t => t.status === 'succeeded' && t.amount > 0)
+    .reduce((sum, t) => sum + t.amount, 0);
+
+  const totalRefunds = filteredTransactions
+    .filter(t => t.status === 'refunded')
+    .reduce((sum, t) => sum + Math.abs(t.amount), 0);
+
+  const netRevenue = totalRevenue - totalRefunds;
 
   // Subscription breakdown by plan
   const planBreakdown = {
@@ -198,38 +223,48 @@ export default function AdminAnalytics() {
   const profitMargin = mrr > 0 ? ((monthlyProfit / mrr) * 100).toFixed(1) : 0;
 
   // Conversion rate (from trial to paid) - using filteredUsers
-  const totalTrialsStarted = filteredUsers.filter(u => 
-    u.subscription_status === 'active' || 
+  const totalTrialsStarted = filteredUsers.filter(u =>
+    u.subscription_status === 'active' ||
     u.subscription_status === 'trial' ||
     u.subscription_status === 'cancelled' ||
     u.subscription_status === 'expired'
   ).length;
-  const conversionRate = totalTrialsStarted > 0 ? 
+  const conversionRate = totalTrialsStarted > 0 ?
     ((activeSubscriptions / totalTrialsStarted) * 100).toFixed(1) : 0;
 
-  // Monthly revenue trend (adjusted to date range)
+  // Monthly revenue trend from actual transactions
   const getMonthlyRevenueTrend = () => {
     const trends = [];
     let currentDate = startOfMonth(dateRange.from);
     while (currentDate <= dateRange.to) {
       const monthStart = currentDate;
       const monthEnd = endOfMonth(currentDate);
-      
-      const activeInMonth = users.filter(u => { // Use all users here to track historical subscriptions
+
+      // Calculate revenue from transactions in this month
+      const monthRevenue = transactions
+        .filter(t => {
+          if (!t.payment_date || t.status !== 'succeeded') return false;
+          const tDate = parseISO(t.payment_date);
+          return isWithinInterval(tDate, { start: monthStart, end: monthEnd });
+        })
+        .reduce((sum, t) => sum + t.amount, 0);
+
+      // Count active users in this month (for context, but main revenue is from transactions)
+      const activeInMonth = users.filter(u => {
         if (!u.created_date) return false;
         const createdDate = parseISO(u.created_date);
-        
+
         // A user is "active" in a given month if they were created before or in that month,
         // AND their subscription is active OR it expired *after* the beginning of that month.
         // This is a simplified approach, a more robust solution would track subscription history.
-        return createdDate <= monthEnd && 
-               (u.subscription_status === 'active' || 
+        return createdDate <= monthEnd &&
+               (u.subscription_status === 'active' ||
                 (u.subscription_expires_at && parseISO(u.subscription_expires_at) >= monthStart));
       }).length;
 
       trends.push({
         month: format(currentDate, 'MMM yy', { locale: it }),
-        revenue: activeInMonth * 30, // Rough estimate
+        revenue: Math.round(monthRevenue),
         users: activeInMonth
       });
       currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
@@ -244,11 +279,11 @@ export default function AdminAnalytics() {
     const projections = [];
     const currentMRR = mrr;
     const growthRate = 1.15; // Assume 15% monthly growth
-    
+
     for (let i = 1; i <= 12; i++) {
       const projectedMRR = currentMRR * Math.pow(growthRate, i);
       const projectedExpenses = totalMonthlyExpenses * (1 + (i * 0.05)); // Expenses grow 5% per month
-      
+
       projections.push({
         month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy', { locale: it }),
         revenue: Math.round(projectedMRR),
@@ -281,6 +316,24 @@ export default function AdminAnalytics() {
 
   const EXPENSE_COLORS = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
+
+  // Transaction breakdown by type
+  const transactionsByType = filteredTransactions
+    .filter(t => t.status === 'succeeded' && t.amount > 0)
+    .reduce((acc, t) => {
+      const type = t.type || 'other';
+      acc[type] = (acc[type] || 0) + t.amount;
+      return acc;
+    }, {});
+
+  const transactionPieData = Object.entries(transactionsByType).map(([name, value]) => ({
+    name: name === 'subscription_payment' ? 'Abbonamenti' :
+          name === 'one_time_payment' ? 'Pagamenti Unici' :
+          name === 'trial_setup' ? 'Setup Trial' : 'Altro',
+    value: Math.round(value)
+  }));
+
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -299,7 +352,7 @@ export default function AdminAnalytics() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics & Financial Dashboard</h1>
               <p className="text-gray-600">Panoramica completa delle metriche e proiezioni finanziarie</p>
             </div>
-            
+
             {/* Date Range Picker */}
             <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
               <PopoverTrigger asChild>
@@ -337,8 +390,8 @@ export default function AdminAnalytics() {
                     />
                   </div>
                   <div className="flex flex-wrap gap-2">
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => {
                         setDateRange({
@@ -350,8 +403,8 @@ export default function AdminAnalytics() {
                     >
                       Ultimo Mese
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => {
                         setDateRange({
@@ -363,8 +416,8 @@ export default function AdminAnalytics() {
                     >
                       Ultimi 3 Mesi
                     </Button>
-                    <Button 
-                      size="sm" 
+                    <Button
+                      size="sm"
                       variant="outline"
                       onClick={() => {
                         setDateRange({
@@ -377,7 +430,7 @@ export default function AdminAnalytics() {
                       Ultimo Anno
                     </Button>
                   </div>
-                  <Button 
+                  <Button
                     className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
                     onClick={() => setShowDatePicker(false)}
                   >
@@ -387,7 +440,7 @@ export default function AdminAnalytics() {
               </PopoverContent>
             </Popover>
           </div>
-          
+
           <div className="text-sm text-gray-500">
             📊 Mostrando dati dal {format(dateRange.from, 'dd MMMM yyyy', { locale: it })} al {format(dateRange.to, 'dd MMMM yyyy', { locale: it })}
           </div>
@@ -399,9 +452,9 @@ export default function AdminAnalytics() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">MRR (Monthly Recurring Revenue)</p>
-                  <p className="text-3xl font-bold text-gray-900">€{mrr.toLocaleString('it-IT')}</p>
-                  <p className="text-xs text-gray-500 mt-1">ARR: €{arr.toLocaleString('it-IT')}</p>
+                  <p className="text-sm text-gray-500 mb-1">Entrate Totali (Periodo)</p>
+                  <p className="text-3xl font-bold text-gray-900">€{totalRevenue.toLocaleString('it-IT')}</p>
+                  <p className="text-xs text-gray-500 mt-1">Netto: €{netRevenue.toLocaleString('it-IT')}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
                   <Euro className="w-6 h-6 text-green-600" />
@@ -414,12 +467,12 @@ export default function AdminAnalytics() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Abbonamenti Attivi</p>
-                  <p className="text-3xl font-bold text-gray-900">{activeSubscriptions}</p>
-                  <p className="text-xs text-gray-500 mt-1">Trial: {trialUsers}</p>
+                  <p className="text-sm text-gray-500 mb-1">MRR (Ricorrente Mensile)</p>
+                  <p className="text-3xl font-bold text-gray-900">€{mrr.toLocaleString('it-IT')}</p>
+                  <p className="text-xs text-gray-500 mt-1">ARR: €{arr.toLocaleString('it-IT')}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Users className="w-6 h-6 text-blue-600" />
+                  <BarChart3 className="w-6 h-6 text-blue-600" />
                 </div>
               </div>
             </CardContent>
@@ -506,7 +559,7 @@ export default function AdminAnalytics() {
             {/* Revenue Trend */}
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Andamento Entrate (Periodo Selezionato)</CardTitle>
+                <CardTitle>Andamento Entrate Reali da Transazioni</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-80">
@@ -521,23 +574,82 @@ export default function AdminAnalytics() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                       <XAxis dataKey="month" stroke="#6b7280" />
                       <YAxis stroke="#6b7280" />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'white', 
-                          border: '1px solid #e5e7eb', 
-                          borderRadius: '8px' 
-                        }} 
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'white',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px'
+                        }}
                       />
-                      <Area 
-                        type="monotone" 
-                        dataKey="revenue" 
-                        stroke="#26847F" 
-                        fillOpacity={1} 
-                        fill="url(#colorRevenue)" 
+                      <Area
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#26847F"
+                        fillOpacity={1}
+                        fill="url(#colorRevenue)"
                         name="Entrate (€)"
                       />
                     </AreaChart>
                   </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Transaction Breakdown */}
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Breakdown Transazioni per Tipo</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="h-64">
+                    {transactionPieData.length > 0 ? (
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={transactionPieData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                          >
+                            {transactionPieData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={['#26847F', '#3b82f6', '#a855f7'][index % 3]} />
+                            ))}
+                          </Pie>
+                          <Tooltip formatter={(value) => `€${value}`} />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    ) : (
+                      <p className="text-center text-gray-500 py-8">Nessuna transazione nel periodo</p>
+                    )}
+                  </div>
+
+                  <div className="space-y-3">
+                    <h4 className="font-semibold text-gray-900 mb-3">Transazioni Recenti</h4>
+                    <div className="space-y-2 max-h-56 overflow-y-auto">
+                      {filteredTransactions
+                        .filter(t => t.status === 'succeeded')
+                        .slice(0, 8)
+                        .map((transaction) => (
+                          <div key={transaction.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                            <div className="flex-1">
+                              <p className="font-semibold text-sm text-gray-900">{transaction.description}</p>
+                              <p className="text-xs text-gray-500">
+                                {format(parseISO(transaction.payment_date), 'dd/MM/yyyy HH:mm')}
+                              </p>
+                            </div>
+                            <p className="font-bold text-green-600">+€{transaction.amount}</p>
+                          </div>
+                        ))}
+                    </div>
+                    {filteredTransactions.filter(t => t.status === 'succeeded').length === 0 && (
+                      <p className="text-center text-gray-500 py-4">Nessuna transazione riuscita nel periodo selezionato</p>
+                    )}
+                  </div>
                 </div>
               </CardContent>
             </Card>
@@ -707,7 +819,7 @@ export default function AdminAnalytics() {
                       </div>
                       <span className="text-2xl font-bold text-green-600">{activeSubscriptions}</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
                       <div className="flex items-center gap-3">
                         <Clock className="w-5 h-5 text-blue-600" />
@@ -715,7 +827,7 @@ export default function AdminAnalytics() {
                       </div>
                       <span className="text-2xl font-bold text-blue-600">{trialUsers}</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-4 bg-orange-50 border border-orange-200 rounded-lg">
                       <div className="flex items-center gap-3">
                         <AlertCircle className="w-5 h-5 text-orange-600" />
@@ -723,7 +835,7 @@ export default function AdminAnalytics() {
                       </div>
                       <span className="text-2xl font-bold text-orange-600">{cancelledUsers}</span>
                     </div>
-                    
+
                     <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
                       <div className="flex items-center gap-3">
                         <Activity className="w-5 h-5 text-gray-600" />
@@ -790,34 +902,34 @@ export default function AdminAnalytics() {
                       <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                       <XAxis dataKey="month" stroke="#6b7280" />
                       <YAxis stroke="#6b7280" />
-                      <Tooltip 
-                        contentStyle={{ 
-                          backgroundColor: 'white', 
-                          border: '1px solid #e5e7eb', 
-                          borderRadius: '8px' 
-                        }} 
+                      <Tooltip
+                        contentStyle={{
+                          backgroundColor: 'white',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px'
+                        }}
                       />
                       <Legend />
-                      <Area 
-                        type="monotone" 
-                        dataKey="revenue" 
-                        stroke="#10b981" 
-                        fillOpacity={1} 
-                        fill="url(#colorRevProj)" 
+                      <Area
+                        type="monotone"
+                        dataKey="revenue"
+                        stroke="#10b981"
+                        fillOpacity={1}
+                        fill="url(#colorRevProj)"
                         name="Entrate (€)"
                       />
-                      <Area 
-                        type="monotone" 
-                        dataKey="expenses" 
-                        stroke="#ef4444" 
-                        fillOpacity={1} 
-                        fill="url(#colorExpProj)" 
+                      <Area
+                        type="monotone"
+                        dataKey="expenses"
+                        stroke="#ef4444"
+                        fillOpacity={1}
+                        fill="url(#colorExpProj)"
                         name="Spese (€)"
                       />
-                      <Line 
-                        type="monotone" 
-                        dataKey="profit" 
-                        stroke="#26847F" 
+                      <Line
+                        type="monotone"
+                        dataKey="profit"
+                        stroke="#26847F"
                         strokeWidth={3}
                         name="Profitto (€)"
                       />
