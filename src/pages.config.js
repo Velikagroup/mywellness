@@ -18,6 +18,7 @@ import ThankYou from './pages/ThankYou';
 import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
 import AdminEmails from './pages/AdminEmails';
+import AdminAnalytics from './pages/AdminAnalytics';
 import Layout from './Layout.jsx';
 
 
@@ -42,6 +43,7 @@ export const PAGES = {
     "ResetPassword": ResetPassword,
     "NotFound": NotFound,
     "AdminEmails": AdminEmails,
+    "AdminAnalytics": AdminAnalytics,
 }
 
 export const pagesConfig = {

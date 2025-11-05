@@ -72,7 +72,8 @@ export default function Layout({ children }) {
     createPageUrl('Workouts'),
     createPageUrl('AdminCoupons'),
     createPageUrl('AdminBlog'),
-    createPageUrl('AdminEmails')
+    createPageUrl('AdminEmails'),
+    createPageUrl('AdminAnalytics') // Added for AdminAnalytics
   ];
 
   // Pagine che NON devono avere il layout
@@ -112,6 +113,7 @@ export default function Layout({ children }) {
       allNavItems.push({ name: 'Coupon', icon: Shield, path: 'AdminCoupons' });
       allNavItems.push({ name: 'Blog', icon: Shield, path: 'AdminBlog' });
       allNavItems.push({ name: 'Email', icon: Shield, path: 'AdminEmails' });
+      allNavItems.push({ name: 'Analytics', icon: Shield, path: 'AdminAnalytics' });
   }
 
   const navItems = allNavItems.filter(item => {
