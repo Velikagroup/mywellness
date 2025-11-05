@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -15,7 +14,7 @@ import {
   Users,
   DollarSign,
   Activity,
-  Calendar as CalendarIcon, // Renamed to avoid conflict with CalendarComponent
+  Calendar as CalendarIcon,
   PieChart as PieChartIcon,
   BarChart3,
   Plus,
@@ -127,25 +126,25 @@ export default function AdminAnalytics() {
 
   // Filter users and expenses by date range
   const filteredUsers = users.filter(u => {
-    if (!u.created_date) return false; // Users must have a created_date to be relevant for the range
+    if (!u.created_date) return false;
     const userDate = parseISO(u.created_date);
     return isWithinInterval(userDate, { start: dateRange.from, end: dateRange.to });
   });
 
   const filteredExpenses = expenses.filter(e => {
-    if (!e.date) return false; // Expenses must have a date
+    if (!e.date) return false;
     const expenseDate = parseISO(e.date);
     return isWithinInterval(expenseDate, { start: dateRange.from, end: dateRange.to });
   });
 
   // Filter transactions by date range
   const filteredTransactions = transactions.filter(t => {
-    if (!t.payment_date) return false; // Transactions must have a payment_date
+    if (!t.payment_date) return false;
     const transactionDate = parseISO(t.payment_date);
     return isWithinInterval(transactionDate, { start: dateRange.from, end: dateRange.to });
   });
 
-  // Analytics Calculations (updated to use filteredUsers/filteredExpenses)
+  // Analytics Calculations
   const activeSubscriptions = filteredUsers.filter(u => u.subscription_status === 'active').length;
   const trialUsers = filteredUsers.filter(u => u.subscription_status === 'trial').length;
   const cancelledUsers = filteredUsers.filter(u => u.subscription_status === 'cancelled').length;
@@ -158,9 +157,7 @@ export default function AdminAnalytics() {
     premium: { monthly: 39, yearly: 31.2 }
   };
 
-  // Calculate MRR from actual Stripe data (transactions + subscriptions)
   const calculateMRR = () => {
-    // Get recurring revenue from active subscriptions
     const recurringRevenue = filteredUsers
       .filter(u => u.subscription_status === 'active' && u.subscription_plan)
       .reduce((sum, u) => {
@@ -193,21 +190,19 @@ export default function AdminAnalytics() {
     premium: filteredUsers.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'premium').length
   };
 
-  // Churn rate (within selected range)
-  const recentCancellations = users.filter(u => { // Use all users to check churn across the board, not just newly created in range
+  // Churn rate
+  const recentCancellations = users.filter(u => {
     if (!u.updated_date) return false;
     const updateDate = parseISO(u.updated_date);
     return isWithinInterval(updateDate, { start: dateRange.from, end: dateRange.to }) &&
            (u.subscription_status === 'cancelled' || u.subscription_status === 'expired');
   }).length;
-  // Churn rate calculation typically considers the number of users at the *beginning* of the period or average users.
-  // For simplicity, we'll use activeSubscriptions which reflects users active within the range.
   const churnRate = activeSubscriptions > 0 ? ((recentCancellations / activeSubscriptions) * 100).toFixed(1) : 0;
 
   // Retention rate
   const retentionRate = activeSubscriptions > 0 ? (100 - parseFloat(churnRate)).toFixed(1) : 0;
 
-  // Total expenses (recurring monthly + one-time) - using filteredExpenses
+  // Total expenses
   const monthlyRecurringExpenses = filteredExpenses
     .filter(e => e.recurring && e.recurring_frequency === 'monthly')
     .reduce((sum, e) => sum + e.amount, 0);
@@ -222,7 +217,7 @@ export default function AdminAnalytics() {
   const monthlyProfit = mrr - totalMonthlyExpenses;
   const profitMargin = mrr > 0 ? ((monthlyProfit / mrr) * 100).toFixed(1) : 0;
 
-  // Conversion rate (from trial to paid) - using filteredUsers
+  // Conversion rate
   const totalTrialsStarted = filteredUsers.filter(u =>
     u.subscription_status === 'active' ||
     u.subscription_status === 'trial' ||
@@ -232,7 +227,7 @@ export default function AdminAnalytics() {
   const conversionRate = totalTrialsStarted > 0 ?
     ((activeSubscriptions / totalTrialsStarted) * 100).toFixed(1) : 0;
 
-  // Monthly revenue trend from actual transactions
+  // Monthly revenue trend
   const getMonthlyRevenueTrend = () => {
     const trends = [];
     let currentDate = startOfMonth(dateRange.from);
@@ -240,7 +235,6 @@ export default function AdminAnalytics() {
       const monthStart = currentDate;
       const monthEnd = endOfMonth(currentDate);
 
-      // Calculate revenue from transactions in this month
       const monthRevenue = transactions
         .filter(t => {
           if (!t.payment_date || t.status !== 'succeeded') return false;
@@ -249,14 +243,9 @@ export default function AdminAnalytics() {
         })
         .reduce((sum, t) => sum + t.amount, 0);
 
-      // Count active users in this month (for context, but main revenue is from transactions)
       const activeInMonth = users.filter(u => {
         if (!u.created_date) return false;
         const createdDate = parseISO(u.created_date);
-
-        // A user is "active" in a given month if they were created before or in that month,
-        // AND their subscription is active OR it expired *after* the beginning of that month.
-        // This is a simplified approach, a more robust solution would track subscription history.
         return createdDate <= monthEnd &&
                (u.subscription_status === 'active' ||
                 (u.subscription_expires_at && parseISO(u.subscription_expires_at) >= monthStart));
@@ -274,15 +263,15 @@ export default function AdminAnalytics() {
 
   const revenueTrend = getMonthlyRevenueTrend();
 
-  // Cash flow projection (next 12 months)
+  // Cash flow projection
   const getCashFlowProjection = () => {
     const projections = [];
     const currentMRR = mrr;
-    const growthRate = 1.15; // Assume 15% monthly growth
+    const growthRate = 1.15;
 
     for (let i = 1; i <= 12; i++) {
       const projectedMRR = currentMRR * Math.pow(growthRate, i);
-      const projectedExpenses = totalMonthlyExpenses * (1 + (i * 0.05)); // Expenses grow 5% per month
+      const projectedExpenses = totalMonthlyExpenses * (1 + (i * 0.05));
 
       projections.push({
         month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy', { locale: it }),
@@ -296,14 +285,13 @@ export default function AdminAnalytics() {
 
   const cashFlowProjection = getCashFlowProjection();
 
-  // Pie chart data for subscriptions
+  // Pie chart data
   const subscriptionPieData = [
     { name: 'Base', value: planBreakdown.base, color: '#3b82f6' },
     { name: 'Pro', value: planBreakdown.pro, color: '#26847F' },
     { name: 'Premium', value: planBreakdown.premium, color: '#a855f7' }
   ].filter(item => item.value > 0);
 
-  // Expense breakdown by category
   const expensesByCategory = filteredExpenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
@@ -316,8 +304,6 @@ export default function AdminAnalytics() {
 
   const EXPENSE_COLORS = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
 
-
-  // Transaction breakdown by type
   const transactionsByType = filteredTransactions
     .filter(t => t.status === 'succeeded' && t.amount > 0)
     .reduce((acc, t) => {
@@ -345,15 +331,13 @@ export default function AdminAnalytics() {
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
-        {/* Header */}
         <div>
-          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics & Financial Dashboard</h1>
               <p className="text-gray-600">Panoramica completa delle metriche e proiezioni finanziarie</p>
             </div>
 
-            {/* Date Range Picker */}
             <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full lg:w-auto justify-start text-left font-normal border-2">
@@ -440,13 +424,8 @@ export default function AdminAnalytics() {
               </PopoverContent>
             </Popover>
           </div>
-
-          <div className="text-sm text-gray-500">
-            📊 Mostrando dati dal {format(dateRange.from, 'dd MMMM yyyy', { locale: it })} al {format(dateRange.to, 'dd MMMM yyyy', { locale: it })}
-          </div>
         </div>
 
-        {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-4">
@@ -511,7 +490,6 @@ export default function AdminAnalytics() {
           </Card>
         </div>
 
-        {/* Tabs */}
         <Tabs defaultValue="overview" className="space-y-6">
           <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="overview">Overview</TabsTrigger>
@@ -520,9 +498,7 @@ export default function AdminAnalytics() {
             <TabsTrigger value="projections">Proiezioni</TabsTrigger>
           </TabsList>
 
-          {/* OVERVIEW TAB */}
           <TabsContent value="overview" className="space-y-6">
-            {/* Conversion Funnel */}
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>Funnel di Conversione</CardTitle>
@@ -556,7 +532,6 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
 
-            {/* Revenue Trend */}
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>Andamento Entrate Reali da Transazioni</CardTitle>
@@ -595,7 +570,6 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
 
-            {/* Transaction Breakdown */}
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>Breakdown Transazioni per Tipo</CardTitle>
@@ -647,7 +621,7 @@ export default function AdminAnalytics() {
                         ))}
                     </div>
                     {filteredTransactions.filter(t => t.status === 'succeeded').length === 0 && (
-                      <p className="text-center text-gray-500 py-4">Nessuna transazione riuscita nel periodo selezionato</p>
+                      <p className="text-center text-gray-500 py-4">Nessuna transazione riuscita nel periodo</p>
                     )}
                   </div>
                 </div>
@@ -655,9 +629,7 @@ export default function AdminAnalytics() {
             </Card>
           </TabsContent>
 
-          {/* FINANCIAL TAB */}
           <TabsContent value="financial" className="space-y-6">
-            {/* Add Expense Button */}
             <div className="flex justify-end">
               <Button
                 onClick={() => setShowAddExpense(true)}
@@ -668,7 +640,6 @@ export default function AdminAnalytics() {
               </Button>
             </div>
 
-            {/* Financial Overview */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardContent className="p-6">
@@ -692,7 +663,6 @@ export default function AdminAnalytics() {
               </Card>
             </div>
 
-            {/* Expense Breakdown */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
@@ -720,9 +690,10 @@ export default function AdminAnalytics() {
                           <Tooltip formatter={(value) => `€${value}`} />
                         </PieChart>
                       </ResponsiveContainer>
-                    ) : (
-                      <p className="text-center text-gray-500 py-8">Nessuna spesa registrata per il periodo selezionato</p>
-                    )}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
+                  )}
                 </CardContent>
               </Card>
 
@@ -745,7 +716,7 @@ export default function AdminAnalytics() {
                       </div>
                     ))}
                     {filteredExpenses.length === 0 && (
-                      <p className="text-center text-gray-500 py-4">Nessuna spesa nel periodo selezionato</p>
+                      <p className="text-center text-gray-500 py-4">Nessuna spesa nel periodo</p>
                     )}
                   </div>
                 </CardContent>
@@ -753,10 +724,8 @@ export default function AdminAnalytics() {
             </div>
           </TabsContent>
 
-          {/* SUBSCRIPTIONS TAB */}
           <TabsContent value="subscriptions" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Plan Distribution */}
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle>Distribuzione Piani</CardTitle>
@@ -785,7 +754,7 @@ export default function AdminAnalytics() {
                       </ResponsiveContainer>
                     </div>
                   ) : (
-                    <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo nel periodo selezionato</p>
+                    <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo</p>
                   )}
                   <div className="mt-4 space-y-2">
                     <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
@@ -804,7 +773,6 @@ export default function AdminAnalytics() {
                 </CardContent>
               </Card>
 
-              {/* Subscription Status */}
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle>Stati Abbonamento</CardTitle>
@@ -847,7 +815,6 @@ export default function AdminAnalytics() {
               </Card>
             </div>
 
-            {/* Key Metrics */}
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>Metriche Chiave</CardTitle>
@@ -877,7 +844,6 @@ export default function AdminAnalytics() {
             </Card>
           </TabsContent>
 
-          {/* PROJECTIONS TAB */}
           <TabsContent value="projections" className="space-y-6">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
@@ -938,7 +904,6 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
 
-            {/* Future Projections Cards */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
                 <CardContent className="p-6">
@@ -980,7 +945,6 @@ export default function AdminAnalytics() {
         </Tabs>
       </div>
 
-      {/* Add Expense Dialog */}
       <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
         <DialogContent className="max-w-md">
           <DialogHeader>
