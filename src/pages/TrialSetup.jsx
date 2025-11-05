@@ -210,25 +210,9 @@ export default function TrialSetup() {
     setIsSaving(true);
 
     try {
-      if (paymentMethod === 'apple_pay') {
-        alert('Apple Pay non ancora implementato. Seleziona Carta di Credito.');
-        setIsSaving(false);
-        return;
-      }
-
-      const [exp_month_str, exp_year_str] = cardData.expiry.split('/');
-      const exp_month = parseInt(exp_month_str, 10);
-      const exp_year = parseInt('20' + exp_year_str, 10);
-      
       const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
 
-      const payload = {
-        cardData: {
-          number: cardData.number.replace(/\s/g, ''),
-          exp_month: exp_month,
-          exp_year: exp_year,
-          cvc: cardData.cvc,
-        },
+      let payload = {
         planType: selectedPlan, // 'base', 'pro', 'premium'
         billingPeriod: selectedBillingPeriod, // 'monthly', 'yearly'
         orderBumpSelected: orderBumpSelected,
@@ -249,6 +233,21 @@ export default function TrialSetup() {
         privacyAccepted: privacyAccepted,
         marketingConsent: marketingConsent
       };
+
+      if (paymentMethod === 'card') {
+        const [exp_month_str, exp_year_str] = cardData.expiry.split('/');
+        const exp_month = parseInt(exp_month_str, 10);
+        const exp_year = parseInt('20' + exp_year_str, 10);
+        
+        payload.cardData = {
+          number: cardData.number.replace(/\s/g, ''),
+          exp_month: exp_month,
+          exp_year: exp_year,
+          cvc: cardData.cvc,
+        };
+      } else if (paymentMethod === 'apple_pay') {
+        payload.useApplePay = true;
+      }
 
       const functionUrl = `${window.location.origin}/functions/stripeCreateTrialSubscription`;
       const response = await fetch(functionUrl, {
