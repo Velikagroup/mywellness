@@ -219,7 +219,9 @@ export default function Layout({ children }) {
       </main>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-5xl px-4">
+      <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 ${
+        navItems.length <= 4 ? 'max-w-2xl' : 'max-w-5xl'
+      }`}>
         <div className="water-glass-effect rounded-3xl py-3 px-2">
           {/* Desktop/Tablet - Single Row */}
           <div className="hidden sm:flex items-center justify-around">
