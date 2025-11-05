@@ -219,7 +219,7 @@ export default function Layout({ children }) {
       </main>
 
       {/* Bottom Navigation */}
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-xl px-4">
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full max-w-5xl px-4">
         <div className="water-glass-effect rounded-3xl py-3 px-2">
           {/* Desktop/Tablet - Single Row */}
           <div className="hidden sm:flex items-center justify-around">
@@ -227,7 +227,7 @@ export default function Layout({ children }) {
               <Link
                 key={item.name}
                 to={createPageUrl(item.path)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors w-20 ${
+                className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] ${
                   location.pathname === createPageUrl(item.path)
                     ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
                     : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
@@ -240,7 +240,7 @@ export default function Layout({ children }) {
             
             <button
               onClick={handleLogout}
-              className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors w-20 text-gray-400 hover:text-red-600 hover:bg-red-50"
+              className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] text-gray-400 hover:text-red-600 hover:bg-red-50"
             >
               <LogOut className="w-5 h-5" />
               <span className="text-xs font-medium">Esci</span>
