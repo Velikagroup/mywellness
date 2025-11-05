@@ -191,44 +191,6 @@ export default function NotFound() {
               Torna Indietro
             </Button>
           </motion.div>
-
-          {/* Suggerimenti */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.6, delay: 0.6 }}
-            className="mt-12 pt-8 border-t border-gray-200/50"
-          >
-            <p className="text-sm text-gray-500 mb-4 font-semibold">
-              Forse stavi cercando:
-            </p>
-            <div className="flex flex-wrap gap-3 justify-center">
-              <button
-                onClick={() => navigate(createPageUrl('Dashboard'))}
-                className="px-4 py-2 bg-white/50 hover:bg-white/80 rounded-full text-sm text-gray-700 hover:text-[var(--brand-primary)] transition-all border border-gray-200/50 hover:border-[var(--brand-primary)]/30"
-              >
-                Dashboard
-              </button>
-              <button
-                onClick={() => navigate(createPageUrl('Meals'))}
-                className="px-4 py-2 bg-white/50 hover:bg-white/80 rounded-full text-sm text-gray-700 hover:text-[var(--brand-primary)] transition-all border border-gray-200/50 hover:border-[var(--brand-primary)]/30"
-              >
-                Piano Nutrizionale
-              </button>
-              <button
-                onClick={() => navigate(createPageUrl('Workouts'))}
-                className="px-4 py-2 bg-white/50 hover:bg-white/80 rounded-full text-sm text-gray-700 hover:text-[var(--brand-primary)] transition-all border border-gray-200/50 hover:border-[var(--brand-primary)]/30"
-              >
-                Allenamento
-              </button>
-              <button
-                onClick={() => navigate(createPageUrl('pricing'))}
-                className="px-4 py-2 bg-white/50 hover:bg-white/80 rounded-full text-sm text-gray-700 hover:text-[var(--brand-primary)] transition-all border border-gray-200/50 hover:border-[var(--brand-primary)]/30"
-              >
-                Piani e Prezzi
-              </button>
-            </div>
-          </motion.div>
         </div>
 
         {/* Footer messaggio divertente */}
