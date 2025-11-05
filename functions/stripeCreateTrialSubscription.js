@@ -30,18 +30,18 @@ Deno.serve(async (req) => {
         const body = await req.json();
         const { 
             cardData,
-            useApplePay = false,
+            paymentMethodId,
             planType = 'base',
             billingPeriod = 'monthly',
             orderBumpSelected = false,
             billingInfo 
         } = body;
 
-        if (!cardData && !useApplePay) {
+        if (!cardData && !paymentMethodId) {
             return Response.json({ error: 'Missing payment information' }, { status: 400 });
         }
 
-        console.log(`📋 Plan: ${planType}, Billing: ${billingPeriod}, Apple Pay: ${useApplePay}`);
+        console.log(`📋 Plan: ${planType}, Billing: ${billingPeriod}, Payment Method: ${paymentMethodId ? 'Apple Pay' : 'Card'}`);
 
         const PRICE_IDS = {
             base: {
@@ -94,16 +94,14 @@ Deno.serve(async (req) => {
             console.log(`✅ Customer created: ${stripeCustomerId}`);
         }
 
-        let paymentMethodId;
+        let finalPaymentMethodId;
 
-        if (useApplePay) {
-            console.log('🍎 Processing Apple Pay payment...');
-            
-            return Response.json({ 
-                error: 'Apple Pay richiede configurazione aggiuntiva. Per favore usa Carta di Credito per ora.' 
-            }, { status: 400 });
-            
+        if (paymentMethodId) {
+            // Apple Pay - il Payment Method è già creato da Stripe.js
+            console.log('🍎 Using Apple Pay payment method:', paymentMethodId);
+            finalPaymentMethodId = paymentMethodId;
         } else {
+            // Card - creiamo il Payment Method sul backend
             const paymentMethod = await stripe.paymentMethods.create({
                 type: 'card',
                 card: {
@@ -124,17 +122,17 @@ Deno.serve(async (req) => {
                 }
             });
             
-            paymentMethodId = paymentMethod.id;
-            console.log(`✅ Payment method created: ${paymentMethodId}`);
+            finalPaymentMethodId = paymentMethod.id;
+            console.log(`✅ Card payment method created: ${finalPaymentMethodId}`);
         }
 
-        await stripe.paymentMethods.attach(paymentMethodId, {
+        await stripe.paymentMethods.attach(finalPaymentMethodId, {
             customer: stripeCustomerId,
         });
 
         await stripe.customers.update(stripeCustomerId, {
             invoice_settings: {
-                default_payment_method: paymentMethodId,
+                default_payment_method: finalPaymentMethodId,
             },
         });
 
@@ -167,7 +165,7 @@ Deno.serve(async (req) => {
                 amount: orderBumpPrice,
                 currency: 'eur',
                 customer: stripeCustomerId,
-                payment_method: paymentMethodId,
+                payment_method: finalPaymentMethodId,
                 off_session: true,
                 confirm: true,
                 description: 'Mastery AI Wellness - Video Corso',
