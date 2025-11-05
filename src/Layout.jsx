@@ -128,8 +128,8 @@ export default function Layout({ children }) {
 
   const handleLogout = async () => {
     try {
-      await base44.auth.logout();
-      navigate(createPageUrl('Home'));
+      const homeUrl = window.location.origin + createPageUrl('Home');
+      await base44.auth.logout(homeUrl);
     } catch (error) {
       console.error("Errore durante il logout:", error);
     }

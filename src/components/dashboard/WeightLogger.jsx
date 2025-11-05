@@ -1,9 +1,10 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Scale, Save } from "lucide-react";
-import { WeightHistory } from "@/entities/WeightHistory";
+import { base44 } from "@/api/base44Client";
 
 export default function WeightLogger({ user, onWeightLogged }) {
   const [weight, setWeight] = useState('');
@@ -15,7 +16,7 @@ export default function WeightLogger({ user, onWeightLogged }) {
     setIsSaving(true);
     try {
       const today = new Date().toISOString().split('T')[0];
-      await WeightHistory.create({
+      await base44.entities.WeightHistory.create({
         user_id: user.id,
         weight: parseFloat(weight),
         date: today

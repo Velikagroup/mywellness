@@ -1,10 +1,6 @@
 
 import React, { useState, useEffect, useCallback, useMemo } from "react";
-import { User } from "@/entities/User";
-import { MealPlan } from "@/entities/MealPlan";
-import { WorkoutPlan } from "@/entities/WorkoutPlan";
-import { WeightHistory } from "@/entities/WeightHistory";
-import { MealLog } from "@/entities/MealLog";
+import { base44 } from "@/api/base44Client";
 import { InvokeLLM } from "@/integrations/Core";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,21 +50,21 @@ export default function Dashboard() {
   const loadUserData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       setUser(currentUser);
 
       const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       const todayDate = new Date().toISOString().split('T')[0];
 
       const basePromises = [
-        WeightHistory.filter({ user_id: currentUser.id }, ['-date', '-created_date'], 30),
-        MealPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek }),
-        MealLog.filter({ user_id: currentUser.id, date: todayDate })
+        base44.entities.WeightHistory.filter({ user_id: currentUser.id }, ['-date', '-created_date'], 30),
+        base44.entities.MealPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek }),
+        base44.entities.MealLog.filter({ user_id: currentUser.id, date: todayDate })
       ];
 
       let workoutPlanPromise = Promise.resolve([]);
       if (hasFeatureAccess(currentUser.subscription_plan, 'workout_plan')) {
-        workoutPlanPromise = WorkoutPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek });
+        workoutPlanPromise = base44.entities.WorkoutPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek });
       }
 
       const [fetchedWeightHistory, fetchedTodayMeals, fetchedMealLogs, fetchedWorkoutPlans] = 
@@ -200,7 +196,7 @@ export default function Dashboard() {
       for (const modifiedMeal of rebalancedMeals.modified_meals) {
         const originalMeal = remainingMeals.find(m => m.meal_type === modifiedMeal.meal_type);
         if (originalMeal) {
-          await MealPlan.update(originalMeal.id, {
+          await base44.entities.MealPlan.update(originalMeal.id, {
             ...modifiedMeal,
             image_url: null
           });
@@ -262,7 +258,7 @@ export default function Dashboard() {
 
     setIsSavingBMR(true);
     try {
-      await User.updateMyUserData({ bmr: Math.round(newBMR) });
+      await base44.auth.updateMe({ bmr: Math.round(newBMR) });
       await loadUserData();
       setShowEditBMR(false);
       alert('✅ Metabolismo Basale aggiornato con successo!');
@@ -282,7 +278,7 @@ export default function Dashboard() {
 
     setIsSavingBodyFat(true);
     try {
-      await User.updateMyUserData({ body_fat_percentage: parseFloat(newBodyFat.toFixed(1)) });
+      await base44.auth.updateMe({ body_fat_percentage: parseFloat(newBodyFat.toFixed(1)) });
       await loadUserData();
       setShowEditBodyFat(false);
       alert('✅ Massa Grassa aggiornata con successo!');
@@ -302,7 +298,7 @@ export default function Dashboard() {
 
     setIsSavingCalories(true);
     try {
-      await User.updateMyUserData({ daily_calories: Math.round(newCalories) });
+      await base44.auth.updateMe({ daily_calories: Math.round(newCalories) });
       await loadUserData();
       setShowEditCalories(false);
       alert('✅ Target Calorico aggiornato con successo!');

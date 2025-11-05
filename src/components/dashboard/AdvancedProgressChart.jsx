@@ -9,6 +9,7 @@ import { format } from 'date-fns';
 import { WeightHistory } from "@/entities/WeightHistory";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { base44 } from "@/api/base44Client";
 
 const KCAL_PER_KG = 7700;
 
@@ -65,7 +66,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     setIsSaving(true);
     try {
       const today = new Date().toISOString().split('T')[0]; // Solo la data YYYY-MM-DD
-      await WeightHistory.create({
+      await base44.entities.WeightHistory.create({
         user_id: user.id,
         weight: parseFloat(weight),
         date: today
