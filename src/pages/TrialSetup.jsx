@@ -39,9 +39,9 @@ export default function TrialSetup() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState('card'); // Default to 'card'
-  // Removed: const [stripe, setStripe] = useState(null);
-  // Removed: const [applePayAvailable, setApplePayAvailable] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'card' or 'apple_pay'
+  const [stripe, setStripe] = useState(null);
+  const [applePayAvailable, setApplePayAvailable] = useState(false);
   const [cardData, setCardData] = useState({
     number: '',
     expiry: '',
@@ -84,9 +84,31 @@ export default function TrialSetup() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
-        // Removed Stripe.js loading and Apple Pay availability checks.
-        // If card details are being sent directly to the backend function,
-        // Stripe.js frontend client is not strictly needed for card tokenization.
+        // Carica Stripe.js
+        const loadStripe = async () => {
+          const stripeKey = 'pk_live_51S6Kgr2OXBs6ZYwl4yACMzsDOQ72eT6A2glTBx5dXJWDmDEABHkXbDMzl77MMb3ZQOpXHWJpBiVQWJjZhZz34Nnl00FuwXVxIM';
+          if (!window.Stripe) {
+            return new Promise((resolve) => {
+              const script = document.createElement('script');
+              script.src = 'https://js.stripe.com/v3/';
+              script.async = true;
+              script.onload = () => {
+                resolve(window.Stripe(stripeKey));
+              };
+              document.body.appendChild(script);
+            });
+          } else {
+            return Promise.resolve(window.Stripe(stripeKey));
+          }
+        };
+
+        const stripeInstance = await loadStripe();
+        setStripe(stripeInstance);
+        
+        // Controllo semplice: mostra Apple Pay su iOS/Safari
+        const isAppleDevice = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
+        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+        setApplePayAvailable(isAppleDevice || isSafari);
 
         // Autocompila i dati dall'utente loggato
         setBillingInfo(prev => ({
@@ -206,7 +228,107 @@ export default function TrialSetup() {
     setBillingInfo(prev => ({ ...prev, [name]: value }));
   };
 
-  // Removed: handleApplePayClick function
+  const handleApplePayClick = async () => {
+    if (!stripe) {
+      alert("Stripe non è caricato. Riprova tra poco.");
+      return;
+    }
+
+    // Only basic form validation needed for Apple Pay, as it will collect payer details
+    if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
+      alert("Per favore, compila tutti i campi obbligatori prima di procedere con Apple Pay.");
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      const amount = Math.round((orderBumpSelected ? ORDER_BUMP_PRICE : 0) * 100);
+      
+      const paymentRequest = stripe.paymentRequest({
+        country: 'IT', // Assumi Italia come default per i test
+        currency: 'eur',
+        total: {
+          label: 'MyWellness - Prova Gratuita',
+          amount: amount,
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+        requestShipping: false, // Non richiedere spedizione
+        // Ensure billing address info is requested if needed
+        requestBillingAddress: true,
+      });
+
+      // Controlla se Apple Pay è disponibile
+      const canMakePaymentResult = await paymentRequest.canMakePayment();
+      
+      if (!canMakePaymentResult || !canMakePaymentResult.applePay) {
+        setIsSaving(false);
+        alert("Apple Pay non è disponibile su questo dispositivo. Per favore, usa la carta di credito.");
+        setPaymentMethod('card'); // Fallback to card
+        return;
+      }
+
+      // Listener per quando l'utente completa Apple Pay
+      paymentRequest.on('paymentmethod', async (ev) => {
+        try {
+          const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
+
+          const payload = {
+            paymentMethodId: ev.paymentMethod.id,
+            planType: selectedPlan,
+            billingPeriod: selectedBillingPeriod,
+            orderBumpSelected: orderBumpSelected,
+            billingInfo: {
+              name: ev.payerName || billingInfo.name,
+              email: ev.payerEmail || billingInfo.email,
+              companyName: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.companyName : null,
+              taxId: showBillingFields ? billingInfo.taxId : null,
+              pecSdi: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.pecSdi : null,
+              billingType: billingInfo.billingType,
+              address: ev.billingAddress?.addressLine[0] || billingInfo.address,
+              city: ev.billingAddress?.city || billingInfo.city,
+              zip: ev.billingAddress?.postalCode || billingInfo.zip,
+              country: ev.billingAddress?.countryCode || billingInfo.country
+            },
+            phoneNumber: fullPhoneNumber,
+            termsAccepted: termsAccepted,
+            privacyAccepted: privacyAccepted,
+            marketingConsent: marketingConsent
+          };
+
+          const response = await fetch(`${window.location.origin}/functions/stripeCreateTrialSubscription`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            throw new Error(result.error || 'Setup failed');
+          }
+
+          ev.complete('success');
+          navigate(createPageUrl('Dashboard'), { replace: true });
+
+        } catch (error) {
+          console.error('Apple Pay error:', error);
+          ev.complete('fail');
+          alert('Errore con Apple Pay: ' + error.message);
+          setIsSaving(false);
+        }
+      });
+
+      // Mostra Apple Pay
+      paymentRequest.show();
+
+    } catch (error) {
+      console.error('Apple Pay initialization error:', error);
+      alert('Errore nell\'inizializzazione di Apple Pay: ' + error.message);
+      setIsSaving(false);
+    }
+  };
 
   const handleCompleteSetup = async () => {
     if (!isFormValid) {
@@ -214,15 +336,19 @@ export default function TrialSetup() {
       return;
     }
 
+    // Se Apple Pay, chiama il gestore Apple Pay
+    if (paymentMethod === 'apple_pay') {
+      return handleApplePayClick();
+    }
+
     setIsSaving(true);
 
     try {
-      const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
-
-      // Card details are always included since Apple Pay is removed
       const [exp_month_str, exp_year_str] = cardData.expiry.split('/');
       const exp_month = parseInt(exp_month_str, 10);
       const exp_year = parseInt('20' + exp_year_str, 10);
+      
+      const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
 
       let payload = {
         cardData: {
@@ -275,10 +401,12 @@ export default function TrialSetup() {
     }
   };
 
-  const isFormValid =
-    cardData.number.replace(/\s/g, '').length === 16 &&
-    cardData.expiry.length === 5 &&
-    cardData.cvc.length === 3 &&
+  const isFormValid = paymentMethod && 
+    (paymentMethod === 'apple_pay' || ( // If Apple Pay, card details not needed here
+      cardData.number.replace(/\s/g, '').length === 16 &&
+      cardData.expiry.length === 5 &&
+      cardData.cvc.length === 3
+    )) &&
     billingInfo.name.length > 0 &&
     billingInfo.email.length > 0 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingInfo.email) &&
@@ -301,7 +429,7 @@ export default function TrialSetup() {
     total = ORDER_BUMP_PRICE;
   }
 
-  // Determine monthly price based on selected plan
+  // Determine plan from location state or default to base
   const planPrices = {
     base: 19,
     pro: 29,
@@ -651,28 +779,50 @@ export default function TrialSetup() {
               </div>
             </div>
 
-            {/* Payment Method Selection - ONLY CARD */}
+            {/* Payment Method Selection */}
             <div className="space-y-4 pt-4 border-t border-gray-200/50">
               <div className="flex items-center gap-3 mb-4">
                 <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
                 <h3 className="text-xl font-bold text-gray-800">Metodo di Pagamento</h3>
               </div>
               
-              <button
-                onClick={() => setPaymentMethod('card')} // Still exists for explicit selection, though it's the only option.
-                className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
-                  paymentMethod === 'card'
-                    ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                    : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
-                }`}
-              >
-                <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                  paymentMethod === 'card' ? 'bg-white' : 'bg-gray-50'
-                }`}>
-                  <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
-                </div>
-                <p className="text-base font-semibold text-gray-800">Carta di Credito / Debito</p>
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={() => setPaymentMethod('card')}
+                  className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
+                    paymentMethod === 'card'
+                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                      : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                  }`}
+                >
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    paymentMethod === 'card' ? 'bg-white' : 'bg-gray-50'
+                  }`}>
+                    <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
+                  </div>
+                  <p className="text-base font-semibold text-gray-800">Carta di Credito / Debito</p>
+                </button>
+
+                {applePayAvailable && (
+                  <button
+                    onClick={() => setPaymentMethod('apple_pay')}
+                    className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
+                      paymentMethod === 'apple_pay'
+                        ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                        : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                    }`}
+                  >
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                      paymentMethod === 'apple_pay' ? 'bg-white' : 'bg-gray-50'
+                    }`}>
+                      <svg className={`w-8 h-8 ${paymentMethod === 'apple_pay' ? 'text-black' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                      </svg>
+                    </div>
+                    <p className="text-base font-semibold text-gray-800">Apple Pay</p>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Card Details - Show only when card is selected */}
@@ -712,9 +862,14 @@ export default function TrialSetup() {
               </div>
             )}
 
-            {/* Removed Apple Pay specific instructional message */}
+            {paymentMethod === 'apple_pay' && (
+              <div className="p-6 bg-blue-50 rounded-xl border border-blue-200">
+                <p className="text-center text-sm text-gray-700">
+                  Cliccando sul pulsante in basso, si aprirà Apple Pay per completare il pagamento in modo sicuro.
+                </p>
+              </div>
+            )}
 
-            {/* Since paymentMethod is now defaulted to 'card', this block will always be rendered */}
             {paymentMethod && (
               <>
                 <div className="pt-4 border-t border-gray-200/50">
