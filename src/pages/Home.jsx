@@ -202,7 +202,7 @@ export default function Home() {
   const handleLogin = async () => {
     // Login diretto, dopo login va al Quiz come default
     const quizUrl = window.location.origin + createPageUrl('Quiz');
-    await base44.auth.loginWithRedirect(quizUrl);
+    await base44.auth.redirectToLogin(quizUrl);
   };
 
   return (

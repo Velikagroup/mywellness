@@ -171,7 +171,7 @@ export default function TrialSetup() {
         // Se non autenticato, salva flag e reindirizza al login
         localStorage.setItem('redirectToTrialSetup', 'true');
         const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
-        await base44.auth.loginWithRedirect(trialSetupUrl);
+        await base44.auth.redirectToLogin(trialSetupUrl);
       } finally {
         setIsLoading(false);
       }

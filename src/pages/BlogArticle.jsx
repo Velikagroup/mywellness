@@ -7,6 +7,7 @@ import { createPageUrl } from '@/utils';
 import { User } from '@/entities/User';
 import { ArrowLeft, Clock, Calendar } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
+import { base44 } from '@/api/base44Client';
 
 export default function BlogArticle() {
   const navigate = useNavigate();
@@ -45,7 +46,7 @@ export default function BlogArticle() {
 
   const handleLogin = async () => {
     const quizUrl = window.location.origin + createPageUrl('Quiz');
-    await User.loginWithRedirect(quizUrl);
+    await base44.auth.redirectToLogin(quizUrl);
   };
 
   const getCategoryInfo = (categoryId) => {
