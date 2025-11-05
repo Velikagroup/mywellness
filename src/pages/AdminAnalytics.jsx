@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -14,7 +15,7 @@ import {
   Users, 
   DollarSign,
   Activity,
-  Calendar,
+  Calendar as CalendarIcon, // Renamed to avoid conflict with CalendarComponent
   PieChart as PieChartIcon,
   BarChart3,
   Plus,
@@ -26,7 +27,10 @@ import {
   Zap
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
-import { format, subMonths, startOfMonth, endOfMonth, differenceInDays } from 'date-fns';
+import { format, subMonths, startOfMonth, endOfMonth, differenceInDays, isWithinInterval, parseISO } from 'date-fns';
+import { it } from 'date-fns/locale';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 export default function AdminAnalytics() {
   const navigate = useNavigate();
@@ -36,6 +40,13 @@ export default function AdminAnalytics() {
   const [expenses, setExpenses] = useState([]);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [isSavingExpense, setIsSavingExpense] = useState(false);
+  
+  // Date range state
+  const [dateRange, setDateRange] = useState({
+    from: subMonths(new Date(), 3),
+    to: new Date()
+  });
+  const [showDatePicker, setShowDatePicker] = useState(false);
   
   // Expense form state
   const [expenseForm, setExpenseForm] = useState({
@@ -111,11 +122,24 @@ export default function AdminAnalytics() {
     setIsSavingExpense(false);
   };
 
-  // Analytics Calculations
-  const activeSubscriptions = users.filter(u => u.subscription_status === 'active').length;
-  const trialUsers = users.filter(u => u.subscription_status === 'trial').length;
-  const cancelledUsers = users.filter(u => u.subscription_status === 'cancelled').length;
-  const expiredUsers = users.filter(u => u.subscription_status === 'expired').length;
+  // Filter users and expenses by date range
+  const filteredUsers = users.filter(u => {
+    if (!u.created_date) return false; // Users must have a created_date to be relevant for the range
+    const userDate = parseISO(u.created_date);
+    return isWithinInterval(userDate, { start: dateRange.from, end: dateRange.to });
+  });
+
+  const filteredExpenses = expenses.filter(e => {
+    if (!e.date) return false; // Expenses must have a date
+    const expenseDate = parseISO(e.date);
+    return isWithinInterval(expenseDate, { start: dateRange.from, end: dateRange.to });
+  });
+
+  // Analytics Calculations (updated to use filteredUsers/filteredExpenses)
+  const activeSubscriptions = filteredUsers.filter(u => u.subscription_status === 'active').length;
+  const trialUsers = filteredUsers.filter(u => u.subscription_status === 'trial').length;
+  const cancelledUsers = filteredUsers.filter(u => u.subscription_status === 'cancelled').length;
+  const expiredUsers = filteredUsers.filter(u => u.subscription_status === 'expired').length;
   
   // MRR Calculation
   const PRICE_MAP = {
@@ -125,7 +149,7 @@ export default function AdminAnalytics() {
   };
 
   const calculateMRR = () => {
-    return users
+    return filteredUsers
       .filter(u => u.subscription_status === 'active')
       .reduce((sum, u) => {
         const plan = u.subscription_plan || 'base';
@@ -139,30 +163,31 @@ export default function AdminAnalytics() {
 
   // Subscription breakdown by plan
   const planBreakdown = {
-    base: users.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'base').length,
-    pro: users.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'pro').length,
-    premium: users.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'premium').length
+    base: filteredUsers.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'base').length,
+    pro: filteredUsers.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'pro').length,
+    premium: filteredUsers.filter(u => u.subscription_status === 'active' && u.subscription_plan === 'premium').length
   };
 
-  // Churn rate (last 30 days)
-  const thirtyDaysAgo = new Date();
-  thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-  const recentCancellations = users.filter(u => {
+  // Churn rate (within selected range)
+  const recentCancellations = users.filter(u => { // Use all users to check churn across the board, not just newly created in range
     if (!u.updated_date) return false;
-    return new Date(u.updated_date) >= thirtyDaysAgo && 
+    const updateDate = parseISO(u.updated_date);
+    return isWithinInterval(updateDate, { start: dateRange.from, end: dateRange.to }) &&
            (u.subscription_status === 'cancelled' || u.subscription_status === 'expired');
   }).length;
+  // Churn rate calculation typically considers the number of users at the *beginning* of the period or average users.
+  // For simplicity, we'll use activeSubscriptions which reflects users active within the range.
   const churnRate = activeSubscriptions > 0 ? ((recentCancellations / activeSubscriptions) * 100).toFixed(1) : 0;
 
   // Retention rate
   const retentionRate = activeSubscriptions > 0 ? (100 - parseFloat(churnRate)).toFixed(1) : 0;
 
-  // Total expenses (recurring monthly + one-time)
-  const monthlyRecurringExpenses = expenses
+  // Total expenses (recurring monthly + one-time) - using filteredExpenses
+  const monthlyRecurringExpenses = filteredExpenses
     .filter(e => e.recurring && e.recurring_frequency === 'monthly')
     .reduce((sum, e) => sum + e.amount, 0);
 
-  const yearlyRecurringExpensesMonthly = expenses
+  const yearlyRecurringExpensesMonthly = filteredExpenses
     .filter(e => e.recurring && e.recurring_frequency === 'yearly')
     .reduce((sum, e) => sum + (e.amount / 12), 0);
 
@@ -172,8 +197,8 @@ export default function AdminAnalytics() {
   const monthlyProfit = mrr - totalMonthlyExpenses;
   const profitMargin = mrr > 0 ? ((monthlyProfit / mrr) * 100).toFixed(1) : 0;
 
-  // Conversion rate (from trial to paid)
-  const totalTrialsStarted = users.filter(u => 
+  // Conversion rate (from trial to paid) - using filteredUsers
+  const totalTrialsStarted = filteredUsers.filter(u => 
     u.subscription_status === 'active' || 
     u.subscription_status === 'trial' ||
     u.subscription_status === 'cancelled' ||
@@ -182,29 +207,34 @@ export default function AdminAnalytics() {
   const conversionRate = totalTrialsStarted > 0 ? 
     ((activeSubscriptions / totalTrialsStarted) * 100).toFixed(1) : 0;
 
-  // Monthly revenue trend (last 6 months)
+  // Monthly revenue trend (adjusted to date range)
   const getMonthlyRevenueTrend = () => {
-    const months = [];
-    for (let i = 5; i >= 0; i--) {
-      const date = subMonths(new Date(), i);
-      const monthStart = startOfMonth(date);
-      const monthEnd = endOfMonth(date);
+    const trends = [];
+    let currentDate = startOfMonth(dateRange.from);
+    while (currentDate <= dateRange.to) {
+      const monthStart = currentDate;
+      const monthEnd = endOfMonth(currentDate);
       
-      // Count active subscriptions in that month
-      const activeInMonth = users.filter(u => {
-        const createdDate = new Date(u.created_date);
+      const activeInMonth = users.filter(u => { // Use all users here to track historical subscriptions
+        if (!u.created_date) return false;
+        const createdDate = parseISO(u.created_date);
+        
+        // A user is "active" in a given month if they were created before or in that month,
+        // AND their subscription is active OR it expired *after* the beginning of that month.
+        // This is a simplified approach, a more robust solution would track subscription history.
         return createdDate <= monthEnd && 
                (u.subscription_status === 'active' || 
-                (u.subscription_expires_at && new Date(u.subscription_expires_at) >= monthStart));
+                (u.subscription_expires_at && parseISO(u.subscription_expires_at) >= monthStart));
       }).length;
 
-      months.push({
-        month: format(date, 'MMM yy'),
+      trends.push({
+        month: format(currentDate, 'MMM yy', { locale: it }),
         revenue: activeInMonth * 30, // Rough estimate
         users: activeInMonth
       });
+      currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
     }
-    return months;
+    return trends;
   };
 
   const revenueTrend = getMonthlyRevenueTrend();
@@ -220,7 +250,7 @@ export default function AdminAnalytics() {
       const projectedExpenses = totalMonthlyExpenses * (1 + (i * 0.05)); // Expenses grow 5% per month
       
       projections.push({
-        month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy'),
+        month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy', { locale: it }),
         revenue: Math.round(projectedMRR),
         expenses: Math.round(projectedExpenses),
         profit: Math.round(projectedMRR - projectedExpenses)
@@ -239,7 +269,7 @@ export default function AdminAnalytics() {
   ].filter(item => item.value > 0);
 
   // Expense breakdown by category
-  const expensesByCategory = expenses.reduce((acc, expense) => {
+  const expensesByCategory = filteredExpenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
   }, {});
@@ -264,8 +294,103 @@ export default function AdminAnalytics() {
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics & Financial Dashboard</h1>
-          <p className="text-gray-600">Panoramica completa delle metriche e proiezioni finanziarie</p>
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Analytics & Financial Dashboard</h1>
+              <p className="text-gray-600">Panoramica completa delle metriche e proiezioni finanziarie</p>
+            </div>
+            
+            {/* Date Range Picker */}
+            <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" className="w-full lg:w-auto justify-start text-left font-normal border-2">
+                  <CalendarIcon className="mr-2 h-4 w-4" />
+                  {dateRange.from && dateRange.to ? (
+                    <>
+                      {format(dateRange.from, 'dd MMM yyyy', { locale: it })} - {format(dateRange.to, 'dd MMM yyyy', { locale: it })}
+                    </>
+                  ) : (
+                    <span>Seleziona periodo</span>
+                  )}
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-auto p-0" align="end">
+                <div className="p-4 space-y-4">
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Data Inizio</Label>
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateRange.from}
+                      onSelect={(date) => date && setDateRange({ ...dateRange, from: date })}
+                      initialFocus
+                      locale={it}
+                    />
+                  </div>
+                  <div>
+                    <Label className="text-sm font-semibold mb-2 block">Data Fine</Label>
+                    <CalendarComponent
+                      mode="single"
+                      selected={dateRange.to}
+                      onSelect={(date) => date && setDateRange({ ...dateRange, to: date })}
+                      disabled={(date) => date < dateRange.from}
+                      locale={it}
+                    />
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        setDateRange({
+                          from: subMonths(new Date(), 1),
+                          to: new Date()
+                        });
+                        setShowDatePicker(false);
+                      }}
+                    >
+                      Ultimo Mese
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        setDateRange({
+                          from: subMonths(new Date(), 3),
+                          to: new Date()
+                        });
+                        setShowDatePicker(false);
+                      }}
+                    >
+                      Ultimi 3 Mesi
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      variant="outline"
+                      onClick={() => {
+                        setDateRange({
+                          from: subMonths(new Date(), 12),
+                          to: new Date()
+                        });
+                        setShowDatePicker(false);
+                      }}
+                    >
+                      Ultimo Anno
+                    </Button>
+                  </div>
+                  <Button 
+                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                    onClick={() => setShowDatePicker(false)}
+                  >
+                    Applica Filtro
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+          </div>
+          
+          <div className="text-sm text-gray-500">
+            📊 Mostrando dati dal {format(dateRange.from, 'dd MMMM yyyy', { locale: it })} al {format(dateRange.to, 'dd MMMM yyyy', { locale: it })}
+          </div>
         </div>
 
         {/* Overview Stats */}
@@ -354,7 +479,7 @@ export default function AdminAnalytics() {
                   <div className="flex items-center gap-4">
                     <div className="flex-1 bg-blue-100 rounded-full h-12 flex items-center justify-between px-6">
                       <span className="font-semibold text-blue-900">Utenti Registrati</span>
-                      <span className="font-bold text-blue-900">{users.length}</span>
+                      <span className="font-bold text-blue-900">{filteredUsers.length}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-4 pl-8">
@@ -381,7 +506,7 @@ export default function AdminAnalytics() {
             {/* Revenue Trend */}
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Andamento Entrate (Ultimi 6 Mesi)</CardTitle>
+                <CardTitle>Andamento Entrate (Periodo Selezionato)</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="h-80">
@@ -485,7 +610,7 @@ export default function AdminAnalytics() {
                       </ResponsiveContainer>
                     </div>
                   ) : (
-                    <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
+                    <p className="text-center text-gray-500 py-8">Nessuna spesa registrata per il periodo selezionato</p>
                   )}
                 </CardContent>
               </Card>
@@ -496,7 +621,7 @@ export default function AdminAnalytics() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {expenses.slice(0, 10).map((expense) => (
+                    {filteredExpenses.slice(0, 10).map((expense) => (
                       <div key={expense.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                         <div className="flex-1">
                           <p className="font-semibold text-sm text-gray-900">{expense.description}</p>
@@ -508,6 +633,9 @@ export default function AdminAnalytics() {
                         <p className="font-bold text-red-600">-€{expense.amount}</p>
                       </div>
                     ))}
+                    {filteredExpenses.length === 0 && (
+                      <p className="text-center text-gray-500 py-4">Nessuna spesa nel periodo selezionato</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
@@ -523,27 +651,31 @@ export default function AdminAnalytics() {
                   <CardTitle>Distribuzione Piani</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  <div className="h-64">
-                    <ResponsiveContainer width="100%" height="100%">
-                      <PieChart>
-                        <Pie
-                          data={subscriptionPieData}
-                          cx="50%"
-                          cy="50%"
-                          labelLine={false}
-                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                          outerRadius={80}
-                          fill="#8884d8"
-                          dataKey="value"
-                        >
-                          {subscriptionPieData.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={entry.color} />
-                          ))}
-                        </Pie>
-                        <Tooltip />
-                      </PieChart>
-                    </ResponsiveContainer>
-                  </div>
+                  {subscriptionPieData.length > 0 ? (
+                    <div className="h-64">
+                      <ResponsiveContainer width="100%" height="100%">
+                        <PieChart>
+                          <Pie
+                            data={subscriptionPieData}
+                            cx="50%"
+                            cy="50%"
+                            labelLine={false}
+                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                            outerRadius={80}
+                            fill="#8884d8"
+                            dataKey="value"
+                          >
+                            {subscriptionPieData.map((entry, index) => (
+                              <Cell key={`cell-${index}`} fill={entry.color} />
+                            ))}
+                          </Pie>
+                          <Tooltip />
+                        </PieChart>
+                      </ResponsiveContainer>
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo nel periodo selezionato</p>
+                  )}
                   <div className="mt-4 space-y-2">
                     <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                       <span className="text-sm font-medium">Base (€19/mese)</span>
