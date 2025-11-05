@@ -1,3 +1,4 @@
+
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -70,7 +71,8 @@ export default function Layout({ children }) {
     createPageUrl('Meals'),
     createPageUrl('Workouts'),
     createPageUrl('AdminCoupons'),
-    createPageUrl('AdminBlog')
+    createPageUrl('AdminBlog'),
+    createPageUrl('AdminEmails')
   ];
 
   // Pagine che NON devono avere il layout
@@ -109,6 +111,7 @@ export default function Layout({ children }) {
   if (user && user.role === 'admin') {
       allNavItems.push({ name: 'Coupon', icon: Shield, path: 'AdminCoupons' });
       allNavItems.push({ name: 'Blog', icon: Shield, path: 'AdminBlog' });
+      allNavItems.push({ name: 'Email', icon: Shield, path: 'AdminEmails' });
   }
 
   const navItems = allNavItems.filter(item => {

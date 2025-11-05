@@ -17,6 +17,7 @@ import LandingCheckout from './pages/LandingCheckout';
 import ThankYou from './pages/ThankYou';
 import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
+import AdminEmails from './pages/AdminEmails';
 import Layout from './Layout.jsx';
 
 
@@ -40,6 +41,7 @@ export const PAGES = {
     "ThankYou": ThankYou,
     "ResetPassword": ResetPassword,
     "NotFound": NotFound,
+    "AdminEmails": AdminEmails,
 }
 
 export const pagesConfig = {
