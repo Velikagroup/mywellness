@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 import Stripe from 'npm:stripe@14.10.0';
 
@@ -164,6 +165,19 @@ Deno.serve(async (req) => {
         });
 
         console.log('✅ User updated with subscription data');
+
+        // Invia email di benvenuto trial
+        try {
+            const functionUrl = `${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/functions/sendTrialWelcomeEmail`;
+            await fetch(functionUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id })
+            });
+            console.log('📧 Trial welcome email trigger sent');
+        } catch (emailError) {
+            console.error('⚠️ Failed to send welcome email (non-critical):', emailError.message);
+        }
 
         return Response.json({
             success: true,

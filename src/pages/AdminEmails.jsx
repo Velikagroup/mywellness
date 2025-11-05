@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -111,6 +112,14 @@ export default function AdminEmails() {
   // Email di sistema configurate
   const systemEmails = [
     {
+      id: 'trial_welcome',
+      name: 'Trial Setup - Benvenuto',
+      description: 'Email di benvenuto inviata dopo il setup del trial con guida ai prossimi passi',
+      trigger: 'Completamento Trial Setup',
+      status: 'active',
+      function: 'sendTrialWelcomeEmail'
+    },
+    {
       id: 'landing_new_user',
       name: 'Landing Offer - Nuovo Utente',
       description: 'Email inviata ai nuovi utenti dopo l\'acquisto della Landing Offer con password temporanea',
@@ -125,6 +134,38 @@ export default function AdminEmails() {
       trigger: 'Acquisto Landing Offer (utente esistente)',
       status: 'active',
       function: 'stripeCreateOneTimePayment'
+    },
+    {
+      id: 'renewal_7_days',
+      name: 'Reminder Rinnovo - 7 Giorni',
+      description: 'Email automatica inviata 7 giorni prima della scadenza abbonamento',
+      trigger: 'Cron giornaliero (7 giorni prima scadenza)',
+      status: 'active',
+      function: 'sendRenewalReminders'
+    },
+    {
+      id: 'renewal_3_days',
+      name: 'Reminder Rinnovo - 3 Giorni',
+      description: 'Email automatica inviata 3 giorni prima della scadenza abbonamento',
+      trigger: 'Cron giornaliero (3 giorni prima scadenza)',
+      status: 'active',
+      function: 'sendRenewalReminders'
+    },
+    {
+      id: 'renewal_1_day',
+      name: 'Reminder Rinnovo - 1 Giorno',
+      description: 'Email urgente inviata 1 giorno prima della scadenza abbonamento',
+      trigger: 'Cron giornaliero (1 giorno prima scadenza)',
+      status: 'active',
+      function: 'sendRenewalReminders'
+    },
+    {
+      id: 'weekly_report',
+      name: 'Report Settimanale Progressi',
+      description: 'Report automatico con statistiche settimanali (peso, calorie, allenamenti, aderenza)',
+      trigger: 'Cron settimanale (ogni Lunedì)',
+      status: 'active',
+      function: 'sendWeeklyReport'
     }
   ];
 
