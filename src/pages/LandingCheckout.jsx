@@ -293,6 +293,11 @@ export default function LandingCheckout() {
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
+
+        /* Sfondo bianco per tutti gli input */
+        input, textarea, select {
+          background-color: white !important;
+        }
       `}</style>
 
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
