@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -209,7 +210,6 @@ export default function TrialSetup() {
     setIsSaving(true);
 
     try {
-      // Per Apple Pay gestione diversa (non implementata qui, da fare con Stripe Apple Pay API)
       if (paymentMethod === 'apple_pay') {
         alert('Apple Pay non ancora implementato. Seleziona Carta di Credito.');
         setIsSaving(false);
@@ -658,28 +658,38 @@ export default function TrialSetup() {
                 <h3 className="text-xl font-bold text-gray-800">Metodo di Pagamento</h3>
               </div>
               
-              <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-3">
                 <button
                   onClick={() => setPaymentMethod('card')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
                     paymentMethod === 'card'
                       ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
                       : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
                   }`}
                 >
-                  <CreditCard className={`w-8 h-8 mx-auto mb-2 ${paymentMethod === 'card' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
-                  <p className="text-sm font-semibold text-gray-800">Carta di Credito</p>
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    paymentMethod === 'card' ? 'bg-white' : 'bg-gray-50'
+                  }`}>
+                    <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
+                  </div>
+                  <p className="text-base font-semibold text-gray-800">Carta di Credito</p>
                 </button>
                 <button
                   onClick={() => setPaymentMethod('apple_pay')}
-                  className={`p-4 rounded-xl border-2 transition-all ${
+                  className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
                     paymentMethod === 'apple_pay'
                       ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
                       : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
                   }`}
                 >
-                  <Smartphone className={`w-8 h-8 mx-auto mb-2 ${paymentMethod === 'apple_pay' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
-                  <p className="text-sm font-semibold text-gray-800">Apple Pay</p>
+                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                    paymentMethod === 'apple_pay' ? 'bg-white' : 'bg-gray-50'
+                  }`}>
+                    <svg className={`w-8 h-8 ${paymentMethod === 'apple_pay' ? 'text-black' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
+                      <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                    </svg>
+                  </div>
+                  <p className="text-base font-semibold text-gray-800">Apple Pay</p>
                 </button>
               </div>
             </div>
@@ -729,83 +739,87 @@ export default function TrialSetup() {
               </div>
             )}
 
-            <div className="pt-4 border-t border-gray-200/50">
-              <Label htmlFor="orderBump" className="block cursor-pointer">
-                <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
-                  <div className="flex items-center justify-between gap-4">
-                    <div className="flex-grow">
-                      <p className="text-lg font-bold text-gray-900">
-                        Si, lo voglio!
-                      </p>
-                      <p className="text-sm text-gray-600 mt-1">
-                        Aggiungi "Mastery AI Wellness": video corso completo
-                      </p>
+            {paymentMethod && (
+              <>
+                <div className="pt-4 border-t border-gray-200/50">
+                  <Label htmlFor="orderBump" className="block cursor-pointer">
+                    <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
+                      <div className="flex items-center justify-between gap-4">
+                        <div className="flex-grow">
+                          <p className="text-lg font-bold text-gray-900">
+                            Si, lo voglio!
+                          </p>
+                          <p className="text-sm text-gray-600 mt-1">
+                            Aggiungi "Mastery AI Wellness": video corso completo
+                          </p>
+                        </div>
+                        <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
+                          className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
+                      </div>
+                      <div className="text-right">
+                        <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
+                        <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
+                      </div>
                     </div>
-                    <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
-                      className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
+                  </Label>
+                </div>
+
+                <div className="space-y-3 pt-4">
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
+                    <Label htmlFor="terms" className="text-xs text-gray-600">
+                      Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
+                    </Label>
                   </div>
-                  <div className="text-right">
-                    <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
-                    <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
+                    <Label htmlFor="privacy" className="text-xs text-gray-600">
+                      Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
+                    </Label>
+                  </div>
+                  <div className="flex items-start space-x-3">
+                    <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
+                    <Label htmlFor="marketing" className="text-xs text-gray-600">
+                      Acconsento a ricevere comunicazioni di marketing e newsletter.
+                    </Label>
                   </div>
                 </div>
-              </Label>
-            </div>
 
-            <div className="space-y-3 pt-4">
-              <div className="flex items-start space-x-3">
-                <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
-                <Label htmlFor="terms" className="text-xs text-gray-600">
-                  Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
-                </Label>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
-                <Label htmlFor="privacy" className="text-xs text-gray-600">
-                  Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
-                </Label>
-              </div>
-              <div className="flex items-start space-x-3">
-                <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
-                <Label htmlFor="marketing" className="text-xs text-gray-600">
-                  Acconsento a ricevere comunicazioni di marketing e newsletter.
-                </Label>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
-              <Shield className="w-4 h-4" />
-              <span>Pagamento sicuro e crittografato</span>
-            </div>
-
-            <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
-              <div className="flex justify-between text-gray-700">
-                <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
-                <span className="font-semibold">€{total.toFixed(2)}</span>
-              </div>
-              <p className="text-xs text-gray-500">
-                Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
-              </p>
-            </div>
-
-            <Button
-              onClick={handleCompleteSetup}
-              disabled={isCtaDisabled}
-              className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSaving ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Attivazione...
+                <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
+                  <Shield className="w-4 h-4" />
+                  <span>Pagamento sicuro e crittografato</span>
                 </div>
-              ) : (
-                `Inizia Prova Gratuita (€${total.toFixed(2)} oggi)`
-              )}
-            </Button>
 
-            <p className="text-xs text-center text-gray-500">
-              Nessun addebito durante i {TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.
-            </p>
+                <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
+                  <div className="flex justify-between text-gray-700">
+                    <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
+                    <span className="font-semibold">€{total.toFixed(2)}</span>
+                  </div>
+                  <p className="text-xs text-gray-500">
+                    Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
+                  </p>
+                </div>
+
+                <Button
+                  onClick={handleCompleteSetup}
+                  disabled={isCtaDisabled}
+                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isSaving ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                      Attivazione...
+                    </div>
+                  ) : (
+                    `Inizia Prova Gratuita (€${total.toFixed(2)} oggi)`
+                  )}
+                </Button>
+
+                <p className="text-xs text-center text-gray-500">
+                  Nessun addebito durante i {TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.
+                </p>
+              </>
+            )}
           </CardContent>
         </Card>
       </div>
