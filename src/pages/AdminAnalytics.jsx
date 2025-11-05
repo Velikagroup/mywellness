@@ -31,6 +31,7 @@ import { format, subMonths, startOfMonth, endOfMonth, differenceInDays, isWithin
 import { it } from 'date-fns/locale';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // NEW IMPORT
 
 export default function AdminAnalytics() {
   const navigate = useNavigate();
@@ -38,10 +39,18 @@ export default function AdminAnalytics() {
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [expenses, setExpenses] = useState([]);
-  const [recurringExpenses, setRecurringExpenses] = useState([]); // NEW STATE
+  const [recurringExpenses, setRecurringExpenses] = useState([]);
   const [transactions, setTransactions] = useState([]);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [isSavingExpense, setIsSavingExpense] = useState(false);
+
+  // NEW STATE for managing variable expenses dialog
+  const [showManageRecurringVariableExpenses, setShowManageRecurringVariableExpenses] = useState(false);
+  const [currentVariableExpenseEntry, setCurrentVariableExpenseEntry] = useState({
+    parent_id: null,
+    month: format(new Date(), 'yyyy-MM'),
+    amount: ''
+  });
 
   // Date range state
   const [dateRange, setDateRange] = useState({
@@ -58,7 +67,7 @@ export default function AdminAnalytics() {
     date: new Date().toISOString().split('T')[0],
     recurring: false,
     recurring_frequency: 'monthly',
-    recurring_variable: false, // NEW FIELD
+    recurring_variable: false,
     notes: ''
   });
 
@@ -89,11 +98,11 @@ export default function AdminAnalytics() {
         base44.entities.Transaction.list()
       ]);
       setUsers(usersData);
-      
+
       // Separate actual expenses from recurring variable expense templates
       const actualExpenses = expensesData.filter(e => !e.recurring_variable || (e.recurring_variable && e.parent_expense_id));
       const parentRecurringVariableExpenses = expensesData.filter(e => e.recurring_variable && !e.parent_expense_id);
-      
+
       setExpenses(actualExpenses); // These are the expenses to be filtered by date and used in calculations
       setRecurringExpenses(parentRecurringVariableExpenses); // These are the parent definitions for variable expenses
       setTransactions(transactionsData);
@@ -103,17 +112,26 @@ export default function AdminAnalytics() {
   };
 
   const handleSaveExpense = async () => {
-    if (!expenseForm.description || !expenseForm.amount) {
+    // If it's a recurring variable expense template, amount is not required for the template itself
+    if (!expenseForm.recurring_variable && (!expenseForm.description || !expenseForm.amount)) {
       alert('Inserisci descrizione e importo');
+      return;
+    }
+    // If it's a recurring variable expense template, only description is strictly needed
+    if (expenseForm.recurring_variable && !expenseForm.description) {
+      alert('Inserisci descrizione');
       return;
     }
 
     setIsSavingExpense(true);
     try {
-      await base44.entities.Expense.create({
+      const payload = {
         ...expenseForm,
-        amount: parseFloat(expenseForm.amount)
-      });
+        // Amount is 0 for variable expense templates, actual amounts are added as child entries
+        amount: expenseForm.recurring_variable ? 0 : parseFloat(expenseForm.amount)
+      };
+
+      await base44.entities.Expense.create(payload);
 
       await loadData();
       setShowAddExpense(false);
@@ -124,7 +142,7 @@ export default function AdminAnalytics() {
         date: new Date().toISOString().split('T')[0],
         recurring: false,
         recurring_frequency: 'monthly',
-        recurring_variable: false, // NEW FIELD
+        recurring_variable: false,
         notes: ''
       });
     } catch (error) {
@@ -142,7 +160,7 @@ export default function AdminAnalytics() {
       }
       await base44.entities.Expense.create({
         category: parent.category,
-        description: `${parent.description} - ${month}`, // e.g., 'Server AWS - 2023-10'
+        description: `${parent.description} - ${format(parseISO(month + '-01'), 'MMMM yyyy', { locale: it })}`, // e.g., 'Server AWS - Ottobre 2023'
         amount: parseFloat(amount),
         date: month + '-01', // Assuming month is 'YYYY-MM'
         recurring: false, // Individual entries are not recurring themselves, they are instances of a variable recurring expense
@@ -155,6 +173,26 @@ export default function AdminAnalytics() {
       console.error('Error saving monthly entry:', error);
       alert('Errore nel salvataggio della voce mensile');
     }
+  };
+
+  // NEW function to add a variable expense entry from the management dialog
+  const handleAddVariableExpenseEntry = async (parentExpenseId) => {
+    const { month, amount } = currentVariableExpenseEntry;
+    if (currentVariableExpenseEntry.parent_id !== parentExpenseId || !month || !amount || parseFloat(amount) <= 0) {
+      alert('Seleziona un mese e inserisci un importo valido.');
+      return;
+    }
+
+    setIsSavingExpense(true);
+    try {
+      await handleSaveRecurringVariableEntry(parentExpenseId, amount, month);
+      // Reset the current entry form after successful save
+      setCurrentVariableExpenseEntry({ parent_id: null, month: format(new Date(), 'yyyy-MM'), amount: '' });
+    } catch (error) {
+      console.error('Error adding variable expense entry:', error);
+      alert('Errore nell\'aggiunta della voce di spesa variabile.');
+    }
+    setIsSavingExpense(false);
   };
 
   // Filter users and expenses by date range
@@ -663,7 +701,14 @@ export default function AdminAnalytics() {
           </TabsContent>
 
           <TabsContent value="financial" className="space-y-6">
-            <div className="flex justify-end">
+            <div className="flex justify-end gap-3">
+              <Button
+                onClick={() => setShowManageRecurringVariableExpenses(true)} // NEW BUTTON
+                variant="outline"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Gestisci Spese Variabili
+              </Button>
               <Button
                 onClick={() => setShowAddExpense(true)}
                 className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
@@ -980,7 +1025,7 @@ export default function AdminAnalytics() {
       </div>
 
       <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto"> {/* MODIFIED */}
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle>Aggiungi Nuova Spesa</DialogTitle>
           </DialogHeader>
@@ -1020,7 +1065,11 @@ export default function AdminAnalytics() {
                 value={expenseForm.amount}
                 onChange={(e) => setExpenseForm({...expenseForm, amount: e.target.value})}
                 className="mt-1"
+                disabled={expenseForm.recurring_variable} // Disable amount input if it's a variable recurring expense template
               />
+              {expenseForm.recurring_variable && (
+                <p className="text-xs text-gray-500 mt-1">L'importo per le spese variabili viene impostato mensilmente.</p>
+              )}
             </div>
 
             <div>
@@ -1038,10 +1087,10 @@ export default function AdminAnalytics() {
                 type="checkbox"
                 id="recurring"
                 checked={expenseForm.recurring}
-                onChange={(e) => setExpenseForm({...expenseForm, recurring: e.target.checked, recurring_variable: false})} {/* MODIFIED: mutually exclusive */}
+                onChange={(e) => setExpenseForm({...expenseForm, recurring: e.target.checked, recurring_variable: false})}
                 className="w-4 h-4"
               />
-              <Label htmlFor="recurring">Spesa Ricorrente Fissa</Label> {/* MODIFIED LABEL */}
+              <Label htmlFor="recurring">Spesa Ricorrente Fissa</Label>
             </div>
 
             {expenseForm.recurring && (
@@ -1058,21 +1107,21 @@ export default function AdminAnalytics() {
               </div>
             )}
 
-            <div className="flex items-center gap-2"> {/* NEW BLOCK */}
+            <div className="flex items-center gap-2">
               <input
                 type="checkbox"
                 id="recurringVariable"
                 checked={expenseForm.recurring_variable}
-                onChange={(e) => setExpenseForm({...expenseForm, recurring_variable: e.target.checked, recurring: false})} {/* NEW: mutually exclusive */}
+                onChange={(e) => setExpenseForm({...expenseForm, recurring_variable: e.target.checked, recurring: false})}
                 className="w-4 h-4"
               />
               <Label htmlFor="recurringVariable">Spesa Ricorrente con Importo Variabile</Label>
             </div>
 
-            {expenseForm.recurring_variable && ( {/* NEW BLOCK */}
+            {expenseForm.recurring_variable && (
               <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-900">
                 <p className="font-semibold mb-1">ℹ️ Spesa Ricorrente Variabile</p>
-                <p>Verrà creata una voce che potrai riutilizzare ogni mese inserendo l'importo diverso.</p>
+                <p>Verrà creata una voce che potrai riutilizzare ogni mese inserendo l'importo diverso. L'importo della spesa madre sarà impostato a 0.</p>
               </div>
             )}
 
@@ -1100,6 +1149,92 @@ export default function AdminAnalytics() {
                 className="flex-1"
               >
                 Annulla
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* NEW DIALOG for managing recurring variable expenses */}
+      <Dialog open={showManageRecurringVariableExpenses} onOpenChange={setShowManageRecurringVariableExpenses}>
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Gestisci Spese Variabili Ricorrenti</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 pt-4">
+            {recurringExpenses.length === 0 ? (
+              <p className="text-center text-gray-500">Nessuna spesa variabile ricorrente configurata.</p>
+            ) : (
+              recurringExpenses.map((parentExpense) => (
+                <Card key={parentExpense.id} className="p-4 border">
+                  <CardTitle className="text-lg font-semibold mb-2">{parentExpense.description}</CardTitle>
+                  <p className="text-sm text-gray-600 mb-4">Categoria: {parentExpense.category}</p>
+
+                  <div className="space-y-3">
+                    <Label htmlFor={`month-select-${parentExpense.id}`}>Mese/Anno</Label>
+                    <Select
+                      value={currentVariableExpenseEntry.parent_id === parentExpense.id ? currentVariableExpenseEntry.month : format(new Date(), 'yyyy-MM')}
+                      onValueChange={(value) => setCurrentVariableExpenseEntry({ parent_id: parentExpense.id, month: value, amount: '' })}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Seleziona Mese" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {Array.from({ length: 12 }).map((_, i) => {
+                          const month = subMonths(new Date(), i);
+                          const formattedMonth = format(month, 'yyyy-MM');
+                          const displayMonth = format(month, 'MMMM yyyy', { locale: it });
+                          return <SelectItem key={formattedMonth} value={formattedMonth}>{displayMonth}</SelectItem>;
+                        })}
+                      </SelectContent>
+                    </Select>
+
+                    <Label htmlFor={`amount-input-${parentExpense.id}`}>Importo Mensile (€)</Label>
+                    <Input
+                      id={`amount-input-${parentExpense.id}`}
+                      type="number"
+                      step="0.01"
+                      placeholder="0.00"
+                      value={currentVariableExpenseEntry.parent_id === parentExpense.id ? currentVariableExpenseEntry.amount : ''}
+                      onChange={(e) => setCurrentVariableExpenseEntry({ ...currentVariableExpenseEntry, amount: e.target.value })}
+                    />
+
+                    <Button
+                      onClick={() => handleAddVariableExpenseEntry(parentExpense.id)}
+                      disabled={!currentVariableExpenseEntry.amount || isSavingExpense || currentVariableExpenseEntry.parent_id !== parentExpense.id}
+                      className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                    >
+                      {isSavingExpense && currentVariableExpenseEntry.parent_id === parentExpense.id ? 'Aggiunta...' : 'Aggiungi Voce'}
+                    </Button>
+
+                    <div className="mt-4">
+                      <h5 className="font-medium text-gray-700 mb-2">Ultime Voci registrate:</h5>
+                      {expenses.filter(e => e.parent_expense_id === parentExpense.id).length > 0 ? (
+                        <ul className="list-disc list-inside space-y-1 text-sm text-gray-600">
+                          {expenses
+                            .filter(e => e.parent_expense_id === parentExpense.id)
+                            .sort((a,b) => parseISO(b.date).getTime() - parseISO(a.date).getTime()) // Sort by date descending
+                            .slice(0, 5) // Show last 5 entries
+                            .map(entry => (
+                              <li key={entry.id}>
+                                {format(parseISO(entry.date), 'MMMM yyyy', { locale: it })}: €{entry.amount.toLocaleString('it-IT')}
+                              </li>
+                            ))}
+                          {expenses.filter(e => e.parent_expense_id === parentExpense.id).length > 5 && (
+                              <li className="text-xs text-gray-500">...altre voci...</li>
+                          )}
+                        </ul>
+                      ) : (
+                        <p className="text-sm text-gray-500">Nessuna voce registrata per questa spesa variabile.</p>
+                      )}
+                    </div>
+                  </div>
+                </Card>
+              ))
+            )}
+            <div className="flex justify-end pt-4">
+              <Button onClick={() => setShowManageRecurringVariableExpenses(false)} variant="outline">
+                Chiudi
               </Button>
             </div>
           </div>
