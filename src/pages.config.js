@@ -14,9 +14,9 @@ import OneTimeOffer from './pages/OneTimeOffer';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import LandingCheckout from './pages/LandingCheckout';
-import 404 from './pages/404';
 import ThankYou from './pages/ThankYou';
 import ResetPassword from './pages/ResetPassword';
+import NotFound from './pages/NotFound';
 import Layout from './Layout.jsx';
 
 
@@ -37,9 +37,9 @@ export const PAGES = {
     "Terms": Terms,
     "Privacy": Privacy,
     "LandingCheckout": LandingCheckout,
-    "404": 404,
     "ThankYou": ThankYou,
     "ResetPassword": ResetPassword,
+    "NotFound": NotFound,
 }
 
 export const pagesConfig = {
