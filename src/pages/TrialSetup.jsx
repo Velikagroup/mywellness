@@ -11,29 +11,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { loadStripe } from '@stripe/stripe-js';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-
-// Icona Apple Pay
-const ApplePayIcon = () => (
-  <img
-    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3c3389941_apple-pay-payment-mark-logo-svgrepo-com.png"
-    alt="Apple Pay"
-    className="h-8 w-auto"
-  />
-);
-
-// Icona Google Pay
-const GooglePayIcon = () => (
-  <img
-    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3e5e3e485_google-pay-svgrepo-com.png"
-    alt="Google Pay"
-    className="h-8 w-auto"
-  />
-);
-
-const stripePromise = loadStripe('pk_live_51SIgep2OXBs6ZYwlVznC6972UnXoiD0IGS0Rvo1Iw1wS0RX8tAh4pCXt2aTn0a7EnGxG3tOYae24oS1keGdFGxT00EJbBPciv');
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -58,7 +37,7 @@ const ORDER_BUMP_PRICE = 19.99;
 
 export default function TrialSetup() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const location = useLocation(); // Keep location if it's used elsewhere, otherwise can be removed. Not used in the provided snippet.
   const [isSaving, setIsSaving] = useState(false);
   const [cardData, setCardData] = useState({
     number: '',
@@ -84,9 +63,6 @@ export default function TrialSetup() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
-  const [paymentRequest, setPaymentRequest] = useState(null);
-  const [expressPaymentType, setExpressPaymentType] = useState(null);
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState(null);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
@@ -140,148 +116,6 @@ export default function TrialSetup() {
     window.scrollTo(0, 0);
   }, []);
 
-  useEffect(() => {
-    let isMounted = true;
-    let localPr = null;
-    let localHandlePaymentMethod = null;
-
-    const initPaymentRequest = async () => {
-      try {
-        const stripeInstance = await loadStripe('pk_live_51SIgep2OXBs6ZYwlVznC6972UnXoiD0IGS0Rvo1Iw1wS0RX8tAh4pCXt2aTn0a7EnGxG3tOYae24oS1keGdFGxT00EJbBPciv');
-
-        if (!isMounted) return;
-        if (!stripeInstance) {
-          if (isMounted) {
-            setExpressPaymentType(null);
-            setPaymentRequest(null);
-          }
-          return;
-        }
-
-        let amount = 0;
-        if (orderBumpSelected) {
-          amount = Math.round(ORDER_BUMP_PRICE * 100);
-        }
-
-        const pr = stripeInstance.paymentRequest({
-          country: billingInfo.country, // Use billing country for PR
-          currency: 'eur',
-          total: {
-            label: 'MyWellness Trial Setup',
-            amount: amount,
-          },
-          requestPayerName: true,
-          requestPayerEmail: true,
-        });
-
-        localPr = pr;
-
-        try {
-          const canMakePaymentResult = await pr.canMakePayment();
-
-          if (!isMounted) return;
-
-          if (canMakePaymentResult) {
-            if (canMakePaymentResult.applePay) {
-              setExpressPaymentType('applePay');
-            } else if (canMakePaymentResult.googlePay) {
-              setExpressPaymentType('googlePay');
-            }
-            setPaymentRequest(pr);
-          } else {
-            setExpressPaymentType(null);
-            setPaymentRequest(null);
-          }
-        } catch (error) {
-          console.error('canMakePayment error:', error);
-          if (isMounted) {
-            setExpressPaymentType(null);
-            setPaymentRequest(null);
-          }
-        }
-
-        const handlePaymentMethod = async (ev) => {
-          setIsSaving(true);
-          try {
-            const { paymentMethod } = ev;
-            const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
-
-            const payload = {
-              paymentMethodId: paymentMethod.id,
-              orderBumpSelected: orderBumpSelected,
-              billingInfo: {
-                name: billingInfo.name,
-                email: billingInfo.email,
-                companyName: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.companyName : null,
-                taxId: showBillingFields ? billingInfo.taxId : null,
-                pecSdi: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.pecSdi : null,
-                billingType: billingInfo.billingType,
-                address: billingInfo.address,
-                city: billingInfo.city,
-                zip: billingInfo.zip,
-                country: billingInfo.country
-              },
-              phoneNumber: fullPhoneNumber,
-              termsAccepted: termsAccepted,
-              privacyAccepted: privacyAccepted,
-              marketingConsent: marketingConsent,
-              useExpressPayment: true
-            };
-
-            const functionUrl = `${window.location.origin}/functions/stripeCreateTrialSubscription`;
-            const response = await fetch(functionUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify(payload)
-            });
-
-            const result = await response.json();
-
-            if (!result.success) {
-              throw new Error(result.error || result.details || 'Setup failed');
-            }
-
-            ev.complete('success');
-            if (isMounted) {
-              navigate(createPageUrl('Dashboard'), { replace: true });
-            }
-
-          } catch (error) {
-            console.error('Express payment error:', error);
-            alert('Errore durante il pagamento: ' + error.message);
-            ev.complete('fail');
-            if (isMounted) {
-              setIsSaving(false);
-            }
-          }
-        };
-
-        pr.on('paymentmethod', handlePaymentMethod);
-        localHandlePaymentMethod = handlePaymentMethod;
-
-      } catch (error) {
-        console.error('loadStripe error:', error);
-        if (isMounted) {
-          setExpressPaymentType(null);
-          setPaymentRequest(null);
-        }
-      }
-    };
-
-    // Only initialize payment request if not loading and user is not already active
-    if (!isLoading && user && user.subscription_status !== 'active') {
-        initPaymentRequest();
-    }
-
-
-    return () => {
-      isMounted = false;
-      if (localPr && localHandlePaymentMethod) {
-        localPr.off('paymentmethod', localHandlePaymentMethod);
-      }
-    };
-  }, [orderBumpSelected, termsAccepted, privacyAccepted, marketingConsent, navigate, isLoading, user, billingInfo, phoneNumber, selectedCountry, showBillingFields]);
-
   // If loading, render a loading indicator
   if (isLoading) {
     return (
@@ -327,13 +161,6 @@ export default function TrialSetup() {
   };
 
   const handleCompleteSetup = async () => {
-    if (selectedPaymentMethod === 'express') {
-      if (paymentRequest) {
-        paymentRequest.show();
-      }
-      return;
-    }
-
     if (!isFormValid) {
       alert("Per favore, compila tutti i campi obbligatori correttamente.");
       return;
@@ -415,30 +242,7 @@ export default function TrialSetup() {
       (billingInfo.billingType !== 'company' || billingInfo.companyName.length > 0)
     ));
 
-  const isExpressPaymentValid = billingInfo.name.length > 0 &&
-    billingInfo.email.length > 0 &&
-    /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingInfo.email) &&
-    phoneNumber.length > 0 &&
-    billingInfo.address.length > 0 &&
-    billingInfo.city.length > 0 &&
-    billingInfo.zip.length > 0 &&
-    billingInfo.country.length > 0 &&
-    termsAccepted &&
-    privacyAccepted &&
-    (!showBillingFields || (
-      billingInfo.taxId.length > 0 &&
-      (billingInfo.billingType !== 'company' || billingInfo.companyName.length > 0)
-    ));
-
-  let isCtaDisabled = true;
-  if (selectedPaymentMethod === 'card') {
-    isCtaDisabled = !isFormValid;
-  } else if (selectedPaymentMethod === 'express') {
-    isCtaDisabled = !isExpressPaymentValid;
-  } else {
-    isCtaDisabled = true;
-  }
-  isCtaDisabled = isCtaDisabled || isSaving;
+  let isCtaDisabled = !isFormValid || isSaving;
 
   let total = 0;
   if (orderBumpSelected) {
@@ -781,151 +585,119 @@ export default function TrialSetup() {
             <div className="space-y-4 pt-4 border-t border-gray-200/50">
               <div className="flex items-center gap-3 mb-4">
                 <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
-                <h3 className="text-xl font-bold text-gray-800">Metodi di Pagamento</h3>
+                <h3 className="text-xl font-bold text-gray-800">Dati Carta</h3>
               </div>
-              <RadioGroup onValueChange={setSelectedPaymentMethod} value={selectedPaymentMethod} className="space-y-3">
-
-                <Label htmlFor="r-card" className={cn("flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all", selectedPaymentMethod === 'card' ? "border-[var(--brand-primary)] bg-[var(--brand-primary-light)] ring-2 ring-[var(--brand-primary)]" : "border-gray-300 hover:border-gray-400")}>
-                  <RadioGroupItem value="card" id="r-card" className="peer sr-only" />
-                  <span className="flex-shrink-0 w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center peer-data-[state=checked]:border-[var(--brand-primary)] peer-data-[state=checked]:bg-[var(--brand-primary)]">
-                      <span className="w-2.5 h-2.5 rounded-full bg-white opacity-0 peer-data-[state=checked]:opacity-100"></span>
-                  </span>
-                  <CreditCard className="w-6 h-6 text-gray-600" />
-                  <span className="font-semibold text-gray-800 text-base">Carta di Credito / Debito</span>
+              
+              <div>
+                <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Numero Carta
                 </Label>
-
-                {expressPaymentType && (
-                  <Label htmlFor="r-express" className={cn("flex items-center gap-4 p-4 border rounded-lg cursor-pointer transition-all", selectedPaymentMethod === 'express' ? "border-[var(--brand-primary)] bg-[var(--brand-primary-light)] ring-2 ring-[var(--brand-primary)]" : "border-gray-300 hover:border-gray-400")}>
-                    <RadioGroupItem value="express" id="r-express" className="peer sr-only" />
-                    <span className="flex-shrink-0 w-5 h-5 rounded-full border-2 border-gray-400 flex items-center justify-center peer-data-[state=checked]:border-[var(--brand-primary)] peer-data-[state=checked]:bg-[var(--brand-primary)]">
-                        <span className="w-2.5 h-2.5 rounded-full bg-white opacity-0 peer-data-[state=checked]:opacity-100"></span>
-                    </span>
-                    {expressPaymentType === 'applePay' ? <ApplePayIcon /> : <GooglePayIcon />}
-                    <span className="font-semibold text-gray-800 text-base">
-                      {expressPaymentType === 'applePay' ? 'Apple Pay' : 'Google Pay'}
-                    </span>
-                  </Label>
-                )}
-              </RadioGroup>
+                <div className="relative">
+                  <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                  <Input id="cardNumber" type="tel" placeholder="1234 5678 9012 3456"
+                    value={cardData.number} onChange={handleCardNumberChange}
+                    className="h-12 text-base pl-10" autoComplete="cc-number" />
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
+                  <Input id="expiry" type="text" placeholder="MM/YY"
+                    value={cardData.expiry} onChange={handleExpiryChange}
+                    className="h-12 text-base" autoComplete="cc-exp" />
+                </div>
+                <div>
+                  <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
+                  <Input id="cvc" type="text" placeholder="123"
+                    value={cardData.cvc} onChange={handleCvcChange}
+                    className="h-12 text-base" autoComplete="cc-csc" />
+                </div>
+              </div>
+              <div className="flex items-center space-x-2 pt-2">
+                <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
+                <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
+                  Salva questa carta per pagamenti futuri
+                </Label>
+              </div>
             </div>
 
-            {selectedPaymentMethod === 'card' && (
-              <div className="space-y-4 pt-4 border-t border-gray-200/50">
-                <div>
-                  <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Numero Carta
-                  </Label>
-                  <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <Input id="cardNumber" type="tel" placeholder="1234 5678 9012 3456"
-                      value={cardData.number} onChange={handleCardNumberChange}
-                      className="h-12 text-base pl-10" autoComplete="cc-number" />
+            <div className="pt-4 border-t border-gray-200/50">
+              <Label htmlFor="orderBump" className="block cursor-pointer">
+                <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
+                  <div className="flex items-center justify-between gap-4">
+                    <div className="flex-grow">
+                      <p className="text-lg font-bold text-gray-900">
+                        Si, lo voglio!
+                      </p>
+                      <p className="text-sm text-gray-600 mt-1">
+                        Aggiungi "Mastery AI Wellness": video corso completo
+                      </p>
+                    </div>
+                    <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
+                      className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
+                  </div>
+                  <div className="text-right">
+                    <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
+                    <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
-                    <Input id="expiry" type="text" placeholder="MM/YY"
-                      value={cardData.expiry} onChange={handleExpiryChange}
-                      className="h-12 text-base" autoComplete="cc-exp" />
-                  </div>
-                  <div>
-                    <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
-                    <Input id="cvc" type="text" placeholder="123"
-                      value={cardData.cvc} onChange={handleCvcChange}
-                      className="h-12 text-base" autoComplete="cc-csc" />
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2 pt-2">
-                  <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
-                  <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
-                    Salva questa carta per pagamenti futuri
-                  </Label>
-                </div>
+              </Label>
+            </div>
+
+            <div className="space-y-3 pt-4">
+              <div className="flex items-start space-x-3">
+                <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
+                <Label htmlFor="terms" className="text-xs text-gray-600">
+                  Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
+                </Label>
               </div>
-            )}
+              <div className="flex items-start space-x-3">
+                <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
+                <Label htmlFor="privacy" className="text-xs text-gray-600">
+                  Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
+                </Label>
+              </div>
+              <div className="flex items-start space-x-3">
+                <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
+                <Label htmlFor="marketing" className="text-xs text-gray-600">
+                  Acconsento a ricevere comunicazioni di marketing e newsletter.
+                </Label>
+              </div>
+            </div>
 
-            {selectedPaymentMethod && (
-              <>
-                <div className="pt-4 border-t border-gray-200/50">
-                  <Label htmlFor="orderBump" className="block cursor-pointer">
-                    <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex-grow">
-                          <p className="text-lg font-bold text-gray-900">
-                            Si, lo voglio!
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Aggiungi "Mastery AI Wellness": video corso completo
-                          </p>
-                        </div>
-                        <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
-                          className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
-                      </div>
-                      <div className="text-right">
-                        <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
-                        <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
-                      </div>
-                    </div>
-                  </Label>
+            <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
+              <Shield className="w-4 h-4" />
+              <span>Pagamento sicuro e crittografato</span>
+            </div>
+
+            <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
+              <div className="flex justify-between text-gray-700">
+                <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
+                <span className="font-semibold">€{total.toFixed(2)}</span>
+              </div>
+              <p className="text-xs text-gray-500">
+                Dopo {TRIAL_DAYS} giorni: €39/mese (puoi cancellare in qualsiasi momento)
+              </p>
+            </div>
+
+            <Button
+              onClick={handleCompleteSetup}
+              disabled={isCtaDisabled}
+              className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSaving ? (
+                <div className="flex items-center gap-2">
+                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                  Attivazione...
                 </div>
+              ) : (
+                `Inizia Prova Gratuita (€${total.toFixed(2)} oggi)`
+              )}
+            </Button>
 
-                <div className="space-y-3 pt-4">
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
-                    <Label htmlFor="terms" className="text-xs text-gray-600">
-                      Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
-                    </Label>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
-                    <Label htmlFor="privacy" className="text-xs text-gray-600">
-                      Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
-                    </Label>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
-                    <Label htmlFor="marketing" className="text-xs text-gray-600">
-                      Acconsento a ricevere comunicazioni di marketing e newsletter.
-                    </Label>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
-                  <Shield className="w-4 h-4" />
-                  <span>Pagamento sicuro e crittografato</span>
-                </div>
-
-                <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
-                  <div className="flex justify-between text-gray-700">
-                    <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
-                    <span className="font-semibold">€{total.toFixed(2)}</span>
-                  </div>
-                  <p className="text-xs text-gray-500">
-                    Dopo {TRIAL_DAYS} giorni: €39/mese (puoi cancellare in qualsiasi momento)
-                  </p>
-                </div>
-
-                <Button
-                  onClick={handleCompleteSetup}
-                  disabled={isCtaDisabled}
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isSaving ? (
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                      Attivazione...
-                    </div>
-                  ) : (
-                    `Inizia Prova Gratuita (€${total.toFixed(2)} oggi)`
-                  )}
-                </Button>
-
-                <p className="text-xs text-center text-gray-500">
-                  Nessun addebito durante i {TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.
-                </p>
-              </>
-            )}
+            <p className="text-xs text-center text-gray-500">
+              Nessun addebito durante i {TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.
+            </p>
           </CardContent>
         </Card>
       </div>
