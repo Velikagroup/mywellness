@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -37,6 +38,7 @@ export default function AdminAnalytics() {
   const [isLoading, setIsLoading] = useState(true);
   const [users, setUsers] = useState([]);
   const [expenses, setExpenses] = useState([]);
+  const [recurringExpenses, setRecurringExpenses] = useState([]); // NEW STATE
   const [transactions, setTransactions] = useState([]);
   const [showAddExpense, setShowAddExpense] = useState(false);
   const [isSavingExpense, setIsSavingExpense] = useState(false);
@@ -56,6 +58,7 @@ export default function AdminAnalytics() {
     date: new Date().toISOString().split('T')[0],
     recurring: false,
     recurring_frequency: 'monthly',
+    recurring_variable: false, // NEW FIELD
     notes: ''
   });
 
@@ -86,7 +89,13 @@ export default function AdminAnalytics() {
         base44.entities.Transaction.list()
       ]);
       setUsers(usersData);
-      setExpenses(expensesData);
+      
+      // Separate actual expenses from recurring variable expense templates
+      const actualExpenses = expensesData.filter(e => !e.recurring_variable || (e.recurring_variable && e.parent_expense_id));
+      const parentRecurringVariableExpenses = expensesData.filter(e => e.recurring_variable && !e.parent_expense_id);
+      
+      setExpenses(actualExpenses); // These are the expenses to be filtered by date and used in calculations
+      setRecurringExpenses(parentRecurringVariableExpenses); // These are the parent definitions for variable expenses
       setTransactions(transactionsData);
     } catch (error) {
       console.error('Error loading data:', error);
@@ -115,6 +124,7 @@ export default function AdminAnalytics() {
         date: new Date().toISOString().split('T')[0],
         recurring: false,
         recurring_frequency: 'monthly',
+        recurring_variable: false, // NEW FIELD
         notes: ''
       });
     } catch (error) {
@@ -122,6 +132,29 @@ export default function AdminAnalytics() {
       alert('Errore nel salvataggio della spesa');
     }
     setIsSavingExpense(false);
+  };
+
+  const handleSaveRecurringVariableEntry = async (parentExpenseId, amount, month) => {
+    try {
+      const parent = recurringExpenses.find(e => e.id === parentExpenseId);
+      if (!parent) {
+        throw new Error('Parent expense not found');
+      }
+      await base44.entities.Expense.create({
+        category: parent.category,
+        description: `${parent.description} - ${month}`, // e.g., 'Server AWS - 2023-10'
+        amount: parseFloat(amount),
+        date: month + '-01', // Assuming month is 'YYYY-MM'
+        recurring: false, // Individual entries are not recurring themselves, they are instances of a variable recurring expense
+        recurring_variable: true, // This marks it as an instance of a variable recurring expense
+        parent_expense_id: parentExpenseId,
+        notes: `Voce mensile variabile (generata da ID parent: ${parentExpenseId})`
+      });
+      await loadData();
+    } catch (error) {
+      console.error('Error saving monthly entry:', error);
+      alert('Errore nel salvataggio della voce mensile');
+    }
   };
 
   // Filter users and expenses by date range
@@ -267,11 +300,11 @@ export default function AdminAnalytics() {
   const getCashFlowProjection = () => {
     const projections = [];
     const currentMRR = mrr;
-    const growthRate = 1.15;
+    const growthRate = 1.15; // 15% monthly growth assumption
 
     for (let i = 1; i <= 12; i++) {
       const projectedMRR = currentMRR * Math.pow(growthRate, i);
-      const projectedExpenses = totalMonthlyExpenses * (1 + (i * 0.05));
+      const projectedExpenses = totalMonthlyExpenses * (1 + (i * 0.05)); // 5% monthly expense increase assumption
 
       projections.push({
         month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy', { locale: it }),
@@ -709,7 +742,8 @@ export default function AdminAnalytics() {
                           <p className="font-semibold text-sm text-gray-900">{expense.description}</p>
                           <p className="text-xs text-gray-500">
                             {expense.category} • {format(new Date(expense.date), 'dd/MM/yyyy')}
-                            {expense.recurring && ` • Ricorrente (${expense.recurring_frequency})`}
+                            {(expense.recurring && expense.recurring_frequency) && ` • Ricorrente (${expense.recurring_frequency})`}
+                            {(expense.recurring_variable && !expense.recurring && expense.parent_expense_id) && ` • Variabile`}
                           </p>
                         </div>
                         <p className="font-bold text-red-600">-€{expense.amount}</p>
@@ -946,7 +980,7 @@ export default function AdminAnalytics() {
       </div>
 
       <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto"> {/* MODIFIED */}
           <DialogHeader>
             <DialogTitle>Aggiungi Nuova Spesa</DialogTitle>
           </DialogHeader>
@@ -1004,10 +1038,10 @@ export default function AdminAnalytics() {
                 type="checkbox"
                 id="recurring"
                 checked={expenseForm.recurring}
-                onChange={(e) => setExpenseForm({...expenseForm, recurring: e.target.checked})}
+                onChange={(e) => setExpenseForm({...expenseForm, recurring: e.target.checked, recurring_variable: false})} {/* MODIFIED: mutually exclusive */}
                 className="w-4 h-4"
               />
-              <Label htmlFor="recurring">Spesa Ricorrente</Label>
+              <Label htmlFor="recurring">Spesa Ricorrente Fissa</Label> {/* MODIFIED LABEL */}
             </div>
 
             {expenseForm.recurring && (
@@ -1021,6 +1055,24 @@ export default function AdminAnalytics() {
                   <option value="monthly">Mensile</option>
                   <option value="yearly">Annuale</option>
                 </select>
+              </div>
+            )}
+
+            <div className="flex items-center gap-2"> {/* NEW BLOCK */}
+              <input
+                type="checkbox"
+                id="recurringVariable"
+                checked={expenseForm.recurring_variable}
+                onChange={(e) => setExpenseForm({...expenseForm, recurring_variable: e.target.checked, recurring: false})} {/* NEW: mutually exclusive */}
+                className="w-4 h-4"
+              />
+              <Label htmlFor="recurringVariable">Spesa Ricorrente con Importo Variabile</Label>
+            </div>
+
+            {expenseForm.recurring_variable && ( {/* NEW BLOCK */}
+              <div className="p-3 bg-blue-50 rounded-lg text-sm text-blue-900">
+                <p className="font-semibold mb-1">ℹ️ Spesa Ricorrente Variabile</p>
+                <p>Verrà creata una voce che potrai riutilizzare ogni mese inserendo l'importo diverso.</p>
               </div>
             )}
 

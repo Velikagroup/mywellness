@@ -19,6 +19,7 @@ import ResetPassword from './pages/ResetPassword';
 import NotFound from './pages/NotFound';
 import AdminEmails from './pages/AdminEmails';
 import AdminAnalytics from './pages/AdminAnalytics';
+import AdminMarketing from './pages/AdminMarketing';
 import Layout from './Layout.jsx';
 
 
@@ -44,6 +45,7 @@ export const PAGES = {
     "NotFound": NotFound,
     "AdminEmails": AdminEmails,
     "AdminAnalytics": AdminAnalytics,
+    "AdminMarketing": AdminMarketing,
 }
 
 export const pagesConfig = {
