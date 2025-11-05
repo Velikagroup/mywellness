@@ -1,6 +1,6 @@
 
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target } from "lucide-react";
 import { base44 } from "@/api/base44Client";
@@ -8,6 +8,7 @@ import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
 export default function Layout({ children }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
 
   // Scroll to top on page change
@@ -128,6 +129,7 @@ export default function Layout({ children }) {
   const handleLogout = async () => {
     try {
       await base44.auth.logout();
+      navigate(createPageUrl('Home'));
     } catch (error) {
       console.error("Errore durante il logout:", error);
     }

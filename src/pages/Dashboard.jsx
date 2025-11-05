@@ -42,10 +42,13 @@ export default function Dashboard() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showEditBMR, setShowEditBMR] = useState(false);
   const [showEditBodyFat, setShowEditBodyFat] = useState(false);
+  const [showEditCalories, setShowEditCalories] = useState(false);
   const [editBMRValue, setEditBMRValue] = useState('');
   const [editBodyFatValue, setEditBodyFatValue] = useState('');
+  const [editCaloriesValue, setEditCaloriesValue] = useState('');
   const [isSavingBMR, setIsSavingBMR] = useState(false);
   const [isSavingBodyFat, setIsSavingBodyFat] = useState(false);
+  const [isSavingCalories, setIsSavingCalories] = useState(false);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -245,6 +248,11 @@ export default function Dashboard() {
     setShowEditBodyFat(true);
   };
 
+  const handleOpenEditCalories = () => {
+    setEditCaloriesValue(user?.daily_calories || '');
+    setShowEditCalories(true);
+  };
+
   const handleSaveBMR = async () => {
     const newBMR = parseFloat(editBMRValue);
     if (isNaN(newBMR) || newBMR <= 0) {
@@ -283,6 +291,26 @@ export default function Dashboard() {
       alert('Errore durante l\'aggiornamento della Massa Grassa');
     }
     setIsSavingBodyFat(false);
+  };
+
+  const handleSaveCalories = async () => {
+    const newCalories = parseFloat(editCaloriesValue);
+    if (isNaN(newCalories) || newCalories <= 0) {
+      alert('Inserisci un valore valido per il Target Calorico');
+      return;
+    }
+
+    setIsSavingCalories(true);
+    try {
+      await User.updateMyUserData({ daily_calories: Math.round(newCalories) });
+      await loadUserData();
+      setShowEditCalories(false);
+      alert('✅ Target Calorico aggiornato con successo!');
+    } catch (error) {
+      console.error('Error updating daily calories:', error);
+      alert('Errore durante l\'aggiornamento del Target Calorico');
+    }
+    setIsSavingCalories(false);
   };
     
   const { progress: goalProgress, status: goalStatus } = useMemo(() => {
@@ -445,13 +473,22 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-6">
-             <TechnicalStatsCard
-              title="Target Calorico"
-              value={user.daily_calories || 2000}
-              unit="kcal"
-              icon={Activity}
-              info="Le calorie giornaliere raccomandate per raggiungere il tuo obiettivo. Calcolate su metabolismo, attività e ritmo desiderato."
-            />
+             <div className="relative">
+              <TechnicalStatsCard
+                title="Target Calorico"
+                value={user.daily_calories || 2000}
+                unit="kcal"
+                icon={Activity}
+                info="Le calorie giornaliere raccomandate per raggiungere il tuo obiettivo. Calcolate su metabolismo, attività e ritmo desiderato."
+              />
+              <button
+                onClick={handleOpenEditCalories}
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[var(--brand-primary)] hover:bg-gray-100 rounded-lg transition-all"
+                title="Modifica Target Calorico"
+              >
+                <Edit3 className="w-4 h-4" />
+              </button>
+            </div>
             <div className="relative">
               <TechnicalStatsCard
                 title="Metabolismo Basale (BMR)"
@@ -613,6 +650,51 @@ export default function Dashboard() {
               </Button>
               <Button
                 onClick={() => setShowEditBodyFat(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Modifica Target Calorico */}
+      <Dialog open={showEditCalories} onOpenChange={setShowEditCalories}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Modifica Target Calorico</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-gray-600">
+              Inserisci il tuo target calorico personalizzato se hai un piano specifico o indicazioni dal tuo nutrizionista.
+            </p>
+            <div>
+              <Label htmlFor="edit-calories" className="text-sm font-semibold text-gray-700 mb-2 block">
+                Target Calorico (kcal/giorno)
+              </Label>
+              <Input
+                id="edit-calories"
+                type="number"
+                value={editCaloriesValue}
+                onChange={(e) => setEditCaloriesValue(e.target.value)}
+                placeholder="Es: 2000"
+                className="h-12 text-base"
+                min="800"
+                max="5000"
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={handleSaveCalories}
+                disabled={isSavingCalories}
+                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+              >
+                {isSavingCalories ? 'Salvataggio...' : 'Salva'}
+              </Button>
+              <Button
+                onClick={() => setShowEditCalories(false)}
                 variant="outline"
                 className="flex-1"
               >
