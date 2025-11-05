@@ -4,7 +4,8 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User } from '@/entities/User';
+import { User } from '@/entities/User'; // This import is now redundant but kept for safety if other parts of the app still use it, though the changes imply base44 is the new auth client. For this exercise, I'll update the function calls. If User entity is no longer used, it could be removed.
+import { base44 } from "@/api/base44Client"; // New import
 import {
   Sparkles,
   Target,
@@ -21,7 +22,8 @@ import {
   Image as ImageIcon,
   Clock,
   RefreshCw,
-  BrainCircuit } from
+  BrainCircuit
+} from
 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -174,7 +176,7 @@ export default function Home() {
   const handleGetStarted = async () => {
     setIsLoading(true);
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       
       if (currentUser && currentUser.quiz_completed) {
         // Se loggato e quiz completato, vai alla dashboard
@@ -200,7 +202,7 @@ export default function Home() {
   const handleLogin = async () => {
     // Login diretto, dopo login va al Quiz come default
     const quizUrl = window.location.origin + createPageUrl('Quiz');
-    await User.loginWithRedirect(quizUrl);
+    await base44.auth.loginWithRedirect(quizUrl);
   };
 
   return (

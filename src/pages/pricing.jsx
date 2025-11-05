@@ -213,14 +213,14 @@ export default function Pricing() {
     } catch (error) {
       // Utente non loggato → fai login con redirect a TrialSetup
       const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + `?plan=${planType}`;
-      await base44.auth.redirectToLogin(trialSetupUrl);
+      await base44.auth.loginWithRedirect(trialSetupUrl);
     }
   };
 
   const handleLogin = async () => {
     // Login diretto con redirect al TrialSetup (piano base di default)
     const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + '?plan=base';
-    await base44.auth.redirectToLogin(trialSetupUrl);
+    await base44.auth.loginWithRedirect(trialSetupUrl);
   };
 
   const getPrice = (plan) => {
