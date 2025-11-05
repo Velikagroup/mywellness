@@ -12,7 +12,7 @@ export default function Layout({ children }) {
   const quizPageUrl = createPageUrl("Quiz");
   const homePageUrl = createPageUrl("Home");
   const landingPageUrl = createPageUrl("Landing");
-  const notFoundPageUrl = createPageUrl("404");
+  const notFoundPageUrl = createPageUrl("NotFound");
 
   // Scroll to top on page change
   React.useEffect(() => {
