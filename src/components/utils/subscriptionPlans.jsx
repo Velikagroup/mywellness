@@ -1,0 +1,92 @@
+// Definizione dei piani e delle loro features
+export const PLANS = {
+  BASE: 'base',
+  PRO: 'pro',
+  PREMIUM: 'premium'
+};
+
+export const PLAN_FEATURES = {
+  [PLANS.BASE]: {
+    name: 'Base',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    workout_plan: false,
+    meal_photo_analysis: false,
+    auto_rebalance: false,
+    workout_tracking: false,
+    ingredient_substitution: false,
+    workout_modification: false,
+    progress_photo_analysis: false,
+    priority_support: false
+  },
+  [PLANS.PRO]: {
+    name: 'Pro',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    workout_plan: true,
+    meal_photo_analysis: true,
+    auto_rebalance: true,
+    workout_tracking: true,
+    ingredient_substitution: false,
+    workout_modification: false,
+    progress_photo_analysis: false,
+    priority_support: false
+  },
+  [PLANS.PREMIUM]: {
+    name: 'Premium',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    workout_plan: true,
+    meal_photo_analysis: true,
+    auto_rebalance: true,
+    workout_tracking: true,
+    ingredient_substitution: true,
+    workout_modification: true,
+    progress_photo_analysis: true,
+    priority_support: true
+  }
+};
+
+// Funzione per verificare se l'utente ha accesso a una feature
+export const hasFeatureAccess = (userPlan, featureName) => {
+  const plan = userPlan || PLANS.BASE;
+  return PLAN_FEATURES[plan]?.[featureName] || false;
+};
+
+// Funzione per ottenere il nome del piano
+export const getPlanName = (planId) => {
+  return PLAN_FEATURES[planId]?.name || 'Base';
+};
+
+// Componente React per mostrare upgrade prompt
+export const UpgradePrompt = ({ requiredPlan, featureName, onUpgradeClick }) => {
+  return (
+    <div className="text-center py-8 px-4">
+      <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+        <span className="text-3xl">🔒</span>
+      </div>
+      <h3 className="text-xl font-bold text-gray-900 mb-2">Feature {requiredPlan === PLANS.PRO ? 'Pro' : 'Premium'}</h3>
+      <p className="text-gray-600 mb-4">
+        {featureName} è disponibile con il piano {requiredPlan === PLANS.PRO ? 'Pro' : 'Premium'}
+      </p>
+      <button
+        onClick={onUpgradeClick}
+        className="inline-block bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-6 py-3 rounded-lg font-semibold transition-all"
+      >
+        Upgrade a {requiredPlan === PLANS.PRO ? 'Pro' : 'Premium'}
+      </button>
+    </div>
+  );
+};

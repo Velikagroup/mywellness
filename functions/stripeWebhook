@@ -1,0 +1,155 @@
+import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import Stripe from 'npm:stripe@14.10.0';
+
+const stripe = new Stripe(Deno.env.get("STRIPE_SECRET_KEY"));
+const webhookSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+
+Deno.serve(async (req) => {
+    const base44 = createClientFromRequest(req);
+    
+    try {
+        // Ottieni la signature di Stripe
+        const signature = req.headers.get('stripe-signature');
+        const body = await req.text();
+
+        if (!signature) {
+            return Response.json({ error: 'No signature' }, { status: 400 });
+        }
+
+        // Verifica e costruisci l'evento
+        let event;
+        try {
+            event = await stripe.webhooks.constructEventAsync(
+                body,
+                signature,
+                webhookSecret
+            );
+        } catch (err) {
+            console.error('Webhook signature verification failed:', err.message);
+            return Response.json({ error: 'Invalid signature' }, { status: 400 });
+        }
+
+        console.log('Webhook event received:', event.type);
+
+        // Gestisci i diversi tipi di eventi
+        switch (event.type) {
+            // Subscription Events
+            case 'customer.subscription.created':
+            case 'customer.subscription.updated': {
+                const subscription = event.data.object;
+                const userId = subscription.metadata.user_id;
+
+                if (userId) {
+                    const status = subscription.status === 'active' || subscription.status === 'trialing' 
+                        ? 'active' 
+                        : subscription.status === 'canceled' 
+                        ? 'cancelled' 
+                        : 'expired';
+
+                    await base44.asServiceRole.entities.User.update(userId, {
+                        subscription_status: status,
+                        stripe_subscription_id: subscription.id,
+                        subscription_period_end: new Date(subscription.current_period_end * 1000).toISOString()
+                    });
+                }
+                break;
+            }
+
+            case 'customer.subscription.deleted': {
+                const subscription = event.data.object;
+                const userId = subscription.metadata.user_id;
+
+                if (userId) {
+                    await base44.asServiceRole.entities.User.update(userId, {
+                        subscription_status: 'cancelled',
+                        subscription_plan: 'base'
+                    });
+                }
+                break;
+            }
+
+            case 'customer.subscription.trial_will_end': {
+                const subscription = event.data.object;
+                const userId = subscription.metadata.user_id;
+
+                if (userId) {
+                    // Qui puoi inviare email di reminder
+                    console.log(`Trial ending soon for user ${userId}`);
+                }
+                break;
+            }
+
+            // Payment Events
+            case 'payment_intent.succeeded': {
+                const paymentIntent = event.data.object;
+                const userId = paymentIntent.metadata.user_id;
+
+                if (userId) {
+                    await base44.asServiceRole.entities.User.update(userId, {
+                        last_payment_date: new Date().toISOString(),
+                        last_payment_amount: paymentIntent.amount / 100
+                    });
+                }
+                break;
+            }
+
+            case 'payment_intent.payment_failed': {
+                const paymentIntent = event.data.object;
+                const userId = paymentIntent.metadata.user_id;
+
+                if (userId) {
+                    // Gestisci pagamento fallito
+                    console.error(`Payment failed for user ${userId}`);
+                    // Qui potresti inviare email, mettere account in stato "payment_failed", etc.
+                }
+                break;
+            }
+
+            case 'invoice.payment_succeeded': {
+                const invoice = event.data.object;
+                const subscription = invoice.subscription;
+
+                if (subscription) {
+                    const sub = await stripe.subscriptions.retrieve(subscription);
+                    const userId = sub.metadata.user_id;
+
+                    if (userId) {
+                        await base44.asServiceRole.entities.User.update(userId, {
+                            subscription_status: 'active',
+                            last_payment_date: new Date().toISOString(),
+                            subscription_period_end: new Date(sub.current_period_end * 1000).toISOString()
+                        });
+                    }
+                }
+                break;
+            }
+
+            case 'invoice.payment_failed': {
+                const invoice = event.data.object;
+                const subscription = invoice.subscription;
+
+                if (subscription) {
+                    const sub = await stripe.subscriptions.retrieve(subscription);
+                    const userId = sub.metadata.user_id;
+
+                    if (userId) {
+                        await base44.asServiceRole.entities.User.update(userId, {
+                            subscription_status: 'payment_failed'
+                        });
+                        // Qui potresti inviare email di alert
+                    }
+                }
+                break;
+            }
+
+            default:
+                console.log(`Unhandled event type: ${event.type}`);
+        }
+
+        return Response.json({ received: true });
+
+    } catch (error) {
+        console.error('Webhook error:', error);
+        return Response.json({ error: error.message }, { status: 500 });
+    }
+});

@@ -1,0 +1,122 @@
+import React, { useState, useEffect, useRef } from 'react';
+import { Input } from "@/components/ui/input";
+import { Target } from "lucide-react";
+
+export default function TargetWeightStep({ data, onDataChange }) {
+  const [unit, setUnit] = useState('kg');
+  const [displayValue, setDisplayValue] = useState('');
+  const isTypingRef = useRef(false);
+
+  useEffect(() => {
+    // Non aggiornare se l'utente sta digitando
+    if (isTypingRef.current) return;
+    
+    if (data.target_weight) {
+      if (unit === 'kg') {
+        setDisplayValue(data.target_weight.toString());
+      } else {
+        setDisplayValue((data.target_weight * 2.20462).toFixed(1));
+      }
+    } else {
+      setDisplayValue('');
+    }
+  }, [unit]);
+
+  const handleChange = (e) => {
+    let value = e.target.value;
+    
+    // Sostituisci virgola con punto per gestire input europeo
+    value = value.replace(',', '.');
+    
+    isTypingRef.current = true;
+    setDisplayValue(value);
+    
+    const numValue = parseFloat(value);
+    if (isNaN(numValue) || value === '') {
+      onDataChange({ target_weight: '' });
+      return;
+    }
+    
+    if (unit === 'kg') {
+      onDataChange({ target_weight: numValue });
+    } else {
+      const kg = numValue / 2.20462;
+      onDataChange({ target_weight: parseFloat(kg.toFixed(1)) });
+    }
+  };
+
+  const handleBlur = () => {
+    isTypingRef.current = false;
+  };
+
+  const handleUnitChange = (newUnit) => {
+    isTypingRef.current = false;
+    
+    if (data.target_weight) {
+      if (newUnit === 'kg') {
+        setDisplayValue(data.target_weight.toString());
+      } else {
+        setDisplayValue((data.target_weight * 2.20462).toFixed(1));
+      }
+    }
+    setUnit(newUnit);
+  };
+
+  return (
+    <div className="space-y-6">
+      <div className="text-center mb-8">
+        <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+          <Target className="w-8 h-8 text-white" />
+        </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">Qual è il tuo peso obiettivo?</h2>
+        <p className="text-gray-600">Il peso che desideri raggiungere</p>
+      </div>
+
+      <div className="max-w-md mx-auto">
+        {/* Unit Toggle */}
+        <div className="flex justify-center mb-6">
+          <div className="inline-flex bg-gray-100 rounded-full p-1 shadow-inner">
+            <button
+              onClick={() => handleUnitChange('kg')}
+              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                unit === 'kg' 
+                  ? 'bg-white text-[var(--brand-primary)] shadow-md' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Chilogrammi
+            </button>
+            <button
+              onClick={() => handleUnitChange('lbs')}
+              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
+                unit === 'lbs' 
+                  ? 'bg-white text-[var(--brand-primary)] shadow-md' 
+                  : 'text-gray-500 hover:text-gray-700'
+              }`}
+            >
+              Libbre
+            </button>
+          </div>
+        </div>
+
+        <div className="relative">
+          <Input
+            type="text"
+            placeholder={unit === 'kg' ? "65.0" : "143.0"}
+            value={displayValue}
+            onChange={handleChange}
+            onBlur={handleBlur}
+            className="text-center text-2xl h-16 border-2 border-gray-200 focus:border-[var(--brand-primary)] pr-12 shadow-sm"
+            inputMode="decimal"
+          />
+          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
+            {unit}
+          </span>
+        </div>
+        <p className="text-sm text-gray-500 mt-2 text-center">
+          {unit === 'kg' ? 'Inserisci il peso obiettivo in chilogrammi' : 'Inserisci il peso obiettivo in libbre'}
+        </p>
+      </div>
+    </div>
+  );
+}

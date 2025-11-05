@@ -1,0 +1,333 @@
+
+import React, { useState, useMemo } from 'react';
+import { Card, CardContent } from "@/components/ui/card";
+import { TrendingDown, TrendingUp, Scale, Save, RefreshCw } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Input } from "@/components/ui/input";
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell } from 'recharts';
+import { format } from 'date-fns';
+import { WeightHistory } from "@/entities/WeightHistory";
+import { Link } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+
+const KCAL_PER_KG = 7700;
+
+const getActivityMultiplier = (activityLevel) => {
+  const multipliers = {
+    sedentary: 1.2,
+    lightly_active: 1.375,
+    moderately_active: 1.55,
+    very_active: 1.725,
+    professional_athlete: 1.9
+  };
+  return multipliers[activityLevel] || 1.2;
+};
+
+export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false }) {
+  const [weight, setWeight] = useState('');
+  const [isSaving, setIsSaving] = useState(false);
+
+  const lineData = useMemo(() => {
+    if (!weightHistory || weightHistory.length === 0) return [];
+    
+    // Ordina dal più vecchio al più nuovo per il grafico
+    const reversedHistory = [...weightHistory].reverse(); 
+
+    // Raggruppa le misurazioni per giorno
+    const entriesByDay = reversedHistory.reduce((acc, entry) => {
+        const dayKey = new Date(entry.created_date).toISOString().substring(0, 10);
+        if (!acc[dayKey]) {
+            acc[dayKey] = [];
+        }
+        acc[dayKey].push(entry);
+        return acc;
+    }, {});
+
+    return reversedHistory.map(entry => {
+        const dayKey = new Date(entry.created_date).toISOString().substring(0, 10);
+        const entriesForDay = entriesByDay[dayKey];
+        
+        // Se c'è più di una misurazione in un giorno, mostra l'ora. Altrimenti solo il giorno.
+        const label = entriesForDay.length > 1 
+            ? format(new Date(entry.created_date), 'dd MMM HH:mm') 
+            : format(new Date(entry.created_date), 'dd MMM'); 
+        
+        return {
+            name: label,
+            weight: entry.weight
+        };
+    });
+  }, [weightHistory]);
+
+  const handleSaveWeight = async () => {
+    if (!weight || !user) return;
+    
+    setIsSaving(true);
+    try {
+      const today = new Date().toISOString().split('T')[0]; // Solo la data YYYY-MM-DD
+      await WeightHistory.create({
+        user_id: user.id,
+        weight: parseFloat(weight),
+        date: today
+      });
+      
+      setWeight('');
+      if (onWeightLogged) onWeightLogged();
+    } catch (error) {
+      console.error("Errore nel salvare il peso:", error);
+      alert("Errore nel salvataggio del peso. Riprova.");
+    }
+    setIsSaving(false);
+  };
+
+  if (!user || !user.quiz_completed) {
+    return null;
+  }
+  
+  const startWeight = user.current_weight;
+  const targetWeight = user.target_weight;
+  // Assuming weightHistory is sorted newest-first, so [0] is current.
+  // If weightHistory can be empty, currentWeight should fall back to startWeight.
+  const currentWeight = weightHistory.length > 0 ? weightHistory[0].weight : startWeight;
+
+  const totalWeightToChange = startWeight - targetWeight;
+  const weightChanged = startWeight - currentWeight;
+  const isWeightLoss = totalWeightToChange > 0;
+  
+  // Determina se il progresso è buono o cattivo in base all'obiettivo
+  const isGoodProgress = isWeightLoss 
+    ? (weightChanged >= 0)  // Se obiettivo è perdere peso, positivo è buono (start - current > 0)
+    : (weightChanged <= 0); // Se obiettivo è guadagnare peso, negativo è buono (start - current < 0)
+
+  let progressPercentage = 0;
+  if (totalWeightToChange !== 0) {
+      progressPercentage = (weightChanged / totalWeightToChange) * 100;
+  } else if (startWeight === targetWeight) {
+      progressPercentage = 100;
+  }
+  progressPercentage = Math.max(0, Math.min(100, progressPercentage));
+
+  const allWeights = weightHistory.map(d => d.weight).concat([startWeight, targetWeight]);
+  const yAxisDomain = [Math.floor(Math.min(...allWeights) - 2), Math.ceil(Math.max(...allWeights) + 2)];
+
+  const totalKcalToChange = Math.abs(totalWeightToChange) * KCAL_PER_KG;
+  const kcalChangedSoFar = Math.abs(weightChanged) * KCAL_PER_KG;
+  const kcalRemaining = totalKcalToChange - kcalChangedSoFar;
+
+  const pieData = [
+    { name: 'Completato', value: kcalChangedSoFar },
+    { name: 'Rimanente', value: kcalRemaining > 0 ? kcalRemaining : 0 },
+  ];
+
+  const COLORS = ['var(--brand-primary)', '#e5e7eb'];
+
+  return (
+    <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
+      <CardContent className="p-6">
+        {/* Header Mobile - visibile solo su mobile */}
+        {isMobile && (
+          <div className="md:hidden mb-6 pb-6 border-b border-gray-200/30">
+            <div className="flex items-start justify-between gap-4 mb-4">
+              <div>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">Analisi Progressi</h1>
+                <p className="text-sm text-gray-600">Tracciamento dettagliato e proiezioni</p>
+              </div>
+            </div>
+            <Link to={createPageUrl("Quiz")} className="block">
+              <Button 
+                variant="outline" 
+                className="w-full bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Ricalibra
+              </Button>
+            </Link>
+          </div>
+        )}
+
+        {/* Weight Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+          <div className="p-5 bg-gradient-to-br from-blue-50/70 to-blue-100/30 rounded-xl border border-blue-200/40 backdrop-blur-sm shadow-lg">
+            <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Peso Iniziale</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl font-bold text-blue-900">{startWeight.toFixed(1)}</p>
+              <span className="text-sm font-medium text-blue-600">kg</span>
+            </div>
+          </div>
+
+          <div className="p-5 bg-gradient-to-br from-[var(--brand-primary-light)]/70 to-emerald-50/30 rounded-xl border-2 border-[var(--brand-primary)]/30 backdrop-blur-sm shadow-lg">
+            <p className="text-xs font-semibold text-[var(--brand-primary-dark-text)] uppercase tracking-wide mb-2">Peso Target</p>
+            <div className="flex items-baseline gap-2">
+              <p className="text-3xl font-bold text-[var(--brand-primary)]">{targetWeight.toFixed(1)}</p>
+              <span className="text-sm font-medium text-[var(--brand-primary-dark-text)]">kg</span>
+            </div>
+          </div>
+
+          <div className={`p-5 rounded-xl border backdrop-blur-sm shadow-lg ${
+            isGoodProgress
+              ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
+              : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40'
+          }`}>
+            <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
+              isGoodProgress ? 'text-green-700' : 'text-red-700'
+            }`}>Variazione</p>
+            <div className="flex items-center gap-2">
+              {isGoodProgress ? (
+                <TrendingDown className="w-5 h-5 text-green-600" />
+              ) : (
+                <TrendingUp className="w-5 h-5 text-red-600" />
+              )}
+              <div className="flex items-baseline gap-2">
+                <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
+                  {isWeightLoss ? (weightChanged >= 0 ? '-' : '+') : (weightChanged <= 0 ? '+' : '-')}{Math.abs(weightChanged).toFixed(1)}
+                </p>
+                <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Charts Grid */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Line Chart + Weight Logger */}
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-bold text-gray-900">Traiettoria Massa Corporea</h3>
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="w-3 h-3 bg-[var(--brand-primary)] rounded-full"></div>
+                  <span className="text-gray-600 font-medium">Peso attuale</span>
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
+                    <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
+                    <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                        border: '1px solid #e5e7eb', 
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                      }} 
+                      formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
+                      labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
+                      cursor={{ stroke: 'var(--brand-primary)', strokeWidth: 2, strokeDasharray: '5 5' }} 
+                    />
+                    <ReferenceLine 
+                      y={targetWeight} 
+                      stroke="var(--brand-primary)" 
+                      strokeDasharray="4 4" 
+                      strokeWidth={2}
+                      label={{ 
+                        value: 'Target', 
+                        position: 'insideTopRight', 
+                        fill: 'var(--brand-primary)', 
+                        fontSize: 13,
+                        fontWeight: 'bold'
+                      }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="weight" 
+                      stroke="var(--brand-primary)" 
+                      strokeWidth={3} 
+                      dot={{ r: 4, fill: 'var(--brand-primary)', strokeWidth: 2, stroke: '#fff' }} 
+                      activeDot={{ r: 6, strokeWidth: 2 }} 
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
+            </div>
+
+            {/* Weight Logger */}
+            <div className="bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+              <div className="flex items-center gap-3 mb-4">
+                <div className="w-10 h-10 bg-[var(--brand-primary)]/10 rounded-full flex items-center justify-center shadow-sm">
+                  <Scale className="w-5 h-5 text-[var(--brand-primary)]" />
+                </div>
+                <h3 className="text-base font-bold text-gray-900">Registra Peso</h3>
+              </div>
+              <div className="space-y-4">
+                <div className="relative">
+                  <Input
+                    type="number"
+                    step="0.1"
+                    placeholder="70.5"
+                    value={weight}
+                    onChange={(e) => setWeight(e.target.value)}
+                    className="text-center text-xl h-12 pr-12"
+                  />
+                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
+                    kg
+                  </span>
+                </div>
+                
+                <Button
+                  onClick={handleSaveWeight}
+                  disabled={!weight || isSaving}
+                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                >
+                  <Save className="w-4 h-4 mr-2" />
+                  {isSaving ? 'Salvataggio...' : 'Salva Peso'}
+                </Button>
+              </div>
+            </div>
+          </div>
+          
+          {/* Pie Chart */}
+          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+            <h3 className="text-base font-bold text-gray-900 mb-4">Scomposizione Calorica Obiettivo</h3>
+            <div className="h-48 relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie 
+                    data={pieData} 
+                    cx="50%" 
+                    cy="50%" 
+                    innerRadius={55} 
+                    outerRadius={75} 
+                    paddingAngle={2} 
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value) => [`${Math.round(value).toLocaleString('it-IT')} kcal`, '']} 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '8px'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute text-center">
+                <p className="text-3xl font-bold text-[var(--brand-primary)]">{progressPercentage.toFixed(0)}%</p>
+                <p className="text-xs text-gray-500 font-medium mt-1">completato</p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              {pieData.map((entry, index) => (
+                <div key={entry.name} className="flex items-center justify-between p-3 bg-white/65 rounded-lg border border-gray-200/30 backdrop-blur-sm shadow-md">
+                  <div className="flex items-center gap-3">
+                    <span className="w-4 h-4 rounded-full" style={{ backgroundColor: COLORS[index] }}></span>
+                    <span className="text-sm font-medium text-gray-700">{entry.name}</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{Math.round(entry.value).toLocaleString('it-IT')} kcal</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-4 text-center bg-white/65 p-3 rounded-lg border border-gray-200/30 backdrop-blur-sm shadow-md">
+              💡 Calcolo basato su <span className="font-semibold text-gray-700">7700 kcal = 1 kg</span> di variazione
+            </p>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
