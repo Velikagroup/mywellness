@@ -320,80 +320,32 @@ export default function LandingCheckout() {
               <CardTitle className="text-3xl font-bold text-gray-900 mb-3">
                 Offerta Esclusiva
               </CardTitle>
-              <p className="text-gray-600 text-base">
+              <p className="text-gray-600 text-base mb-4">
                 Piano Premium - 3 Mesi a Prezzo Speciale
               </p>
+              
+              {/* PREZZO CON SCONTO EVIDENTE */}
+              <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border-2 border-red-200">
+                <p className="text-sm text-gray-600 mb-2">Prezzo Normale</p>
+                <div className="relative inline-block mb-3">
+                  <span className="text-4xl font-black text-gray-400 line-through">€117</span>
+                  <div className="absolute -top-2 -right-12 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full transform rotate-12">
+                    -43%
+                  </div>
+                </div>
+                
+                <p className="text-sm text-[var(--brand-primary)] font-bold mb-1">Oggi Paghi Solo</p>
+                <div className="text-6xl font-black text-[var(--brand-primary)] mb-2">€67</div>
+                <p className="text-sm text-gray-600">per 3 mesi completi</p>
+                
+                <div className="mt-4 pt-4 border-t border-red-200">
+                  <p className="text-lg font-bold text-green-600">✅ Risparmi €50!</p>
+                </div>
+              </div>
             </CardHeader>
 
             <CardContent className="px-8 pb-8 space-y-6">
-            <div className="bg-[var(--brand-primary-light)] rounded-xl p-5 border border-[var(--brand-primary)]/20">
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Dashboard scientifica completa</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Piano nutrizionale settimanale personalizzato</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Ricette con foto AI e istruzioni</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Calcolo BMR e massa grassa</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Lista della spesa automatica</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Tracking peso e progressi</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Piano di allenamento personalizzato</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Workout con warm-up e cool-down</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Schede adattive al tuo livello</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">📸 Analisi AI dei pasti con foto</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">⚖️ Ribilanciamento automatico calorie</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">Tracking allenamenti</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">🔄 Sostituzione ingredienti AI</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">💪 Modifica scheda AI per imprevisti</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">📊 Analisi progressi con foto AI</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)] flex-shrink-0" />
-                  <span className="text-sm text-gray-800 font-medium">🚀 Supporto prioritario</span>
-                </div>
-              </div>
-            </div>
+            
 
               <div className="space-y-4 pt-4 border-t border-gray-200/50">
                 <div className="flex items-center gap-3">
@@ -745,72 +697,73 @@ export default function LandingCheckout() {
                   </div>
                   <p className="font-bold text-gray-900">€{LANDING_OFFER_PRICE.toFixed(2)}</p>
                 </div>
-                <ul className="space-y-2 ml-4">
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Dashboard scientifica completa</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Piano nutrizionale settimanale personalizzato</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Ricette con foto AI e istruzioni</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Calcolo BMR e massa grassa</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Lista della spesa automatica</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Tracking peso e progressi</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Piano di allenamento personalizzato</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Workout con warm-up e cool-down</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Schede adattive al tuo livello</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>📸 Analisi AI dei pasti con foto</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>⚖️ Ribilanciamento automatico calorie</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>Tracking allenamenti</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>🔄 Sostituzione ingredienti AI</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>💪 Modifica scheda AI per imprevisti</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>📊 Analisi progressi con foto AI</span>
-                  </li>
-                  <li className="flex items-start gap-2 text-sm text-gray-600">
-                    <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
-                    <span>🚀 Supporto prioritario</span>
-                  </li>
-                </ul>
+                
+                {/* FEATURES COMPLETE */}
+                <div className="bg-[var(--brand-primary-light)] rounded-xl p-5 border border-[var(--brand-primary)]/20 mt-4">
+                  <p className="font-bold text-gray-900 mb-3 text-center">✨ Cosa Ottieni</p>
+                  <ul className="space-y-2">
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Dashboard scientifica con BMR e massa grassa</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Piano nutrizionale settimanale personalizzato</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Ricette con foto AI e istruzioni dettagliate</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Lista della spesa automatica organizzata</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Tracking peso e progressi in tempo reale</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Piano di allenamento personalizzato settimanale</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Workout con warm-up e cool-down inclusi</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Schede adattive al tuo livello fitness</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>📸 Analisi AI dei pasti con foto</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>⚖️ Ribilanciamento automatico calorie</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>Tracking completo allenamenti</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>🔄 Sostituzione ingredienti AI illimitata</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>💪 Modifica scheda AI per imprevisti</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>📊 Analisi progressi con foto AI</span>
+                    </li>
+                    <li className="flex items-start gap-2 text-sm text-gray-600">
+                      <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0 mt-0.5" />
+                      <span>🚀 Supporto prioritario dedicato</span>
+                    </li>
+                  </ul>
+                </div>
               </div>
 
               {orderBumpSelected && (
