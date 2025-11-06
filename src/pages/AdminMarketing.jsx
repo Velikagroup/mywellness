@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -31,91 +32,175 @@ export default function AdminMarketing() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [campaigns, setCampaigns] = useState([]);
-  const [metrics, setMetrics] = useState([]);
-  const [transactions, setTransactions] = useState([]);
+
+  // Original states, some might be raw data for specific display needs, or deprecated by new structure
+  const [campaigns, setCampaigns] = useState([]); // Raw list of campaigns for 'Campaigns' tab
+  const [metrics, setMetrics] = useState([]); // Raw metrics, potentially deprecated by processed data
+  const [transactions, setTransactions] = useState([]); // Raw transactions
+
   const [showConnectDialog, setShowConnectDialog] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
 
-  const [dateRange, setDateRange] = useState({
-    from: subDays(new Date(), 30),
-    to: new Date()
-  });
+  // Renamed from 'dateRange' to 'selectedDateRange' as per outline implication
+  const [selectedDateRange, setSelectedDateRange] = useState([
+    subDays(new Date(), 30),
+    new Date()
+  ]);
 
-  useEffect(() => {
-    checkAccess();
-  }, []);
+  // NEW states from the outline's implied data structure
+  const [campaignsByPlatform, setCampaignsByPlatform] = useState([]); // Aggregated data
+  const [marketingExpenses, setMarketingExpenses] = useState([]); // New state for expenses
+  const [allMetricsFilteredByDate, setAllMetricsFilteredByDate] = useState([]); // For daily trend and overall stats
 
-  const checkAccess = async () => {
+  // Define the main data loading and processing function
+  const loadMarketingData = async () => {
+    setIsLoading(true);
     try {
-      const currentUser = await base44.auth.me();
-      if (currentUser.role !== 'admin') {
-        navigate(createPageUrl('Dashboard'));
-        return;
-      }
-      setUser(currentUser);
-      await loadData();
-    } catch (error) {
-      navigate(createPageUrl('Home'));
-    }
-    setIsLoading(false);
-  };
+      const campaignsData = await base44.entities.AdCampaign.list();
+      const metricsData = await base44.entities.AdMetric.list();
+      const expensesData = await base44.entities.Expense.filter({
+        category: 'marketing',
+        date: { $gte: selectedDateRange[0].toISOString(), $lte: selectedDateRange[1].toISOString() }
+      });
+      const allTransactionsData = await base44.entities.Transaction.list();
+      const allUsers = await base44.entities.User.list();
 
-  const loadData = async () => {
-    try {
-      const [campaignsData, metricsData, transactionsData] = await Promise.all([
-        base44.entities.AdCampaign.list(),
-        base44.entities.AdMetric.list(),
-        base44.entities.Transaction.list()
-      ]);
-      setCampaigns(campaignsData);
-      setMetrics(metricsData);
-      setTransactions(transactionsData);
+      // Update raw state variables if they are still needed for specific UI parts
+      setCampaigns(campaignsData); // Needed for 'Campaigns' tab list
+      setMetrics(metricsData); // Keep if raw metrics are displayed anywhere, otherwise can be removed
+      setTransactions(allTransactionsData);
+
+      // Filter metrics by the current date range for aggregation
+      const metricsFilteredByDate = metricsData.filter(m => {
+        if (!m.date) return false;
+        const metricDate = parseISO(m.date);
+        return isWithinInterval(metricDate, { start: selectedDateRange[0], end: selectedDateRange[1] });
+      });
+      setAllMetricsFilteredByDate(metricsFilteredByDate); // Store for daily trend and other derived stats
+
+      // NEW: Calculate funnel data per platform (as per outline's simplification)
+      const platforms = ['meta', 'tiktok', 'pinterest', 'google'];
+      const funnelData = {};
+
+      platforms.forEach(platform => {
+        // Simplified distribution: in a real app, users would be tracked by source/UTM
+        const totalUsersForFunnel = allUsers; // Outline doesn't filter users per platform, just divides total
+        funnelData[platform] = {
+          quiz: Math.floor(totalUsersForFunnel.filter(u => u.quiz_completed === true).length / platforms.length),
+          checkout: Math.floor(totalUsersForFunnel.filter(u => u.billing_name && u.billing_name.length > 0).length / platforms.length),
+          purchases: Math.floor(totalUsersForFunnel.filter(u => u.purchased_landing_offer === true).length / platforms.length)
+        };
+      });
+
+      // Group and aggregate data per platform
+      const groupedData = campaignsData.reduce((acc, campaign) => {
+        const platform = campaign.platform;
+        const campaignMetrics = metricsFilteredByDate.filter(m => m.campaign_id === campaign.campaign_id);
+
+        const totalSpend = campaignMetrics.reduce((sum, m) => sum + (m.spend || 0), 0);
+        const totalRevenue = campaignMetrics.reduce((sum, m) => sum + (m.revenue || 0), 0);
+        const totalConversions = campaignMetrics.reduce((sum, m) => sum + (m.conversions || 0), 0);
+        const totalClicks = campaignMetrics.reduce((sum, m) => sum + (m.clicks || 0), 0);
+        const totalImpressions = campaignMetrics.reduce((sum, m) => sum + (m.impressions || 0), 0);
+
+        if (!acc[platform]) {
+          acc[platform] = {
+            platform,
+            campaigns: [],
+            totalSpend: 0,
+            totalRevenue: 0,
+            totalConversions: 0,
+            totalClicks: 0,
+            totalImpressions: 0,
+            funnel: funnelData[platform] || { quiz: 0, checkout: 0, purchases: 0 } // Attach funnel data
+          };
+        }
+
+        // Add campaign details and its aggregated metrics to the platform
+        acc[platform].campaigns.push({
+          ...campaign,
+          metrics: campaignMetrics, // Keep raw campaign metrics if needed for drill-down
+          totalSpend, totalConversions, totalRevenue, totalClicks, totalImpressions
+        });
+
+        // Sum up platform totals
+        acc[platform].totalSpend += totalSpend;
+        acc[platform].totalRevenue += totalRevenue;
+        acc[platform].totalConversions += totalConversions;
+        acc[platform].totalClicks += totalClicks;
+        acc[platform].totalImpressions += totalImpressions;
+
+        return acc;
+      }, {});
+
+      setCampaignsByPlatform(Object.values(groupedData));
+      setMarketingExpenses(expensesData);
+
     } catch (error) {
       console.error('Error loading marketing data:', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Filter metrics by date range
-  const filteredMetrics = metrics.filter(m => {
-    if (!m.date) return false;
-    const metricDate = parseISO(m.date);
-    return isWithinInterval(metricDate, { start: dateRange.from, end: dateRange.to });
-  });
+  // 1. Initial access check and first data load on component mount
+  useEffect(() => {
+    const checkUserAccessAndLoad = async () => {
+      setIsLoading(true); // Ensure loading is true at the start of the access check
+      try {
+        const currentUser = await base44.auth.me();
+        if (currentUser.role !== 'admin') {
+          navigate(createPageUrl('Dashboard'));
+          return; // Stop execution if not admin
+        }
+        setUser(currentUser);
+        // After user access is confirmed, perform the initial data load
+        await loadMarketingData();
+      } catch (error) {
+        console.error("Access check failed:", error);
+        navigate(createPageUrl('Home')); // Redirect if access fails
+      }
+      // setIsLoading(false) is handled by loadMarketingData's finally block
+      // If `navigate` occurs, component unmounts, so no need to set isLoading here.
+    };
+    checkUserAccessAndLoad();
+  }, []); // Empty dependency array means this runs once on mount
 
-  // Calculate totals
-  const totalSpend = filteredMetrics.reduce((sum, m) => sum + (m.spend || 0), 0);
-  const totalRevenue = filteredMetrics.reduce((sum, m) => sum + (m.revenue || 0), 0);
-  const totalConversions = filteredMetrics.reduce((sum, m) => sum + (m.conversions || 0), 0);
-  const totalClicks = filteredMetrics.reduce((sum, m) => sum + (m.clicks || 0), 0);
-  const totalImpressions = filteredMetrics.reduce((sum, m) => sum + (m.impressions || 0), 0);
+  // 2. Effect to reload data when selectedDateRange or user changes (e.g., after initial user fetch)
+  useEffect(() => {
+    // Only load if user is already authenticated to prevent unnecessary calls before `setUser`
+    if (user) {
+      loadMarketingData();
+    }
+  }, [selectedDateRange, user]); // Re-run when date range changes or user object is set/changes
+
+  // --- Derived Calculations from new state structure ---
+  // Summing across all platforms for overall stats
+  const totalSpend = campaignsByPlatform.reduce((sum, p) => sum + p.totalSpend, 0);
+  const totalRevenue = campaignsByPlatform.reduce((sum, p) => sum + p.totalRevenue, 0);
+  const totalConversions = campaignsByPlatform.reduce((sum, p) => sum + p.totalConversions, 0);
+  const totalClicks = campaignsByPlatform.reduce((sum, p) => sum + p.totalClicks, 0);
+  const totalImpressions = campaignsByPlatform.reduce((sum, p) => sum + p.totalImpressions, 0);
 
   const overallROAS = totalSpend > 0 ? (totalRevenue / totalSpend).toFixed(2) : 0;
   const overallCPA = totalConversions > 0 ? (totalSpend / totalConversions).toFixed(2) : 0;
   const overallCTR = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : 0;
   const netProfit = totalRevenue - totalSpend;
 
-  // Platform breakdown
-  const platformData = ['meta', 'tiktok', 'pinterest', 'google'].map(platform => {
-    const platformMetrics = filteredMetrics.filter(m => m.platform === platform);
-    const spend = platformMetrics.reduce((sum, m) => sum + (m.spend || 0), 0);
-    const revenue = platformMetrics.reduce((sum, m) => sum + (m.revenue || 0), 0);
-    const conversions = platformMetrics.reduce((sum, m) => sum + (m.conversions || 0), 0);
-    
-    return {
-      name: platform.charAt(0).toUpperCase() + platform.slice(1),
-      spend: Math.round(spend),
-      revenue: Math.round(revenue),
-      conversions: conversions,
-      roas: spend > 0 ? (revenue / spend).toFixed(2) : 0
-    };
-  }).filter(p => p.spend > 0);
+  // Platform breakdown for charts and ROAS list
+  const platformData = campaignsByPlatform.map(p => ({
+    name: p.platform.charAt(0).toUpperCase() + p.platform.slice(1),
+    spend: Math.round(p.totalSpend),
+    revenue: Math.round(p.totalRevenue),
+    conversions: p.totalConversions,
+    roas: p.totalSpend > 0 ? (p.totalRevenue / p.totalSpend).toFixed(2) : 0
+  })).filter(p => p.spend > 0 || p.revenue > 0); // Show platforms with activity
 
-  // Daily trend
+  // Daily trend from the aggregated and date-filtered metrics
   const getDailyTrend = () => {
     const dailyMap = {};
-    filteredMetrics.forEach(m => {
-      const date = m.date;
+    allMetricsFilteredByDate.forEach(m => {
+      const date = m.date; // m.date is already an ISO string from the API
       if (!dailyMap[date]) {
         dailyMap[date] = { date, spend: 0, revenue: 0, conversions: 0 };
       }
@@ -127,7 +212,7 @@ export default function AdminMarketing() {
     return Object.values(dailyMap)
       .sort((a, b) => new Date(a.date) - new Date(b.date))
       .map(d => ({
-        date: format(parseISO(d.date), 'dd MMM', { locale: it }),
+        date: format(parseISO(d.date), 'dd MMM', { locale: it }), // Parse ISO string to Date object
         spend: Math.round(d.spend),
         revenue: Math.round(d.revenue),
         roas: d.spend > 0 ? (d.revenue / d.spend).toFixed(2) : 0
@@ -155,10 +240,13 @@ export default function AdminMarketing() {
       const response = await base44.functions.invoke('syncAdMetrics', { platform });
       if (response.success) {
         alert(`✅ Metriche sincronizzate da ${platform}`);
-        await loadData();
+        await loadMarketingData(); // Re-load all data to update views
+      } else {
+        alert(`Errore durante la sincronizzazione da ${platform}: ${response.error || 'Errore sconosciuto'}`);
       }
     } catch (error) {
       alert('Errore durante la sincronizzazione: ' + error.message);
+      console.error('Error syncing metrics:', error);
     }
   };
 
@@ -355,7 +443,7 @@ export default function AdminMarketing() {
                         <div className="w-full bg-gray-200 rounded-full h-2">
                           <div
                             className={`h-2 rounded-full ${platform.roas >= 2 ? 'bg-green-600' : platform.roas >= 1 ? 'bg-orange-600' : 'bg-red-600'}`}
-                            style={{ width: `${Math.min((platform.roas / 3) * 100, 100)}%` }}
+                            style={{ width: `${Math.min((parseFloat(platform.roas) / 3) * 100, 100)}%` }}
                           ></div>
                         </div>
                         <div className="flex justify-between text-xs text-gray-500">
@@ -417,8 +505,9 @@ export default function AdminMarketing() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {['Meta (Facebook/Instagram)', 'TikTok Ads', 'Pinterest Ads', 'Google Ads'].map((platformName, index) => {
                 const platformKey = platformName.split(' ')[0].toLowerCase();
-                const isConnected = campaigns.some(c => c.platform === platformKey);
-                
+                // Check connectivity using the new grouped data structure
+                const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+
                 return (
                   <Card key={index} className="bg-white/80 backdrop-blur-sm">
                     <CardContent className="p-6">
@@ -445,6 +534,7 @@ export default function AdminMarketing() {
                           </Button>
                           <div className="p-3 bg-gray-50 rounded-lg">
                             <p className="text-xs text-gray-600">
+                              {/* TODO: Implement last sync date from backend or metric data */}
                               Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
                             </p>
                           </div>
@@ -488,12 +578,16 @@ export default function AdminMarketing() {
                 <CardTitle>Campagne Attive</CardTitle>
               </CardHeader>
               <CardContent>
+                {/* Use the `campaigns` state, which is now populated by `loadMarketingData` */}
                 {campaigns.length > 0 ? (
                   <div className="space-y-4">
                     {campaigns.filter(c => c.status === 'active').map((campaign) => {
-                      const campaignMetrics = filteredMetrics.filter(m => m.campaign_id === campaign.campaign_id);
-                      const campaignSpend = campaignMetrics.reduce((sum, m) => sum + (m.spend || 0), 0);
-                      const campaignRevenue = campaignMetrics.reduce((sum, m) => sum + (m.revenue || 0), 0);
+                      // Find aggregated metrics for this campaign from campaignsByPlatform
+                      const platformDataForCampaign = campaignsByPlatform.find(p => p.platform === campaign.platform);
+                      const campaignAggregated = platformDataForCampaign?.campaigns.find(c => c.id === campaign.id);
+
+                      const campaignSpend = campaignAggregated?.totalSpend || 0;
+                      const campaignRevenue = campaignAggregated?.totalRevenue || 0;
                       const campaignROAS = campaignSpend > 0 ? (campaignRevenue / campaignSpend).toFixed(2) : 0;
 
                       return (

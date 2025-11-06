@@ -71,6 +71,15 @@ export default function AdminAnalytics() {
     notes: ''
   });
 
+  // NEW STATE for the analytics summary
+  const [stats, setStats] = useState({
+    totalUsers: 0, trialUsers: 0, activeUsers: 0, paidUsers: 0,
+    quizCompletedUsers: 0, checkoutStartedUsers: 0, landingOfferPurchases: 0,
+    totalRevenue: 0, mrr: 0, retentionRate: 0,
+    baseUsers: 0, proUsers: 0, premiumUsers: 0,
+    totalExpenses: 0, netProfit: 0, monthlyExpenses: 0
+  });
+
   useEffect(() => {
     checkAccess();
   }, []);
@@ -83,33 +92,128 @@ export default function AdminAnalytics() {
         return;
       }
       setUser(currentUser);
-      await loadData();
+      await loadData(); // This loads ALL users, expenses, transactions initially
     } catch (error) {
       navigate(createPageUrl('Home'));
     }
-    setIsLoading(false);
+    // setIsLoading(false); // This will be set to false after loadAnalytics completes
   };
 
   const loadData = async () => {
     try {
+      // Fetch ALL data, regardless of date range for initial full lists
       const [usersData, expensesData, transactionsData] = await Promise.all([
         base44.entities.User.list(),
-        base44.entities.Expense.list(),
+        base44.entities.Expense.list(), // Fetch all expenses
         base44.entities.Transaction.list()
       ]);
       setUsers(usersData);
-
-      // Separate actual expenses from recurring variable expense templates
-      const actualExpenses = expensesData.filter(e => !e.recurring_variable || (e.recurring_variable && e.parent_expense_id));
-      const parentRecurringVariableExpenses = expensesData.filter(e => e.recurring_variable && !e.parent_expense_id);
-
-      setExpenses(actualExpenses); // These are the expenses to be filtered by date and used in calculations
-      setRecurringExpenses(parentRecurringVariableExpenses); // These are the parent definitions for variable expenses
       setTransactions(transactionsData);
+
+      // Store ALL expenses in the `expenses` state for general use and filtering
+      setExpenses(expensesData);
+
+      // Filter out parent recurring variable expenses for the specific `recurringExpenses` state
+      const parentRecurringVariableExpenses = expensesData.filter(e => e.recurring_variable && !e.parent_expense_id);
+      setRecurringExpenses(parentRecurringVariableExpenses);
     } catch (error) {
       console.error('Error loading data:', error);
     }
   };
+
+  // NEW useEffect block for specific analytics calculations from the outline
+  useEffect(() => {
+    const loadAnalytics = async () => {
+      setIsLoading(true); // Indicate loading for analytics as well
+
+      try {
+        // Fetch users and transactions - the outline implies refetching or using the "all" lists
+        // and then filtering them client-side for the current dateRange
+        const allUsers = await base44.entities.User.list();
+        const allTransactions = await base44.entities.Transaction.list();
+
+        // Explicitly server-side filter expenses for this stats calculation, as per outline
+        const fetchedExpenses = await base44.entities.Expense.filter({
+          date: { $gte: dateRange.from.toISOString(), $lte: dateRange.to.toISOString() }
+        });
+
+        // Filter users and transactions based on dateRange client-side
+        const currentUsersForStats = allUsers.filter(u => {
+          if (!u.created_date) return false;
+          const userDate = parseISO(u.created_date);
+          return isWithinInterval(userDate, { start: dateRange.from, end: dateRange.to });
+        });
+
+        const currentTransactionsForStats = allTransactions.filter(t => {
+            if (!t.payment_date) return false;
+            const transactionDate = parseISO(t.payment_date);
+            return isWithinInterval(transactionDate, { start: dateRange.from, end: dateRange.to });
+        });
+
+        const totalUsers = currentUsersForStats.length;
+        const trialUsers = currentUsersForStats.filter(u => u.subscription_status === 'trial' || u.subscription_status === 'pending_trial').length;
+        const activeUsers = currentUsersForStats.filter(u => u.subscription_status === 'active').length;
+        const paidUsers = activeUsers; // Assuming paid users are active subscribers
+
+        // NEW: Landing Offer Funnel Stats
+        // These relate to users created within the selected date range
+        const quizCompletedUsers = currentUsersForStats.filter(u => u.quiz_completed === true).length;
+        const checkoutStartedUsers = currentUsersForStats.filter(u => u.billing_name && u.billing_name.length > 0).length;
+        const landingOfferPurchases = currentUsersForStats.filter(u => u.purchased_landing_offer === true).length;
+
+        const totalRevenue = currentTransactionsForStats
+          .filter(t => t.status === 'succeeded' && t.amount > 0) // Filtering out potential negative amounts for refunds
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        const totalExpenses = fetchedExpenses.reduce((sum, e) => sum + e.amount, 0); // Using the server-filtered expenses
+        const netProfit = totalRevenue - totalExpenses;
+
+        const baseUsers = currentUsersForStats.filter(u => u.subscription_plan === 'base' && u.subscription_status === 'active').length;
+        const proUsers = currentUsersForStats.filter(u => u.subscription_plan === 'pro' && u.subscription_status === 'active').length;
+        const premiumUsers = currentUsersForStats.filter(u => u.subscription_plan === 'premium' && u.subscription_status === 'active').length;
+
+        // MRR: Monthly Recurring Revenue. Outline calculates from 'monthly' billing_period transactions.
+        const mrr = currentTransactionsForStats
+          .filter(t => t.status === 'succeeded' && t.type !== 'refund' && t.billing_period === 'monthly')
+          .reduce((sum, t) => sum + t.amount, 0);
+
+        // Monthly expenses: Outline filters for recurring=true and monthly frequency from the already fetched (date-filtered) expenses.
+        const monthlyExpenses = fetchedExpenses
+          .filter(e => e.recurring === true && e.recurring_frequency === 'monthly')
+          .reduce((sum, e) => sum + e.amount, 0);
+
+        // Retention rate: Outline calculates (activeUsers / totalUsers) * 100 based on the currentUsersForStats.
+        const retentionRate = totalUsers > 0 ? (activeUsers / totalUsers) * 100 : 0;
+
+        setStats({
+          totalUsers,
+          trialUsers,
+          activeUsers,
+          paidUsers,
+          quizCompletedUsers,
+          checkoutStartedUsers,
+          landingOfferPurchases,
+          totalRevenue,
+          mrr,
+          retentionRate,
+          baseUsers,
+          proUsers,
+          premiumUsers,
+          totalExpenses,
+          netProfit,
+          monthlyExpenses
+        });
+
+      } catch (error) {
+        console.error('Error loading analytics:', error);
+      }
+      setIsLoading(false); // Set to false after this analytics load
+    };
+
+    if (dateRange.from && dateRange.to) { // Only run if date range is defined
+        loadAnalytics();
+    }
+  }, [dateRange]); // Rerun when date range changes
 
   const handleSaveExpense = async () => {
     // If it's a recurring variable expense template, amount is not required for the template itself
@@ -133,7 +237,7 @@ export default function AdminAnalytics() {
 
       await base44.entities.Expense.create(payload);
 
-      await loadData();
+      await loadData(); // Reload all general data
       setShowAddExpense(false);
       setExpenseForm({
         category: 'server',
@@ -195,7 +299,7 @@ export default function AdminAnalytics() {
     setIsSavingExpense(false);
   };
 
-  // Filter users and expenses by date range
+  // Filter users and expenses by date range (these use the *all* states)
   const filteredUsers = users.filter(u => {
     if (!u.created_date) return false;
     const userDate = parseISO(u.created_date);
@@ -205,23 +309,24 @@ export default function AdminAnalytics() {
   const filteredExpenses = expenses.filter(e => {
     if (!e.date) return false;
     const expenseDate = parseISO(e.date);
-    return isWithinInterval(expenseDate, { start: dateRange.from, end: dateRange.to });
+    // Only include actual expenses (not parent templates for variable expenses)
+    return isWithinInterval(expenseDate, { start: dateRange.from, end: dateRange.to }) && (!e.recurring_variable || e.parent_expense_id);
   });
 
-  // Filter transactions by date range
+  // Filter transactions by date range (these use the *all* states)
   const filteredTransactions = transactions.filter(t => {
     if (!t.payment_date) return false;
     const transactionDate = parseISO(t.payment_date);
     return isWithinInterval(transactionDate, { start: dateRange.from, end: dateRange.to });
   });
 
-  // Analytics Calculations
+  // Analytics Calculations (using the existing filtered data where applicable, separate from `stats`)
   const activeSubscriptions = filteredUsers.filter(u => u.subscription_status === 'active').length;
   const trialUsers = filteredUsers.filter(u => u.subscription_status === 'trial').length;
   const cancelledUsers = filteredUsers.filter(u => u.subscription_status === 'cancelled').length;
   const expiredUsers = filteredUsers.filter(u => u.subscription_status === 'expired').length;
 
-  // MRR Calculation
+  // MRR Calculation (Existing, based on price map)
   const PRICE_MAP = {
     base: { monthly: 19, yearly: 15.2 },
     pro: { monthly: 29, yearly: 23.2 },
@@ -240,11 +345,11 @@ export default function AdminAnalytics() {
     return recurringRevenue;
   };
 
-  const mrr = calculateMRR();
-  const arr = mrr * 12;
+  const mrrFromPriceMap = calculateMRR();
+  const arr = mrrFromPriceMap * 12;
 
   // Calculate actual revenue from transactions
-  const totalRevenue = filteredTransactions
+  const totalRevenueExisting = filteredTransactions
     .filter(t => t.status === 'succeeded' && t.amount > 0)
     .reduce((sum, t) => sum + t.amount, 0);
 
@@ -252,7 +357,7 @@ export default function AdminAnalytics() {
     .filter(t => t.status === 'refunded')
     .reduce((sum, t) => sum + Math.abs(t.amount), 0);
 
-  const netRevenue = totalRevenue - totalRefunds;
+  const netRevenue = totalRevenueExisting - totalRefunds;
 
   // Subscription breakdown by plan
   const planBreakdown = {
@@ -262,7 +367,7 @@ export default function AdminAnalytics() {
   };
 
   // Churn rate
-  const recentCancellations = users.filter(u => {
+  const recentCancellations = users.filter(u => { // Uses 'users' (all users)
     if (!u.updated_date) return false;
     const updateDate = parseISO(u.updated_date);
     return isWithinInterval(updateDate, { start: dateRange.from, end: dateRange.to }) &&
@@ -270,10 +375,10 @@ export default function AdminAnalytics() {
   }).length;
   const churnRate = activeSubscriptions > 0 ? ((recentCancellations / activeSubscriptions) * 100).toFixed(1) : 0;
 
-  // Retention rate
-  const retentionRate = activeSubscriptions > 0 ? (100 - parseFloat(churnRate)).toFixed(1) : 0;
+  // Retention rate (Existing, derived from churn)
+  const retentionRateExisting = activeSubscriptions > 0 ? (100 - parseFloat(churnRate)).toFixed(1) : 0;
 
-  // Total expenses
+  // Total expenses (Existing)
   const monthlyRecurringExpenses = filteredExpenses
     .filter(e => e.recurring && e.recurring_frequency === 'monthly')
     .reduce((sum, e) => sum + e.amount, 0);
@@ -284,9 +389,9 @@ export default function AdminAnalytics() {
 
   const totalMonthlyExpenses = monthlyRecurringExpenses + yearlyRecurringExpensesMonthly;
 
-  // Profit
-  const monthlyProfit = mrr - totalMonthlyExpenses;
-  const profitMargin = mrr > 0 ? ((monthlyProfit / mrr) * 100).toFixed(1) : 0;
+  // Profit (Existing)
+  const monthlyProfit = mrrFromPriceMap - totalMonthlyExpenses;
+  const profitMargin = mrrFromPriceMap > 0 ? ((monthlyProfit / mrrFromPriceMap) * 100).toFixed(1) : 0;
 
   // Conversion rate
   const totalTrialsStarted = filteredUsers.filter(u =>
@@ -306,7 +411,7 @@ export default function AdminAnalytics() {
       const monthStart = currentDate;
       const monthEnd = endOfMonth(currentDate);
 
-      const monthRevenue = transactions
+      const monthRevenue = transactions // Uses ALL transactions
         .filter(t => {
           if (!t.payment_date || t.status !== 'succeeded') return false;
           const tDate = parseISO(t.payment_date);
@@ -314,7 +419,7 @@ export default function AdminAnalytics() {
         })
         .reduce((sum, t) => sum + t.amount, 0);
 
-      const activeInMonth = users.filter(u => {
+      const activeInMonth = users.filter(u => { // Uses ALL users
         if (!u.created_date) return false;
         const createdDate = parseISO(u.created_date);
         return createdDate <= monthEnd &&
@@ -337,7 +442,7 @@ export default function AdminAnalytics() {
   // Cash flow projection
   const getCashFlowProjection = () => {
     const projections = [];
-    const currentMRR = mrr;
+    const currentMRR = mrrFromPriceMap;
     const growthRate = 1.15; // 15% monthly growth assumption
 
     for (let i = 1; i <= 12; i++) {
@@ -503,7 +608,7 @@ export default function AdminAnalytics() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Entrate Totali (Periodo)</p>
-                  <p className="text-3xl font-bold text-gray-900">€{totalRevenue.toLocaleString('it-IT')}</p>
+                  <p className="text-3xl font-bold text-gray-900">€{totalRevenueExisting.toLocaleString('it-IT')}</p>
                   <p className="text-xs text-gray-500 mt-1">Netto: €{netRevenue.toLocaleString('it-IT')}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -518,7 +623,7 @@ export default function AdminAnalytics() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">MRR (Ricorrente Mensile)</p>
-                  <p className="text-3xl font-bold text-gray-900">€{mrr.toLocaleString('it-IT')}</p>
+                  <p className="text-3xl font-bold text-gray-900">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
                   <p className="text-xs text-gray-500 mt-1">ARR: €{arr.toLocaleString('it-IT')}</p>
                 </div>
                 <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
@@ -533,7 +638,7 @@ export default function AdminAnalytics() {
               <div className="flex items-center justify-between">
                 <div>
                   <p className="text-sm text-gray-500 mb-1">Retention Rate</p>
-                  <p className="text-3xl font-bold text-green-600">{retentionRate}%</p>
+                  <p className="text-3xl font-bold text-green-600">{retentionRateExisting}%</p>
                   <p className="text-xs text-gray-500 mt-1">Churn: {churnRate}%</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -703,7 +808,7 @@ export default function AdminAnalytics() {
           <TabsContent value="financial" className="space-y-6">
             <div className="flex justify-end gap-3">
               <Button
-                onClick={() => setShowManageRecurringVariableExpenses(true)} // NEW BUTTON
+                onClick={() => setShowManageRecurringVariableExpenses(true)}
                 variant="outline"
               >
                 <Zap className="w-4 h-4 mr-2" />
@@ -722,7 +827,7 @@ export default function AdminAnalytics() {
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <p className="text-sm text-gray-500 mb-2">Entrate Mensili</p>
-                  <p className="text-3xl font-bold text-green-600">€{mrr.toLocaleString('it-IT')}</p>
+                  <p className="text-3xl font-bold text-green-600">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
                 </CardContent>
               </Card>
               <Card className="bg-white/80 backdrop-blur-sm">
@@ -906,7 +1011,7 @@ export default function AdminAnalytics() {
                   </div>
                   <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
                     <p className="text-sm text-green-700 mb-1">Retention Rate</p>
-                    <p className="text-3xl font-bold text-green-900">{retentionRate}%</p>
+                    <p className="text-3xl font-bold text-green-900">{retentionRateExisting}%</p>
                   </div>
                   <div className="p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg border border-red-200">
                     <p className="text-sm text-red-700 mb-1">Churn Rate</p>
@@ -915,7 +1020,7 @@ export default function AdminAnalytics() {
                   <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
                     <p className="text-sm text-purple-700 mb-1">ARPU</p>
                     <p className="text-3xl font-bold text-purple-900">
-                      €{activeSubscriptions > 0 ? (mrr / activeSubscriptions).toFixed(0) : 0}
+                      €{activeSubscriptions > 0 ? (mrrFromPriceMap / activeSubscriptions).toFixed(0) : 0}
                     </p>
                   </div>
                 </div>
@@ -991,7 +1096,7 @@ export default function AdminAnalytics() {
                     €{cashFlowProjection[5]?.revenue.toLocaleString('it-IT')}
                   </p>
                   <p className="text-xs text-green-600 mt-2">
-                    +{((cashFlowProjection[5]?.revenue / mrr - 1) * 100).toFixed(0)}% crescita
+                    +{((cashFlowProjection[5]?.revenue / mrrFromPriceMap - 1) * 100).toFixed(0)}% crescita
                   </p>
                 </CardContent>
               </Card>
@@ -1003,7 +1108,7 @@ export default function AdminAnalytics() {
                     €{cashFlowProjection[11]?.revenue.toLocaleString('it-IT')}
                   </p>
                   <p className="text-xs text-blue-600 mt-2">
-                    +{((cashFlowProjection[11]?.revenue / mrr - 1) * 100).toFixed(0)}% crescita
+                    +{((cashFlowProjection[11]?.revenue / mrrFromPriceMap - 1) * 100).toFixed(0)}% crescita
                   </p>
                 </CardContent>
               </Card>
