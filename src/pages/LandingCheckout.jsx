@@ -875,6 +875,23 @@ export default function LandingCheckout() {
           </Card>
         </div>
       </div>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 mt-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center space-y-2">
+            <p className="text-sm font-semibold text-gray-700">
+              © VELIKA GROUP LLC. All Rights Reserved.
+            </p>
+            <p className="text-xs text-gray-500">
+              30 N Gould St 32651 Sheridan, WY 82801, United States
+            </p>
+            <p className="text-xs text-gray-500">
+              EIN: 36-5141800 - velika.03@outlook.it
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
