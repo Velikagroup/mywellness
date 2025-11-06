@@ -168,7 +168,7 @@ export default function AdminAnalytics() {
           .filter(t => t.status === 'succeeded' && t.amount > 0) // Filtering out potential negative amounts for refunds
           .reduce((sum, t) => sum + t.amount, 0);
 
-        const totalExpenses = fetchedExpenses.reduce((sum, e => sum + e.amount, 0); // Using the server-filtered expenses
+        const totalExpenses = fetchedExpenses.reduce((sum, e) => sum + e.amount, 0); // Using the server-filtered expenses
         const netProfit = totalRevenue - totalExpenses;
 
         const baseUsers = currentUsersForStats.filter(u => u.subscription_plan === 'base' && u.subscription_status === 'active').length;
@@ -911,8 +911,7 @@ export default function AdminAnalytics() {
                           <Tooltip formatter={(value) => `€${value}`} />
                         </PieChart>
                       </ResponsiveContainer>
-                    </div>
-                  ) : (
+                    ) : (
                     <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
                   )}
                 </CardContent>
