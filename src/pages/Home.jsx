@@ -47,8 +47,8 @@ export default function Home() {
 
   useEffect(() => {
     const referenceDate = new Date('2025-10-01T19:32:00Z').getTime();
-    const baseKg = 103567;
-    const incrementIntervalSeconds = 5;
+    const baseKg = 203112; // Updated to get ~45136 users (45136 * 4.5)
+    const incrementIntervalSeconds = 10; // Increment every 10 seconds
 
     const calculateLiveStats = () => {
       const now = Date.now();
@@ -70,7 +70,7 @@ export default function Home() {
     };
 
     calculateLiveStats();
-    const interval = setInterval(calculateLiveStats, 1000);
+    const interval = setInterval(calculateLiveStats, 10000); // Update every 10 seconds
 
     return () => clearInterval(interval);
   }, []);
