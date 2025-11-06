@@ -1109,7 +1109,7 @@ export default function AdminAnalytics() {
               <CardContent>
                 <div className="h-96">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={cashFlowProjection}>
+                    <BarChart data={cashFlowProjection} barCategoryGap="20%" barSize={40}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                       <XAxis dataKey="month" stroke="#6b7280" />
                       <YAxis stroke="#6b7280" />
