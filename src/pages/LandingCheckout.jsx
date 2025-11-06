@@ -185,7 +185,7 @@ const countries = [
   { code: 'BQ', name: 'Caraibi Olandesi', dial_code: '+599' },
   { code: 'PR', name: 'Porto Rico', dial_code: '+1' },
   { code: 'VI', name: 'Isole Vergini Americane', dial_code: '+1' },
-];
+].sort((a, b) => a.name.localeCompare(b.name, 'it'));
 
 const countryCodeToFlag = (code) => {
   if (!code) return '';
