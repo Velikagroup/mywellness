@@ -507,7 +507,7 @@ export default function AdminMarketing() {
           <TabsContent value="platforms" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
-                const platformKey = platformDisplayName.toLowerCase(); // Use lower case for keys
+                const platformKey = platformDisplayName.toLowerCase();
                 // Check connectivity using the new grouped data structure
                 const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
                 
@@ -537,50 +537,49 @@ export default function AdminMarketing() {
                         </div>
                       </div>
 
+                      {/* Metriche Piattaforma - SEMPRE VISIBILI */}
+                      <div className="grid grid-cols-3 gap-3 mb-4">
+                        <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+                          <p className="text-xs text-red-600 font-semibold mb-1">Spesa</p>
+                          <p className="text-lg font-bold text-red-700">€{platformSpend.toFixed(0)}</p>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+                          <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
+                          <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
+                        </div>
+                        <div className={`rounded-lg p-3 border ${
+                          platformROAS >= 2 ? 'bg-green-50 border-green-100' : 
+                          platformROAS >= 1 ? 'bg-orange-50 border-orange-100' : 
+                          'bg-red-50 border-red-100'
+                        }`}>
+                          <p className={`text-xs font-semibold mb-1 ${
+                            platformROAS >= 2 ? 'text-green-600' : 
+                            platformROAS >= 1 ? 'text-orange-600' : 
+                            'text-red-600'
+                          }`}>ROAS</p>
+                          <p className={`text-lg font-bold ${
+                            platformROAS >= 2 ? 'text-green-700' : 
+                            platformROAS >= 1 ? 'text-orange-700' : 
+                            'text-red-700'
+                          }`}>{platformROAS}x</p>
+                        </div>
+                      </div>
+
                       {isConnected ? (
-                        <>
-                          {/* NEW: Metriche Piattaforma */}
-                          <div className="grid grid-cols-3 gap-3 mb-4">
-                            <div className="bg-red-50 rounded-lg p-3 border border-red-100">
-                              <p className="text-xs text-red-600 font-semibold mb-1">Spesa</p>
-                              <p className="text-lg font-bold text-red-700">€{platformSpend.toFixed(0)}</p>
-                            </div>
-                            <div className="bg-green-50 rounded-lg p-3 border border-green-100">
-                              <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
-                              <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
-                            </div>
-                            <div className={`rounded-lg p-3 border ${
-                              platformROAS >= 2 ? 'bg-green-50 border-green-100' : 
-                              platformROAS >= 1 ? 'bg-orange-50 border-orange-100' : 
-                              'bg-red-50 border-red-100'
-                            }`}>
-                              <p className={`text-xs font-semibold mb-1 ${
-                                platformROAS >= 2 ? 'text-green-600' : 
-                                platformROAS >= 1 ? 'text-orange-600' : 
-                                'text-red-600'
-                              }`}>ROAS</p>
-                              <p className={`text-lg font-bold ${
-                                platformROAS >= 2 ? 'text-green-700' : 
-                                platformROAS >= 1 ? 'text-orange-700' : 
-                                'text-red-700'
-                              }`}>{platformROAS}x</p>
-                            </div>
+                        <div className="space-y-3">
+                          <Button
+                            onClick={() => handleSyncMetrics(platformKey)}
+                            className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                          >
+                            <Zap className="w-4 h-4 mr-2" />
+                            Sincronizza Metriche
+                          </Button>
+                          <div className="p-3 bg-gray-50 rounded-lg">
+                            <p className="text-xs text-gray-600">
+                              Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
+                            </p>
                           </div>
-                          <div className="space-y-3">
-                            <Button
-                              onClick={() => handleSyncMetrics(platformKey)}
-                              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                            >
-                              <Zap className="w-4 h-4 mr-2" />
-                              Sincronizza Metriche
-                            </Button>
-                            <div className="p-3 bg-gray-50 rounded-lg">
-                              <p className="text-xs text-gray-600">
-                                Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
-                              </p>
-                            </div>
-                          </div>
-                        </>
+                        </div>
                       ) : (
                         <Button
                           onClick={() => handleConnectPlatform(platformKey)}
@@ -592,7 +591,7 @@ export default function AdminMarketing() {
                         </Button>
                       )}
 
-                      {/* NEW: Landing Funnel per Social */}
+                      {/* Landing Funnel per Social */}
                       <div className="mt-6 pt-6 border-t border-gray-200">
                         <h4 className="text-sm font-bold text-gray-900 mb-3">Funnel Landing Offer</h4>
                         <div className="space-y-2">
