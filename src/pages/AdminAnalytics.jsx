@@ -659,7 +659,7 @@ export default function AdminAnalytics() {
                   <p className={`text-3xl font-bold ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     €{monthlyProfit.toLocaleString('it-IT')}
                   </p>
-                  <p className="text-xs text-gray-500 mt-1">Margine: {profitMargin}%</p>
+                <p className="text-xs text-gray-500 mt-1">Margine: {profitMargin}%</p>
                 </div>
                 <div className={`w-12 h-12 rounded-full flex items-center justify-center ${monthlyProfit >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
                   <DollarSign className={`w-6 h-6 ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
@@ -911,10 +911,10 @@ export default function AdminAnalytics() {
                           <Tooltip formatter={(value) => `€${value}`} />
                         </PieChart>
                       </ResponsiveContainer>
-                    </div>
-                  ) : (
-                    <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
-                  )}
+                    ) : (
+                      <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
+                    )}
+                  </div>
                 </CardContent>
               </Card>
 
