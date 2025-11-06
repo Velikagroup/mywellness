@@ -299,10 +299,14 @@ export default function LandingCheckout() {
     const initializePaymentRequest = async () => {
       try {
         console.log('🔍 Initializing Payment Request...');
-        console.log('📱 User Agent:', navigator.userAgent);
-        console.log('🌐 Platform:', navigator.platform);
-        console.log('🔧 Is Safari:', /^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-        console.log('📲 Is iOS:', /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+        
+        // Check if Payment Request API is available
+        if (!window.PaymentRequest) {
+          console.log('❌ Payment Request API not available in this browser');
+          setShowApplePay(false);
+          setShowGooglePay(false);
+          return;
+        }
         
         const pr = stripe.paymentRequest({
           country: 'IT',
@@ -333,37 +337,15 @@ export default function LandingCheckout() {
             console.log('✅ Google Pay is available');
             setShowGooglePay(true);
           }
-          
-          if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
-            console.log('⚠️ Payment Request available but no specific wallet detected - using platform detection');
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-            const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
-            
-            if (isIOS || isSafari || isMacOS) {
-              console.log('🍎 iOS/Safari/macOS detected - showing Apple Pay');
-              setShowApplePay(true);
-            } else {
-              console.log('🤖 Showing Google Pay as default');
-              setShowGooglePay(true);
-            }
-          }
         } else {
-          console.log('❌ No digital wallet available - canMakePayment returned null/false');
-          console.log('⚙️ Trying fallback detection anyway...');
-          
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-          const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
-          
-          if (isIOS || isSafari || isMacOS) {
-            console.log('🍎 iOS/Safari/macOS detected via fallback - attempting to show Apple Pay');
-            setShowApplePay(true);
-            setPaymentRequest(pr); // Still set paymentRequest even if canMakePayment was false
-          }
+          console.log('❌ No digital wallet available');
+          setShowApplePay(false);
+          setShowGooglePay(false);
         }
       } catch (error) {
         console.error('❌ Payment Request initialization error:', error);
+        setShowApplePay(false);
+        setShowGooglePay(false);
       }
     };
 
