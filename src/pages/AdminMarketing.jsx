@@ -84,11 +84,16 @@ export default function AdminMarketing() {
 
       platforms.forEach(platform => {
         // Simplified distribution: in a real app, users would be tracked by source/UTM
-        const totalUsersForFunnel = allUsers; // Outline doesn't filter users per platform, just divides total
+        // For now, distribute total users by platform. This is a placeholder.
+        const usersForPlatform = allUsers.filter(u => u.acquisition_platform === platform); // Assume users have an acquisition_platform
+        // If acquisition_platform is not available, distribute equally:
+        // const totalUsersForFunnel = allUsers;
+        // const numUsersPerPlatform = Math.floor(totalUsersForFunnel.length / platforms.length);
+
         funnelData[platform] = {
-          quiz: Math.floor(totalUsersForFunnel.filter(u => u.quiz_completed === true).length / platforms.length),
-          checkout: Math.floor(totalUsersForFunnel.filter(u => u.billing_name && u.billing_name.length > 0).length / platforms.length),
-          purchases: Math.floor(totalUsersForFunnel.filter(u => u.purchased_landing_offer === true).length / platforms.length)
+          quiz: usersForPlatform.filter(u => u.quiz_completed === true).length,
+          checkout: usersForPlatform.filter(u => u.billing_name && u.billing_name.length > 0).length,
+          purchases: usersForPlatform.filter(u => u.purchased_landing_offer === true).length
         };
       });
 
@@ -503,17 +508,23 @@ export default function AdminMarketing() {
           {/* PLATFORMS TAB */}
           <TabsContent value="platforms" className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {['Meta (Facebook/Instagram)', 'TikTok Ads', 'Pinterest Ads', 'Google Ads'].map((platformName, index) => {
-                const platformKey = platformName.split(' ')[0].toLowerCase();
+              {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
+                const platformKey = platformDisplayName.toLowerCase(); // Use lower case for keys
                 // Check connectivity using the new grouped data structure
                 const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+                
+                // Get funnel data for this platform
+                const platformGroup = campaignsByPlatform.find(p => p.platform === platformKey);
+                const funnel = platformGroup?.funnel || { quiz: 0, checkout: 0, purchases: 0 };
 
                 return (
                   <Card key={index} className="bg-white/80 backdrop-blur-sm">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div>
-                          <h3 className="text-xl font-bold text-gray-900">{platformName}</h3>
+                          <h3 className="text-xl font-bold text-gray-900">
+                            {platformDisplayName === 'Meta' ? 'Meta (Facebook/Instagram)' : platformDisplayName + ' Ads'}
+                          </h3>
                           <p className="text-sm text-gray-500 mt-1">
                             {isConnected ? '✅ Connesso' : '⚠️ Non connesso'}
                           </p>
@@ -534,7 +545,6 @@ export default function AdminMarketing() {
                           </Button>
                           <div className="p-3 bg-gray-50 rounded-lg">
                             <p className="text-xs text-gray-600">
-                              {/* TODO: Implement last sync date from backend or metric data */}
                               Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
                             </p>
                           </div>
@@ -546,9 +556,36 @@ export default function AdminMarketing() {
                           className="w-full"
                         >
                           <LinkIcon className="w-4 h-4 mr-2" />
-                          Connetti {platformName}
+                          Connetti {platformDisplayName === 'Meta' ? 'Meta' : platformDisplayName} Ads
                         </Button>
                       )}
+
+                      {/* NEW: Landing Funnel per Social */}
+                      <div className="mt-6 pt-6 border-t border-gray-200">
+                        <h4 className="text-sm font-bold text-gray-900 mb-3">Funnel Landing Offer</h4>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
+                            <span className="text-gray-700">Quiz Completati</span>
+                            <span className="font-bold text-indigo-600">{funnel.quiz}</span>
+                          </div>
+                          <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                            <span className="text-gray-700">Checkout Iniziati</span>
+                            <span className="font-bold text-cyan-600">{funnel.checkout}</span>
+                          </div>
+                          <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
+                            <span className="text-gray-700">Acquisti</span>
+                            <span className="font-bold text-emerald-600">{funnel.purchases}</span>
+                          </div>
+                          <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                            <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
+                            <p className="text-xl font-black text-indigo-600">
+                              {funnel.quiz > 0 
+                                ? ((funnel.purchases / funnel.quiz) * 100).toFixed(1) 
+                                : '0.0'}%
+                            </p>
+                          </div>
+                        </div>
+                      </div>
                     </CardContent>
                   </Card>
                 );
