@@ -76,6 +76,8 @@ export default function LandingCheckout() {
   const [saveCard, setSaveCard] = useState(true);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [discountError, setDiscountError] = useState('');
+  const [salesTax, setSalesTax] = useState(null);
+  const [loadingTax, setLoadingTax] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -102,6 +104,34 @@ export default function LandingCheckout() {
       setStripe(stripeInstance);
     });
   }, []);
+
+  // Load sales tax when country changes
+  useEffect(() => {
+    const loadSalesTax = async () => {
+      if (!billingInfo.country) return;
+      
+      setLoadingTax(true);
+      try {
+        const taxes = await base44.entities.SalesTax.filter({
+          country_code: billingInfo.country,
+          is_active: true
+        });
+        
+        if (taxes && taxes.length > 0) {
+          setSalesTax(taxes[0]);
+        } else {
+          setSalesTax(null);
+        }
+      } catch (error) {
+        console.error('Error loading sales tax:', error);
+        setSalesTax(null);
+      } finally {
+        setLoadingTax(false);
+      }
+    };
+    
+    loadSalesTax();
+  }, [billingInfo.country]);
 
   // Initialize Payment Request for Apple Pay / Google Pay
   useEffect(() => {
@@ -352,7 +382,7 @@ export default function LandingCheckout() {
     }
 
     if (!isFormValid) {
-      alert("Per favore, compila tutti i campi obbligatori correttamente.");
+      alert("Per favor, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
@@ -451,7 +481,19 @@ export default function LandingCheckout() {
     discount = subtotal * (appliedCoupon.discount_value / 100);
   }
 
-  const total = Math.max(0, subtotal - discount);
+  const subtotalAfterDiscount = Math.max(0, subtotal - discount);
+  
+  // Calculate tax breakdown
+  let taxAmount = 0;
+  let baseAmount = subtotalAfterDiscount;
+  
+  if (salesTax && salesTax.tax_rate > 0) {
+    // Price includes tax, so we calculate backwards
+    baseAmount = subtotalAfterDiscount / (1 + salesTax.tax_rate / 100);
+    taxAmount = subtotalAfterDiscount - baseAmount;
+  }
+
+  const total = subtotalAfterDiscount;
 
   return (
     <div className="min-h-screen animated-gradient-bg">
@@ -1106,6 +1148,21 @@ export default function LandingCheckout() {
                 </div>
               )}
 
+              {salesTax && salesTax.tax_rate > 0 && (
+                <div className="pt-3 border-t border-gray-200">
+                  <div className="space-y-1 text-sm">
+                    <div className="flex justify-between text-gray-600">
+                      <span>Base imponibile</span>
+                      <span>€{baseAmount.toFixed(2)}</span>
+                    </div>
+                    <div className="flex justify-between text-gray-600">
+                      <span>{salesTax.tax_name} ({salesTax.tax_rate}%)</span>
+                      <span>€{taxAmount.toFixed(2)}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="pt-4 border-t-2 border-gray-300">
                 <div className="flex justify-between items-baseline">
                   <span className="text-xl font-bold text-gray-900">Totale</span>
@@ -1116,6 +1173,11 @@ export default function LandingCheckout() {
                     <div className="text-3xl font-black text-[var(--brand-primary)]">
                       €{total.toFixed(2)}
                     </div>
+                    {salesTax && salesTax.tax_rate > 0 && (
+                      <div className="text-xs text-gray-500 mt-1">
+                        IVA inclusa
+                      </div>
+                    )}
                   </div>
                 </div>
               </div>

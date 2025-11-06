@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -128,28 +129,34 @@ export default function AdminSalesTax() {
     try {
       const updates = [];
       for (const [code, tax] of Object.entries(taxes)) {
-        if (tax.tax_rate !== undefined) {
+        // Only save if a tax rate has been explicitly set or if it's an existing record
+        if (tax.tax_rate !== undefined || tax.id) { 
           const country = COUNTRIES.find(c => c.code === code);
+          // Ensure country exists and tax_name/tax_rate are defined, use defaults if not
+          const currentTaxRate = tax.tax_rate !== undefined ? tax.tax_rate : (country ? country.defaultTax : 0);
+          const currentTaxName = tax.tax_name !== undefined ? tax.tax_name : (country ? country.defaultName : '');
+          const currentIsActive = tax.is_active !== undefined ? tax.is_active : true;
+
           if (tax.id) {
             updates.push(base44.entities.SalesTax.update(tax.id, {
-              tax_rate: tax.tax_rate,
-              tax_name: tax.tax_name,
-              is_active: tax.is_active
+              tax_rate: currentTaxRate,
+              tax_name: currentTaxName,
+              is_active: currentIsActive
             }));
-          } else {
+          } else if (country) { // Only create if a corresponding country exists
             updates.push(base44.entities.SalesTax.create({
               country_code: code,
               country_name: country.name,
-              tax_rate: tax.tax_rate,
-              tax_name: tax.tax_name,
-              is_active: tax.is_active
+              tax_rate: currentTaxRate,
+              tax_name: currentTaxName,
+              is_active: currentIsActive
             }));
           }
         }
       }
       await Promise.all(updates);
       toast.success('Tutte le tasse salvate');
-      await loadTaxes();
+      await loadTaxes(); // Reload to get newly created IDs
     } catch (error) {
       console.error('Error bulk saving:', error);
       toast.error('Errore nel salvataggio multiplo');
@@ -163,13 +170,14 @@ export default function AdminSalesTax() {
     try {
       const newTaxes = { ...taxes };
       for (const country of COUNTRIES) {
-        if (!newTaxes[country.code]) {
+        if (!newTaxes[country.code] || newTaxes[country.code].tax_rate === undefined) { // Initialize if not present or tax_rate is undefined
           newTaxes[country.code] = {
+            ...newTaxes[country.code], // Keep existing ID if any
             country_code: country.code,
             country_name: country.name,
             tax_rate: country.defaultTax,
             tax_name: country.defaultName,
-            is_active: true
+            is_active: true // Default to active
           };
         }
       }
@@ -184,15 +192,23 @@ export default function AdminSalesTax() {
   };
 
   const updateTax = (code, field, value) => {
-    setTaxes(prev => ({
-      ...prev,
-      [code]: {
-        ...prev[code],
-        [field]: value,
-        country_code: code,
-        country_name: COUNTRIES.find(c => c.code === code)?.name
-      }
-    }));
+    setTaxes(prev => {
+      const currentTax = prev[code] || {};
+      const country = COUNTRIES.find(c => c.code === code);
+      return {
+        ...prev,
+        [code]: {
+          ...currentTax,
+          [field]: value,
+          country_code: code,
+          country_name: country?.name,
+          // Ensure default values for other fields if they are not yet defined
+          tax_rate: currentTax.tax_rate !== undefined ? currentTax.tax_rate : country?.defaultTax || 0,
+          tax_name: currentTax.tax_name !== undefined ? currentTax.tax_name : country?.defaultName || '',
+          is_active: currentTax.is_active !== undefined ? currentTax.is_active : true,
+        }
+      };
+    });
   };
 
   const filteredCountries = COUNTRIES.filter(country =>
@@ -257,11 +273,25 @@ export default function AdminSalesTax() {
           {/* Countries List */}
           <div className="grid gap-4">
             {filteredCountries.map((country) => {
+              // Ensure 'tax' object has default structure even if not in 'taxes' state
               const tax = taxes[country.code] || {
+                country_code: country.code,
+                country_name: country.name,
                 tax_rate: country.defaultTax,
                 tax_name: country.defaultName,
                 is_active: true
               };
+
+              // Use country defaults if tax object properties are undefined
+              const currentTaxRate = tax.tax_rate !== undefined ? tax.tax_rate : country.defaultTax;
+              const currentTaxName = tax.tax_name !== undefined ? tax.tax_name : country.defaultName;
+              const currentIsActive = tax.is_active !== undefined ? tax.is_active : true;
+
+              const baseAmount = 67;
+              const rate = currentTaxRate / 100;
+              const totalAmount = baseAmount; // Assuming €67 is the total price including tax for this example
+              const baseExclTax = totalAmount / (1 + rate);
+              const taxAmount = totalAmount - baseExclTax;
 
               return (
                 <Card key={country.code} className="bg-white">
@@ -286,7 +316,7 @@ export default function AdminSalesTax() {
                           step="0.1"
                           min="0"
                           max="100"
-                          value={tax.tax_rate || ''}
+                          value={currentTaxRate}
                           onChange={(e) => updateTax(country.code, 'tax_rate', parseFloat(e.target.value) || 0)}
                           className="h-10 mt-1"
                         />
@@ -297,7 +327,7 @@ export default function AdminSalesTax() {
                         <Label className="text-xs text-gray-600">Nome Tassa</Label>
                         <Input
                           type="text"
-                          value={tax.tax_name || ''}
+                          value={currentTaxName}
                           onChange={(e) => updateTax(country.code, 'tax_name', e.target.value)}
                           placeholder="IVA, VAT, GST..."
                           className="h-10 mt-1"
@@ -307,11 +337,16 @@ export default function AdminSalesTax() {
                       {/* Example */}
                       <div className="md:col-span-2">
                         <Label className="text-xs text-gray-600">Esempio (€67)</Label>
-                        <div className="text-sm font-medium text-gray-700 mt-1">
-                          €{(67 + (67 * (tax.tax_rate || 0) / 100)).toFixed(2)}
-                        </div>
-                        <div className="text-xs text-gray-500">
-                          ({tax.tax_name}: €{((67 * (tax.tax_rate || 0) / 100)).toFixed(2)})
+                        <div className="text-sm space-y-1 mt-1">
+                          <div className="font-medium text-gray-700">
+                            Tot: €{totalAmount.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            Base: €{baseExclTax.toFixed(2)}
+                          </div>
+                          <div className="text-xs text-gray-500">
+                            {currentTaxName}: €{taxAmount.toFixed(2)}
+                          </div>
                         </div>
                       </div>
 
@@ -320,7 +355,7 @@ export default function AdminSalesTax() {
                         <div className="flex flex-col items-center gap-1">
                           <Label className="text-xs text-gray-600">Attiva</Label>
                           <Checkbox
-                            checked={tax.is_active !== false}
+                            checked={currentIsActive}
                             onCheckedChange={(checked) => updateTax(country.code, 'is_active', checked)}
                           />
                         </div>
