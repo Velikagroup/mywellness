@@ -675,9 +675,10 @@ export default function AdminAnalytics() {
           </TabsList>
 
           <TabsContent value="overview" className="space-y-6">
+            {/* Funnel di Conversione Trial → Abbonamento */}
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Funnel di Conversione</CardTitle>
+                <CardTitle>Funnel di Conversione Trial → Abbonamento</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -702,6 +703,40 @@ export default function AdminAnalytics() {
                   <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
                     <p className="text-center text-green-900 font-bold text-lg">
                       Tasso di Conversione: {conversionRate}%
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* NEW: Funnel Landing Offer */}
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Funnel Landing Offer (Quiz → Checkout → Acquisto)</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 bg-indigo-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-indigo-900">Quiz Completati</span>
+                      <span className="font-bold text-indigo-900">{stats.quizCompletedUsers}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 pl-8">
+                    <div className="flex-1 bg-cyan-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-cyan-900">Landing Checkout Iniziati</span>
+                      <span className="font-bold text-cyan-900">{stats.checkoutStartedUsers}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 pl-16">
+                    <div className="flex-1 bg-emerald-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-emerald-900">Acquisti Landing Offer</span>
+                      <span className="font-bold text-emerald-900">{stats.landingOfferPurchases}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                    <p className="text-center text-indigo-900 font-bold text-lg">
+                      Tasso di Conversione Quiz → Acquisto: {stats.quizCompletedUsers > 0 ? ((stats.landingOfferPurchases / stats.quizCompletedUsers) * 100).toFixed(1) : 0}%
                     </p>
                   </div>
                 </div>
