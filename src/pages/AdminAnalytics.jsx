@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Keep for now, but remove Tabs/TabsList/TabsTrigger below
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   TrendingUp,
@@ -510,6 +510,7 @@ export default function AdminAnalytics() {
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Header */}
         <div>
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
@@ -605,6 +606,7 @@ export default function AdminAnalytics() {
           </div>
         </div>
 
+        {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-4">
@@ -669,185 +671,181 @@ export default function AdminAnalytics() {
           </Card>
         </div>
 
-        <Tabs defaultValue="overview" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="financial">Finanza</TabsTrigger>
-            <TabsTrigger value="subscriptions">Abbonamenti</TabsTrigger>
-            <TabsTrigger value="projections">Proiezioni</TabsTrigger>
-          </TabsList>
-
-          <TabsContent value="overview" className="space-y-6">
-            {/* Funnel di Conversione - Grid per 2 colonne */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Funnel Trial → Abbonamento */}
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>Funnel di Conversione Trial → Abbonamento</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1 bg-blue-100 rounded-full h-12 flex items-center justify-between px-6">
-                        <span className="font-semibold text-blue-900">Utenti Registrati</span>
-                        <span className="font-bold text-blue-900">{filteredUsers.length}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 pl-8">
-                      <div className="flex-1 bg-purple-100 rounded-full h-12 flex items-center justify-between px-6">
-                        <span className="font-semibold text-purple-900">Trial Attivi</span>
-                        <span className="font-bold text-purple-900">{trialUsers}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 pl-16">
-                      <div className="flex-1 bg-green-100 rounded-full h-12 flex items-center justify-between px-6">
-                        <span className="font-semibold text-green-900">Abbonati Paganti</span>
-                        <span className="font-bold text-green-900">{activeSubscriptions}</span>
-                      </div>
-                    </div>
-                    <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                      <p className="text-center text-green-900 font-bold text-lg">
-                        Tasso di Conversione: {conversionRate}%
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              {/* Funnel Landing Offer */}
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>Funnel Landing Offer (Quiz → Checkout → Acquisto)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center gap-4">
-                      <div className="flex-1 bg-indigo-100 rounded-full h-12 flex items-center justify-between px-6">
-                        <span className="font-semibold text-indigo-900">Quiz Completati</span>
-                        <span className="font-bold text-indigo-900">{stats.quizCompletedUsers}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 pl-8">
-                      <div className="flex-1 bg-cyan-100 rounded-full h-12 flex items-center justify-between px-6">
-                        <span className="font-semibold text-cyan-900">Landing Checkout Iniziati</span>
-                        <span className="font-bold text-cyan-900">{stats.checkoutStartedUsers}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-4 pl-16">
-                      <div className="flex-1 bg-emerald-100 rounded-full h-12 flex items-center justify-between px-6">
-                        <span className="font-semibold text-emerald-900">Acquisti Landing Offer</span>
-                        <span className="font-bold text-emerald-900">{stats.landingOfferPurchases}</span>
-                      </div>
-                    </div>
-                    <div className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
-                      <p className="text-center text-indigo-900 font-bold text-lg">
-                        Tasso di Conversione Quiz → Acquisto: {stats.quizCompletedUsers > 0 ? ((stats.landingOfferPurchases / stats.quizCompletedUsers) * 100).toFixed(1) : 0}%
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
+        {/* OVERVIEW SECTION */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
+          
+          {/* Funnel di Conversione */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Andamento Entrate Reali da Transazioni</CardTitle>
+                <CardTitle>Funnel di Conversione Trial → Abbonamento</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-80">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={revenueTrend}>
-                      <defs>
-                        <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#26847F" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#26847F" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                      <XAxis dataKey="month" stroke="#6b7280" />
-                      <YAxis stroke="#6b7280" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px'
-                        }}
-                      />
-                      <Area
-                        type="monotone"
-                        dataKey="revenue"
-                        stroke="#26847F"
-                        fillOpacity={1}
-                        fill="url(#colorRevenue)"
-                        name="Entrate (€)"
-                      />
-                    </AreaChart>
-                  </ResponsiveContainer>
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 bg-blue-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-blue-900">Utenti Registrati</span>
+                      <span className="font-bold text-blue-900">{filteredUsers.length}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 pl-8">
+                    <div className="flex-1 bg-purple-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-purple-900">Trial Attivi</span>
+                      <span className="font-bold text-purple-900">{trialUsers}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 pl-16">
+                    <div className="flex-1 bg-green-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-green-900">Abbonati Paganti</span>
+                      <span className="font-bold text-green-900">{activeSubscriptions}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
+                    <p className="text-center text-green-900 font-bold text-lg">
+                      Tasso di Conversione: {conversionRate}%
+                    </p>
+                  </div>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Breakdown Transazioni per Tipo</CardTitle>
+                <CardTitle>Funnel Landing Offer (Quiz → Checkout → Acquisto)</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="h-64">
-                    {transactionPieData.length > 0 ? (
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={transactionPieData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                          >
-                            {transactionPieData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={['#26847F', '#3b82f6', '#a855f7'][index % 3]} />
-                            ))}
-                          </Pie>
-                          <Tooltip formatter={(value) => `€${value}`} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <p className="text-center text-gray-500 py-8">Nessuna transazione nel periodo</p>
-                    )}
+                <div className="space-y-4">
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1 bg-indigo-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-indigo-900">Quiz Completati</span>
+                      <span className="font-bold text-indigo-900">{stats.quizCompletedUsers}</span>
+                    </div>
                   </div>
+                  <div className="flex items-center gap-4 pl-8">
+                    <div className="flex-1 bg-cyan-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-cyan-900">Landing Checkout Iniziati</span>
+                      <span className="font-bold text-cyan-900">{stats.checkoutStartedUsers}</span>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-4 pl-16">
+                    <div className="flex-1 bg-emerald-100 rounded-full h-12 flex items-center justify-between px-6">
+                      <span className="font-semibold text-emerald-900">Acquisti Landing Offer</span>
+                      <span className="font-bold text-emerald-900">{stats.landingOfferPurchases}</span>
+                    </div>
+                  </div>
+                  <div className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                    <p className="text-center text-indigo-900 font-bold text-lg">
+                      Tasso di Conversione Quiz → Acquisto: {stats.quizCompletedUsers > 0 ? ((stats.landingOfferPurchases / stats.quizCompletedUsers) * 100).toFixed(1) : 0}%
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-                  <div className="space-y-3">
-                    <h4 className="font-semibold text-gray-900 mb-3">Transazioni Recenti</h4>
-                    <div className="space-y-2 max-h-56 overflow-y-auto">
-                      {filteredTransactions
-                        .filter(t => t.status === 'succeeded')
-                        .slice(0, 8)
-                        .map((transaction) => (
-                          <div key={transaction.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
-                            <div className="flex-1">
-                              <p className="font-semibold text-sm text-gray-900">{transaction.description}</p>
-                              <p className="text-xs text-gray-500">
-                                {format(parseISO(transaction.payment_date), 'dd/MM/yyyy HH:mm')}
-                              </p>
-                            </div>
-                            <p className="font-bold text-green-600">+€{transaction.amount}</p>
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Andamento Entrate Reali da Transazioni</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="h-80">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={revenueTrend}>
+                    <defs>
+                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="5%" stopColor="#26847F" stopOpacity={0.8}/>
+                        <stop offset="95%" stopColor="#26847F" stopOpacity={0}/>
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis dataKey="month" stroke="#6b7280" />
+                    <YAxis stroke="#6b7280" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Area
+                      type="monotone"
+                      dataKey="revenue"
+                      stroke="#26847F"
+                      fillOpacity={1}
+                      fill="url(#colorRevenue)"
+                      name="Entrate (€)"
+                    />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Breakdown Transazioni per Tipo</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="h-64">
+                  {transactionPieData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={transactionPieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {transactionPieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={['#26847F', '#3b82f6', '#a855f7'][index % 3]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => `€${value}`} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <p className="text-center text-gray-500 py-8">Nessuna transazione nel periodo</p>
+                  )}
+                </div>
+
+                <div className="space-y-3">
+                  <h4 className="font-semibold text-gray-900 mb-3">Transazioni Recenti</h4>
+                  <div className="space-y-2 max-h-56 overflow-y-auto">
+                    {filteredTransactions
+                      .filter(t => t.status === 'succeeded')
+                      .slice(0, 8)
+                      .map((transaction) => (
+                        <div key={transaction.id} className="flex items-center justify-between p-2 bg-gray-50 rounded-lg">
+                          <div className="flex-1">
+                            <p className="font-semibold text-sm text-gray-900">{transaction.description}</p>
+                            <p className="text-xs text-gray-500">
+                              {format(parseISO(transaction.payment_date), 'dd/MM/yyyy HH:mm')}
+                            </p>
                           </div>
-                        ))}
-                    </div>
-                    {filteredTransactions.filter(t => t.status === 'succeeded').length === 0 && (
-                      <p className="text-center text-gray-500 py-4">Nessuna transazione riuscita nel periodo</p>
-                    )}
+                          <p className="font-bold text-green-600">+€{transaction.amount}</p>
+                        </div>
+                      ))}
                   </div>
+                  {filteredTransactions.filter(t => t.status === 'succeeded').length === 0 && (
+                    <p className="text-center text-gray-500 py-4">Nessuna transazione riuscita nel periodo</p>
+                  )}
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-          <TabsContent value="financial" className="space-y-6">
-            <div className="flex justify-end gap-3">
+        {/* FINANCIAL SECTION */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <h2 className="text-2xl font-bold text-gray-900">Finanza</h2>
+            <div className="flex gap-3">
               <Button
                 onClick={() => setShowManageRecurringVariableExpenses(true)}
                 variant="outline"
@@ -863,242 +861,140 @@ export default function AdminAnalytics() {
                 Aggiungi Spesa
               </Button>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <p className="text-sm text-gray-500 mb-2">Entrate Mensili</p>
-                  <p className="text-3xl font-bold text-green-600">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <p className="text-sm text-gray-500 mb-2">Spese Mensili</p>
-                  <p className="text-3xl font-bold text-red-600">€{totalMonthlyExpenses.toLocaleString('it-IT')}</p>
-                </CardContent>
-              </Card>
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <p className="text-sm text-gray-500 mb-2">Profitto Netto</p>
-                  <p className={`text-3xl font-bold ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    €{monthlyProfit.toLocaleString('it-IT')}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>Spese per Categoria</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="h-64">
-                    {expensePieData.length > 0 ? (
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={expensePieData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                          >
-                            {expensePieData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={EXPENSE_COLORS[index % EXPENSE_COLORS.length]} />
-                            ))}
-                          </Pie>
-                          <Tooltip formatter={(value) => `€${value}`} />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    ) : (
-                      <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>Spese Recenti</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-3 max-h-64 overflow-y-auto">
-                    {filteredExpenses.slice(0, 10).map((expense) => (
-                      <div key={expense.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                        <div className="flex-1">
-                          <p className="font-semibold text-sm text-gray-900">{expense.description}</p>
-                          <p className="text-xs text-gray-500">
-                            {expense.category} • {format(new Date(expense.date), 'dd/MM/yyyy')}
-                            {(expense.recurring && expense.recurring_frequency) && ` • Ricorrente (${expense.recurring_frequency})`}
-                            {(expense.recurring_variable && !expense.recurring && expense.parent_expense_id) && ` • Variabile`}
-                          </p>
-                        </div>
-                        <p className="font-bold text-red-600">-€{expense.amount}</p>
-                      </div>
-                    ))}
-                    {filteredExpenses.length === 0 && (
-                      <p className="text-center text-gray-500 py-4">Nessuna spesa nel periodo</p>
-                    )}
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-
-          <TabsContent value="subscriptions" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>Distribuzione Piani</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  {subscriptionPieData.length > 0 ? (
-                    <div className="h-64">
-                      <ResponsiveContainer width="100%" height="100%">
-                        <PieChart>
-                          <Pie
-                            data={subscriptionPieData}
-                            cx="50%"
-                            cy="50%"
-                            labelLine={false}
-                            label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                            outerRadius={80}
-                            fill="#8884d8"
-                            dataKey="value"
-                          >
-                            {subscriptionPieData.map((entry, index) => (
-                              <Cell key={`cell-${index}`} fill={entry.color} />
-                            ))}
-                          </Pie>
-                          <Tooltip />
-                        </PieChart>
-                      </ResponsiveContainer>
-                    </div>
-                  ) : (
-                    <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo</p>
-                  )}
-                  <div className="mt-4 space-y-2">
-                    <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
-                      <span className="text-sm font-medium">Base (€19/mese)</span>
-                      <span className="font-bold">{planBreakdown.base} utenti</span>
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-teal-50 rounded">
-                      <span className="text-sm font-medium">Pro (€29/mese)</span>
-                      <span className="font-bold">{planBreakdown.pro} utenti</span>
-                    </div>
-                    <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
-                      <span className="text-sm font-medium">Premium (€39/mese)</span>
-                      <span className="font-bold">{planBreakdown.premium} utenti</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardHeader>
-                  <CardTitle>Stati Abbonamento</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                        <span className="font-semibold text-green-900">Attivi</span>
-                      </div>
-                      <span className="text-2xl font-bold text-green-600">{activeSubscriptions}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Clock className="w-5 h-5 text-blue-600" />
-                        <span className="font-semibold text-blue-900">In Trial</span>
-                      </div>
-                      <span className="text-2xl font-bold text-blue-600">{trialUsers}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <AlertCircle className="w-5 h-5 text-orange-600" />
-                        <span className="font-semibold text-orange-900">Cancellati</span>
-                      </div>
-                      <span className="text-2xl font-bold text-orange-600">{cancelledUsers}</span>
-                    </div>
-
-                    <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
-                      <div className="flex items-center gap-3">
-                        <Activity className="w-5 h-5 text-gray-600" />
-                        <span className="font-semibold text-gray-900">Scaduti</span>
-                      </div>
-                      <span className="text-2xl font-bold text-gray-600">{expiredUsers}</span>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            <Card className="bg-white/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle>Metriche Chiave</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                  <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-                    <p className="text-sm text-blue-700 mb-1">Conversion Rate</p>
-                    <p className="text-3xl font-bold text-blue-900">{conversionRate}%</p>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
-                    <p className="text-sm text-green-700 mb-1">Retention Rate</p>
-                    <p className="text-3xl font-bold text-green-900">{retentionRateExisting}%</p>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg border border-red-200">
-                    <p className="text-sm text-red-700 mb-1">Churn Rate</p>
-                    <p className="text-3xl font-bold text-red-900">{churnRate}%</p>
-                  </div>
-                  <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-                    <p className="text-sm text-purple-700 mb-1">ARPU</p>
-                    <p className="text-3xl font-bold text-purple-900">
-                      €{activeSubscriptions > 0 ? (mrrFromPriceMap / activeSubscriptions).toFixed(0) : 0}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="projections" className="space-y-6">
-            {/* Growth Rate Input */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardContent className="p-6">
-                <div className="flex items-center gap-4">
-                  <div className="flex-1">
-                    <Label htmlFor="growth-rate" className="text-sm font-semibold text-gray-700 mb-2 block">
-                      Tasso di Crescita Mensile (%)
-                    </Label>
-                    <div className="flex items-center gap-3">
-                      <Input
-                        id="growth-rate"
-                        type="number"
-                        step="0.1"
-                        value={projectionGrowthRate}
-                        onChange={(e) => setProjectionGrowthRate(parseFloat(e.target.value) || 0)}
-                        className="w-32 h-12 text-lg font-bold"
-                        min="0"
-                        max="100"
-                      />
-                      <span className="text-2xl font-bold text-gray-600">%</span>
+                <p className="text-sm text-gray-500 mb-2">Entrate Mensili</p>
+                <p className="text-3xl font-bold text-green-600">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <p className="text-sm text-gray-500 mb-2">Spese Mensili</p>
+                <p className="text-3xl font-bold text-red-600">€{totalMonthlyExpenses.toLocaleString('it-IT')}</p>
+              </CardContent>
+            </Card>
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <p className="text-sm text-gray-500 mb-2">Profitto Netto</p>
+                <p className={`text-3xl font-bold ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  €{monthlyProfit.toLocaleString('it-IT')}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Spese per Categoria</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-64">
+                  {expensePieData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={expensePieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {expensePieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={EXPENSE_COLORS[index % EXPENSE_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip formatter={(value) => `€${value}`} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Spese Recenti</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3 max-h-64 overflow-y-auto">
+                  {filteredExpenses.slice(0, 10).map((expense) => (
+                    <div key={expense.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                      <div className="flex-1">
+                        <p className="font-semibold text-sm text-gray-900">{expense.description}</p>
+                        <p className="text-xs text-gray-500">
+                          {expense.category} • {format(new Date(expense.date), 'dd/MM/yyyy')}
+                          {(expense.recurring && expense.recurring_frequency) && ` • Ricorrente (${expense.recurring_frequency})`}
+                          {(expense.recurring_variable && !expense.recurring && expense.parent_expense_id) && ` • Variabile`}
+                        </p>
+                      </div>
+                      <p className="font-bold text-red-600">-€{expense.amount}</p>
                     </div>
+                  ))}
+                  {filteredExpenses.length === 0 && (
+                    <p className="text-center text-gray-500 py-4">Nessuna spesa nel periodo</p>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
+        {/* SUBSCRIPTIONS SECTION */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">Abbonamenti</h2>
+          
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardHeader>
+                <CardTitle>Distribuzione Piani</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {subscriptionPieData.length > 0 ? (
+                  <div className="h-64">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <PieChart>
+                        <Pie
+                          data={subscriptionPieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
+                          outerRadius={80}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {subscriptionPieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={entry.color} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                      </PieChart>
+                    </ResponsiveContainer>
                   </div>
-                  <div className="flex-1 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
-                    <p className="text-sm text-blue-700 mb-1">Crescita Annuale Equivalente</p>
-                    <p className="text-2xl font-black text-blue-900">
-                      {(Math.pow(1 + projectionGrowthRate / 100, 12) - 1) * 100 > 0 
-                        ? `+${((Math.pow(1 + projectionGrowthRate / 100, 12) - 1) * 100).toFixed(1)}%` 
-                        : '0%'}
-                    </p>
+                ) : (
+                  <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo</p>
+                )}
+                <div className="mt-4 space-y-2">
+                  <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
+                    <span className="text-sm font-medium">Base (€19/mese)</span>
+                    <span className="font-bold">{planBreakdown.base} utenti</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-teal-50 rounded">
+                    <span className="text-sm font-medium">Pro (€29/mese)</span>
+                    <span className="font-bold">{planBreakdown.pro} utenti</span>
+                  </div>
+                  <div className="flex items-center justify-between p-2 bg-purple-50 rounded">
+                    <span className="text-sm font-medium">Premium (€39/mese)</span>
+                    <span className="font-bold">{planBreakdown.premium} utenti</span>
                   </div>
                 </div>
               </CardContent>
@@ -1106,87 +1002,194 @@ export default function AdminAnalytics() {
 
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Proiezione Cash Flow (12 Mesi)</CardTitle>
-                <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile e aumento spese 5%</p>
+                <CardTitle>Stati Abbonamento</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="h-96">
-                  <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={cashFlowProjection} barCategoryGap="20%" margin={{ left: 20, right: 20 }}>
-                      <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                      <XAxis 
-                        dataKey="month" 
-                        stroke="#6b7280"
-                        padding={{ left: 30, right: 30 }}
-                      />
-                      <YAxis stroke="#6b7280" />
-                      <Tooltip
-                        contentStyle={{
-                          backgroundColor: 'white',
-                          border: '1px solid #e5e7eb',
-                          borderRadius: '8px'
-                        }}
-                      />
-                      <Legend />
-                      <Bar 
-                        dataKey="revenue" 
-                        fill="#10b981" 
-                        name="Entrate (€)"
-                        radius={[4, 4, 0, 0]}
-                        maxBarSize={50}
-                      />
-                      <Bar 
-                        dataKey="expenses" 
-                        fill="#ef4444" 
-                        name="Spese (€)"
-                        radius={[4, 4, 0, 0]}
-                        maxBarSize={50}
-                      />
-                    </BarChart>
-                  </ResponsiveContainer>
+                <div className="space-y-4">
+                  <div className="flex items-center justify-between p-4 bg-green-50 border border-green-200 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                      <span className="font-semibold text-green-900">Attivi</span>
+                    </div>
+                    <span className="text-2xl font-bold text-green-600">{activeSubscriptions}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Clock className="w-5 h-5 text-blue-600" />
+                      <span className="font-semibold text-blue-900">In Trial</span>
+                    </div>
+                    <span className="text-2xl font-bold text-blue-600">{trialUsers}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <AlertCircle className="w-5 h-5 text-orange-600" />
+                      <span className="font-semibold text-orange-900">Cancellati</span>
+                    </div>
+                    <span className="text-2xl font-bold text-orange-600">{cancelledUsers}</span>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-50 border border-gray-200 rounded-lg">
+                    <div className="flex items-center gap-3">
+                      <Activity className="w-5 h-5 text-gray-600" />
+                      <span className="font-semibold text-gray-900">Scaduti</span>
+                    </div>
+                    <span className="text-2xl font-bold text-gray-600">{expiredUsers}</span>
+                  </div>
                 </div>
               </CardContent>
             </Card>
+          </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
-                <CardContent className="p-6">
-                  <p className="text-sm text-green-700 mb-2">MRR Proiettato (6 mesi)</p>
-                  <p className="text-4xl font-bold text-green-900">
-                    €{cashFlowProjection[5]?.revenue.toLocaleString('it-IT')}
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Metriche Chiave</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 mb-1">Conversion Rate</p>
+                  <p className="text-3xl font-bold text-blue-900">{conversionRate}%</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                  <p className="text-sm text-green-700 mb-1">Retention Rate</p>
+                  <p className="text-3xl font-bold text-green-900">{retentionRateExisting}%</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg border border-red-200">
+                  <p className="text-sm text-red-700 mb-1">Churn Rate</p>
+                  <p className="text-3xl font-bold text-red-900">{churnRate}%</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                  <p className="text-sm text-purple-700 mb-1">ARPU</p>
+                  <p className="text-3xl font-bold text-purple-900">
+                    €{activeSubscriptions > 0 ? (mrrFromPriceMap / activeSubscriptions).toFixed(0) : 0}
                   </p>
-                  <p className="text-xs text-green-600 mt-2">
-                    +{((cashFlowProjection[5]?.revenue / mrrFromPriceMap - 1) * 100).toFixed(0)}% crescita
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
 
-              <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
-                <CardContent className="p-6">
-                  <p className="text-sm text-blue-700 mb-2">MRR Proiettato (12 mesi)</p>
-                  <p className="text-4xl font-bold text-blue-900">
-                    €{cashFlowProjection[11]?.revenue.toLocaleString('it-IT')}
+        {/* PROJECTIONS SECTION */}
+        <div className="space-y-6">
+          <h2 className="text-2xl font-bold text-gray-900">Proiezioni</h2>
+          
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-6">
+              <div className="flex items-center gap-4">
+                <div className="flex-1">
+                  <Label htmlFor="growth-rate" className="text-sm font-semibold text-gray-700 mb-2 block">
+                    Tasso di Crescita Mensile (%)
+                  </Label>
+                  <div className="flex items-center gap-3">
+                    <Input
+                      id="growth-rate"
+                      type="number"
+                      step="0.1"
+                      value={projectionGrowthRate}
+                      onChange={(e) => setProjectionGrowthRate(parseFloat(e.target.value) || 0)}
+                      className="w-32 h-12 text-lg font-bold"
+                      min="0"
+                      max="100"
+                    />
+                    <span className="text-2xl font-bold text-gray-600">%</span>
+                  </div>
+                </div>
+                <div className="flex-1 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 mb-1">Crescita Annuale Equivalente</p>
+                  <p className="text-2xl font-black text-blue-900">
+                    {(Math.pow(1 + projectionGrowthRate / 100, 12) - 1) * 100 > 0 
+                      ? `+${((Math.pow(1 + projectionGrowthRate / 100, 12) - 1) * 100).toFixed(1)}%` 
+                      : '0%'}
                   </p>
-                  <p className="text-xs text-blue-600 mt-2">
-                    +{((cashFlowProjection[11]?.revenue / mrrFromPriceMap - 1) * 100).toFixed(0)}% crescita
-                  </p>
-                </CardContent>
-              </Card>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-              <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200">
-                <CardContent className="p-6">
-                  <p className="text-sm text-purple-700 mb-2">Profitto Proiettato (12 mesi)</p>
-                  <p className="text-4xl font-bold text-purple-900">
-                    €{cashFlowProjection[11]?.profit.toLocaleString('it-IT')}
-                  </p>
-                  <p className="text-xs text-purple-600 mt-2">
-                    Break-even: {monthlyProfit < 0 ? 'Mese ' + Math.ceil(Math.abs(monthlyProfit) / (cashFlowProjection[11]?.profit / 12)) : 'Raggiunto'}
-                  </p>
-                </CardContent>
-              </Card>
-            </div>
-          </TabsContent>
-        </Tabs>
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Proiezione Cash Flow (12 Mesi)</CardTitle>
+              <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile e aumento spese 5%</p>
+            </CardHeader>
+            <CardContent>
+              <div className="h-96">
+                <ResponsiveContainer width="100%" height="100%">
+                  <BarChart data={cashFlowProjection} barCategoryGap="20%" margin={{ left: 20, right: 20 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#6b7280"
+                      padding={{ left: 30, right: 30 }}
+                    />
+                    <YAxis stroke="#6b7280" />
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: 'white',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '8px'
+                      }}
+                    />
+                    <Legend />
+                    <Bar 
+                      dataKey="revenue" 
+                      fill="#10b981" 
+                      name="Entrate (€)"
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
+                    />
+                    <Bar 
+                      dataKey="expenses" 
+                      fill="#ef4444" 
+                      name="Spese (€)"
+                      radius={[4, 4, 0, 0]}
+                      maxBarSize={50}
+                    />
+                  </BarChart>
+                </ResponsiveContainer>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
+              <CardContent className="p-6">
+                <p className="text-sm text-green-700 mb-2">MRR Proiettato (6 mesi)</p>
+                <p className="text-4xl font-bold text-green-900">
+                  €{cashFlowProjection[5]?.revenue.toLocaleString('it-IT')}
+                </p>
+                <p className="text-xs text-green-600 mt-2">
+                  +{((cashFlowProjection[5]?.revenue / mrrFromPriceMap - 1) * 100).toFixed(0)}% crescita
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
+              <CardContent className="p-6">
+                <p className="text-sm text-blue-700 mb-2">MRR Proiettato (12 mesi)</p>
+                <p className="text-4xl font-bold text-blue-900">
+                  €{cashFlowProjection[11]?.revenue.toLocaleString('it-IT')}
+                </p>
+                <p className="text-xs text-blue-600 mt-2">
+                  +{((cashFlowProjection[11]?.revenue / mrrFromPriceMap - 1) * 100).toFixed(0)}% crescita
+                </p>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-2 border-purple-200">
+              <CardContent className="p-6">
+                <p className="text-sm text-purple-700 mb-2">Profitto Proiettato (12 mesi)</p>
+                <p className="text-4xl font-bold text-purple-900">
+                  €{cashFlowProjection[11]?.profit.toLocaleString('it-IT')}
+                </p>
+                <p className="text-xs text-purple-600 mt-2">
+                  Break-even: {monthlyProfit < 0 ? 'Mese ' + Math.ceil(Math.abs(monthlyProfit) / (cashFlowProjection[11]?.profit / 12)) : 'Raggiunto'}
+                </p>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
       </div>
 
       <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
