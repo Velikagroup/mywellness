@@ -193,14 +193,10 @@ export default function TrialSetup() {
     const initializePaymentRequest = async () => {
       try {
         console.log('🔍 Initializing Payment Request...');
-        
-        // Check if Payment Request API is available
-        if (!window.PaymentRequest) {
-          console.log('❌ Payment Request API not available in this browser');
-          setShowApplePay(false);
-          setShowGooglePay(false);
-          return;
-        }
+        console.log('📱 User Agent:', navigator.userAgent);
+        console.log('🌐 Platform:', navigator.platform);
+        console.log('🔧 Is Safari:', /^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+        console.log('📲 Is iOS:', /iPad|iPhone|iPod/.test(navigator.userAgent));
         
         const pr = stripe.paymentRequest({
           country: 'IT',
@@ -215,6 +211,7 @@ export default function TrialSetup() {
           requestBillingAddress: true,
         });
 
+        // Check availability
         const canMakePaymentResult = await pr.canMakePayment();
         
         console.log('💳 canMakePayment result:', canMakePaymentResult);
@@ -223,6 +220,7 @@ export default function TrialSetup() {
           setCanMakePayment(canMakePaymentResult);
           setPaymentRequest(pr);
           
+          // Set individual flags for Apple Pay and Google Pay
           if (canMakePaymentResult.applePay) {
             console.log('✅ Apple Pay is available');
             setShowApplePay(true);
@@ -232,15 +230,39 @@ export default function TrialSetup() {
             console.log('✅ Google Pay is available');
             setShowGooglePay(true);
           }
+          
+          // Fallback detection più aggressivo per iOS/Safari
+          if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
+            console.log('⚠️ Payment Request available but no specific wallet detected - using platform detection');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
+            
+            if (isIOS || isSafari || isMacOS) {
+              console.log('🍎 iOS/Safari/macOS detected - showing Apple Pay');
+              setShowApplePay(true);
+            } else {
+              console.log('🤖 Showing Google Pay as default');
+              setShowGooglePay(true);
+            }
+          }
         } else {
-          console.log('❌ No digital wallet available');
-          setShowApplePay(false);
-          setShowGooglePay(false);
+          console.log('❌ No digital wallet available - canMakePayment returned null/false');
+          console.log('⚙️ Trying fallback detection anyway...');
+          
+          // Fallback anche se canMakePayment fallisce
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
+          
+          if (isIOS || isSafari || isMacOS) {
+            console.log('🍎 iOS/Safari/macOS detected via fallback - attempting to show Apple Pay');
+            setShowApplePay(true);
+            setPaymentRequest(pr); // Set it anyway for the click handler
+          }
         }
       } catch (error) {
         console.error('❌ Payment Request initialization error:', error);
-        setShowApplePay(false);
-        setShowGooglePay(false);
       }
     };
 
@@ -1112,7 +1134,7 @@ export default function TrialSetup() {
                     <span>Subtotale</span>
                     <span>€{subtotal.toFixed(2)}</span>
                   </div>
-                  {appliedCoupon && appliedCoupon.discount_type === 'percentage' && (
+                  {appliedCoupon && discount > 0 && (
                     <div className="flex justify-between text-green-600 font-semibold">
                       <span>Sconto ({appliedCoupon.code})</span>
                       <span>-€{discount.toFixed(2)}</span>
