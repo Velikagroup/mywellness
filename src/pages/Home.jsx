@@ -700,7 +700,7 @@ export default function Home() {
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }>
+              transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">📊 Analisi Scientifica</span>
@@ -727,7 +727,6 @@ export default function Home() {
                   src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/32fccd473_Dashboard.jpg"
                   alt="Dashboard MyWellness"
                   className="w-full h-auto rounded-xl" />
-
               </div>
             </motion.div>
           </motion.div>
@@ -834,9 +833,7 @@ export default function Home() {
               <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Workout su Misura
               </h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">Schede settimanali personalizzate con warm-up e cool-down, analisi AI dei progressi e modifiche immediate della scheda in caso di dolori o impedimenti.
-
-              </p>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">Schede settimanali personalizzate con warm-up e cool-down, analisi AI dei progressi e modifiche immediate della scheda in caso di dolori o impedimenti.</p>
               <div className="flex flex-wrap gap-3">
                 <span className="px-4 py-2 bg-violet-50 text-violet-700 rounded-full text-sm font-medium">🎯 Progressione Adattiva</span>
                 <span className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium">📸 Analisi Postura</span>
