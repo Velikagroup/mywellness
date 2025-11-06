@@ -22,8 +22,8 @@ import {
   Image as ImageIcon,
   Clock,
   RefreshCw,
-  BrainCircuit
-} from
+  BrainCircuit } from
+
 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -177,7 +177,7 @@ export default function Home() {
     setIsLoading(true);
     try {
       const currentUser = await base44.auth.me();
-      
+
       if (currentUser && currentUser.quiz_completed) {
         // Se loggato e quiz completato, vai alla dashboard
         navigate(createPageUrl('Dashboard'));
@@ -545,9 +545,9 @@ export default function Home() {
       <section className="pt-32 pb-20 px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-transparent border-2 border-transparent rounded-full text-sm shadow-lg" style={{ 
-              backgroundImage: 'linear-gradient(white, white), linear-gradient(90deg, #3b82f6 0%, #8b5cf6 25%, #a855f7 50%, #ec4899 75%, #3b82f6 100%)', 
-              backgroundOrigin: 'border-box', 
+            <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-transparent border-2 border-transparent rounded-full text-sm shadow-lg" style={{
+              backgroundImage: 'linear-gradient(white, white), linear-gradient(90deg, #3b82f6 0%, #8b5cf6 25%, #a855f7 50%, #ec4899 75%, #3b82f6 100%)',
+              backgroundOrigin: 'border-box',
               backgroundClip: 'padding-box, border-box',
               backgroundSize: '100%, 300%',
               animation: 'borderGradientFlow 8s linear infinite'
@@ -791,7 +791,7 @@ export default function Home() {
                 </div>
               </div>
               <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Conto Calorico AI</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">Scatta foto dei pasti: l'AI analizza calorie e macro. Se sforri, i piani nutrizionali e di allenamento si ribilanciano automaticamente.</p>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.</p>
               <div className="flex flex-wrap gap-3">
                 <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">🔍 Riconoscimento Cibo</span>
                 <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">⚖️ Ribilanciamento Automatico</span>
