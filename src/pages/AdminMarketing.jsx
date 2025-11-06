@@ -78,22 +78,20 @@ export default function AdminMarketing() {
       });
       setAllMetricsFilteredByDate(metricsFilteredByDate); // Store for daily trend and other derived stats
 
-      // NEW: Calculate funnel data per platform (as per outline's simplification)
+      // NEW: Calculate funnel data per platform
+      // Distribuzione semplificata: dividiamo equamente tutti gli utenti tra le piattaforme
       const platforms = ['meta', 'tiktok', 'pinterest', 'google'];
       const funnelData = {};
 
-      platforms.forEach(platform => {
-        // Simplified distribution: in a real app, users would be tracked by source/UTM
-        // For now, distribute total users by platform. This is a placeholder.
-        const usersForPlatform = allUsers.filter(u => u.acquisition_platform === platform); // Assume users have an acquisition_platform
-        // If acquisition_platform is not available, distribute equally:
-        // const totalUsersForFunnel = allUsers;
-        // const numUsersPerPlatform = Math.floor(totalUsersForFunnel.length / platforms.length);
+      const totalQuizCompleted = allUsers.filter(u => u.quiz_completed === true).length;
+      const totalCheckoutStarted = allUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
+      const totalPurchases = allUsers.filter(u => u.purchased_landing_offer === true).length;
 
+      platforms.forEach(platform => {
         funnelData[platform] = {
-          quiz: usersForPlatform.filter(u => u.quiz_completed === true).length,
-          checkout: usersForPlatform.filter(u => u.billing_name && u.billing_name.length > 0).length,
-          purchases: usersForPlatform.filter(u => u.purchased_landing_offer === true).length
+          quiz: Math.floor(totalQuizCompleted / platforms.length),
+          checkout: Math.floor(totalCheckoutStarted / platforms.length),
+          purchases: Math.floor(totalPurchases / platforms.length)
         };
       });
 
