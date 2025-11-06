@@ -39,6 +39,12 @@ const ORDER_BUMP_PRICE = 19.99;
 export default function LandingCheckout() {
   const navigate = useNavigate();
   const [isSaving, setIsSaving] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'card', 'apple_pay' or 'google_pay'
+  const [stripe, setStripe] = useState(null);
+  const [paymentRequest, setPaymentRequest] = useState(null);
+  const [canMakePayment, setCanMakePayment] = useState(null);
+  const [showApplePay, setShowApplePay] = useState(false);
+  const [showGooglePay, setShowGooglePay] = useState(false);
   const [cardData, setCardData] = useState({
     number: '',
     expiry: '',
@@ -73,7 +79,107 @@ export default function LandingCheckout() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Load Stripe.js
+    const loadStripe = async () => {
+      const stripeKey = 'pk_live_51S6Kgr2OXBs6ZYwl4yACMzsDOQ72eT6A2glTBx5dXJWDmDEABHkXbDMzl77MMb3ZQOpXHWJpBiVQWJjZhZz34Nnl00FuwXVxIM';
+      if (!window.Stripe) {
+        return new Promise((resolve) => {
+          const script = document.createElement('script');
+          script.src = 'https://js.stripe.com/v3/';
+          script.async = true;
+          script.onload = () => {
+            resolve(window.Stripe(stripeKey));
+          };
+          document.body.appendChild(script);
+        });
+      } else {
+        return Promise.resolve(window.Stripe(stripeKey));
+      }
+    };
+
+    loadStripe().then(stripeInstance => {
+      setStripe(stripeInstance);
+    });
   }, []);
+
+  // Initialize Payment Request for Apple Pay / Google Pay
+  useEffect(() => {
+    if (!stripe) return;
+
+    const initializePaymentRequest = async () => {
+      try {
+        console.log('🔍 Initializing Payment Request...');
+        console.log('📱 User Agent:', navigator.userAgent);
+        console.log('🌐 Platform:', navigator.platform);
+        console.log('🔧 Is Safari:', /^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+        console.log('📲 Is iOS:', /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream);
+        
+        const pr = stripe.paymentRequest({
+          country: 'IT',
+          currency: 'eur',
+          total: {
+            label: 'MyWellness - Offerta Speciale',
+            amount: 100, // Placeholder amount, will be updated before showing
+          },
+          requestPayerName: true,
+          requestPayerEmail: true,
+          requestPayerPhone: true,
+        });
+
+        const canMakePaymentResult = await pr.canMakePayment();
+        
+        console.log('💳 canMakePayment result:', canMakePaymentResult);
+        
+        if (canMakePaymentResult) {
+          setCanMakePayment(canMakePaymentResult);
+          setPaymentRequest(pr);
+          
+          if (canMakePaymentResult.applePay) {
+            console.log('✅ Apple Pay is available');
+            setShowApplePay(true);
+          }
+          
+          if (canMakePaymentResult.googlePay) {
+            console.log('✅ Google Pay is available');
+            setShowGooglePay(true);
+          }
+          
+          if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
+            console.log('⚠️ Payment Request available but no specific wallet detected - using platform detection');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
+            
+            if (isIOS || isSafari || isMacOS) {
+              console.log('🍎 iOS/Safari/macOS detected - showing Apple Pay');
+              setShowApplePay(true);
+            } else {
+              console.log('🤖 Showing Google Pay as default');
+              setShowGooglePay(true);
+            }
+          }
+        } else {
+          console.log('❌ No digital wallet available - canMakePayment returned null/false');
+          console.log('⚙️ Trying fallback detection anyway...');
+          
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
+          
+          if (isIOS || isSafari || isMacOS) {
+            console.log('🍎 iOS/Safari/macOS detected via fallback - attempting to show Apple Pay');
+            setShowApplePay(true);
+            setPaymentRequest(pr); // Still set paymentRequest even if canMakePayment was false
+          }
+        }
+      } catch (error) {
+        console.error('❌ Payment Request initialization error:', error);
+      }
+    };
+
+    initializePaymentRequest();
+  }, [stripe]);
 
   const handleCardNumberChange = (e) => {
     let value = e.target.value.replace(/\s/g, '');
@@ -139,7 +245,112 @@ export default function LandingCheckout() {
     setIsApplyingCoupon(false);
   };
 
+  const handleDigitalWalletClick = async (walletType) => {
+    if (!paymentRequest || !stripe) {
+      alert("Wallet digitale non disponibile. Prova con la carta.");
+      return;
+    }
+
+    console.log(`🔄 Initializing ${walletType} payment...`);
+
+    // Basic form validation for non-card fields
+    if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
+      alert("Per favore, compila tutti i campi obbligatori prima di procedere con il pagamento.");
+      setIsSaving(false);
+      return;
+    }
+
+    setIsSaving(true);
+
+    try {
+      let subtotal = LANDING_OFFER_PRICE;
+      if (orderBumpSelected) {
+        subtotal += ORDER_BUMP_PRICE;
+      }
+
+      let discount = 0;
+      if (appliedCoupon && appliedCoupon.discount_type === 'percentage') {
+        discount = subtotal * (appliedCoupon.discount_value / 100);
+      }
+
+      const currentTotal = Math.max(0, subtotal - discount);
+      // Stripe requires amount in cents
+      const amountInCents = Math.round(currentTotal * 100);
+
+      paymentRequest.update({
+        total: {
+          label: 'MyWellness - Offerta Speciale',
+          amount: amountInCents,
+        },
+      });
+
+      // Remove previous listeners to prevent multiple calls
+      paymentRequest.off('paymentmethod');
+      paymentRequest.on('paymentmethod', async (ev) => {
+        try {
+          const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
+
+          const payload = {
+            paymentMethodId: ev.paymentMethod.id,
+            orderBumpSelected: orderBumpSelected,
+            appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
+            billingInfo: {
+              name: ev.payerName || billingInfo.name, // Use payerName from wallet if available
+              email: ev.payerEmail || billingInfo.email, // Use payerEmail from wallet if available
+              companyName: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.companyName : null,
+              taxId: showBillingFields ? billingInfo.taxId : null,
+              pecSdi: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.pecSdi : null,
+              billingType: billingInfo.billingType,
+              address: billingInfo.address,
+              city: billingInfo.city,
+              zip: billingInfo.zip,
+              country: billingInfo.country
+            },
+            phoneNumber: ev.payerPhone || fullPhoneNumber, // Use payerPhone from wallet if available
+            termsAccepted: termsAccepted,
+            privacyAccepted: privacyAccepted,
+            marketingConsent: marketingConsent
+          };
+
+          const functionUrl = `${window.location.origin}/functions/stripeCreateOneTimePayment`;
+          const response = await fetch(functionUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+
+          const result = await response.json();
+
+          if (!result.success) {
+            throw new Error(result.error || result.details || 'Payment failed');
+          }
+
+          ev.complete('success');
+          navigate(createPageUrl('ThankYou'), { replace: true });
+
+        } catch (error) {
+          console.error('Digital Wallet payment error:', error);
+          ev.complete('fail');
+          alert('Errore con il pagamento: ' + error.message);
+          setIsSaving(false);
+        }
+      });
+
+      paymentRequest.show();
+
+    } catch (error) {
+      console.error('Digital Wallet initialization error:', error);
+      alert('Errore nell\'inizializzazione del wallet: ' + error.message);
+      setIsSaving(false);
+    }
+  };
+
   const handleCompletePayment = async () => {
+    // If a digital wallet is selected, call its handler
+    if (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay') {
+      return handleDigitalWalletClick(paymentMethod === 'apple_pay' ? 'Apple Pay' : 'Google Pay');
+    }
+
     if (!isFormValid) {
       alert("Per favore, compila tutti i campi obbligatori correttamente.");
       return;
@@ -204,10 +415,11 @@ export default function LandingCheckout() {
     }
   };
 
-  const isFormValid = cardData.number.replace(/\s/g, '').length === 16 &&
+  const isCardFormValid = cardData.number.replace(/\s/g, '').length === 16 &&
     cardData.expiry.length === 5 &&
-    cardData.cvc.length === 3 &&
-    billingInfo.name.length > 0 &&
+    cardData.cvc.length === 3;
+
+  const isBillingInfoValid = billingInfo.name.length > 0 &&
     billingInfo.email.length > 0 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingInfo.email) &&
     phoneNumber.length > 0 &&
@@ -222,6 +434,11 @@ export default function LandingCheckout() {
       (billingInfo.billingType !== 'company' || billingInfo.companyName.length > 0)
     ));
 
+  const isFormValid = paymentMethod && isBillingInfoValid && (
+    (paymentMethod === 'card' && isCardFormValid) ||
+    (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay') // Digital wallets don't require card details pre-fill
+  );
+    
   const isCtaDisabled = !isFormValid || isSaving;
 
   let subtotal = LANDING_OFFER_PRICE;
@@ -575,109 +792,206 @@ export default function LandingCheckout() {
                 </div>
               </div>
 
+              {/* Payment Method Selection */}
               <div className="space-y-4 pt-4 border-t border-gray-200/50">
                 <div className="flex items-center gap-3 mb-4">
                   <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
-                  <h3 className="text-xl font-bold text-gray-800">Dati Carta</h3>
+                  <h3 className="text-xl font-bold text-gray-800">Metodo di Pagamento</h3>
                 </div>
 
-                <div>
-                  <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Numero Carta
-                  </Label>
-                  <div className="relative">
-                    <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
-                    <Input id="cardNumber" name="cardnumber" type="tel" placeholder="1234 5678 9012 3456"
-                      value={cardData.number} onChange={handleCardNumberChange}
-                      className="h-12 text-base pl-10" autoComplete="cc-number" />
-                  </div>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
-                    <Input id="expiry" name="exp-date" type="text" placeholder="MM/YY"
-                      value={cardData.expiry} onChange={handleExpiryChange}
-                      className="h-12 text-base" autoComplete="cc-exp" />
-                  </div>
-                  <div>
-                    <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
-                    <Input id="cvc" name="cvc" type="text" placeholder="123"
-                      value={cardData.cvc} onChange={handleCvcChange}
-                      className="h-12 text-base" autoComplete="cc-csc" />
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2 pt-2">
-                  <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
-                  <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
-                    Salva questa carta per pagamenti futuri
-                  </Label>
+                <div className="space-y-3">
+                  <button
+                    onClick={() => setPaymentMethod('card')}
+                    className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
+                      paymentMethod === 'card'
+                        ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                        : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                    }`}
+                  >
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                      paymentMethod === 'card' ? 'bg-white' : 'bg-gray-50'
+                    }`}>
+                      <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
+                    </div>
+                    <p className="text-base font-semibold text-gray-800">Carta di Credito / Debito</p>
+                  </button>
+
+                  {showApplePay && (
+                    <button
+                      onClick={() => {
+                        setPaymentMethod('apple_pay');
+                      }}
+                      disabled={isSaving}
+                      className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
+                        paymentMethod === 'apple_pay'
+                          ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                          : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                        paymentMethod === 'apple_pay' ? 'bg-white' : 'bg-gray-50'
+                      }`}>
+                        <svg className={`w-8 h-8 ${paymentMethod === 'apple_pay' ? 'text-black' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                      </div>
+                      <div className="text-left">
+                        <p className="text-base font-semibold text-gray-800">Apple Pay</p>
+                        <p className="text-xs text-gray-500">Pagamento veloce e sicuro</p>
+                      </div>
+                    </button>
+                  )}
+
+                  {showGooglePay && (
+                    <button
+                      onClick={() => {
+                        setPaymentMethod('google_pay');
+                      }}
+                      disabled={isSaving}
+                      className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
+                        paymentMethod === 'google_pay'
+                          ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                          : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                      }`}
+                    >
+                      <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                        paymentMethod === 'google_pay' ? 'bg-white' : 'bg-gray-50'
+                      }`}>
+                        <svg className={`w-8 h-8 ${paymentMethod === 'google_pay' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} fill="currentColor" viewBox="0 0 512 512">
+                          <path d="M473.16 221.48l-2.26-9.59H262.46v88.22H387c-12.93 61.4-72.93 93.72-121.94 93.72-35.66 0-73.25-15-98.13-39.11a140.08 140.08 0 01-41.8-98.88c0-37.16 16.7-74.33 41-98.78s61-38.13 97.49-38.13c41.79 0 71.74 22.19 82.94 32.31l62.69-62.36C390.86 72.72 340.34 32 261.6 32c-60.75 0-119 23.27-161.58 65.71C58 139.5 36.25 199.93 36.25 256s20.58 113.48 61.3 155.6c43.51 44.92 105.13 68.4 168.58 68.4 57.73 0 112.45-22.62 151.45-63.66 38.34-40.4 58.17-96.3 58.17-154.9 0-24.67-2.48-39.32-2.59-39.96z"/>
+                        </svg>
+                      </div>
+                      <div className="text-left">
+                        <p className="text-base font-semibold text-gray-800">Google Pay</p>
+                        <p className="text-xs text-gray-500">Pagamento veloce e sicuro</p>
+                      </div>
+                    </button>
+                  )}
                 </div>
               </div>
 
-              <div className="space-y-6 pt-6 border-t border-gray-200/50">
-                <div className="space-y-2">
-                  <Label htmlFor="couponCode" className="text-sm font-semibold text-gray-700">
-                    Codice Sconto (Opzionale)
-                  </Label>
-                  <div className="relative">
-                    <Input id="couponCode" type="text" placeholder="Es. PROMO20" value={couponCode}
-                      onChange={(e) => setCouponCode(e.target.value)} className="h-12 text-base pr-28" />
-                    <Button type="button" onClick={handleApplyDiscount} disabled={isApplyingCoupon} className={cn("absolute right-2 top-1/2 -translate-y-1/2 h-9 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors", couponCode && "bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-hover)]")}>
-                        {isApplyingCoupon ? 'Applicando...' : 'Applica'}
-                    </Button>
+              {/* Card Details - Show only when card is selected */}
+              {paymentMethod === 'card' && (
+                <div className="space-y-4 pt-4">
+                  <div className="flex items-center gap-3 mb-4">
+                    <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
+                    <h3 className="text-xl font-bold text-gray-800">Dati Carta</h3>
                   </div>
-                  {discountError && <p className="text-red-500 text-sm mt-1">{discountError}</p>}
-                </div>
 
-                <div className="pt-0">
-                  <Label htmlFor="orderBump" className="block cursor-pointer">
-                    <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex-grow">
-                          <p className="text-lg font-bold text-gray-900">
-                            Si, lo voglio!
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Aggiungi "Mastery AI Wellness": video corso completo
-                          </p>
-                        </div>
-                        <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
-                          className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
+                  <div>
+                    <Label htmlFor="cardNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Numero Carta
+                    </Label>
+                    <div className="relative">
+                      <CreditCard className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+                      <Input id="cardNumber" name="cardnumber" type="tel" placeholder="1234 5678 9012 3456"
+                        value={cardData.number} onChange={handleCardNumberChange}
+                        className="h-12 text-base pl-10" autoComplete="cc-number" />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="expiry" className="text-sm font-semibold text-gray-700 mb-2 block">Scadenza</Label>
+                      <Input id="expiry" name="exp-date" type="text" placeholder="MM/YY"
+                        value={cardData.expiry} onChange={handleExpiryChange}
+                        className="h-12 text-base" autoComplete="cc-exp" />
+                    </div>
+                    <div>
+                      <Label htmlFor="cvc" className="text-sm font-semibold text-gray-700 mb-2 block">CVC</Label>
+                      <Input id="cvc" name="cvc" type="text" placeholder="123"
+                        value={cardData.cvc} onChange={handleCvcChange}
+                        className="h-12 text-base" autoComplete="cc-csc" />
+                    </div>
+                  </div>
+                  <div className="flex items-center space-x-2 pt-2">
+                    <Checkbox id="save-card" checked={saveCard} onCheckedChange={setSaveCard} />
+                    <Label htmlFor="save-card" className="text-sm font-normal text-gray-600 cursor-pointer">
+                      Salva questa carta per pagamenti futuri
+                    </Label>
+                  </div>
+                </div>
+              )}
+
+              {(paymentMethod === 'apple_pay' || paymentMethod === 'google_pay') && (
+                <div className="p-6 bg-gradient-to-br from-[var(--brand-primary-light)] to-teal-50 rounded-xl border border-[var(--brand-primary)]/20">
+                  <div className="flex items-center gap-3 mb-2">
+                    <CheckCircle className="w-5 h-5 text-[var(--brand-primary)]" />
+                    <p className="font-semibold text-gray-900">Metodo Sicuro e Veloce</p>
+                  </div>
+                  <p className="text-sm text-gray-700">
+                    Cliccando sul bottone di completamento, si aprirà {paymentMethod === 'apple_pay' ? 'Apple Pay' : 'Google Pay'} per finalizzare il pagamento in modo sicuro.
+                  </p>
+                </div>
+              )}
+
+              {paymentMethod && (
+                <>
+                  <div className="space-y-6 pt-6 border-t border-gray-200/50">
+                    <div className="space-y-2">
+                      <Label htmlFor="couponCode" className="text-sm font-semibold text-gray-700">
+                        Codice Sconto (Opzionale)
+                      </Label>
+                      <div className="relative">
+                        <Input id="couponCode" type="text" placeholder="Es. PROMO20" value={couponCode}
+                          onChange={(e) => setCouponCode(e.target.value)} className="h-12 text-base pr-28" />
+                        <Button type="button" onClick={handleApplyDiscount} disabled={isApplyingCoupon} className={cn("absolute right-2 top-1/2 -translate-y-1/2 h-9 bg-gray-200 text-gray-700 hover:bg-gray-300 transition-colors", couponCode && "bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-hover)]")}>
+                            {isApplyingCoupon ? 'Applicando...' : 'Applica'}
+                        </Button>
                       </div>
-                      <div className="text-right">
-                        <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
-                        <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
+                      {discountError && <p className="text-red-500 text-sm mt-1">{discountError}</p>}
+                    </div>
+
+                    <div className="pt-0">
+                      <Label htmlFor="orderBump" className="block cursor-pointer">
+                        <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
+                          <div className="flex items-center justify-between gap-4">
+                            <div className="flex-grow">
+                              <p className="text-lg font-bold text-gray-900">
+                                Si, lo voglio!
+                              </p>
+                              <p className="text-sm text-gray-600 mt-1">
+                                Aggiungi "Mastery AI Wellness": video corso completo
+                              </p>
+                            </div>
+                            <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
+                              className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
+                          </div>
+                          <div className="text-right">
+                            <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
+                            <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
+                          </div>
+                        </div>
+                      </Label>
+                    </div>
+                    
+                    <div className="space-y-3 pt-4">
+                      <div className="flex items-start space-x-3">
+                        <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
+                        <Label htmlFor="terms" className="text-xs text-gray-600">
+                          Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
+                        </Label>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
+                        <Label htmlFor="privacy" className="text-xs text-gray-600">
+                          Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
+                        </Label>
+                      </div>
+                      <div className="flex items-start space-x-3">
+                        <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
+                        <Label htmlFor="marketing" className="text-xs text-gray-600">
+                          Acconsento a ricevere comunicazioni di marketing e newsletter.
+                        </Label>
                       </div>
                     </div>
-                  </Label>
-                </div>
-                
-                <div className="space-y-3 pt-4">
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
-                    <Label htmlFor="terms" className="text-xs text-gray-600">
-                      Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
-                    </Label>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
-                    <Label htmlFor="privacy" className="text-xs text-gray-600">
-                      Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
-                    </Label>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
-                    <Label htmlFor="marketing" className="text-xs text-gray-600">
-                      Acconsento a ricevere comunicazioni di marketing e newsletter.
-                    </Label>
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
-                  <Shield className="w-4 h-4" />
-                  <span>Pagamento sicuro e crittografato</span>
-                </div>
-              </div>
+                    <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
+                      <Shield className="w-4 h-4" />
+                      <span>Pagamento sicuro e crittografato</span>
+                    </div>
+                  </div>
+                </>
+              )}
             </CardContent>
           </Card>
 
