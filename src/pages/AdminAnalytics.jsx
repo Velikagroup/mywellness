@@ -1109,9 +1109,13 @@ export default function AdminAnalytics() {
               <CardContent>
                 <div className="h-96">
                   <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={cashFlowProjection} barCategoryGap="20%" barSize={40}>
+                    <BarChart data={cashFlowProjection} barCategoryGap="20%" margin={{ left: 20, right: 20 }}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                      <XAxis dataKey="month" stroke="#6b7280" />
+                      <XAxis 
+                        dataKey="month" 
+                        stroke="#6b7280"
+                        padding={{ left: 30, right: 30 }}
+                      />
                       <YAxis stroke="#6b7280" />
                       <Tooltip
                         contentStyle={{
@@ -1126,12 +1130,14 @@ export default function AdminAnalytics() {
                         fill="#10b981" 
                         name="Entrate (€)"
                         radius={[4, 4, 0, 0]}
+                        maxBarSize={50}
                       />
                       <Bar 
                         dataKey="expenses" 
                         fill="#ef4444" 
                         name="Spese (€)"
                         radius={[4, 4, 0, 0]}
+                        maxBarSize={50}
                       />
                     </BarChart>
                   </ResponsiveContainer>
