@@ -39,9 +39,10 @@ export default function TrialSetup() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(null); // 'card' or 'apple_pay'
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'card' or 'digital_wallet'
   const [stripe, setStripe] = useState(null);
-  const [applePayAvailable, setApplePayAvailable] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState(null); // New state for Stripe Payment Request
+  const [canMakePayment, setCanMakePayment] = useState(null); // New state to store result of canMakePayment
   const [cardData, setCardData] = useState({
     number: '',
     expiry: '',
@@ -109,11 +110,6 @@ export default function TrialSetup() {
         const stripeInstance = await loadStripe();
         setStripe(stripeInstance);
         
-        // Controllo semplice: mostra Apple Pay su iOS/Safari
-        const isAppleDevice = /iPhone|iPad|iPod|Macintosh/.test(navigator.userAgent);
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        setApplePayAvailable(isAppleDevice || isSafari);
-
         // Autocompila i dati dall'utente loggato
         setBillingInfo(prev => ({
           ...prev,
@@ -187,6 +183,47 @@ export default function TrialSetup() {
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
+
+  // Initialize Payment Request for Apple Pay / Google Pay
+  useEffect(() => {
+    if (!stripe || !user) return; // Ensure stripe is loaded and user is authenticated
+
+    const initializePaymentRequest = async () => {
+      try {
+        const pr = stripe.paymentRequest({
+          country: 'IT', // Assuming Italy as default for initial request, payer can change
+          currency: 'eur',
+          total: {
+            label: 'MyWellness - Prova Gratuita',
+            amount: 100, // €1.00 placeholder, will be updated before showing the sheet
+          },
+          requestPayerName: true,
+          requestPayerEmail: true,
+          requestPayerPhone: false, // Stripe recommends setting this to false initially
+          requestBillingAddress: true, // Request billing address to prefill our form
+          // Additional configuration for Google Pay (if needed)
+          // paymentRequest.googlePay('default', {
+          //   // Configuration for Google Pay
+          // });
+        });
+
+        // Check if Apple Pay or Google Pay is available
+        const canMakePaymentResult = await pr.canMakePayment();
+        
+        if (canMakePaymentResult) {
+          setCanMakePayment(canMakePaymentResult);
+          setPaymentRequest(pr);
+          console.log('✅ Digital Wallet available:', canMakePaymentResult);
+        } else {
+          console.log('❌ No digital wallet available');
+        }
+      } catch (error) {
+        console.error('Payment Request initialization error:', error);
+      }
+    };
+
+    initializePaymentRequest();
+  }, [stripe, user]); // Depend on stripe and user to ensure they are loaded/authenticated
 
   // If loading, render a loading indicator
   if (isLoading) {
@@ -269,48 +306,44 @@ export default function TrialSetup() {
     setIsApplyingCoupon(false);
   };
 
-  const handleApplePayClick = async () => {
-    if (!stripe) {
-      alert("Stripe non è caricato. Riprova tra poco.");
+  const handleDigitalWalletClick = async () => {
+    if (!paymentRequest || !stripe) {
+      alert("Wallet digitale non disponibile.");
       return;
     }
 
-    // Only basic form validation needed for Apple Pay, as it will collect payer details
     if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
-      alert("Per favore, compila tutti i campi obbligatori prima di procedere con Apple Pay.");
+      alert("Per favor, compila tutti i campi obbligatori prima di procedere.");
       return;
     }
 
     setIsSaving(true);
 
     try {
-      const amount = Math.round(total * 100);
-      
-      const paymentRequest = stripe.paymentRequest({
-        country: 'IT', // Assumi Italia come default per i test
-        currency: 'eur',
+      // Calculate current total
+      let subtotal = 0;
+      if (orderBumpSelected) {
+        subtotal = ORDER_BUMP_PRICE;
+      }
+
+      let discount = 0;
+      if (appliedCoupon && appliedCoupon.discount_type === 'percentage') {
+        discount = subtotal * (appliedCoupon.discount_value / 100);
+      }
+
+      const currentTotal = Math.max(0, subtotal - discount);
+      const amount = Math.round(currentTotal * 100); // Convert to cents
+
+      // Update payment request with current amount
+      paymentRequest.update({
         total: {
           label: 'MyWellness - Prova Gratuita',
           amount: amount,
         },
-        requestPayerName: true,
-        requestPayerEmail: true,
-        requestShipping: false, // Non richiedere spedizione
-        // Ensure billing address info is requested if needed
-        requestBillingAddress: true,
       });
 
-      // Controlla se Apple Pay è disponibile
-      const canMakePaymentResult = await paymentRequest.canMakePayment();
-      
-      if (!canMakePaymentResult || !canMakePaymentResult.applePay) {
-        setIsSaving(false);
-        alert("Apple Pay non è disponibile su questo dispositivo. Per favor, usa la carta di credito.");
-        setPaymentMethod('card'); // Fallback to card
-        return;
-      }
-
-      // Listener per quando l'utente completa Apple Pay
+      // Set up payment method listener
+      paymentRequest.off('paymentmethod'); // Remove any existing listeners
       paymentRequest.on('paymentmethod', async (ev) => {
         try {
           const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
@@ -322,7 +355,7 @@ export default function TrialSetup() {
             orderBumpSelected: orderBumpSelected,
             appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
             billingInfo: {
-              name: ev.payerName || billingInfo.name,
+              name: ev.payerName || billingInfo.name, // Use payer info from wallet if available
               email: ev.payerEmail || billingInfo.email,
               companyName: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.companyName : null,
               taxId: showBillingFields ? billingInfo.taxId : null,
@@ -341,7 +374,10 @@ export default function TrialSetup() {
 
           const response = await fetch(`${window.location.origin}/functions/stripeCreateTrialSubscription`, {
             method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
+            headers: { 
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${await base44.auth.getToken()}` // Add authorization header
+            },
             body: JSON.stringify(payload)
           });
 
@@ -355,19 +391,19 @@ export default function TrialSetup() {
           navigate(createPageUrl('Dashboard'), { replace: true });
 
         } catch (error) {
-          console.error('Apple Pay error:', error);
+          console.error('Digital Wallet payment error:', error);
           ev.complete('fail');
-          alert('Errore con Apple Pay: ' + error.message);
+          alert('Errore con il pagamento: ' + error.message);
           setIsSaving(false);
         }
       });
 
-      // Mostra Apple Pay
+      // Show the payment sheet
       paymentRequest.show();
 
     } catch (error) {
-      console.error('Apple Pay initialization error:', error);
-      alert('Errore nell\'inizializzazione di Apple Pay: ' + error.message);
+      console.error('Digital Wallet initialization error:', error);
+      alert('Errore nell\'inizializzazione del wallet: ' + error.message);
       setIsSaving(false);
     }
   };
@@ -378,9 +414,9 @@ export default function TrialSetup() {
       return;
     }
 
-    // Se Apple Pay, chiama il gestore Apple Pay
-    if (paymentMethod === 'apple_pay') {
-      return handleApplePayClick();
+    // Se Digital Wallet, usa il gestore specifico
+    if (paymentMethod === 'digital_wallet') {
+      return handleDigitalWalletClick();
     }
 
     setIsSaving(true);
@@ -424,7 +460,10 @@ export default function TrialSetup() {
       const functionUrl = `${window.location.origin}/functions/stripeCreateTrialSubscription`;
       const response = await fetch(functionUrl, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${await base44.auth.getToken()}` // Add authorization header
+        },
         body: JSON.stringify(payload)
       });
 
@@ -445,7 +484,7 @@ export default function TrialSetup() {
   };
 
   const isFormValid = paymentMethod && 
-    (paymentMethod === 'apple_pay' || ( // If Apple Pay, card details not needed here
+    (paymentMethod === 'digital_wallet' || ( // If Digital Wallet, card details not needed here
       cardData.number.replace(/\s/g, '').length === 16 &&
       cardData.expiry.length === 5 &&
       cardData.cvc.length === 3
@@ -871,23 +910,35 @@ export default function TrialSetup() {
                   <p className="text-base font-semibold text-gray-800">Carta di Credito / Debito</p>
                 </button>
 
-                {applePayAvailable && (
+                {canMakePayment && ( // Only show if digital wallet is available
                   <button
-                    onClick={() => setPaymentMethod('apple_pay')}
+                    onClick={() => setPaymentMethod('digital_wallet')}
                     className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
-                      paymentMethod === 'apple_pay'
+                      paymentMethod === 'digital_wallet'
                         ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
                         : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
                     }`}
                   >
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                      paymentMethod === 'apple_pay' ? 'bg-white' : 'bg-gray-50'
+                      paymentMethod === 'digital_wallet' ? 'bg-white' : 'bg-gray-50'
                     }`}>
-                      <svg className={`w-8 h-8 ${paymentMethod === 'apple_pay' ? 'text-black' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
-                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                      </svg>
+                      {canMakePayment.applePay ? (
+                        <svg className={`w-8 h-8 ${paymentMethod === 'digital_wallet' ? 'text-black' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                        </svg>
+                      ) : (
+                        // Google Pay icon (simplified for example, use actual Google Pay SVG if available)
+                        <svg className={`w-8 h-8 ${paymentMethod === 'digital_wallet' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} fill="currentColor" viewBox="0 0 24 24">
+                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                        </svg>
+                      )}
                     </div>
-                    <p className="text-base font-semibold text-gray-800">Apple Pay</p>
+                    <div className="text-left">
+                      <p className="text-base font-semibold text-gray-800">
+                        {canMakePayment.applePay ? 'Apple Pay' : 'Google Pay'}
+                      </p>
+                      <p className="text-xs text-gray-500">Pagamento rapido e sicuro</p>
+                    </div>
                   </button>
                 )}
               </div>
@@ -930,10 +981,14 @@ export default function TrialSetup() {
               </div>
             )}
 
-            {paymentMethod === 'apple_pay' && (
-              <div className="p-6 bg-blue-50 rounded-xl border border-blue-200">
-                <p className="text-center text-sm text-gray-700">
-                  Cliccando sul pulsante in basso, si aprirà Apple Pay per completare il pagamento in modo sicuro.
+            {paymentMethod === 'digital_wallet' && (
+              <div className="p-6 bg-gradient-to-br from-[var(--brand-primary-light)] to-teal-50 rounded-xl border border-[var(--brand-primary)]/20">
+                <div className="flex items-center gap-3 mb-2">
+                  <CheckCircle className="w-5 h-5 text-[var(--brand-primary)]" />
+                  <p className="font-semibold text-gray-900">Metodo Sicuro e Veloce</p>
+                </div>
+                <p className="text-sm text-gray-700">
+                  Cliccando sul pulsante in basso, si aprirà {canMakePayment?.applePay ? 'Apple Pay' : 'Google Pay'} per completare il pagamento in modo sicuro.
                 </p>
               </div>
             )}
