@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target } from "lucide-react";
+import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -75,7 +75,8 @@ export default function Layout({ children }) {
     createPageUrl('AdminBlog'),
     createPageUrl('AdminEmails'),
     createPageUrl('AdminAnalytics'), // Added for AdminAnalytics
-    createPageUrl('AdminMarketing')
+    createPageUrl('AdminMarketing'),
+    createPageUrl('AdminSalesTax') // Added for AdminSalesTax
   ];
 
   // Pagine che NON devono avere il layout
@@ -117,6 +118,7 @@ export default function Layout({ children }) {
       allNavItems.push({ name: 'Email', icon: Mail, path: 'AdminEmails' });
       allNavItems.push({ name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' });
       allNavItems.push({ name: 'Marketing', icon: Target, path: 'AdminMarketing' });
+      allNavItems.push({ name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' });
   }
 
   const navItems = allNavItems.filter(item => {

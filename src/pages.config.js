@@ -20,6 +20,7 @@ import NotFound from './pages/NotFound';
 import AdminEmails from './pages/AdminEmails';
 import AdminAnalytics from './pages/AdminAnalytics';
 import AdminMarketing from './pages/AdminMarketing';
+import AdminSalesTax from './pages/AdminSalesTax';
 import Layout from './Layout.jsx';
 
 
@@ -46,6 +47,7 @@ export const PAGES = {
     "AdminEmails": AdminEmails,
     "AdminAnalytics": AdminAnalytics,
     "AdminMarketing": AdminMarketing,
+    "AdminSalesTax": AdminSalesTax,
 }
 
 export const pagesConfig = {
