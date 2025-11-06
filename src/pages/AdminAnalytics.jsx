@@ -1111,7 +1111,7 @@ export default function AdminAnalytics() {
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Proiezione Cash Flow (12 Mesi)</CardTitle>
-              <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile e spese fisse</p>
+              <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile delle entrate e spese mensili fisse</p>
             </CardHeader>
             <CardContent>
               <div className="h-96">
