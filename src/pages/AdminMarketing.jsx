@@ -35,7 +35,7 @@ export default function AdminMarketing() {
 
   // Original states, some might be raw data for specific display needs, or deprecated by new structure
   const [campaigns, setCampaigns] = useState([]); // Raw list of campaigns for 'Campaigns' tab
-  const [metrics, setMetrics] = useState([]); // Raw metrics, potentially deprecated by processed data
+  const [metrics, setMetrics] = useState([]); // Raw metrics, potentially deprecated by new structure
   const [transactions, setTransactions] = useState([]); // Raw transactions
 
   const [showConnectDialog, setShowConnectDialog] = useState(false);
