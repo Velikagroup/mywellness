@@ -39,10 +39,12 @@ export default function TrialSetup() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(null); // 'card' or 'digital_wallet'
+  const [paymentMethod, setPaymentMethod] = useState(null); // 'card', 'apple_pay' or 'google_pay'
   const [stripe, setStripe] = useState(null);
   const [paymentRequest, setPaymentRequest] = useState(null); // New state for Stripe Payment Request
   const [canMakePayment, setCanMakePayment] = useState(null); // New state to store result of canMakePayment
+  const [showApplePay, setShowApplePay] = useState(false); // New state
+  const [showGooglePay, setShowGooglePay] = useState(false); // New state
   const [cardData, setCardData] = useState({
     number: '',
     expiry: '',
@@ -186,44 +188,71 @@ export default function TrialSetup() {
 
   // Initialize Payment Request for Apple Pay / Google Pay
   useEffect(() => {
-    if (!stripe || !user) return; // Ensure stripe is loaded and user is authenticated
+    if (!stripe || !user) return;
 
     const initializePaymentRequest = async () => {
       try {
+        console.log('🔍 Initializing Payment Request...');
+        console.log('📱 User Agent:', navigator.userAgent);
+        console.log('🌐 Platform:', navigator.platform);
+        
         const pr = stripe.paymentRequest({
-          country: 'IT', // Assuming Italy as default for initial request, payer can change
+          country: 'IT',
           currency: 'eur',
           total: {
             label: 'MyWellness - Prova Gratuita',
-            amount: 100, // €1.00 placeholder, will be updated before showing the sheet
+            amount: 100,
           },
           requestPayerName: true,
           requestPayerEmail: true,
-          requestPayerPhone: false, // Stripe recommends setting this to false initially
-          requestBillingAddress: true, // Request billing address to prefill our form
-          // Additional configuration for Google Pay (if needed)
-          // paymentRequest.googlePay('default', {
-          //   // Configuration for Google Pay
-          // });
+          requestPayerPhone: false,
+          requestBillingAddress: true,
         });
 
-        // Check if Apple Pay or Google Pay is available
+        // Check availability
         const canMakePaymentResult = await pr.canMakePayment();
+        
+        console.log('💳 canMakePayment result:', canMakePaymentResult);
         
         if (canMakePaymentResult) {
           setCanMakePayment(canMakePaymentResult);
           setPaymentRequest(pr);
-          console.log('✅ Digital Wallet available:', canMakePaymentResult);
+          
+          // Set individual flags for Apple Pay and Google Pay
+          if (canMakePaymentResult.applePay) {
+            console.log('✅ Apple Pay is available');
+            setShowApplePay(true);
+          }
+          
+          if (canMakePaymentResult.googlePay) {
+            console.log('✅ Google Pay is available');
+            setShowGooglePay(true);
+          }
+          
+          if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
+            console.log('⚠️ Payment Request available but no specific wallet detected');
+            // Fallback: assume it's available for the platform
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            
+            if (isIOS || isSafari) {
+              console.log('📱 iOS/Safari detected - showing Apple Pay');
+              setShowApplePay(true);
+            } else {
+              console.log('🤖 Showing Google Pay as default');
+              setShowGooglePay(true);
+            }
+          }
         } else {
           console.log('❌ No digital wallet available');
         }
       } catch (error) {
-        console.error('Payment Request initialization error:', error);
+        console.error('❌ Payment Request initialization error:', error);
       }
     };
 
     initializePaymentRequest();
-  }, [stripe, user]); // Depend on stripe and user to ensure they are loaded/authenticated
+  }, [stripe, user]);
 
   // If loading, render a loading indicator
   if (isLoading) {
@@ -306,14 +335,16 @@ export default function TrialSetup() {
     setIsApplyingCoupon(false);
   };
 
-  const handleDigitalWalletClick = async () => {
+  const handleDigitalWalletClick = async (walletType) => { // Added walletType parameter
     if (!paymentRequest || !stripe) {
       alert("Wallet digitale non disponibile.");
       return;
     }
 
+    console.log(`🔄 Initializing ${walletType} payment...`); // Added log
+
     if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
-      alert("Per favor, compila tutti i campi obbligatori prima di procedere.");
+      alert("Per favore, compila tutti i campi obbligatori prima di procedere.");
       return;
     }
 
@@ -415,8 +446,8 @@ export default function TrialSetup() {
     }
 
     // Se Digital Wallet, usa il gestore specifico
-    if (paymentMethod === 'digital_wallet') {
-      return handleDigitalWalletClick();
+    if (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay') {
+      return handleDigitalWalletClick(paymentMethod === 'apple_pay' ? 'Apple Pay' : 'Google Pay');
     }
 
     setIsSaving(true);
@@ -484,7 +515,7 @@ export default function TrialSetup() {
   };
 
   const isFormValid = paymentMethod && 
-    (paymentMethod === 'digital_wallet' || ( // If Digital Wallet, card details not needed here
+    (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay' || ( // Updated condition
       cardData.number.replace(/\s/g, '').length === 16 &&
       cardData.expiry.length === 5 &&
       cardData.cvc.length === 3
@@ -910,34 +941,56 @@ export default function TrialSetup() {
                   <p className="text-base font-semibold text-gray-800">Carta di Credito / Debito</p>
                 </button>
 
-                {canMakePayment && ( // Only show if digital wallet is available
+                {showApplePay && (
                   <button
-                    onClick={() => setPaymentMethod('digital_wallet')}
+                    onClick={() => {
+                      setPaymentMethod('apple_pay');
+                      handleDigitalWalletClick('Apple Pay');
+                    }}
+                    disabled={isSaving}
                     className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
-                      paymentMethod === 'digital_wallet'
+                      paymentMethod === 'apple_pay'
                         ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
                         : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
                     }`}
                   >
                     <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                      paymentMethod === 'digital_wallet' ? 'bg-white' : 'bg-gray-50'
+                      paymentMethod === 'apple_pay' ? 'bg-white' : 'bg-gray-50'
                     }`}>
-                      {canMakePayment.applePay ? (
-                        <svg className={`w-8 h-8 ${paymentMethod === 'digital_wallet' ? 'text-black' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
-                          <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
-                        </svg>
-                      ) : (
-                        // Google Pay icon (simplified for example, use actual Google Pay SVG if available)
-                        <svg className={`w-8 h-8 ${paymentMethod === 'digital_wallet' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} fill="currentColor" viewBox="0 0 24 24">
-                          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                        </svg>
-                      )}
+                      <svg className={`w-8 h-8 ${paymentMethod === 'apple_pay' ? 'text-black' : 'text-gray-400'}`} viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M17.05 20.28c-.98.95-2.05.88-3.08.4-1.09-.5-2.08-.48-3.24 0-1.44.62-2.2.44-3.06-.4C2.79 15.25 3.51 7.59 9.05 7.31c1.35.07 2.29.74 3.08.8 1.18-.24 2.31-.93 3.57-.84 1.51.12 2.65.72 3.4 1.8-3.12 1.87-2.38 5.98.48 7.13-.57 1.5-1.31 2.99-2.54 4.09l.01-.01zM12.03 7.25c-.15-2.23 1.66-4.07 3.74-4.25.29 2.58-2.34 4.5-3.74 4.25z"/>
+                      </svg>
                     </div>
                     <div className="text-left">
-                      <p className="text-base font-semibold text-gray-800">
-                        {canMakePayment.applePay ? 'Apple Pay' : 'Google Pay'}
-                      </p>
-                      <p className="text-xs text-gray-500">Pagamento rapido e sicuro</p>
+                      <p className="text-base font-semibold text-gray-800">Apple Pay</p>
+                      <p className="text-xs text-gray-500">Pagamento veloce e sicuro</p>
+                    </div>
+                  </button>
+                )}
+
+                {showGooglePay && (
+                  <button
+                    onClick={() => {
+                      setPaymentMethod('google_pay');
+                      handleDigitalWalletClick('Google Pay');
+                    }}
+                    disabled={isSaving}
+                    className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
+                      paymentMethod === 'google_pay'
+                        ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                        : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
+                    }`}
+                  >
+                    <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
+                      paymentMethod === 'google_pay' ? 'bg-white' : 'bg-gray-50'
+                    }`}>
+                      <svg className={`w-8 h-8 ${paymentMethod === 'google_pay' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} fill="currentColor" viewBox="0 0 512 512">
+                        <path d="M473.16 221.48l-2.26-9.59H262.46v88.22H387c-12.93 61.4-72.93 93.72-121.94 93.72-35.66 0-73.25-15-98.13-39.11a140.08 140.08 0 01-41.8-98.88c0-37.16 16.7-74.33 41-98.78s61-38.13 97.49-38.13c41.79 0 71.74 22.19 82.94 32.31l62.69-62.36C390.86 72.72 340.34 32 261.6 32c-60.75 0-119 23.27-161.58 65.71C58 139.5 36.25 199.93 36.25 256s20.58 113.48 61.3 155.6c43.51 44.92 105.13 68.4 168.58 68.4 57.73 0 112.45-22.62 151.45-63.66 38.34-40.4 58.17-96.3 58.17-154.9 0-24.67-2.48-39.32-2.59-39.96z"/>
+                      </svg>
+                    </div>
+                    <div className="text-left">
+                      <p className="text-base font-semibold text-gray-800">Google Pay</p>
+                      <p className="text-xs text-gray-500">Pagamento veloce e sicuro</p>
                     </div>
                   </button>
                 )}
@@ -981,14 +1034,14 @@ export default function TrialSetup() {
               </div>
             )}
 
-            {paymentMethod === 'digital_wallet' && (
+            {(paymentMethod === 'apple_pay' || paymentMethod === 'google_pay') && (
               <div className="p-6 bg-gradient-to-br from-[var(--brand-primary-light)] to-teal-50 rounded-xl border border-[var(--brand-primary)]/20">
                 <div className="flex items-center gap-3 mb-2">
                   <CheckCircle className="w-5 h-5 text-[var(--brand-primary)]" />
                   <p className="font-semibold text-gray-900">Metodo Sicuro e Veloce</p>
                 </div>
                 <p className="text-sm text-gray-700">
-                  Cliccando sul pulsante in basso, si aprirà {canMakePayment?.applePay ? 'Apple Pay' : 'Google Pay'} per completare il pagamento in modo sicuro.
+                  Cliccando sul bottone sopra, si aprirà {paymentMethod === 'apple_pay' ? 'Apple Pay' : 'Google Pay'} per completare il pagamento in modo sicuro.
                 </p>
               </div>
             )}
