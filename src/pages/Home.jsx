@@ -22,8 +22,9 @@ import {
   Image as ImageIcon,
   Clock,
   RefreshCw,
-  BrainCircuit } from
-
+  BrainCircuit,
+  Users // Added Users icon import
+} from
 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 
@@ -573,7 +574,6 @@ export default function Home() {
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c10949cf7_IMGH1.png"
                 alt="MyWellness App - Dashboard Progressi"
                 className="w-full h-auto drop-shadow-2xl" />
-
             </div>
           </div>
           
@@ -582,15 +582,15 @@ export default function Home() {
             guidato dall'<span className="animated-text-gradient">AI</span>
           </h1>
           
-          <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">Piani nutrizionali e allenamenti personalizzati, creati dall'intelligenza artificiale e adattati in tempo reale ai tuoi progressi.
-
+          <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+            Piani nutrizionali e allenamenti personalizzati, creati dall'intelligenza artificiale e adattati in tempo reale ai tuoi progressi.
           </p>
           
           <div className="flex items-center justify-center gap-4">
             <Button
               ref={heroQuizButtonRef}
-              onClick={handleGetStarted} // Changed to handleGetStarted
-              disabled={isLoading} // Added disabled state
+              onClick={handleGetStarted}
+              disabled={isLoading}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-6 py-3 text-sm font-medium">
               Quiz Gratuito
             </Button>
@@ -603,14 +603,27 @@ export default function Home() {
             </Button>
           </div>
           
+          {/* Nuova sezione con numero utenti e avatar sovrapposti */}
           <div className="mt-16 pt-8">
-            <p className="text-sm text-gray-500 mb-6">Fidato da professionisti di</p>
-            <div className="flex items-center justify-center gap-6 md:gap-12 flex-wrap">
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/24/Adidas_logo.png" alt="Adidas" className="h-6 md:h-10 object-contain grayscale opacity-60 hover:opacity-80 transition-opacity" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/a/a6/Logo_NIKE.svg" alt="Nike" className="h-5 md:h-9 object-contain grayscale opacity-60 hover:opacity-80 transition-opacity" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/f/fa/Apple_logo_black.svg" alt="Apple" className="h-6 md:h-11 object-contain grayscale opacity-60 hover:opacity-80 transition-opacity" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/2/2f/Google_2015_logo.svg" alt="Google" className="h-5 md:h-10 object-contain grayscale opacity-60 hover:opacity-80 transition-opacity" />
-              <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/9/96/Microsoft_logo_%282012%29.svg/320px-Microsoft_logo_%282012%29.svg.png" alt="Microsoft" className="hidden md:block h-5 md:h-9 object-contain grayscale opacity-60 hover:opacity-80 transition-opacity" />
+            <div className="flex flex-col items-center justify-center gap-4">
+              <div className="flex items-center -space-x-3">
+                <img src="https://i.pravatar.cc/400?img=29" alt="User" className="w-12 h-12 rounded-full border-3 border-white shadow-lg" />
+                <img src="https://i.pravatar.cc/400?img=47" alt="User" className="w-12 h-12 rounded-full border-3 border-white shadow-lg" />
+                <img src="https://i.pravatar.cc/400?img=33" alt="User" className="w-12 h-12 rounded-full border-3 border-white shadow-lg" />
+                <img src="https://i.pravatar.cc/400?img=25" alt="User" className="w-12 h-12 rounded-full border-3 border-white shadow-lg" />
+                <img src="https://i.pravatar.cc/400?img=68" alt="User" className="w-12 h-12 rounded-full border-3 border-white shadow-lg" />
+                <div className="w-12 h-12 rounded-full border-3 border-white shadow-lg bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 flex items-center justify-center">
+                  <Users className="w-6 h-6 text-white" />
+                </div>
+              </div>
+              
+              <div className="text-center">
+                <p className="text-sm text-gray-500 mb-1">Utilizzato da oltre</p>
+                <p className="text-3xl md:text-4xl font-black text-gray-900">
+                  {liveStats.users.toLocaleString('it-IT')} <span className="text-[var(--brand-primary)]">persone</span>
+                </p>
+                <p className="text-xs text-gray-400 mt-1">🔥 Aggiornamento in tempo reale</p>
+              </div>
             </div>
           </div>
         </div>
