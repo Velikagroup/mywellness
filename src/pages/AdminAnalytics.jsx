@@ -446,11 +446,11 @@ export default function AdminAnalytics() {
   const getCashFlowProjection = () => {
     const projections = [];
     const currentMRR = mrrFromPriceMap;
-    const growthRate = 1 + (projectionGrowthRate / 100); // Use user-defined growth rate
+    const growthRate = 1 + (projectionGrowthRate / 100);
 
     for (let i = 1; i <= 12; i++) {
       const projectedMRR = currentMRR * Math.pow(growthRate, i);
-      const projectedExpenses = totalMonthlyExpenses * (1 + (i * 0.05)); // 5% monthly expense increase assumption
+      const projectedExpenses = totalMonthlyExpenses; // Spese fisse - nessuna crescita automatica
 
       projections.push({
         month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy', { locale: it }),
@@ -1111,7 +1111,7 @@ export default function AdminAnalytics() {
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <CardTitle>Proiezione Cash Flow (12 Mesi)</CardTitle>
-              <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile e aumento spese 5%</p>
+              <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile e spese fisse</p>
             </CardHeader>
             <CardContent>
               <div className="h-96">
