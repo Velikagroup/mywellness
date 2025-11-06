@@ -61,6 +61,10 @@ export default function TrialSetup() {
   });
   const [showBillingFields, setShowBillingFields] = useState(false);
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [discountError, setDiscountError] = useState('');
   const [orderBumpSelected, setOrderBumpSelected] = useState(false);
   const [saveCard, setSaveCard] = useState(true);
   const [termsAccepted, setTermsAccepted] = useState(false);
@@ -228,6 +232,43 @@ export default function TrialSetup() {
     setBillingInfo(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleApplyDiscount = async () => {
+    if (!couponCode.trim()) {
+      setDiscountError("Inserisci un codice coupon.");
+      setAppliedCoupon(null);
+      return;
+    }
+
+    setIsApplyingCoupon(true);
+    setDiscountError('');
+    try {
+      const coupons = await base44.entities.Coupon.filter({
+        code: couponCode.toUpperCase(),
+        is_active: true
+      });
+
+      if (coupons.length > 0) {
+        const coupon = coupons[0];
+
+        if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
+          setDiscountError("Questo coupon è scaduto.");
+          setAppliedCoupon(null);
+        } else {
+          setAppliedCoupon(coupon);
+          setDiscountError("");
+          alert(`✅ Coupon applicato! Riceverai uno sconto del ${coupon.discount_value}%`);
+        }
+      } else {
+        setDiscountError("Coupon non valido.");
+        setAppliedCoupon(null);
+      }
+    } catch (error) {
+      console.error("Error validating coupon:", error);
+      setDiscountError("Errore nella verifica del coupon. Riprova più tardi.");
+    }
+    setIsApplyingCoupon(false);
+  };
+
   const handleApplePayClick = async () => {
     if (!stripe) {
       alert("Stripe non è caricato. Riprova tra poco.");
@@ -243,7 +284,7 @@ export default function TrialSetup() {
     setIsSaving(true);
 
     try {
-      const amount = Math.round((orderBumpSelected ? ORDER_BUMP_PRICE : 0) * 100);
+      const amount = Math.round(total * 100);
       
       const paymentRequest = stripe.paymentRequest({
         country: 'IT', // Assumi Italia come default per i test
@@ -279,6 +320,7 @@ export default function TrialSetup() {
             planType: selectedPlan,
             billingPeriod: selectedBillingPeriod,
             orderBumpSelected: orderBumpSelected,
+            appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
             billingInfo: {
               name: ev.payerName || billingInfo.name,
               email: ev.payerEmail || billingInfo.email,
@@ -360,6 +402,7 @@ export default function TrialSetup() {
         planType: selectedPlan, // 'base', 'pro', 'premium'
         billingPeriod: selectedBillingPeriod, // 'monthly', 'yearly'
         orderBumpSelected: orderBumpSelected,
+        appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
         billingInfo: {
           name: billingInfo.name,
           email: billingInfo.email,
@@ -424,10 +467,17 @@ export default function TrialSetup() {
 
   let isCtaDisabled = !isFormValid || isSaving;
 
-  let total = 0;
+  let subtotal = 0;
   if (orderBumpSelected) {
-    total = ORDER_BUMP_PRICE;
+    subtotal = ORDER_BUMP_PRICE;
   }
+
+  let discount = 0;
+  if (appliedCoupon && appliedCoupon.discount_type === 'percentage') {
+    discount = subtotal * (appliedCoupon.discount_value / 100);
+  }
+
+  const total = Math.max(0, subtotal - discount);
 
   // Determine plan from location state or default to base
   const planPrices = {
@@ -890,47 +940,64 @@ export default function TrialSetup() {
 
             {paymentMethod && (
               <>
-                <div className="pt-4 border-t border-gray-200/50">
-                  <Label htmlFor="orderBump" className="block cursor-pointer">
-                    <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
-                      <div className="flex items-center justify-between gap-4">
-                        <div className="flex-grow">
-                          <p className="text-lg font-bold text-gray-900">
-                            Si, lo voglio!
-                          </p>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Aggiungi "Mastery AI Wellness": video corso completo
-                          </p>
-                        </div>
-                        <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
-                          className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
-                      </div>
-                      <div className="text-right">
-                        <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
-                        <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
-                      </div>
+                <div className="space-y-6 pt-6 border-t border-gray-200/50">
+                  <div className="space-y-2">
+                    <Label htmlFor="couponCode" className="text-sm font-semibold text-gray-700">
+                      Codice Sconto (Opzionale)
+                    </Label>
+                    <div className="relative">
+                      <Input id="couponCode" type="text" placeholder="Es. PROMO20" value={couponCode}
+                        onChange={(e) => { setCouponCode(e.target.value); setDiscountError(''); }} className="h-12 text-base pr-28 bg-white" />
+                      <Button type="button" onClick={handleApplyDiscount} disabled={isApplyingCoupon || !couponCode.trim()}
+                        className={cn("absolute right-2 top-1/2 -translate-y-1/2 h-9", couponCode.trim() ? "bg-[var(--brand-primary)] text-white hover:bg-[var(--brand-primary-hover)]" : "bg-gray-200 text-gray-700 cursor-not-allowed")}>
+                          {isApplyingCoupon ? 'Applicando...' : 'Applica'}
+                      </Button>
                     </div>
-                  </Label>
-                </div>
+                    {discountError && <p className="text-red-500 text-sm mt-1">{discountError}</p>}
+                  </div>
 
-                <div className="space-y-3 pt-4">
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
-                    <Label htmlFor="terms" className="text-xs text-gray-600">
-                      Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
+                  <div className="pt-0">
+                    <Label htmlFor="orderBump" className="block cursor-pointer">
+                      <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
+                        <div className="flex items-center justify-between gap-4">
+                          <div className="flex-grow">
+                            <p className="text-lg font-bold text-gray-900">
+                              Si, lo voglio!
+                            </p>
+                            <p className="text-sm text-gray-600 mt-1">
+                              Aggiungi "Mastery AI Wellness": video corso completo
+                            </p>
+                          </div>
+                          <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
+                            className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
+                        </div>
+                        <div className="text-right">
+                          <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
+                          <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
+                        </div>
+                      </div>
                     </Label>
                   </div>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
-                    <Label htmlFor="privacy" className="text-xs text-gray-600">
-                      Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
-                    </Label>
-                  </div>
-                  <div className="flex items-start space-x-3">
-                    <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
-                    <Label htmlFor="marketing" className="text-xs text-gray-600">
-                      Acconsento a ricevere comunicazioni di marketing e newsletter.
-                    </Label>
+                  
+                  <div className="space-y-3 pt-4">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
+                      <Label htmlFor="terms" className="text-xs text-gray-600">
+                        Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Termini e Condizioni</a> del servizio.*
+                      </Label>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
+                      <Label htmlFor="privacy" className="text-xs text-gray-600">
+                        Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[var(--brand-primary)]">Privacy Policy</a> e acconsento al trattamento dei dati.*
+                      </Label>
+                    </div>
+                    <div className="flex items-start space-x-3">
+                      <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
+                      <Label htmlFor="marketing" className="text-xs text-gray-600">
+                        Acconsento a ricevere comunicazioni di marketing e newsletter.
+                      </Label>
+                    </div>
                   </div>
                 </div>
 
@@ -941,8 +1008,18 @@ export default function TrialSetup() {
 
                 <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
                   <div className="flex justify-between text-gray-700">
+                    <span>Subtotale</span>
+                    <span>€{subtotal.toFixed(2)}</span>
+                  </div>
+                  {appliedCoupon && discount > 0 && (
+                    <div className="flex justify-between text-green-600 font-semibold">
+                      <span>Sconto ({appliedCoupon.code})</span>
+                      <span>-€{discount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <div className="flex justify-between text-gray-700 font-semibold pt-2 border-t border-gray-200">
                     <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
-                    <span className="font-semibold">€{total.toFixed(2)}</span>
+                    <span>€{total.toFixed(2)}</span>
                   </div>
                   <p className="text-xs text-gray-500">
                     Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
@@ -964,7 +1041,7 @@ export default function TrialSetup() {
                   )}
                 </Button>
 
-                <p className="text-xs text-center text-gray-500">
+                <p className="text-xs text-center text-gray-500 mt-4">
                   Nessun addebito durante i {TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.
                 </p>
               </>
