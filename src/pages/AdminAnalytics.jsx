@@ -974,9 +974,10 @@ export default function AdminAnalytics() {
                           <Tooltip />
                         </PieChart>
                       </ResponsiveContainer>
-                    ) : (
-                      <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo</p>
-                    )}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo</p>
+                  )}
                   <div className="mt-4 space-y-2">
                     <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                       <span className="text-sm font-medium">Base (€19/mese)</span>
