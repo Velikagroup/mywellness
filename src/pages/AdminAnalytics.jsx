@@ -606,74 +606,74 @@ export default function AdminAnalytics() {
           </div>
         </div>
 
-        {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Entrate Totali (Periodo)</p>
-                  <p className="text-3xl font-bold text-gray-900">€{totalRevenueExisting.toLocaleString('it-IT')}</p>
-                  <p className="text-xs text-gray-500 mt-1">Netto: €{netRevenue.toLocaleString('it-IT')}</p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <Euro className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">MRR (Ricorrente Mensile)</p>
-                  <p className="text-3xl font-bold text-gray-900">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
-                  <p className="text-xs text-gray-500 mt-1">ARR: €{arr.toLocaleString('it-IT')}</p>
-                </div>
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6 text-blue-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Retention Rate</p>
-                  <p className="text-3xl font-bold text-green-600">{retentionRateExisting}%</p>
-                  <p className="text-xs text-gray-500 mt-1">Churn: {churnRate}%</p>
-                </div>
-                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                  <TrendingUp className="w-6 h-6 text-green-600" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-sm text-gray-500 mb-1">Profitto Mensile</p>
-                  <p className={`text-3xl font-bold ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    €{monthlyProfit.toLocaleString('it-IT')}
-                  </p>
-                <p className="text-xs text-gray-500 mt-1">Margine: {profitMargin}%</p>
-                </div>
-                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${monthlyProfit >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
-                  <DollarSign className={`w-6 h-6 ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
         {/* OVERVIEW SECTION */}
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
+          
+          {/* Overview Stats - SPOSTATO QUI */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Entrate Totali (Periodo)</p>
+                    <p className="text-3xl font-bold text-gray-900">€{totalRevenueExisting.toLocaleString('it-IT')}</p>
+                    <p className="text-xs text-gray-500 mt-1">Netto: €{netRevenue.toLocaleString('it-IT')}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <Euro className="w-6 h-6 text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">MRR (Ricorrente Mensile)</p>
+                    <p className="text-3xl font-bold text-gray-900">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
+                    <p className="text-xs text-gray-500 mt-1">ARR: €{arr.toLocaleString('it-IT')}</p>
+                  </div>
+                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
+                    <BarChart3 className="w-6 h-6 text-blue-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Retention Rate</p>
+                    <p className="text-3xl font-bold text-green-600">{retentionRateExisting}%</p>
+                    <p className="text-xs text-gray-500 mt-1">Churn: {churnRate}%</p>
+                  </div>
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                    <TrendingUp className="w-6 h-6 text-green-600" />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-gray-500 mb-1">Profitto Mensile</p>
+                    <p className={`text-3xl font-bold ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                      €{monthlyProfit.toLocaleString('it-IT')}
+                    </p>
+                    <p className="text-xs text-gray-500 mt-1">Margine: {profitMargin}%</p>
+                  </div>
+                  <div className={`w-12 h-12 rounded-full flex items-center justify-center ${monthlyProfit >= 0 ? 'bg-green-100' : 'bg-red-100'}`}>
+                    <DollarSign className={`w-6 h-6 ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`} />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
           
           {/* Funnel di Conversione */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -886,6 +886,35 @@ export default function AdminAnalytics() {
             </Card>
           </div>
 
+          {/* Metriche Chiave Finanziarie - SPOSTATE QUI dalla sezione Abbonamenti */}
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle>Metriche Chiave Finanziarie</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
+                  <p className="text-sm text-blue-700 mb-1">Conversion Rate</p>
+                  <p className="text-3xl font-bold text-blue-900">{conversionRate}%</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
+                  <p className="text-sm text-green-700 mb-1">Retention Rate</p>
+                  <p className="text-3xl font-bold text-green-900">{retentionRateExisting}%</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg border border-red-200">
+                  <p className="text-sm text-red-700 mb-1">Churn Rate</p>
+                  <p className="text-3xl font-bold text-red-900">{churnRate}%</p>
+                </div>
+                <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
+                  <p className="text-sm text-purple-700 mb-1">ARPU</p>
+                  <p className="text-3xl font-bold text-purple-900">
+                    €{activeSubscriptions > 0 ? (mrrFromPriceMap / activeSubscriptions).toFixed(0) : 0}
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
@@ -948,7 +977,7 @@ export default function AdminAnalytics() {
           </div>
         </div>
 
-        {/* SUBSCRIPTIONS SECTION */}
+        {/* SUBSCRIPTIONS SECTION - SEMPLIFICATO */}
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Abbonamenti</h2>
           
@@ -1041,34 +1070,6 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
           </div>
-
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardHeader>
-              <CardTitle>Metriche Chiave</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                <div className="p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-700 mb-1">Conversion Rate</p>
-                  <p className="text-3xl font-bold text-blue-900">{conversionRate}%</p>
-                </div>
-                <div className="p-4 bg-gradient-to-br from-green-50 to-green-100 rounded-lg border border-green-200">
-                  <p className="text-sm text-green-700 mb-1">Retention Rate</p>
-                  <p className="text-3xl font-bold text-green-900">{retentionRateExisting}%</p>
-                </div>
-                <div className="p-4 bg-gradient-to-br from-red-50 to-red-100 rounded-lg border border-red-200">
-                  <p className="text-sm text-red-700 mb-1">Churn Rate</p>
-                  <p className="text-3xl font-bold text-red-900">{churnRate}%</p>
-                </div>
-                <div className="p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg border border-purple-200">
-                  <p className="text-sm text-purple-700 mb-1">ARPU</p>
-                  <p className="text-3xl font-bold text-purple-900">
-                    €{activeSubscriptions > 0 ? (mrrFromPriceMap / activeSubscriptions).toFixed(0) : 0}
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* PROJECTIONS SECTION */}
