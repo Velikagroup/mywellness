@@ -911,7 +911,8 @@ export default function AdminAnalytics() {
                           <Tooltip formatter={(value) => `€${value}`} />
                         </PieChart>
                       </ResponsiveContainer>
-                    ) : (
+                    </div>
+                  ) : (
                     <p className="text-center text-gray-500 py-8">Nessuna spesa registrata</p>
                   )}
                 </CardContent>
