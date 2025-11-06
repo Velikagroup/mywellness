@@ -195,6 +195,8 @@ export default function TrialSetup() {
         console.log('🔍 Initializing Payment Request...');
         console.log('📱 User Agent:', navigator.userAgent);
         console.log('🌐 Platform:', navigator.platform);
+        console.log('🔧 Is Safari:', /^((?!chrome|android).)*safari/i.test(navigator.userAgent));
+        console.log('📲 Is iOS:', /iPad|iPhone|iPod/.test(navigator.userAgent));
         
         const pr = stripe.paymentRequest({
           country: 'IT',
@@ -229,14 +231,15 @@ export default function TrialSetup() {
             setShowGooglePay(true);
           }
           
+          // Fallback detection più aggressivo per iOS/Safari
           if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
-            console.log('⚠️ Payment Request available but no specific wallet detected');
-            // Fallback: assume it's available for the platform
-            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
+            console.log('⚠️ Payment Request available but no specific wallet detected - using platform detection');
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
             const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
             
-            if (isIOS || isSafari) {
-              console.log('📱 iOS/Safari detected - showing Apple Pay');
+            if (isIOS || isSafari || isMacOS) {
+              console.log('🍎 iOS/Safari/macOS detected - showing Apple Pay');
               setShowApplePay(true);
             } else {
               console.log('🤖 Showing Google Pay as default');
@@ -244,7 +247,19 @@ export default function TrialSetup() {
             }
           }
         } else {
-          console.log('❌ No digital wallet available');
+          console.log('❌ No digital wallet available - canMakePayment returned null/false');
+          console.log('⚙️ Trying fallback detection anyway...');
+          
+          // Fallback anche se canMakePayment fallisce
+          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+          const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+          const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
+          
+          if (isIOS || isSafari || isMacOS) {
+            console.log('🍎 iOS/Safari/macOS detected via fallback - attempting to show Apple Pay');
+            setShowApplePay(true);
+            setPaymentRequest(pr); // Set it anyway for the click handler
+          }
         }
       } catch (error) {
         console.error('❌ Payment Request initialization error:', error);
@@ -1157,6 +1172,23 @@ export default function TrialSetup() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Footer */}
+      <footer className="py-12 px-6 mt-8">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center space-y-2">
+            <p className="text-sm font-semibold text-gray-700">
+              © VELIKA GROUP LLC. All Rights Reserved.
+            </p>
+            <p className="text-xs text-gray-500">
+              30 N Gould St 32651 Sheridan, WY 82801, United States
+            </p>
+            <p className="text-xs text-gray-500">
+              EIN: 36-5141800 - velika.03@outlook.it
+            </p>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
