@@ -890,8 +890,8 @@ export default function AdminAnalytics() {
                   <CardTitle>Spese per Categoria</CardTitle>
                 </CardHeader>
                 <CardContent>
-                  {expensePieData.length > 0 ? (
-                    <div className="h-64">
+                  <div className="h-64">
+                    {expensePieData.length > 0 ? (
                       <ResponsiveContainer width="100%" height="100%">
                         <PieChart>
                           <Pie
@@ -974,10 +974,9 @@ export default function AdminAnalytics() {
                           <Tooltip />
                         </PieChart>
                       </ResponsiveContainer>
-                    </div>
-                  ) : (
-                    <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo</p>
-                  )}
+                    ) : (
+                      <p className="text-center text-gray-500 py-8">Nessun abbonamento attivo</p>
+                    )}
                   <div className="mt-4 space-y-2">
                     <div className="flex items-center justify-between p-2 bg-blue-50 rounded">
                       <span className="text-sm font-medium">Base (€19/mese)</span>
