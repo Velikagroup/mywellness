@@ -496,34 +496,34 @@ export default function Quiz() {
                 </div>
               </div>
 
-              {/* Info Boxes */}
+              {/* Info Boxes - più piccoli su mobile */}
               <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-6 rounded-2xl border-2 border-blue-200/50 shadow-lg">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                      <CheckCircle2 className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 md:p-6 rounded-2xl border-2 border-blue-200/50 shadow-lg">
+                  <div className="flex items-center gap-3 mb-2 md:mb-3">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-500 rounded-full flex items-center justify-center">
+                      <CheckCircle2 className="w-4 h-4 md:w-6 md:h-6 text-white" />
                     </div>
-                    <h4 className="font-bold text-blue-900">Analisi Completata</h4>
+                    <h4 className="font-bold text-blue-900 text-sm md:text-base">Analisi Completata</h4>
                   </div>
-                  <p className="text-sm text-blue-800">
+                  <p className="text-xs md:text-sm text-blue-800">
                     Abbiamo analizzato i tuoi dati fisici con precisione scientifica
                   </p>
                 </div>
                 
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-6 rounded-2xl border-2 border-green-200/50 shadow-lg">
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 bg-green-500 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-6 h-6 text-white" />
+                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 md:p-6 rounded-2xl border-2 border-green-200/50 shadow-lg">
+                  <div className="flex items-center gap-3 mb-2 md:mb-3">
+                    <div className="w-8 h-8 md:w-10 md:h-10 bg-green-500 rounded-full flex items-center justify-center">
+                      <Sparkles className="w-4 h-4 md:w-6 md:h-6 text-white" />
                     </div>
-                    <h4 className="font-bold text-green-900">Piano Personalizzato</h4>
+                    <h4 className="font-bold text-green-900 text-sm md:text-base">Piano Personalizzato</h4>
                   </div>
-                  <p className="text-sm text-green-800">
+                  <p className="text-xs md:text-sm text-green-800">
                     Creeremo un percorso su misura per te basato su questi dati
                   </p>
                 </div>
               </div>
 
-              {/* CTA Button - Green Gradient like Quiz */}
+              {/* CTA Button - icona solo a destra */}
               <Button
                 onClick={handleRevealBodyFat}
                 disabled={isSaving}
@@ -536,7 +536,6 @@ export default function Quiz() {
                   </>
                 ) : (
                   <>
-                    <Eye className="w-6 h-6 mr-3" />
                     Scopri la tua Massa Grassa
                     <Sparkles className="w-5 h-5 ml-3" />
                   </>
