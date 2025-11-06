@@ -46,8 +46,9 @@ export default function Home() {
   // Rimosso il useEffect che controllava redirectToTrialSetup perché ora il login viene fatto direttamente dal Quiz
 
   useEffect(() => {
-    const referenceDate = new Date('2025-10-01T19:32:00Z').getTime();
-    const baseKg = 203112; // Updated to get ~45136 users (45136 * 4.5)
+    // Data aggiornata a oggi per partire da ~45136 utenti
+    const referenceDate = new Date('2025-11-06T00:00:00Z').getTime();
+    const baseKg = 203112; // 45136 * 4.5
     const incrementIntervalSeconds = 10; // Increment every 10 seconds
 
     const calculateLiveStats = () => {
@@ -699,7 +700,7 @@ export default function Home() {
               initial={{ opacity: 0, y: -20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
+              transition={{ duration: 0.7, delay: 0.2 }>
               <div className="flex items-center justify-center gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">📊 Analisi Scientifica</span>
