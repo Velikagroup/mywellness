@@ -80,6 +80,9 @@ export default function AdminAnalytics() {
     totalExpenses: 0, netProfit: 0, monthlyExpenses: 0
   });
 
+  // NEW STATE for projection growth rate
+  const [projectionGrowthRate, setProjectionGrowthRate] = useState(15);
+
   useEffect(() => {
     checkAccess();
   }, []);
@@ -165,7 +168,7 @@ export default function AdminAnalytics() {
           .filter(t => t.status === 'succeeded' && t.amount > 0) // Filtering out potential negative amounts for refunds
           .reduce((sum, t) => sum + t.amount, 0);
 
-        const totalExpenses = fetchedExpenses.reduce((sum, e) => sum + e.amount, 0); // Using the server-filtered expenses
+        const totalExpenses = fetchedExpenses.reduce((sum, e => sum + e.amount, 0); // Using the server-filtered expenses
         const netProfit = totalRevenue - totalExpenses;
 
         const baseUsers = currentUsersForStats.filter(u => u.subscription_plan === 'base' && u.subscription_status === 'active').length;
@@ -443,7 +446,7 @@ export default function AdminAnalytics() {
   const getCashFlowProjection = () => {
     const projections = [];
     const currentMRR = mrrFromPriceMap;
-    const growthRate = 1.15; // 15% monthly growth assumption
+    const growthRate = 1 + (projectionGrowthRate / 100); // Use user-defined growth rate
 
     for (let i = 1; i <= 12; i++) {
       const projectedMRR = currentMRR * Math.pow(growthRate, i);
@@ -1064,25 +1067,49 @@ export default function AdminAnalytics() {
           </TabsContent>
 
           <TabsContent value="projections" className="space-y-6">
+            {/* Growth Rate Input */}
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-6">
+                <div className="flex items-center gap-4">
+                  <div className="flex-1">
+                    <Label htmlFor="growth-rate" className="text-sm font-semibold text-gray-700 mb-2 block">
+                      Tasso di Crescita Mensile (%)
+                    </Label>
+                    <div className="flex items-center gap-3">
+                      <Input
+                        id="growth-rate"
+                        type="number"
+                        step="0.1"
+                        value={projectionGrowthRate}
+                        onChange={(e) => setProjectionGrowthRate(parseFloat(e.target.value) || 0)}
+                        className="w-32 h-12 text-lg font-bold"
+                        min="0"
+                        max="100"
+                      />
+                      <span className="text-2xl font-bold text-gray-600">%</span>
+                    </div>
+                  </div>
+                  <div className="flex-1 bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-700 mb-1">Crescita Annuale Equivalente</p>
+                    <p className="text-2xl font-black text-blue-900">
+                      {(Math.pow(1 + projectionGrowthRate / 100, 12) - 1) * 100 > 0 
+                        ? `+${((Math.pow(1 + projectionGrowthRate / 100, 12) - 1) * 100).toFixed(1)}%` 
+                        : '0%'}
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
                 <CardTitle>Proiezione Cash Flow (12 Mesi)</CardTitle>
-                <p className="text-sm text-gray-500">Basato su crescita 15% mensile e aumento spese 5%</p>
+                <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile e aumento spese 5%</p>
               </CardHeader>
               <CardContent>
                 <div className="h-96">
                   <ResponsiveContainer width="100%" height="100%">
-                    <AreaChart data={cashFlowProjection}>
-                      <defs>
-                        <linearGradient id="colorRevProj" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
-                        </linearGradient>
-                        <linearGradient id="colorExpProj" x1="0" y1="0" x2="0" y2="1">
-                          <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                          <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
-                        </linearGradient>
-                      </defs>
+                    <BarChart data={cashFlowProjection}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                       <XAxis dataKey="month" stroke="#6b7280" />
                       <YAxis stroke="#6b7280" />
@@ -1094,30 +1121,19 @@ export default function AdminAnalytics() {
                         }}
                       />
                       <Legend />
-                      <Area
-                        type="monotone"
-                        dataKey="revenue"
-                        stroke="#10b981"
-                        fillOpacity={1}
-                        fill="url(#colorRevProj)"
+                      <Bar 
+                        dataKey="revenue" 
+                        fill="#10b981" 
                         name="Entrate (€)"
+                        radius={[4, 4, 0, 0]}
                       />
-                      <Area
-                        type="monotone"
-                        dataKey="expenses"
-                        stroke="#ef4444"
-                        fillOpacity={1}
-                        fill="url(#colorExpProj)"
+                      <Bar 
+                        dataKey="expenses" 
+                        fill="#ef4444" 
                         name="Spese (€)"
+                        radius={[4, 4, 0, 0]}
                       />
-                      <Line
-                        type="monotone"
-                        dataKey="profit"
-                        stroke="#26847F"
-                        strokeWidth={3}
-                        name="Profitto (€)"
-                      />
-                    </AreaChart>
+                    </BarChart>
                   </ResponsiveContainer>
                 </div>
               </CardContent>
