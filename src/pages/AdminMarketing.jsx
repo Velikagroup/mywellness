@@ -586,23 +586,23 @@ export default function AdminMarketing() {
             );
           })}
         </div>
+      </div> {/* This div closes the max-w-7xl container, moving it from its original position after the "How it Works" card */}
 
-        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
-          <CardContent className="p-6">
-            <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-              <Settings className="w-5 h-5 text-blue-600" />
-              Come Funziona
-            </h4>
-            <div className="space-y-2 text-sm text-gray-700">
-              <p>1. Connetti le tue piattaforme ads tramite OAuth</p>
-              <p>2. Le metriche vengono sincronizzate automaticamente ogni ora</p>
-              <p>3. Usa Conversion API di Meta per tracciare vendite in tempo reale</p>
-              <p>4. Monitora ROAS e performance in un'unica dashboard</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
-
+      <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
+        <CardContent className="p-6">
+          <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+            <Settings className="w-5 h-5 text-blue-600" />
+            Come Funziona
+          </h4>
+          <div className="space-y-2 text-sm text-gray-700">
+            <p>1. Connetti le tue piattaforme ads tramite OAuth</p>
+            <p>2. Le metriche vengono sincronizzate automaticamente ogni ora</p>
+            <p>3. Usa Conversion API di Meta per tracciare vendite in tempo reale</p>
+            <p>4. Monitora ROAS e performance in un'unica dashboard</p>
+          </div>
+        </CardContent>
+      </Card>
+      
       {/* Connect Platform Dialog */}
       <Dialog open={showConnectDialog} onOpenChange={setShowConnectDialog}>
         <DialogContent>
