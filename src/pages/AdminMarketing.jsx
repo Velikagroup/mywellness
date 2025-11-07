@@ -63,6 +63,11 @@ export default function AdminMarketing() {
     new Date()
   ]);
 
+  const [tempDateRange, setTempDateRange] = useState([
+    subDays(new Date(), 30),
+    new Date()
+  ]);
+
   const [campaignsByPlatform, setCampaignsByPlatform] = useState([]);
   const [marketingExpenses, setMarketingExpenses] = useState([]);
   const [allMetricsFilteredByDate, setAllMetricsFilteredByDate] = useState([]);
@@ -198,7 +203,7 @@ export default function AdminMarketing() {
             totalClicks: 0,
             totalImpressions: 0,
             // Use the simplified distributed funnel data for paid campaigns
-            funnel: funnelData[platform] || { quiz: 0, checkout: 0, purchases: 0 }
+            funnel: funnelData[platform] || (selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 })
           };
         }
 
@@ -442,7 +447,13 @@ export default function AdminMarketing() {
             </div>
 
             <div className="flex flex-wrap gap-3">
-              <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+              <Popover open={showDatePicker} onOpenChange={(open) => {
+                setShowDatePicker(open);
+                if (open) {
+                  // Reset temp dates to current dates when opening
+                  setTempDateRange(selectedDateRange);
+                }
+              }}>
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="justify-start text-left font-normal border-2">
                     <CalendarIcon className="mr-2 h-4 w-4" />
@@ -461,8 +472,8 @@ export default function AdminMarketing() {
                       <Label className="text-sm font-semibold mb-2 block">Data Inizio</Label>
                       <CalendarComponent
                         mode="single"
-                        selected={selectedDateRange[0]}
-                        onSelect={(date) => date && setSelectedDateRange([date, selectedDateRange[1]])}
+                        selected={tempDateRange[0]}
+                        onSelect={(date) => date && setTempDateRange([date, tempDateRange[1]])}
                         initialFocus
                         locale={it}
                       />
@@ -471,9 +482,9 @@ export default function AdminMarketing() {
                       <Label className="text-sm font-semibold mb-2 block">Data Fine</Label>
                       <CalendarComponent
                         mode="single"
-                        selected={selectedDateRange[1]}
-                        onSelect={(date) => date && setSelectedDateRange([selectedDateRange[0], date])}
-                        disabled={(date) => date < selectedDateRange[0]}
+                        selected={tempDateRange[1]}
+                        onSelect={(date) => date && setTempDateRange([tempDateRange[0], date])}
+                        disabled={(date) => date < tempDateRange[0]}
                         locale={it}
                       />
                     </div>
@@ -482,7 +493,9 @@ export default function AdminMarketing() {
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          setSelectedDateRange([subDays(new Date(), 7), new Date()]);
+                          const newRange = [subDays(new Date(), 7), new Date()];
+                          setSelectedDateRange(newRange);
+                          setTempDateRange(newRange);
                           setShowDatePicker(false);
                         }}
                       >
@@ -492,7 +505,9 @@ export default function AdminMarketing() {
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          setSelectedDateRange([subDays(new Date(), 30), new Date()]);
+                          const newRange = [subDays(new Date(), 30), new Date()];
+                          setSelectedDateRange(newRange);
+                          setTempDateRange(newRange);
                           setShowDatePicker(false);
                         }}
                       >
@@ -502,7 +517,9 @@ export default function AdminMarketing() {
                         size="sm"
                         variant="outline"
                         onClick={() => {
-                          setSelectedDateRange([subDays(new Date(), 90), new Date()]);
+                          const newRange = [subDays(new Date(), 90), new Date()];
+                          setSelectedDateRange(newRange);
+                          setTempDateRange(newRange);
                           setShowDatePicker(false);
                         }}
                       >
@@ -511,7 +528,10 @@ export default function AdminMarketing() {
                     </div>
                     <Button
                       className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                      onClick={() => setShowDatePicker(false)}
+                      onClick={() => {
+                        setSelectedDateRange(tempDateRange);
+                        setShowDatePicker(false);
+                      }}
                     >
                       Applica Filtro
                     </Button>
@@ -521,8 +541,10 @@ export default function AdminMarketing() {
 
               <Button
                 onClick={() => {
-                  setSelectedDateRange([subDays(new Date(), 30), new Date()]);
-                  setShowDatePicker(false); // Close date picker after selecting a preset
+                  const newRange = [subDays(new Date(), 30), new Date()];
+                  setSelectedDateRange(newRange);
+                  setTempDateRange(newRange);
+                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
                 }}
                 variant="outline"
                 className="border-2"
@@ -555,12 +577,16 @@ export default function AdminMarketing() {
                     .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
 
                   if (oldestDate) {
-                    setSelectedDateRange([oldestDate, new Date()]);
+                    const newRange = [oldestDate, new Date()];
+                    setSelectedDateRange(newRange);
+                    setTempDateRange(newRange);
                   } else {
                     // Default a 1 anno fa se non ci sono dati
-                    setSelectedDateRange([subDays(new Date(), 365), new Date()]);
+                    const newRange = [subDays(new Date(), 365), new Date()];
+                    setSelectedDateRange(newRange);
+                    setTempDateRange(newRange);
                   }
-                  setShowDatePicker(false); // Close date picker after selecting a preset
+                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
                 }}
                 variant="outline"
                 className="border-2"
