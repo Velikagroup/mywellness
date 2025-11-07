@@ -76,6 +76,16 @@ export default function AdminMarketing() {
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
+  const copyPlatformLink = (platform) => {
+    const baseUrl = selectedFunnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
+    const trackingUrl = `${baseUrl}?utm_source=organic_${platform}`;
+    
+    navigator.clipboard.writeText(trackingUrl);
+    setCopiedLink(`${platform}_${selectedFunnel}`);
+    
+    setTimeout(() => setCopiedLink(null), 2000);
+  };
+
   // New function from outline
   const getSocialIcon = (platform) => {
     const icons = {
@@ -713,9 +723,19 @@ export default function AdminMarketing() {
                       <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
                         <div className="flex items-center justify-between mb-4">
                           <h4 className="font-bold text-gray-900">{platformName}</h4>
-                          <Activity className="w-5 h-5 text-purple-600" />
+                          <button
+                            onClick={() => copyPlatformLink(platform.platform)}
+                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border border-purple-200"
+                            title="Copia link di tracciamento"
+                          >
+                            {copiedLink === `${platform.platform}_${selectedFunnel}` ? (
+                              <CheckCircle className="w-5 h-5 text-green-600" />
+                            ) : (
+                              <LinkIcon className="w-5 h-5 text-purple-600" />
+                            )}
+                          </button>
                         </div>
-                        
+
                         {/* Box Entrate Organiche */}
                         <div className="mb-4">
                           <div className="bg-green-50 rounded-lg p-4 border border-green-100">
@@ -789,6 +809,22 @@ export default function AdminMarketing() {
               const platformRevenue = platformGroup?.totalRevenue || 0;
               const platformROAS = platformSpend > 0 ? (platformRevenue / platformSpend).toFixed(2) : 0;
 
+              // Mappa piattaforme ads a social organici
+              const organicPlatforms = {
+                meta: ['facebook', 'instagram'],
+                tiktok: ['tiktok'],
+                pinterest: ['pinterest'],
+                google: ['youtube']
+              };
+
+              const handleCopyPlatformLinks = () => {
+                const platforms = organicPlatforms[platformKey];
+                if (platforms && platforms.length > 0) {
+                  // Se ci sono più piattaforme (Meta), copia la prima
+                  copyPlatformLink(platforms[0]);
+                }
+              };
+
               return (
                 <Card key={index} className="bg-white/80 backdrop-blur-sm">
                   <CardContent className="p-6">
@@ -801,9 +837,21 @@ export default function AdminMarketing() {
                           {isConnected ? '✅ Connesso' : '⚠️ Non connesso'}
                         </p>
                       </div>
-                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isConnected ? 'bg-green-100' : 'bg-gray-100'}`}>
-                        <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
-                      </div>
+                      <button
+                        onClick={handleCopyPlatformLinks}
+                        className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border-2 ${
+                          isConnected 
+                            ? 'bg-green-50 border-green-200 hover:bg-green-100' 
+                            : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
+                        }`}
+                        title="Copia link di tracciamento organico"
+                      >
+                        {copiedLink?.startsWith(`${organicPlatforms[platformKey]?.[0]}_`) ? (
+                          <CheckCircle className="w-6 h-6 text-green-600" />
+                        ) : (
+                          <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
+                        )}
+                      </button>
                     </div>
 
                     {/* Metriche Piattaforma */}
