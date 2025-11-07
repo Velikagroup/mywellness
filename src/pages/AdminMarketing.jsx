@@ -682,7 +682,7 @@ export default function AdminMarketing() {
 
               <Button
                 onClick={() => {
-                  const newRange = [subDays(new Date(), 30), new Date()];
+                  const newRange = [new Date(), new Date()]; // Corrected for "Oggi" button
                   setSelectedDateRange(newRange);
                   setTempDateRange(newRange);
                   // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
@@ -1427,10 +1427,8 @@ export default function AdminMarketing() {
                             <h4 className="font-bold text-gray-900 text-sm">
                               {platformDisplayName === 'Meta' ? 'Meta Ads' : platformDisplayName + ' Ads'}
                             </h4>
-                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              isConnected ? 'bg-green-500' : 'bg-gray-300'}`
-                            }>
-                              <LinkIcon className={`w-4 h-4 ${isConnected ? 'text-white' : 'text-gray-600'}`} />
+                            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-gray-300">
+                              <LinkIcon className="w-4 h-4 text-gray-600" />
                             </div>
                           </div>
 
