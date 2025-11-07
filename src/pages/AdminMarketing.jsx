@@ -679,7 +679,6 @@ export default function AdminMarketing() {
                   </div>
                 </PopoverContent>
               </Popover>
-
               <Button
                 onClick={() => {
                   const newRange = [new Date(), new Date()]; // Corrected for "Oggi" button
@@ -1257,25 +1256,25 @@ export default function AdminMarketing() {
                       <div className="mb-4">
                         <h5 className="text-xs font-bold text-gray-900 mb-2">Funnel Conversione</h5>
                         <div className="space-y-1.5">
-                          <div className="flex items-center justify-between p-2 bg-indigo-50 rounded text-xs">
+                          <div className="flex items-center justify-between p-2 bg-indigo-500/10 rounded text-xs">
                             <span className="text-gray-700">Quiz</span>
                             <span className="font-bold text-indigo-600">{metrics.funnel.quiz}</span>
                           </div>
                           {selectedFunnel === 'landing' && (
-                            <div className="flex items-center justify-between p-2 bg-purple-50 rounded text-xs">
+                            <div className="flex items-center justify-between p-2 bg-purple-500/10 rounded text-xs">
                               <span className="text-gray-700">Landing</span>
                               <span className="font-bold text-purple-600">{metrics.funnel.landing}</span>
                             </div>
                           )}
-                          <div className="flex items-center justify-between p-2 bg-cyan-50 rounded text-xs">
+                          <div className="flex items-center justify-between p-2 bg-cyan-500/10 rounded text-xs">
                             <span className="text-gray-700">Checkout</span>
                             <span className="font-bold text-cyan-600">{metrics.funnel.checkout}</span>
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-emerald-50 rounded text-xs">
+                          <div className="flex items-center justify-between p-2 bg-emerald-500/10 rounded text-xs">
                             <span className="text-gray-700">Acquisti</span>
                             <span className="font-bold text-emerald-600">{metrics.funnel.purchases}</span>
                           </div>
-                          <div className="p-2 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded border border-indigo-200">
+                          <div className="p-2 bg-gradient-to-r from-indigo-500/10 to-cyan-500/10 rounded border border-indigo-200">
                             <p className="text-xs text-gray-600 mb-0.5">Conversione</p>
                             <p className="text-xl font-black text-indigo-600">{metrics.conversionRate}%</p>
                           </div>
