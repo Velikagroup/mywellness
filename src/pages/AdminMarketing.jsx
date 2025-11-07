@@ -13,7 +13,8 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger } from
+  AccordionTrigger
+} from
 "@/components/ui/accordion";
 import {
   TrendingUp,
@@ -42,8 +43,8 @@ import { Badge } from '@/components/ui/badge';
 
 // Define countries array (placeholder/minimal for selectedCountry initialization)
 const countries = [
-{ code: 'IT', name: 'Italy' }
-// Add other countries as needed for future features
+  { code: 'IT', name: 'Italy' }
+  // Add other countries as needed for future features
 ];
 
 export default function AdminMarketing() {
@@ -79,14 +80,14 @@ export default function AdminMarketing() {
   const [selectedFunnel, setSelectedFunnel] = useState('trial'); // 'trial' or 'landing'
 
   const [selectedDateRange, setSelectedDateRange] = useState([
-  subDays(new Date(), 30),
-  new Date()]
-  );
+    subDays(new Date(), 30),
+    new Date()
+  ]);
 
   const [tempDateRange, setTempDateRange] = useState([
-  subDays(new Date(), 30),
-  new Date()]
-  );
+    subDays(new Date(), 30),
+    new Date()
+  ]);
 
   const [campaignsByPlatform, setCampaignsByPlatform] = useState([]);
   const [marketingExpenses, setMarketingExpenses] = useState([]);
@@ -126,7 +127,7 @@ export default function AdminMarketing() {
     const baseUrl = selectedFunnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
 
     const allLinks = socialPlatforms.map((platform) =>
-    `${platform.charAt(0).toUpperCase() + platform.slice(1)}: ${baseUrl}?utm_source=organic_${platform}`
+      `${platform.charAt(0).toUpperCase() + platform.slice(1)}: ${baseUrl}?utm_source=organic_${platform}`
     ).join('\n\n');
 
     navigator.clipboard.writeText(allLinks);
@@ -184,7 +185,7 @@ export default function AdminMarketing() {
       const totalQuizCompleted = allUsersData.filter((u) => u.quiz_completed === true).length;
       const totalCheckoutStarted = allUsersData.filter((u) => u.billing_name && u.billing_name.length > 0).length;
       const totalPurchases = allUsersData.filter((u) =>
-      selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true
+        selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true
       ).length;
 
       // For landing funnel, add Landing step (same as Quiz for now, as all quiz completers see landing)
@@ -309,7 +310,7 @@ export default function AdminMarketing() {
   });
 
   const organicSocialSales = funnelFilteredTransactions.filter((t) =>
-  t.traffic_source && t.traffic_source.startsWith('organic_') && t.status === 'succeeded'
+    t.traffic_source && t.traffic_source.startsWith('organic_') && t.status === 'succeeded'
   );
 
   const organicSalesByPlatform = organicSocialSales.reduce((acc, sale) => {
@@ -389,8 +390,8 @@ export default function AdminMarketing() {
   }, selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
 
   const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0 ?
-  (totalOrganicFunnel.purchases / totalOrganicFunnel.quiz * 100).toFixed(1) :
-  '0.0';
+    (totalOrganicFunnel.purchases / totalOrganicFunnel.quiz * 100).toFixed(1) :
+    '0.0';
 
   const platformData = campaignsByPlatform.map((p) => ({
     name: p.platform.charAt(0).toUpperCase() + p.platform.slice(1),
@@ -413,13 +414,13 @@ export default function AdminMarketing() {
     });
 
     return Object.values(dailyMap).
-    sort((a, b) => new Date(a.date) - new Date(b.date)).
-    map((d) => ({
-      date: format(parseISO(d.date), 'dd MMM', { locale: it }),
-      spend: Math.round(d.spend),
-      revenue: Math.round(d.revenue),
-      roas: d.spend > 0 ? (d.revenue / d.spend).toFixed(2) : 0
-    }));
+      sort((a, b) => new Date(a.date) - new Date(b.date)).
+      map((d) => ({
+        date: format(parseISO(d.date), 'dd MMM', { locale: it }),
+        spend: Math.round(d.spend),
+        revenue: Math.round(d.revenue),
+        roas: d.spend > 0 ? (d.revenue / d.spend).toFixed(2) : 0
+      }));
   };
 
   const dailyTrend = getDailyTrend();
@@ -598,11 +599,11 @@ export default function AdminMarketing() {
                   <Button variant="outline" className="justify-start text-left font-normal border-2">
                     <CalendarIcon className="mr-2 h-4 w-4" />
                     {selectedDateRange[0] && selectedDateRange[1] ?
-                    <>
+                      <>
                         {format(selectedDateRange[0], 'dd MMM yyyy', { locale: it })} - {format(selectedDateRange[1], 'dd MMM yyyy', { locale: it })}
                       </> :
 
-                    <span>Seleziona periodo</span>
+                      <span>Seleziona periodo</span>
                     }
                   </Button>
                 </PopoverTrigger>
@@ -697,24 +698,24 @@ export default function AdminMarketing() {
                 onClick={async () => {
                   // Trova la data più vecchia tra transazioni e metriche
                   const oldestTransaction = transactions.length > 0 ?
-                  transactions.reduce((oldest, t) => {
-                    if (!t.payment_date) return oldest;
-                    const tDate = parseISO(t.payment_date);
-                    return !oldest || tDate < oldest ? tDate : oldest;
-                  }, null) :
-                  null;
+                    transactions.reduce((oldest, t) => {
+                      if (!t.payment_date) return oldest;
+                      const tDate = parseISO(t.payment_date);
+                      return !oldest || tDate < oldest ? tDate : oldest;
+                    }, null) :
+                    null;
 
                   const oldestMetric = metrics.length > 0 ?
-                  metrics.reduce((oldest, m) => {
-                    if (!m.date) return oldest;
-                    const mDate = parseISO(m.date);
-                    return !oldest || mDate < oldest ? mDate : oldest;
-                  }, null) :
-                  null;
+                    metrics.reduce((oldest, m) => {
+                      if (!m.date) return oldest;
+                      const mDate = parseISO(m.date);
+                      return !oldest || mDate < oldest ? mDate : oldest;
+                    }, null) :
+                    null;
 
                   const oldestDate = [oldestTransaction, oldestMetric].
-                  filter((d) => d !== null).
-                  reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
+                    filter((d) => d !== null).
+                    reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
 
                   if (oldestDate) {
                     const newRange = [oldestDate, new Date()];
@@ -900,9 +901,9 @@ export default function AdminMarketing() {
                     title="Copia tutti i link di tracciamento organico">
 
                     {copiedLink === 'all_organic' ?
-                    <CheckCircle className="w-5 h-5 text-green-600" /> :
+                      <CheckCircle className="w-5 h-5 text-green-600" /> :
 
-                    <LinkIcon className="w-5 h-5 text-purple-600" />
+                      <LinkIcon className="w-5 h-5 text-purple-600" />
                     }
                   </button>
                 </div>
@@ -921,7 +922,7 @@ export default function AdminMarketing() {
                   <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
                 </div>
                 {selectedFunnel === 'landing' &&
-                <div className="text-center">
+                  <div className="text-center">
                     <p className="text-xs text-gray-600 mb-1">Landing Visualizzata</p>
                     <p className="text-2xl font-bold text-purple-600">{totalOrganicFunnel.landing}</p>
                   </div>
@@ -942,27 +943,27 @@ export default function AdminMarketing() {
             </CardHeader>
             <CardContent className="pt-4">
               {organicSocialData.length > 0 ?
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {organicSocialData.map((platform) => {
-                  const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
-                  const conversionRate = platform.funnel.quiz > 0 ?
-                  (platform.funnel.purchases / platform.funnel.quiz * 100).toFixed(1) :
-                  '0.0';
+                    const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
+                    const conversionRate = platform.funnel.quiz > 0 ?
+                      (platform.funnel.purchases / platform.funnel.quiz * 100).toFixed(1) :
+                      '0.0';
 
-                  return (
-                    <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
+                    return (
+                      <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
                         <div className="flex items-center justify-between mb-4">
                           <h4 className="font-bold text-gray-900">{platformName}</h4>
                           <button
-                          onClick={() => copyPlatformLink(platform.platform)}
-                          className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border border-purple-200"
-                          title="Copia link di tracciamento">
+                            onClick={() => copyPlatformLink(platform.platform)}
+                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border border-purple-200"
+                            title="Copia link di tracciamento">
 
                             {copiedLink === `${platform.platform}_${selectedFunnel}` ?
-                          <CheckCircle className="w-5 h-5 text-green-600" /> :
+                              <CheckCircle className="w-5 h-5 text-green-600" /> :
 
-                          <LinkIcon className="w-5 h-5 text-purple-600" />
-                          }
+                              <LinkIcon className="w-5 h-5 text-purple-600" />
+                            }
                           </button>
                         </div>
 
@@ -986,11 +987,11 @@ export default function AdminMarketing() {
                               <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
                             </div>
                             {selectedFunnel === 'landing' &&
-                          <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
+                              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
                                 <span className="text-gray-700">Landing</span>
                                 <span className="font-bold text-purple-600">{platform.funnel.landing}</span>
                               </div>
-                          }
+                            }
                             <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
                               <span className="text-gray-700">Checkout</span>
                               <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
@@ -1011,19 +1012,19 @@ export default function AdminMarketing() {
                           <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
                           <div className="space-y-1">
                             {platform.transactions.slice(0, 3).map((tx, idx) =>
-                          <div key={idx} className="flex justify-between text-xs">
+                              <div key={idx} className="flex justify-between text-xs">
                                 <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
                                 <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
                               </div>
-                          )}
+                            )}
                           </div>
                         </div>
                       </div>);
 
-                })}
+                  })}
                 </div> :
 
-              <div className="text-center py-8">
+                <div className="text-center py-8">
                   <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
                   <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
@@ -1075,17 +1076,17 @@ export default function AdminMarketing() {
                       <button
                         onClick={handleCopyPlatformLinks}
                         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border-2 ${
-                        (organicPlatforms[platformKey] && organicPlatforms[platformKey].length > 0) ?
-                        'bg-gray-50 border-gray-200 hover:bg-gray-100' : // Always show link icon if platforms exist for organic link
-                        'opacity-0 pointer-events-none' // Hide if no organic platform mapping
-                        }`
+                          (organicPlatforms[platformKey] && organicPlatforms[platformKey].length > 0) ?
+                            'bg-gray-50 border-gray-200 hover:bg-gray-100' : // Always show link icon if platforms exist for organic link
+                            'opacity-0 pointer-events-none' // Hide if no organic platform mapping
+                          }`
                         }
                         title="Copia link di tracciamento organico">
 
                         {copiedLink?.startsWith(`${organicPlatforms[platformKey]?.[0]}_`) ?
-                        <CheckCircle className="w-6 h-6 text-green-600" /> :
+                          <CheckCircle className="w-6 h-6 text-green-600" /> :
 
-                        <LinkIcon className={`w-6 h-6 text-gray-400`} />
+                          <LinkIcon className={`w-6 h-6 text-gray-400`} />
                         }
                       </button>
                     </div>
@@ -1101,28 +1102,28 @@ export default function AdminMarketing() {
                         <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
                       </div>
                       <div className={`rounded-lg p-3 border ${
-                      platformROAS >= 2 ? 'bg-green-50 border-green-100' :
-                      platformROAS >= 1 ? 'bg-orange-50 border-orange-100' :
-                      'bg-red-50 border-red-100'}`
+                        platformROAS >= 2 ? 'bg-green-50 border-green-100' :
+                          platformROAS >= 1 ? 'bg-orange-50 border-orange-100' :
+                            'bg-red-50 border-red-100'}`
                       }>
                         <p className={`text-xs font-semibold mb-1 ${
-                        platformROAS >= 2 ? 'text-green-600' :
-                        platformROAS >= 1 ? 'text-orange-600' :
-                        'text-red-600'}`
+                          platformROAS >= 2 ? 'text-green-600' :
+                            platformROAS >= 1 ? 'text-orange-600' :
+                              'text-red-600'}`
                         }>ROAS</p>
                         <p className={`text-lg font-bold ${
-                        platformROAS >= 2 ? 'text-green-700' :
-                        platformROAS >= 1 ? 'text-orange-700' :
-                        'text-red-700'}`
+                          platformROAS >= 2 ? 'text-green-700' :
+                            platformROAS >= 1 ? 'text-orange-700' :
+                              'text-red-700'}`
                         }>{platformROAS}x</p>
                       </div>
                     </div>
 
                     {isConnected &&
-                    <div className="space-y-3 mb-6">
+                      <div className="space-y-3 mb-6">
                         <Button
-                        onClick={() => handleSyncMetrics(platformKey)}
-                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]">
+                          onClick={() => handleSyncMetrics(platformKey)}
+                          className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]">
 
                           <Zap className="w-4 h-4 mr-2" />
                           Sincronizza Metriche
@@ -1144,7 +1145,7 @@ export default function AdminMarketing() {
                           <span className="font-bold text-indigo-600">{funnel.quiz}</span>
                         </div>
                         {selectedFunnel === 'landing' &&
-                        <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
+                          <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
                             <span className="text-gray-700">Landing Visualizzata</span>
                             <span className="font-bold text-purple-600">{funnel.landing}</span>
                           </div>
@@ -1161,8 +1162,8 @@ export default function AdminMarketing() {
                           <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
                           <p className="text-xl font-black text-indigo-600">
                             {funnel.quiz > 0 ?
-                            (funnel.purchases / funnel.quiz * 100).toFixed(1) :
-                            '0.0'}%
+                              (funnel.purchases / funnel.quiz * 100).toFixed(1) :
+                              '0.0'}%
                           </p>
                         </div>
                       </div>
@@ -1241,16 +1242,16 @@ export default function AdminMarketing() {
                         </div>
                         <div className={`rounded-lg p-3 border ${
                           metrics.profit >= 0 ? 'bg-green-50 border-green-100' :
-                          'bg-red-50 border-red-100'
-                        }`}>
+                            'bg-red-50 border-red-100'
+                          }`}>
                           <p className={`text-xs font-semibold mb-1 ${
                             metrics.profit >= 0 ? 'text-green-600' :
-                            'text-red-600'
-                          }`}>ROI ({metrics.profit >= 0 ? 'Profitto' : 'Perdita'})</p>
+                              'text-red-600'
+                            }`}>ROI ({metrics.profit >= 0 ? 'Profitto' : 'Perdita'})</p>
                           <p className={`text-lg font-bold ${
                             metrics.profit >= 0 ? 'text-green-700' :
-                            'text-red-700'
-                          }`}>{metrics.roi}%</p>
+                              'text-red-700'
+                            }`}>{metrics.roi}%</p>
                         </div>
                         <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
                           <p className="text-xs text-purple-600 font-semibold mb-1">Vendite</p>
@@ -1356,13 +1357,13 @@ export default function AdminMarketing() {
                               <p className="font-semibold text-gray-900">{influencer.commission_rate}%</p>
                             </div>
                           )}
-                           {influencer.start_date && (
+                          {influencer.start_date && (
                             <div>
                               <p className="text-gray-500">Inizio</p>
                               <p className="font-semibold text-gray-900">{format(parseISO(influencer.start_date), 'dd MMM yyyy', { locale: it })}</p>
                             </div>
                           )}
-                           {influencer.contact_info && (
+                          {influencer.contact_info && (
                             <div>
                               <p className="text-gray-500">Contatto</p>
                               <p className="font-semibold text-gray-900 truncate">{influencer.contact_info}</p>
@@ -1418,16 +1419,16 @@ export default function AdminMarketing() {
 
                       return (
                         <div key={platformDisplayName} className={`p-5 rounded-xl border-2 transition-all ${
-                        isConnected ?
-                        'bg-green-50 border-green-200' :
-                        'bg-gray-50 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'}`
+                          isConnected ?
+                            'bg-green-50 border-green-200' :
+                            'bg-gray-50 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'}`
                         }>
                           <div className="flex items-center justify-between mb-3">
                             <h4 className="font-bold text-gray-900 text-sm">
                               {platformDisplayName === 'Meta' ? 'Meta Ads' : platformDisplayName + ' Ads'}
                             </h4>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                            isConnected ? 'bg-green-500' : 'bg-gray-300'}`
+                              isConnected ? 'bg-green-500' : 'bg-gray-300'}`
                             }>
                               <LinkIcon className={`w-4 h-4 ${isConnected ? 'text-white' : 'text-gray-600'}`} />
                             </div>
@@ -1438,20 +1439,20 @@ export default function AdminMarketing() {
                           </p>
 
                           {isConnected ?
-                          <Button
-                            onClick={() => handleSyncMetrics(platformKey)}
-                            size="sm"
-                            className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs">
+                            <Button
+                              onClick={() => handleSyncMetrics(platformKey)}
+                              size="sm"
+                              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs">
 
                               <Zap className="w-3 h-3 mr-1" />
                               Sincronizza
                             </Button> :
 
-                          <Button
-                            onClick={() => handleConnectPlatform(platformKey)}
-                            variant="outline"
-                            size="sm"
-                            className="w-full text-xs">
+                            <Button
+                              onClick={() => handleConnectPlatform(platformKey)}
+                              variant="outline"
+                              size="sm"
+                              className="w-full text-xs">
 
                               <Plus className="w-3 h-3 mr-1" />
                               Connetti
@@ -1521,7 +1522,7 @@ export default function AdminMarketing() {
                 <Input
                   id="influencer-slug"
                   value={newInfluencer.slug}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, slug: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, slug: e.target.value })}
                   placeholder="mariorossi"
                 />
                 <p className="text-xs text-gray-500 mt-1">URL sarà: ?utm_source=influencer_{newInfluencer.slug}</p>
@@ -1534,7 +1535,7 @@ export default function AdminMarketing() {
                 <select
                   id="influencer-platform"
                   value={newInfluencer.platform}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, platform: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, platform: e.target.value })}
                   className="w-full h-10 px-3 border border-gray-200 rounded-lg"
                 >
                   <option value="instagram">Instagram</option>
@@ -1554,7 +1555,7 @@ export default function AdminMarketing() {
                   id="influencer-followers"
                   type="number"
                   value={newInfluencer.follower_count}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, follower_count: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, follower_count: e.target.value })}
                   placeholder="10000"
                 />
               </div>
@@ -1566,7 +1567,7 @@ export default function AdminMarketing() {
                 <select
                   id="influencer-contract"
                   value={newInfluencer.contract_type}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, contract_type: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, contract_type: e.target.value })}
                   className="w-full h-10 px-3 border border-gray-200 rounded-lg"
                 >
                   <option value="one_time">One-Time</option>
@@ -1581,7 +1582,7 @@ export default function AdminMarketing() {
                   id="influencer-cost"
                   type="number"
                   value={newInfluencer.cost_per_post}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, cost_per_post: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, cost_per_post: e.target.value })}
                   placeholder="500"
                 />
               </div>
@@ -1594,7 +1595,7 @@ export default function AdminMarketing() {
                   id="influencer-commission"
                   type="number"
                   value={newInfluencer.commission_rate}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, commission_rate: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, commission_rate: e.target.value })}
                   placeholder="10"
                 />
               </div>
@@ -1607,7 +1608,7 @@ export default function AdminMarketing() {
                   id="influencer-start-date"
                   type="date"
                   value={newInfluencer.start_date}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, start_date: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, start_date: e.target.value })}
                 />
               </div>
               <div>
@@ -1616,7 +1617,7 @@ export default function AdminMarketing() {
                   id="influencer-total-spent"
                   type="number"
                   value={newInfluencer.total_spent}
-                  onChange={(e) => setNewInfluencer({...newInfluencer, total_spent: e.target.value})}
+                  onChange={(e) => setNewInfluencer({ ...newInfluencer, total_spent: e.target.value })}
                   placeholder="0"
                 />
               </div>
@@ -1627,7 +1628,7 @@ export default function AdminMarketing() {
               <Input
                 id="influencer-contact"
                 value={newInfluencer.contact_info}
-                onChange={(e) => setNewInfluencer({...newInfluencer, contact_info: e.target.value})}
+                onChange={(e) => setNewInfluencer({ ...newInfluencer, contact_info: e.target.value })}
                 placeholder="mario@example.com"
               />
             </div>
@@ -1637,7 +1638,7 @@ export default function AdminMarketing() {
               <Textarea
                 id="influencer-notes"
                 value={newInfluencer.notes}
-                onChange={(e) => setNewInfluencer({...newInfluencer, notes: e.target.value})}
+                onChange={(e) => setNewInfluencer({ ...newInfluencer, notes: e.target.value })}
                 placeholder="Note sulla collaborazione..."
                 rows={3}
               />
