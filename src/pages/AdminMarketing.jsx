@@ -1488,7 +1488,7 @@ export default function AdminMarketing() {
                 </select>
               </div>
               <div>
-                <Label htmlFor="influencer-cost">Costo per Post (€)</P>
+                <Label htmlFor="influencer-cost">Costo per Post (€)</Label>
                 <Input
                   id="influencer-cost"
                   type="number"
