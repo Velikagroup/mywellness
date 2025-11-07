@@ -147,23 +147,31 @@ export default function AdminMarketing() {
       const platforms = ['meta', 'tiktok', 'pinterest', 'google'];
       const funnelData = {};
 
-      // These overall counts are for the *paid* campaign funnel data,
-      // currently a simplified distribution.
-      // These calculations need to be refined to be specific to 'trial' or 'landing'
-      // based on the selectedFunnel state, but for now they are broadly distributed.
+      // These overall counts are for the *paid* campaign funnel data
       const totalQuizCompleted = allUsersData.filter(u => u.quiz_completed === true).length;
       const totalCheckoutStarted = allUsersData.filter(u => u.billing_name && u.billing_name.length > 0).length;
       const totalPurchases = allUsersData.filter(u => 
         selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true
       ).length;
 
+      // For landing funnel, add Landing step (same as Quiz for now, as all quiz completers see landing)
+      const totalLandingViews = selectedFunnel === 'landing' ? totalQuizCompleted : 0;
 
       platforms.forEach(platform => {
-        funnelData[platform] = {
-          quiz: Math.floor(totalQuizCompleted / platforms.length), // This is a simplified distribution, might need refinement
-          checkout: Math.floor(totalCheckoutStarted / platforms.length),
-          purchases: Math.floor(totalPurchases / platforms.length)
-        };
+        if (selectedFunnel === 'landing') {
+          funnelData[platform] = {
+            quiz: Math.floor(totalQuizCompleted / platforms.length),
+            landing: Math.floor(totalLandingViews / platforms.length),
+            checkout: Math.floor(totalCheckoutStarted / platforms.length),
+            purchases: Math.floor(totalPurchases / platforms.length)
+          };
+        } else {
+          funnelData[platform] = {
+            quiz: Math.floor(totalQuizCompleted / platforms.length),
+            checkout: Math.floor(totalCheckoutStarted / platforms.length),
+            purchases: Math.floor(totalPurchases / platforms.length)
+          };
+        }
       });
 
       const groupedData = campaignsData.reduce((acc, campaign) => {
@@ -299,18 +307,31 @@ export default function AdminMarketing() {
     
     // Now count funnel steps based on these associated users' profiles
     const quizCompleted = associatedUsers.filter(u => u.quiz_completed === true).length;
+    const landingViews = selectedFunnel === 'landing' ? quizCompleted : 0;
     const checkoutStarted = associatedUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
     // Purchases are already correctly represented by platformData.sales (total successful transactions for this platform and date range)
     const purchases = platformData.sales;
     
-    return {
-      ...platformData,
-      funnel: {
-        quiz: quizCompleted,
-        checkout: checkoutStarted,
-        purchases: purchases
-      }
-    };
+    if (selectedFunnel === 'landing') {
+      return {
+        ...platformData,
+        funnel: {
+          quiz: quizCompleted,
+          landing: landingViews,
+          checkout: checkoutStarted,
+          purchases: purchases
+        }
+      };
+    } else {
+      return {
+        ...platformData,
+        funnel: {
+          quiz: quizCompleted,
+          checkout: checkoutStarted,
+          purchases: purchases
+        }
+      };
+    }
   });
 
   const totalOrganicSales = organicSocialSales.length;
@@ -318,12 +339,21 @@ export default function AdminMarketing() {
 
   // Calcola il funnel totale per le vendite organiche
   const totalOrganicFunnel = organicSocialData.reduce((acc, platform) => {
-    return {
-      quiz: acc.quiz + platform.funnel.quiz,
-      checkout: acc.checkout + platform.funnel.checkout,
-      purchases: acc.purchases + platform.funnel.purchases
-    };
-  }, { quiz: 0, checkout: 0, purchases: 0 });
+    if (selectedFunnel === 'landing') {
+      return {
+        quiz: acc.quiz + platform.funnel.quiz,
+        landing: acc.landing + platform.funnel.landing,
+        checkout: acc.checkout + platform.funnel.checkout,
+        purchases: acc.purchases + platform.funnel.purchases
+      };
+    } else {
+      return {
+        quiz: acc.quiz + platform.funnel.quiz,
+        checkout: acc.checkout + platform.funnel.checkout,
+        purchases: acc.purchases + platform.funnel.purchases
+      };
+    }
+  }, selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
 
   const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0 
     ? ((totalOrganicFunnel.purchases / totalOrganicFunnel.quiz) * 100).toFixed(1) 
@@ -656,11 +686,17 @@ export default function AdminMarketing() {
               <p className="text-sm text-gray-500 mb-4">Vendite da attività organica</p>
               
               {/* Funnel Totale Organico */}
-              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+              <div className={`grid grid-cols-1 ${selectedFunnel === 'landing' ? 'md:grid-cols-4' : 'md:grid-cols-4'} gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200`}>
                 <div className="text-center">
                   <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
                   <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
                 </div>
+                {selectedFunnel === 'landing' && (
+                  <div className="text-center">
+                    <p className="text-xs text-gray-600 mb-1">Landing Visualizzata</p>
+                    <p className="text-2xl font-bold text-purple-600">{totalOrganicFunnel.landing}</p>
+                  </div>
+                )}
                 <div className="text-center">
                   <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
                   <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
@@ -720,6 +756,12 @@ export default function AdminMarketing() {
                               <span className="text-gray-700">Quiz</span>
                               <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
                             </div>
+                            {selectedFunnel === 'landing' && (
+                              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
+                                <span className="text-gray-700">Landing</span>
+                                <span className="font-bold text-purple-600">{platform.funnel.landing}</span>
+                              </div>
+                            )}
                             <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
                               <span className="text-gray-700">Checkout</span>
                               <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
@@ -768,7 +810,7 @@ export default function AdminMarketing() {
               const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
 
               const platformGroup = campaignsByPlatform.find(p => p.platform === platformKey);
-              const funnel = platformGroup?.funnel || { quiz: 0, checkout: 0, purchases: 0 };
+              const funnel = platformGroup?.funnel || (selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
 
               const platformSpend = platformGroup?.totalSpend || 0;
               const platformRevenue = platformGroup?.totalRevenue || 0;
@@ -872,6 +914,12 @@ export default function AdminMarketing() {
                           <span className="text-gray-700">Quiz Completati</span>
                           <span className="font-bold text-indigo-600">{funnel.quiz}</span>
                         </div>
+                        {selectedFunnel === 'landing' && (
+                          <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
+                            <span className="text-gray-700">Landing Visualizzata</span>
+                            <span className="font-bold text-purple-600">{funnel.landing}</span>
+                          </div>
+                        )}
                         <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
                           <span className="text-gray-700">Checkout Iniziati</span>
                           <span className="font-bold text-cyan-600">{funnel.checkout}</span>
