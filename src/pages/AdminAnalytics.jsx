@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'; // Keep for now, but remove Tabs/TabsList/TabsTrigger below
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   TrendingUp,
@@ -31,7 +31,7 @@ import { format, subMonths, startOfMonth, endOfMonth, differenceInDays, isWithin
 import { it } from 'date-fns/locale';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"; // NEW IMPORT
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 export default function AdminAnalytics() {
   const navigate = useNavigate();
@@ -75,6 +75,9 @@ export default function AdminAnalytics() {
   const [stats, setStats] = useState({
     totalUsers: 0, trialUsers: 0, activeUsers: 0, paidUsers: 0,
     quizCompletedUsers: 0, checkoutStartedUsers: 0, landingOfferPurchases: 0,
+    trialPurchases: 0, // NEW: separato per riferimento
+    totalPurchases: 0, // NEW: totale combinato
+    unifiedConversionRate: 0, // NEW: conversione unificata
     totalRevenue: 0, mrr: 0, retentionRate: 0,
     baseUsers: 0, proUsers: 0, premiumUsers: 0,
     totalExpenses: 0, netProfit: 0, monthlyExpenses: 0
@@ -158,11 +161,19 @@ export default function AdminAnalytics() {
         const activeUsers = currentUsersForStats.filter(u => u.subscription_status === 'active').length;
         const paidUsers = activeUsers; // Assuming paid users are active subscribers
 
-        // NEW: Landing Offer Funnel Stats
-        // These relate to users created within the selected date range
+        // UNIFIED FUNNEL STATS - Combina Trial Setup + Landing Checkout
         const quizCompletedUsers = currentUsersForStats.filter(u => u.quiz_completed === true).length;
         const checkoutStartedUsers = currentUsersForStats.filter(u => u.billing_name && u.billing_name.length > 0).length;
+        
+        // Acquisti totali: somma trial subscriptions + landing offer purchases
+        const trialPurchases = currentUsersForStats.filter(u => u.purchased_plan_type === 'subscription').length;
         const landingOfferPurchases = currentUsersForStats.filter(u => u.purchased_landing_offer === true).length;
+        const totalPurchases = trialPurchases + landingOfferPurchases;
+
+        // Conversione unificata Quiz → Acquisto (qualsiasi tipo)
+        const unifiedConversionRate = quizCompletedUsers > 0 
+          ? ((totalPurchases / quizCompletedUsers) * 100).toFixed(1) 
+          : 0;
 
         const totalRevenue = currentTransactionsForStats
           .filter(t => t.status === 'succeeded' && t.amount > 0) // Filtering out potential negative amounts for refunds
@@ -196,6 +207,9 @@ export default function AdminAnalytics() {
           quizCompletedUsers,
           checkoutStartedUsers,
           landingOfferPurchases,
+          trialPurchases, // NEW: separato per riferimento
+          totalPurchases, // NEW: totale combinato
+          unifiedConversionRate, // NEW: conversione unificata
           totalRevenue,
           mrr,
           retentionRate,
@@ -675,35 +689,85 @@ export default function AdminAnalytics() {
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
           
-          {/* Funnel di Conversione */}
+          {/* Funnel Unificato di Conversione */}
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Target className="w-5 h-5 text-[var(--brand-primary)]" />
+                Funnel di Conversione Unificato (Tutti i Funnel)
+              </CardTitle>
+              <p className="text-sm text-gray-500 mt-2">
+                Metriche aggregate di Trial Setup + Landing Checkout attraverso tutti i canali e location
+              </p>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-4">
+                  <div className="flex-1 bg-indigo-100 rounded-full h-14 flex items-center justify-between px-6">
+                    <span className="font-semibold text-indigo-900">Quiz Completati (Totale)</span>
+                    <span className="font-bold text-indigo-900 text-xl">{stats.quizCompletedUsers}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 pl-8">
+                  <div className="flex-1 bg-cyan-100 rounded-full h-14 flex items-center justify-between px-6">
+                    <span className="font-semibold text-cyan-900">Checkout Iniziati (Totale)</span>
+                    <span className="font-bold text-cyan-900 text-xl">{stats.checkoutStartedUsers}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-4 pl-16">
+                  <div className="flex-1 bg-emerald-100 rounded-full h-14 flex items-center justify-between px-6">
+                    <span className="font-semibold text-emerald-900">Acquisti Totali (Trial + Landing)</span>
+                    <span className="font-bold text-emerald-900 text-xl">{stats.totalPurchases}</span>
+                  </div>
+                </div>
+                
+                {/* Breakdown acquisti per tipo */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pl-20">
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <p className="text-sm text-blue-700 mb-1">Trial Subscriptions</p>
+                    <p className="text-2xl font-bold text-blue-900">{stats.trialPurchases}</p>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
+                    <p className="text-sm text-purple-700 mb-1">Landing Offer (€67)</p>
+                    <p className="text-2xl font-bold text-purple-900">{stats.landingOfferPurchases}</p>
+                  </div>
+                </div>
+
+                <div className="mt-6 p-6 bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl border-2 border-green-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm text-green-700 mb-1">Tasso di Conversione Unificato</p>
+                      <p className="text-xs text-gray-600">Quiz Completati → Acquisti (Qualsiasi Tipo)</p>
+                    </div>
+                    <p className="text-5xl font-black text-green-900">{stats.unifiedConversionRate}%</p>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Funnel Breakdown per Tipo (opzionale - per dettagli) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Funnel di Conversione Trial → Abbonamento</CardTitle>
+                <CardTitle className="text-base">Breakdown: Trial Setup</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1 bg-blue-100 rounded-full h-12 flex items-center justify-between px-6">
-                      <span className="font-semibold text-blue-900">Utenti Registrati</span>
-                      <span className="font-bold text-blue-900">{filteredUsers.length}</span>
-                    </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                    <span className="text-sm font-medium text-blue-900">Quiz → Trial Attivi</span>
+                    <span className="font-bold text-blue-900">{stats.trialUsers}</span>
                   </div>
-                  <div className="flex items-center gap-4 pl-8">
-                    <div className="flex-1 bg-purple-100 rounded-full h-12 flex items-center justify-between px-6">
-                      <span className="font-semibold text-purple-900">Trial Attivi</span>
-                      <span className="font-bold text-purple-900">{trialUsers}</span>
-                    </div>
+                  <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                    <span className="text-sm font-medium text-green-900">Trial → Abbonati Paganti</span>
+                    <span className="font-bold text-green-900">{stats.trialPurchases}</span>
                   </div>
-                  <div className="flex items-center gap-4 pl-16">
-                    <div className="flex-1 bg-green-100 rounded-full h-12 flex items-center justify-between px-6">
-                      <span className="font-semibold text-green-900">Abbonati Paganti</span>
-                      <span className="font-bold text-green-900">{activeSubscriptions}</span>
-                    </div>
-                  </div>
-                  <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg border border-green-200">
-                    <p className="text-center text-green-900 font-bold text-lg">
-                      Tasso di Conversione: {conversionRate}%
+                  <div className="p-3 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
+                    <p className="text-xs text-gray-600 mb-1">Conversione Trial</p>
+                    <p className="text-2xl font-bold text-blue-900">
+                      {stats.quizCompletedUsers > 0 
+                        ? ((stats.trialPurchases / stats.quizCompletedUsers) * 100).toFixed(1) 
+                        : '0.0'}%
                     </p>
                   </div>
                 </div>
@@ -712,31 +776,24 @@ export default function AdminAnalytics() {
 
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle>Funnel Landing Offer (Quiz → Checkout → Acquisto)</CardTitle>
+                <CardTitle className="text-base">Breakdown: Landing Checkout</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="space-y-4">
-                  <div className="flex items-center gap-4">
-                    <div className="flex-1 bg-indigo-100 rounded-full h-12 flex items-center justify-between px-6">
-                      <span className="font-semibold text-indigo-900">Quiz Completati</span>
-                      <span className="font-bold text-indigo-900">{stats.quizCompletedUsers}</span>
-                    </div>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg">
+                    <span className="text-sm font-medium text-cyan-900">Quiz → Checkout Iniziati</span>
+                    <span className="font-bold text-cyan-900">{stats.checkoutStartedUsers}</span>
                   </div>
-                  <div className="flex items-center gap-4 pl-8">
-                    <div className="flex-1 bg-cyan-100 rounded-full h-12 flex items-center justify-between px-6">
-                      <span className="font-semibold text-cyan-900">Landing Checkout Iniziati</span>
-                      <span className="font-bold text-cyan-900">{stats.checkoutStartedUsers}</span>
-                    </div>
+                  <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
+                    <span className="text-sm font-medium text-purple-900">Checkout → Acquisti Landing</span>
+                    <span className="font-bold text-purple-900">{stats.landingOfferPurchases}</span>
                   </div>
-                  <div className="flex items-center gap-4 pl-16">
-                    <div className="flex-1 bg-emerald-100 rounded-full h-12 flex items-center justify-between px-6">
-                      <span className="font-semibold text-emerald-900">Acquisti Landing Offer</span>
-                      <span className="font-bold text-emerald-900">{stats.landingOfferPurchases}</span>
-                    </div>
-                  </div>
-                  <div className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
-                    <p className="text-center text-indigo-900 font-bold text-lg">
-                      Tasso di Conversione Quiz → Acquisto: {stats.quizCompletedUsers > 0 ? ((stats.landingOfferPurchases / stats.quizCompletedUsers) * 100).toFixed(1) : 0}%
+                  <div className="p-3 bg-gradient-to-r from-cyan-50 to-purple-50 rounded-lg border border-cyan-200">
+                    <p className="text-xs text-gray-600 mb-1">Conversione Landing</p>
+                    <p className="text-2xl font-bold text-purple-900">
+                      {stats.quizCompletedUsers > 0 
+                        ? ((stats.landingOfferPurchases / stats.quizCompletedUsers) * 100).toFixed(1) 
+                        : '0.0'}%
                     </p>
                   </div>
                 </div>
