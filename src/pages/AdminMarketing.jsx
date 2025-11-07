@@ -294,7 +294,7 @@ export default function AdminMarketing() {
   });
 
   const totalOrganicSales = organicSocialSales.length;
-  const totalOrganicRevenue = organicSocialSales.reduce((sum, s => sum + s.amount, 0);
+  const totalOrganicRevenue = organicSocialSales.reduce((sum, s) => sum + s.amount, 0);
 
   // Calcola il funnel totale per le vendite organiche
   const totalOrganicFunnel = organicSocialData.reduce((acc, platform) => {
