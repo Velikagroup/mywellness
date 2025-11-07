@@ -616,7 +616,7 @@ export default function AdminMarketing() {
           </div>
 
           {/* Box Vendite Organiche Social */}
-          <Accordion type="single" collapsible defaultValue="item-1" className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-lg">
+          <Accordion type="single" collapsible className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-lg">
             <AccordionItem value="item-1" className="border-none">
               <AccordionTrigger className="hover:no-underline px-6 py-6">
                 <div className="flex items-center justify-between w-full pr-4">
