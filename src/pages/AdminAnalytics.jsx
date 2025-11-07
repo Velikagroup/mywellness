@@ -495,7 +495,7 @@ export default function AdminAnalytics() {
     value: Math.round(value)
   }));
 
-  const EXPENSE_COLORS = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899'];
+  const EXPENSE_COLORS = ['#ef4444', '#f59e0b', '#10b981', '#3b82f6', '#8b5cf6', '#ec4899', '#14b8a6', '#f97316'];
 
   const transactionsByType = filteredTransactions
     .filter(t => t.status === 'succeeded' && t.amount > 0)
