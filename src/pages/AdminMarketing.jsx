@@ -29,11 +29,14 @@ import {
   Eye,
   ShoppingCart,
   Zap,
-  CheckCircle // Added CheckCircle import
+  CheckCircle, // Added CheckCircle import
+  Calendar as CalendarIcon // Added CalendarIcon import
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { format, subDays, parseISO, isWithinInterval } from 'date-fns';
 import { it } from 'date-fns/locale';
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 // Define countries array (placeholder/minimal for selectedCountry initialization)
 const countries = [
@@ -68,6 +71,7 @@ export default function AdminMarketing() {
   const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
   const [copiedLink, setCopiedLink] = useState(null);
+  const [showDatePicker, setShowDatePicker] = useState(false); // Added showDatePicker state
 
   const APP_URL = window.location.origin;
 
@@ -431,8 +435,141 @@ export default function AdminMarketing() {
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         {/* Header */}
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Marketing Analytics</h1>
-          <p className="text-gray-600">Performance campagne pubblicitarie e ROAS</p>
+          <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 mb-4">
+            <div>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">Marketing Analytics</h1>
+              <p className="text-gray-600">Performance campagne pubblicitarie e ROAS</p>
+            </div>
+
+            <div className="flex flex-wrap gap-3">
+              <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
+                <PopoverTrigger asChild>
+                  <Button variant="outline" className="justify-start text-left font-normal border-2">
+                    <CalendarIcon className="mr-2 h-4 w-4" />
+                    {selectedDateRange[0] && selectedDateRange[1] ? (
+                      <>
+                        {format(selectedDateRange[0], 'dd MMM yyyy', { locale: it })} - {format(selectedDateRange[1], 'dd MMM yyyy', { locale: it })}
+                      </>
+                    ) : (
+                      <span>Seleziona periodo</span>
+                    )}
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto p-0" align="end">
+                  <div className="p-4 space-y-4">
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Data Inizio</Label>
+                      <CalendarComponent
+                        mode="single"
+                        selected={selectedDateRange[0]}
+                        onSelect={(date) => date && setSelectedDateRange([date, selectedDateRange[1]])}
+                        initialFocus
+                        locale={it}
+                      />
+                    </div>
+                    <div>
+                      <Label className="text-sm font-semibold mb-2 block">Data Fine</Label>
+                      <CalendarComponent
+                        mode="single"
+                        selected={selectedDateRange[1]}
+                        onSelect={(date) => date && setSelectedDateRange([selectedDateRange[0], date])}
+                        disabled={(date) => date < selectedDateRange[0]}
+                        locale={it}
+                      />
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedDateRange([subDays(new Date(), 7), new Date()]);
+                          setShowDatePicker(false);
+                        }}
+                      >
+                        Ultima Settimana
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedDateRange([subDays(new Date(), 30), new Date()]);
+                          setShowDatePicker(false);
+                        }}
+                      >
+                        Ultimo Mese
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          setSelectedDateRange([subDays(new Date(), 90), new Date()]);
+                          setShowDatePicker(false);
+                        }}
+                      >
+                        Ultimi 3 Mesi
+                      </Button>
+                    </div>
+                    <Button
+                      className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                      onClick={() => setShowDatePicker(false)}
+                    >
+                      Applica Filtro
+                    </Button>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              <Button
+                onClick={() => {
+                  setSelectedDateRange([subDays(new Date(), 30), new Date()]);
+                  setShowDatePicker(false); // Close date picker after selecting a preset
+                }}
+                variant="outline"
+                className="border-2"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                Oggi
+              </Button>
+
+              <Button
+                onClick={async () => {
+                  // Trova la data più vecchia tra transazioni e metriche
+                  const oldestTransaction = transactions.length > 0 
+                    ? transactions.reduce((oldest, t) => {
+                        if (!t.payment_date) return oldest;
+                        const tDate = parseISO(t.payment_date);
+                        return !oldest || tDate < oldest ? tDate : oldest;
+                      }, null)
+                    : null;
+
+                  const oldestMetric = metrics.length > 0
+                    ? metrics.reduce((oldest, m) => {
+                        if (!m.date) return oldest;
+                        const mDate = parseISO(m.date);
+                        return !oldest || mDate < oldest ? mDate : oldest;
+                      }, null)
+                    : null;
+
+                  const oldestDate = [oldestTransaction, oldestMetric]
+                    .filter(d => d !== null)
+                    .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
+
+                  if (oldestDate) {
+                    setSelectedDateRange([oldestDate, new Date()]);
+                  } else {
+                    // Default a 1 anno fa se non ci sono dati
+                    setSelectedDateRange([subDays(new Date(), 365), new Date()]);
+                  }
+                  setShowDatePicker(false); // Close date picker after selecting a preset
+                }}
+                variant="outline"
+                className="border-2"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                Tutto
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Connessione Piattaforme - Box Esterno con Accordion */}
