@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsTrigger } from '@/components/ui/tabs'; // Removed TabsList as it's not used
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   TrendingUp,
@@ -135,21 +135,13 @@ export default function AdminAnalytics() {
       try {
         // Fetch users and transactions - the outline implies refetching or using the "all" lists
         // and then filtering them client-side for the current dateRange
-        const allUsers = users; // Use the already loaded `users` state
-        const allTransactions = transactions; // Use the already loaded `transactions` state
+        const allUsers = await base44.entities.User.list();
+        const allTransactions = await base44.entities.Transaction.list();
 
         // Explicitly server-side filter expenses for this stats calculation, as per outline
-        // NOTE: The previous code was fetching expenses again from server.
-        // It's better to use the client-side `expenses` state for consistency with users/transactions,
-        // and filter it according to the date range. If an exact server-side filter is required,
-        // the `base44.entities.Expense.filter` call should remain.
-        // For now, I'll filter client-side to ensure `expenses` state is the source of truth for both display and stats.
-        const fetchedExpenses = expenses.filter(e => { // Use the already loaded `expenses` state
-          if (!e.date) return false;
-          const expenseDate = parseISO(e.date);
-          return isWithinInterval(expenseDate, { start: dateRange.from, end: dateRange.to });
+        const fetchedExpenses = await base44.entities.Expense.filter({
+          date: { $gte: dateRange.from.toISOString(), $lte: dateRange.to.toISOString() }
         });
-
 
         // Filter users and transactions based on dateRange client-side
         const currentUsersForStats = allUsers.filter(u => {
@@ -187,7 +179,7 @@ export default function AdminAnalytics() {
           .filter(t => t.status === 'succeeded' && t.amount > 0) // Filtering out potential negative amounts for refunds
           .reduce((sum, t) => sum + t.amount, 0);
 
-        const totalExpenses = fetchedExpenses.reduce((sum, e) => sum + e.amount, 0); // Using the date-filtered expenses
+        const totalExpenses = fetchedExpenses.reduce((sum, e) => sum + e.amount, 0); // Using the server-filtered expenses
         const netProfit = totalRevenue - totalExpenses;
 
         const baseUsers = currentUsersForStats.filter(u => u.subscription_plan === 'base' && u.subscription_status === 'active').length;
@@ -235,10 +227,10 @@ export default function AdminAnalytics() {
       setIsLoading(false); // Set to false after this analytics load
     };
 
-    if (dateRange.from && dateRange.to && users.length > 0 && transactions.length > 0 && expenses.length > 0) { // Only run if date range is defined and base data is loaded
+    if (dateRange.from && dateRange.to) { // Only run if date range is defined
         loadAnalytics();
     }
-  }, [dateRange, users, transactions, expenses]); // Rerun when date range or base data changes
+  }, [dateRange]); // Rerun when date range changes
 
   const handleSaveExpense = async () => {
     // If it's a recurring variable expense template, amount is not required for the template itself
@@ -347,7 +339,7 @@ export default function AdminAnalytics() {
 
   // Analytics Calculations (using the existing filtered data where applicable, separate from `stats`)
   const activeSubscriptions = filteredUsers.filter(u => u.subscription_status === 'active').length;
-  const trialUsersCount = filteredUsers.filter(u => u.subscription_status === 'trial').length; // Renamed to avoid collision with stats.trialUsers
+  const trialUsers = filteredUsers.filter(u => u.subscription_status === 'trial').length;
   const cancelledUsers = filteredUsers.filter(u => u.subscription_status === 'cancelled').length;
   const expiredUsers = filteredUsers.filter(u => u.subscription_status === 'expired').length;
 
@@ -614,58 +606,6 @@ export default function AdminAnalytics() {
                       }}
                     >
                       Ultimo Anno
-                    </Button>
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      onClick={() => {
-                        // Trova la data più vecchia tra transazioni, utenti e spese
-                        const oldestTransaction = transactions.length > 0 
-                          ? transactions.reduce((oldest, t) => {
-                              if (!t.payment_date) return oldest;
-                              const tDate = parseISO(t.payment_date);
-                              return !oldest || tDate < oldest ? tDate : oldest;
-                            }, null)
-                          : null;
-
-                        const oldestUser = users.length > 0
-                          ? users.reduce((oldest, u) => {
-                              if (!u.created_date) return oldest;
-                              const uDate = parseISO(u.created_date);
-                              return !oldest || uDate < oldest ? uDate : oldest;
-                            }, null)
-                          : null;
-
-                        const oldestExpense = expenses.length > 0
-                          ? expenses.reduce((oldest, e) => {
-                              if (!e.date) return oldest;
-                              const eDate = parseISO(e.date);
-                              return !oldest || eDate < oldest ? eDate : oldest;
-                            }, null)
-                          : null;
-
-                        const oldestDateCandidates = [oldestTransaction, oldestUser, oldestExpense].filter(d => d !== null);
-
-                        const oldestDate = oldestDateCandidates.length > 0
-                          ? oldestDateCandidates.reduce((minDate, current) => current < minDate ? current : minDate, oldestDateCandidates[0])
-                          : null;
-
-                        if (oldestDate) {
-                          setDateRange({
-                            from: oldestDate,
-                            to: new Date()
-                          });
-                        } else {
-                          // Default a 1 anno fa se non ci sono dati
-                          setDateRange({
-                            from: subMonths(new Date(), 12),
-                            to: new Date()
-                          });
-                        }
-                        setShowDatePicker(false);
-                      }}
-                    >
-                      Tutto
                     </Button>
                   </div>
                   <Button
@@ -1136,7 +1076,7 @@ export default function AdminAnalytics() {
                       <Clock className="w-5 h-5 text-blue-600" />
                       <span className="font-semibold text-blue-900">In Trial</span>
                     </div>
-                    <span className="text-2xl font-bold text-blue-600">{trialUsersCount}</span>
+                    <span className="text-2xl font-bold text-blue-600">{trialUsers}</span>
                   </div>
 
                   <div className="flex items-center justify-between p-4 bg-orange-50 border border-orange-200 rounded-lg">
