@@ -4,18 +4,23 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   TrendingUp,
   DollarSign,
   Target,
+  Activity,
   Link as LinkIcon,
+  Plus,
+  Settings,
   BarChart3,
+  PieChart as PieChartIcon,
+  MousePointerClick,
+  Eye,
   ShoppingCart,
-  Copy,
-  Check,
-  Share2,
-  Users
+  Zap
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { format, subDays, parseISO, isWithinInterval } from 'date-fns';
@@ -25,31 +30,101 @@ export default function AdminMarketing() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+
   const [campaigns, setCampaigns] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [allUsers, setAllUsers] = useState([]);
-  const [copiedLink, setCopiedLink] = useState(null);
+
+  const [showConnectDialog, setShowConnectDialog] = useState(false);
+  const [selectedPlatform, setSelectedPlatform] = useState(null);
 
   const [selectedDateRange, setSelectedDateRange] = useState([
     subDays(new Date(), 30),
     new Date()
   ]);
 
+  const [campaignsByPlatform, setCampaignsByPlatform] = useState([]);
+  const [marketingExpenses, setMarketingExpenses] = useState([]);
+  const [allMetricsFilteredByDate, setAllMetricsFilteredByDate] = useState([]);
+
   const loadMarketingData = async () => {
     setIsLoading(true);
     try {
-      const [campaignsData, metricsData, allTransactionsData, usersData] = await Promise.all([
-        base44.entities.AdCampaign.list(),
-        base44.entities.AdMetric.list(),
-        base44.entities.Transaction.list(),
-        base44.entities.User.list()
-      ]);
+      const campaignsData = await base44.entities.AdCampaign.list();
+      const metricsData = await base44.entities.AdMetric.list();
+      const expensesData = await base44.entities.Expense.filter({
+        category: 'marketing',
+        date: { $gte: selectedDateRange[0].toISOString(), $lte: selectedDateRange[1].toISOString() }
+      });
+      const allTransactionsData = await base44.entities.Transaction.list();
+      const allUsers = await base44.entities.User.list();
 
       setCampaigns(campaignsData);
       setMetrics(metricsData);
       setTransactions(allTransactionsData);
-      setAllUsers(usersData);
+
+      const metricsFilteredByDate = metricsData.filter(m => {
+        if (!m.date) return false;
+        const metricDate = parseISO(m.date);
+        return isWithinInterval(metricDate, { start: selectedDateRange[0], end: selectedDateRange[1] });
+      });
+      setAllMetricsFilteredByDate(metricsFilteredByDate);
+
+      const platforms = ['meta', 'tiktok', 'pinterest', 'google'];
+      const funnelData = {};
+
+      const totalQuizCompleted = allUsers.filter(u => u.quiz_completed === true).length;
+      const totalCheckoutStarted = allUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
+      const totalPurchases = allUsers.filter(u => u.purchased_landing_offer === true).length;
+
+      platforms.forEach(platform => {
+        funnelData[platform] = {
+          quiz: Math.floor(totalQuizCompleted / platforms.length),
+          checkout: Math.floor(totalCheckoutStarted / platforms.length),
+          purchases: Math.floor(totalPurchases / platforms.length)
+        };
+      });
+
+      const groupedData = campaignsData.reduce((acc, campaign) => {
+        const platform = campaign.platform;
+        const campaignMetrics = metricsFilteredByDate.filter(m => m.campaign_id === campaign.campaign_id);
+
+        const totalSpend = campaignMetrics.reduce((sum, m) => sum + (m.spend || 0), 0);
+        const totalRevenue = campaignMetrics.reduce((sum, m) => sum + (m.revenue || 0), 0);
+        const totalConversions = campaignMetrics.reduce((sum, m) => sum + (m.conversions || 0), 0);
+        const totalClicks = campaignMetrics.reduce((sum, m) => sum + (m.clicks || 0), 0);
+        const totalImpressions = campaignMetrics.reduce((sum, m) => sum + (m.impressions || 0), 0);
+
+        if (!acc[platform]) {
+          acc[platform] = {
+            platform,
+            campaigns: [],
+            totalSpend: 0,
+            totalRevenue: 0,
+            totalConversions: 0,
+            totalClicks: 0,
+            totalImpressions: 0,
+            funnel: funnelData[platform] || { quiz: 0, checkout: 0, purchases: 0 }
+          };
+        }
+
+        acc[platform].campaigns.push({
+          ...campaign,
+          metrics: campaignMetrics,
+          totalSpend, totalConversions, totalRevenue, totalClicks, totalImpressions
+        });
+
+        acc[platform].totalSpend += totalSpend;
+        acc[platform].totalRevenue += totalRevenue;
+        acc[platform].totalConversions += totalConversions;
+        acc[platform].totalClicks += totalClicks;
+        acc[platform].totalImpressions += totalImpressions;
+
+        return acc;
+      }, {});
+
+      setCampaignsByPlatform(Object.values(groupedData));
+      setMarketingExpenses(expensesData);
 
     } catch (error) {
       console.error('Error loading marketing data:', error);
@@ -77,105 +152,80 @@ export default function AdminMarketing() {
     checkUserAccessAndLoad();
   }, []);
 
-  // Organic/Landing Funnel Data
-  const organicSources = [
-    { key: 'instagram_organic', name: 'Instagram', color: '#E4405F', icon: '📸' },
-    { key: 'facebook_organic', name: 'Facebook', color: '#1877F2', icon: '📘' },
-    { key: 'tiktok_organic', name: 'TikTok', color: '#000000', icon: '🎵' },
-    { key: 'youtube_organic', name: 'YouTube', color: '#FF0000', icon: '▶️' },
-    { key: 'pinterest_organic', name: 'Pinterest', color: '#E60023', icon: '📌' },
-    { key: 'direct', name: 'Diretto', color: '#6B7280', icon: '🔗' }
-  ];
-
-  const getOrganicStats = () => {
-    return organicSources.map(source => {
-      const sourceUsers = allUsers.filter(u => u.traffic_source === source.key);
-      const quizCompleted = sourceUsers.filter(u => u.quiz_completed).length;
-      const checkoutStarted = sourceUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
-      const purchases = sourceUsers.filter(u => u.purchased_landing_offer).length;
-      
-      const revenue = transactions
-        .filter(t => {
-          const user = allUsers.find(u => u.id === t.user_id);
-          return user && user.traffic_source === source.key && t.status === 'succeeded';
-        })
-        .reduce((sum, t) => sum + (t.amount || 0), 0);
-
-      return {
-        ...source,
-        users: sourceUsers.length,
-        quizCompleted,
-        checkoutStarted,
-        purchases,
-        revenue: revenue,
-        conversionRate: quizCompleted > 0 ? ((purchases / quizCompleted) * 100).toFixed(1) : 0
-      };
-    }).filter(s => s.users > 0);
-  };
-
-  const organicStats = getOrganicStats();
-  const totalOrganicRevenue = organicStats.reduce((sum, s) => sum + s.revenue, 0);
-  const totalOrganicPurchases = organicStats.reduce((sum, s) => sum + s.purchases, 0);
-  const totalOrganicUsers = organicStats.reduce((sum, s) => sum + s.users, 0);
-
-  // Ads Performance Data
-  const metricsFilteredByDate = metrics.filter(m => {
-    if (!m.date) return false;
-    const metricDate = parseISO(m.date);
-    return isWithinInterval(metricDate, { start: selectedDateRange[0], end: selectedDateRange[1] });
-  });
-
-  const platformsAds = ['meta', 'tiktok', 'pinterest', 'google'];
-  const campaignsByPlatform = campaigns.reduce((acc, campaign) => {
-    const platform = campaign.platform;
-    const campaignMetrics = metricsFilteredByDate.filter(m => m.campaign_id === campaign.campaign_id);
-
-    const totalSpend = campaignMetrics.reduce((sum, m) => sum + (m.spend || 0), 0);
-    const totalRevenue = campaignMetrics.reduce((sum, m) => sum + (m.revenue || 0), 0);
-    const totalConversions = campaignMetrics.reduce((sum, m) => sum + (m.conversions || 0), 0);
-    const totalClicks = campaignMetrics.reduce((sum, m) => sum + (m.clicks || 0), 0);
-    const totalImpressions = campaignMetrics.reduce((sum, m) => sum + (m.impressions || 0), 0);
-
-    if (!acc[platform]) {
-      acc[platform] = {
-        platform,
-        campaigns: [],
-        totalSpend: 0,
-        totalRevenue: 0,
-        totalConversions: 0,
-        totalClicks: 0,
-        totalImpressions: 0
-      };
+  useEffect(() => {
+    if (user) {
+      loadMarketingData();
     }
+  }, [selectedDateRange, user]);
 
-    acc[platform].campaigns.push({
-      ...campaign,
-      metrics: campaignMetrics,
-      totalSpend, totalConversions, totalRevenue, totalClicks, totalImpressions
+  const totalSpend = campaignsByPlatform.reduce((sum, p) => sum + p.totalSpend, 0);
+  const totalRevenue = campaignsByPlatform.reduce((sum, p) => sum + p.totalRevenue, 0);
+  const totalConversions = campaignsByPlatform.reduce((sum, p) => sum + p.totalConversions, 0);
+  const totalClicks = campaignsByPlatform.reduce((sum, p) => sum + p.totalClicks, 0);
+  const totalImpressions = campaignsByPlatform.reduce((sum, p) => sum + p.totalImpressions, 0);
+
+  const overallROAS = totalSpend > 0 ? (totalRevenue / totalSpend).toFixed(2) : 0;
+  const overallCPA = totalConversions > 0 ? (totalSpend / totalConversions).toFixed(2) : 0;
+  const overallCTR = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : 0;
+  const netProfit = totalRevenue - totalSpend;
+
+  const platformData = campaignsByPlatform.map(p => ({
+    name: p.platform.charAt(0).toUpperCase() + p.platform.slice(1),
+    spend: Math.round(p.totalSpend),
+    revenue: Math.round(p.totalRevenue),
+    conversions: p.totalConversions,
+    roas: p.totalSpend > 0 ? (p.totalRevenue / p.totalSpend).toFixed(2) : 0
+  })).filter(p => p.spend > 0 || p.revenue > 0);
+
+  const getDailyTrend = () => {
+    const dailyMap = {};
+    allMetricsFilteredByDate.forEach(m => {
+      const date = m.date;
+      if (!dailyMap[date]) {
+        dailyMap[date] = { date, spend: 0, revenue: 0, conversions: 0 };
+      }
+      dailyMap[date].spend += m.spend || 0;
+      dailyMap[date].revenue += m.revenue || 0;
+      dailyMap[date].conversions += m.conversions || 0;
     });
 
-    acc[platform].totalSpend += totalSpend;
-    acc[platform].totalRevenue += totalRevenue;
-    acc[platform].totalConversions += totalConversions;
-    acc[platform].totalClicks += totalClicks;
-    acc[platform].totalImpressions += totalImpressions;
+    return Object.values(dailyMap)
+      .sort((a, b) => new Date(a.date) - new Date(b.date))
+      .map(d => ({
+        date: format(parseISO(d.date), 'dd MMM', { locale: it }),
+        spend: Math.round(d.spend),
+        revenue: Math.round(d.revenue),
+        roas: d.spend > 0 ? (d.revenue / d.spend).toFixed(2) : 0
+      }));
+  };
 
-    return acc;
-  }, {});
+  const dailyTrend = getDailyTrend();
 
-  const campaignsByPlatformArray = Object.values(campaignsByPlatform);
-  
-  const totalSpendAds = campaignsByPlatformArray.reduce((sum, p) => sum + p.totalSpend, 0);
-  const totalRevenueAds = campaignsByPlatformArray.reduce((sum, p) => sum + p.totalRevenue, 0);
-  const totalConversionsAds = campaignsByPlatformArray.reduce((sum, p) => sum + p.totalConversions, 0);
-  const overallROAS = totalSpendAds > 0 ? (totalRevenueAds / totalSpendAds).toFixed(2) : 0;
+  const PLATFORM_COLORS = {
+    Meta: '#0084FF',
+    Tiktok: '#000000',
+    Pinterest: '#E60023',
+    Google: '#4285F4'
+  };
 
-  const handleCopyLink = (sourceKey) => {
-    const baseUrl = window.location.origin;
-    const landingUrl = `${baseUrl}${createPageUrl('Landing')}?source=${sourceKey}`;
-    navigator.clipboard.writeText(landingUrl);
-    setCopiedLink(sourceKey);
-    setTimeout(() => setCopiedLink(null), 2000);
+  const handleConnectPlatform = async (platform) => {
+    setSelectedPlatform(platform);
+    setShowConnectDialog(true);
+  };
+
+  const handleSyncMetrics = async (platform) => {
+    try {
+      const response = await base44.functions.invoke('syncAdMetrics', { platform });
+      if (response.success) {
+        alert(`✅ Metriche sincronizzate da ${platform}`);
+        await loadMarketingData();
+      } else {
+        alert(`Errore durante la sincronizzazione da ${platform}: ${response.error || 'Errore sconosciuto'}`);
+      }
+    } catch (error) {
+      alert('Errore durante la sincronizzazione: ' + error.message);
+      console.error('Error syncing metrics:', error);
+    }
   };
 
   if (isLoading) {
@@ -189,294 +239,296 @@ export default function AdminMarketing() {
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
+        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Marketing Analytics</h1>
-          <p className="text-gray-600">Performance campagne pubblicitarie e traffico organico</p>
+          <p className="text-gray-600">Performance campagne pubblicitarie e ROAS</p>
         </div>
 
-        <Tabs defaultValue="ads" className="space-y-6">
-          <TabsList className="grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="ads">Campagne Ads</TabsTrigger>
-            <TabsTrigger value="organic">Landing & Organico</TabsTrigger>
-          </TabsList>
+        {/* Overview Stats */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Spesa Totale</p>
+                  <p className="text-3xl font-bold text-red-600">€{totalSpend.toLocaleString('it-IT')}</p>
+                </div>
+                <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                  <DollarSign className="w-6 h-6 text-red-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* ADS PERFORMANCE TAB */}
-          <TabsContent value="ads" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">Spesa Ads</p>
-                      <p className="text-3xl font-bold text-red-600">€{totalSpendAds.toLocaleString('it-IT')}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
-                      <DollarSign className="w-6 h-6 text-red-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Entrate da Ads</p>
+                  <p className="text-3xl font-bold text-green-600">€{totalRevenue.toLocaleString('it-IT')}</p>
+                </div>
+                <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
+                  <TrendingUp className="w-6 h-6 text-green-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">Entrate da Ads</p>
-                      <p className="text-3xl font-bold text-green-600">€{totalRevenueAds.toLocaleString('it-IT')}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-green-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">ROAS</p>
+                  <p className={`text-3xl font-bold ${overallROAS >= 2 ? 'text-green-600' : overallROAS >= 1 ? 'text-orange-600' : 'text-red-600'}`}>
+                    {overallROAS}x
+                  </p>
+                  <p className="text-xs text-gray-500 mt-1">Profitto: €{netProfit.toFixed(0)}</p>
+                </div>
+                <div className={`w-12 h-12 rounded-full flex items-center justify-center ${overallROAS >= 2 ? 'bg-green-100' : 'bg-orange-100'}`}>
+                  <Target className={`w-6 h-6 ${overallROAS >= 2 ? 'text-green-600' : 'text-orange-600'}`} />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm text-gray-500 mb-1">Conversioni</p>
+                  <p className="text-3xl font-bold text-purple-600">{totalConversions}</p>
+                  <p className="text-xs text-gray-500 mt-1">CPA: €{overallCPA}</p>
+                </div>
+                <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
+                  <ShoppingCart className="w-6 h-6 text-purple-600" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* ROAS Trend */}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle>Andamento ROAS e Spend</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="h-80">
+              <ResponsiveContainer width="100%" height="100%">
+                <AreaChart data={dailyTrend}>
+                  <defs>
+                    <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                    </linearGradient>
+                    <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                    </linearGradient>
+                  </defs>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
+                  <XAxis dataKey="date" stroke="#6b7280" />
+                  <YAxis stroke="#6b7280" />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: 'white',
+                      border: '1px solid #e5e7eb',
+                      borderRadius: '8px'
+                    }}
+                  />
+                  <Legend />
+                  <Area
+                    type="monotone"
+                    dataKey="spend"
+                    stroke="#ef4444"
+                    fillOpacity={1}
+                    fill="url(#colorSpend)"
+                    name="Spesa (€)"
+                  />
+                  <Area
+                    type="monotone"
+                    dataKey="revenue"
+                    stroke="#10b981"
+                    fillOpacity={1}
+                    fill="url(#colorRevenue)"
+                    name="Entrate (€)"
+                  />
+                  <Line
+                    type="monotone"
+                    dataKey="roas"
+                    stroke="#8b5cf6"
+                    strokeWidth={3}
+                    name="ROAS"
+                  />
+                </AreaChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Piattaforme */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
+            const platformKey = platformDisplayName.toLowerCase();
+            const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+            
+            const platformGroup = campaignsByPlatform.find(p => p.platform === platformKey);
+            const funnel = platformGroup?.funnel || { quiz: 0, checkout: 0, purchases: 0 };
+            
+            const platformSpend = platformGroup?.totalSpend || 0;
+            const platformRevenue = platformGroup?.totalRevenue || 0;
+            const platformROAS = platformSpend > 0 ? (platformRevenue / platformSpend).toFixed(2) : 0;
+
+            return (
+              <Card key={index} className="bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-6">
+                  <div className="flex items-start justify-between mb-4">
                     <div>
-                      <p className="text-sm text-gray-500 mb-1">ROAS Ads</p>
-                      <p className={`text-3xl font-bold ${overallROAS >= 2 ? 'text-green-600' : overallROAS >= 1 ? 'text-orange-600' : 'text-red-600'}`}>
-                        {overallROAS}x
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {platformDisplayName === 'Meta' ? 'Meta (Facebook/Instagram)' : platformDisplayName + ' Ads'}
+                      </h3>
+                      <p className="text-sm text-gray-500 mt-1">
+                        {isConnected ? '✅ Connesso' : '⚠️ Non connesso'}
                       </p>
                     </div>
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${overallROAS >= 2 ? 'bg-green-100' : 'bg-orange-100'}`}>
-                      <Target className={`w-6 h-6 ${overallROAS >= 2 ? 'text-green-600' : 'text-orange-600'}`} />
+                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isConnected ? 'bg-green-100' : 'bg-gray-100'}`}>
+                      <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
                     </div>
                   </div>
-                </CardContent>
-              </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">Conversioni Ads</p>
-                      <p className="text-3xl font-bold text-purple-600">{totalConversionsAds}</p>
+                  {/* Metriche Piattaforma */}
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+                      <p className="text-xs text-red-600 font-semibold mb-1">Spesa</p>
+                      <p className="text-lg font-bold text-red-700">€{platformSpend.toFixed(0)}</p>
                     </div>
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <ShoppingCart className="w-6 h-6 text-purple-600" />
+                    <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+                      <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
+                      <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
+                    </div>
+                    <div className={`rounded-lg p-3 border ${
+                      platformROAS >= 2 ? 'bg-green-50 border-green-100' : 
+                      platformROAS >= 1 ? 'bg-orange-50 border-orange-100' : 
+                      'bg-red-50 border-red-100'
+                    }`}>
+                      <p className={`text-xs font-semibold mb-1 ${
+                        platformROAS >= 2 ? 'text-green-600' : 
+                        platformROAS >= 1 ? 'text-orange-600' : 
+                        'text-red-600'
+                      }`}>ROAS</p>
+                      <p className={`text-lg font-bold ${
+                        platformROAS >= 2 ? 'text-green-700' : 
+                        platformROAS >= 1 ? 'text-orange-700' : 
+                        'text-red-700'
+                      }`}>{platformROAS}x</p>
                     </div>
                   </div>
-                </CardContent>
-              </Card>
-            </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
-                const platformKey = platformDisplayName.toLowerCase();
-                const isConnected = campaignsByPlatformArray.some(p => p.platform === platformKey && p.campaigns.length > 0);
-                
-                const platformGroup = campaignsByPlatformArray.find(p => p.platform === platformKey);
-                const platformSpend = platformGroup?.totalSpend || 0;
-                const platformRevenue = platformGroup?.totalRevenue || 0;
-                const platformROAS = platformSpend > 0 ? (platformRevenue / platformSpend).toFixed(2) : 0;
-
-                return (
-                  <Card key={index} className="bg-white/80 backdrop-blur-sm">
-                    <CardContent className="p-6">
-                      <div className="flex items-start justify-between mb-4">
-                        <div>
-                          <h3 className="text-xl font-bold text-gray-900">
-                            {platformDisplayName === 'Meta' ? 'Meta (Facebook/Instagram)' : platformDisplayName + ' Ads'}
-                          </h3>
-                          <p className="text-sm text-gray-500 mt-1">
-                            {isConnected ? '✅ Connesso' : '⚠️ Non connesso'}
-                          </p>
-                        </div>
-                        <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isConnected ? 'bg-green-100' : 'bg-gray-100'}`}>
-                          <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
-                        </div>
-                      </div>
-
-                      <div className="grid grid-cols-3 gap-3 mb-4">
-                        <div className="bg-red-50 rounded-lg p-3 border border-red-100">
-                          <p className="text-xs text-red-600 font-semibold mb-1">Spesa</p>
-                          <p className="text-lg font-bold text-red-700">€{platformSpend.toFixed(0)}</p>
-                        </div>
-                        <div className="bg-green-50 rounded-lg p-3 border border-green-100">
-                          <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
-                          <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
-                        </div>
-                        <div className={`rounded-lg p-3 border ${
-                          platformROAS >= 2 ? 'bg-green-50 border-green-100' : 
-                          platformROAS >= 1 ? 'bg-orange-50 border-orange-100' : 
-                          'bg-red-50 border-red-100'
-                        }`}>
-                          <p className={`text-xs font-semibold mb-1 ${
-                            platformROAS >= 2 ? 'text-green-600' : 
-                            platformROAS >= 1 ? 'text-orange-600' : 
-                            'text-red-600'
-                          }`}>ROAS</p>
-                          <p className={`text-lg font-bold ${
-                            platformROAS >= 2 ? 'text-green-700' : 
-                            platformROAS >= 1 ? 'text-orange-700' : 
-                            'text-red-700'
-                          }`}>{platformROAS}x</p>
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
-          </TabsContent>
-
-          {/* ORGANIC/LANDING FUNNEL TAB */}
-          <TabsContent value="organic" className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">Utenti Organici</p>
-                      <p className="text-3xl font-bold text-blue-600">{totalOrganicUsers}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                      <Users className="w-6 h-6 text-blue-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">Entrate Organiche</p>
-                      <p className="text-3xl font-bold text-green-600">€{totalOrganicRevenue.toLocaleString('it-IT')}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
-                      <TrendingUp className="w-6 h-6 text-green-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">Acquisti Organici</p>
-                      <p className="text-3xl font-bold text-purple-600">{totalOrganicPurchases}</p>
-                    </div>
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center">
-                      <ShoppingCart className="w-6 h-6 text-purple-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="text-sm text-gray-500 mb-1">Valore Medio</p>
-                      <p className="text-3xl font-bold text-teal-600">
-                        €{totalOrganicPurchases > 0 ? (totalOrganicRevenue / totalOrganicPurchases).toFixed(0) : 0}
-                      </p>
-                    </div>
-                    <div className="w-12 h-12 bg-teal-100 rounded-full flex items-center justify-center">
-                      <BarChart3 className="w-6 h-6 text-teal-600" />
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Link di Tracking */}
-            <Card className="bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-200">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Share2 className="w-5 h-5 text-blue-600" />
-                  Link di Tracking per Social Media
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                <p className="text-sm text-gray-700 mb-4">
-                  Usa questi link univoci per tracciare le conversioni da ogni social network. Copia e condividi nella bio o nei post.
-                </p>
-                {organicSources.map(source => {
-                  const landingUrl = `${window.location.origin}${createPageUrl('Landing')}?source=${source.key}`;
-                  return (
-                    <div key={source.key} className="flex items-center gap-3 p-3 bg-white rounded-lg border border-gray-200">
-                      <div className="text-2xl">{source.icon}</div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">{source.name}</p>
-                        <p className="text-xs text-gray-500 truncate">{landingUrl}</p>
-                      </div>
+                  {isConnected ? (
+                    <div className="space-y-3">
                       <Button
-                        onClick={() => handleCopyLink(source.key)}
-                        size="sm"
-                        variant="outline"
-                        className="flex-shrink-0"
+                        onClick={() => handleSyncMetrics(platformKey)}
+                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
                       >
-                        {copiedLink === source.key ? (
-                          <><Check className="w-4 h-4 mr-1" /> Copiato</>
-                        ) : (
-                          <><Copy className="w-4 h-4 mr-1" /> Copia</>
-                        )}
+                        <Zap className="w-4 h-4 mr-2" />
+                        Sincronizza Metriche
                       </Button>
+                      <div className="p-3 bg-gray-50 rounded-lg">
+                        <p className="text-xs text-gray-600">
+                          Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
+                        </p>
+                      </div>
                     </div>
-                  );
-                })}
-              </CardContent>
-            </Card>
+                  ) : (
+                    <Button
+                      onClick={() => handleConnectPlatform(platformKey)}
+                      variant="outline"
+                      className="w-full"
+                    >
+                      <LinkIcon className="w-4 h-4 mr-2" />
+                      Connetti {platformDisplayName === 'Meta' ? 'Meta' : platformDisplayName} Ads
+                    </Button>
+                  )}
 
-            {/* Performance per Social */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {organicStats.map((source, index) => (
-                <Card key={index} className="bg-white/80 backdrop-blur-sm">
-                  <CardContent className="p-6">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <h3 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                          <span className="text-2xl">{source.icon}</span>
-                          {source.name}
-                        </h3>
-                        <p className="text-sm text-gray-500 mt-1">Traffico Organico</p>
+                  {/* Landing Funnel */}
+                  <div className="mt-6 pt-6 border-t border-gray-200">
+                    <h4 className="text-sm font-bold text-gray-900 mb-3">Funnel Landing Offer</h4>
+                    <div className="space-y-2">
+                      <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
+                        <span className="text-gray-700">Quiz Completati</span>
+                        <span className="font-bold text-indigo-600">{funnel.quiz}</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                        <span className="text-gray-700">Checkout Iniziati</span>
+                        <span className="font-bold text-cyan-600">{funnel.checkout}</span>
+                      </div>
+                      <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
+                        <span className="text-gray-700">Acquisti</span>
+                        <span className="font-bold text-emerald-600">{funnel.purchases}</span>
+                      </div>
+                      <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                        <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
+                        <p className="text-xl font-black text-indigo-600">
+                          {funnel.quiz > 0 
+                            ? ((funnel.purchases / funnel.quiz) * 100).toFixed(1) 
+                            : '0.0'}%
+                        </p>
                       </div>
                     </div>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
 
-                    <div className="grid grid-cols-3 gap-3 mb-4">
-                      <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
-                        <p className="text-xs text-blue-600 font-semibold mb-1">Utenti</p>
-                        <p className="text-lg font-bold text-blue-700">{source.users}</p>
-                      </div>
-                      <div className="bg-green-50 rounded-lg p-3 border border-green-100">
-                        <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
-                        <p className="text-lg font-bold text-green-700">€{source.revenue.toFixed(0)}</p>
-                      </div>
-                      <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
-                        <p className="text-xs text-purple-600 font-semibold mb-1">Conv.</p>
-                        <p className="text-lg font-bold text-purple-700">{source.conversionRate}%</p>
-                      </div>
-                    </div>
-
-                    <div className="mt-6 pt-4 border-t border-gray-200">
-                      <h4 className="text-sm font-bold text-gray-900 mb-3">Funnel Landing</h4>
-                      <div className="space-y-2">
-                        <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg text-sm">
-                          <span className="text-gray-700">Quiz Completati</span>
-                          <span className="font-bold text-indigo-600">{source.quizCompleted}</span>
-                        </div>
-                        <div className="flex items-center justify-between p-2 bg-cyan-50 rounded-lg text-sm">
-                          <span className="text-gray-700">Checkout Iniziati</span>
-                          <span className="font-bold text-cyan-600">{source.checkoutStarted}</span>
-                        </div>
-                        <div className="flex items-center justify-between p-2 bg-emerald-50 rounded-lg text-sm">
-                          <span className="text-gray-700">Acquisti</span>
-                          <span className="font-bold text-emerald-600">{source.purchases}</span>
-                        </div>
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
+        <Card className="bg-gradient-to-r from-blue-50 to-indigo-50 border-2 border-blue-200">
+          <CardContent className="p-6">
+            <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
+              <Settings className="w-5 h-5 text-blue-600" />
+              Come Funziona
+            </h4>
+            <div className="space-y-2 text-sm text-gray-700">
+              <p>1. Connetti le tue piattaforme ads tramite OAuth</p>
+              <p>2. Le metriche vengono sincronizzate automaticamente ogni ora</p>
+              <p>3. Usa Conversion API di Meta per tracciare vendite in tempo reale</p>
+              <p>4. Monitora ROAS e performance in un'unica dashboard</p>
             </div>
-          </TabsContent>
-        </Tabs>
+          </CardContent>
+        </Card>
       </div>
+
+      {/* Connect Platform Dialog */}
+      <Dialog open={showConnectDialog} onOpenChange={setShowConnectDialog}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Connetti Piattaforma Ads</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-gray-600">
+              Per connettere questa piattaforma, avrai bisogno di autorizzare MyWellness ad accedere ai dati delle tue campagne pubblicitarie.
+            </p>
+            <div className="p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-900 font-semibold mb-2">Cosa verrà sincronizzato:</p>
+              <ul className="text-sm text-blue-800 space-y-1 list-disc list-inside">
+                <li>Metriche campagne (impressioni, click, spesa)</li>
+                <li>Conversioni e revenue</li>
+                <li>ROAS e performance</li>
+              </ul>
+            </div>
+            <Button
+              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+              onClick={() => {
+                alert('Feature in sviluppo: OAuth flow per ' + selectedPlatform);
+                setShowConnectDialog(false);
+              }}
+            >
+              Autorizza Accesso
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
