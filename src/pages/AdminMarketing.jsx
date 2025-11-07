@@ -1024,17 +1024,13 @@ export default function AdminMarketing() {
                   })}
                 </div> :
 
-                <div className="text-center py-8">
-                  <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
-                  <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
-                </div>
+                null
               }
             </CardContent>
           </Card>
 
           {/* Grid Piattaforme Ads */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
               const platformKey = platformDisplayName.toLowerCase();
               const isConnected = campaignsByPlatform.some((p) => p.platform === platformKey && p.campaigns.length > 0);
