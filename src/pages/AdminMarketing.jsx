@@ -86,6 +86,20 @@ export default function AdminMarketing() {
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
+  const copyAllOrganicLinks = () => {
+    const socialPlatforms = ['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'pinterest', 'twitter'];
+    const baseUrl = selectedFunnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
+    
+    const allLinks = socialPlatforms.map(platform => 
+      `${platform.charAt(0).toUpperCase() + platform.slice(1)}: ${baseUrl}?utm_source=organic_${platform}`
+    ).join('\n\n');
+    
+    navigator.clipboard.writeText(allLinks);
+    setCopiedLink('all_organic');
+    
+    setTimeout(() => setCopiedLink(null), 2000);
+  };
+
   // New function from outline
   const getSocialIcon = (platform) => {
     const icons = {
@@ -599,14 +613,27 @@ export default function AdminMarketing() {
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardHeader>
               <div className="flex items-center justify-between mb-6">
-                <div>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="w-5 h-5 text-purple-600" />
-                    Vendite Organiche Social
-                  </CardTitle>
-                  <p className="text-sm text-gray-500 mt-1">
-                    Vendite da attività organica
-                  </p>
+                <div className="flex items-center gap-4">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="w-5 h-5 text-purple-600" />
+                      Vendite Organiche Social
+                    </CardTitle>
+                    <p className="text-sm text-gray-500 mt-1">
+                      Vendite da attività organica
+                    </p>
+                  </div>
+                  <button
+                    onClick={copyAllOrganicLinks}
+                    className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border-2 border-purple-200"
+                    title="Copia tutti i link di tracciamento organico"
+                  >
+                    {copiedLink === 'all_organic' ? (
+                      <CheckCircle className="w-5 h-5 text-green-600" />
+                    ) : (
+                      <LinkIcon className="w-5 h-5 text-purple-600" />
+                    )}
+                  </button>
                 </div>
                 <div className="text-right">
                   <p className="text-sm text-gray-500">Totale Vendite</p>
