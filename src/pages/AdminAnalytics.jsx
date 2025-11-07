@@ -1175,8 +1175,7 @@ export default function AdminAnalytics() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={cashFlowProjection} 
-                    barGap={-35}
-                    barCategoryGap="15%" 
+                    barCategoryGap="25%" 
                     margin={{ left: 20, right: 20, top: 20, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -1207,7 +1206,8 @@ export default function AdminAnalytics() {
                       fill="#ef4444" 
                       name="Spese (€)"
                       radius={[4, 4, 0, 0]}
-                      barSize={35}
+                      barSize={70}
+                      fillOpacity={0.7}
                     />
                   </BarChart>
                 </ResponsiveContainer>
@@ -1216,6 +1216,7 @@ export default function AdminAnalytics() {
           </Card>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+
             <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-2 border-green-200">
               <CardContent className="p-6">
                 <p className="text-sm text-green-700 mb-2">MRR Proiettato (6 mesi)</p>
