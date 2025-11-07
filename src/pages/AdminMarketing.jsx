@@ -405,68 +405,79 @@ export default function AdminMarketing() {
           <p className="text-gray-600">Performance campagne pubblicitarie e ROAS</p>
         </div>
 
-        {/* Connessione Piattaforme - Box Esterno */}
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <LinkIcon className="w-5 h-5 text-[var(--brand-primary)]" />
-              Connetti Piattaforme Advertising
-            </CardTitle>
-            <p className="text-sm text-gray-500 mt-1">Collega i tuoi account pubblicitari per sincronizzare automaticamente le metriche</p>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName) => {
-                const platformKey = platformDisplayName.toLowerCase();
-                const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+        {/* Connessione Piattaforme - Box Esterno con Accordion */}
+        <Accordion type="single" collapsible className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-lg">
+          <AccordionItem value="item-1" className="border-none">
+            <Card className="border-none shadow-none bg-transparent">
+              <CardHeader className="pb-0">
+                <CardTitle className="flex items-center gap-2 text-lg">
+                  <LinkIcon className="w-5 h-5 text-[var(--brand-primary)]" />
+                  Connetti Piattaforme Advertising
+                </CardTitle>
+                <p className="text-sm text-gray-500 mt-1 mb-4">Collega i tuoi account pubblicitari per sincronizzare automaticamente le metriche</p>
+                <AccordionTrigger className="hover:no-underline py-2 border-t border-gray-200">
+                  <span className="text-sm font-semibold text-gray-700">
+                    Mostra piattaforme disponibili
+                  </span>
+                </AccordionTrigger>
+              </CardHeader>
+              <AccordionContent>
+                <CardContent className="pt-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName) => {
+                      const platformKey = platformDisplayName.toLowerCase();
+                      const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
 
-                return (
-                  <div key={platformDisplayName} className={`p-5 rounded-xl border-2 transition-all ${
-                    isConnected
-                      ? 'bg-green-50 border-green-200'
-                      : 'bg-gray-50 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
-                  }`}>
-                    <div className="flex items-center justify-between mb-3">
-                      <h4 className="font-bold text-gray-900 text-sm">
-                        {platformDisplayName === 'Meta' ? 'Meta Ads' : platformDisplayName + ' Ads'}
-                      </h4>
-                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                        isConnected ? 'bg-green-500' : 'bg-gray-300'
-                      }`}>
-                        <LinkIcon className={`w-4 h-4 ${isConnected ? 'text-white' : 'text-gray-600'}`} />
-                      </div>
-                    </div>
+                      return (
+                        <div key={platformDisplayName} className={`p-5 rounded-xl border-2 transition-all ${
+                          isConnected
+                            ? 'bg-green-50 border-green-200'
+                            : 'bg-gray-50 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                        }`}>
+                          <div className="flex items-center justify-between mb-3">
+                            <h4 className="font-bold text-gray-900 text-sm">
+                              {platformDisplayName === 'Meta' ? 'Meta Ads' : platformDisplayName + ' Ads'}
+                            </h4>
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              isConnected ? 'bg-green-500' : 'bg-gray-300'
+                            }`}>
+                              <LinkIcon className={`w-4 h-4 ${isConnected ? 'text-white' : 'text-gray-600'}`} />
+                            </div>
+                          </div>
 
-                    <p className={`text-xs mb-3 font-medium ${isConnected ? 'text-green-700' : 'text-gray-600'}`}>
-                      {isConnected ? '✅ Connesso e Sincronizzato' : '⚠️ Non Connesso'}
-                    </p>
+                          <p className={`text-xs mb-3 font-medium ${isConnected ? 'text-green-700' : 'text-gray-600'}`}>
+                            {isConnected ? '✅ Connesso e Sincronizzato' : '⚠️ Non Connesso'}
+                          </p>
 
-                    {isConnected ? (
-                      <Button
-                        onClick={() => handleSyncMetrics(platformKey)}
-                        size="sm"
-                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs"
-                      >
-                        <Zap className="w-3 h-3 mr-1" />
-                        Sincronizza
-                      </Button>
-                    ) : (
-                      <Button
-                        onClick={() => handleConnectPlatform(platformKey)}
-                        variant="outline"
-                        size="sm"
-                        className="w-full text-xs"
-                      >
-                        <Plus className="w-3 h-3 mr-1" />
-                        Connetti
-                      </Button>
-                    )}
+                          {isConnected ? (
+                            <Button
+                              onClick={() => handleSyncMetrics(platformKey)}
+                              size="sm"
+                              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs"
+                            >
+                              <Zap className="w-3 h-3 mr-1" />
+                              Sincronizza
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => handleConnectPlatform(platformKey)}
+                              variant="outline"
+                              size="sm"
+                              className="w-full text-xs"
+                            >
+                              <Plus className="w-3 h-3 mr-1" />
+                              Connetti
+                            </Button>
+                          )}
+                        </div>
+                      );
+                    })}
                   </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+                </CardContent>
+              </AccordionContent>
+            </Card>
+          </AccordionItem>
+        </Accordion>
 
         {/* Funnel Tabs */}
         <Tabs value={selectedFunnel} onValueChange={setSelectedFunnel} className="w-full">
@@ -627,10 +638,7 @@ export default function AdminMarketing() {
                         Vendite Organiche Social
                       </CardTitle>
                       <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          copyAllOrganicLinks();
-                        }}
+                        onClick={copyAllOrganicLinks}
                         className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border-2 border-purple-200"
                         title="Copia tutti i link di tracciamento organico"
                       >
@@ -648,7 +656,27 @@ export default function AdminMarketing() {
                     </div>
                   </div>
                   <p className="text-sm text-gray-500 mb-4">Vendite da attività organica</p>
-                  <AccordionTrigger className="hover:no-underline py-2 border-t border-gray-200">
+                  
+                  {/* Funnel Totale Organico */}
+                  <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
+                      <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
+                      <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600 mb-1">Acquisti</p>
+                      <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
+                    </div>
+                    <div className="text-center bg-white/50 rounded-lg py-2">
+                      <p className="text-xs text-gray-600 mb-1">Conversione</p>
+                      <p className="text-2xl font-black text-indigo-600">{totalOrganicConversionRate}%</p>
+                    </div>
+                  </div>
+                  <AccordionTrigger className="hover:no-underline py-2 border-t border-gray-200 mt-4">
                     <span className="text-sm font-semibold text-gray-700">
                       Mostra dettagli per piattaforma
                     </span>
@@ -656,26 +684,6 @@ export default function AdminMarketing() {
                 </CardHeader>
                 <AccordionContent>
                   <CardContent className="pt-4">
-                    {/* Funnel Totale Organico */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 mb-6">
-                      <div className="text-center">
-                        <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
-                        <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
-                        <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
-                      </div>
-                      <div className="text-center">
-                        <p className="text-xs text-gray-600 mb-1">Acquisti</p>
-                        <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
-                      </div>
-                      <div className="text-center bg-white/50 rounded-lg py-2">
-                        <p className="text-xs text-gray-600 mb-1">Conversione</p>
-                        <p className="text-2xl font-black text-indigo-600">{totalOrganicConversionRate}%</p>
-                      </div>
-                    </div>
-
                     {organicSocialData.length > 0 ? (
                       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                         {organicSocialData.map((platform) => {
