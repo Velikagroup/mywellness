@@ -10,12 +10,18 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { 
-  Mail, 
-  Send, 
-  Clock, 
-  CheckCircle, 
-  Users, 
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  Mail,
+  Send,
+  Clock,
+  CheckCircle,
+  Users,
   Filter,
   Settings,
   Zap,
@@ -28,12 +34,16 @@ export default function AdminEmails() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
-  
+
   // Broadcast state
   const [broadcastSubject, setBroadcastSubject] = useState('');
   const [broadcastBody, setBroadcastBody] = useState('');
   const [broadcastSegment, setBroadcastSegment] = useState('all');
   const [userCount, setUserCount] = useState(0);
+
+  // NEW: Preview state
+  const [showEmailPreview, setShowEmailPreview] = useState(false);
+  const [previewEmail, setPreviewEmail] = useState(null);
 
   useEffect(() => {
     checkAccess();
@@ -99,6 +109,11 @@ export default function AdminEmails() {
       case 'expired': return 'utenti con abbonamento scaduto';
       default: return 'gli utenti selezionati';
     }
+  };
+
+  const handleOpenPreview = (email) => {
+    setPreviewEmail(email);
+    setShowEmailPreview(true);
   };
 
   if (isLoading) {
@@ -331,7 +346,11 @@ export default function AdminEmails() {
                           <span>Function: {email.function}</span>
                         </div>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => handleOpenPreview(email)}
+                      >
                         <Eye className="w-4 h-4" />
                       </Button>
                     </div>
@@ -356,7 +375,7 @@ export default function AdminEmails() {
                   <Send className="w-5 h-5" />
                   Invia Email Broadcast
                 </CardTitle>
-                <p className="text-sm text-gray-500">Invia un'email a tutti o a un segmento specifico di utenti</p>
+                <p className="text-sm text-gray-500 mt-1">Invia un'email a tutti o a un segmento specifico di utenti</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
@@ -516,6 +535,69 @@ export default function AdminEmails() {
           </TabsContent>
         </Tabs>
       </div>
+
+      {/* NEW: Email Preview Dialog */}
+      <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              Anteprima Email: {previewEmail?.name}
+            </DialogTitle>
+          </DialogHeader>
+          {previewEmail && (
+            <div className="space-y-6 pt-4">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700">Stato</Label>
+                  <Badge className="mt-1 bg-green-100 text-green-700">
+                    {previewEmail.status === 'active' ? 'Attiva' : 'Inattiva'}
+                  </Badge>
+                </div>
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700">ID Email</Label>
+                  <p className="text-sm text-gray-900 mt-1">{previewEmail.id}</p>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-semibold text-gray-700">Descrizione</Label>
+                <p className="text-sm text-gray-600 mt-1">{previewEmail.description}</p>
+              </div>
+
+              <div>
+                <Label className="text-sm font-semibold text-gray-700">Trigger Automatico</Label>
+                <div className="flex items-center gap-2 mt-1 p-3 bg-blue-50 rounded-lg">
+                  <Zap className="w-4 h-4 text-blue-600" />
+                  <span className="text-sm text-blue-900">{previewEmail.trigger}</span>
+                </div>
+              </div>
+
+              <div>
+                <Label className="text-sm font-semibold text-gray-700">Backend Function</Label>
+                <div className="mt-1 p-3 bg-gray-50 rounded-lg font-mono text-sm text-gray-900">
+                  {previewEmail.function}
+                </div>
+              </div>
+
+              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
+                <p className="text-sm text-amber-900">
+                  ℹ️ <strong>Nota:</strong> Per modificare il contenuto di questa email, edita la backend function{' '}
+                  <code className="bg-amber-100 px-1 py-0.5 rounded">{previewEmail.function}</code> nella sezione Code del dashboard.
+                </p>
+              </div>
+
+              <div className="flex justify-end pt-2">
+                <Button
+                  onClick={() => setShowEmailPreview(false)}
+                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                >
+                  Chiudi
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
