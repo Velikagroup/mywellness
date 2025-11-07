@@ -258,7 +258,7 @@ export default function AdminMarketing() {
   }, [selectedDateRange, user, selectedFunnel]); // Re-run loadMarketingData when selectedFunnel changes
 
   const totalSpend = campaignsByPlatform.reduce((sum, p) => sum + p.totalSpend, 0);
-  const totalRevenue = campaignsByPlatform.reduce((sum, p => sum + p.totalRevenue, 0);
+  const totalRevenue = campaignsByPlatform.reduce((sum, p) => sum + p.totalRevenue, 0);
   const totalConversions = campaignsByPlatform.reduce((sum, p) => sum + p.totalConversions, 0);
   const totalClicks = campaignsByPlatform.reduce((sum, p) => sum + p.totalClicks, 0);
   const totalImpressions = campaignsByPlatform.reduce((sum, p) => sum + p.totalImpressions, 0);
