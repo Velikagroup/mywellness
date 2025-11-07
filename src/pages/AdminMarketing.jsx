@@ -618,144 +618,149 @@ export default function AdminMarketing() {
           {/* Box Vendite Organiche Social */}
           <Accordion type="single" collapsible className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-lg">
             <AccordionItem value="item-1" className="border-none">
-              <AccordionTrigger className="hover:no-underline px-6 py-6">
-                <div className="flex items-center justify-between w-full pr-4">
-                  <div className="flex items-center gap-4">
-                    <div>
-                      <div className="flex items-center gap-2 text-lg font-bold text-gray-900">
+              <Card className="border-none shadow-none bg-transparent">
+                <CardHeader className="pb-0">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-4">
+                      <CardTitle className="flex items-center gap-2 text-lg">
                         <Activity className="w-5 h-5 text-purple-600" />
                         Vendite Organiche Social
-                      </div>
-                      <p className="text-sm text-gray-500 mt-1 text-left">
-                        Vendite da attività organica
-                      </p>
+                      </CardTitle>
+                      <button
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          copyAllOrganicLinks();
+                        }}
+                        className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border-2 border-purple-200"
+                        title="Copia tutti i link di tracciamento organico"
+                      >
+                        {copiedLink === 'all_organic' ? (
+                          <CheckCircle className="w-5 h-5 text-green-600" />
+                        ) : (
+                          <LinkIcon className="w-5 h-5 text-purple-600" />
+                        )}
+                      </button>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copyAllOrganicLinks();
-                      }}
-                      className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border-2 border-purple-200"
-                      title="Copia tutti i link di tracciamento organico"
-                    >
-                      {copiedLink === 'all_organic' ? (
-                        <CheckCircle className="w-5 h-5 text-green-600" />
-                      ) : (
-                        <LinkIcon className="w-5 h-5 text-purple-600" />
-                      )}
-                    </button>
+                    <div className="text-right">
+                      <p className="text-sm text-gray-500">Totale Vendite</p>
+                      <p className="text-3xl font-bold text-purple-600">{totalOrganicSales}</p>
+                      <p className="text-sm text-gray-500">€{totalOrganicRevenue.toFixed(0)}</p>
+                    </div>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500">Totale Vendite</p>
-                    <p className="text-3xl font-bold text-purple-600">{totalOrganicSales}</p>
-                    <p className="text-sm text-gray-500">€{totalOrganicRevenue.toFixed(0)}</p>
-                  </div>
-                </div>
-              </AccordionTrigger>
-              <AccordionContent className="px-6 pb-6">
-                {/* Funnel Totale Organico */}
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 mb-6">
-                  <div className="text-center">
-                    <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
-                    <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
-                    <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-xs text-gray-600 mb-1">Acquisti</p>
-                    <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
-                  </div>
-                  <div className="text-center bg-white/50 rounded-lg py-2">
-                    <p className="text-xs text-gray-600 mb-1">Conversione</p>
-                    <p className="text-2xl font-black text-indigo-600">{totalOrganicConversionRate}%</p>
-                  </div>
-                </div>
+                  <p className="text-sm text-gray-500 mb-4">Vendite da attività organica</p>
+                  <AccordionTrigger className="hover:no-underline py-2 border-t border-gray-200">
+                    <span className="text-sm font-semibold text-gray-700">
+                      Mostra dettagli per piattaforma
+                    </span>
+                  </AccordionTrigger>
+                </CardHeader>
+                <AccordionContent>
+                  <CardContent className="pt-4">
+                    {/* Funnel Totale Organico */}
+                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200 mb-6">
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
+                        <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
+                        <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
+                      </div>
+                      <div className="text-center">
+                        <p className="text-xs text-gray-600 mb-1">Acquisti</p>
+                        <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
+                      </div>
+                      <div className="text-center bg-white/50 rounded-lg py-2">
+                        <p className="text-xs text-gray-600 mb-1">Conversione</p>
+                        <p className="text-2xl font-black text-indigo-600">{totalOrganicConversionRate}%</p>
+                      </div>
+                    </div>
 
-                {organicSocialData.length > 0 ? (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {organicSocialData.map((platform) => {
-                      const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
-                      const conversionRate = platform.funnel.quiz > 0 
-                        ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1) 
-                        : '0.0';
-                      
-                      return (
-                        <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
-                          <div className="flex items-center justify-between mb-4">
-                            <h4 className="font-bold text-gray-900">{platformName}</h4>
-                            <button
-                              onClick={() => copyPlatformLink(platform.platform)}
-                              className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border border-purple-200"
-                              title="Copia link di tracciamento"
-                            >
-                              {copiedLink === `${platform.platform}_${selectedFunnel}` ? (
-                                <CheckCircle className="w-5 h-5 text-green-600" />
-                              ) : (
-                                <LinkIcon className="w-5 h-5 text-purple-600" />
-                              )}
-                            </button>
-                          </div>
+                    {organicSocialData.length > 0 ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                        {organicSocialData.map((platform) => {
+                          const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
+                          const conversionRate = platform.funnel.quiz > 0 
+                            ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1) 
+                            : '0.0';
+                          
+                          return (
+                            <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
+                              <div className="flex items-center justify-between mb-4">
+                                <h4 className="font-bold text-gray-900">{platformName}</h4>
+                                <button
+                                  onClick={() => copyPlatformLink(platform.platform)}
+                                  className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border border-purple-200"
+                                  title="Copia link di tracciamento"
+                                >
+                                  {copiedLink === `${platform.platform}_${selectedFunnel}` ? (
+                                    <CheckCircle className="w-5 h-5 text-green-600" />
+                                  ) : (
+                                    <LinkIcon className="w-5 h-5 text-purple-600" />
+                                  )}
+                                </button>
+                              </div>
 
-                          {/* Box Entrate Organiche */}
-                          <div className="mb-4">
-                            <div className="bg-green-50 rounded-lg p-4 border border-green-100">
-                              <p className="text-xs text-green-600 font-semibold mb-1">Entrate Organiche</p>
-                              <p className="text-2xl font-bold text-green-700">€{platform.revenue.toFixed(0)}</p>
-                              <p className="text-xs text-gray-600 mt-1">
-                                {platform.sales} vendite • AOV: €{platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(0) : 0}
-                              </p>
-                            </div>
-                          </div>
-
-                          {/* Funnel a Step */}
-                          <div className="mb-4">
-                            <h5 className="text-xs font-bold text-gray-900 mb-3">Funnel Conversione</h5>
-                            <div className="space-y-2">
-                              <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
-                                <span className="text-gray-700">Quiz</span>
-                                <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
-                              </div>
-                              <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
-                                <span className="text-gray-700">Checkout</span>
-                                <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
-                              </div>
-                              <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                                <span className="text-gray-700">Acquisti</span>
-                                <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
-                              </div>
-                              <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
-                                <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
-                                <p className="text-xl font-black text-indigo-600">{conversionRate}%</p>
-                              </div>
-                            </div>
-                          </div>
-
-                          {/* Transazioni Recenti */}
-                          <div className="pt-3 border-t border-purple-200">
-                            <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
-                            <div className="space-y-1">
-                              {platform.transactions.slice(0, 3).map((tx, idx) => (
-                                <div key={idx} className="flex justify-between text-xs">
-                                  <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
-                                  <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
+                              {/* Box Entrate Organiche */}
+                              <div className="mb-4">
+                                <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+                                  <p className="text-xs text-green-600 font-semibold mb-1">Entrate Organiche</p>
+                                  <p className="text-2xl font-bold text-green-700">€{platform.revenue.toFixed(0)}</p>
+                                  <p className="text-xs text-gray-600 mt-1">
+                                    {platform.sales} vendite • AOV: €{platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(0) : 0}
+                                  </p>
                                 </div>
-                              ))}
+                              </div>
+
+                              {/* Funnel a Step */}
+                              <div className="mb-4">
+                                <h5 className="text-xs font-bold text-gray-900 mb-3">Funnel Conversione</h5>
+                                <div className="space-y-2">
+                                  <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
+                                    <span className="text-gray-700">Quiz</span>
+                                    <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
+                                  </div>
+                                  <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                                    <span className="text-gray-700">Checkout</span>
+                                    <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
+                                  </div>
+                                  <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
+                                    <span className="text-gray-700">Acquisti</span>
+                                    <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
+                                  </div>
+                                  <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                                    <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
+                                    <p className="text-xl font-black text-indigo-600">{conversionRate}%</p>
+                                  </div>
+                                </div>
+                              </div>
+
+                              {/* Transazioni Recenti */}
+                              <div className="pt-3 border-t border-purple-200">
+                                <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
+                                <div className="space-y-1">
+                                  {platform.transactions.slice(0, 3).map((tx, idx) => (
+                                    <div key={idx} className="flex justify-between text-xs">
+                                      <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
+                                      <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
+                                    </div>
+                                  ))}
+                                </div>
+                              </div>
                             </div>
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <div className="text-center py-8">
-                    <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                    <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
-                    <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
-                  </div>
-                )}
-              </AccordionContent>
+                          );
+                        })}
+                      </div>
+                    ) : (
+                      <div className="text-center py-8">
+                        <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                        <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
+                        <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
+                      </div>
+                    )}
+                  </CardContent>
+                </AccordionContent>
+              </Card>
             </AccordionItem>
           </Accordion>
 
