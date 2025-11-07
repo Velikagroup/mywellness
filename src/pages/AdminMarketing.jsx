@@ -242,6 +242,19 @@ export default function AdminMarketing() {
   const totalOrganicSales = organicSocialSales.length;
   const totalOrganicRevenue = organicSocialSales.reduce((sum, s) => sum + s.amount, 0);
 
+  // Calcola il funnel totale per le vendite organiche
+  const totalOrganicFunnel = organicSocialData.reduce((acc, platform) => {
+    return {
+      quiz: acc.quiz + platform.funnel.quiz,
+      checkout: acc.checkout + platform.funnel.checkout,
+      purchases: acc.purchases + platform.funnel.purchases
+    };
+  }, { quiz: 0, checkout: 0, purchases: 0 });
+
+  const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0 
+    ? ((totalOrganicFunnel.purchases / totalOrganicFunnel.quiz) * 100).toFixed(1) 
+    : '0.0';
+
   const platformData = campaignsByPlatform.map(p => ({
     name: p.platform.charAt(0).toUpperCase() + p.platform.slice(1),
     spend: Math.round(p.totalSpend),
@@ -522,7 +535,7 @@ export default function AdminMarketing() {
         {/* Sezione Vendite Organiche Social */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between mb-6">
               <div>
                 <CardTitle className="flex items-center gap-2">
                   <Activity className="w-5 h-5 text-purple-600" />
@@ -536,6 +549,26 @@ export default function AdminMarketing() {
                 <p className="text-sm text-gray-500">Totale Vendite</p>
                 <p className="text-3xl font-bold text-purple-600">{totalOrganicSales}</p>
                 <p className="text-sm text-gray-500">€{totalOrganicRevenue.toFixed(0)}</p>
+              </div>
+            </div>
+
+            {/* Funnel Totale Organico */}
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+              <div className="text-center">
+                <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
+                <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
+                <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-gray-600 mb-1">Acquisti</p>
+                <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
+              </div>
+              <div className="text-center bg-white/50 rounded-lg py-2">
+                <p className="text-xs text-gray-600 mb-1">Conversione</p>
+                <p className="text-2xl font-black text-indigo-600">{totalOrganicConversionRate}%</p>
               </div>
             </div>
           </CardHeader>
