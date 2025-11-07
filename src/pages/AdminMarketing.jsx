@@ -809,19 +809,6 @@ export default function AdminMarketing() {
                             </div>
                           </div>
                         </div>
-
-                        {/* Transazioni Recenti */}
-                        <div className="pt-3 border-t border-purple-200">
-                          <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
-                          <div className="space-y-1">
-                            {platform.transactions.slice(0, 3).map((tx, idx) => (
-                              <div key={idx} className="flex justify-between text-xs">
-                                <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
-                                <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
                       </div>
                     );
                   })}
