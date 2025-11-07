@@ -759,7 +759,7 @@ export default function AdminAnalytics() {
                     <span className="font-bold text-blue-900">{stats.trialUsers}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <span className="text-sm font-medium text-green-900">Trial → Abbonati Paganti</span>
+                    <span className="font-medium text-green-900">Trial → Abbonati Paganti</span>
                     <span className="font-bold text-green-900">{stats.trialPurchases}</span>
                   </div>
                   <div className="p-3 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
@@ -781,11 +781,11 @@ export default function AdminAnalytics() {
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg">
-                    <span className="text-sm font-medium text-cyan-900">Quiz → Checkout Iniziati</span>
+                    <span className="font-medium text-cyan-900">Quiz → Checkout Iniziati</span>
                     <span className="font-bold text-cyan-900">{stats.checkoutStartedUsers}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
-                    <span className="text-sm font-medium text-purple-900">Checkout → Acquisti Landing</span>
+                    <span className="font-medium text-purple-900">Checkout → Acquisti Landing</span>
                     <span className="font-bold text-purple-900">{stats.landingOfferPurchases}</span>
                   </div>
                   <div className="p-3 bg-gradient-to-r from-cyan-50 to-purple-50 rounded-lg border border-cyan-200">
@@ -1174,8 +1174,8 @@ export default function AdminAnalytics() {
               <div className="h-96">
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
-                    data={cashFlowProjection} 
-                    barCategoryGap="25%" 
+                    data={cashFlowProjection}
+                    barGap={-55}
                     margin={{ left: 20, right: 20, top: 20, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -1206,8 +1206,7 @@ export default function AdminAnalytics() {
                       fill="#ef4444" 
                       name="Spese (€)"
                       radius={[4, 4, 0, 0]}
-                      barSize={70}
-                      fillOpacity={0.7}
+                      barSize={40}
                     />
                   </BarChart>
                 </ResponsiveContainer>
