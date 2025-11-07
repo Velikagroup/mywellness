@@ -406,28 +406,6 @@ export default function AdminAnalytics() {
 
   const totalMonthlyExpenses = monthlyRecurringExpenses + yearlyRecurringExpensesMonthly;
 
-  // Calculate expenses by category for the Cash Flow Projection (monthly recurring fixed expenses)
-  const monthlyRecurringExpensesForProjectionByCategory = filteredExpenses
-    .filter(e => e.recurring && e.recurring_frequency === 'monthly')
-    .reduce((acc, expense) => {
-      acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
-      return acc;
-    }, {});
-
-  const yearlyRecurringExpensesForProjectionByCategory = filteredExpenses
-    .filter(e => e.recurring && e.recurring_frequency === 'yearly')
-    .reduce((acc, expense) => {
-      acc[expense.category] = (acc[expense.category] || 0) + (expense.amount / 12);
-      return acc;
-    }, {});
-
-  // Merge yearly into monthly for the projection
-  const combinedMonthlyExpensesForProjectionByCategory = { ...monthlyRecurringExpensesForProjectionByCategory };
-  Object.keys(yearlyRecurringExpensesForProjectionByCategory).forEach(cat => {
-    combinedMonthlyExpensesForProjectionByCategory[cat] = (combinedMonthlyExpensesForProjectionByCategory[cat] || 0) + yearlyRecurringExpensesForProjectionByCategory[cat];
-  });
-
-
   // Profit (Existing)
   const monthlyProfit = mrrFromPriceMap - totalMonthlyExpenses;
   const profitMargin = mrrFromPriceMap > 0 ? ((monthlyProfit / mrrFromPriceMap) * 100).toFixed(1) : 0;
@@ -486,21 +464,14 @@ export default function AdminAnalytics() {
 
     for (let i = 1; i <= 12; i++) {
       const projectedMRR = currentMRR * Math.pow(growthRate, i);
-      
-      const projectionMonth = {
+      const projectedExpenses = totalMonthlyExpenses; // Spese fisse - nessuna crescita automatica
+
+      projections.push({
         month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy', { locale: it }),
         revenue: Math.round(projectedMRR),
-        profit: Math.round(projectedMRR - totalMonthlyExpenses),
-        // Aggiungi ogni categoria di spesa
-        expense_server: Math.round(combinedMonthlyExpensesForProjectionByCategory['server'] || 0),
-        expense_marketing: Math.round(combinedMonthlyExpensesForProjectionByCategory['marketing'] || 0),
-        expense_staff: Math.round(combinedMonthlyExpensesForProjectionByCategory['staff'] || 0),
-        expense_tools: Math.round(combinedMonthlyExpensesForProjectionByCategory['tools'] || 0),
-        expense_infrastructure: Math.round(combinedMonthlyExpensesForProjectionByCategory['infrastructure'] || 0),
-        expense_other: Math.round(combinedMonthlyExpensesForProjectionByCategory['other'] || 0)
-      };
-      
-      projections.push(projectionMonth);
+        expenses: Math.round(projectedExpenses),
+        profit: Math.round(projectedMRR - projectedExpenses)
+      });
     }
     return projections;
   };
@@ -514,7 +485,6 @@ export default function AdminAnalytics() {
     { name: 'Premium', value: planBreakdown.premium, color: '#a855f7' }
   ].filter(item => item.value > 0);
 
-  // This `expensesByCategory` is for the "Spese per Categoria" pie chart, reflecting all filtered expenses.
   const expensesByCategory = filteredExpenses.reduce((acc, expense) => {
     acc[expense.category] = (acc[expense.category] || 0) + expense.amount;
     return acc;
@@ -1208,6 +1178,7 @@ export default function AdminAnalytics() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={cashFlowProjection}
+                    barGap={-55}
                     margin={{ left: 20, right: 20, top: 20, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -1226,58 +1197,19 @@ export default function AdminAnalytics() {
                       cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                     />
                     <Legend />
-                    
-                    {/* Entrate - barra larga di sfondo */}
                     <Bar 
                       dataKey="revenue" 
                       fill="#10b981" 
                       name="Entrate (€)"
                       radius={[6, 6, 0, 0]}
-                      barSize={80}
+                      barSize={70}
                     />
-                    
-                    {/* Spese per categoria - sovrapposte al centro, più strette */}
                     <Bar 
-                      dataKey="expense_server" 
+                      dataKey="expenses" 
                       fill="#ef4444" 
-                      name="Server"
-                      stackId="expenses"
-                      barSize={35}
-                    />
-                    <Bar 
-                      dataKey="expense_marketing" 
-                      fill="#f59e0b" 
-                      name="Marketing"
-                      stackId="expenses"
-                      barSize={35}
-                    />
-                    <Bar 
-                      dataKey="expense_staff" 
-                      fill="#8b5cf6" 
-                      name="Personale"
-                      stackId="expenses"
-                      barSize={35}
-                    />
-                    <Bar 
-                      dataKey="expense_tools" 
-                      fill="#3b82f6" 
-                      name="Tool"
-                      stackId="expenses"
-                      barSize={35}
-                    />
-                    <Bar 
-                      dataKey="expense_infrastructure" 
-                      fill="#ec4899" 
-                      name="Infrastruttura"
-                      stackId="expenses"
-                      barSize={35}
-                    />
-                    <Bar 
-                      dataKey="expense_other" 
-                      fill="#6b7280" 
-                      name="Altro"
-                      stackId="expenses"
-                      barSize={35}
+                      name="Spese (€)"
+                      radius={[4, 4, 0, 0]}
+                      barSize={40}
                     />
                   </BarChart>
                 </ResponsiveContainer>
