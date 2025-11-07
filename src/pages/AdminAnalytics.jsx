@@ -1208,7 +1208,6 @@ export default function AdminAnalytics() {
                 <ResponsiveContainer width="100%" height="100%">
                   <BarChart 
                     data={cashFlowProjection}
-                    barGap={-10}
                     margin={{ left: 20, right: 20, top: 20, bottom: 20 }}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -1228,57 +1227,57 @@ export default function AdminAnalytics() {
                     />
                     <Legend />
                     
-                    {/* Entrate - barra larga principale */}
+                    {/* Entrate - barra larga di sfondo */}
                     <Bar 
                       dataKey="revenue" 
                       fill="#10b981" 
                       name="Entrate (€)"
                       radius={[6, 6, 0, 0]}
-                      barSize={70}
+                      barSize={80}
                     />
                     
-                    {/* Spese per categoria - sovrapposte e più strette */}
+                    {/* Spese per categoria - sovrapposte al centro, più strette */}
                     <Bar 
                       dataKey="expense_server" 
                       fill="#ef4444" 
                       name="Server"
                       stackId="expenses"
-                      barSize={40}
+                      barSize={35}
                     />
                     <Bar 
                       dataKey="expense_marketing" 
                       fill="#f59e0b" 
                       name="Marketing"
                       stackId="expenses"
-                      barSize={40}
+                      barSize={35}
                     />
                     <Bar 
                       dataKey="expense_staff" 
                       fill="#8b5cf6" 
                       name="Personale"
                       stackId="expenses"
-                      barSize={40}
+                      barSize={35}
                     />
                     <Bar 
                       dataKey="expense_tools" 
                       fill="#3b82f6" 
                       name="Tool"
                       stackId="expenses"
-                      barSize={40}
+                      barSize={35}
                     />
                     <Bar 
                       dataKey="expense_infrastructure" 
                       fill="#ec4899" 
                       name="Infrastruttura"
                       stackId="expenses"
-                      barSize={40}
+                      barSize={35}
                     />
                     <Bar 
                       dataKey="expense_other" 
                       fill="#6b7280" 
                       name="Altro"
                       stackId="expenses"
-                      barSize={40}
+                      barSize={35}
                     />
                   </BarChart>
                 </ResponsiveContainer>
