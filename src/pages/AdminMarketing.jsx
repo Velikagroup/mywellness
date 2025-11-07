@@ -294,7 +294,7 @@ export default function AdminMarketing() {
   });
 
   const totalOrganicSales = organicSocialSales.length;
-  const totalOrganicRevenue = organicSocialSales.reduce((sum, s) => sum + s.amount, 0);
+  const totalOrganicRevenue = organicSocialSales.reduce((sum, s => sum + s.amount, 0);
 
   // Calcola il funnel totale per le vendite organiche
   const totalOrganicFunnel = organicSocialData.reduce((acc, platform) => {
@@ -444,81 +444,6 @@ export default function AdminMarketing() {
                   </div>
                 );
               })}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Link Tracciamento Organico */}
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <LinkIcon className="w-5 h-5 text-purple-600" />
-              Link di Tracciamento Organico
-            </CardTitle>
-            <p className="text-sm text-gray-500 mt-1">
-              Copia questi link da usare nei tuoi social per tracciare le vendite organiche
-            </p>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-6">
-              {/* Link per Trial Setup */}
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  🔥 Funnel Trial Setup
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  {['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'pinterest', 'twitter'].map((platform) => (
-                    <button
-                      key={`${platform}_trial`}
-                      onClick={() => copyTrackingLink(platform, 'trial')}
-                      className="flex items-center justify-between gap-2 p-3 rounded-lg border-2 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{getSocialIcon(platform)}</span>
-                        <span className="text-sm font-semibold text-gray-900 capitalize">{platform}</span>
-                      </div>
-                      {copiedLink === `${platform}_trial` ? (
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <LinkIcon className="w-4 h-4 text-gray-400" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Link per Landing Checkout */}
-              <div>
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  💰 Funnel Landing Checkout
-                </h3>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
-                  {['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'pinterest', 'twitter'].map((platform) => (
-                    <button
-                      key={`${platform}_landing`}
-                      onClick={() => copyTrackingLink(platform, 'landing')}
-                      className="flex items-center justify-between gap-2 p-3 rounded-lg border-2 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all"
-                    >
-                      <div className="flex items-center gap-2">
-                        <span className="text-xl">{getSocialIcon(platform)}</span>
-                        <span className="text-sm font-semibold text-gray-900 capitalize">{platform}</span>
-                      </div>
-                      {copiedLink === `${platform}_landing` ? (
-                        <CheckCircle className="w-4 h-4 text-green-600" />
-                      ) : (
-                        <LinkIcon className="w-4 h-4 text-gray-400" />
-                      )}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-              <p className="text-sm text-blue-900">
-                <strong>💡 Come funziona:</strong> Clicca su un social per copiare il link. Usa questo link nelle tue bio, storie, post o link tree. 
-                Quando un utente completa l'acquisto tramite quel link, la vendita verrà automaticamente attribuita a quel social nella sezione "Vendite Organiche Social".
-              </p>
             </div>
           </CardContent>
         </Card>
