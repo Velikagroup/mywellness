@@ -41,17 +41,16 @@ Deno.serve(async (req) => {
                 const customerId = session.customer;
                 const paymentIntentId = session.payment_intent;
 
-                // Find user by stripe_customer_id
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
 
                 if (users.length > 0) {
                     const user = users[0];
                     const metadata = session.metadata || {};
 
-                    // Determine plan and type
                     const isLandingOffer = metadata.type === 'landing_offer';
                     const plan = metadata.plan_type || 'premium';
-                    const amount = session.amount_total / 100; // Convert from cents
+                    const amount = session.amount_total / 100;
+                    const trafficSource = metadata.traffic_source || user.traffic_source || 'direct';
 
                     // Create transaction record
                     await base44.asServiceRole.entities.Transaction.create({
@@ -65,6 +64,7 @@ Deno.serve(async (req) => {
                         billing_period: isLandingOffer ? 'one_time' : (metadata.billing_period || 'monthly'),
                         payment_date: new Date().toISOString(),
                         description: isLandingOffer ? 'Landing Offer - 3 mesi Premium' : `Checkout ${plan}`,
+                        traffic_source: trafficSource,
                         metadata: metadata
                     });
 
@@ -85,6 +85,7 @@ Deno.serve(async (req) => {
 
                 if (users.length > 0) {
                     const user = users[0];
+                    const trafficSource = invoice.metadata?.traffic_source || user.traffic_source || 'direct';
 
                     // Update user payment info
                     await base44.asServiceRole.entities.User.update(user.id, {
@@ -108,6 +109,7 @@ Deno.serve(async (req) => {
                             (user.subscription_plan === 'premium' ? 'monthly' : 'monthly') : 'monthly', // billing_period can be more dynamic, this is a placeholder example
                         payment_date: new Date(invoice.created * 1000).toISOString(),
                         description: `Pagamento ${user.subscription_plan || 'subscription'}`,
+                        traffic_source: trafficSource,
                         metadata: invoice.metadata
                     });
 
@@ -127,6 +129,7 @@ Deno.serve(async (req) => {
 
                 if (users.length > 0) {
                     const user = users[0];
+                    const trafficSource = invoice.metadata?.traffic_source || user.traffic_source || 'direct';
 
                     // Update user status
                     await base44.asServiceRole.entities.User.update(user.id, {
@@ -145,6 +148,7 @@ Deno.serve(async (req) => {
                         plan: user.subscription_plan || 'base',
                         payment_date: new Date(invoice.created * 1000).toISOString(),
                         description: `Pagamento fallito - ${user.subscription_plan || 'subscription'}`,
+                        traffic_source: trafficSource,
                         metadata: invoice.metadata
                     });
 

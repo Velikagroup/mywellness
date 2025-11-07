@@ -80,6 +80,7 @@ export default function TrialSetup() {
   // New states for authentication check
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [trafficSource, setTrafficSource] = useState(null); // Added trafficSource state
 
   // Determine plan from location state or default to base
   const [selectedPlan, setSelectedPlan] = useState('base');
@@ -90,6 +91,22 @@ export default function TrialSetup() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+
+        // Capture traffic source if available (e.g., from query params or localStorage)
+        const queryParams = new URLSearchParams(location.search);
+        const refSource = queryParams.get('ref');
+        const storedSource = localStorage.getItem('trafficSource');
+
+        if (refSource) {
+          setTrafficSource(refSource);
+          localStorage.setItem('trafficSource', refSource); // Persist if needed
+        } else if (storedSource) {
+          setTrafficSource(storedSource);
+        } else {
+          setTrafficSource('direct'); // Default if no source is found
+        }
+        console.log("Traffic Source:", refSource || storedSource || 'direct');
+
 
         // Carica Stripe.js
         const loadStripe = async () => {
@@ -400,6 +417,7 @@ export default function TrialSetup() {
             billingPeriod: selectedBillingPeriod,
             orderBumpSelected: orderBumpSelected,
             appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
+            trafficSource: trafficSource, // Aggiungi traffic source
             billingInfo: {
               name: ev.payerName || billingInfo.name, // Use payer info from wallet if available
               email: ev.payerEmail || billingInfo.email,
@@ -456,7 +474,7 @@ export default function TrialSetup() {
 
   const handleCompleteSetup = async () => {
     if (!isFormValid) {
-      alert("Per favore, compila tutti i campi obbligatori correttamente.");
+      alert("Per favor, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
@@ -485,6 +503,7 @@ export default function TrialSetup() {
         billingPeriod: selectedBillingPeriod, // 'monthly', 'yearly'
         orderBumpSelected: orderBumpSelected,
         appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
+        trafficSource: trafficSource, // Added traffic source for card payments as well
         billingInfo: {
           name: billingInfo.name,
           email: billingInfo.email,
@@ -1134,7 +1153,7 @@ export default function TrialSetup() {
                     <span>Subtotale</span>
                     <span>€{subtotal.toFixed(2)}</span>
                   </div>
-                  {appliedCoupon && discount > 0 && (
+                  {appliedCoupon && appliedCoupon.discount_type === 'percentage' && (
                     <div className="flex justify-between text-green-600 font-semibold">
                       <span>Sconto ({appliedCoupon.code})</span>
                       <span>-€{discount.toFixed(2)}</span>

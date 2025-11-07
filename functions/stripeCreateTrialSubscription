@@ -30,20 +30,21 @@ Deno.serve(async (req) => {
 
         const body = await req.json();
         const { 
-            paymentMethodId, 
-            planType = 'premium', // 'base', 'pro', 'premium'
-            billingPeriod = 'monthly', // 'monthly' or 'yearly'
+            cardData,
+            paymentMethodId,
+            planType = 'base',
+            billingPeriod = 'monthly',
             orderBumpSelected = false,
+            trafficSource = null,
             billingInfo 
         } = body;
 
-        if (!paymentMethodId) {
-            return Response.json({ error: 'Missing paymentMethodId' }, { status: 400 });
+        if (!cardData && !paymentMethodId) {
+            return Response.json({ error: 'Missing payment information' }, { status: 400 });
         }
 
-        console.log(`📋 Plan: ${planType}, Billing: ${billingPeriod}`);
+        console.log(`📋 Plan: ${planType}, Billing: ${billingPeriod}, Payment Method: ${paymentMethodId ? 'Apple Pay' : 'Card'}`);
 
-        // Mappa dei Price IDs da Stripe (questi sono i tuoi Price IDs reali)
         const PRICE_IDS = {
             base: {
                 monthly: 'price_1SNDMW2OXBs6ZYwlp5UgCO8Y',
@@ -69,7 +70,6 @@ Deno.serve(async (req) => {
 
         console.log(`💳 Using Price ID: ${selectedPriceId}`);
 
-        // Crea o recupera il customer Stripe
         let stripeCustomerId = user.stripe_customer_id;
         
         if (!stripeCustomerId) {
@@ -96,21 +96,50 @@ Deno.serve(async (req) => {
             console.log(`✅ Customer created: ${stripeCustomerId}`);
         }
 
-        // Attach payment method al customer
-        await stripe.paymentMethods.attach(paymentMethodId, {
+        let finalPaymentMethodId;
+
+        if (paymentMethodId) {
+            // Apple Pay - il Payment Method è già creato da Stripe.js
+            console.log('🍎 Using Apple Pay payment method:', paymentMethodId);
+            finalPaymentMethodId = paymentMethodId;
+        } else {
+            // Card - creiamo il Payment Method sul backend
+            const paymentMethod = await stripe.paymentMethods.create({
+                type: 'card',
+                card: {
+                    number: cardData.number,
+                    exp_month: cardData.exp_month,
+                    exp_year: cardData.exp_year,
+                    cvc: cardData.cvc,
+                },
+                billing_details: {
+                    name: billingInfo?.name,
+                    email: billingInfo?.email,
+                    address: billingInfo ? {
+                        line1: billingInfo.address,
+                        city: billingInfo.city,
+                        postal_code: billingInfo.zip,
+                        country: billingInfo.country
+                    } : undefined
+                }
+            });
+            
+            finalPaymentMethodId = paymentMethod.id;
+            console.log(`✅ Card payment method created: ${finalPaymentMethodId}`);
+        }
+
+        await stripe.paymentMethods.attach(finalPaymentMethodId, {
             customer: stripeCustomerId,
         });
 
-        // Imposta come metodo di pagamento default
         await stripe.customers.update(stripeCustomerId, {
             invoice_settings: {
-                default_payment_method: paymentMethodId,
+                default_payment_method: finalPaymentMethodId,
             },
         });
 
         console.log('✅ Payment method attached and set as default');
 
-        // Crea la subscription con trial di 3 giorni
         const subscription = await stripe.subscriptions.create({
             customer: stripeCustomerId,
             items: [{ price: selectedPriceId }],
@@ -125,34 +154,34 @@ Deno.serve(async (req) => {
                 user_id: user.id,
                 plan_type: planType,
                 billing_period: billingPeriod,
-                order_bump_selected: orderBumpSelected.toString()
+                order_bump_selected: orderBumpSelected.toString(),
+                traffic_source: trafficSource || 'direct'
             }
         });
 
         console.log(`✅ Subscription created: ${subscription.id}`);
 
-        // Se c'è order bump, crea pagamento immediato separato
         let orderBumpPaymentIntent = null;
         if (orderBumpSelected) {
-            const orderBumpPrice = 1999; // €19.99
+            const orderBumpPrice = 1999;
             orderBumpPaymentIntent = await stripe.paymentIntents.create({
                 amount: orderBumpPrice,
                 currency: 'eur',
                 customer: stripeCustomerId,
-                payment_method: paymentMethodId,
+                payment_method: finalPaymentMethodId,
                 off_session: true,
                 confirm: true,
                 description: 'Mastery AI Wellness - Video Corso',
                 metadata: {
                     user_id: user.id,
-                    type: 'order_bump'
+                    type: 'order_bump',
+                    traffic_source: trafficSource || 'direct'
                 }
             });
             
             console.log(`✅ Order Bump payment created: ${orderBumpPaymentIntent.id}`);
         }
 
-        // Aggiorna l'utente con i dati della subscription
         const trialEndsAt = new Date();
         trialEndsAt.setDate(trialEndsAt.getDate() + 3);
 
@@ -161,12 +190,12 @@ Deno.serve(async (req) => {
             subscription_plan: planType,
             trial_ends_at: trialEndsAt.toISOString(),
             stripe_subscription_id: subscription.id,
-            stripe_customer_id: stripeCustomerId
+            stripe_customer_id: stripeCustomerId,
+            traffic_source: trafficSource || 'direct'
         });
 
         console.log('✅ User updated with subscription data');
 
-        // Invia email di benvenuto trial
         try {
             const functionUrl = `${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/functions/sendTrialWelcomeEmail`;
             await fetch(functionUrl, {

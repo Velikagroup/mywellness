@@ -22,11 +22,18 @@ import {
   MousePointerClick,
   Eye,
   ShoppingCart,
-  Zap
+  Zap,
+  CheckCircle // Added CheckCircle import
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { format, subDays, parseISO, isWithinInterval } from 'date-fns';
 import { it } from 'date-fns/locale';
+
+// Define countries array (placeholder/minimal for selectedCountry initialization)
+const countries = [
+  { code: 'IT', name: 'Italy' },
+  // Add other countries as needed for future features
+];
 
 export default function AdminMarketing() {
   const navigate = useNavigate();
@@ -50,6 +57,38 @@ export default function AdminMarketing() {
   const [campaignsByPlatform, setCampaignsByPlatform] = useState([]);
   const [marketingExpenses, setMarketingExpenses] = useState([]);
   const [allMetricsFilteredByDate, setAllMetricsFilteredByDate] = useState([]);
+
+  // New state variables from outline
+  const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
+  const [copiedLink, setCopiedLink] = useState(null);
+
+  const APP_URL = window.location.origin;
+
+  // New function from outline
+  const copyTrackingLink = (platform, funnel) => {
+    const baseUrl = funnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
+    const trackingUrl = `${baseUrl}?utm_source=organic_${platform}`;
+    
+    navigator.clipboard.writeText(trackingUrl);
+    setCopiedLink(`${platform}_${funnel}`);
+    
+    setTimeout(() => setCopiedLink(null), 2000);
+  };
+
+  // New function from outline
+  const getSocialIcon = (platform) => {
+    const icons = {
+      instagram: '📸',
+      facebook: '👥',
+      tiktok: '🎵',
+      youtube: '📺',
+      linkedin: '💼',
+      pinterest: '📌',
+      twitter: '🐦'
+    };
+    return icons[platform] || '🔗';
+  };
 
   const loadMarketingData = async () => {
     setIsLoading(true);
@@ -395,6 +434,81 @@ export default function AdminMarketing() {
                   </div>
                 );
               })}
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Link Tracciamento Organico */}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LinkIcon className="w-5 h-5 text-purple-600" />
+              Link di Tracciamento Organico
+            </CardTitle>
+            <p className="text-sm text-gray-500 mt-1">
+              Copia questi link da usare nei tuoi social per tracciare le vendite organiche
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-6">
+              {/* Link per Trial Setup */}
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  🔥 Funnel Trial Setup
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'pinterest', 'twitter'].map((platform) => (
+                    <button
+                      key={`${platform}_trial`}
+                      onClick={() => copyTrackingLink(platform, 'trial')}
+                      className="flex items-center justify-between gap-2 p-3 rounded-lg border-2 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{getSocialIcon(platform)}</span>
+                        <span className="text-sm font-semibold text-gray-900 capitalize">{platform}</span>
+                      </div>
+                      {copiedLink === `${platform}_trial` ? (
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <LinkIcon className="w-4 h-4 text-gray-400" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Link per Landing Checkout */}
+              <div>
+                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  💰 Funnel Landing Checkout
+                </h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-3">
+                  {['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'pinterest', 'twitter'].map((platform) => (
+                    <button
+                      key={`${platform}_landing`}
+                      onClick={() => copyTrackingLink(platform, 'landing')}
+                      className="flex items-center justify-between gap-2 p-3 rounded-lg border-2 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all"
+                    >
+                      <div className="flex items-center gap-2">
+                        <span className="text-xl">{getSocialIcon(platform)}</span>
+                        <span className="text-sm font-semibold text-gray-900 capitalize">{platform}</span>
+                      </div>
+                      {copiedLink === `${platform}_landing` ? (
+                        <CheckCircle className="w-4 h-4 text-green-600" />
+                      ) : (
+                        <LinkIcon className="w-4 h-4 text-gray-400" />
+                      )}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
+              <p className="text-sm text-blue-900">
+                <strong>💡 Come funziona:</strong> Clicca su un social per copiare il link. Usa questo link nelle tue bio, storie, post o link tree. 
+                Quando un utente completa l'acquisto tramite quel link, la vendita verrà automaticamente attribuita a quel social nella sezione "Vendite Organiche Social".
+              </p>
             </div>
           </CardContent>
         </Card>

@@ -237,6 +237,7 @@ export default function LandingCheckout() {
   const [discountError, setDiscountError] = useState('');
   const [salesTax, setSalesTax] = useState(null);
   const [loadingTax, setLoadingTax] = useState(false);
+  const [trafficSource, setTrafficSource] = useState(null); // New state variable
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -262,6 +263,14 @@ export default function LandingCheckout() {
     loadStripe().then(stripeInstance => {
       setStripe(stripeInstance);
     });
+
+    // Leggi parametro UTM dalla URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const utmSource = urlParams.get('utm_source');
+    if (utmSource) {
+      setTrafficSource(utmSource);
+      console.log('🔍 Traffic source detected:', utmSource);
+    }
   }, []);
 
   // Load sales tax when country changes
@@ -483,6 +492,7 @@ export default function LandingCheckout() {
             paymentMethodId: ev.paymentMethod.id,
             orderBumpSelected: orderBumpSelected,
             appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
+            trafficSource: trafficSource, // Added traffic source
             billingInfo: {
               name: ev.payerName || billingInfo.name, // Use payerName from wallet if available
               email: ev.payerEmail || billingInfo.email, // Use payerEmail from wallet if available
@@ -562,7 +572,8 @@ export default function LandingCheckout() {
           cvc: cardData.cvc,
         },
         orderBumpSelected: orderBumpSelected,
-        appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
+        appliedCouponCode: appliedCoupon ? appliedCoupon.code : null, // Ensured this uses appliedCoupon
+        trafficSource: trafficSource, // Added traffic source
         billingInfo: {
           name: billingInfo.name,
           email: billingInfo.email,
