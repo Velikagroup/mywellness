@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   TrendingUp,
   DollarSign,
@@ -38,6 +39,7 @@ export default function AdminMarketing() {
 
   const [showConnectDialog, setShowConnectDialog] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
+  const [selectedFunnel, setSelectedFunnel] = useState('trial'); // 'trial' or 'landing'
 
   const [selectedDateRange, setSelectedDateRange] = useState([
     subDays(new Date(), 30),
@@ -177,7 +179,16 @@ export default function AdminMarketing() {
     return isWithinInterval(txDate, { start: selectedDateRange[0], end: selectedDateRange[1] });
   });
 
-  const organicSocialSales = filteredTransactions.filter(t => 
+  // Filter by funnel type
+  const funnelFilteredTransactions = filteredTransactions.filter(t => {
+    if (selectedFunnel === 'trial') {
+      return t.type === 'subscription_payment' || t.type === 'trial_setup';
+    } else { // selectedFunnel === 'landing'
+      return t.plan === 'landing_offer' || t.type === 'one_time_payment';
+    }
+  });
+
+  const organicSocialSales = funnelFilteredTransactions.filter(t => 
     t.traffic_source && t.traffic_source.startsWith('organic_') && t.status === 'succeeded'
   );
 
@@ -276,6 +287,22 @@ export default function AdminMarketing() {
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Marketing Analytics</h1>
           <p className="text-gray-600">Performance campagne pubblicitarie e ROAS</p>
         </div>
+
+        {/* Funnel Tabs */}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardContent className="p-6">
+            <Tabs value={selectedFunnel} onValueChange={setSelectedFunnel} className="w-full">
+              <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+                <TabsTrigger value="trial" className="text-sm">
+                  Trial Setup
+                </TabsTrigger>
+                <TabsTrigger value="landing" className="text-sm">
+                  Landing Checkout
+                </TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </CardContent>
+        </Card>
 
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -408,7 +435,9 @@ export default function AdminMarketing() {
                   <Activity className="w-5 h-5 text-purple-600" />
                   Vendite Organiche Social
                 </CardTitle>
-                <p className="text-sm text-gray-500 mt-1">Vendite generate da attività organica sui social media</p>
+                <p className="text-sm text-gray-500 mt-1">
+                  Vendite da attività organica ({selectedFunnel === 'trial' ? 'Trial Setup' : 'Landing Checkout'})
+                </p>
               </div>
               <div className="text-right">
                 <p className="text-sm text-gray-500">Totale Vendite</p>
@@ -493,7 +522,7 @@ export default function AdminMarketing() {
                         {platformDisplayName === 'Meta' ? 'Meta (Facebook/Instagram)' : platformDisplayName + ' Ads'}
                       </h3>
                       <p className="text-sm text-gray-500 mt-1">
-                        {isConnected ? '✅ Connesso' : '⚠️ Non connesso'}
+                        {isConnected ? '✅ Connesso' : '⚠️ Non connesso'} • {selectedFunnel === 'trial' ? 'Trial Setup' : 'Landing Checkout'}
                       </p>
                     </div>
                     <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isConnected ? 'bg-green-100' : 'bg-gray-100'}`}>
@@ -557,7 +586,9 @@ export default function AdminMarketing() {
 
                   {/* Landing Funnel */}
                   <div className="mt-6 pt-6 border-t border-gray-200">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">Funnel Landing Offer</h4>
+                    <h4 className="text-sm font-bold text-gray-900 mb-3">
+                      {selectedFunnel === 'trial' ? 'Funnel Trial Setup' : 'Funnel Landing Offer'}
+                    </h4>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
                         <span className="text-gray-700">Quiz Completati</span>
