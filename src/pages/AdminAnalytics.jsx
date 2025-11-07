@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsTrigger } from '@/components/ui/tabs';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   TrendingUp,
@@ -1173,12 +1173,17 @@ export default function AdminAnalytics() {
             <CardContent>
               <div className="h-96">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={cashFlowProjection} barCategoryGap="20%" margin={{ left: 20, right: 20 }}>
+                  <BarChart 
+                    data={cashFlowProjection} 
+                    barGap={-35}
+                    barCategoryGap="15%" 
+                    margin={{ left: 20, right: 20, top: 20, bottom: 20 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
                     <XAxis 
                       dataKey="month" 
                       stroke="#6b7280"
-                      padding={{ left: 30, right: 30 }}
+                      tickLine={false}
                     />
                     <YAxis stroke="#6b7280" />
                     <Tooltip
@@ -1187,21 +1192,22 @@ export default function AdminAnalytics() {
                         border: '1px solid #e5e7eb',
                         borderRadius: '8px'
                       }}
+                      cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                     />
                     <Legend />
                     <Bar 
                       dataKey="revenue" 
                       fill="#10b981" 
                       name="Entrate (€)"
-                      radius={[4, 4, 0, 0]}
-                      maxBarSize={50}
+                      radius={[6, 6, 0, 0]}
+                      barSize={70}
                     />
                     <Bar 
                       dataKey="expenses" 
                       fill="#ef4444" 
                       name="Spese (€)"
                       radius={[4, 4, 0, 0]}
-                      maxBarSize={50}
+                      barSize={35}
                     />
                   </BarChart>
                 </ResponsiveContainer>
