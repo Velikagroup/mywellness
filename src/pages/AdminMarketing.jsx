@@ -13,8 +13,8 @@ import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion";
+  AccordionTrigger } from
+"@/components/ui/accordion";
 import {
   TrendingUp,
   DollarSign,
@@ -40,8 +40,8 @@ import { Calendar as CalendarComponent } from "@/components/ui/calendar";
 
 // Define countries array (placeholder/minimal for selectedCountry initialization)
 const countries = [
-  { code: 'IT', name: 'Italy' },
-  // Add other countries as needed for future features
+{ code: 'IT', name: 'Italy' }
+// Add other countries as needed for future features
 ];
 
 export default function AdminMarketing() {
@@ -59,14 +59,14 @@ export default function AdminMarketing() {
   const [selectedFunnel, setSelectedFunnel] = useState('trial'); // 'trial' or 'landing'
 
   const [selectedDateRange, setSelectedDateRange] = useState([
-    subDays(new Date(), 30),
-    new Date()
-  ]);
+  subDays(new Date(), 30),
+  new Date()]
+  );
 
   const [tempDateRange, setTempDateRange] = useState([
-    subDays(new Date(), 30),
-    new Date()
-  ]);
+  subDays(new Date(), 30),
+  new Date()]
+  );
 
   const [campaignsByPlatform, setCampaignsByPlatform] = useState([]);
   const [marketingExpenses, setMarketingExpenses] = useState([]);
@@ -74,7 +74,7 @@ export default function AdminMarketing() {
 
   // New state variables from outline
   const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
-  const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
+  const [selectedCountry, setSelectedCountry] = useState(countries.find((c) => c.code === 'IT'));
   const [copiedLink, setCopiedLink] = useState(null);
   const [showDatePicker, setShowDatePicker] = useState(false); // Added showDatePicker state
 
@@ -84,34 +84,34 @@ export default function AdminMarketing() {
   const copyTrackingLink = (platform, funnel) => {
     const baseUrl = funnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
     const trackingUrl = `${baseUrl}?utm_source=organic_${platform}`;
-    
+
     navigator.clipboard.writeText(trackingUrl);
     setCopiedLink(`${platform}_${funnel}`);
-    
+
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
   const copyPlatformLink = (platform) => {
     const baseUrl = selectedFunnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
     const trackingUrl = `${baseUrl}?utm_source=organic_${platform}`;
-    
+
     navigator.clipboard.writeText(trackingUrl);
     setCopiedLink(`${platform}_${selectedFunnel}`);
-    
+
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
   const copyAllOrganicLinks = () => {
     const socialPlatforms = ['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'pinterest', 'twitter'];
     const baseUrl = selectedFunnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
-    
-    const allLinks = socialPlatforms.map(platform => 
-      `${platform.charAt(0).toUpperCase() + platform.slice(1)}: ${baseUrl}?utm_source=organic_${platform}`
+
+    const allLinks = socialPlatforms.map((platform) =>
+    `${platform.charAt(0).toUpperCase() + platform.slice(1)}: ${baseUrl}?utm_source=organic_${platform}`
     ).join('\n\n');
-    
+
     navigator.clipboard.writeText(allLinks);
     setCopiedLink('all_organic');
-    
+
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
@@ -146,7 +146,7 @@ export default function AdminMarketing() {
       setTransactions(allTransactionsData);
       setAllUsers(allUsersData); // Set all users in state
 
-      const metricsFilteredByDate = metricsData.filter(m => {
+      const metricsFilteredByDate = metricsData.filter((m) => {
         if (!m.date) return false;
         const metricDate = parseISO(m.date);
         return isWithinInterval(metricDate, { start: selectedDateRange[0], end: selectedDateRange[1] });
@@ -157,16 +157,16 @@ export default function AdminMarketing() {
       const funnelData = {};
 
       // These overall counts are for the *paid* campaign funnel data
-      const totalQuizCompleted = allUsersData.filter(u => u.quiz_completed === true).length;
-      const totalCheckoutStarted = allUsersData.filter(u => u.billing_name && u.billing_name.length > 0).length;
-      const totalPurchases = allUsersData.filter(u => 
-        selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true
+      const totalQuizCompleted = allUsersData.filter((u) => u.quiz_completed === true).length;
+      const totalCheckoutStarted = allUsersData.filter((u) => u.billing_name && u.billing_name.length > 0).length;
+      const totalPurchases = allUsersData.filter((u) =>
+      selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true
       ).length;
 
       // For landing funnel, add Landing step (same as Quiz for now, as all quiz completers see landing)
       const totalLandingViews = selectedFunnel === 'landing' ? totalQuizCompleted : 0;
 
-      platforms.forEach(platform => {
+      platforms.forEach((platform) => {
         if (selectedFunnel === 'landing') {
           funnelData[platform] = {
             quiz: Math.floor(totalQuizCompleted / platforms.length),
@@ -185,7 +185,7 @@ export default function AdminMarketing() {
 
       const groupedData = campaignsData.reduce((acc, campaign) => {
         const platform = campaign.platform;
-        const campaignMetrics = metricsFilteredByDate.filter(m => m.campaign_id === campaign.campaign_id);
+        const campaignMetrics = metricsFilteredByDate.filter((m) => m.campaign_id === campaign.campaign_id);
 
         const totalSpend = campaignMetrics.reduce((sum, m) => sum + (m.spend || 0), 0);
         const totalRevenue = campaignMetrics.reduce((sum, m) => sum + (m.revenue || 0), 0);
@@ -265,27 +265,27 @@ export default function AdminMarketing() {
 
   const overallROAS = totalSpend > 0 ? (totalRevenue / totalSpend).toFixed(2) : 0;
   const overallCPA = totalConversions > 0 ? (totalSpend / totalConversions).toFixed(2) : 0;
-  const overallCTR = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : 0;
+  const overallCTR = totalImpressions > 0 ? (totalClicks / totalImpressions * 100).toFixed(2) : 0;
   const netProfit = totalRevenue - totalSpend;
 
   // Calculate organic social sales
-  const filteredTransactions = transactions.filter(t => {
+  const filteredTransactions = transactions.filter((t) => {
     if (!t.payment_date) return false;
     const txDate = parseISO(t.payment_date);
     return isWithinInterval(txDate, { start: selectedDateRange[0], end: selectedDateRange[1] });
   });
 
   // Filter by funnel type
-  const funnelFilteredTransactions = filteredTransactions.filter(t => {
+  const funnelFilteredTransactions = filteredTransactions.filter((t) => {
     if (selectedFunnel === 'trial') {
       return t.type === 'subscription_payment' || t.type === 'trial_setup';
-    } else { // selectedFunnel === 'landing'
+    } else {// selectedFunnel === 'landing'
       return t.plan === 'landing_offer' || t.type === 'one_time_payment';
     }
   });
 
-  const organicSocialSales = funnelFilteredTransactions.filter(t =>
-    t.traffic_source && t.traffic_source.startsWith('organic_') && t.status === 'succeeded'
+  const organicSocialSales = funnelFilteredTransactions.filter((t) =>
+  t.traffic_source && t.traffic_source.startsWith('organic_') && t.status === 'succeeded'
   );
 
   const organicSalesByPlatform = organicSocialSales.reduce((acc, sale) => {
@@ -305,22 +305,22 @@ export default function AdminMarketing() {
   }, {});
 
   // Calcola funnel per piattaforme organiche in modo più accurato
-  const organicSocialData = Object.values(organicSalesByPlatform).map(platformData => {
+  const organicSocialData = Object.values(organicSalesByPlatform).map((platformData) => {
     // Get unique user IDs involved in successful transactions from this specific organic source within the selected date range.
     const userIdsForThisOrganicPlatform = [...new Set(
-      platformData.transactions.filter(t => t.status === 'succeeded').map(t => t.user_id)
+      platformData.transactions.filter((t) => t.status === 'succeeded').map((t) => t.user_id)
     )];
-    
+
     // Filter the *entire* user list (`allUsers`) for those user IDs to get their full profiles
-    const associatedUsers = allUsers.filter(user => userIdsForThisOrganicPlatform.includes(user.id));
-    
+    const associatedUsers = allUsers.filter((user) => userIdsForThisOrganicPlatform.includes(user.id));
+
     // Now count funnel steps based on these associated users' profiles
-    const quizCompleted = associatedUsers.filter(u => u.quiz_completed === true).length;
+    const quizCompleted = associatedUsers.filter((u) => u.quiz_completed === true).length;
     const landingViews = selectedFunnel === 'landing' ? quizCompleted : 0;
-    const checkoutStarted = associatedUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
+    const checkoutStarted = associatedUsers.filter((u) => u.billing_name && u.billing_name.length > 0).length;
     // Purchases are already correctly represented by platformData.sales (total successful transactions for this platform and date range)
     const purchases = platformData.sales;
-    
+
     if (selectedFunnel === 'landing') {
       return {
         ...platformData,
@@ -364,21 +364,21 @@ export default function AdminMarketing() {
     }
   }, selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
 
-  const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0 
-    ? ((totalOrganicFunnel.purchases / totalOrganicFunnel.quiz) * 100).toFixed(1) 
-    : '0.0';
+  const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0 ?
+  (totalOrganicFunnel.purchases / totalOrganicFunnel.quiz * 100).toFixed(1) :
+  '0.0';
 
-  const platformData = campaignsByPlatform.map(p => ({
+  const platformData = campaignsByPlatform.map((p) => ({
     name: p.platform.charAt(0).toUpperCase() + p.platform.slice(1),
     spend: Math.round(p.totalSpend),
     revenue: Math.round(p.totalRevenue),
     conversions: p.totalConversions,
     roas: p.totalSpend > 0 ? (p.totalRevenue / p.totalSpend).toFixed(2) : 0
-  })).filter(p => p.spend > 0 || p.revenue > 0);
+  })).filter((p) => p.spend > 0 || p.revenue > 0);
 
   const getDailyTrend = () => {
     const dailyMap = {};
-    allMetricsFilteredByDate.forEach(m => {
+    allMetricsFilteredByDate.forEach((m) => {
       const date = m.date;
       if (!dailyMap[date]) {
         dailyMap[date] = { date, spend: 0, revenue: 0, conversions: 0 };
@@ -388,14 +388,14 @@ export default function AdminMarketing() {
       dailyMap[date].conversions += m.conversions || 0;
     });
 
-    return Object.values(dailyMap)
-      .sort((a, b) => new Date(a.date) - new Date(b.date))
-      .map(d => ({
-        date: format(parseISO(d.date), 'dd MMM', { locale: it }),
-        spend: Math.round(d.spend),
-        revenue: Math.round(d.revenue),
-        roas: d.spend > 0 ? (d.revenue / d.spend).toFixed(2) : 0
-      }));
+    return Object.values(dailyMap).
+    sort((a, b) => new Date(a.date) - new Date(b.date)).
+    map((d) => ({
+      date: format(parseISO(d.date), 'dd MMM', { locale: it }),
+      spend: Math.round(d.spend),
+      revenue: Math.round(d.revenue),
+      roas: d.spend > 0 ? (d.revenue / d.spend).toFixed(2) : 0
+    }));
   };
 
   const dailyTrend = getDailyTrend();
@@ -431,8 +431,8 @@ export default function AdminMarketing() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--brand-primary)]"></div>
-      </div>
-    );
+      </div>);
+
   }
 
   return (
@@ -457,13 +457,13 @@ export default function AdminMarketing() {
                 <PopoverTrigger asChild>
                   <Button variant="outline" className="justify-start text-left font-normal border-2">
                     <CalendarIcon className="mr-2 h-4 w-4" />
-                    {selectedDateRange[0] && selectedDateRange[1] ? (
-                      <>
+                    {selectedDateRange[0] && selectedDateRange[1] ?
+                    <>
                         {format(selectedDateRange[0], 'dd MMM yyyy', { locale: it })} - {format(selectedDateRange[1], 'dd MMM yyyy', { locale: it })}
-                      </>
-                    ) : (
-                      <span>Seleziona periodo</span>
-                    )}
+                      </> :
+
+                    <span>Seleziona periodo</span>
+                    }
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="end">
@@ -475,8 +475,8 @@ export default function AdminMarketing() {
                         selected={tempDateRange[0]}
                         onSelect={(date) => date && setTempDateRange([date, tempDateRange[1]])}
                         initialFocus
-                        locale={it}
-                      />
+                        locale={it} />
+
                     </div>
                     <div>
                       <Label className="text-sm font-semibold mb-2 block">Data Fine</Label>
@@ -485,8 +485,8 @@ export default function AdminMarketing() {
                         selected={tempDateRange[1]}
                         onSelect={(date) => date && setTempDateRange([tempDateRange[0], date])}
                         disabled={(date) => date < tempDateRange[0]}
-                        locale={it}
-                      />
+                        locale={it} />
+
                     </div>
                     <div className="flex flex-wrap gap-2">
                       <Button
@@ -497,8 +497,8 @@ export default function AdminMarketing() {
                           setSelectedDateRange(newRange);
                           setTempDateRange(newRange);
                           setShowDatePicker(false);
-                        }}
-                      >
+                        }}>
+
                         Ultima Settimana
                       </Button>
                       <Button
@@ -509,8 +509,8 @@ export default function AdminMarketing() {
                           setSelectedDateRange(newRange);
                           setTempDateRange(newRange);
                           setShowDatePicker(false);
-                        }}
-                      >
+                        }}>
+
                         Ultimo Mese
                       </Button>
                       <Button
@@ -521,8 +521,8 @@ export default function AdminMarketing() {
                           setSelectedDateRange(newRange);
                           setTempDateRange(newRange);
                           setShowDatePicker(false);
-                        }}
-                      >
+                        }}>
+
                         Ultimi 3 Mesi
                       </Button>
                     </div>
@@ -531,8 +531,8 @@ export default function AdminMarketing() {
                       onClick={() => {
                         setSelectedDateRange(tempDateRange);
                         setShowDatePicker(false);
-                      }}
-                    >
+                      }}>
+
                       Applica Filtro
                     </Button>
                   </div>
@@ -547,8 +547,8 @@ export default function AdminMarketing() {
                   // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
                 }}
                 variant="outline"
-                className="border-2"
-              >
+                className="border-2">
+
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 Oggi
               </Button>
@@ -556,25 +556,25 @@ export default function AdminMarketing() {
               <Button
                 onClick={async () => {
                   // Trova la data più vecchia tra transazioni e metriche
-                  const oldestTransaction = transactions.length > 0 
-                    ? transactions.reduce((oldest, t) => {
-                        if (!t.payment_date) return oldest;
-                        const tDate = parseISO(t.payment_date);
-                        return !oldest || tDate < oldest ? tDate : oldest;
-                      }, null)
-                    : null;
+                  const oldestTransaction = transactions.length > 0 ?
+                  transactions.reduce((oldest, t) => {
+                    if (!t.payment_date) return oldest;
+                    const tDate = parseISO(t.payment_date);
+                    return !oldest || tDate < oldest ? tDate : oldest;
+                  }, null) :
+                  null;
 
-                  const oldestMetric = metrics.length > 0
-                    ? metrics.reduce((oldest, m) => {
-                        if (!m.date) return oldest;
-                        const mDate = parseISO(m.date);
-                        return !oldest || mDate < oldest ? mDate : oldest;
-                      }, null)
-                    : null;
+                  const oldestMetric = metrics.length > 0 ?
+                  metrics.reduce((oldest, m) => {
+                    if (!m.date) return oldest;
+                    const mDate = parseISO(m.date);
+                    return !oldest || mDate < oldest ? mDate : oldest;
+                  }, null) :
+                  null;
 
-                  const oldestDate = [oldestTransaction, oldestMetric]
-                    .filter(d => d !== null)
-                    .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
+                  const oldestDate = [oldestTransaction, oldestMetric].
+                  filter((d) => d !== null).
+                  reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
 
                   if (oldestDate) {
                     const newRange = [oldestDate, new Date()];
@@ -589,8 +589,8 @@ export default function AdminMarketing() {
                   // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
                 }}
                 variant="outline"
-                className="border-2"
-              >
+                className="border-2">
+
                 <CalendarIcon className="mr-2 h-4 w-4" />
                 Tutto
               </Button>
@@ -630,7 +630,7 @@ export default function AdminMarketing() {
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
-                  <p className="text-sm text-gray-500 mb-1">Entrate da Ads</p>
+                  <p className="text-sm text-gray-500 mb-1">Entrate da Marketing</p>
                   <p className="text-3xl font-bold text-green-600">€{totalRevenue.toLocaleString('it-IT')}</p>
                 </div>
                 <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -684,12 +684,12 @@ export default function AdminMarketing() {
                 <AreaChart data={dailyTrend}>
                   <defs>
                     <linearGradient id="colorSpend" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#ef4444" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8}/>
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0}/>
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.8} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
@@ -700,8 +700,8 @@ export default function AdminMarketing() {
                       backgroundColor: 'white',
                       border: '1px solid #e5e7eb',
                       borderRadius: '8px'
-                    }}
-                  />
+                    }} />
+
                   <Legend />
                   <Area
                     type="monotone"
@@ -709,23 +709,23 @@ export default function AdminMarketing() {
                     stroke="#ef4444"
                     fillOpacity={1}
                     fill="url(#colorSpend)"
-                    name="Spesa (€)"
-                  />
+                    name="Spesa (€)" />
+
                   <Area
                     type="monotone"
                     dataKey="revenue"
                     stroke="#10b981"
                     fillOpacity={1}
                     fill="url(#colorRevenue)"
-                    name="Entrate (€)"
-                  />
+                    name="Entrate (€)" />
+
                   <Line
                     type="monotone"
                     dataKey="roas"
                     stroke="#8b5cf6"
                     strokeWidth={3}
-                    name="ROAS"
-                  />
+                    name="ROAS" />
+
                 </AreaChart>
               </ResponsiveContainer>
             </div>
@@ -757,13 +757,13 @@ export default function AdminMarketing() {
                   <button
                     onClick={copyAllOrganicLinks}
                     className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border-2 border-purple-200"
-                    title="Copia tutti i link di tracciamento organico"
-                  >
-                    {copiedLink === 'all_organic' ? (
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    ) : (
-                      <LinkIcon className="w-5 h-5 text-purple-600" />
-                    )}
+                    title="Copia tutti i link di tracciamento organico">
+
+                    {copiedLink === 'all_organic' ?
+                    <CheckCircle className="w-5 h-5 text-green-600" /> :
+
+                    <LinkIcon className="w-5 h-5 text-purple-600" />
+                    }
                   </button>
                 </div>
                 <div className="text-right">
@@ -780,12 +780,12 @@ export default function AdminMarketing() {
                   <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
                   <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
                 </div>
-                {selectedFunnel === 'landing' && (
-                  <div className="text-center">
+                {selectedFunnel === 'landing' &&
+                <div className="text-center">
                     <p className="text-xs text-gray-600 mb-1">Landing Visualizzata</p>
                     <p className="text-2xl font-bold text-purple-600">{totalOrganicFunnel.landing}</p>
                   </div>
-                )}
+                }
                 <div className="text-center">
                   <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
                   <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
@@ -801,28 +801,28 @@ export default function AdminMarketing() {
               </div>
             </CardHeader>
             <CardContent className="pt-4">
-              {organicSocialData.length > 0 ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {organicSocialData.length > 0 ?
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {organicSocialData.map((platform) => {
-                    const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
-                    const conversionRate = platform.funnel.quiz > 0 
-                      ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1) 
-                      : '0.0';
-                    
-                    return (
-                      <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
+                  const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
+                  const conversionRate = platform.funnel.quiz > 0 ?
+                  (platform.funnel.purchases / platform.funnel.quiz * 100).toFixed(1) :
+                  '0.0';
+
+                  return (
+                    <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
                         <div className="flex items-center justify-between mb-4">
                           <h4 className="font-bold text-gray-900">{platformName}</h4>
                           <button
-                            onClick={() => copyPlatformLink(platform.platform)}
-                            className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border border-purple-200"
-                            title="Copia link di tracciamento"
-                          >
-                            {copiedLink === `${platform.platform}_${selectedFunnel}` ? (
-                              <CheckCircle className="w-5 h-5 text-green-600" />
-                            ) : (
-                              <LinkIcon className="w-5 h-5 text-purple-600" />
-                            )}
+                          onClick={() => copyPlatformLink(platform.platform)}
+                          className="w-10 h-10 rounded-full flex items-center justify-center bg-white hover:bg-purple-100 transition-all border border-purple-200"
+                          title="Copia link di tracciamento">
+
+                            {copiedLink === `${platform.platform}_${selectedFunnel}` ?
+                          <CheckCircle className="w-5 h-5 text-green-600" /> :
+
+                          <LinkIcon className="w-5 h-5 text-purple-600" />
+                          }
                           </button>
                         </div>
 
@@ -845,12 +845,12 @@ export default function AdminMarketing() {
                               <span className="text-gray-700">Quiz</span>
                               <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
                             </div>
-                            {selectedFunnel === 'landing' && (
-                              <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
+                            {selectedFunnel === 'landing' &&
+                          <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
                                 <span className="text-gray-700">Landing</span>
                                 <span className="font-bold text-purple-600">{platform.funnel.landing}</span>
                               </div>
-                            )}
+                          }
                             <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
                               <span className="text-gray-700">Checkout</span>
                               <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
@@ -870,25 +870,25 @@ export default function AdminMarketing() {
                         <div className="pt-3 border-t border-purple-200">
                           <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
                           <div className="space-y-1">
-                            {platform.transactions.slice(0, 3).map((tx, idx) => (
-                              <div key={idx} className="flex justify-between text-xs">
+                            {platform.transactions.slice(0, 3).map((tx, idx) =>
+                          <div key={idx} className="flex justify-between text-xs">
                                 <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
                                 <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
                               </div>
-                            ))}
+                          )}
                           </div>
                         </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              ) : (
-                <div className="text-center py-8">
+                      </div>);
+
+                })}
+                </div> :
+
+              <div className="text-center py-8">
                   <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
                   <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
                 </div>
-              )}
+              }
             </CardContent>
           </Card>
 
@@ -896,9 +896,9 @@ export default function AdminMarketing() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
               const platformKey = platformDisplayName.toLowerCase();
-              const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+              const isConnected = campaignsByPlatform.some((p) => p.platform === platformKey && p.campaigns.length > 0);
 
-              const platformGroup = campaignsByPlatform.find(p => p.platform === platformKey);
+              const platformGroup = campaignsByPlatform.find((p) => p.platform === platformKey);
               const funnel = platformGroup?.funnel || (selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
 
               const platformSpend = platformGroup?.totalSpend || 0;
@@ -936,17 +936,17 @@ export default function AdminMarketing() {
                       <button
                         onClick={handleCopyPlatformLinks}
                         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border-2 ${
-                          isConnected 
-                            ? 'bg-green-50 border-green-200 hover:bg-green-100' 
-                            : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
-                        }`}
-                        title="Copia link di tracciamento organico"
-                      >
-                        {copiedLink?.startsWith(`${organicPlatforms[platformKey]?.[0]}_`) ? (
-                          <CheckCircle className="w-6 h-6 text-green-600" />
-                        ) : (
-                          <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
-                        )}
+                        isConnected ?
+                        'bg-green-50 border-green-200 hover:bg-green-100' :
+                        'bg-gray-50 border-gray-200 hover:bg-gray-100'}`
+                        }
+                        title="Copia link di tracciamento organico">
+
+                        {copiedLink?.startsWith(`${organicPlatforms[platformKey]?.[0]}_`) ?
+                        <CheckCircle className="w-6 h-6 text-green-600" /> :
+
+                        <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
+                        }
                       </button>
                     </div>
 
@@ -961,29 +961,29 @@ export default function AdminMarketing() {
                         <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
                       </div>
                       <div className={`rounded-lg p-3 border ${
-                        platformROAS >= 2 ? 'bg-green-50 border-green-100' :
-                        platformROAS >= 1 ? 'bg-orange-50 border-orange-100' :
-                        'bg-red-50 border-red-100'
-                      }`}>
+                      platformROAS >= 2 ? 'bg-green-50 border-green-100' :
+                      platformROAS >= 1 ? 'bg-orange-50 border-orange-100' :
+                      'bg-red-50 border-red-100'}`
+                      }>
                         <p className={`text-xs font-semibold mb-1 ${
-                          platformROAS >= 2 ? 'text-green-600' :
-                          platformROAS >= 1 ? 'text-orange-600' :
-                          'text-red-600'
-                        }`}>ROAS</p>
+                        platformROAS >= 2 ? 'text-green-600' :
+                        platformROAS >= 1 ? 'text-orange-600' :
+                        'text-red-600'}`
+                        }>ROAS</p>
                         <p className={`text-lg font-bold ${
-                          platformROAS >= 2 ? 'text-green-700' :
-                          platformROAS >= 1 ? 'text-orange-700' :
-                          'text-red-700'
-                        }`}>{platformROAS}x</p>
+                        platformROAS >= 2 ? 'text-green-700' :
+                        platformROAS >= 1 ? 'text-orange-700' :
+                        'text-red-700'}`
+                        }>{platformROAS}x</p>
                       </div>
                     </div>
 
-                    {isConnected && (
-                      <div className="space-y-3 mb-6">
+                    {isConnected &&
+                    <div className="space-y-3 mb-6">
                         <Button
-                          onClick={() => handleSyncMetrics(platformKey)}
-                          className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                        >
+                        onClick={() => handleSyncMetrics(platformKey)}
+                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]">
+
                           <Zap className="w-4 h-4 mr-2" />
                           Sincronizza Metriche
                         </Button>
@@ -993,7 +993,7 @@ export default function AdminMarketing() {
                           </p>
                         </div>
                       </div>
-                    )}
+                    }
 
                     {/* Funnel */}
                     <div className="mt-6 pt-6 border-t border-gray-200">
@@ -1003,12 +1003,12 @@ export default function AdminMarketing() {
                           <span className="text-gray-700">Quiz Completati</span>
                           <span className="font-bold text-indigo-600">{funnel.quiz}</span>
                         </div>
-                        {selectedFunnel === 'landing' && (
-                          <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
+                        {selectedFunnel === 'landing' &&
+                        <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg text-sm">
                             <span className="text-gray-700">Landing Visualizzata</span>
                             <span className="font-bold text-purple-600">{funnel.landing}</span>
                           </div>
-                        )}
+                        }
                         <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
                           <span className="text-gray-700">Checkout Iniziati</span>
                           <span className="font-bold text-cyan-600">{funnel.checkout}</span>
@@ -1020,16 +1020,16 @@ export default function AdminMarketing() {
                         <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
                           <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
                           <p className="text-xl font-black text-indigo-600">
-                            {funnel.quiz > 0
-                              ? ((funnel.purchases / funnel.quiz) * 100).toFixed(1)
-                              : '0.0'}%
+                            {funnel.quiz > 0 ?
+                            (funnel.purchases / funnel.quiz * 100).toFixed(1) :
+                            '0.0'}%
                           </p>
                         </div>
                       </div>
                     </div>
                   </CardContent>
-                </Card>
-              );
+                </Card>);
+
             })}
           </div>
         </div>
@@ -1055,21 +1055,21 @@ export default function AdminMarketing() {
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName) => {
                       const platformKey = platformDisplayName.toLowerCase();
-                      const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+                      const isConnected = campaignsByPlatform.some((p) => p.platform === platformKey && p.campaigns.length > 0);
 
                       return (
                         <div key={platformDisplayName} className={`p-5 rounded-xl border-2 transition-all ${
-                          isConnected
-                            ? 'bg-green-50 border-green-200'
-                            : 'bg-gray-50 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
-                        }`}>
+                        isConnected ?
+                        'bg-green-50 border-green-200' :
+                        'bg-gray-50 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'}`
+                        }>
                           <div className="flex items-center justify-between mb-3">
                             <h4 className="font-bold text-gray-900 text-sm">
                               {platformDisplayName === 'Meta' ? 'Meta Ads' : platformDisplayName + ' Ads'}
                             </h4>
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
-                              isConnected ? 'bg-green-500' : 'bg-gray-300'
-                            }`}>
+                            isConnected ? 'bg-green-500' : 'bg-gray-300'}`
+                            }>
                               <LinkIcon className={`w-4 h-4 ${isConnected ? 'text-white' : 'text-gray-600'}`} />
                             </div>
                           </div>
@@ -1078,28 +1078,28 @@ export default function AdminMarketing() {
                             {isConnected ? '✅ Connesso e Sincronizzato' : '⚠️ Non Connesso'}
                           </p>
 
-                          {isConnected ? (
-                            <Button
-                              onClick={() => handleSyncMetrics(platformKey)}
-                              size="sm"
-                              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs"
-                            >
+                          {isConnected ?
+                          <Button
+                            onClick={() => handleSyncMetrics(platformKey)}
+                            size="sm"
+                            className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs">
+
                               <Zap className="w-3 h-3 mr-1" />
                               Sincronizza
-                            </Button>
-                          ) : (
-                            <Button
-                              onClick={() => handleConnectPlatform(platformKey)}
-                              variant="outline"
-                              size="sm"
-                              className="w-full text-xs"
-                            >
+                            </Button> :
+
+                          <Button
+                            onClick={() => handleConnectPlatform(platformKey)}
+                            variant="outline"
+                            size="sm"
+                            className="w-full text-xs">
+
                               <Plus className="w-3 h-3 mr-1" />
                               Connetti
                             </Button>
-                          )}
-                        </div>
-                      );
+                          }
+                        </div>);
+
                     })}
                   </div>
                 </CardContent>
@@ -1132,13 +1132,13 @@ export default function AdminMarketing() {
               onClick={() => {
                 alert('Feature in sviluppo: OAuth flow per ' + selectedPlatform);
                 setShowConnectDialog(false);
-              }}
-            >
+              }}>
+
               Autorizza Accesso
             </Button>
           </div>
         </DialogContent>
       </Dialog>
-    </div>
-  );
+    </div>);
+
 }
