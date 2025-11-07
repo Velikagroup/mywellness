@@ -36,6 +36,7 @@ export default function AdminMarketing() {
   const [campaigns, setCampaigns] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [transactions, setTransactions] = useState([]);
+  const [allUsers, setAllUsers] = useState([]); // Added to state for detailed funnel calculation
 
   const [showConnectDialog, setShowConnectDialog] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
@@ -60,11 +61,12 @@ export default function AdminMarketing() {
         date: { $gte: selectedDateRange[0].toISOString(), $lte: selectedDateRange[1].toISOString() }
       });
       const allTransactionsData = await base44.entities.Transaction.list();
-      const allUsers = await base44.entities.User.list();
+      const allUsersData = await base44.entities.User.list(); // Fetch all users
 
       setCampaigns(campaignsData);
       setMetrics(metricsData);
       setTransactions(allTransactionsData);
+      setAllUsers(allUsersData); // Set all users in state
 
       const metricsFilteredByDate = metricsData.filter(m => {
         if (!m.date) return false;
@@ -76,9 +78,11 @@ export default function AdminMarketing() {
       const platforms = ['meta', 'tiktok', 'pinterest', 'google'];
       const funnelData = {};
 
-      const totalQuizCompleted = allUsers.filter(u => u.quiz_completed === true).length;
-      const totalCheckoutStarted = allUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
-      const totalPurchases = allUsers.filter(u => u.purchased_landing_offer === true).length;
+      // These overall counts are for the *paid* campaign funnel data,
+      // currently a simplified distribution.
+      const totalQuizCompleted = allUsersData.filter(u => u.quiz_completed === true).length;
+      const totalCheckoutStarted = allUsersData.filter(u => u.billing_name && u.billing_name.length > 0).length;
+      const totalPurchases = allUsersData.filter(u => u.purchased_landing_offer === true).length;
 
       platforms.forEach(platform => {
         funnelData[platform] = {
@@ -107,6 +111,7 @@ export default function AdminMarketing() {
             totalConversions: 0,
             totalClicks: 0,
             totalImpressions: 0,
+            // Use the simplified distributed funnel data for paid campaigns
             funnel: funnelData[platform] || { quiz: 0, checkout: 0, purchases: 0 }
           };
         }
@@ -208,7 +213,32 @@ export default function AdminMarketing() {
     return acc;
   }, {});
 
-  const organicSocialData = Object.values(organicSalesByPlatform);
+  // Calcola funnel per piattaforme organiche in modo più accurato
+  const organicSocialData = Object.values(organicSalesByPlatform).map(platformData => {
+    // Get unique user IDs involved in successful transactions from this specific organic source within the selected date range.
+    const userIdsForThisOrganicPlatform = [...new Set(
+      platformData.transactions.filter(t => t.status === 'succeeded').map(t => t.user_id)
+    )];
+    
+    // Filter the *entire* user list (`allUsers`) for those user IDs to get their full profiles
+    const associatedUsers = allUsers.filter(user => userIdsForThisOrganicPlatform.includes(user.id));
+    
+    // Now count funnel steps based on these associated users' profiles
+    const quizCompleted = associatedUsers.filter(u => u.quiz_completed === true).length;
+    const checkoutStarted = associatedUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
+    // Purchases are already correctly represented by platformData.sales (total successful transactions for this platform and date range)
+    const purchases = platformData.sales;
+    
+    return {
+      ...platformData,
+      funnel: {
+        quiz: quizCompleted,
+        checkout: checkoutStarted,
+        purchases: purchases
+      }
+    };
+  });
+
   const totalOrganicSales = organicSocialSales.length;
   const totalOrganicRevenue = organicSocialSales.reduce((sum, s) => sum + s.amount, 0);
 
@@ -515,15 +545,18 @@ export default function AdminMarketing() {
                 {organicSocialData.map((platform) => {
                   const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
                   const avgOrderValue = platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(2) : 0;
-
+                  const conversionRate = platform.funnel.quiz > 0
+                    ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1)
+                    : '0.0';
+                  
                   return (
                     <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
                       <div className="flex items-center justify-between mb-3">
                         <h4 className="font-bold text-gray-900">{platformName}</h4>
                         <Activity className="w-5 h-5 text-purple-600" />
                       </div>
-
-                      <div className="space-y-2">
+                      
+                      <div className="space-y-2 mb-4"> {/* Added mb-4 for spacing */}
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">Vendite:</span>
                           <span className="font-bold text-purple-600">{platform.sales}</span>
@@ -535,6 +568,31 @@ export default function AdminMarketing() {
                         <div className="flex justify-between items-center">
                           <span className="text-sm text-gray-600">AOV:</span>
                           <span className="font-bold text-gray-700">€{avgOrderValue}</span>
+                        </div>
+                      </div>
+
+                      {/* Funnel Organico */}
+                      <div className="pt-4 border-t border-purple-200"> {/* Added pt-4 and border-t */}
+                        <h5 className="text-xs font-bold text-gray-900 mb-2">
+                          {selectedFunnel === 'trial' ? 'Funnel Trial Setup' : 'Funnel Landing Offer'}
+                        </h5>
+                        <div className="space-y-1.5"> {/* Adjusted spacing */}
+                          <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg text-xs"> {/* Adjusted padding and text size */}
+                            <span className="text-gray-700">Quiz</span>
+                            <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-cyan-50 rounded-lg text-xs">
+                            <span className="text-gray-700">Checkout</span>
+                            <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-emerald-50 rounded-lg text-xs">
+                            <span className="text-gray-700">Acquisti</span>
+                            <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
+                          </div>
+                          <div className="mt-2 p-2 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                            <p className="text-xs text-gray-600 mb-0.5">Conversione Quiz → Acquisto</p> {/* Adjusted mb */}
+                            <p className="text-lg font-black text-indigo-600">{conversionRate}%</p> {/* Adjusted text size */}
+                          </div>
                         </div>
                       </div>
 
