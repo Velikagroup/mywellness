@@ -288,6 +288,69 @@ export default function AdminMarketing() {
           <p className="text-gray-600">Performance campagne pubblicitarie e ROAS</p>
         </div>
 
+        {/* Connessione Piattaforme - Box Esterno */}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <LinkIcon className="w-5 h-5 text-[var(--brand-primary)]" />
+              Connetti Piattaforme Advertising
+            </CardTitle>
+            <p className="text-sm text-gray-500 mt-1">Collega i tuoi account pubblicitari per sincronizzare automaticamente le metriche</p>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+              {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName) => {
+                const platformKey = platformDisplayName.toLowerCase();
+                const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+                
+                return (
+                  <div key={platformDisplayName} className={`p-5 rounded-xl border-2 transition-all ${
+                    isConnected 
+                      ? 'bg-green-50 border-green-200' 
+                      : 'bg-gray-50 border-gray-200 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                  }`}>
+                    <div className="flex items-center justify-between mb-3">
+                      <h4 className="font-bold text-gray-900 text-sm">
+                        {platformDisplayName === 'Meta' ? 'Meta Ads' : platformDisplayName + ' Ads'}
+                      </h4>
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                        isConnected ? 'bg-green-500' : 'bg-gray-300'
+                      }`}>
+                        <LinkIcon className={`w-4 h-4 ${isConnected ? 'text-white' : 'text-gray-600'}`} />
+                      </div>
+                    </div>
+                    
+                    <p className={`text-xs mb-3 font-medium ${isConnected ? 'text-green-700' : 'text-gray-600'}`}>
+                      {isConnected ? '✅ Connesso e Sincronizzato' : '⚠️ Non Connesso'}
+                    </p>
+                    
+                    {isConnected ? (
+                      <Button
+                        onClick={() => handleSyncMetrics(platformKey)}
+                        size="sm"
+                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-xs"
+                      >
+                        <Zap className="w-3 h-3 mr-1" />
+                        Sincronizza
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => handleConnectPlatform(platformKey)}
+                        variant="outline"
+                        size="sm"
+                        className="w-full text-xs"
+                      >
+                        <Plus className="w-3 h-3 mr-1" />
+                        Connetti
+                      </Button>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </CardContent>
+        </Card>
+
         {/* Funnel Tabs */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardContent className="p-6">
@@ -499,124 +562,6 @@ export default function AdminMarketing() {
             )}
           </CardContent>
         </Card>
-
-        {/* Piattaforme */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
-            const platformKey = platformDisplayName.toLowerCase();
-            const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
-            
-            const platformGroup = campaignsByPlatform.find(p => p.platform === platformKey);
-            const funnel = platformGroup?.funnel || { quiz: 0, checkout: 0, purchases: 0 };
-            
-            const platformSpend = platformGroup?.totalSpend || 0;
-            const platformRevenue = platformGroup?.totalRevenue || 0;
-            const platformROAS = platformSpend > 0 ? (platformRevenue / platformSpend).toFixed(2) : 0;
-
-            return (
-              <Card key={index} className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {platformDisplayName === 'Meta' ? 'Meta (Facebook/Instagram)' : platformDisplayName + ' Ads'}
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {isConnected ? '✅ Connesso' : '⚠️ Non connesso'} • {selectedFunnel === 'trial' ? 'Trial Setup' : 'Landing Checkout'}
-                      </p>
-                    </div>
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isConnected ? 'bg-green-100' : 'bg-gray-100'}`}>
-                      <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
-                    </div>
-                  </div>
-
-                  {/* Metriche Piattaforma */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    <div className="bg-red-50 rounded-lg p-3 border border-red-100">
-                      <p className="text-xs text-red-600 font-semibold mb-1">Spesa</p>
-                      <p className="text-lg font-bold text-red-700">€{platformSpend.toFixed(0)}</p>
-                    </div>
-                    <div className="bg-green-50 rounded-lg p-3 border border-green-100">
-                      <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
-                      <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
-                    </div>
-                    <div className={`rounded-lg p-3 border ${
-                      platformROAS >= 2 ? 'bg-green-50 border-green-100' : 
-                      platformROAS >= 1 ? 'bg-orange-50 border-orange-100' : 
-                      'bg-red-50 border-red-100'
-                    }`}>
-                      <p className={`text-xs font-semibold mb-1 ${
-                        platformROAS >= 2 ? 'text-green-600' : 
-                        platformROAS >= 1 ? 'text-orange-600' : 
-                        'text-red-600'
-                      }`}>ROAS</p>
-                      <p className={`text-lg font-bold ${
-                        platformROAS >= 2 ? 'text-green-700' : 
-                        platformROAS >= 1 ? 'text-orange-700' : 
-                        'text-red-700'
-                      }`}>{platformROAS}x</p>
-                    </div>
-                  </div>
-
-                  {isConnected ? (
-                    <div className="space-y-3">
-                      <Button
-                        onClick={() => handleSyncMetrics(platformKey)}
-                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                      >
-                        <Zap className="w-4 h-4 mr-2" />
-                        Sincronizza Metriche
-                      </Button>
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-600">
-                          Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
-                        </p>
-                      </div>
-                    </div>
-                  ) : (
-                    <Button
-                      onClick={() => handleConnectPlatform(platformKey)}
-                      variant="outline"
-                      className="w-full"
-                    >
-                      <LinkIcon className="w-4 h-4 mr-2" />
-                      Connetti {platformDisplayName === 'Meta' ? 'Meta' : platformDisplayName} Ads
-                    </Button>
-                  )}
-
-                  {/* Landing Funnel */}
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">
-                      {selectedFunnel === 'trial' ? 'Funnel Trial Setup' : 'Funnel Landing Offer'}
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
-                        <span className="text-gray-700">Quiz Completati</span>
-                        <span className="font-bold text-indigo-600">{funnel.quiz}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
-                        <span className="text-gray-700">Checkout Iniziati</span>
-                        <span className="font-bold text-cyan-600">{funnel.checkout}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                        <span className="text-gray-700">Acquisti</span>
-                        <span className="font-bold text-emerald-600">{funnel.purchases}</span>
-                      </div>
-                      <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
-                        <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
-                        <p className="text-xl font-black text-indigo-600">
-                          {funnel.quiz > 0 
-                            ? ((funnel.purchases / funnel.quiz) * 100).toFixed(1) 
-                            : '0.0'}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
       </div>
 
       {/* Connect Platform Dialog */}
