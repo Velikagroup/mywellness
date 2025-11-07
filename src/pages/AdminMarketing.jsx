@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -168,6 +169,37 @@ export default function AdminMarketing() {
   const overallCPA = totalConversions > 0 ? (totalSpend / totalConversions).toFixed(2) : 0;
   const overallCTR = totalImpressions > 0 ? ((totalClicks / totalImpressions) * 100).toFixed(2) : 0;
   const netProfit = totalRevenue - totalSpend;
+
+  // Calculate organic social sales
+  const filteredTransactions = transactions.filter(t => {
+    if (!t.payment_date) return false;
+    const txDate = parseISO(t.payment_date);
+    return isWithinInterval(txDate, { start: selectedDateRange[0], end: selectedDateRange[1] });
+  });
+
+  const organicSocialSales = filteredTransactions.filter(t => 
+    t.traffic_source && t.traffic_source.startsWith('organic_') && t.status === 'succeeded'
+  );
+
+  const organicSalesByPlatform = organicSocialSales.reduce((acc, sale) => {
+    const platform = sale.traffic_source.replace('organic_', '');
+    if (!acc[platform]) {
+      acc[platform] = {
+        platform,
+        sales: 0,
+        revenue: 0,
+        transactions: []
+      };
+    }
+    acc[platform].sales += 1;
+    acc[platform].revenue += sale.amount;
+    acc[platform].transactions.push(sale);
+    return acc;
+  }, {});
+
+  const organicSocialData = Object.values(organicSalesByPlatform);
+  const totalOrganicSales = organicSocialSales.length;
+  const totalOrganicRevenue = organicSocialSales.reduce((sum, s) => sum + s.amount, 0);
 
   const platformData = campaignsByPlatform.map(p => ({
     name: p.platform.charAt(0).toUpperCase() + p.platform.slice(1),
@@ -364,6 +396,78 @@ export default function AdminMarketing() {
                 </AreaChart>
               </ResponsiveContainer>
             </div>
+          </CardContent>
+        </Card>
+
+        {/* Sezione Vendite Organiche Social */}
+        <Card className="bg-white/80 backdrop-blur-sm">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-5 h-5 text-purple-600" />
+                  Vendite Organiche Social
+                </CardTitle>
+                <p className="text-sm text-gray-500 mt-1">Vendite generate da attività organica sui social media</p>
+              </div>
+              <div className="text-right">
+                <p className="text-sm text-gray-500">Totale Vendite</p>
+                <p className="text-3xl font-bold text-purple-600">{totalOrganicSales}</p>
+                <p className="text-sm text-gray-500">€{totalOrganicRevenue.toFixed(0)}</p>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent>
+            {organicSocialData.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {organicSocialData.map((platform) => {
+                  const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
+                  const avgOrderValue = platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(2) : 0;
+                  
+                  return (
+                    <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
+                      <div className="flex items-center justify-between mb-3">
+                        <h4 className="font-bold text-gray-900">{platformName}</h4>
+                        <Activity className="w-5 h-5 text-purple-600" />
+                      </div>
+                      
+                      <div className="space-y-2">
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Vendite:</span>
+                          <span className="font-bold text-purple-600">{platform.sales}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">Revenue:</span>
+                          <span className="font-bold text-green-600">€{platform.revenue.toFixed(0)}</span>
+                        </div>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-600">AOV:</span>
+                          <span className="font-bold text-gray-700">€{avgOrderValue}</span>
+                        </div>
+                      </div>
+
+                      <div className="mt-4 pt-3 border-t border-purple-200">
+                        <p className="text-xs text-gray-500">Transazioni Recenti</p>
+                        <div className="mt-2 space-y-1">
+                          {platform.transactions.slice(0, 3).map((tx, idx) => (
+                            <div key={idx} className="flex justify-between text-xs">
+                              <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
+                              <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            ) : (
+              <div className="text-center py-8">
+                <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
+                <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
+              </div>
+            )}
           </CardContent>
         </Card>
 
