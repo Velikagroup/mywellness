@@ -544,61 +544,57 @@ export default function AdminMarketing() {
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                 {organicSocialData.map((platform) => {
                   const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
-                  const avgOrderValue = platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(2) : 0;
-                  const conversionRate = platform.funnel.quiz > 0
-                    ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1)
+                  const conversionRate = platform.funnel.quiz > 0 
+                    ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1) 
                     : '0.0';
                   
                   return (
                     <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
-                      <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center justify-between mb-4">
                         <h4 className="font-bold text-gray-900">{platformName}</h4>
                         <Activity className="w-5 h-5 text-purple-600" />
                       </div>
                       
-                      <div className="space-y-2 mb-4"> {/* Added mb-4 for spacing */}
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Vendite:</span>
-                          <span className="font-bold text-purple-600">{platform.sales}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">Revenue:</span>
-                          <span className="font-bold text-green-600">€{platform.revenue.toFixed(0)}</span>
-                        </div>
-                        <div className="flex justify-between items-center">
-                          <span className="text-sm text-gray-600">AOV:</span>
-                          <span className="font-bold text-gray-700">€{avgOrderValue}</span>
+                      {/* Box Entrate Organiche */}
+                      <div className="mb-4">
+                        <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+                          <p className="text-xs text-green-600 font-semibold mb-1">Entrate Organiche</p>
+                          <p className="text-2xl font-bold text-green-700">€{platform.revenue.toFixed(0)}</p>
+                          <p className="text-xs text-gray-600 mt-1">
+                            {platform.sales} vendite • AOV: €{platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(0) : 0}
+                          </p>
                         </div>
                       </div>
 
-                      {/* Funnel Organico */}
-                      <div className="pt-4 border-t border-purple-200"> {/* Added pt-4 and border-t */}
-                        <h5 className="text-xs font-bold text-gray-900 mb-2">
+                      {/* Funnel a Step */}
+                      <div className="mb-4">
+                        <h5 className="text-xs font-bold text-gray-900 mb-3">
                           {selectedFunnel === 'trial' ? 'Funnel Trial Setup' : 'Funnel Landing Offer'}
                         </h5>
-                        <div className="space-y-1.5"> {/* Adjusted spacing */}
-                          <div className="flex items-center justify-between p-2 bg-indigo-50 rounded-lg text-xs"> {/* Adjusted padding and text size */}
-                            <span className="text-gray-700">Quiz</span>
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
+                            <span className="text-gray-700">Quiz Completati</span>
                             <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-cyan-50 rounded-lg text-xs">
-                            <span className="text-gray-700">Checkout</span>
+                          <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                            <span className="text-gray-700">Checkout Iniziati</span>
                             <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
                           </div>
-                          <div className="flex items-center justify-between p-2 bg-emerald-50 rounded-lg text-xs">
+                          <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
                             <span className="text-gray-700">Acquisti</span>
                             <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
                           </div>
-                          <div className="mt-2 p-2 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
-                            <p className="text-xs text-gray-600 mb-0.5">Conversione Quiz → Acquisto</p> {/* Adjusted mb */}
-                            <p className="text-lg font-black text-indigo-600">{conversionRate}%</p> {/* Adjusted text size */}
+                          <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                            <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
+                            <p className="text-xl font-black text-indigo-600">{conversionRate}%</p>
                           </div>
                         </div>
                       </div>
 
-                      <div className="mt-4 pt-3 border-t border-purple-200">
-                        <p className="text-xs text-gray-500">Transazioni Recenti</p>
-                        <div className="mt-2 space-y-1">
+                      {/* Transazioni Recenti */}
+                      <div className="pt-3 border-t border-purple-200">
+                        <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
+                        <div className="space-y-1">
                           {platform.transactions.slice(0, 3).map((tx, idx) => (
                             <div key={idx} className="flex justify-between text-xs">
                               <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
