@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity } from "lucide-react";
+import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -10,6 +10,7 @@ export default function Layout({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
   const [user, setUser] = React.useState(null);
+  const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
   // Scroll to top on page change
   React.useEffect(() => {
@@ -106,27 +107,30 @@ export default function Layout({ children }) {
     return <>{children}</>;
   }
 
-  const allNavItems = [
+  // Main navigation items (sempre visibili in mobile)
+  const mainNavItems = [
     { name: 'Dashboard', icon: Home, path: 'Dashboard' },
     { name: 'Nutrizione', icon: Utensils, path: 'Meals' },
     { name: 'Allenamento', icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' }
-  ];
-  
-  if (user && user.role === 'admin') {
-      allNavItems.push({ name: 'Coupon', icon: Tag, path: 'AdminCoupons' });
-      allNavItems.push({ name: 'Blog', icon: FileText, path: 'AdminBlog' });
-      allNavItems.push({ name: 'Email', icon: Mail, path: 'AdminEmails' });
-      allNavItems.push({ name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' });
-      allNavItems.push({ name: 'Marketing', icon: Target, path: 'AdminMarketing' });
-      allNavItems.push({ name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' });
-  }
-
-  const navItems = allNavItems.filter(item => {
+  ].filter(item => {
     if (item.requiresFeature && user) {
       return hasFeatureAccess(user.subscription_plan, item.requiresFeature);
     }
     return true;
   });
+
+  // Admin menu items (solo nel menu espandibile)
+  const adminMenuItems = user && user.role === 'admin' ? [
+    { name: 'Coupon', icon: Tag, path: 'AdminCoupons' },
+    { name: 'Blog', icon: FileText, path: 'AdminBlog' },
+    { name: 'Email', icon: Mail, path: 'AdminEmails' },
+    { name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' },
+    { name: 'Marketing', icon: Target, path: 'AdminMarketing' },
+    { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
+  ] : [];
+
+  // Per desktop, tutti gli item insieme
+  const allNavItems = [...mainNavItems, ...adminMenuItems];
 
   const handleLogout = async () => {
     try {
@@ -135,6 +139,11 @@ export default function Layout({ children }) {
     } catch (error) {
       console.error("Errore durante il logout:", error);
     }
+  };
+
+  const handleMenuItemClick = (path) => {
+    setMobileMenuOpen(false);
+    navigate(createPageUrl(path));
   };
 
   return (
@@ -197,12 +206,29 @@ export default function Layout({ children }) {
           background: linear-gradient(135deg, 
             rgba(249, 250, 251, 0.75) 0%,
             rgba(243, 244, 246, 0.65) 50%,
-            rgba(249, 250, 251, 0.75) 100%
+            rgba(249, 250, 241, 0.75) 100%
           );
           box-shadow: 
             0 8px 32px 0 rgba(31, 38, 135, 0.08),
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .mobile-menu-expanded {
+          animation: expandUp 0.3s ease-out forwards;
+          max-height: 0; /* Initial state for animation */
+          overflow: hidden; /* Hide content before expansion */
+        }
+
+        @keyframes expandUp {
+          from {
+            max-height: 0;
+            opacity: 0;
+          }
+          to {
+            max-height: 500px; /* Sufficiently large to reveal content */
+            opacity: 1;
+          }
         }
       `}</style>
       
@@ -223,13 +249,11 @@ export default function Layout({ children }) {
       </main>
 
       {/* Bottom Navigation */}
-      <div className={`fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 ${
-        navItems.length <= 4 ? 'max-w-2xl' : 'max-w-5xl'
-      }`}>
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 max-w-2xl sm:max-w-5xl">
         <div className="water-glass-effect rounded-3xl py-3 px-2">
-          {/* Desktop/Tablet - Single Row */}
+          {/* Desktop - Single Row */}
           <div className="hidden sm:flex items-center justify-around">
-            {navItems.map((item) => (
+            {allNavItems.map((item) => (
               <Link
                 key={item.name}
                 to={createPageUrl(item.path)}
@@ -253,76 +277,31 @@ export default function Layout({ children }) {
             </button>
           </div>
 
-          {/* Mobile - Two Rows (max 4 items per row) */}
+          {/* Mobile - Menu con espansione */}
           <div className="sm:hidden">
-            {navItems.length <= 4 ? (
-              // Single row for 4 or fewer items
-              <div className="flex items-center justify-around">
-                {navItems.map((item) => (
-                  <Link
-                    key={item.name}
-                    to={createPageUrl(item.path)}
-                    className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] ${
-                      location.pathname === createPageUrl(item.path)
-                        ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                        : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
-                    }`}
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="text-xs font-medium text-center">{item.name}</span>
-                  </Link>
-                ))}
-                
-                <button
-                  onClick={handleLogout}
-                  className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] text-gray-400 hover:text-red-600 hover:bg-red-50"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span className="text-xs font-medium">Esci</span>
-                </button>
-              </div>
-            ) : (
-              // Two rows for more than 4 items
-              <div className="space-y-2">
-                {/* First Row - First 4 items */}
-                <div className="flex items-center justify-around">
-                  {navItems.slice(0, 4).map((item) => (
-                    <Link
+            {/* Menu espanso con pagine admin */}
+            {mobileMenuOpen && adminMenuItems.length > 0 && (
+              <div className="mobile-menu-expanded pb-4 mb-2 border-b border-gray-200">
+                <div className="grid grid-cols-4 gap-2 p-2">
+                  {adminMenuItems.map((item) => (
+                    <button
                       key={item.name}
-                      to={createPageUrl(item.path)}
-                      className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] ${
+                      onClick={() => handleMenuItemClick(item.path)}
+                      className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${
                         location.pathname === createPageUrl(item.path)
                           ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                          : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                          : 'text-gray-600 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
                       }`}
                     >
                       <item.icon className="w-5 h-5" />
-                      <span className="text-xs font-medium text-center">{item.name}</span>
-                    </Link>
-                  ))}
-                </div>
-
-                {/* Second Row - Remaining items + Logout */}
-                <div className="flex items-center justify-around">
-                  {navItems.slice(4).map((item) => (
-                    <Link
-                      key={item.name}
-                      to={createPageUrl(item.path)}
-                      className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] ${
-                        location.pathname === createPageUrl(item.path)
-                          ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                          : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
-                      }`}
-                    >
-                      <item.icon className="w-5 h-5" />
-                      <span className="text-xs font-medium text-center">{item.name}</span>
-                    </Link>
+                      <span className="text-xs font-medium text-center leading-tight">{item.name}</span>
+                    </button>
                   ))}
                   
-                  {/* Logout button is always present in the second row for mobile if there are more than 4 items */}
+                  {/* Logout nel menu espanso */}
                   <button
                     onClick={handleLogout}
-                    className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 max-w-[80px] text-gray-400 hover:text-red-600 hover:bg-red-50"
+                    className="flex flex-col items-center gap-1 p-3 rounded-lg transition-colors text-red-600 hover:bg-red-50"
                   >
                     <LogOut className="w-5 h-5" />
                     <span className="text-xs font-medium">Esci</span>
@@ -330,6 +309,50 @@ export default function Layout({ children }) {
                 </div>
               </div>
             )}
+
+            {/* Barra principale sempre visibile */}
+            <div className="flex items-center justify-around">
+              {mainNavItems.map((item) => (
+                <Link
+                  key={item.name}
+                  to={createPageUrl(item.path)}
+                  className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
+                    location.pathname === createPageUrl(item.path)
+                      ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                      : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-xs font-medium text-center">{item.name}</span>
+                </Link>
+              ))}
+              
+              {/* Pulsante Menu (solo se ci sono pagine admin) */}
+              {adminMenuItems.length > 0 && (
+                <button
+                  onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                  className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
+                    mobileMenuOpen
+                      ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                      : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                  }`}
+                >
+                  {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
+                  <span className="text-xs font-medium">Menu</span>
+                </button>
+              )}
+              
+              {/* Se non ci sono pagine admin, mostra logout */}
+              {adminMenuItems.length === 0 && (
+                <button
+                  onClick={handleLogout}
+                  className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 text-gray-400 hover:text-red-600 hover:bg-red-50"
+                >
+                  <LogOut className="w-5 h-5" />
+                  <span className="text-xs font-medium">Esci</span>
+                </button>
+              )}
+            </div>
           </div>
         </div>
       </div>
