@@ -456,20 +456,7 @@ export default function AdminAnalytics() {
 
   const revenueTrend = getMonthlyRevenueTrend();
 
-  // Calculate fixed monthly recurring expenses by category for projection
-  // This ensures the Bar Chart in the projection section uses the correct expense breakdown
-  const projectionExpenseCategories = filteredExpenses
-    .filter(e => e.recurring === true) // Consider all fixed recurring expenses
-    .reduce((acc, e) => {
-      let monthlyAmount = e.amount;
-      if (e.recurring_frequency === 'yearly') {
-        monthlyAmount /= 12;
-      }
-      acc[e.category] = (acc[e.category] || 0) + monthlyAmount;
-      return acc;
-    }, {});
-
-
+  // Cash flow projection
   const getCashFlowProjection = () => {
     const projections = [];
     const currentMRR = mrrFromPriceMap;
@@ -477,24 +464,14 @@ export default function AdminAnalytics() {
 
     for (let i = 1; i <= 12; i++) {
       const projectedMRR = currentMRR * Math.pow(growthRate, i);
-      const projectedExpenses = totalMonthlyExpenses; // This refers to the combined fixed monthly + yearly/12 expenses
+      const projectedExpenses = totalMonthlyExpenses; // Spese fisse - nessuna crescita automatica
 
-      const monthData = {
+      projections.push({
         month: format(new Date(new Date().setMonth(new Date().getMonth() + i)), 'MMM yy', { locale: it }),
         revenue: Math.round(projectedMRR),
-      };
-
-      let currentMonthTotalExpenses = 0;
-      // Add each category of expense as a separate field from projectionExpenseCategories
-      Object.entries(projectionExpenseCategories).forEach(([category, amount]) => {
-        monthData[category] = Math.round(amount);
-        currentMonthTotalExpenses += amount;
+        expenses: Math.round(projectedExpenses),
+        profit: Math.round(projectedMRR - projectedExpenses)
       });
-      
-      // Calculate profit using the total projected expenses
-      monthData.profit = Math.round(projectedMRR - currentMonthTotalExpenses);
-
-      projections.push(monthData);
     }
     return projections;
   };
@@ -1227,17 +1204,13 @@ export default function AdminAnalytics() {
                       radius={[6, 6, 0, 0]}
                       barSize={70}
                     />
-                    {Object.keys(projectionExpenseCategories).map((category, index) => (
-                      <Bar 
-                        key={category}
-                        dataKey={category} 
-                        fill={EXPENSE_COLORS[index % EXPENSE_COLORS.length]}
-                        name={`${category.charAt(0).toUpperCase() + category.slice(1)} (€)`}
-                        radius={[4, 4, 0, 0]}
-                        barSize={40}
-                        stackId="expenses"
-                      />
-                    ))}
+                    <Bar 
+                      dataKey="expenses" 
+                      fill="#ef4444" 
+                      name="Spese (€)"
+                      radius={[4, 4, 0, 0]}
+                      barSize={40}
+                    />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
