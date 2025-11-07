@@ -258,7 +258,7 @@ export default function AdminMarketing() {
   }, [selectedDateRange, user, selectedFunnel]); // Re-run loadMarketingData when selectedFunnel changes
 
   const totalSpend = campaignsByPlatform.reduce((sum, p) => sum + p.totalSpend, 0);
-  const totalRevenue = campaignsByPlatform.reduce((sum, p) => sum + p.totalRevenue, 0);
+  const totalRevenue = campaignsByPlatform.reduce((sum, p => sum + p.totalRevenue, 0);
   const totalConversions = campaignsByPlatform.reduce((sum, p) => sum + p.totalConversions, 0);
   const totalClicks = campaignsByPlatform.reduce((sum, p) => sum + p.totalClicks, 0);
   const totalImpressions = campaignsByPlatform.reduce((sum, p) => sum + p.totalImpressions, 0);
@@ -525,6 +525,46 @@ export default function AdminMarketing() {
                       >
                         Ultimi 3 Mesi
                       </Button>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => {
+                          // Trova la data più vecchia tra transazioni e metriche
+                          const oldestTransaction = transactions.length > 0 
+                            ? transactions.reduce((oldest, t) => {
+                                if (!t.payment_date) return oldest;
+                                const tDate = parseISO(t.payment_date);
+                                return !oldest || tDate < oldest ? tDate : oldest;
+                              }, null)
+                            : null;
+
+                          const oldestMetric = metrics.length > 0
+                            ? metrics.reduce((oldest, m) => {
+                                if (!m.date) return oldest;
+                                const mDate = parseISO(m.date);
+                                return !oldest || mDate < oldest ? mDate : oldest;
+                              }, null)
+                            : null;
+
+                          const oldestDate = [oldestTransaction, oldestMetric]
+                            .filter(d => d !== null)
+                            .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
+
+                          if (oldestDate) {
+                            const newRange = [oldestDate, new Date()];
+                            setSelectedDateRange(newRange);
+                            setTempDateRange(newRange);
+                          } else {
+                            // Default a 1 anno fa se non ci sono dati
+                            const newRange = [subDays(new Date(), 365), new Date()];
+                            setSelectedDateRange(newRange);
+                            setTempDateRange(newRange);
+                          }
+                          setShowDatePicker(false);
+                        }}
+                      >
+                        Tutto
+                      </Button>
                     </div>
                     <Button
                       className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
@@ -538,62 +578,6 @@ export default function AdminMarketing() {
                   </div>
                 </PopoverContent>
               </Popover>
-
-              <Button
-                onClick={() => {
-                  const newRange = [subDays(new Date(), 30), new Date()];
-                  setSelectedDateRange(newRange);
-                  setTempDateRange(newRange);
-                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
-                }}
-                variant="outline"
-                className="border-2"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                Oggi
-              </Button>
-
-              <Button
-                onClick={async () => {
-                  // Trova la data più vecchia tra transazioni e metriche
-                  const oldestTransaction = transactions.length > 0 
-                    ? transactions.reduce((oldest, t) => {
-                        if (!t.payment_date) return oldest;
-                        const tDate = parseISO(t.payment_date);
-                        return !oldest || tDate < oldest ? tDate : oldest;
-                      }, null)
-                    : null;
-
-                  const oldestMetric = metrics.length > 0
-                    ? metrics.reduce((oldest, m) => {
-                        if (!m.date) return oldest;
-                        const mDate = parseISO(m.date);
-                        return !oldest || mDate < oldest ? mDate : oldest;
-                      }, null)
-                    : null;
-
-                  const oldestDate = [oldestTransaction, oldestMetric]
-                    .filter(d => d !== null)
-                    .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
-
-                  if (oldestDate) {
-                    const newRange = [oldestDate, new Date()];
-                    setSelectedDateRange(newRange);
-                    setTempDateRange(newRange);
-                  } else {
-                    // Default a 1 anno fa se non ci sono dati
-                    const newRange = [subDays(new Date(), 365), new Date()];
-                    setSelectedDateRange(newRange);
-                    setTempDateRange(newRange);
-                  }
-                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
-                }}
-                variant="outline"
-                className="border-2"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                Tutto
-              </Button>
             </div>
           </div>
         </div>
