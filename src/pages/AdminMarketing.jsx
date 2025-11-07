@@ -538,62 +538,6 @@ export default function AdminMarketing() {
                   </div>
                 </PopoverContent>
               </Popover>
-
-              <Button
-                onClick={() => {
-                  const newRange = [subDays(new Date(), 30), new Date()];
-                  setSelectedDateRange(newRange);
-                  setTempDateRange(newRange);
-                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
-                }}
-                variant="outline"
-                className="border-2"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                Oggi
-              </Button>
-
-              <Button
-                onClick={async () => {
-                  // Trova la data più vecchia tra transazioni e metriche
-                  const oldestTransaction = transactions.length > 0 
-                    ? transactions.reduce((oldest, t) => {
-                        if (!t.payment_date) return oldest;
-                        const tDate = parseISO(t.payment_date);
-                        return !oldest || tDate < oldest ? tDate : oldest;
-                      }, null)
-                    : null;
-
-                  const oldestMetric = metrics.length > 0
-                    ? metrics.reduce((oldest, m) => {
-                        if (!m.date) return oldest;
-                        const mDate = parseISO(m.date);
-                        return !oldest || mDate < oldest ? mDate : oldest;
-                      }, null)
-                    : null;
-
-                  const oldestDate = [oldestTransaction, oldestMetric]
-                    .filter(d => d !== null)
-                    .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
-
-                  if (oldestDate) {
-                    const newRange = [oldestDate, new Date()];
-                    setSelectedDateRange(newRange);
-                    setTempDateRange(newRange);
-                  } else {
-                    // Default a 1 anno fa se non ci sono dati
-                    const newRange = [subDays(new Date(), 365), new Date()];
-                    setSelectedDateRange(newRange);
-                    setTempDateRange(newRange);
-                  }
-                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
-                }}
-                variant="outline"
-                className="border-2"
-              >
-                <CalendarIcon className="mr-2 h-4 w-4" />
-                Tutto
-              </Button>
             </div>
           </div>
         </div>
