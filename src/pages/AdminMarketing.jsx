@@ -395,20 +395,16 @@ export default function AdminMarketing() {
         </Card>
 
         {/* Funnel Tabs */}
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardContent className="p-6">
-            <Tabs value={selectedFunnel} onValueChange={setSelectedFunnel} className="w-full">
-              <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
-                <TabsTrigger value="trial" className="text-sm">
-                  Trial Setup
-                </TabsTrigger>
-                <TabsTrigger value="landing" className="text-sm">
-                  Landing Checkout
-                </TabsTrigger>
-              </TabsList>
-            </Tabs>
-          </CardContent>
-        </Card>
+        <Tabs value={selectedFunnel} onValueChange={setSelectedFunnel} className="w-full">
+          <TabsList className="grid w-full max-w-md mx-auto grid-cols-2">
+            <TabsTrigger value="trial" className="text-sm">
+              Trial Setup
+            </TabsTrigger>
+            <TabsTrigger value="landing" className="text-sm">
+              Landing Checkout
+            </TabsTrigger>
+          </TabsList>
+        </Tabs>
 
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
