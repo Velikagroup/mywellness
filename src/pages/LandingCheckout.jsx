@@ -237,13 +237,22 @@ export default function LandingCheckout() {
   const [discountError, setDiscountError] = useState('');
   const [salesTax, setSalesTax] = useState(null);
   const [loadingTax, setLoadingTax] = useState(false);
+  const [trafficSource, setTrafficSource] = useState(null);
 
   useEffect(() => {
     window.scrollTo(0, 0);
 
+    // 🔥 GET TRAFFIC SOURCE from URL or sessionStorage
+    const urlParams = new URLSearchParams(window.location.search);
+    const sourceFromUrl = urlParams.get('source');
+    const sourceFromSession = sessionStorage.getItem('traffic_source');
+    const source = sourceFromUrl || sourceFromSession || 'direct';
+    setTrafficSource(source);
+    console.log('📊 Landing Checkout - Traffic Source:', source);
+
     // Load Stripe.js
     const loadStripe = async () => {
-      const stripeKey = 'pk_live_51S6Kgr2OXBs6ZYwl4yACMzsDOQ72eT6A2glTBx5dXJWDmDEABHkXbDMzl77MMb3ZQOpXHWJpBiVQWJjZhZz34Nnl00FuwXVxIM';
+      const stripeKey = 'pk_live_51S6Kgr2OXBs6ZYwl4yACMzsDOQ72eT6A2glTBx5dXJWDjDEABHkXbDMzl77MMb3ZQOpXHWJpBiVQWJjZhZz34Nnl00FuwXVxIM';
       if (!window.Stripe) {
         return new Promise((resolve) => {
           const script = document.createElement('script');
@@ -498,7 +507,8 @@ export default function LandingCheckout() {
             phoneNumber: ev.payerPhone || fullPhoneNumber, // Use payerPhone from wallet if available
             termsAccepted: termsAccepted,
             privacyAccepted: privacyAccepted,
-            marketingConsent: marketingConsent
+            marketingConsent: marketingConsent,
+            trafficSource: trafficSource
           };
 
           const functionUrl = `${window.location.origin}/functions/stripeCreateOneTimePayment`;
@@ -578,7 +588,8 @@ export default function LandingCheckout() {
         phoneNumber: fullPhoneNumber,
         termsAccepted: termsAccepted,
         privacyAccepted: privacyAccepted,
-        marketingConsent: marketingConsent
+        marketingConsent: marketingConsent,
+        trafficSource: trafficSource
       };
 
       const functionUrl = `${window.location.origin}/functions/stripeCreateOneTimePayment`;
