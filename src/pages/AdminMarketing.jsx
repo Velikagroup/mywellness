@@ -37,6 +37,8 @@ import { format, subDays, parseISO, isWithinInterval } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Calendar as CalendarComponent } from "@/components/ui/calendar";
+import { Textarea } from '@/components/ui/textarea'; // NEW
+import { Badge } from '@/components/ui/badge'; // NEW
 
 // Define countries array (placeholder/minimal for selectedCountry initialization)
 const countries = [
@@ -52,7 +54,25 @@ export default function AdminMarketing() {
   const [campaigns, setCampaigns] = useState([]);
   const [metrics, setMetrics] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [allUsers, setAllUsers] = useState([]); // Added to state for detailed funnel calculation
+  const [allUsers, setAllUsers] = useState([]);
+
+  // NEW: Influencer state
+  const [influencers, setInfluencers] = useState([]);
+  const [showInfluencerDialog, setShowInfluencerDialog] = useState(false);
+  const [newInfluencer, setNewInfluencer] = useState({
+    name: '',
+    slug: '',
+    platform: 'instagram',
+    follower_count: '',
+    cost_per_post: '',
+    total_spent: 0,
+    contract_type: 'one_time',
+    commission_rate: '',
+    is_active: true,
+    start_date: new Date().toISOString().split('T')[0],
+    notes: '',
+    contact_info: ''
+  });
 
   const [showConnectDialog, setShowConnectDialog] = useState(false);
   const [selectedPlatform, setSelectedPlatform] = useState(null);
@@ -84,34 +104,34 @@ export default function AdminMarketing() {
   const copyTrackingLink = (platform, funnel) => {
     const baseUrl = funnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
     const trackingUrl = `${baseUrl}?utm_source=organic_${platform}`;
-    
+
     navigator.clipboard.writeText(trackingUrl);
     setCopiedLink(`${platform}_${funnel}`);
-    
+
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
   const copyPlatformLink = (platform) => {
     const baseUrl = selectedFunnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
     const trackingUrl = `${baseUrl}?utm_source=organic_${platform}`;
-    
+
     navigator.clipboard.writeText(trackingUrl);
     setCopiedLink(`${platform}_${selectedFunnel}`);
-    
+
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
   const copyAllOrganicLinks = () => {
     const socialPlatforms = ['instagram', 'facebook', 'tiktok', 'youtube', 'linkedin', 'pinterest', 'twitter'];
     const baseUrl = selectedFunnel === 'trial' ? `${APP_URL}${createPageUrl('TrialSetup')}` : `${APP_URL}${createPageUrl('LandingCheckout')}`;
-    
-    const allLinks = socialPlatforms.map(platform => 
+
+    const allLinks = socialPlatforms.map(platform =>
       `${platform.charAt(0).toUpperCase() + platform.slice(1)}: ${baseUrl}?utm_source=organic_${platform}`
     ).join('\n\n');
-    
+
     navigator.clipboard.writeText(allLinks);
     setCopiedLink('all_organic');
-    
+
     setTimeout(() => setCopiedLink(null), 2000);
   };
 
@@ -139,7 +159,11 @@ export default function AdminMarketing() {
         date: { $gte: selectedDateRange[0].toISOString(), $lte: selectedDateRange[1].toISOString() }
       });
       const allTransactionsData = await base44.entities.Transaction.list();
-      const allUsersData = await base44.entities.User.list(); // Fetch all users
+      const allUsersData = await base44.entities.User.list();
+
+      // NEW: Load influencers
+      const influencersData = await base44.entities.Influencer.list('-created_date');
+      setInfluencers(influencersData);
 
       setCampaigns(campaignsData);
       setMetrics(metricsData);
@@ -159,7 +183,7 @@ export default function AdminMarketing() {
       // These overall counts are for the *paid* campaign funnel data
       const totalQuizCompleted = allUsersData.filter(u => u.quiz_completed === true).length;
       const totalCheckoutStarted = allUsersData.filter(u => u.billing_name && u.billing_name.length > 0).length;
-      const totalPurchases = allUsersData.filter(u => 
+      const totalPurchases = allUsersData.filter(u =>
         selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true
       ).length;
 
@@ -310,17 +334,17 @@ export default function AdminMarketing() {
     const userIdsForThisOrganicPlatform = [...new Set(
       platformData.transactions.filter(t => t.status === 'succeeded').map(t => t.user_id)
     )];
-    
+
     // Filter the *entire* user list (`allUsers`) for those user IDs to get their full profiles
     const associatedUsers = allUsers.filter(user => userIdsForThisOrganicPlatform.includes(user.id));
-    
+
     // Now count funnel steps based on these associated users' profiles
     const quizCompleted = associatedUsers.filter(u => u.quiz_completed === true).length;
     const landingViews = selectedFunnel === 'landing' ? quizCompleted : 0;
     const checkoutStarted = associatedUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
     // Purchases are already correctly represented by platformData.sales (total successful transactions for this platform and date range)
     const purchases = platformData.sales;
-    
+
     if (selectedFunnel === 'landing') {
       return {
         ...platformData,
@@ -364,8 +388,8 @@ export default function AdminMarketing() {
     }
   }, selectedFunnel === 'landing' ? { quiz: 0, landing: 0, checkout: 0, purchases: 0 } : { quiz: 0, checkout: 0, purchases: 0 });
 
-  const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0 
-    ? ((totalOrganicFunnel.purchases / totalOrganicFunnel.quiz) * 100).toFixed(1) 
+  const totalOrganicConversionRate = totalOrganicFunnel.quiz > 0
+    ? ((totalOrganicFunnel.purchases / totalOrganicFunnel.quiz) * 100).toFixed(1)
     : '0.0';
 
   const platformData = campaignsByPlatform.map(p => ({
@@ -425,6 +449,118 @@ export default function AdminMarketing() {
       alert('Errore durante la sincronizzazione: ' + error.message);
       console.error('Error syncing metrics:', error);
     }
+  };
+
+  // NEW: Influencer functions
+  const generateInfluencerSlug = (name) => {
+    return name
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '')
+      .substring(0, 20);
+  };
+
+  const handleInfluencerNameChange = (name) => {
+    setNewInfluencer({
+      ...newInfluencer,
+      name: name,
+      slug: generateInfluencerSlug(name)
+    });
+  };
+
+  const handleCreateInfluencer = async () => {
+    if (!newInfluencer.name || !newInfluencer.slug) {
+      alert('Nome e slug sono obbligatori');
+      return;
+    }
+
+    try {
+      await base44.entities.Influencer.create({
+        ...newInfluencer,
+        follower_count: newInfluencer.follower_count ? Number(newInfluencer.follower_count) : null,
+        cost_per_post: newInfluencer.cost_per_post ? Number(newInfluencer.cost_per_post) : null,
+        total_spent: Number(newInfluencer.total_spent || 0),
+        commission_rate: newInfluencer.commission_rate ? Number(newInfluencer.commission_rate) : null
+      });
+
+      setShowInfluencerDialog(false);
+      setNewInfluencer({
+        name: '',
+        slug: '',
+        platform: 'instagram',
+        follower_count: '',
+        cost_per_post: '',
+        total_spent: 0,
+        contract_type: 'one_time',
+        commission_rate: '',
+        is_active: true,
+        start_date: new Date().toISOString().split('T')[0],
+        notes: '',
+        contact_info: ''
+      });
+      await loadMarketingData();
+    } catch (error) {
+      alert('Errore nella creazione: ' + error.message);
+    }
+  };
+
+  const handleUpdateInfluencerSpent = async (influencer, additionalSpent) => {
+    const newTotal = (influencer.total_spent || 0) + additionalSpent;
+    try {
+      await base44.entities.Influencer.update(influencer.id, {
+        total_spent: newTotal
+      });
+      await loadMarketingData();
+    } catch (error) {
+      alert('Errore aggiornamento: ' + error.message);
+    }
+  };
+
+  const copyInfluencerLink = (influencer, funnel) => {
+    const baseUrl = funnel === 'trial'
+      ? `${APP_URL}${createPageUrl('TrialSetup')}`
+      : `${APP_URL}${createPageUrl('LandingCheckout')}`;
+    const trackingUrl = `${baseUrl}?utm_source=influencer_${influencer.slug}`;
+
+    navigator.clipboard.writeText(trackingUrl);
+    setCopiedLink(`influencer_${influencer.slug}_${funnel}`);
+
+    setTimeout(() => setCopiedLink(null), 2000);
+  };
+
+  // Calculate influencer metrics
+  const getInfluencerMetrics = (influencer) => {
+    const influencerTransactions = funnelFilteredTransactions.filter(t =>
+      t.traffic_source === `influencer_${influencer.slug}` && t.status === 'succeeded'
+    );
+
+    const revenue = influencerTransactions.reduce((sum, t) => sum + t.amount, 0);
+    const sales = influencerTransactions.length;
+    const cost = influencer.total_spent || 0;
+    const roi = cost > 0 ? (((revenue - cost) / cost) * 100).toFixed(1) : '0.0'; // Calculate ROI as percentage
+    const roas = cost > 0 ? (revenue / cost).toFixed(2) : '0.00';
+
+    // Funnel data for this influencer
+    const userIds = [...new Set(influencerTransactions.map(t => t.user_id))];
+    const associatedUsers = allUsers.filter(u => userIds.includes(u.id));
+
+    const quizCompleted = associatedUsers.filter(u => u.quiz_completed === true).length;
+    const landingViews = selectedFunnel === 'landing' ? quizCompleted : 0;
+    const checkoutStarted = associatedUsers.filter(u => u.billing_name && u.billing_name.length > 0).length;
+    const purchases = sales;
+
+    return {
+      revenue,
+      sales,
+      cost,
+      roi,
+      roas,
+      profit: revenue - cost,
+      funnel: selectedFunnel === 'landing'
+        ? { quiz: quizCompleted, landing: landingViews, checkout: checkoutStarted, purchases }
+        : { quiz: quizCompleted, checkout: checkoutStarted, purchases },
+      conversionRate: quizCompleted > 0 ? ((purchases / quizCompleted) * 100).toFixed(1) : '0.0',
+      transactions: influencerTransactions
+    };
   };
 
   if (isLoading) {
@@ -717,7 +853,7 @@ export default function AdminMarketing() {
                 </div>
               </div>
               <p className="text-sm text-gray-500 mb-4">Vendite da attività organica</p>
-              
+
               {/* Funnel Totale Organico */}
               <div className={`grid grid-cols-1 ${selectedFunnel === 'landing' ? 'md:grid-cols-4' : 'md:grid-cols-4'} gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200`}>
                 <div className="text-center">
@@ -749,10 +885,10 @@ export default function AdminMarketing() {
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
                   {organicSocialData.map((platform) => {
                     const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
-                    const conversionRate = platform.funnel.quiz > 0 
-                      ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1) 
+                    const conversionRate = platform.funnel.quiz > 0
+                      ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1)
                       : '0.0';
-                    
+
                     return (
                       <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
                         <div className="flex items-center justify-between mb-4">
@@ -861,8 +997,8 @@ export default function AdminMarketing() {
                       <button
                         onClick={handleCopyPlatformLinks}
                         className={`w-12 h-12 rounded-full flex items-center justify-center transition-all border-2 ${
-                          isConnected 
-                            ? 'bg-green-50 border-green-200 hover:bg-green-100' 
+                          isConnected
+                            ? 'bg-green-50 border-green-200 hover:bg-green-100'
                             : 'bg-gray-50 border-gray-200 hover:bg-gray-100'
                         }`}
                         title="Copia link di tracciamento organico"
@@ -957,6 +1093,216 @@ export default function AdminMarketing() {
               );
             })}
           </div>
+        </div>
+
+        {/* NEW: Influencer Marketing Section */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">Influencer Marketing</h2>
+              <p className="text-sm text-gray-600 mt-1">
+                Gestisci collaborazioni e traccia performance influencer
+              </p>
+            </div>
+            <Button
+              onClick={() => setShowInfluencerDialog(true)}
+              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Aggiungi Influencer
+            </Button>
+          </div>
+
+          {influencers.length > 0 ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {influencers.map((influencer) => {
+                const metrics = getInfluencerMetrics(influencer);
+                const platformEmoji = {
+                  instagram: '📸',
+                  tiktok: '🎵',
+                  youtube: '📺',
+                  facebook: '👥',
+                  linkedin: '💼',
+                  twitter: '🐦',
+                  podcast: '🎙️',
+                  blog: '✍️',
+                  altro: '🌐'
+                };
+
+                return (
+                  <Card key={influencer.id} className="bg-white/80 backdrop-blur-sm">
+                    <CardContent className="p-6">
+                      <div className="flex items-start justify-between mb-4">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-500 rounded-full flex items-center justify-center text-2xl">
+                            {platformEmoji[influencer.platform]}
+                          </div>
+                          <div>
+                            <h3 className="font-bold text-gray-900">{influencer.name}</h3>
+                            <p className="text-xs text-gray-500 capitalize">{influencer.platform}</p>
+                            {influencer.follower_count && (
+                              <p className="text-xs text-gray-400">{influencer.follower_count.toLocaleString()} follower</p>
+                            )}
+                          </div>
+                        </div>
+                        {!influencer.is_active && (
+                          <Badge variant="outline" className="text-xs">Inattivo</Badge>
+                        )}
+                      </div>
+
+                      {/* Metriche Principali */}
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+                          <p className="text-xs text-red-600 font-semibold mb-1">Costo</p>
+                          <p className="text-lg font-bold text-red-700">€{metrics.cost.toFixed(0)}</p>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+                          <p className="text-xs text-green-600 font-semibold mb-1">Revenue</p>
+                          <p className="text-lg font-bold text-green-700">€{metrics.revenue.toFixed(0)}</p>
+                        </div>
+                        <div className={`rounded-lg p-3 border ${
+                          metrics.roi >= 100 ? 'bg-green-50 border-green-100' :
+                          metrics.roi >= 0 ? 'bg-orange-50 border-orange-100' :
+                          'bg-red-50 border-red-100'
+                        }`}>
+                          <p className={`text-xs font-semibold mb-1 ${
+                            metrics.roi >= 100 ? 'text-green-600' :
+                            metrics.roi >= 0 ? 'text-orange-600' :
+                            'text-red-600'
+                          }`}>ROI</p>
+                          <p className={`text-lg font-bold ${
+                            metrics.roi >= 100 ? 'text-green-700' :
+                            metrics.roi >= 0 ? 'text-orange-700' :
+                            'text-red-700'
+                          }`}>{metrics.roi}%</p>
+                        </div>
+                        <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
+                          <p className="text-xs text-purple-600 font-semibold mb-1">Vendite</p>
+                          <p className="text-lg font-bold text-purple-700">{metrics.sales}</p>
+                        </div>
+                      </div>
+
+                      {/* Funnel */}
+                      <div className="mb-4">
+                        <h5 className="text-xs font-bold text-gray-900 mb-2">Funnel Conversione</h5>
+                        <div className="space-y-1.5">
+                          <div className="flex items-center justify-between p-2 bg-indigo-50 rounded text-xs">
+                            <span className="text-gray-700">Quiz</span>
+                            <span className="font-bold text-indigo-600">{metrics.funnel.quiz}</span>
+                          </div>
+                          {selectedFunnel === 'landing' && (
+                            <div className="flex items-center justify-between p-2 bg-purple-50 rounded text-xs">
+                              <span className="text-gray-700">Landing</span>
+                              <span className="font-bold text-purple-600">{metrics.funnel.landing}</span>
+                            </div>
+                          )}
+                          <div className="flex items-center justify-between p-2 bg-cyan-50 rounded text-xs">
+                            <span className="text-gray-700">Checkout</span>
+                            <span className="font-bold text-cyan-600">{metrics.funnel.checkout}</span>
+                          </div>
+                          <div className="flex items-center justify-between p-2 bg-emerald-50 rounded text-xs">
+                            <span className="text-gray-700">Acquisti</span>
+                            <span className="font-bold text-emerald-600">{metrics.funnel.purchases}</span>
+                          </div>
+                          <div className="p-2 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded border border-indigo-200">
+                            <p className="text-xs text-gray-600 mb-0.5">Conversione</p>
+                            <p className="text-base font-black text-indigo-600">{metrics.conversionRate}%</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Actions */}
+                      <div className="space-y-2">
+                        <div className="flex gap-2">
+                          <Button
+                            onClick={() => copyInfluencerLink(influencer, 'trial')}
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 text-xs"
+                          >
+                            {copiedLink === `influencer_${influencer.slug}_trial` ? (
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                            ) : (
+                              <LinkIcon className="w-3 h-3 mr-1" />
+                            )}
+                            Trial Link
+                          </Button>
+                          <Button
+                            onClick={() => copyInfluencerLink(influencer, 'landing')}
+                            variant="outline"
+                            size="sm"
+                            className="flex-1 text-xs"
+                          >
+                            {copiedLink === `influencer_${influencer.slug}_landing` ? (
+                              <CheckCircle className="w-3 h-3 mr-1" />
+                            ) : (
+                              <LinkIcon className="w-3 h-3 mr-1" />
+                            )}
+                            Landing Link
+                          </Button>
+                        </div>
+                        <Button
+                          onClick={() => {
+                            const amount = prompt('Inserisci l\'importo speso (EUR):');
+                            if (amount && !isNaN(amount) && parseFloat(amount) >= 0) {
+                              handleUpdateInfluencerSpent(influencer, Number(amount));
+                            } else if (amount !== null) {
+                              alert('Importo non valido. Inserisci un numero.');
+                            }
+                          }}
+                          variant="outline"
+                          size="sm"
+                          className="w-full text-xs"
+                        >
+                          <DollarSign className="w-3 h-3 mr-1" />
+                          Aggiungi Spesa
+                        </Button>
+                      </div>
+
+                      {/* Info Contratto */}
+                      <div className="mt-4 pt-4 border-t border-gray-200">
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <p className="text-gray-500">Contratto</p>
+                            <p className="font-semibold text-gray-900 capitalize">
+                              {influencer.contract_type.replace('_', ' ')}
+                            </p>
+                          </div>
+                          {influencer.cost_per_post && (
+                            <div>
+                              <p className="text-gray-500">Costo Post</p>
+                              <p className="font-semibold text-gray-900">€{influencer.cost_per_post}</p>
+                            </div>
+                          )}
+                          {influencer.commission_rate && influencer.contract_type === 'performance' && (
+                            <div>
+                              <p className="text-gray-500">Commissione</p>
+                              <p className="font-semibold text-gray-900">{influencer.commission_rate}%</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                );
+              })}
+            </div>
+          ) : (
+            <Card className="bg-white/80 backdrop-blur-sm">
+              <CardContent className="p-12 text-center">
+                <Activity className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                <h3 className="text-xl font-bold text-gray-900 mb-2">Nessun Influencer</h3>
+                <p className="text-gray-600 mb-6">Inizia ad aggiungere influencer per tracciare le loro performance</p>
+                <Button
+                  onClick={() => setShowInfluencerDialog(true)}
+                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                >
+                  <Plus className="w-4 h-4 mr-2" />
+                  Aggiungi Primo Influencer
+                </Button>
+              </CardContent>
+            </Card>
+          )}
         </div>
 
         {/* Connetti Piattaforme Advertising - SPOSTATO IN FONDO */}
@@ -1061,6 +1407,169 @@ export default function AdminMarketing() {
             >
               Autorizza Accesso
             </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* NEW: Influencer Dialog */}
+      <Dialog open={showInfluencerDialog} onOpenChange={setShowInfluencerDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>Aggiungi Nuovo Influencer</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="influencer-name">Nome Influencer *</Label>
+                <Input
+                  id="influencer-name"
+                  value={newInfluencer.name}
+                  onChange={(e) => handleInfluencerNameChange(e.target.value)}
+                  placeholder="Mario Rossi"
+                />
+              </div>
+              <div>
+                <Label htmlFor="influencer-slug">Slug (per link) *</Label>
+                <Input
+                  id="influencer-slug"
+                  value={newInfluencer.slug}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, slug: e.target.value})}
+                  placeholder="mariorossi"
+                />
+                <p className="text-xs text-gray-500 mt-1">URL sarà: ?utm_source=influencer_{newInfluencer.slug}</p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="influencer-platform">Piattaforma *</Label>
+                <select
+                  id="influencer-platform"
+                  value={newInfluencer.platform}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, platform: e.target.value})}
+                  className="w-full h-10 px-3 border border-gray-200 rounded-lg"
+                >
+                  <option value="instagram">Instagram</option>
+                  <option value="tiktok">TikTok</option>
+                  <option value="youtube">YouTube</option>
+                  <option value="facebook">Facebook</option>
+                  <option value="linkedin">LinkedIn</option>
+                  <option value="twitter">Twitter</option>
+                  <option value="podcast">Podcast</option>
+                  <option value="blog">Blog</option>
+                  <option value="altro">Altro</option>
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="influencer-followers">Numero Follower</Label>
+                <Input
+                  id="influencer-followers"
+                  type="number"
+                  value={newInfluencer.follower_count}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, follower_count: e.target.value})}
+                  placeholder="10000"
+                />
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="influencer-contract">Tipo Contratto</Label>
+                <select
+                  id="influencer-contract"
+                  value={newInfluencer.contract_type}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, contract_type: e.target.value})}
+                  className="w-full h-10 px-3 border border-gray-200 rounded-lg"
+                >
+                  <option value="one_time">One-Time</option>
+                  <option value="monthly">Mensile</option>
+                  <option value="performance">Performance-Based</option>
+                  <option value="barter">Barter/Scambio</option>
+                </select>
+              </div>
+              <div>
+                <Label htmlFor="influencer-cost">Costo per Post (€)</P>
+                <Input
+                  id="influencer-cost"
+                  type="number"
+                  value={newInfluencer.cost_per_post}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, cost_per_post: e.target.value})}
+                  placeholder="500"
+                />
+              </div>
+            </div>
+
+            {newInfluencer.contract_type === 'performance' && (
+              <div>
+                <Label htmlFor="influencer-commission">Commissione (%)</Label>
+                <Input
+                  id="influencer-commission"
+                  type="number"
+                  value={newInfluencer.commission_rate}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, commission_rate: e.target.value})}
+                  placeholder="10"
+                />
+              </div>
+            )}
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="influencer-start-date">Data Inizio</Label>
+                <Input
+                  id="influencer-start-date"
+                  type="date"
+                  value={newInfluencer.start_date}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, start_date: e.target.value})}
+                />
+              </div>
+              <div>
+                <Label htmlFor="influencer-total-spent">Spesa Iniziale (€)</Label>
+                <Input
+                  id="influencer-total-spent"
+                  type="number"
+                  value={newInfluencer.total_spent}
+                  onChange={(e) => setNewInfluencer({...newInfluencer, total_spent: e.target.value})}
+                  placeholder="0"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label htmlFor="influencer-contact">Contatto (Email/Tel)</Label>
+              <Input
+                id="influencer-contact"
+                value={newInfluencer.contact_info}
+                onChange={(e) => setNewInfluencer({...newInfluencer, contact_info: e.target.value})}
+                placeholder="mario@example.com"
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="influencer-notes">Note</Label>
+              <Textarea
+                id="influencer-notes"
+                value={newInfluencer.notes}
+                onChange={(e) => setNewInfluencer({...newInfluencer, notes: e.target.value})}
+                placeholder="Note sulla collaborazione..."
+                rows={3}
+              />
+            </div>
+
+            <div className="flex gap-3 pt-4">
+              <Button
+                onClick={() => setShowInfluencerDialog(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
+              </Button>
+              <Button
+                onClick={handleCreateInfluencer}
+                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+              >
+                Crea Influencer
+              </Button>
+            </div>
           </div>
         </DialogContent>
       </Dialog>
