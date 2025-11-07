@@ -685,7 +685,6 @@ export default function AdminMarketing() {
                   const newRange = [new Date(), new Date()]; // Corrected for "Oggi" button
                   setSelectedDateRange(newRange);
                   setTempDateRange(newRange);
-                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
                 }}
                 variant="outline"
                 className="border-2">
@@ -727,7 +726,6 @@ export default function AdminMarketing() {
                     setSelectedDateRange(newRange);
                     setTempDateRange(newRange);
                   }
-                  // setShowDatePicker(false); // No need to close if it's already closed, it's an external button
                 }}
                 variant="outline"
                 className="border-2">
