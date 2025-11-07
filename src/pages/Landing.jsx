@@ -29,9 +29,19 @@ export default function Landing() {
   const [emailCaptured, setEmailCaptured] = useState(false);
   const [captureFormData, setCaptureFormData] = useState({ name: '', email: '' });
   const [isSubmittingCapture, setIsSubmittingCapture] = useState(false);
+  const [trafficSource, setTrafficSource] = useState(null);
 
   useEffect(() => {
     document.title = "MyWellness - Trasforma il tuo corpo con l'AI";
+    
+    // 🔥 TRACK TRAFFIC SOURCE from URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const source = urlParams.get('source') || urlParams.get('utm_source') || 'direct';
+    setTrafficSource(source);
+    console.log('📊 Traffic Source:', source);
+    
+    // Save to sessionStorage to persist across navigation
+    sessionStorage.setItem('traffic_source', source);
   }, []);
 
   useEffect(() => {
@@ -250,8 +260,10 @@ export default function Landing() {
   };
 
   const handleCTA = () => {
-    console.log('🔥 CTA CLICKED!');
-    navigate(createPageUrl('LandingCheckout'));
+    console.log('🔥 CTA CLICKED with source:', trafficSource);
+    // Pass traffic source to checkout
+    const checkoutUrl = createPageUrl('LandingCheckout') + (trafficSource ? `?source=${trafficSource}` : '');
+    navigate(checkoutUrl);
   };
 
   const testimonials = [
