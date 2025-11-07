@@ -80,9 +80,14 @@ export default function AdminMarketing() {
 
       // These overall counts are for the *paid* campaign funnel data,
       // currently a simplified distribution.
+      // These calculations need to be refined to be specific to 'trial' or 'landing'
+      // based on the selectedFunnel state, but for now they are broadly distributed.
       const totalQuizCompleted = allUsersData.filter(u => u.quiz_completed === true).length;
       const totalCheckoutStarted = allUsersData.filter(u => u.billing_name && u.billing_name.length > 0).length;
-      const totalPurchases = allUsersData.filter(u => u.purchased_landing_offer === true).length;
+      const totalPurchases = allUsersData.filter(u => 
+        selectedFunnel === 'trial' ? u.purchased_plan_type === 'subscription' : u.purchased_landing_offer === true
+      ).length;
+
 
       platforms.forEach(platform => {
         funnelData[platform] = {
@@ -164,7 +169,7 @@ export default function AdminMarketing() {
     if (user) {
       loadMarketingData();
     }
-  }, [selectedDateRange, user]);
+  }, [selectedDateRange, user, selectedFunnel]); // Re-run loadMarketingData when selectedFunnel changes
 
   const totalSpend = campaignsByPlatform.reduce((sum, p) => sum + p.totalSpend, 0);
   const totalRevenue = campaignsByPlatform.reduce((sum, p) => sum + p.totalRevenue, 0);
@@ -528,231 +533,241 @@ export default function AdminMarketing() {
           </CardContent>
         </Card>
 
-        {/* Sezione Vendite Organiche Social */}
-        <Card className="bg-white/80 backdrop-blur-sm">
-          <CardHeader>
-            <div className="flex items-center justify-between mb-6">
-              <div>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="w-5 h-5 text-purple-600" />
-                  Vendite Organiche Social
-                </CardTitle>
-                <p className="text-sm text-gray-500 mt-1">
-                  Vendite da attività organica ({selectedFunnel === 'trial' ? 'Trial Setup' : 'Landing Checkout'})
-                </p>
-              </div>
-              <div className="text-right">
-                <p className="text-sm text-gray-500">Totale Vendite</p>
-                <p className="text-3xl font-bold text-purple-600">{totalOrganicSales}</p>
-                <p className="text-sm text-gray-500">€{totalOrganicRevenue.toFixed(0)}</p>
-              </div>
+        {/* Sezione Unificata: Vendite Organiche + Piattaforme Ads */}
+        <div className="space-y-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h2 className="text-2xl font-bold text-gray-900">
+                Performance per Piattaforma
+              </h2>
+              <p className="text-sm text-gray-600 mt-1">
+                {selectedFunnel === 'trial' ? 'Funnel Trial Setup' : 'Funnel Landing Checkout'}
+              </p>
             </div>
+          </div>
 
-            {/* Funnel Totale Organico */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
-              <div className="text-center">
-                <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
-                <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
+          {/* Box Vendite Organiche Social */}
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardHeader>
+              <div className="flex items-center justify-between mb-6">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-5 h-5 text-purple-600" />
+                    Vendite Organiche Social
+                  </CardTitle>
+                  <p className="text-sm text-gray-500 mt-1">
+                    Vendite da attività organica
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm text-gray-500">Totale Vendite</p>
+                  <p className="text-3xl font-bold text-purple-600">{totalOrganicSales}</p>
+                  <p className="text-sm text-gray-500">€{totalOrganicRevenue.toFixed(0)}</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
-                <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
+
+              {/* Funnel Totale Organico */}
+              <div className="grid grid-cols-1 md:grid-cols-4 gap-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 rounded-xl border border-purple-200">
+                <div className="text-center">
+                  <p className="text-xs text-gray-600 mb-1">Quiz Completati</p>
+                  <p className="text-2xl font-bold text-indigo-600">{totalOrganicFunnel.quiz}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-gray-600 mb-1">Checkout Iniziati</p>
+                  <p className="text-2xl font-bold text-cyan-600">{totalOrganicFunnel.checkout}</p>
+                </div>
+                <div className="text-center">
+                  <p className="text-xs text-gray-600 mb-1">Acquisti</p>
+                  <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
+                </div>
+                <div className="text-center bg-white/50 rounded-lg py-2">
+                  <p className="text-xs text-gray-600 mb-1">Conversione</p>
+                  <p className="text-2xl font-black text-indigo-600">{totalOrganicConversionRate}%</p>
+                </div>
               </div>
-              <div className="text-center">
-                <p className="text-xs text-gray-600 mb-1">Acquisti</p>
-                <p className="text-2xl font-bold text-emerald-600">{totalOrganicFunnel.purchases}</p>
-              </div>
-              <div className="text-center bg-white/50 rounded-lg py-2">
-                <p className="text-xs text-gray-600 mb-1">Conversione</p>
-                <p className="text-2xl font-black text-indigo-600">{totalOrganicConversionRate}%</p>
-              </div>
-            </div>
-          </CardHeader>
-          <CardContent>
-            {organicSocialData.length > 0 ? (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                {organicSocialData.map((platform) => {
-                  const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
-                  const conversionRate = platform.funnel.quiz > 0 
-                    ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1) 
-                    : '0.0';
-                  
-                  return (
-                    <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
-                      <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-bold text-gray-900">{platformName}</h4>
-                        <Activity className="w-5 h-5 text-purple-600" />
+            </CardHeader>
+            <CardContent>
+              {organicSocialData.length > 0 ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {organicSocialData.map((platform) => {
+                    const platformName = platform.platform.charAt(0).toUpperCase() + platform.platform.slice(1);
+                    const conversionRate = platform.funnel.quiz > 0 
+                      ? ((platform.funnel.purchases / platform.funnel.quiz) * 100).toFixed(1) 
+                      : '0.0';
+                    
+                    return (
+                      <div key={platform.platform} className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-5 border border-purple-200">
+                        <div className="flex items-center justify-between mb-4">
+                          <h4 className="font-bold text-gray-900">{platformName}</h4>
+                          <Activity className="w-5 h-5 text-purple-600" />
+                        </div>
+                        
+                        {/* Box Entrate Organiche */}
+                        <div className="mb-4">
+                          <div className="bg-green-50 rounded-lg p-4 border border-green-100">
+                            <p className="text-xs text-green-600 font-semibold mb-1">Entrate Organiche</p>
+                            <p className="text-2xl font-bold text-green-700">€{platform.revenue.toFixed(0)}</p>
+                            <p className="text-xs text-gray-600 mt-1">
+                              {platform.sales} vendite • AOV: €{platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(0) : 0}
+                            </p>
+                          </div>
+                        </div>
+
+                        {/* Funnel a Step */}
+                        <div className="mb-4">
+                          <h5 className="text-xs font-bold text-gray-900 mb-3">Funnel Conversione</h5>
+                          <div className="space-y-2">
+                            <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
+                              <span className="text-gray-700">Quiz</span>
+                              <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                              <span className="text-gray-700">Checkout</span>
+                              <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
+                            </div>
+                            <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
+                              <span className="text-gray-700">Acquisti</span>
+                              <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
+                            </div>
+                            <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                              <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
+                              <p className="text-xl font-black text-indigo-600">{conversionRate}%</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        {/* Transazioni Recenti */}
+                        <div className="pt-3 border-t border-purple-200">
+                          <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
+                          <div className="space-y-1">
+                            {platform.transactions.slice(0, 3).map((tx, idx) => (
+                              <div key={idx} className="flex justify-between text-xs">
+                                <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
+                                <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
                       </div>
-                      
-                      {/* Box Entrate Organiche */}
-                      <div className="mb-4">
-                        <div className="bg-green-50 rounded-lg p-4 border border-green-100">
-                          <p className="text-xs text-green-600 font-semibold mb-1">Entrate Organiche</p>
-                          <p className="text-2xl font-bold text-green-700">€{platform.revenue.toFixed(0)}</p>
-                          <p className="text-xs text-gray-600 mt-1">
-                            {platform.sales} vendite • AOV: €{platform.sales > 0 ? (platform.revenue / platform.sales).toFixed(0) : 0}
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="text-center py-8">
+                  <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
+                  <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
+                  <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Grid Piattaforme Ads */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
+              const platformKey = platformDisplayName.toLowerCase();
+              const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
+
+              const platformGroup = campaignsByPlatform.find(p => p.platform === platformKey);
+              const funnel = platformGroup?.funnel || { quiz: 0, checkout: 0, purchases: 0 };
+
+              const platformSpend = platformGroup?.totalSpend || 0;
+              const platformRevenue = platformGroup?.totalRevenue || 0;
+              const platformROAS = platformSpend > 0 ? (platformRevenue / platformSpend).toFixed(2) : 0;
+
+              return (
+                <Card key={index} className="bg-white/80 backdrop-blur-sm">
+                  <CardContent className="p-6">
+                    <div className="flex items-start justify-between mb-4">
+                      <div>
+                        <h3 className="text-xl font-bold text-gray-900">
+                          {platformDisplayName === 'Meta' ? 'Meta (Facebook/Instagram)' : platformDisplayName + ' Ads'}
+                        </h3>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {isConnected ? '✅ Connesso' : '⚠️ Non connesso'}
+                        </p>
+                      </div>
+                      <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isConnected ? 'bg-green-100' : 'bg-gray-100'}`}>
+                        <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
+                      </div>
+                    </div>
+
+                    {/* Metriche Piattaforma */}
+                    <div className="grid grid-cols-3 gap-3 mb-4">
+                      <div className="bg-red-50 rounded-lg p-3 border border-red-100">
+                        <p className="text-xs text-red-600 font-semibold mb-1">Spesa</p>
+                        <p className="text-lg font-bold text-red-700">€{platformSpend.toFixed(0)}</p>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+                        <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
+                        <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
+                      </div>
+                      <div className={`rounded-lg p-3 border ${
+                        platformROAS >= 2 ? 'bg-green-50 border-green-100' :
+                        platformROAS >= 1 ? 'bg-orange-50 border-orange-100' :
+                        'bg-red-50 border-red-100'
+                      }`}>
+                        <p className={`text-xs font-semibold mb-1 ${
+                          platformROAS >= 2 ? 'text-green-600' :
+                          platformROAS >= 1 ? 'text-orange-600' :
+                          'text-red-600'
+                        }`}>ROAS</p>
+                        <p className={`text-lg font-bold ${
+                          platformROAS >= 2 ? 'text-green-700' :
+                          platformROAS >= 1 ? 'text-orange-700' :
+                          'text-red-700'
+                        }`}>{platformROAS}x</p>
+                      </div>
+                    </div>
+
+                    {isConnected && (
+                      <div className="space-y-3 mb-6">
+                        <Button
+                          onClick={() => handleSyncMetrics(platformKey)}
+                          className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                        >
+                          <Zap className="w-4 h-4 mr-2" />
+                          Sincronizza Metriche
+                        </Button>
+                        <div className="p-3 bg-gray-50 rounded-lg">
+                          <p className="text-xs text-gray-600">
+                            Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
                           </p>
                         </div>
                       </div>
+                    )}
 
-                      {/* Funnel a Step */}
-                      <div className="mb-4">
-                        <h5 className="text-xs font-bold text-gray-900 mb-3">
-                          {selectedFunnel === 'trial' ? 'Funnel Trial Setup' : 'Funnel Landing Offer'}
-                        </h5>
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
-                            <span className="text-gray-700">Quiz Completati</span>
-                            <span className="font-bold text-indigo-600">{platform.funnel.quiz}</span>
-                          </div>
-                          <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
-                            <span className="text-gray-700">Checkout Iniziati</span>
-                            <span className="font-bold text-cyan-600">{platform.funnel.checkout}</span>
-                          </div>
-                          <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                            <span className="text-gray-700">Acquisti</span>
-                            <span className="font-bold text-emerald-600">{platform.funnel.purchases}</span>
-                          </div>
-                          <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
-                            <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
-                            <p className="text-xl font-black text-indigo-600">{conversionRate}%</p>
-                          </div>
+                    {/* Funnel */}
+                    <div className="mt-6 pt-6 border-t border-gray-200">
+                      <h4 className="text-sm font-bold text-gray-900 mb-3">Funnel Conversione</h4>
+                      <div className="space-y-2">
+                        <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
+                          <span className="text-gray-700">Quiz Completati</span>
+                          <span className="font-bold text-indigo-600">{funnel.quiz}</span>
                         </div>
-                      </div>
-
-                      {/* Transazioni Recenti */}
-                      <div className="pt-3 border-t border-purple-200">
-                        <p className="text-xs text-gray-500 mb-2">Transazioni Recenti</p>
-                        <div className="space-y-1">
-                          {platform.transactions.slice(0, 3).map((tx, idx) => (
-                            <div key={idx} className="flex justify-between text-xs">
-                              <span className="text-gray-600">{format(parseISO(tx.payment_date), 'dd/MM')}</span>
-                              <span className="font-semibold text-green-600">€{tx.amount.toFixed(0)}</span>
-                            </div>
-                          ))}
+                        <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
+                          <span className="text-gray-700">Checkout Iniziati</span>
+                          <span className="font-bold text-cyan-600">{funnel.checkout}</span>
+                        </div>
+                        <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
+                          <span className="text-gray-700">Acquisti</span>
+                          <span className="font-bold text-emerald-600">{funnel.purchases}</span>
+                        </div>
+                        <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
+                          <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
+                          <p className="text-xl font-black text-indigo-600">
+                            {funnel.quiz > 0
+                              ? ((funnel.purchases / funnel.quiz) * 100).toFixed(1)
+                              : '0.0'}%
+                          </p>
                         </div>
                       </div>
                     </div>
-                  );
-                })}
-              </div>
-            ) : (
-              <div className="text-center py-8">
-                <Activity className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">Nessuna vendita organica tracciata nel periodo selezionato</p>
-                <p className="text-sm text-gray-400 mt-2">Le vendite organiche vengono tracciate automaticamente quando viene specificata la sorgente</p>
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        {/* Piattaforme Ads - Box Dettagliati */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName, index) => {
-            const platformKey = platformDisplayName.toLowerCase();
-            const isConnected = campaignsByPlatform.some(p => p.platform === platformKey && p.campaigns.length > 0);
-
-            const platformGroup = campaignsByPlatform.find(p => p.platform === platformKey);
-            const funnel = platformGroup?.funnel || { quiz: 0, checkout: 0, purchases: 0 };
-
-            const platformSpend = platformGroup?.totalSpend || 0;
-            const platformRevenue = platformGroup?.totalRevenue || 0;
-            const platformROAS = platformSpend > 0 ? (platformRevenue / platformSpend).toFixed(2) : 0;
-
-            return (
-              <Card key={index} className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-6">
-                  <div className="flex items-start justify-between mb-4">
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {platformDisplayName === 'Meta' ? 'Meta (Facebook/Instagram)' : platformDisplayName + ' Ads'}
-                      </h3>
-                      <p className="text-sm text-gray-500 mt-1">
-                        {isConnected ? '✅ Connesso' : '⚠️ Non connesso'} • {selectedFunnel === 'trial' ? 'Trial Setup' : 'Landing Checkout'}
-                      </p>
-                    </div>
-                    <div className={`w-12 h-12 rounded-full flex items-center justify-center ${isConnected ? 'bg-green-100' : 'bg-gray-100'}`}>
-                      <LinkIcon className={`w-6 h-6 ${isConnected ? 'text-green-600' : 'text-gray-400'}`} />
-                    </div>
-                  </div>
-
-                  {/* Metriche Piattaforma */}
-                  <div className="grid grid-cols-3 gap-3 mb-4">
-                    <div className="bg-red-50 rounded-lg p-3 border border-red-100">
-                      <p className="text-xs text-red-600 font-semibold mb-1">Spesa</p>
-                      <p className="text-lg font-bold text-red-700">€{platformSpend.toFixed(0)}</p>
-                    </div>
-                    <div className="bg-green-50 rounded-lg p-3 border border-green-100">
-                      <p className="text-xs text-green-600 font-semibold mb-1">Entrate</p>
-                      <p className="text-lg font-bold text-green-700">€{platformRevenue.toFixed(0)}</p>
-                    </div>
-                    <div className={`rounded-lg p-3 border ${
-                      platformROAS >= 2 ? 'bg-green-50 border-green-100' :
-                      platformROAS >= 1 ? 'bg-orange-50 border-orange-100' :
-                      'bg-red-50 border-red-100'
-                    }`}>
-                      <p className={`text-xs font-semibold mb-1 ${
-                        platformROAS >= 2 ? 'text-green-600' :
-                        platformROAS >= 1 ? 'text-orange-600' :
-                        'text-red-600'
-                      }`}>ROAS</p>
-                      <p className={`text-lg font-bold ${
-                        platformROAS >= 2 ? 'text-green-700' :
-                        platformROAS >= 1 ? 'text-orange-700' :
-                        'text-red-700'
-                      }`}>{platformROAS}x</p>
-                    </div>
-                  </div>
-
-                  {isConnected && (
-                    <div className="space-y-3 mb-6">
-                      <Button
-                        onClick={() => handleSyncMetrics(platformKey)}
-                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                      >
-                        <Zap className="w-4 h-4 mr-2" />
-                        Sincronizza Metriche
-                      </Button>
-                      <div className="p-3 bg-gray-50 rounded-lg">
-                        <p className="text-xs text-gray-600">
-                          Ultima sincronizzazione: {format(new Date(), 'dd/MM/yyyy HH:mm')}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {/* Landing Funnel */}
-                  <div className="mt-6 pt-6 border-t border-gray-200">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">
-                      {selectedFunnel === 'trial' ? 'Funnel Trial Setup' : 'Funnel Landing Offer'}
-                    </h4>
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between p-3 bg-indigo-50 rounded-lg text-sm">
-                        <span className="text-gray-700">Quiz Completati</span>
-                        <span className="font-bold text-indigo-600">{funnel.quiz}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-cyan-50 rounded-lg text-sm">
-                        <span className="text-gray-700">Checkout Iniziati</span>
-                        <span className="font-bold text-cyan-600">{funnel.checkout}</span>
-                      </div>
-                      <div className="flex items-center justify-between p-3 bg-emerald-50 rounded-lg text-sm">
-                        <span className="text-gray-700">Acquisti</span>
-                        <span className="font-bold text-emerald-600">{funnel.purchases}</span>
-                      </div>
-                      <div className="mt-2 p-3 bg-gradient-to-r from-indigo-50 to-cyan-50 rounded-lg border border-indigo-200">
-                        <p className="text-xs text-gray-600 mb-1">Conversione Quiz → Acquisto</p>
-                        <p className="text-xl font-black text-indigo-600">
-                          {funnel.quiz > 0
-                            ? ((funnel.purchases / funnel.quiz) * 100).toFixed(1)
-                            : '0.0'}%
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
         </div>
       </div>
 
