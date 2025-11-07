@@ -808,15 +808,17 @@ export default function AdminAnalytics() {
             <CardContent>
               <div className="h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                  <AreaChart data={revenueTrend}>
-                    <defs>
-                      <linearGradient id="colorRevenue" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#26847F" stopOpacity={0.8}/>
-                        <stop offset="95%" stopColor="#26847F" stopOpacity={0}/>
-                      </linearGradient>
-                    </defs>
+                  <BarChart 
+                    data={revenueTrend}
+                    barGap={-55}
+                    margin={{ left: 20, right: 20, top: 20, bottom: 20 }}
+                  >
                     <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" />
-                    <XAxis dataKey="month" stroke="#6b7280" />
+                    <XAxis 
+                      dataKey="month" 
+                      stroke="#6b7280"
+                      tickLine={false}
+                    />
                     <YAxis stroke="#6b7280" />
                     <Tooltip
                       contentStyle={{
@@ -824,16 +826,17 @@ export default function AdminAnalytics() {
                         border: '1px solid #e5e7eb',
                         borderRadius: '8px'
                       }}
+                      cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
                     />
-                    <Area
-                      type="monotone"
-                      dataKey="revenue"
-                      stroke="#26847F"
-                      fillOpacity={1}
-                      fill="url(#colorRevenue)"
+                    <Legend />
+                    <Bar 
+                      dataKey="revenue" 
+                      fill="#10b981" 
                       name="Entrate (€)"
+                      radius={[6, 6, 0, 0]}
+                      barSize={70}
                     />
-                  </AreaChart>
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
             </CardContent>
