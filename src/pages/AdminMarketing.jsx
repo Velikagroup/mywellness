@@ -455,15 +455,17 @@ export default function AdminMarketing() {
                 }
               }}>
                 <PopoverTrigger asChild>
-                  <Button variant="outline" className="justify-start text-left font-normal border-2">
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {selectedDateRange[0] && selectedDateRange[1] ? (
-                      <>
-                        {format(selectedDateRange[0], 'dd MMM yyyy', { locale: it })} - {format(selectedDateRange[1], 'dd MMM yyyy', { locale: it })}
-                      </>
-                    ) : (
-                      <span>Seleziona periodo</span>
-                    )}
+                  <Button variant="outline" className="h-11 px-4 justify-start text-left font-normal border-2 hover:bg-gray-50 transition-colors min-w-[280px]">
+                    <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                    <span className="truncate">
+                      {selectedDateRange[0] && selectedDateRange[1] ? (
+                        <>
+                          {format(selectedDateRange[0], 'dd MMM yyyy', { locale: it })} - {format(selectedDateRange[1], 'dd MMM yyyy', { locale: it })}
+                        </>
+                      ) : (
+                        <span>Seleziona periodo</span>
+                      )}
+                    </span>
                   </Button>
                 </PopoverTrigger>
                 <PopoverContent className="w-auto p-0" align="end">
@@ -538,6 +540,47 @@ export default function AdminMarketing() {
                   </div>
                 </PopoverContent>
               </Popover>
+
+              <Button
+                onClick={async () => {
+                  // Trova la data più vecchia tra transazioni e metriche
+                  const oldestTransaction = transactions.length > 0 
+                    ? transactions.reduce((oldest, t) => {
+                        if (!t.payment_date) return oldest;
+                        const tDate = parseISO(t.payment_date);
+                        return !oldest || tDate < oldest ? tDate : oldest;
+                      }, null)
+                    : null;
+
+                  const oldestMetric = metrics.length > 0
+                    ? metrics.reduce((oldest, m) => {
+                        if (!m.date) return oldest;
+                        const mDate = parseISO(m.date);
+                        return !oldest || mDate < oldest ? mDate : oldest;
+                      }, null)
+                    : null;
+
+                  const oldestDate = [oldestTransaction, oldestMetric]
+                    .filter(d => d !== null)
+                    .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
+
+                  if (oldestDate) {
+                    const newRange = [oldestDate, new Date()];
+                    setSelectedDateRange(newRange);
+                    setTempDateRange(newRange);
+                  } else {
+                    // Default a 1 anno fa se non ci sono dati
+                    const newRange = [subDays(new Date(), 365), new Date()];
+                    setSelectedDateRange(newRange);
+                    setTempDateRange(newRange);
+                  }
+                }}
+                variant="outline"
+                className="h-11 px-4 border-2 hover:bg-gray-50 transition-colors"
+              >
+                <CalendarIcon className="mr-2 h-4 w-4" />
+                Periodo Completo
+              </Button>
             </div>
           </div>
         </div>

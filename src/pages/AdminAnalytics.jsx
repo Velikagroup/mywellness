@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Tabs, TabsContent, TabsTrigger } from '@/components/ui/tabs'; // TabsList is unused
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import {
   TrendingUp,
@@ -16,7 +16,7 @@ import {
   DollarSign,
   Activity,
   Calendar as CalendarIcon,
-  PieChart as PieChartIcon,
+  PieChart as PieChartIcon, // PieChart as PieChartIcon is unused
   BarChart3,
   Plus,
   Euro,
@@ -135,10 +135,12 @@ export default function AdminAnalytics() {
       try {
         // Fetch users and transactions - the outline implies refetching or using the "all" lists
         // and then filtering them client-side for the current dateRange
-        const allUsers = await base44.entities.User.list();
-        const allTransactions = await base44.entities.Transaction.list();
+        // We already have all users/transactions in state, so filter from there
+        const allUsers = users;
+        const allTransactions = transactions;
 
         // Explicitly server-side filter expenses for this stats calculation, as per outline
+        // This is necessary because `expenses` state contains ALL expenses for other purposes
         const fetchedExpenses = await base44.entities.Expense.filter({
           date: { $gte: dateRange.from.toISOString(), $lte: dateRange.to.toISOString() }
         });
@@ -227,10 +229,14 @@ export default function AdminAnalytics() {
       setIsLoading(false); // Set to false after this analytics load
     };
 
-    if (dateRange.from && dateRange.to) { // Only run if date range is defined
+    if (dateRange.from && dateRange.to && users.length > 0 && transactions.length > 0 && expenses.length > 0) { // Only run if date range is defined and initial data is loaded
         loadAnalytics();
+    } else if (users.length > 0 && transactions.length > 0 && expenses.length > 0) {
+      // If data is loaded but dateRange might be initially unset, ensure loadAnalytics runs.
+      // This is a safety catch, as dateRange has default values.
+      loadAnalytics();
     }
-  }, [dateRange]); // Rerun when date range changes
+  }, [dateRange, users, transactions, expenses]); // Rerun when date range or underlying data changes
 
   const handleSaveExpense = async () => {
     // If it's a recurring variable expense template, amount is not required for the template itself
@@ -534,15 +540,17 @@ export default function AdminAnalytics() {
 
             <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full lg:w-auto justify-start text-left font-normal border-2">
-                  <CalendarIcon className="mr-2 h-4 w-4" />
-                  {dateRange.from && dateRange.to ? (
-                    <>
-                      {format(dateRange.from, 'dd MMM yyyy', { locale: it })} - {format(dateRange.to, 'dd MMM yyyy', { locale: it })}
-                    </>
-                  ) : (
-                    <span>Seleziona periodo</span>
-                  )}
+                <Button variant="outline" className="h-11 px-4 w-full lg:w-auto justify-start text-left font-normal border-2 hover:bg-gray-50 transition-colors min-w-[280px]">
+                  <CalendarIcon className="mr-2 h-4 w-4 flex-shrink-0" />
+                  <span className="truncate">
+                    {dateRange.from && dateRange.to ? (
+                      <>
+                        {format(dateRange.from, 'dd MMM yyyy', { locale: it })} - {format(dateRange.to, 'dd MMM yyyy', { locale: it })}
+                      </>
+                    ) : (
+                      <span>Seleziona periodo</span>
+                    )}
+                  </span>
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-auto p-0" align="end">
@@ -617,6 +625,57 @@ export default function AdminAnalytics() {
                 </div>
               </PopoverContent>
             </Popover>
+
+            <Button
+              onClick={async () => {
+                // Trova la data più vecchia tra utenti, transazioni ed expenses
+                const oldestUser = users.length > 0 
+                  ? users.reduce((oldest, u) => {
+                      if (!u.created_date) return oldest;
+                      const uDate = parseISO(u.created_date);
+                      return !oldest || uDate < oldest ? uDate : oldest;
+                    }, null)
+                  : null;
+
+                const oldestTransaction = transactions.length > 0 
+                  ? transactions.reduce((oldest, t) => {
+                      if (!t.payment_date) return oldest;
+                      const tDate = parseISO(t.payment_date);
+                      return !oldest || tDate < oldest ? tDate : oldest;
+                    }, null)
+                  : null;
+
+                const oldestExpense = expenses.length > 0
+                  ? expenses.reduce((oldest, e) => {
+                      if (!e.date) return oldest;
+                      const eDate = parseISO(e.date);
+                      return !oldest || eDate < oldest ? eDate : oldest;
+                    }, null)
+                  : null;
+
+                const oldestDate = [oldestUser, oldestTransaction, oldestExpense]
+                  .filter(d => d !== null)
+                  .reduce((oldest, d) => !oldest || d < oldest ? d : oldest, null);
+
+                if (oldestDate) {
+                  setDateRange({
+                    from: oldestDate,
+                    to: new Date()
+                  });
+                } else {
+                  // Default a 1 anno fa se non ci sono dati
+                  setDateRange({
+                    from: subMonths(new Date(), 12),
+                    to: new Date()
+                  });
+                }
+              }}
+              variant="outline"
+              className="h-11 px-4 w-full lg:w-auto border-2 hover:bg-gray-50 transition-colors"
+            >
+              <CalendarIcon className="mr-2 h-4 w-4" />
+              Periodo Completo
+            </Button>
           </div>
         </div>
 
@@ -988,7 +1047,7 @@ export default function AdminAnalytics() {
                       <div className="flex-1">
                         <p className="font-semibold text-sm text-gray-900">{expense.description}</p>
                         <p className="text-xs text-gray-500">
-                          {expense.category} • {format(new Date(expense.date), 'dd/MM/yyyy')}
+                          {expense.category} • {format(parseISO(expense.date), 'dd/MM/yyyy')}
                           {(expense.recurring && expense.recurring_frequency) && ` • Ricorrente (${expense.recurring_frequency})`}
                           {(expense.recurring_variable && !expense.recurring && expense.parent_expense_id) && ` • Variabile`}
                         </p>
