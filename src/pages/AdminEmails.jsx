@@ -46,8 +46,19 @@ export default function AdminEmails() {
   const [previewEmail, setPreviewEmail] = useState(null);
 
   // NEW: Edit state for preview dialog
-  const [editingContent, setEditingContent] = useState('');
+  const [editingContent, setEditingContent] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
+
+  const [emailTemplates, setEmailTemplates] = useState([]);
+
+  const loadEmailTemplates = async () => {
+    try {
+      const templates = await base44.entities.EmailTemplate.list();
+      setEmailTemplates(templates);
+    } catch (error) {
+      console.error('Error loading email templates:', error);
+    }
+  };
 
   useEffect(() => {
     checkAccess();
@@ -62,6 +73,7 @@ export default function AdminEmails() {
       }
       setUser(currentUser);
       await loadUserCount();
+      await loadEmailTemplates();
     } catch (error) {
       navigate(createPageUrl('Home'));
     }
@@ -116,21 +128,36 @@ export default function AdminEmails() {
   };
 
   const handleOpenPreview = (email) => {
-    setPreviewEmail(email);
+    const template = emailTemplates.find(t => t.template_id === email.id);
+    setPreviewEmail({ ...email, template });
     setShowEmailPreview(true);
-    setIsEditMode(false); // Ensure edit mode is off when opening a new preview
-    setEditingContent(''); // Clear previous editing content
+    setIsEditMode(false);
+    setEditingContent(template || {});
   };
 
   const handleStartEdit = () => {
     setIsEditMode(true);
-    setEditingContent(previewEmail?.preview || '');
+    setEditingContent(previewEmail?.template || {});
   };
 
-  const handleSaveEdit = () => {
-    // In a real implementation, this would update the backend function
-    alert('⚠️ Per modificare il contenuto delle email, devi editare la backend function: ' + previewEmail.function);
-    setIsEditMode(false);
+  const handleSaveEdit = async () => {
+    try {
+      if (previewEmail?.template?.id) {
+        await base44.entities.EmailTemplate.update(previewEmail.template.id, editingContent);
+        alert('✅ Email modificata con successo!');
+        await loadEmailTemplates();
+        setIsEditMode(false);
+        setShowEmailPreview(false);
+      } else if (previewEmail?.id && !previewEmail?.template?.id) {
+        // This case might happen if a systemEmail exists but no template for it yet.
+        // In a real app, you might want to allow creating a new template here,
+        // or prevent editing if no template exists. For now, this will just show an error.
+        alert('❌ Impossibile salvare: Template non trovato. Crea un nuovo template per questa email.');
+      }
+    } catch (error) {
+      console.error('Error updating template:', error);
+      alert('❌ Errore durante il salvataggio: ' + error.message);
+    }
   };
 
   if (isLoading) {
@@ -149,43 +176,7 @@ export default function AdminEmails() {
       description: 'Email di benvenuto inviata dopo il setup del trial con guida ai prossimi passi',
       trigger: 'Completamento Trial Setup',
       status: 'active',
-      function: 'sendTrialWelcomeEmail',
-      subject: '🎉 Benvenuto in MyWellness! I tuoi 3 giorni di prova iniziano ora!',
-      preview: `
-        <strong>Oggetto:</strong> 🎉 Benvenuto in MyWellness! I tuoi 3 giorni di prova iniziano ora!<br/><br/>
-        
-        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
-        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
-        
-        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
-          <h2 style="color: #26847F; margin-top: 0;">🎉 Benvenuto in MyWellness!</h2>
-          <p><strong>Ciao {user_name},</strong></p>
-          <p>Grazie per aver scelto MyWellness! Sei a un passo dal trasformare il tuo corpo e la tua vita con l'intelligenza artificiale.</p>
-          
-          <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>⏰ Il tuo periodo di prova termina tra: 3 GIORNI</strong></p>
-            <p style="margin: 5px 0 0 0; font-size: 13px;">Dopo la prova: €39/mese (puoi cancellare quando vuoi)</p>
-          </div>
-          
-          <h3>🚀 Cosa ti aspetta:</h3>
-          <ul>
-            <li>🍽️ Piano Nutrizionale AI Personalizzato</li>
-            <li>💪 Allenamenti Scientifici</li>
-            <li>📸 Analisi Foto con AI</li>
-            <li>📊 Tracciamento Progressi</li>
-          </ul>
-          
-          <h3>📝 I tuoi prossimi passi:</h3>
-          <ol>
-            <li>Completa il Quiz</li>
-            <li>Genera il tuo Piano</li>
-            <li>Inizia Subito</li>
-            <li>Analizza i Risultati</li>
-          </ol>
-          
-          <p style="margin-top: 20px;"><strong>💡 Consiglio Pro:</strong> I primi 3 giorni sono cruciali! Dedica 10 minuti oggi per completare il quiz e generare il tuo piano.</p>
-        </div>
-      `
+      function: 'sendTrialWelcomeEmail'
     },
     {
       id: 'landing_new_user',
@@ -193,28 +184,7 @@ export default function AdminEmails() {
       description: 'Email inviata ai nuovi utenti dopo l\'acquisto della Landing Offer con password temporanea',
       trigger: 'Acquisto Landing Offer (nuovo utente)',
       status: 'active',
-      function: 'stripeCreateOneTimePayment',
-      subject: '🎉 Benvenuto in MyWellness - Il Tuo Accesso',
-      preview: `
-        <strong>Oggetto:</strong> 🎉 Benvenuto in MyWellness - Il Tuo Accesso<br/><br/>
-        
-        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
-        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
-        
-        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
-          <h2 style="color: #26847F; margin-top: 0;">Benvenuto in MyWellness!</h2>
-          <p><strong>Ciao {user_name},</strong></p>
-          <p>Grazie per aver scelto MyWellness! Il tuo acquisto è stato completato con successo.</p>
-          
-          <div style="background: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
-            <p style="margin: 0;"><strong>La tua password temporanea:</strong></p>
-            <p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #26847F;">{temp_password}</p>
-          </div>
-          
-          <p>Per iniziare, clicca sul pulsante qui sotto e crea la tua password personale.</p>
-          <p style="margin-top: 20px;">Se hai bisogno di aiuto, contattaci a <strong>support@projectmywellness.com</strong></p>
-        </div>
-      `
+      function: 'stripeCreateOneTimePayment'
     },
     {
       id: 'landing_existing_user',
@@ -222,28 +192,7 @@ export default function AdminEmails() {
       description: 'Email di conferma per utenti esistenti che acquistano la Landing Offer',
       trigger: 'Acquisto Landing Offer (utente esistente)',
       status: 'active',
-      function: 'stripeCreateOneTimePayment',
-      subject: '🎉 Grazie per il tuo acquisto - MyWellness Premium Attivato',
-      preview: `
-        <strong>Oggetto:</strong> 🎉 Grazie per il tuo acquisto - MyWellness Premium Attivato<br/><br/>
-        
-        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
-        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
-        
-        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
-          <h2 style="color: #26847F; margin-top: 0;">Il Tuo Piano Premium è Attivo!</h2>
-          <p><strong>Ciao {user_name},</strong></p>
-          <p>Grazie per aver acquistato il piano Premium di MyWellness! Il tuo pagamento è stato completato con successo.</p>
-          
-          <div style="background: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
-            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #26847F;">✅ Piano Premium Attivato</p>
-            <p style="margin: 10px 0 0 0;">Durata: 3 mesi</p>
-          </div>
-          
-          <p>Accedi subito alla tua dashboard per iniziare il tuo percorso di trasformazione.</p>
-          <p style="margin-top: 20px;">Se hai bisogno di aiuto, contattaci a <strong>support@projectmywellness.com</strong></p>
-        </div>
-      `
+      function: 'stripeCreateOneTimePayment'
     },
     {
       id: 'renewal_7_days',
@@ -251,34 +200,7 @@ export default function AdminEmails() {
       description: 'Email automatica inviata 7 giorni prima della scadenza abbonamento',
       trigger: 'Cron giornaliero (7 giorni prima scadenza)',
       status: 'active',
-      function: 'sendRenewalReminders',
-      subject: '⏰ Il tuo abbonamento MyWellness scade tra 7 giorni',
-      preview: `
-        <strong>Oggetto:</strong> ⏰ Il tuo abbonamento MyWellness scade tra 7 giorni<br/><br/>
-        
-        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
-        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
-        
-        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
-          <h2 style="color: #26847F; margin-top: 0;">⏰ Promemoria Rinnovo</h2>
-          <p><strong>Ciao {user_name},</strong></p>
-          
-          <div style="background: #eff6ff; border: 3px solid #3b82f6; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
-            <h3 style="color: #3b82f6; font-size: 24px; margin: 0 0 10px 0;">📅 Promemoria</h3>
-            <p style="margin: 0; font-size: 18px;">Il tuo abbonamento MyWellness scade tra 7 giorni</p>
-            <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Data scadenza: {expiry_date}</p>
-          </div>
-          
-          <p>Non perdere l'accesso a tutte le funzionalità Premium che ti aiutano a raggiungere i tuoi obiettivi:</p>
-          <ul>
-            <li>Piano nutrizionale personalizzato con AI</li>
-            <li>Allenamenti adattivi basati sui tuoi progressi</li>
-            <li>Analisi foto pasti automatica</li>
-            <li>Tracciamento completo dei progressi</li>
-            <li>Supporto prioritario</li>
-          </ul>
-        </div>
-      `
+      function: 'sendRenewalReminders'
     },
     {
       id: 'renewal_3_days',
@@ -286,27 +208,7 @@ export default function AdminEmails() {
       description: 'Email automatica inviata 3 giorni prima della scadenza abbonamento',
       trigger: 'Cron giornaliero (3 giorni prima scadenza)',
       status: 'active',
-      function: 'sendRenewalReminders',
-      subject: '🔔 Ultimi 3 giorni - Non perdere MyWellness!',
-      preview: `
-        <strong>Oggetto:</strong> 🔔 Ultimi 3 giorni - Non perdere MyWellness!<br/><br/>
-        
-        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
-        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
-        
-        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
-          <h2 style="color: #26847F; margin-top: 0;">⏰ Promemoria Rinnovo</h2>
-          <p><strong>Ciao {user_name},</strong></p>
-          
-          <div style="background: #fef3c7; border: 3px solid #f59e0b; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
-            <h3 style="color: #f59e0b; font-size: 24px; margin: 0 0 10px 0;">⏰ Ultimi 3 giorni</h3>
-            <p style="margin: 0; font-size: 18px;">Il tuo abbonamento MyWellness scade tra 3 giorni</p>
-            <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Data scadenza: {expiry_date}</p>
-          </div>
-          
-          <p>Rinnova ora per continuare senza interruzioni!</p>
-        </div>
-      `
+      function: 'sendRenewalReminders'
     },
     {
       id: 'renewal_1_day',
@@ -314,27 +216,7 @@ export default function AdminEmails() {
       description: 'Email urgente inviata 1 giorno prima della scadenza abbonamento',
       trigger: 'Cron giornaliero (1 giorno prima scadenza)',
       status: 'active',
-      function: 'sendRenewalReminders',
-      subject: '🚨 Ultimo giorno! Il tuo abbonamento MyWellness scade domani',
-      preview: `
-        <strong>Oggetto:</strong> 🚨 Ultimo giorno! Il tuo abbonamento MyWellness scade domani<br/><br/>
-        
-        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
-        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
-        
-        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
-          <h2 style="color: #26847F; margin-top: 0;">⏰ Promemoria Rinnovo</h2>
-          <p><strong>Ciao {user_name},</strong></p>
-          
-          <div style="background: #fef2f2; border: 3px solid #ef4444; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
-            <h3 style="color: #ef4444; font-size: 28px; margin: 0 0 10px 0;">🚨 ULTIMO GIORNO!</h3>
-            <p style="margin: 0; font-size: 18px;">Il tuo abbonamento MyWellness scade domani</p>
-            <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Data scadenza: {expiry_date}</p>
-          </div>
-          
-          <p><strong>⚡ Ultimo giorno per rinnovare senza interruzioni!</strong></p>
-        </div>
-      `
+      function: 'sendRenewalReminders'
     },
     {
       id: 'weekly_report',
@@ -342,36 +224,7 @@ export default function AdminEmails() {
       description: 'Report automatico con statistiche settimanali (peso, calorie, allenamenti, aderenza)',
       trigger: 'Cron settimanale (ogni Lunedì)',
       status: 'active',
-      function: 'sendWeeklyReport',
-      subject: '📊 Il tuo Report Settimanale MyWellness',
-      preview: `
-        <strong>Oggetto:</strong> 📊 Il tuo Report Settimanale MyWellness - {week_range}<br/><br/>
-        
-        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
-        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
-        
-        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
-          <h2 style="color: #26847F; margin-top: 0;">📊 Report Settimanale</h2>
-          <p><strong>Ciao {user_name},</strong></p>
-          <p>Ecco il riassunto dei tuoi progressi questa settimana! 💪</p>
-          
-          <div style="background: #e9f6f5; border: 2px solid #26847F; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
-            <h3 style="color: #26847F; margin: 0 0 10px 0;">📉 Variazione Peso</h3>
-            <p style="margin: 0; font-size: 32px; font-weight: bold; color: #10b981;">{weight_change} kg</p>
-            <p style="margin: 10px 0 0 0; color: #666;">Peso attuale: {current_weight} kg · Target: {target_weight} kg</p>
-          </div>
-          
-          <h3>📈 Le tue statistiche</h3>
-          <ul>
-            <li>🍽️ Calorie medie: {avg_calories} kcal/giorno</li>
-            <li>💪 Allenamenti completati: {workouts_completed}/{planned_workouts}</li>
-            <li>✓ Aderenza al piano: {adherence}%</li>
-            <li>🎯 Progresso obiettivo: {progress}%</li>
-          </ul>
-          
-          <p><strong>Continua così! La costanza è la chiave del successo 🌟</strong></p>
-        </div>
-      `
+      function: 'sendWeeklyReport'
     }
   ];
 
@@ -732,8 +585,8 @@ export default function AdminEmails() {
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center justify-between">
-              <span>Anteprima Email: {previewEmail?.name}</span>
-              {!isEditMode && (
+              <span>Email: {previewEmail?.name}</span>
+              {!isEditMode && previewEmail?.template && (
                 <Button
                   onClick={handleStartEdit}
                   variant="outline"
@@ -741,7 +594,7 @@ export default function AdminEmails() {
                   className="ml-4"
                 >
                   <Edit className="w-4 h-4 mr-2" />
-                  Modifica
+                  Modifica Contenuto
                 </Button>
               )}
             </DialogTitle>
@@ -774,53 +627,164 @@ export default function AdminEmails() {
                 </div>
               </div>
 
-              <div>
-                <Label className="text-sm font-semibold text-gray-700">Backend Function</Label>
-                <div className="mt-1 p-3 bg-gray-50 rounded-lg font-mono text-sm text-gray-900">
-                  {previewEmail.function}
-                </div>
-              </div>
-
-              <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-3 block">Contenuto Email</Label>
-                {isEditMode ? (
-                  <div className="space-y-4">
-                    <Textarea
-                      value={editingContent}
-                      onChange={(e) => setEditingContent(e.target.value)}
-                      rows={20}
-                      className="font-mono text-sm"
+              {isEditMode ? (
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Mittente</Label>
+                    <Input
+                      value={editingContent.from_email || ''}
+                      onChange={(e) => setEditingContent({...editingContent, from_email: e.target.value})}
+                      placeholder="info@projectmywellness.com"
+                      className="h-12"
                     />
-                    <div className="flex gap-3">
-                      <Button
-                        onClick={handleSaveEdit}
-                        className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                      >
-                        Salva Modifiche
-                      </Button>
-                      <Button
-                        onClick={() => setIsEditMode(false)}
-                        variant="outline"
-                        className="flex-1"
-                      >
-                        Annulla
-                      </Button>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Reply-To</Label>
+                    <Input
+                      value={editingContent.reply_to_email || ''}
+                      onChange={(e) => setEditingContent({...editingContent, reply_to_email: e.target.value})}
+                      placeholder="no-reply@projectmywellness.com"
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Oggetto</Label>
+                    <Input
+                      value={editingContent.subject || ''}
+                      onChange={(e) => setEditingContent({...editingContent, subject: e.target.value})}
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Saluto</Label>
+                    <Input
+                      value={editingContent.greeting || ''}
+                      onChange={(e) => setEditingContent({...editingContent, greeting: e.target.value})}
+                      placeholder="Ciao {user_name},"
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
+                    <Textarea
+                      value={editingContent.main_content || ''}
+                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
+                      rows={15}
+                      className="text-sm"
+                      placeholder="Contenuto email..."
+                    />
+                    <p className="text-xs text-gray-500 mt-2">
+                      Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}
+                    </p>
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA</Label>
+                    <Input
+                      value={editingContent.call_to_action_text || ''}
+                      onChange={(e) => setEditingContent({...editingContent, call_to_action_text: e.target.value})}
+                      placeholder="Vai alla Dashboard"
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">URL Pulsante CTA</Label>
+                    <Input
+                      value={editingContent.call_to_action_url || ''}
+                      onChange={(e) => setEditingContent({...editingContent, call_to_action_url: e.target.value})}
+                      placeholder="{app_url}/Dashboard"
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Footer</Label>
+                    <Input
+                      value={editingContent.footer_text || ''}
+                      onChange={(e) => setEditingContent({...editingContent, footer_text: e.target.value})}
+                      placeholder="Il tuo percorso verso il benessere"
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      onClick={handleSaveEdit}
+                      className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                    >
+                      💾 Salva Modifiche
+                    </Button>
+                    <Button
+                      onClick={() => setIsEditMode(false)}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Annulla
+                    </Button>
+                  </div>
+                </div>
+              ) : previewEmail?.template ? (
+                <div className="space-y-4">
+                  <div className="p-6 bg-gray-50 rounded-lg border-2 border-gray-200">
+                    <div className="space-y-4">
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Da:</p>
+                        <p className="text-sm font-semibold text-gray-900">{previewEmail.template.from_email}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-gray-500 mb-1">Reply-To:</p>
+                        <p className="text-sm font-semibold text-gray-900">{previewEmail.template.reply_to_email}</p>
+                      </div>
+                      <div className="pt-3 border-t border-gray-300">
+                        <p className="text-xs text-gray-500 mb-1">Oggetto:</p>
+                        <p className="text-sm font-bold text-gray-900">{previewEmail.template.subject}</p>
+                      </div>
+                      <div className="pt-3 border-t border-gray-300">
+                        <p className="text-xs text-gray-500 mb-2">Saluto:</p>
+                        <p className="text-sm text-gray-900">{previewEmail.template.greeting}</p>
+                      </div>
+                      <div className="pt-3 border-t border-gray-300">
+                        <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
+                        <div className="text-sm text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
+                          {previewEmail.template.main_content}
+                        </div>
+                      </div>
+                      {previewEmail.template.call_to_action_text && (
+                        <div className="pt-3 border-t border-gray-300">
+                          <p className="text-xs text-gray-500 mb-2">Pulsante CTA:</p>
+                          <div className="bg-white p-4 rounded border border-gray-200">
+                            <p className="text-sm font-semibold text-[var(--brand-primary)] mb-1">
+                              📍 {previewEmail.template.call_to_action_text}
+                            </p>
+                            <p className="text-xs text-gray-500">→ {previewEmail.template.call_to_action_url}</p>
+                          </div>
+                        </div>
+                      )}
+                      <div className="pt-3 border-t border-gray-300">
+                        <p className="text-xs text-gray-500 mb-2">Footer:</p>
+                        <p className="text-sm text-gray-600 italic">{previewEmail.template.footer_text}</p>
+                      </div>
                     </div>
                   </div>
-                ) : (
-                  <div 
-                    className="p-6 bg-white border-2 border-gray-200 rounded-lg max-h-[500px] overflow-y-auto"
-                    dangerouslySetInnerHTML={{ __html: previewEmail.preview }}
-                  />
-                )}
-              </div>
 
-              <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                <p className="text-sm text-amber-900">
-                  ℹ️ <strong>Nota:</strong> Per modificare effettivamente il contenuto di questa email, devi editare la backend function{' '}
-                  <code className="bg-amber-100 px-1 py-0.5 rounded">{previewEmail.function}</code> nella sezione Code del dashboard.
-                </p>
-              </div>
+                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                    <p className="text-sm text-blue-900">
+                      💡 <strong>Variabili disponibili:</strong> {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}, {'{'}weight_change{'}'}, {'{'}week_range{'}'}
+                    </p>
+                  </div>
+                </div>
+              ) : (
+                <div className="p-6 bg-amber-50 rounded-lg border border-amber-200">
+                  <p className="text-sm text-amber-900">
+                    ⚠️ Template non trovato per questa email. Puoi crearne uno modificandola.
+                  </p>
+                </div>
+              )}
 
               {!isEditMode && (
                 <div className="flex justify-end pt-2">
