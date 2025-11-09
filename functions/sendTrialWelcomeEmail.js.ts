@@ -182,9 +182,9 @@ Deno.serve(async (req) => {
                     </tr>
                 </table>
                 
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
                     <tr>
-                        <td align="center" style="padding: 20px; color: #999999;">
+                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
                             <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
