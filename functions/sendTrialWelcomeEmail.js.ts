@@ -31,15 +31,27 @@ Deno.serve(async (req) => {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
+        body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 20px 0; background-color: #f4f4f4; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header { background: white; padding: 24px 30px; }
         .header img { height: 48px; width: auto; display: block; }
         .content { padding: 40px 30px; }
-        .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
         .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
         p { margin: 0 0 1em 0; }
         strong { font-weight: 700; }
+
+        /* Existing styles that were not changed */
+        .welcome-box { margin-bottom: 30px; }
+        .timer { background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0 30px 0; }
+        .timer strong { color: #d97706; font-size: 24px; display: block; margin-bottom: 5px; }
+        .highlight { color: #d97706; font-weight: 700; }
+        .feature { display: flex; align-items: flex-start; margin-bottom: 20px; }
+        .feature-icon { font-size: 24px; margin-right: 15px; background: #ecfdf5; padding: 10px; border-radius: 8px; }
+        .feature-text h3 { margin: 0 0 5px 0; color: #111827; font-size: 18px; }
+        .feature-text p { margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6; }
+        .steps { margin-top: 30px; }
+        .step { display: flex; align-items: flex-start; margin-bottom: 20px; }
+        .step-number { background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; display: flex; align-items: center; justify-content: center; font-weight: bold; margin-right: 15px; font-size: 14px; flex-shrink: 0; }
     </style>
 </head>
 <body>
@@ -151,16 +163,22 @@ Deno.serve(async (req) => {
                 Il nostro team è qui per te! Rispondi a questa email o scrivici a 
                 <a href="mailto:velika.03@outlook.it" style="color: #26847F; text-decoration: none; font-weight: 600;">velika.03@outlook.it</a>
             </p>
-        </div>
 
-        <div class="footer">
-            <p style="margin: 0 0 10px 0;"><strong style="color: #111827;">MyWellness</strong></p>
-            <p style="margin: 0 0 10px 0;">Il tuo percorso verso il benessere inizia oggi 🌟</p>
-            <p style="margin: 0; font-size: 12px;">
-                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Privacy">Privacy Policy</a> · 
-                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Terms">Termini di Servizio</a>
-            </p>
+            <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; margin-top: 30px;">
+                <p style="margin: 0 0 10px 0;"><strong style="color: #111827;">MyWellness</strong></p>
+                <p style="margin: 0 0 10px 0;">Il tuo percorso verso il benessere inizia oggi 🌟</p>
+                <p style="margin: 0; font-size: 12px;">
+                    <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Privacy" style="color: #26847F; text-decoration: none;">Privacy Policy</a> · 
+                    <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Terms" style="color: #26847F; text-decoration: none;">Termini di Servizio</a>
+                </p>
+            </div>
         </div>
+    </div>
+    
+    <div style="text-align: center; padding: 20px; color: #999999;">
+        <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+        <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+        <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
     </div>
 </body>
 </html>

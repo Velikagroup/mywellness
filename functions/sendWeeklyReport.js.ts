@@ -186,7 +186,7 @@ function getWeeklyReportTemplate(user, stats) {
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
+        body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 20px 0; background-color: #f4f4f4; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header { background: white; padding: 24px 30px; }
         .header img { height: 48px; width: auto; display: block; }
@@ -199,7 +199,6 @@ function getWeeklyReportTemplate(user, stats) {
         .progress-bar { background: #e5e7eb; height: 24px; border-radius: 12px; overflow: hidden; margin: 10px 0; }
         .progress-fill { background: linear-gradient(90deg, #26847F 0%, #1f6b66 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; }
         .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
-        .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; }
         .motivation { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0; }
     </style>
 </head>
@@ -278,11 +277,12 @@ function getWeeklyReportTemplate(user, stats) {
                 Continua così! La costanza è la chiave del successo 🌟
             </p>
         </div>
-
-        <div class="footer">
-            <p style="margin: 0 0 10px 0;"><strong>MyWellness</strong></p>
-            <p style="margin: 0; font-size: 12px;">Il tuo percorso verso il benessere</p>
-        </div>
+    </div>
+    
+    <div style="text-align: center; padding: 20px; color: #999999;">
+        <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+        <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+        <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
     </div>
 </body>
 </html>

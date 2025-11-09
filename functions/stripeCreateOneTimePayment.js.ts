@@ -272,38 +272,53 @@ Deno.serve(async (req) => {
                     from_name: `MyWellness <${fromEmail}>`,
                     subject: '🎉 Benvenuto in MyWellness - Il Tuo Accesso',
                     body: `
-                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                        <div style="background: white; padding: 24px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h1 style="color: #26847F; margin-top: 20px;">Benvenuto in MyWellness!</h1>
-                        </div>
-                        
-                        <p style="font-size: 16px; color: #333;">Ciao <strong>${userName}</strong>,</p>
-                        
-                        <p style="font-size: 16px; color: #333;">Grazie per aver scelto MyWellness! Il tuo acquisto è stato completato con successo.</p>
-                        
-                        <div style="background-color: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
-                            <p style="margin: 0; font-size: 16px;"><strong>La tua password temporanea:</strong></p>
-                            <p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${tempPasswordToSend}</p>
-                        </div>
-                        
-                        <p style="font-size: 16px; color: #333;">Per iniziare, clicca sul pulsante qui sotto e crea la tua password personale:</p>
-                        
-                        <div style="text-align: center; margin: 30px 0;">
-                            <a href="${dashboardUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
-                                Accedi alla Dashboard
-                            </a>
-                        </div>
-                        
-                        <p style="font-size: 14px; color: #666;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</p>
-                        <p style="font-size: 12px; color: #999; word-break: break-all;">${dashboardUrl}</p>
-                        
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="font-size: 14px; color: #666;">Se hai bisogno di aiuto, contattaci a <a href="mailto:support@projectmywellness.com" style="color: #26847F;">support@projectmywellness.com</a></p>
-                        
-                        <p style="font-size: 12px; color: #999; text-align: center; margin-top: 30px;">© 2025 MyWellness. Tutti i diritti riservati.</p>
-                    </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px 0; background-color: #f4f4f4;">
+    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="background: white; padding: 24px 30px;">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+            <h1 style="color: #26847F; margin-top: 20px;">Benvenuto in MyWellness!</h1>
+        </div>
+        
+        <div style="padding: 40px 30px;">
+            <p style="font-size: 16px; color: #333;">Ciao <strong>${userName}</strong>,</p>
+            
+            <p style="font-size: 16px; color: #333;">Grazie per aver scelto MyWellness! Il tuo acquisto è stato completato con successo.</p>
+            
+            <div style="background-color: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
+                <p style="margin: 0; font-size: 16px;"><strong>La tua password temporanea:</strong></p>
+                <p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${tempPasswordToSend}</p>
+            </div>
+            
+            <p style="font-size: 16px; color: #333;">Per iniziare, clicca sul pulsante qui sotto e crea la tua password personale:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${dashboardUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
+                    Accedi alla Dashboard
+                </a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</p>
+            <p style="font-size: 12px; color: #999; word-break: break-all;">${dashboardUrl}</p>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+            
+            <p style="font-size: 14px; color: #666;">Se hai bisogno di aiuto, contattaci a <a href="mailto:support@projectmywellness.com" style="color: #26847F;">support@projectmywellness.com</a></p>
+        </div>
+    </div>
+    
+    <div style="text-align: center; padding: 20px; color: #999999;">
+        <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+        <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+        <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+    </div>
+</body>
+</html>
                     `
                 });
                 
@@ -319,38 +334,53 @@ Deno.serve(async (req) => {
                     from_name: `MyWellness <${fromEmail}>`,
                     subject: '🎉 Grazie per il tuo acquisto - MyWellness Premium Attivato',
                     body: `
-                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                        <div style="background: white; padding: 24px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h1 style="color: #26847F; margin-top: 20px;">Il Tuo Piano Premium è Attivo!</h1>
-                        </div>
-                        
-                        <p style="font-size: 16px; color: #333;">Ciao <strong>${userName}</strong>,</p>
-                        
-                        <p style="font-size: 16px; color: #333;">Grazie per aver acquistato il piano Premium di MyWellness! Il tuo pagamento è stato completato con successo.</p>
-                        
-                        <div style="background-color: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
-                            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #26847F;">✅ Piano Premium Attivato</p>
-                            <p style="margin: 10px 0 0 0; font-size: 14px; color: #333;">Durata: 3 mesi</p>
-                        </div>
-                        
-                        <p style="font-size: 16px; color: #333;">Accedi subito alla tua dashboard per iniziare il tuo percorso di trasformazione:</p>
-                        
-                        <div style="text-align: center; margin: 30px 0;">
-                            <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
-                                Vai alla Dashboard
-                            </a>
-                        </div>
-                        
-                        <p style="font-size: 14px; color: #666;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</p>
-                        <p style="font-size: 12px; color: #999; word-break: break-all;">${loginUrl}</p>
-                        
-                        <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                        
-                        <p style="font-size: 14px; color: #666;">Se hai bisogno di aiuto, contattaci a <a href="mailto:support@projectmywellness.com" style="color: #26847F;">support@projectmywellness.com</a></p>
-                        
-                        <p style="font-size: 12px; color: #999; text-align: center; margin-top: 30px;">© 2025 MyWellness. Tutti i diritti riservati.</p>
-                    </div>
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+</head>
+<body style="font-family: Arial, sans-serif; margin: 0; padding: 20px 0; background-color: #f4f4f4;">
+    <div style="max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
+        <div style="background: white; padding: 24px 30px;">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+            <h1 style="color: #26847F; margin-top: 20px;">Il Tuo Piano Premium è Attivo!</h1>
+        </div>
+        
+        <div style="padding: 40px 30px;">
+            <p style="font-size: 16px; color: #333;">Ciao <strong>${userName}</strong>,</p>
+            
+            <p style="font-size: 16px; color: #333;">Grazie per aver acquistato il piano Premium di MyWellness! Il tuo pagamento è stato completato con successo.</p>
+            
+            <div style="background-color: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
+                <p style="margin: 0; font-size: 18px; font-weight: bold; color: #26847F;">✅ Piano Premium Attivato</p>
+                <p style="margin: 10px 0 0 0; font-size: 14px; color: #333;">Durata: 3 mesi</p>
+            </div>
+            
+            <p style="font-size: 16px; color: #333;">Accedi subito alla tua dashboard per iniziare il tuo percorso di trasformazione:</p>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
+                    Vai alla Dashboard
+                </a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</p>
+            <p style="font-size: 12px; color: #999; word-break: break-all;">${loginUrl}</p>
+            
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
+            
+            <p style="font-size: 14px; color: #666;">Se hai bisogno di aiuto, contattaci a <a href="mailto:support@projectmywellness.com" style="color: #26847F;">support@projectmywellness.com</a></p>
+        </div>
+    </div>
+    
+    <div style="text-align: center; padding: 20px; color: #999999;">
+        <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+        <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+        <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+    </div>
+</body>
+</html>
                     `
                 });
                 
