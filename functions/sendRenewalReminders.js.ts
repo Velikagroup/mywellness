@@ -43,7 +43,7 @@ Deno.serve(async (req) => {
 
         for (const user of activeUsers) {
             const expiresAt = new Date(user.subscription_period_end);
-            const daysUntilExpiry = Math.ceil((expiresAt - today) / (1000 * 60 * 60 * 24));
+            const daysUntilExpiry = Math.ceil((expiresAt.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
             console.log(`📧 User ${user.email}: expires in ${daysUntilExpiry} days`);
 
@@ -137,7 +137,8 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
     <style>
         body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: white; padding: 40px 20px; text-align: center; }
+        .header { background: white; padding: 24px 30px; }
+        .header img { height: 48px; }
         .content { padding: 40px 30px; }
         .urgency-box { background: ${urgencyBg}; border: 3px solid ${urgencyColor}; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
         .urgency-box h2 { color: ${urgencyColor}; margin: 0 0 10px 0; font-size: 32px; }
@@ -150,7 +151,7 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness" style="max-width: 180px;">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness">
             <h1 style="color: #26847F; margin: 20px 0 0 0; font-size: 24px;">⏰ Promemoria Rinnovo</h1>
         </div>
         

@@ -187,7 +187,8 @@ function getWeeklyReportTemplate(user, stats) {
     <style>
         body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: white; padding: 40px 20px; text-align: center; color: #26847F; }
+        .header { background: white; padding: 24px 30px; }
+        .header img { height: 48px; }
         .content { padding: 40px 30px; }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .stat-box { background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb; }
@@ -204,9 +205,9 @@ function getWeeklyReportTemplate(user, stats) {
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness" style="max-width: 180px;">
-            <h1 style="margin: 20px 0 10px 0; font-size: 28px;">📊 Report Settimanale</h1>
-            <p style="margin: 0; color: #6b7280; font-size: 16px;">${stats.weekRange}</p>
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness">
+            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">📊 Report Settimanale</h1>
+            <p style="color: #6b7280; margin: 0; font-size: 16px;">${stats.weekRange}</p>
         </div>
         
         <div class="content">

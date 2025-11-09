@@ -273,9 +273,9 @@ Deno.serve(async (req) => {
                     subject: '🎉 Benvenuto in MyWellness - Il Tuo Accesso',
                     body: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                        <div style="background: white; padding: 40px 20px; text-align: center;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness" style="max-width: 180px;">
-                            <h1 style="color: #26847F; text-align: center; margin-top: 20px;">Benvenuto in MyWellness!</h1>
+                        <div style="background: white; padding: 24px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+                            <h1 style="color: #26847F; margin-top: 20px;">Benvenuto in MyWellness!</h1>
                         </div>
                         
                         <p style="font-size: 16px; color: #333;">Ciao <strong>${userName}</strong>,</p>
@@ -320,9 +320,9 @@ Deno.serve(async (req) => {
                     subject: '🎉 Grazie per il tuo acquisto - MyWellness Premium Attivato',
                     body: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
-                        <div style="background: white; padding: 40px 20px; text-align: center;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness" style="max-width: 180px;">
-                            <h1 style="color: #26847F; text-align: center; margin-top: 20px;">Il Tuo Piano Premium è Attivo!</h1>
+                        <div style="background: white; padding: 24px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+                            <h1 style="color: #26847F; margin-top: 20px;">Il Tuo Piano Premium è Attivo!</h1>
                         </div>
                         
                         <p style="font-size: 16px; color: #333;">Ciao <strong>${userName}</strong>,</p>

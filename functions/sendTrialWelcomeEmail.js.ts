@@ -33,8 +33,8 @@ Deno.serve(async (req) => {
     <style>
         body { font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: white; padding: 40px 20px; text-align: center; }
-        .header img { max-width: 180px; }
+        .header { background: white; padding: 24px 30px; }
+        .header img { height: 48px; }
         .content { padding: 40px 30px; }
         .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
         .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
 <body>
     <div class="container">
         <div class="header">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness">
             <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">🎉 Benvenuto in MyWellness!</h1>
             <p style="color: #6b7280; margin: 0; font-size: 16px;">La tua prova gratuita di 3 giorni inizia ora</p>
         </div>
