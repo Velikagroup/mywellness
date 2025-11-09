@@ -191,6 +191,7 @@ export default function AdminEmails() {
     try {
       const template = previewEmail.template;
       const fromEmail = template.from_email || 'info@projectmywellness.com';
+      const replyToEmail = template.reply_to_email || 'no-reply@projectmywellness.com';
       
       // Prepara variabili di esempio realistiche
       const variables = {
@@ -270,12 +271,14 @@ export default function AdminEmails() {
 </html>
       `;
 
-      // Invia email di test
-      await base44.integrations.Core.SendEmail({
+      // Chiama la function sendTestEmailDirect che userà SendGrid API direttamente
+      const response = await base44.functions.invoke('sendTestEmailDirect', {
         to: user.email,
-        from_name: `MyWellness Team <${fromEmail}>`,
+        from_email: fromEmail,
+        from_name: 'MyWellness Team',
+        reply_to: replyToEmail,
         subject: `[TEST] ${replacedSubject}`,
-        body: htmlBody
+        html: htmlBody
       });
 
       alert(`✅ Email di test inviata con successo a ${user.email}!`);
