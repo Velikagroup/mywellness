@@ -237,7 +237,7 @@ export default function AdminEmails() {
     <style>
         body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
-        .header { background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); padding: 40px 20px; text-align: center; }
+        .header { padding: 40px 20px; text-align: center; background: white; }
         .header img { max-width: 180px; }
         .content { padding: 40px 30px; }
         .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
@@ -275,7 +275,7 @@ export default function AdminEmails() {
       const response = await base44.functions.invoke('sendTestEmailDirect', {
         to: user.email,
         from_email: fromEmail,
-        from_name: 'MyWellness Team',
+        from_name: 'MyWellness',
         reply_to: replyToEmail,
         subject: `[TEST] ${replacedSubject}`,
         html: htmlBody

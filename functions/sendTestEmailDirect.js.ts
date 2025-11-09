@@ -39,7 +39,7 @@ Deno.serve(async (req) => {
                 }],
                 from: {
                     email: from_email,
-                    name: from_name || 'MyWellness Team'
+                    name: from_name || 'MyWellness'
                 },
                 reply_to: reply_to ? {
                     email: reply_to
