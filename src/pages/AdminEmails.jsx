@@ -45,6 +45,10 @@ export default function AdminEmails() {
   const [showEmailPreview, setShowEmailPreview] = useState(false);
   const [previewEmail, setPreviewEmail] = useState(null);
 
+  // NEW: Edit state for preview dialog
+  const [editingContent, setEditingContent] = useState('');
+  const [isEditMode, setIsEditMode] = useState(false);
+
   useEffect(() => {
     checkAccess();
   }, []);
@@ -114,6 +118,19 @@ export default function AdminEmails() {
   const handleOpenPreview = (email) => {
     setPreviewEmail(email);
     setShowEmailPreview(true);
+    setIsEditMode(false); // Ensure edit mode is off when opening a new preview
+    setEditingContent(''); // Clear previous editing content
+  };
+
+  const handleStartEdit = () => {
+    setIsEditMode(true);
+    setEditingContent(previewEmail?.preview || '');
+  };
+
+  const handleSaveEdit = () => {
+    // In a real implementation, this would update the backend function
+    alert('⚠️ Per modificare il contenuto delle email, devi editare la backend function: ' + previewEmail.function);
+    setIsEditMode(false);
   };
 
   if (isLoading) {
@@ -712,10 +729,21 @@ export default function AdminEmails() {
 
       {/* NEW: Email Preview Dialog */}
       <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
-              Anteprima Email: {previewEmail?.name}
+            <DialogTitle className="text-xl font-bold flex items-center justify-between">
+              <span>Anteprima Email: {previewEmail?.name}</span>
+              {!isEditMode && (
+                <Button
+                  onClick={handleStartEdit}
+                  variant="outline"
+                  size="sm"
+                  className="ml-4"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Modifica
+                </Button>
+              )}
             </DialogTitle>
           </DialogHeader>
           {previewEmail && (
@@ -738,13 +766,6 @@ export default function AdminEmails() {
                 <p className="text-sm text-gray-600 mt-1">{previewEmail.description}</p>
               </div>
 
-              {previewEmail.subject && (
-                <div>
-                  <Label className="text-sm font-semibold text-gray-700">Oggetto Email</Label>
-                  <p className="text-sm text-gray-900 mt-1">{previewEmail.subject}</p>
-                </div>
-              )}
-
               <div>
                 <Label className="text-sm font-semibold text-gray-700">Trigger Automatico</Label>
                 <div className="flex items-center gap-2 mt-1 p-3 bg-blue-50 rounded-lg">
@@ -760,33 +781,57 @@ export default function AdminEmails() {
                 </div>
               </div>
 
-              {previewEmail.preview && (
-                <div>
-                  <Label className="text-sm font-semibold text-gray-700">Contenuto Email (Anteprima)</Label>
-                  <div
-                    className="mt-1 p-4 border rounded-lg bg-gray-50 overflow-auto"
-                    style={{ maxHeight: '400px' }} // Added max-height for better preview experience
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-3 block">Contenuto Email</Label>
+                {isEditMode ? (
+                  <div className="space-y-4">
+                    <Textarea
+                      value={editingContent}
+                      onChange={(e) => setEditingContent(e.target.value)}
+                      rows={20}
+                      className="font-mono text-sm"
+                    />
+                    <div className="flex gap-3">
+                      <Button
+                        onClick={handleSaveEdit}
+                        className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                      >
+                        Salva Modifiche
+                      </Button>
+                      <Button
+                        onClick={() => setIsEditMode(false)}
+                        variant="outline"
+                        className="flex-1"
+                      >
+                        Annulla
+                      </Button>
+                    </div>
+                  </div>
+                ) : (
+                  <div 
+                    className="p-6 bg-white border-2 border-gray-200 rounded-lg max-h-[500px] overflow-y-auto"
                     dangerouslySetInnerHTML={{ __html: previewEmail.preview }}
                   />
-                </div>
-              )}
-
+                )}
+              </div>
 
               <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                 <p className="text-sm text-amber-900">
-                  ℹ️ <strong>Nota:</strong> Per modificare il contenuto di questa email, edita la backend function{' '}
+                  ℹ️ <strong>Nota:</strong> Per modificare effettivamente il contenuto di questa email, devi editare la backend function{' '}
                   <code className="bg-amber-100 px-1 py-0.5 rounded">{previewEmail.function}</code> nella sezione Code del dashboard.
                 </p>
               </div>
 
-              <div className="flex justify-end pt-2">
-                <Button
-                  onClick={() => setShowEmailPreview(false)}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                >
-                  Chiudi
-                </Button>
-              </div>
+              {!isEditMode && (
+                <div className="flex justify-end pt-2">
+                  <Button
+                    onClick={() => setShowEmailPreview(false)}
+                    className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                  >
+                    Chiudi
+                  </Button>
+                </div>
+              )}
             </div>
           )}
         </DialogContent>
