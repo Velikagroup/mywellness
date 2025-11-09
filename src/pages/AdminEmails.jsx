@@ -190,6 +190,7 @@ export default function AdminEmails() {
 
     try {
       const template = previewEmail.template;
+      const fromEmail = template.from_email || 'info@projectmywellness.com';
       
       // Prepara variabili di esempio realistiche
       const variables = {
@@ -272,7 +273,7 @@ export default function AdminEmails() {
       // Invia email di test
       await base44.integrations.Core.SendEmail({
         to: user.email,
-        from_name: `MyWellness Team <${template.from_email || 'info@projectmywellness.com'}>`,
+        from_name: `MyWellness Team <${fromEmail}>`,
         subject: `[TEST] ${replacedSubject}`,
         body: htmlBody
       });
