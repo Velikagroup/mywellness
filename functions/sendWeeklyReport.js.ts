@@ -185,12 +185,20 @@ function getWeeklyReportTemplate(user, stats) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; }
+            .content { padding: 30px 20px !important; }
+            .stat-table { width: 100% !important; }
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4; padding: 20px 0;">
+<body style="margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
         <tr>
             <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
                     <tr>
                         <td style="background: white; padding: 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
@@ -199,7 +207,7 @@ function getWeeklyReportTemplate(user, stats) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 40px 30px;">
+                        <td class="content" style="padding: 40px 30px;">
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
                             
                             <p style="color: #374151; line-height: 1.6;">
@@ -218,7 +226,7 @@ function getWeeklyReportTemplate(user, stats) {
 
                             <h3 style="color: #111827; margin: 30px 0 15px 0;">📈 Le tue statistiche</h3>
                             
-                            <table width="100%" cellpadding="0" cellspacing="15" border="0">
+                            <table class="stat-table" width="100%" cellpadding="0" cellspacing="15" border="0">
                                 <tr>
                                     <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                                         <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🍽️</p>
@@ -274,7 +282,7 @@ function getWeeklyReportTemplate(user, stats) {
                     </tr>
                 </table>
                 
-                <table width="600" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px;">
                     <tr>
                         <td align="center" style="padding: 20px; color: #999999;">
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>

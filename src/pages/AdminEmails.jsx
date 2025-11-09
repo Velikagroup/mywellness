@@ -228,26 +228,33 @@ export default function AdminEmails() {
       const replacedSubject = replaceVars(template.subject, variables);
       const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
 
-      // Costruisci HTML email professionale con tabelle per compatibilità Gmail
+      // Costruisci HTML email professionale con responsive design
       const htmlBody = `
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; }
+            .content { padding: 30px 20px !important; }
+        }
+    </style>
 </head>
-<body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4; padding: 20px 0;">
+<body style="margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
         <tr>
             <td align="center">
-                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
                     <tr>
                         <td style="padding: 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 40px 30px;">
+                        <td class="content" style="padding: 40px 30px;">
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
                             <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
                             ${template.call_to_action_text && template.call_to_action_url ? `
@@ -265,7 +272,7 @@ export default function AdminEmails() {
                     </tr>
                 </table>
                 
-                <table width="600" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px;">
                     <tr>
                         <td align="center" style="padding: 20px; color: #999999;">
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
@@ -425,8 +432,7 @@ export default function AdminEmails() {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:// ... keep existing code (rest of the component) ...
-grid-cols-4 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
