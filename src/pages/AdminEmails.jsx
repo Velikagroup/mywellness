@@ -132,7 +132,43 @@ export default function AdminEmails() {
       description: 'Email di benvenuto inviata dopo il setup del trial con guida ai prossimi passi',
       trigger: 'Completamento Trial Setup',
       status: 'active',
-      function: 'sendTrialWelcomeEmail'
+      function: 'sendTrialWelcomeEmail',
+      subject: '🎉 Benvenuto in MyWellness! I tuoi 3 giorni di prova iniziano ora!',
+      preview: `
+        <strong>Oggetto:</strong> 🎉 Benvenuto in MyWellness! I tuoi 3 giorni di prova iniziano ora!<br/><br/>
+        
+        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
+        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
+        
+        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
+          <h2 style="color: #26847F; margin-top: 0;">🎉 Benvenuto in MyWellness!</h2>
+          <p><strong>Ciao {user_name},</strong></p>
+          <p>Grazie per aver scelto MyWellness! Sei a un passo dal trasformare il tuo corpo e la tua vita con l'intelligenza artificiale.</p>
+          
+          <div style="background: #fef3c7; border: 2px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
+            <p style="margin: 0;"><strong>⏰ Il tuo periodo di prova termina tra: 3 GIORNI</strong></p>
+            <p style="margin: 5px 0 0 0; font-size: 13px;">Dopo la prova: €39/mese (puoi cancellare quando vuoi)</p>
+          </div>
+          
+          <h3>🚀 Cosa ti aspetta:</h3>
+          <ul>
+            <li>🍽️ Piano Nutrizionale AI Personalizzato</li>
+            <li>💪 Allenamenti Scientifici</li>
+            <li>📸 Analisi Foto con AI</li>
+            <li>📊 Tracciamento Progressi</li>
+          </ul>
+          
+          <h3>📝 I tuoi prossimi passi:</h3>
+          <ol>
+            <li>Completa il Quiz</li>
+            <li>Genera il tuo Piano</li>
+            <li>Inizia Subito</li>
+            <li>Analizza i Risultati</li>
+          </ol>
+          
+          <p style="margin-top: 20px;"><strong>💡 Consiglio Pro:</strong> I primi 3 giorni sono cruciali! Dedica 10 minuti oggi per completare il quiz e generare il tuo piano.</p>
+        </div>
+      `
     },
     {
       id: 'landing_new_user',
@@ -140,7 +176,28 @@ export default function AdminEmails() {
       description: 'Email inviata ai nuovi utenti dopo l\'acquisto della Landing Offer con password temporanea',
       trigger: 'Acquisto Landing Offer (nuovo utente)',
       status: 'active',
-      function: 'stripeCreateOneTimePayment'
+      function: 'stripeCreateOneTimePayment',
+      subject: '🎉 Benvenuto in MyWellness - Il Tuo Accesso',
+      preview: `
+        <strong>Oggetto:</strong> 🎉 Benvenuto in MyWellness - Il Tuo Accesso<br/><br/>
+        
+        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
+        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
+        
+        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
+          <h2 style="color: #26847F; margin-top: 0;">Benvenuto in MyWellness!</h2>
+          <p><strong>Ciao {user_name},</strong></p>
+          <p>Grazie per aver scelto MyWellness! Il tuo acquisto è stato completato con successo.</p>
+          
+          <div style="background: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
+            <p style="margin: 0;"><strong>La tua password temporanea:</strong></p>
+            <p style="margin: 10px 0 0 0; font-size: 24px; font-weight: bold; color: #26847F;">{temp_password}</p>
+          </div>
+          
+          <p>Per iniziare, clicca sul pulsante qui sotto e crea la tua password personale.</p>
+          <p style="margin-top: 20px;">Se hai bisogno di aiuto, contattaci a <strong>support@projectmywellness.com</strong></p>
+        </div>
+      `
     },
     {
       id: 'landing_existing_user',
@@ -148,7 +205,28 @@ export default function AdminEmails() {
       description: 'Email di conferma per utenti esistenti che acquistano la Landing Offer',
       trigger: 'Acquisto Landing Offer (utente esistente)',
       status: 'active',
-      function: 'stripeCreateOneTimePayment'
+      function: 'stripeCreateOneTimePayment',
+      subject: '🎉 Grazie per il tuo acquisto - MyWellness Premium Attivato',
+      preview: `
+        <strong>Oggetto:</strong> 🎉 Grazie per il tuo acquisto - MyWellness Premium Attivato<br/><br/>
+        
+        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
+        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
+        
+        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
+          <h2 style="color: #26847F; margin-top: 0;">Il Tuo Piano Premium è Attivo!</h2>
+          <p><strong>Ciao {user_name},</strong></p>
+          <p>Grazie per aver acquistato il piano Premium di MyWellness! Il tuo pagamento è stato completato con successo.</p>
+          
+          <div style="background: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
+            <p style="margin: 0; font-size: 18px; font-weight: bold; color: #26847F;">✅ Piano Premium Attivato</p>
+            <p style="margin: 10px 0 0 0;">Durata: 3 mesi</p>
+          </div>
+          
+          <p>Accedi subito alla tua dashboard per iniziare il tuo percorso di trasformazione.</p>
+          <p style="margin-top: 20px;">Se hai bisogno di aiuto, contattaci a <strong>support@projectmywellness.com</strong></p>
+        </div>
+      `
     },
     {
       id: 'renewal_7_days',
@@ -156,7 +234,34 @@ export default function AdminEmails() {
       description: 'Email automatica inviata 7 giorni prima della scadenza abbonamento',
       trigger: 'Cron giornaliero (7 giorni prima scadenza)',
       status: 'active',
-      function: 'sendRenewalReminders'
+      function: 'sendRenewalReminders',
+      subject: '⏰ Il tuo abbonamento MyWellness scade tra 7 giorni',
+      preview: `
+        <strong>Oggetto:</strong> ⏰ Il tuo abbonamento MyWellness scade tra 7 giorni<br/><br/>
+        
+        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
+        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
+        
+        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
+          <h2 style="color: #26847F; margin-top: 0;">⏰ Promemoria Rinnovo</h2>
+          <p><strong>Ciao {user_name},</strong></p>
+          
+          <div style="background: #eff6ff; border: 3px solid #3b82f6; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
+            <h3 style="color: #3b82f6; font-size: 24px; margin: 0 0 10px 0;">📅 Promemoria</h3>
+            <p style="margin: 0; font-size: 18px;">Il tuo abbonamento MyWellness scade tra 7 giorni</p>
+            <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Data scadenza: {expiry_date}</p>
+          </div>
+          
+          <p>Non perdere l'accesso a tutte le funzionalità Premium che ti aiutano a raggiungere i tuoi obiettivi:</p>
+          <ul>
+            <li>Piano nutrizionale personalizzato con AI</li>
+            <li>Allenamenti adattivi basati sui tuoi progressi</li>
+            <li>Analisi foto pasti automatica</li>
+            <li>Tracciamento completo dei progressi</li>
+            <li>Supporto prioritario</li>
+          </ul>
+        </div>
+      `
     },
     {
       id: 'renewal_3_days',
@@ -164,7 +269,27 @@ export default function AdminEmails() {
       description: 'Email automatica inviata 3 giorni prima della scadenza abbonamento',
       trigger: 'Cron giornaliero (3 giorni prima scadenza)',
       status: 'active',
-      function: 'sendRenewalReminders'
+      function: 'sendRenewalReminders',
+      subject: '🔔 Ultimi 3 giorni - Non perdere MyWellness!',
+      preview: `
+        <strong>Oggetto:</strong> 🔔 Ultimi 3 giorni - Non perdere MyWellness!<br/><br/>
+        
+        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
+        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
+        
+        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
+          <h2 style="color: #26847F; margin-top: 0;">⏰ Promemoria Rinnovo</h2>
+          <p><strong>Ciao {user_name},</strong></p>
+          
+          <div style="background: #fef3c7; border: 3px solid #f59e0b; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
+            <h3 style="color: #f59e0b; font-size: 24px; margin: 0 0 10px 0;">⏰ Ultimi 3 giorni</h3>
+            <p style="margin: 0; font-size: 18px;">Il tuo abbonamento MyWellness scade tra 3 giorni</p>
+            <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Data scadenza: {expiry_date}</p>
+          </div>
+          
+          <p>Rinnova ora per continuare senza interruzioni!</p>
+        </div>
+      `
     },
     {
       id: 'renewal_1_day',
@@ -172,7 +297,27 @@ export default function AdminEmails() {
       description: 'Email urgente inviata 1 giorno prima della scadenza abbonamento',
       trigger: 'Cron giornaliero (1 giorno prima scadenza)',
       status: 'active',
-      function: 'sendRenewalReminders'
+      function: 'sendRenewalReminders',
+      subject: '🚨 Ultimo giorno! Il tuo abbonamento MyWellness scade domani',
+      preview: `
+        <strong>Oggetto:</strong> 🚨 Ultimo giorno! Il tuo abbonamento MyWellness scade domani<br/><br/>
+        
+        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
+        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
+        
+        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
+          <h2 style="color: #26847F; margin-top: 0;">⏰ Promemoria Rinnovo</h2>
+          <p><strong>Ciao {user_name},</strong></p>
+          
+          <div style="background: #fef2f2; border: 3px solid #ef4444; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
+            <h3 style="color: #ef4444; font-size: 28px; margin: 0 0 10px 0;">🚨 ULTIMO GIORNO!</h3>
+            <p style="margin: 0; font-size: 18px;">Il tuo abbonamento MyWellness scade domani</p>
+            <p style="margin: 10px 0 0 0; color: #666; font-size: 14px;">Data scadenza: {expiry_date}</p>
+          </div>
+          
+          <p><strong>⚡ Ultimo giorno per rinnovare senza interruzioni!</strong></p>
+        </div>
+      `
     },
     {
       id: 'weekly_report',
@@ -180,7 +325,36 @@ export default function AdminEmails() {
       description: 'Report automatico con statistiche settimanali (peso, calorie, allenamenti, aderenza)',
       trigger: 'Cron settimanale (ogni Lunedì)',
       status: 'active',
-      function: 'sendWeeklyReport'
+      function: 'sendWeeklyReport',
+      subject: '📊 Il tuo Report Settimanale MyWellness',
+      preview: `
+        <strong>Oggetto:</strong> 📊 Il tuo Report Settimanale MyWellness - {week_range}<br/><br/>
+        
+        <strong>Da:</strong> MyWellness Team &lt;info@projectmywellness.com&gt;<br/>
+        <strong>Risposta a:</strong> no-reply@projectmywellness.com<br/><br/>
+        
+        <div style="border: 2px solid #e5e7eb; border-radius: 8px; padding: 20px; background: #f9fafb;">
+          <h2 style="color: #26847F; margin-top: 0;">📊 Report Settimanale</h2>
+          <p><strong>Ciao {user_name},</strong></p>
+          <p>Ecco il riassunto dei tuoi progressi questa settimana! 💪</p>
+          
+          <div style="background: #e9f6f5; border: 2px solid #26847F; padding: 20px; border-radius: 12px; text-align: center; margin: 20px 0;">
+            <h3 style="color: #26847F; margin: 0 0 10px 0;">📉 Variazione Peso</h3>
+            <p style="margin: 0; font-size: 32px; font-weight: bold; color: #10b981;">{weight_change} kg</p>
+            <p style="margin: 10px 0 0 0; color: #666;">Peso attuale: {current_weight} kg · Target: {target_weight} kg</p>
+          </div>
+          
+          <h3>📈 Le tue statistiche</h3>
+          <ul>
+            <li>🍽️ Calorie medie: {avg_calories} kcal/giorno</li>
+            <li>💪 Allenamenti completati: {workouts_completed}/{planned_workouts}</li>
+            <li>✓ Aderenza al piano: {adherence}%</li>
+            <li>🎯 Progresso obiettivo: {progress}%</li>
+          </ul>
+          
+          <p><strong>Continua così! La costanza è la chiave del successo 🌟</strong></p>
+        </div>
+      `
     }
   ];
 
@@ -564,6 +738,13 @@ export default function AdminEmails() {
                 <p className="text-sm text-gray-600 mt-1">{previewEmail.description}</p>
               </div>
 
+              {previewEmail.subject && (
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700">Oggetto Email</Label>
+                  <p className="text-sm text-gray-900 mt-1">{previewEmail.subject}</p>
+                </div>
+              )}
+
               <div>
                 <Label className="text-sm font-semibold text-gray-700">Trigger Automatico</Label>
                 <div className="flex items-center gap-2 mt-1 p-3 bg-blue-50 rounded-lg">
@@ -578,6 +759,18 @@ export default function AdminEmails() {
                   {previewEmail.function}
                 </div>
               </div>
+
+              {previewEmail.preview && (
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700">Contenuto Email (Anteprima)</Label>
+                  <div
+                    className="mt-1 p-4 border rounded-lg bg-gray-50 overflow-auto"
+                    style={{ maxHeight: '400px' }} // Added max-height for better preview experience
+                    dangerouslySetInnerHTML={{ __html: previewEmail.preview }}
+                  />
+                </div>
+              )}
+
 
               <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                 <p className="text-sm text-amber-900">
