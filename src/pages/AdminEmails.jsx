@@ -149,16 +149,141 @@ export default function AdminEmails() {
         setIsEditMode(false);
         setShowEmailPreview(false);
       } else if (previewEmail?.id && !previewEmail?.template?.id) {
-        // This case might happen if a systemEmail exists but no template for it yet.
-        // In a real app, you might want to allow creating a new template here,
-        // or prevent editing if no template exists. For now, this will just show an error.
-        alert('❌ Impossibile salvare: Template non trovato. Crea un nuovo template per questa email.');
+        // If systemEmail exists but no template for it, create a new template
+        const newTemplateData = {
+          template_id: previewEmail.id,
+          from_email: editingContent.from_email || 'info@projectmywellness.com',
+          reply_to_email: editingContent.reply_to_email || 'no-reply@projectmywellness.com',
+          subject: editingContent.subject || 'Oggetto predefinito',
+          greeting: editingContent.greeting || 'Ciao {user_name},',
+          main_content: editingContent.main_content || 'Contenuto predefinito dell\'email.',
+          call_to_action_text: editingContent.call_to_action_text || '',
+          call_to_action_url: editingContent.call_to_action_url || '',
+          footer_text: editingContent.footer_text || 'Il tuo percorso verso il benessere'
+        };
+        await base44.entities.EmailTemplate.create(newTemplateData);
+        alert('✅ Nuovo template creato e salvato con successo!');
+        await loadEmailTemplates();
+        setIsEditMode(false);
+        setShowEmailPreview(false);
       }
     } catch (error) {
-      console.error('Error updating template:', error);
+      console.error('Error updating/creating template:', error);
       alert('❌ Errore durante il salvataggio: ' + error.message);
     }
   };
+
+  const handleSendTestEmail = async () => {
+    if (!previewEmail?.template) {
+      alert('❌ Template non trovato. Impossibile inviare email di test.');
+      return;
+    }
+
+    if (!user?.email) {
+      alert('❌ Impossibile determinare l\'indirizzo email dell\'utente corrente per inviare il test.');
+      return;
+    }
+
+    if (!confirm(`Inviare email di test a ${user.email}?`)) {
+      return;
+    }
+
+    try {
+      const template = previewEmail.template;
+      
+      // Prepara variabili di esempio realistiche
+      const variables = {
+        user_name: user.full_name || 'Mario Rossi',
+        user_email: user.email,
+        expiry_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }),
+        temp_password: 'TestPass123!',
+        app_url: window.location.origin,
+        weight_change: '-2.5',
+        current_weight: '72.5',
+        target_weight: '70',
+        avg_calories: '1850',
+        workouts_completed: '4',
+        planned_workouts: '5',
+        adherence: '80',
+        progress: '65',
+        distance_remaining: '2.5',
+        week_range: '1-7 Gen 2025',
+        motivational_message: 'Ottimo lavoro questa settimana! Continua così 💪'
+      };
+
+      // Helper function to replace variables
+      const replaceVars = (text, vars) => {
+        let result = text;
+        Object.keys(vars).forEach(key => {
+          const regex = new RegExp(`\\{${key}\\}`, 'g');
+          result = result.replace(regex, vars[key]);
+        });
+        return result;
+      };
+
+      const replacedGreeting = replaceVars(template.greeting, variables);
+      const replacedMainContent = replaceVars(template.main_content, variables);
+      const replacedSubject = replaceVars(template.subject, variables);
+      const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
+
+      // Costruisci HTML email professionale
+      const htmlBody = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <style>
+        body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
+        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .header { background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); padding: 40px 20px; text-align: center; }
+        .header img { max-width: 180px; }
+        .content { padding: 40px 30px; }
+        .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
+        p { margin: 0 0 1em 0; }
+        strong { font-weight: 700; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness">
+        </div>
+        <div class="content">
+            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
+            <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
+            ${template.call_to_action_text && template.call_to_action_url ? `
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="${replacedCtaUrl}" class="cta-button">
+                    ${template.call_to_action_text}
+                </a>
+            </div>
+            ` : ''}
+        </div>
+        <div class="footer">
+            <p style="margin: 0 0 10px 0;"><strong>MyWellness</strong></p>
+            <p style="margin: 0;">${template.footer_text || 'Il tuo percorso verso il benessere'}</p>
+        </div>
+    </div>
+</body>
+</html>
+      `;
+
+      // Invia email di test
+      await base44.integrations.Core.SendEmail({
+        to: user.email,
+        from_name: `MyWellness Team <${template.from_email || 'info@projectmywellness.com'}>`,
+        subject: `[TEST] ${replacedSubject}`,
+        body: htmlBody
+      });
+
+      alert(`✅ Email di test inviata con successo a ${user.email}!`);
+    } catch (error) {
+      console.error('Error sending test email:', error);
+      alert('❌ Errore durante l\'invio dell\'email di test: ' + error.message);
+    }
+  };
+
 
   if (isLoading) {
     return (
@@ -597,6 +722,17 @@ export default function AdminEmails() {
                   Modifica Contenuto
                 </Button>
               )}
+               {!isEditMode && !previewEmail?.template && (
+                <Button
+                  onClick={handleStartEdit}
+                  variant="outline"
+                  size="sm"
+                  className="ml-4"
+                >
+                  <Edit className="w-4 h-4 mr-2" />
+                  Crea Template
+                </Button>
+              )}
             </DialogTitle>
           </DialogHeader>
           {previewEmail && (
@@ -678,7 +814,7 @@ export default function AdminEmails() {
                       placeholder="Contenuto email..."
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                      Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}
+                      Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}, {'{'}weight_change{'}'}, {'{'}current_weight{'}'}, {'{'}target_weight{'}'}, {'{'}avg_calories{'}'}, {'{'}workouts_completed{'}'}, {'{'}planned_workouts{'}'}, {'{'}adherence{'}'}, {'{'}progress{'}'}, {'{'}distance_remaining{'}'}, {'{'}week_range{'}'}, {'{'}motivational_message{'}'}
                     </p>
                   </div>
 
@@ -774,8 +910,18 @@ export default function AdminEmails() {
 
                   <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-sm text-blue-900">
-                      💡 <strong>Variabili disponibili:</strong> {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}, {'{'}weight_change{'}'}, {'{'}week_range{'}'}
+                      💡 <strong>Variabili disponibili:</strong> {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}, {'{'}weight_change{'}'}, {'{'}current_weight{'}'}, {'{'}target_weight{'}'}, {'{'}avg_calories{'}'}, {'{'}workouts_completed{'}'}, {'{'}planned_workouts{'}'}, {'{'}adherence{'}'}, {'{'}progress{'}'}, {'{'}distance_remaining{'}'}, {'{'}week_range{'}'}, {'{'}motivational_message{'}'}
                     </p>
+                  </div>
+
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      onClick={handleSendTestEmail}
+                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                    >
+                      <Send className="w-4 h-4 mr-2" />
+                      📧 Invia Email di Test
+                    </Button>
                   </div>
                 </div>
               ) : (
