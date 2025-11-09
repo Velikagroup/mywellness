@@ -200,7 +200,10 @@ Deno.serve(async (req) => {
             const functionUrl = `${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/functions/sendTrialWelcomeEmail`;
             await fetch(functionUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
+                headers: { 
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${await base44.asServiceRole.auth.getToken()}`
+                },
                 body: JSON.stringify({ userId: user.id })
             });
             console.log('📧 Trial welcome email trigger sent');

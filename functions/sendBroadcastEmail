@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -64,7 +65,7 @@ Deno.serve(async (req) => {
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: targetUser.email,
-                    from_name: 'MyWellness',
+                    from_name: 'MyWellness Team <info@projectmywellness.com>',
                     subject: subject,
                     body: personalizedBody
                 });
