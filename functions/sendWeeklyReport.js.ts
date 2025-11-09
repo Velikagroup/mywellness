@@ -185,105 +185,107 @@ function getWeeklyReportTemplate(user, stats) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 20px 0; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; }
-        .header { background: white; padding: 24px 30px; }
-        .header img { height: 48px; width: auto; display: block; }
-        .content { padding: 40px 30px; }
-        .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
-        .stat-box { background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb; }
-        .stat-box h3 { margin: 0 0 5px 0; font-size: 32px; font-weight: bold; }
-        .stat-box p { margin: 0; color: #6b7280; font-size: 14px; }
-        .highlight-box { background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center; }
-        .progress-bar { background: #e5e7eb; height: 24px; border-radius: 12px; overflow: hidden; margin: 10px 0; }
-        .progress-fill { background: linear-gradient(90deg, #26847F 0%, #1f6b66 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; }
-        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
-        .motivation { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0; }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness">
-            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">📊 Report Settimanale</h1>
-            <p style="color: #6b7280; margin: 0; font-size: 16px;">${stats.weekRange}</p>
-        </div>
-        
-        <div class="content">
-            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
-            
-            <p style="color: #374151; line-height: 1.6;">
-                Ecco il riassunto dei tuoi progressi questa settimana! 💪
-            </p>
+<body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                    <tr>
+                        <td style="background: white; padding: 24px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">📊 Report Settimanale</h1>
+                            <p style="color: #6b7280; margin: 0; font-size: 16px;">${stats.weekRange}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
+                            
+                            <p style="color: #374151; line-height: 1.6;">
+                                Ecco il riassunto dei tuoi progressi questa settimana! 💪
+                            </p>
 
-            <div class="highlight-box">
-                <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} Variazione Peso</h2>
-                <p style="margin: 0; font-size: 36px; font-weight: bold; color: ${weightColor};">
-                    ${stats.weightChange > 0 ? '+' : ''}${stats.weightChange} kg
-                </p>
-                <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
-                    Peso attuale: ${stats.currentWeight} kg · Target: ${stats.targetWeight} kg
-                </p>
-            </div>
+                            <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+                                <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} Variazione Peso</h2>
+                                <p style="margin: 0; font-size: 36px; font-weight: bold; color: ${weightColor};">
+                                    ${stats.weightChange > 0 ? '+' : ''}${stats.weightChange} kg
+                                </p>
+                                <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
+                                    Peso attuale: ${stats.currentWeight} kg · Target: ${stats.targetWeight} kg
+                                </p>
+                            </div>
 
-            <h3 style="color: #111827; margin: 30px 0 15px 0;">📈 Le tue statistiche</h3>
-            
-            <div class="stat-grid">
-                <div class="stat-box">
-                    <h3 style="color: #26847F;">🍽️</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.avgCalories}</p>
-                    <p>Calorie medie/giorno</p>
-                </div>
+                            <h3 style="color: #111827; margin: 30px 0 15px 0;">📈 Le tue statistiche</h3>
+                            
+                            <table width="100%" cellpadding="0" cellspacing="15" border="0">
+                                <tr>
+                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🍽️</p>
+                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.avgCalories}</p>
+                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Calorie medie/giorno</p>
+                                    </td>
+                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">💪</p>
+                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.workoutsCompleted}/${stats.plannedWorkouts}</p>
+                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Allenamenti completati</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: ${adherenceColor};">✓</p>
+                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.adherence}%</p>
+                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Aderenza al piano</p>
+                                    </td>
+                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🎯</p>
+                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.progressPercentage}%</p>
+                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Progresso obiettivo</p>
+                                    </td>
+                                </tr>
+                            </table>
 
-                <div class="stat-box">
-                    <h3 style="color: #26847F;">💪</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.workoutsCompleted}/${stats.plannedWorkouts}</p>
-                    <p>Allenamenti completati</p>
-                </div>
+                            <h3 style="color: #111827; margin: 30px 0 10px 0;">🎯 Progresso verso l'obiettivo</h3>
+                            <div style="background: #e5e7eb; height: 24px; border-radius: 12px; overflow: hidden; margin: 10px 0;">
+                                <div style="background: linear-gradient(90deg, #26847F 0%, #1f6b66 100%); height: 100%; width: ${Math.min(stats.progressPercentage, 100)}%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+                                    ${stats.progressPercentage}%
+                                </div>
+                            </div>
+                            <p style="text-align: center; color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">
+                                Rimangono ${stats.distanceRemaining} kg al tuo obiettivo!
+                            </p>
 
-                <div class="stat-box">
-                    <h3 style="color: ${adherenceColor};">✓</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.adherence}%</p>
-                    <p>Aderenza al piano</p>
-                </div>
+                            ${getMotivationalMessage(stats)}
 
-                <div class="stat-box">
-                    <h3 style="color: #26847F;">🎯</h3>
-                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.progressPercentage}%</p>
-                    <p>Progresso obiettivo</p>
-                </div>
-            </div>
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            📊 Vedi Dashboard Completa
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
 
-            <h3 style="color: #111827; margin: 30px 0 10px 0;">🎯 Progresso verso l'obiettivo</h3>
-            <div class="progress-bar">
-                <div class="progress-fill" style="width: ${Math.min(stats.progressPercentage, 100)}%;">
-                    ${stats.progressPercentage}%
-                </div>
-            </div>
-            <p style="text-align: center; color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">
-                Rimangono ${stats.distanceRemaining} kg al tuo obiettivo!
-            </p>
-
-            ${getMotivationalMessage(stats)}
-
-            <div style="text-align: center; margin: 30px 0;">
-                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" class="cta-button" style="color: #ffffff !important;">
-                    📊 Vedi Dashboard Completa
-                </a>
-            </div>
-
-            <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
-                Continua così! La costanza è la chiave del successo 🌟
-            </p>
-        </div>
-    </div>
-    
-    <div style="text-align: center; padding: 20px; color: #999999;">
-        <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
-        <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-        <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-    </div>
+                            <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
+                                Continua così! La costanza è la chiave del successo 🌟
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999;">
+                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
     `;
@@ -292,7 +294,7 @@ function getWeeklyReportTemplate(user, stats) {
 function getMotivationalMessage(stats) {
     if (stats.progressPercentage >= 75) {
         return `
-        <div class="motivation">
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-weight: 600;">
                 🔥 <strong>Incredibile!</strong> Sei oltre il 75% del tuo obiettivo! Il traguardo è vicino, continua così!
             </p>
@@ -300,7 +302,7 @@ function getMotivationalMessage(stats) {
         `;
     } else if (stats.adherence >= 80 && stats.workoutsCompleted >= stats.plannedWorkouts * 0.8) {
         return `
-        <div class="motivation">
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-weight: 600;">
                 💪 <strong>Ottimo lavoro!</strong> La tua costanza sta dando risultati. Mantieni questo ritmo!
             </p>
@@ -308,7 +310,7 @@ function getMotivationalMessage(stats) {
         `;
     } else if (stats.weightTrend === 'down') {
         return `
-        <div class="motivation">
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-weight: 600;">
                 📉 <strong>Ben fatto!</strong> Il peso sta scendendo. Stai andando nella direzione giusta!
             </p>
@@ -316,7 +318,7 @@ function getMotivationalMessage(stats) {
         `;
     } else {
         return `
-        <div class="motivation">
+        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
             <p style="margin: 0; color: #92400e; font-weight: 600;">
                 💡 <strong>Consiglio:</strong> Cerca di seguire il piano con maggiore costanza questa settimana. Piccoli passi portano a grandi risultati!
             </p>

@@ -135,68 +135,88 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 20px 0; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb; }
-        .header { background: white; padding: 24px 30px; }
-        .header img { height: 48px; width: auto; display: block; }
-        .content { padding: 40px 30px; }
-        .urgency-box { background: ${urgencyBg}; border: 3px solid ${urgencyColor}; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
-        .urgency-box h2 { color: ${urgencyColor}; margin: 0 0 10px 0; font-size: 32px; }
-        .feature { margin: 15px 0; padding-left: 30px; position: relative; }
-        .feature:before { content: '✓'; position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px; }
-        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
-    </style>
 </head>
-<body>
-    <div class="container">
-        <div class="header">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness">
-            <h1 style="color: #26847F; margin: 20px 0 0 0; font-size: 24px;">⏰ Promemoria Rinnovo</h1>
-        </div>
-        
-        <div class="content">
-            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
-            
-            <div class="urgency-box">
-                <h2>${daysLeft === 1 ? '🚨 ULTIMO GIORNO!' : daysLeft === 3 ? '⏰ Ultimi 3 giorni' : '📅 Promemoria'}</h2>
-                <p style="margin: 0; color: #111827; font-size: 18px;">
-                    Il tuo abbonamento MyWellness scade ${daysLeft === 1 ? 'domani' : `tra ${daysLeft} giorni`}
-                </p>
-                <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
-                    Data scadenza: ${new Date(expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}
-                </p>
-            </div>
+<body style="margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #f4f4f4; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="background: white; border-radius: 16px; overflow: hidden; border: 1px solid #e5e7eb;">
+                    <tr>
+                        <td style="background: white; padding: 24px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                            <h1 style="color: #26847F; margin: 20px 0 0 0; font-size: 24px;">⏰ Promemoria Rinnovo</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 40px 30px;">
+                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
+                            
+                            <div style="background: ${urgencyBg}; border: 3px solid ${urgencyColor}; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
+                                <h2 style="color: ${urgencyColor}; margin: 0 0 10px 0; font-size: 32px;">${daysLeft === 1 ? '🚨 ULTIMO GIORNO!' : daysLeft === 3 ? '⏰ Ultimi 3 giorni' : '📅 Promemoria'}</h2>
+                                <p style="margin: 0; color: #111827; font-size: 18px;">
+                                    Il tuo abbonamento MyWellness scade ${daysLeft === 1 ? 'domani' : `tra ${daysLeft} giorni`}
+                                </p>
+                                <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
+                                    Data scadenza: ${new Date(expiryDate).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}
+                                </p>
+                            </div>
 
-            <p style="color: #374151; line-height: 1.6;">
-                Non perdere l'accesso a tutte le funzionalità Premium che ti aiutano a raggiungere i tuoi obiettivi:
-            </p>
+                            <p style="color: #374151; line-height: 1.6;">
+                                Non perdere l'accesso a tutte le funzionalità Premium che ti aiutano a raggiungere i tuoi obiettivi:
+                            </p>
 
-            <div class="feature">Piano nutrizionale personalizzato con AI</div>
-            <div class="feature">Allenamenti adattivi basati sui tuoi progressi</div>
-            <div class="feature">Analisi foto pasti automatica</div>
-            <div class="feature">Tracciamento completo dei progressi</div>
-            <div class="feature">Supporto prioritario</div>
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Piano nutrizionale personalizzato con AI
+                            </div>
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Allenamenti adattivi basati sui tuoi progressi
+                            </div>
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Analisi foto pasti automatica
+                            </div>
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Tracciamento completo dei progressi
+                            </div>
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Supporto prioritario
+                            </div>
 
-            <div style="text-align: center; margin: 30px 0;">
-                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" class="cta-button" style="color: #ffffff !important;">
-                    🔄 Rinnova Abbonamento
-                </a>
-            </div>
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            🔄 Rinnova Abbonamento
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
 
-            <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
-                ${daysLeft === 1 ? 
-                    '⚡ Ultimo giorno per rinnovare senza interruzioni!' : 
-                    'Rinnova ora per continuare senza interruzioni'}
-            </p>
-        </div>
-    </div>
-    
-    <div style="text-align: center; padding: 20px; color: #999999;">
-        <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
-        <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-        <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-    </div>
+                            <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
+                                ${daysLeft === 1 ? 
+                                    '⚡ Ultimo giorno per rinnovare senza interruzioni!' : 
+                                    'Rinnova ora per continuare senza interruzioni'}
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+                
+                <table width="600" cellpadding="0" cellspacing="0" border="0" style="margin-top: 20px;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999;">
+                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
 </body>
 </html>
     `;
