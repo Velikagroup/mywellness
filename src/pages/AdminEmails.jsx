@@ -234,14 +234,15 @@ export default function AdminEmails() {
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header { padding: 24px 30px; background: white; }
-        .header img { height: 48px; }
+        .header img { height: 48px; width: auto; display: block; }
         .content { padding: 40px 30px; }
         .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; }
-        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
         p { margin: 0 0 1em 0; }
         strong { font-weight: 700; }
     </style>
@@ -256,7 +257,7 @@ export default function AdminEmails() {
             <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
             ${template.call_to_action_text && template.call_to_action_url ? `
             <div style="text-align: center; margin: 30px 0;">
-                <a href="${replacedCtaUrl}" class="cta-button">
+                <a href="${replacedCtaUrl}" class="cta-button" style="color: #ffffff !important;">
                     ${template.call_to_action_text}
                 </a>
             </div>

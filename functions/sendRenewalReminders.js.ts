@@ -134,17 +134,18 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header { background: white; padding: 24px 30px; }
-        .header img { height: 48px; }
+        .header img { height: 48px; width: auto; display: block; }
         .content { padding: 40px 30px; }
         .urgency-box { background: ${urgencyBg}; border: 3px solid ${urgencyColor}; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0; }
         .urgency-box h2 { color: ${urgencyColor}; margin: 0 0 10px 0; font-size: 32px; }
         .feature { margin: 15px 0; padding-left: 30px; position: relative; }
         .feature:before { content: '✓'; position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px; }
-        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
         .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; }
     </style>
 </head>
@@ -179,7 +180,7 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
             <div class="feature">Supporto prioritario</div>
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" class="cta-button">
+                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" class="cta-button" style="color: #ffffff !important;">
                     🔄 Rinnova Abbonamento
                 </a>
             </div>

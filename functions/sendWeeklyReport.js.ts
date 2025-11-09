@@ -184,11 +184,12 @@ function getWeeklyReportTemplate(user, stats) {
 <html>
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { font-family: 'Inter', -apple-system, sans-serif; margin: 0; padding: 0; background-color: #f9fafb; }
         .container { max-width: 600px; margin: 0 auto; background: white; border-radius: 16px; overflow: hidden; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
         .header { background: white; padding: 24px 30px; }
-        .header img { height: 48px; }
+        .header img { height: 48px; width: auto; display: block; }
         .content { padding: 40px 30px; }
         .stat-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin: 20px 0; }
         .stat-box { background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb; }
@@ -197,7 +198,7 @@ function getWeeklyReportTemplate(user, stats) {
         .highlight-box { background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center; }
         .progress-bar { background: #e5e7eb; height: 24px; border-radius: 12px; overflow: hidden; margin: 10px 0; }
         .progress-fill { background: linear-gradient(90deg, #26847F 0%, #1f6b66 100%); height: 100%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px; }
-        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
+        .cta-button { display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px; margin: 20px 0; }
         .footer { background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; }
         .motivation { background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0; }
     </style>
@@ -268,7 +269,7 @@ function getWeeklyReportTemplate(user, stats) {
             ${getMotivationalMessage(stats)}
 
             <div style="text-align: center; margin: 30px 0;">
-                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" class="cta-button">
+                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" class="cta-button" style="color: #ffffff !important;">
                     📊 Vedi Dashboard Completa
                 </a>
             </div>

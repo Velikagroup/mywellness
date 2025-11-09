@@ -274,7 +274,7 @@ Deno.serve(async (req) => {
                     body: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                         <div style="background: white; padding: 24px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                             <h1 style="color: #26847F; margin-top: 20px;">Benvenuto in MyWellness!</h1>
                         </div>
                         
@@ -290,7 +290,7 @@ Deno.serve(async (req) => {
                         <p style="font-size: 16px; color: #333;">Per iniziare, clicca sul pulsante qui sotto e crea la tua password personale:</p>
                         
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="${dashboardUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
+                            <a href="${dashboardUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
                                 Accedi alla Dashboard
                             </a>
                         </div>
@@ -321,7 +321,7 @@ Deno.serve(async (req) => {
                     body: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px;">
                         <div style="background: white; padding: 24px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                             <h1 style="color: #26847F; margin-top: 20px;">Il Tuo Piano Premium è Attivo!</h1>
                         </div>
                         
@@ -337,7 +337,7 @@ Deno.serve(async (req) => {
                         <p style="font-size: 16px; color: #333;">Accedi subito alla tua dashboard per iniziare il tuo percorso di trasformazione:</p>
                         
                         <div style="text-align: center; margin: 30px 0;">
-                            <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: white; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
+                            <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
                                 Vai alla Dashboard
                             </a>
                         </div>
