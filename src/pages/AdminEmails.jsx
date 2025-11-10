@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -25,7 +26,8 @@ import {
   Settings,
   Zap,
   Eye,
-  Edit
+  Edit,
+  Trash2
 } from 'lucide-react';
 
 export default function AdminEmails() {
@@ -164,6 +166,27 @@ export default function AdminEmails() {
     }
   };
 
+  const handleDeleteTemplate = async () => {
+    if (!previewEmail?.template?.id) {
+      alert('❌ Nessun template da eliminare.');
+      return;
+    }
+
+    if (!confirm(`Sei sicuro di voler eliminare il template "${previewEmail.name}"?\n\nQuesta azione non può essere annullata.`)) {
+      return;
+    }
+
+    try {
+      await base44.entities.EmailTemplate.delete(previewEmail.template.id);
+      alert('✅ Template eliminato con successo!');
+      await loadEmailTemplates();
+      setShowEmailPreview(false);
+    } catch (error) {
+      console.error('Error deleting template:', error);
+      alert('❌ Errore durante l\'eliminazione: ' + error.message);
+    }
+  };
+
   const handleSendTestEmail = async () => {
     if (!previewEmail?.template) {
       alert('❌ Template non trovato. Impossibile inviare email di test.');
@@ -235,9 +258,14 @@ export default function AdminEmails() {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+.logo-cell { padding: 60px 30px 24px 30px; }
+.content-cell { padding: 40px 30px; }
+@media only screen and (min-width: 600px) {
+.logo-cell { padding: 60px 60px 24px 60px !important; }
+.content-cell { padding: 60px 60px 40px 60px !important; }
+}
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
-.content { padding: 30px 20px !important; }
 .outer-wrapper { padding: 0 !important; }
 }
 </style>
@@ -248,12 +276,12 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <td align="center">
 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
 <tr>
-<td style="background: white; padding: 60px 30px 24px 30px;">
+<td class="logo-cell" style="background: white;">
 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
 </td>
 </tr>
 <tr>
-<td class="content" style="padding: 40px 30px;">
+<td class="content-cell">
 <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
 <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
 ${ctaHtml}
@@ -714,28 +742,39 @@ ${ctaHtml}
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center justify-between">
               <span>Email: {previewEmail?.name}</span>
-              {!isEditMode && previewEmail?.template && (
-                <Button
-                  onClick={handleStartEdit}
-                  variant="outline"
-                  size="sm"
-                  className="ml-4"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Modifica Contenuto
-                </Button>
-              )}
-               {!isEditMode && !previewEmail?.template && (
-                <Button
-                  onClick={handleStartEdit}
-                  variant="outline"
-                  size="sm"
-                  className="ml-4"
-                >
-                  <Edit className="w-4 h-4 mr-2" />
-                  Crea Template
-                </Button>
-              )}
+              <div className="flex items-center gap-2">
+                {!isEditMode && previewEmail?.template && (
+                  <>
+                    <Button
+                      onClick={handleDeleteTemplate}
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                    >
+                      <Trash2 className="w-4 h-4 mr-2" />
+                      Elimina
+                    </Button>
+                    <Button
+                      onClick={handleStartEdit}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Edit className="w-4 h-4 mr-2" />
+                      Modifica
+                    </Button>
+                  </>
+                )}
+                {!isEditMode && !previewEmail?.template && (
+                  <Button
+                    onClick={handleStartEdit}
+                    variant="outline"
+                    size="sm"
+                  >
+                    <Edit className="w-4 h-4 mr-2" />
+                    Crea Template
+                  </Button>
+                )}
+              </div>
             </DialogTitle>
           </DialogHeader>
           {previewEmail && (
