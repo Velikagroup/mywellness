@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase } from "lucide-react";
+import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -39,12 +39,12 @@ export default function TrialSetup() {
   const navigate = useNavigate();
   const location = useLocation();
   const [isSaving, setIsSaving] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(null); // 'card', 'apple_pay' or 'google_pay'
+  const [paymentMethod, setPaymentMethod] = useState(null);
   const [stripe, setStripe] = useState(null);
-  const [paymentRequest, setPaymentRequest] = useState(null); // New state for Stripe Payment Request
-  const [canMakePayment, setCanMakePayment] = useState(null); // New state to store result of canMakePayment
-  const [showApplePay, setShowApplePay] = useState(false); // New state
-  const [showGooglePay, setShowGooglePay] = useState(false); // New state
+  const [paymentRequest, setPaymentRequest] = useState(null);
+  const [canMakePayment, setCanMakePayment] = useState(null);
+  const [showApplePay, setShowApplePay] = useState(false);
+  const [showGooglePay, setShowGooglePay] = useState(false);
   const [cardData, setCardData] = useState({
     number: '',
     expiry: '',
@@ -76,15 +76,36 @@ export default function TrialSetup() {
   const [popoverOpen, setPopoverOpen] = useState(false);
   const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
-
-  // New states for authentication check
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [trafficSource, setTrafficSource] = useState(null); // Added trafficSource state
-
-  // Determine plan from location state or default to base
+  const [trafficSource, setTrafficSource] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState('base');
   const [selectedBillingPeriod, setSelectedBillingPeriod] = useState('monthly');
+
+  // 🔐 VALIDAZIONE COUPON PERSONALIZZATO
+  const validateCouponFromURL = async (code, email) => {
+    try {
+      const response = await base44.functions.invoke('validatePersonalCoupon', {
+        couponCode: code,
+        userEmail: email
+      });
+
+      if (response.valid) {
+        setAppliedCoupon({
+          code: code,
+          discount_type: response.discount_type,
+          discount_value: response.discount_value
+        });
+        setDiscountError('');
+      } else {
+        setDiscountError(response.error || 'Coupon non valido');
+      }
+    } catch (error) {
+      console.error('Error validating coupon from URL:', error);
+      setDiscountError('Errore di validazione del coupon.');
+    }
+  };
+
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -92,23 +113,29 @@ export default function TrialSetup() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
-        // Capture traffic source if available (e.g., from query params or localStorage)
         const queryParams = new URLSearchParams(location.search);
         const refSource = queryParams.get('ref');
         const storedSource = localStorage.getItem('trafficSource');
+        
+        // 🎫 GESTIONE COUPON DA URL
+        const couponParam = queryParams.get('coupon');
+        if (couponParam && currentUser.email) { // Ensure user email is available for validation
+          setCouponCode(couponParam);
+          // Auto-valida il coupon
+          await validateCouponFromURL(couponParam, currentUser.email);
+        }
 
         if (refSource) {
           setTrafficSource(refSource);
-          localStorage.setItem('trafficSource', refSource); // Persist if needed
+          localStorage.setItem('trafficSource', refSource);
         } else if (storedSource) {
           setTrafficSource(storedSource);
         } else {
-          setTrafficSource('direct'); // Default if no source is found
+          setTrafficSource('direct');
         }
         console.log("Traffic Source:", refSource || storedSource || 'direct');
 
 
-        // Carica Stripe.js
         const loadStripe = async () => {
           const stripeKey = 'pk_live_51S6Kgr2OXBs6ZYwl4yACMzsDOQ72eT6A2glTBx5dXJWDmDEABHkXbDMzl77MMb3ZQOpXHWJpBiVQWJjZhZz34Nnl00FuwXVxIM';
           if (!window.Stripe) {
@@ -129,7 +156,6 @@ export default function TrialSetup() {
         const stripeInstance = await loadStripe();
         setStripe(stripeInstance);
         
-        // Autocompila i dati dall'utente loggato
         setBillingInfo(prev => ({
           ...prev,
           name: currentUser.full_name || currentUser.billing_name || '',
@@ -145,7 +171,6 @@ export default function TrialSetup() {
         }));
 
         if (currentUser.phone_number) {
-          // Extract phone number without country code if possible
           const phoneMatch = currentUser.phone_number.match(/\+\d+\s*(.+)/);
           if (phoneMatch) {
             setPhoneNumber(phoneMatch[1].trim());
@@ -154,31 +179,25 @@ export default function TrialSetup() {
           }
         }
 
-        // Se l'utente ha già una sottoscrizione attiva, reindirizza alla dashboard
         if (currentUser && currentUser.subscription_status === 'active') {
           navigate(createPageUrl('Dashboard'), { replace: true });
           return;
         }
 
-        // Controlla se arriva dalla landing (offerta speciale) o dal quiz normale
         const fromLanding = location.state?.fromLanding || false;
         if (fromLanding) {
-          // Da Landing: piano premium con offerta speciale (già gestito altrove)
           setSelectedPlan('premium');
         } else {
-          // Dal Quiz normale: propone piano Base
           setSelectedPlan('base');
         }
 
-        // Controlla se ci sono dati del quiz da salvare
         const savedQuizData = localStorage.getItem('quizData');
         if (savedQuizData) {
           try {
             const quizData = JSON.parse(savedQuizData);
-            // Salva i dati del quiz nell'utente
             await base44.auth.updateMe(quizData);
             console.log('Quiz data saved to user profile');
-            localStorage.removeItem('quizData'); // Remove after saving to avoid repeated updates
+            localStorage.removeItem('quizData');
           } catch (error) {
             console.error('Error saving quiz data:', error);
           }
@@ -186,8 +205,6 @@ export default function TrialSetup() {
 
       } catch (error) {
         console.error('Authentication error:', error);
-
-        // Se non autenticato, salva flag e reindirizza al login
         localStorage.setItem('redirectToTrialSetup', 'true');
         const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
         await base44.auth.redirectToLogin(trialSetupUrl);
@@ -203,7 +220,6 @@ export default function TrialSetup() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Initialize Payment Request for Apple Pay / Google Pay
   useEffect(() => {
     if (!stripe || !user) return;
 
@@ -220,7 +236,7 @@ export default function TrialSetup() {
           currency: 'eur',
           total: {
             label: 'MyWellness - Prova Gratuita',
-            amount: 100,
+            amount: 100, // Dummy amount, will be updated before .show()
           },
           requestPayerName: true,
           requestPayerEmail: true,
@@ -228,7 +244,6 @@ export default function TrialSetup() {
           requestBillingAddress: true,
         });
 
-        // Check availability
         const canMakePaymentResult = await pr.canMakePayment();
         
         console.log('💳 canMakePayment result:', canMakePaymentResult);
@@ -237,7 +252,6 @@ export default function TrialSetup() {
           setCanMakePayment(canMakePaymentResult);
           setPaymentRequest(pr);
           
-          // Set individual flags for Apple Pay and Google Pay
           if (canMakePaymentResult.applePay) {
             console.log('✅ Apple Pay is available');
             setShowApplePay(true);
@@ -248,7 +262,6 @@ export default function TrialSetup() {
             setShowGooglePay(true);
           }
           
-          // Fallback detection più aggressivo per iOS/Safari
           if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
             console.log('⚠️ Payment Request available but no specific wallet detected - using platform detection');
             const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
@@ -267,7 +280,6 @@ export default function TrialSetup() {
           console.log('❌ No digital wallet available - canMakePayment returned null/false');
           console.log('⚙️ Trying fallback detection anyway...');
           
-          // Fallback anche se canMakePayment fallisce
           const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
           const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
           const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
@@ -275,7 +287,7 @@ export default function TrialSetup() {
           if (isIOS || isSafari || isMacOS) {
             console.log('🍎 iOS/Safari/macOS detected via fallback - attempting to show Apple Pay');
             setShowApplePay(true);
-            setPaymentRequest(pr); // Set it anyway for the click handler
+            setPaymentRequest(pr);
           }
         }
       } catch (error) {
@@ -286,7 +298,6 @@ export default function TrialSetup() {
     initializePaymentRequest();
   }, [stripe, user]);
 
-  // If loading, render a loading indicator
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
@@ -340,40 +351,39 @@ export default function TrialSetup() {
     setIsApplyingCoupon(true);
     setDiscountError('');
     try {
-      const coupons = await base44.entities.Coupon.filter({
-        code: couponCode.toUpperCase(),
-        is_active: true
+      // Use the new base44 function to validate coupons
+      const response = await base44.functions.invoke('validatePersonalCoupon', {
+        couponCode: couponCode.toUpperCase(),
+        userEmail: user.email // Pass the user's email for personalized coupon validation
       });
 
-      if (coupons.length > 0) {
-        const coupon = coupons[0];
-
-        if (coupon.expires_at && new Date(coupon.expires_at) < new Date()) {
-          setDiscountError("Questo coupon è scaduto.");
-          setAppliedCoupon(null);
-        } else {
-          setAppliedCoupon(coupon);
-          setDiscountError("");
-          alert(`✅ Coupon applicato! Riceverai uno sconto del ${coupon.discount_value}%`);
-        }
+      if (response.valid) {
+        setAppliedCoupon({
+          code: couponCode.toUpperCase(),
+          discount_type: response.discount_type,
+          discount_value: response.discount_value
+        });
+        setDiscountError("");
+        alert(`✅ Coupon applicato! Sconto del ${response.discount_value}%`);
       } else {
-        setDiscountError("Coupon non valido.");
+        setDiscountError(response.error || "Coupon non valido.");
         setAppliedCoupon(null);
       }
     } catch (error) {
       console.error("Error validating coupon:", error);
       setDiscountError("Errore nella verifica del coupon. Riprova più tardi.");
+      setAppliedCoupon(null);
     }
     setIsApplyingCoupon(false);
   };
 
-  const handleDigitalWalletClick = async (walletType) => { // Added walletType parameter
+  const handleDigitalWalletClick = async (walletType) => {
     if (!paymentRequest || !stripe) {
       alert("Wallet digitale non disponibile.");
       return;
     }
 
-    console.log(`🔄 Initializing ${walletType} payment...`); // Added log
+    console.log(`🔄 Initializing ${walletType} payment...`);
 
     if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
       alert("Per favore, compila tutti i campi obbligatori prima di procedere.");
@@ -383,7 +393,6 @@ export default function TrialSetup() {
     setIsSaving(true);
 
     try {
-      // Calculate current total
       let subtotal = 0;
       if (orderBumpSelected) {
         subtotal = ORDER_BUMP_PRICE;
@@ -395,9 +404,8 @@ export default function TrialSetup() {
       }
 
       const currentTotal = Math.max(0, subtotal - discount);
-      const amount = Math.round(currentTotal * 100); // Convert to cents
+      const amount = Math.round(currentTotal * 100);
 
-      // Update payment request with current amount
       paymentRequest.update({
         total: {
           label: 'MyWellness - Prova Gratuita',
@@ -405,8 +413,7 @@ export default function TrialSetup() {
         },
       });
 
-      // Set up payment method listener
-      paymentRequest.off('paymentmethod'); // Remove any existing listeners
+      paymentRequest.off('paymentmethod');
       paymentRequest.on('paymentmethod', async (ev) => {
         try {
           const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
@@ -417,9 +424,9 @@ export default function TrialSetup() {
             billingPeriod: selectedBillingPeriod,
             orderBumpSelected: orderBumpSelected,
             appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
-            trafficSource: trafficSource, // Aggiungi traffic source
+            trafficSource: trafficSource,
             billingInfo: {
-              name: ev.payerName || billingInfo.name, // Use payer info from wallet if available
+              name: ev.payerName || billingInfo.name,
               email: ev.payerEmail || billingInfo.email,
               companyName: showBillingFields && billingInfo.billingType === 'company' ? billingInfo.companyName : null,
               taxId: showBillingFields ? billingInfo.taxId : null,
@@ -440,7 +447,7 @@ export default function TrialSetup() {
             method: 'POST',
             headers: { 
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${await base44.auth.getToken()}` // Add authorization header
+              'Authorization': `Bearer ${await base44.auth.getToken()}`
             },
             body: JSON.stringify(payload)
           });
@@ -462,7 +469,6 @@ export default function TrialSetup() {
         }
       });
 
-      // Show the payment sheet
       paymentRequest.show();
 
     } catch (error) {
@@ -474,11 +480,10 @@ export default function TrialSetup() {
 
   const handleCompleteSetup = async () => {
     if (!isFormValid) {
-      alert("Per favor, compila tutti i campi obbligatori correttamente.");
+      alert("Per favore, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
-    // Se Digital Wallet, usa il gestore specifico
     if (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay') {
       return handleDigitalWalletClick(paymentMethod === 'apple_pay' ? 'Apple Pay' : 'Google Pay');
     }
@@ -499,11 +504,11 @@ export default function TrialSetup() {
           exp_year: exp_year,
           cvc: cardData.cvc,
         },
-        planType: selectedPlan, // 'base', 'pro', 'premium'
-        billingPeriod: selectedBillingPeriod, // 'monthly', 'yearly'
+        planType: selectedPlan,
+        billingPeriod: selectedBillingPeriod,
         orderBumpSelected: orderBumpSelected,
         appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
-        trafficSource: trafficSource, // Added traffic source for card payments as well
+        trafficSource: trafficSource,
         billingInfo: {
           name: billingInfo.name,
           email: billingInfo.email,
@@ -527,7 +532,7 @@ export default function TrialSetup() {
         method: 'POST',
         headers: { 
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await base44.auth.getToken()}` // Add authorization header
+          'Authorization': `Bearer ${await base44.auth.getToken()}`
         },
         body: JSON.stringify(payload)
       });
@@ -549,7 +554,7 @@ export default function TrialSetup() {
   };
 
   const isFormValid = paymentMethod && 
-    (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay' || ( // Updated condition
+    (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay' || (
       cardData.number.replace(/\s/g, '').length === 16 &&
       cardData.expiry.length === 5 &&
       cardData.cvc.length === 3
@@ -583,7 +588,6 @@ export default function TrialSetup() {
 
   const total = Math.max(0, subtotal - discount);
 
-  // Determine plan from location state or default to base
   const planPrices = {
     base: 19,
     pro: 29,
@@ -675,6 +679,27 @@ export default function TrialSetup() {
               {selectedPlan === 'pro' && 'Piano Pro - Nutrizionale + Allenamento + Analisi AI'}
               {selectedPlan === 'premium' && 'Piano Premium - Accesso completo a tutte le funzionalità'}
             </p>
+            
+            {/* 🎫 COUPON APPLIED BANNER */}
+            {appliedCoupon && (
+              <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
+                <div className="flex items-center justify-center gap-2">
+                  <Tag className="w-5 h-5 text-green-600" />
+                  <span className="font-bold text-green-700">
+                    Sconto del {appliedCoupon.discount_value}% applicato! ({appliedCoupon.code})
+                  </span>
+                  <button
+                    onClick={() => {
+                      setAppliedCoupon(null);
+                      setCouponCode('');
+                      setDiscountError('');
+                    }}
+                    className="ml-2 text-green-600 hover:text-green-800">
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
+              </div>
+            )}
           </CardHeader>
 
           <CardContent className="px-8 pb-8 space-y-6">
@@ -951,7 +976,6 @@ export default function TrialSetup() {
               </div>
             </div>
 
-            {/* Payment Method Selection */}
             <div className="space-y-4 pt-4 border-t border-gray-200/50">
               <div className="flex items-center gap-3 mb-4">
                 <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
@@ -1031,7 +1055,6 @@ export default function TrialSetup() {
               </div>
             </div>
 
-            {/* Card Details - Show only when card is selected */}
             {paymentMethod === 'card' && (
               <div className="space-y-4 pt-4">
                 <div>
@@ -1192,7 +1215,6 @@ export default function TrialSetup() {
         </Card>
       </div>
 
-      {/* Footer */}
       <footer className="py-12 px-6 mt-8">
         <div className="max-w-6xl mx-auto">
           <div className="text-center space-y-2">
