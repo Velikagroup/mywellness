@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -34,21 +33,14 @@ export default function AdminEmails() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
-
-  // Broadcast state
   const [broadcastSubject, setBroadcastSubject] = useState('');
   const [broadcastBody, setBroadcastBody] = useState('');
   const [broadcastSegment, setBroadcastSegment] = useState('all');
   const [userCount, setUserCount] = useState(0);
-
-  // NEW: Preview state
   const [showEmailPreview, setShowEmailPreview] = useState(false);
   const [previewEmail, setPreviewEmail] = useState(null);
-
-  // NEW: Edit state for preview dialog
   const [editingContent, setEditingContent] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
-
   const [emailTemplates, setEmailTemplates] = useState([]);
 
   const loadEmailTemplates = async () => {
@@ -225,67 +217,65 @@ export default function AdminEmails() {
       const replacedSubject = replaceVars(template.subject, variables);
       const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
 
-      const htmlBody = `
-<!DOCTYPE html>
+      const ctaHtml = template.call_to_action_text && template.call_to_action_url ? 
+        `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+            <tr>
+                <td align="center">
+                    <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                        ${template.call_to_action_text}
+                    </a>
+                </td>
+            </tr>
+        </table>` : '';
+
+      const htmlBody = `<!DOCTYPE html>
 <html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        @media only screen and (max-width: 600px) {
-            .container { width: 100% !important; border-radius: 0 !important; }
-            .content { padding: 30px 20px !important; }
-            .outer-wrapper { padding: 0 !important; }
-        }
-    </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+@media only screen and (max-width: 600px) {
+.container { width: 100% !important; border-radius: 0 !important; }
+.content { padding: 30px 20px !important; }
+.outer-wrapper { padding: 0 !important; }
+}
+</style>
 </head>
 <body style="margin: 0; padding: 0;">
-    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
-        <tr>
-            <td align="center">
-                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); padding: 40px 30px 24px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content" style="padding: 40px 30px;">
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
-                            <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
-                            ${template.call_to_action_text && template.call_to_action_url ? `
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            ${template.call_to_action_text}
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-                            ` : ''}
-                        </td>
-                    </tr>
-                </table>
-                
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
-                    <tr>
-                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
-                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
-                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+<table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+<tr>
+<td align="center">
+<table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+<tr>
+<td style="background: white; padding: 60px 30px 24px 30px;">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+</td>
+</tr>
+<tr>
+<td class="content" style="padding: 40px 30px;">
+<p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
+<div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
+${ctaHtml}
+</td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+<tr>
+<td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
+<p style="margin: 5px 0; font-size: 12px; font-weight: 600;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
+<p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
 </body>
-</html>
-      `;
+</html>`;
 
-      const response = await base44.functions.invoke('sendTestEmailDirect', {
+      await base44.functions.invoke('sendTestEmailDirect', {
         to: user.email,
         from_email: fromEmail,
         from_name: 'MyWellness',
@@ -300,264 +290,6 @@ export default function AdminEmails() {
       alert('❌ Errore durante l\'invio dell\'email di test: ' + error.message);
     }
   };
-
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--brand-primary)]"></div>
-      </div>
-    );
-  }
-
-  const systemEmails = [
-    {
-      id: 'trial_welcome',
-      name: 'Trial Setup - Benvenuto',
-      description: 'Email di benvenuto inviata dopo il setup del trial con guida ai prossimi passi',
-      trigger: 'Completamento Trial Setup',
-      status: 'active',
-      function: 'sendTrialWelcomeEmail'
-    },
-    {
-      id: 'landing_new_user',
-      name: 'Landing Offer - Nuovo Utente',
-      description: 'Email inviata ai nuovi utenti dopo l\'acquisto della Landing Offer con password temporanea',
-      trigger: 'Acquisto Landing Offer (nuovo utente)',
-      status: 'active',
-      function: 'stripeCreateOneTimePayment'
-    },
-    {
-      id: 'landing_existing_user',
-      name: 'Landing Offer - Utente Esistente',
-      description: 'Email di conferma per utenti esistenti che acquistano la Landing Offer',
-      trigger: 'Acquisto Landing Offer (utente esistente)',
-      status: 'active',
-      function: 'stripeCreateOneTimePayment'
-    },
-    {
-      id: 'renewal_7_days',
-      name: 'Reminder Rinnovo - 7 Giorni',
-      description: 'Email automatica inviata 7 giorni prima della scadenza abbonamento',
-      trigger: 'Cron giornaliero (7 giorni prima scadenza)',
-      status: 'active',
-      function: 'sendRenewalReminders'
-    },
-    {
-      id: 'renewal_3_days',
-      name: 'Reminder Rinnovo - 3 Giorni',
-      description: 'Email automatica inviata 3 giorni prima della scadenza abbonamento',
-      trigger: 'Cron giornaliero (3 giorni prima scadenza)',
-      status: 'active',
-      function: 'sendRenewalReminders'
-    },
-    {
-      id: 'renewal_1_day',
-      name: 'Reminder Rinnovo - 1 Giorno',
-      description: 'Email urgente inviata 1 giorno prima della scadenza abbonamento',
-      trigger: 'Cron giornaliero (1 giorno prima scadenza)',
-      status: 'active',
-      function: 'sendRenewalReminders'
-    },
-    {
-      id: 'weekly_report',
-      name: 'Report Settimanale Progressi',
-      description: 'Report automatico con statistiche settimanali (peso, calorie, allenamenti, aderenza)',
-      trigger: 'Cron settimanale (ogni Lunedì)',
-      status: 'active',
-      function: 'sendWeeklyReport'
-    }
-  ];
-
-  const emailSequences = [
-    {
-      id: 'welcome_sequence',
-      name: 'Sequenza di Benvenuto (Trial)',
-      description: 'Serie di email per guidare l\'utente nei primi giorni di trial',
-      emails: [
-        { day: 0, subject: 'Benvenuto in MyWellness! Inizia qui 🎯', status: 'planned' },
-        { day: 1, subject: 'Come generare il tuo piano nutrizionale personalizzato', status: 'planned' },
-        { day: 2, subject: 'Ultimo giorno di trial - Non perdere il tuo piano! ⏰', status: 'planned' }
-      ],
-      status: 'planned'
-    },
-    {
-      id: 'renewal_reminder',
-      name: 'Reminder Rinnovo',
-      description: 'Email di promemoria prima della scadenza dell\'abbonamento',
-      emails: [
-        { day: -7, subject: 'Il tuo abbonamento scade tra 7 giorni', status: 'planned' },
-        { day: -3, subject: 'Ultimi 3 giorni - Rinnova ora e continua il tuo percorso', status: 'planned' },
-        { day: -1, subject: 'Ultimo giorno! Non perdere i tuoi progressi', status: 'planned' }
-      ],
-      status: 'planned'
-    },
-    {
-      id: 'engagement_sequence',
-      name: 'Sequenza Engagement',
-      description: 'Email per mantenere gli utenti attivi e motivati',
-      emails: [
-        { week: 1, subject: 'I tuoi primi progressi! 📊', status: 'planned' },
-        { week: 2, subject: 'Consigli per massimizzare i risultati', status: 'planned' },
-        { week: 4, subject: 'Report mensile dei tuoi progressi', status: 'planned' }
-      ],
-      status: 'planned'
-    },
-    {
-      id: 'win_back',
-      name: 'Win-Back Sequence',
-      description: 'Recupera utenti che hanno cancellato l\'abbonamento',
-      emails: [
-        { day: 7, subject: 'Ci manchi! Torna con un\'offerta speciale', status: 'planned' },
-        { day: 14, subject: 'Il tuo piano ti sta aspettando', status: 'planned' },
-        { day: 30, subject: 'Ultima possibilità: 50% di sconto per te', status: 'planned' }
-      ],
-      status: 'planned'
-    }
-  ];
-
-  return (
-    <div className="min-h-screen pb-20">
-      <div className="max-w-7xl mx-auto p-6 space-y-8">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Email Manager</h1>
-          <p className="text-gray-600">Gestisci le email di sistema, broadcast e sequenze automatiche</p>
-        </div>
-
-        <div className="grid grid-cols-1 md:// ... keep existing code (imports and component start) ...
-
-export default function AdminEmails() {
-  // ... keep existing code (state and functions until handleSendTestEmail) ...
-
-  const handleSendTestEmail = async () => {
-    if (!previewEmail?.template) {
-      alert('❌ Template non trovato. Impossibile inviare email di test.');
-      return;
-    }
-
-    if (!user?.email) {
-      alert('❌ Impossibile determinare l\'indirizzo email dell\'utente corrente per inviare il test.');
-      return;
-    }
-
-    if (!confirm(`Inviare email di test a ${user.email}?`)) {
-      return;
-    }
-
-    try {
-      const template = previewEmail.template;
-      const fromEmail = template.from_email || 'info@projectmywellness.com';
-      const replyToEmail = template.reply_to_email || 'no-reply@projectmywellness.com';
-      
-      const variables = {
-        user_name: user.full_name || 'Mario Rossi',
-        user_email: user.email,
-        expiry_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }),
-        temp_password: 'TestPass123!',
-        app_url: window.location.origin,
-        weight_change: '-2.5',
-        current_weight: '72.5',
-        target_weight: '70',
-        avg_calories: '1850',
-        workouts_completed: '4',
-        planned_workouts: '5',
-        adherence: '80',
-        progress: '65',
-        distance_remaining: '2.5',
-        week_range: '1-7 Gen 2025',
-        motivational_message: 'Ottimo lavoro questa settimana! Continua così 💪'
-      };
-
-      const replaceVars = (text, vars) => {
-        let result = text;
-        Object.keys(vars).forEach(key => {
-          const regex = new RegExp(`\\{${key}\\}`, 'g');
-          result = result.replace(regex, vars[key]);
-        });
-        return result;
-      };
-
-      const replacedGreeting = replaceVars(template.greeting, variables);
-      const replacedMainContent = replaceVars(template.main_content, variables);
-      const replacedSubject = replaceVars(template.subject, variables);
-      const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
-
-      const htmlBody = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        @media only screen and (max-width: 600px) {
-            .container { width: 100% !important; border-radius: 0 !important; }
-            .content { padding: 30px 20px !important; }
-            .outer-wrapper { padding: 0 !important; }
-        }
-    </style>
-</head>
-<body style="margin: 0; padding: 0;">
-    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
-        <tr>
-            <td align="center">
-                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); padding: 40px 30px 24px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content" style="padding: 40px 30px;">
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
-                            <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
-                            ${template.call_to_action_text && template.call_to_action_url ? `
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            ${template.call_to_action_text}
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-                            ` : ''}
-                        </td>
-                    </tr>
-                </table>
-                
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
-                    <tr>
-                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
-                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
-                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>
-      `;
-
-      const response = await base44.functions.invoke('sendTestEmailDirect', {
-        to: user.email,
-        from_email: fromEmail,
-        from_name: 'MyWellness',
-        reply_to: replyToEmail,
-        subject: `[TEST] ${replacedSubject}`,
-        html: htmlBody
-      });
-
-      alert(`✅ Email di test inviata con successo a ${user.email}!`);
-    } catch (error) {
-      console.error('Error sending test email:', error);
-      alert('❌ Errore durante l\'invio dell\'email di test: ' + error.message);
-    }
-  };
-
 
   if (isLoading) {
     return (
