@@ -24,14 +24,15 @@ Deno.serve(async (req) => {
 
         console.log(`📅 Today: ${today.toISOString().split('T')[0]}`);
 
-        // Recupera tutti gli utenti con subscription attiva
+        // Recupera tutti gli utenti con subscription attiva E che hanno cancellato il rinnovo automatico
         const allUsers = await base44.asServiceRole.entities.User.list();
-        const activeUsers = allUsers.filter(u => 
+        const usersWithCancelledRenewal = allUsers.filter(u => 
             u.subscription_status === 'active' && 
-            u.subscription_period_end
+            u.subscription_period_end &&
+            u.cancellation_at_period_end === true  // SOLO utenti che hanno annullato il rinnovo automatico
         );
 
-        console.log(`👥 Found ${activeUsers.length} active users to check`);
+        console.log(`👥 Found ${usersWithCancelledRenewal.length} users with cancelled auto-renewal to check`);
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
 
@@ -40,11 +41,11 @@ Deno.serve(async (req) => {
         let sent1Day = 0;
         const results = [];
 
-        for (const user of activeUsers) {
+        for (const user of usersWithCancelledRenewal) {
             const expiresAt = new Date(user.subscription_period_end);
             const daysUntilExpiry = Math.ceil((expiresAt.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 
-            console.log(`📧 User ${user.email}: expires in ${daysUntilExpiry} days`);
+            console.log(`📧 User ${user.email}: expires in ${daysUntilExpiry} days (auto-renewal cancelled)`);
 
             let emailSubject = '';
             let emailBody = '';
@@ -136,9 +137,14 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        .logo-cell { padding: 60px 30px 24px 30px; }
+        .content-cell { padding: 40px 30px; }
+        @media only screen and (min-width: 600px) {
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 60px 60px 40px 60px !important; }
+        }
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
-            .content { padding: 30px 20px !important; }
             .outer-wrapper { padding: 0 !important; }
         }
     </style>
@@ -149,13 +155,13 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="background: white; padding: 40px 30px 24px 30px;">
+                        <td class="logo-cell" style="background: white;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                             <h1 style="color: #26847F; margin: 20px 0 0 0; font-size: 24px;">⏰ Promemoria Rinnovo</h1>
                         </td>
                     </tr>
                     <tr>
-                        <td class="content" style="padding: 40px 30px;">
+                        <td class="content-cell">
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
                             
                             <div style="background: ${urgencyBg}; border: 3px solid ${urgencyColor}; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
@@ -169,7 +175,7 @@ function getEmailTemplate(user, daysLeft, expiryDate) {
                             </div>
 
                             <p style="color: #374151; line-height: 1.6;">
-                                Non perdere l'accesso a tutte le funzionalità Premium che ti aiutano a raggiungere i tuoi obiettivi:
+                                Hai scelto di non rinnovare automaticamente il tuo abbonamento. Non perdere l'accesso a tutte le funzionalità Premium che ti aiutano a raggiungere i tuoi obiettivi:
                             </p>
 
                             <div style="margin: 15px 0; padding-left: 30px; position: relative;">

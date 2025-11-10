@@ -353,26 +353,34 @@ ${ctaHtml}
       function: 'stripeCreateOneTimePayment'
     },
     {
+      id: 'renewal_confirmation',
+      name: 'Conferma Rinnovo Automatico',
+      description: 'Email di conferma inviata dopo il rinnovo automatico dell\'abbonamento (solo per utenti che NON hanno cancellato)',
+      trigger: 'Rinnovo automatico abbonamento (Stripe webhook)',
+      status: 'active',
+      function: 'sendRenewalConfirmation'
+    },
+    {
       id: 'renewal_7_days',
       name: 'Reminder Rinnovo - 7 Giorni',
-      description: 'Email automatica inviata 7 giorni prima della scadenza abbonamento',
-      trigger: 'Cron giornaliero (7 giorni prima scadenza)',
+      description: 'Email inviata 7 giorni prima della scadenza SOLO per utenti che hanno cancellato il rinnovo automatico',
+      trigger: 'Cron giornaliero (7 giorni prima scadenza, con cancellazione attiva)',
       status: 'active',
       function: 'sendRenewalReminders'
     },
     {
       id: 'renewal_3_days',
       name: 'Reminder Rinnovo - 3 Giorni',
-      description: 'Email automatica inviata 3 giorni prima della scadenza abbonamento',
-      trigger: 'Cron giornaliero (3 giorni prima scadenza)',
+      description: 'Email inviata 3 giorni prima della scadenza SOLO per utenti che hanno cancellato il rinnovo automatico',
+      trigger: 'Cron giornaliero (3 giorni prima scadenza, con cancellazione attiva)',
       status: 'active',
       function: 'sendRenewalReminders'
     },
     {
       id: 'renewal_1_day',
       name: 'Reminder Rinnovo - 1 Giorno',
-      description: 'Email urgente inviata 1 giorno prima della scadenza abbonamento',
-      trigger: 'Cron giornaliero (1 giorno prima scadenza)',
+      description: 'Email urgente inviata 1 giorno prima della scadenza SOLO per utenti che hanno cancellato il rinnovo automatico',
+      trigger: 'Cron giornaliero (1 giorno prima scadenza, con cancellazione attiva)',
       status: 'active',
       function: 'sendRenewalReminders'
     },
