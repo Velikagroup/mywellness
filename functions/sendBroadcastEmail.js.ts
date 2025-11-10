@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
                     .replace(/\{user_name\}/g, targetUser.full_name || 'Utente')
                     .replace(/\{user_email\}/g, targetUser.email);
 
-                // Wrap in proper HTML template
+                // Wrap in proper HTML template with desktop spacing
                 const htmlEmail = `
 <!DOCTYPE html>
 <html>
@@ -71,9 +71,14 @@ Deno.serve(async (req) => {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        .logo-cell { padding: 60px 30px 24px 30px; }
+        .content-cell { padding: 40px 30px; }
+        @media only screen and (min-width: 600px) {
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 60px 60px 40px 60px !important; }
+        }
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
-            .content { padding: 30px 20px !important; }
             .outer-wrapper { padding: 0 !important; }
         }
     </style>
@@ -84,12 +89,12 @@ Deno.serve(async (req) => {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="background: white; padding: 40px 30px 24px 30px;">
+                        <td class="logo-cell" style="background: white;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
-                        <td class="content" style="padding: 40px 30px;">
+                        <td class="content-cell">
                             ${personalizedBody}
                         </td>
                     </tr>
