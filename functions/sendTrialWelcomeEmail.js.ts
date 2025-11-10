@@ -1,4 +1,3 @@
-
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -45,7 +44,7 @@ Deno.serve(async (req) => {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="background: white; padding: 24px 30px;">
+                        <td style="background: white; padding: 40px 30px 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                             <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">🎉 Benvenuto in MyWellness!</h1>
                             <p style="color: #6b7280; margin: 0; font-size: 16px;">La tua prova gratuita di 3 giorni inizia ora</p>
@@ -108,7 +107,7 @@ Deno.serve(async (req) => {
                                 </tr>
                             </table>
 
-                            <div style="text-align: center; margin: 30px 0;">
+                            <div style="text-align: center; margin: 30px 0 10px 0;">
                                 <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                     🎯 Vai alla Dashboard
                                 </a>
