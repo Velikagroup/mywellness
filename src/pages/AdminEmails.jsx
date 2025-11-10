@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -22,7 +21,6 @@ import {
   Clock,
   CheckCircle,
   Users,
-  Filter,
   Settings,
   Zap,
   Eye,
@@ -33,24 +31,42 @@ import {
   Heart,
   Shield,
   BarChart3,
-  ShoppingCart
+  ShoppingCart,
+  Calendar,
+  Save,
+  FileText,
+  X
 } from 'lucide-react';
 
 export default function AdminEmails() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isSendingBroadcast, setIsSendingBroadcast] = useState(false);
-  const [broadcastSubject, setBroadcastSubject] = useState('');
-  const [broadcastBody, setBroadcastBody] = useState('');
-  const [broadcastSegment, setBroadcastSegment] = useState('all');
-  const [userCount, setUserCount] = useState(0);
   const [showEmailPreview, setShowEmailPreview] = useState(false);
   const [previewEmail, setPreviewEmail] = useState(null);
   const [editingContent, setEditingContent] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [emailTemplates, setEmailTemplates] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [userCount, setUserCount] = useState(0);
+  
+  // Broadcast states
+  const [showBroadcastDialog, setShowBroadcastDialog] = useState(false);
+  const [broadcastData, setBroadcastData] = useState({
+    name: '',
+    subject: '',
+    greeting: 'Ciao {user_name},',
+    main_content: '',
+    call_to_action_text: '',
+    call_to_action_url: '',
+    footer_text: 'Il tuo percorso verso il benessere',
+    from_email: 'info@projectmywellness.com',
+    reply_to_email: 'no-reply@projectmywellness.com',
+    segment: 'all',
+    scheduled_for: ''
+  });
+  const [broadcasts, setBroadcasts] = useState([]);
+  const [editingBroadcast, setEditingBroadcast] = useState(null);
 
   const loadEmailTemplates = async () => {
     try {
@@ -58,6 +74,15 @@ export default function AdminEmails() {
       setEmailTemplates(templates);
     } catch (error) {
       console.error('Error loading email templates:', error);
+    }
+  };
+
+  const loadBroadcasts = async () => {
+    try {
+      const allBroadcasts = await base44.entities.BroadcastEmail.list(['-created_date']);
+      setBroadcasts(allBroadcasts);
+    } catch (error) {
+      console.error('Error loading broadcasts:', error);
     }
   };
 
@@ -75,6 +100,7 @@ export default function AdminEmails() {
       setUser(currentUser);
       await loadUserCount();
       await loadEmailTemplates();
+      await loadBroadcasts();
     } catch (error) {
       navigate(createPageUrl('Home'));
     }
@@ -87,44 +113,6 @@ export default function AdminEmails() {
       setUserCount(users.length);
     } catch (error) {
       console.error('Error loading user count:', error);
-    }
-  };
-
-  const handleSendBroadcast = async () => {
-    if (!broadcastSubject.trim() || !broadcastBody.trim()) {
-      alert('Inserisci subject e body dell\'email');
-      return;
-    }
-
-    if (!confirm(`Sei sicuro di voler inviare questa email a ${getSegmentDescription()}?`)) {
-      return;
-    }
-
-    setIsSendingBroadcast(true);
-    try {
-      const response = await base44.functions.invoke('sendBroadcastEmail', {
-        subject: broadcastSubject,
-        body: broadcastBody,
-        segment: broadcastSegment
-      });
-
-      alert(`✅ Email inviata con successo a ${response.sent_count} utenti!`);
-      setBroadcastSubject('');
-      setBroadcastBody('');
-    } catch (error) {
-      console.error('Error sending broadcast:', error);
-      alert('Errore durante l\'invio: ' + error.message);
-    }
-    setIsSendingBroadcast(false);
-  };
-
-  const getSegmentDescription = () => {
-    switch(broadcastSegment) {
-      case 'all': return 'tutti gli utenti';
-      case 'active': return 'utenti con abbonamento attivo';
-      case 'trial': return 'utenti in trial';
-      case 'expired': return 'utenti con abbonamento scaduto';
-      default: return 'gli utenti selezionati';
     }
   };
 
@@ -152,6 +140,7 @@ export default function AdminEmails() {
       } else if (previewEmail?.id && !previewEmail?.template?.id) {
         const newTemplateData = {
           template_id: previewEmail.id,
+          name: previewEmail.name,
           from_email: editingContent.from_email || 'info@projectmywellness.com',
           reply_to_email: editingContent.reply_to_email || 'no-reply@projectmywellness.com',
           subject: editingContent.subject || 'Oggetto predefinito',
@@ -217,20 +206,7 @@ export default function AdminEmails() {
       const variables = {
         user_name: user.full_name || 'Mario Rossi',
         user_email: user.email,
-        expiry_date: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }),
-        temp_password: 'TestPass123!',
-        app_url: window.location.origin,
-        weight_change: '-2.5',
-        current_weight: '72.5',
-        target_weight: '70',
-        avg_calories: '1850',
-        workouts_completed: '4',
-        planned_workouts: '5',
-        adherence: '80',
-        progress: '65',
-        distance_remaining: '2.5',
-        week_range: '1-7 Gen 2025',
-        motivational_message: 'Ottimo lavoro questa settimana! Continua così 💪'
+        app_url: window.location.origin
       };
 
       const replaceVars = (text, vars) => {
@@ -324,6 +300,134 @@ ${ctaHtml}
       console.error('Error sending test email:', error);
       alert('❌ Errore durante l\'invio dell\'email di test: ' + error.message);
     }
+  };
+
+  const handleNewBroadcast = () => {
+    setBroadcastData({
+      name: '',
+      subject: '',
+      greeting: 'Ciao {user_name},',
+      main_content: '',
+      call_to_action_text: '',
+      call_to_action_url: '',
+      footer_text: 'Il tuo percorso verso il benessere',
+      from_email: 'info@projectmywellness.com',
+      reply_to_email: 'no-reply@projectmywellness.com',
+      segment: 'all',
+      scheduled_for: ''
+    });
+    setEditingBroadcast(null);
+    setShowBroadcastDialog(true);
+  };
+
+  const handleEditBroadcast = (broadcast) => {
+    setBroadcastData(broadcast);
+    setEditingBroadcast(broadcast);
+    setShowBroadcastDialog(true);
+  };
+
+  const handleSaveBroadcast = async (action) => {
+    if (!broadcastData.name.trim() || !broadcastData.subject.trim() || !broadcastData.main_content.trim()) {
+      alert('Compila almeno nome, oggetto e contenuto');
+      return;
+    }
+
+    try {
+      const dataToSave = {
+        ...broadcastData,
+        status: action === 'draft' ? 'draft' : (action === 'schedule' ? 'scheduled' : 'draft')
+      };
+
+      if (action === 'send_now') {
+        // Invia immediatamente
+        if (!confirm(`Sei sicuro di voler inviare questa email al segmento "${getSegmentName(broadcastData.segment)}"?`)) {
+          return;
+        }
+
+        const response = await base44.functions.invoke('sendScheduledBroadcasts', {
+          broadcast_id: editingBroadcast?.id || 'immediate',
+          broadcast_data: dataToSave
+        });
+
+        alert(`✅ Email inviata con successo!`);
+        setShowBroadcastDialog(false);
+        await loadBroadcasts();
+        
+      } else if (action === 'schedule') {
+        if (!broadcastData.scheduled_for) {
+          alert('Seleziona data e ora per la programmazione');
+          return;
+        }
+
+        if (editingBroadcast) {
+          await base44.entities.BroadcastEmail.update(editingBroadcast.id, dataToSave);
+          alert('✅ Broadcast programmato aggiornato!');
+        } else {
+          await base44.entities.BroadcastEmail.create(dataToSave);
+          alert('✅ Broadcast programmato con successo!');
+        }
+        
+        setShowBroadcastDialog(false);
+        await loadBroadcasts();
+        
+      } else {
+        // Salva come bozza
+        if (editingBroadcast) {
+          await base44.entities.BroadcastEmail.update(editingBroadcast.id, dataToSave);
+          alert('✅ Bozza aggiornata!');
+        } else {
+          await base44.entities.BroadcastEmail.create(dataToSave);
+          alert('✅ Bozza salvata!');
+        }
+        
+        setShowBroadcastDialog(false);
+        await loadBroadcasts();
+      }
+    } catch (error) {
+      console.error('Error saving broadcast:', error);
+      alert('❌ Errore: ' + error.message);
+    }
+  };
+
+  const handleDeleteBroadcast = async (broadcast) => {
+    if (!confirm(`Eliminare "${broadcast.name}"?`)) return;
+
+    try {
+      await base44.entities.BroadcastEmail.delete(broadcast.id);
+      alert('✅ Broadcast eliminato!');
+      await loadBroadcasts();
+    } catch (error) {
+      console.error('Error deleting broadcast:', error);
+      alert('❌ Errore: ' + error.message);
+    }
+  };
+
+  const getSegmentName = (segment) => {
+    const segments = {
+      all: 'Tutti gli utenti',
+      active_subscribers: 'Abbonamenti attivi',
+      trial_users: 'Utenti in trial',
+      expired_subscribers: 'Abbonamenti scaduti',
+      trial_expired_no_conversion: 'Trial scaduti senza conversione',
+      inactive_7_days: 'Inattivi da 7+ giorni',
+      goal_achievers: 'Obiettivi raggiunti',
+      workout_streak: 'Streak allenamento',
+      no_workout_week: 'Nessun workout questa settimana',
+      renewal_7_days: 'Rinnovo tra 7 giorni',
+      renewal_3_days: 'Rinnovo tra 3 giorni',
+      renewal_1_day: 'Rinnovo domani',
+      milestone_30_days: '30 giorni di utilizzo',
+      milestone_60_days: '60 giorni di utilizzo',
+      milestone_90_days: '90 giorni di utilizzo',
+      quiz_abandoned: 'Quiz abbandonati',
+      trial_setup_abandoned: 'Trial setup abbandonati',
+      pricing_visited: 'Pricing visitato senza acquisto',
+      checkout_abandoned: 'Checkout abbandonati',
+      base_plan: 'Piano Base',
+      pro_plan: 'Piano Pro',
+      premium_plan: 'Piano Premium'
+    };
+    return segments[segment] || segment;
   };
 
   if (isLoading) {
@@ -439,16 +543,18 @@ ${ctaHtml}
     : { [selectedCategory]: emailCategories[selectedCategory] };
 
   const totalEmails = Object.values(emailCategories).reduce((sum, cat) => sum + cat.emails.length, 0);
-  const activeEmails = Object.values(emailCategories).reduce((sum, cat) => 
-    sum + cat.emails.filter(e => !e.status || e.status !== 'planned').length, 0
-  );
+  const activeEmails = totalEmails;
+
+  const draftBroadcasts = broadcasts.filter(b => b.status === 'draft');
+  const scheduledBroadcasts = broadcasts.filter(b => b.status === 'scheduled');
+  const sentBroadcasts = broadcasts.filter(b => b.status === 'sent');
 
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Email Manager</h1>
-          <p className="text-gray-600">Gestisci le email di sistema automatizzate e broadcast manuali</p>
+          <p className="text-gray-600">Gestisci email di sistema automatizzate e campagne broadcast</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -459,7 +565,7 @@ ${ctaHtml}
                   <Mail className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Email Totali</p>
+                  <p className="text-sm text-gray-500">Email Sistema</p>
                   <p className="text-2xl font-bold text-gray-900">{totalEmails}</p>
                 </div>
               </div>
@@ -469,26 +575,12 @@ ${ctaHtml}
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                  <CheckCircle className="w-5 h-5 text-green-600" />
-                </div>
-                <div>
-                  <p className="text-sm text-gray-500">Email Attive</p>
-                  <p className="text-2xl font-bold text-gray-900">{activeEmails}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-white/80 backdrop-blur-sm">
-            <CardContent className="p-4">
-              <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                  <Users className="w-5 h-5 text-purple-600" />
+                  <FileText className="w-5 h-5 text-purple-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Utenti Totali</p>
-                  <p className="text-2xl font-bold text-gray-900">{userCount}</p>
+                  <p className="text-sm text-gray-500">Bozze</p>
+                  <p className="text-2xl font-bold text-gray-900">{draftBroadcasts.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -501,8 +593,22 @@ ${ctaHtml}
                   <Clock className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Categorie</p>
-                  <p className="text-2xl font-bold text-gray-900">{Object.keys(emailCategories).length}</p>
+                  <p className="text-sm text-gray-500">Programmate</p>
+                  <p className="text-2xl font-bold text-gray-900">{scheduledBroadcasts.length}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <Card className="bg-white/80 backdrop-blur-sm">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                  <CheckCircle className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="text-sm text-gray-500">Inviate</p>
+                  <p className="text-2xl font-bold text-gray-900">{sentBroadcasts.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -517,7 +623,7 @@ ${ctaHtml}
             </TabsTrigger>
             <TabsTrigger value="broadcast" className="flex items-center gap-2">
               <Send className="w-4 h-4" />
-              Broadcast
+              Broadcast Campagne
             </TabsTrigger>
           </TabsList>
 
@@ -553,7 +659,7 @@ ${ctaHtml}
                         <p className="text-sm text-gray-500">{category.emails.length} email configurate</p>
                       </div>
                       <Badge className={getCategoryColor(category.color)}>
-                        {category.emails.filter(e => !e.status || e.status !== 'planned').length} attive
+                        {category.emails.length} attive
                       </Badge>
                     </div>
 
@@ -564,9 +670,7 @@ ${ctaHtml}
                             <div className="flex-1">
                               <div className="flex items-center gap-3 mb-2">
                                 <h4 className="font-semibold text-gray-900">{email.name}</h4>
-                                <Badge className={email.status === 'planned' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}>
-                                  {email.status === 'planned' ? 'Da Implementare' : 'Attiva'}
-                                </Badge>
+                                <Badge className="bg-green-100 text-green-700">Attiva</Badge>
                               </div>
                               <div className="flex items-center gap-4 text-xs text-gray-500">
                                 <span className="flex items-center gap-1">
@@ -593,94 +697,149 @@ ${ctaHtml}
             </Card>
           </TabsContent>
 
-          <TabsContent value="broadcast" className="space-y-4">
-            <Card className="bg-white/80 backdrop-blur-sm">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Send className="w-5 h-5" />
-                  Invia Email Broadcast
-                </CardTitle>
-                <p className="text-sm text-gray-500 mt-1">Invia un email a tutti o a un segmento specifico di utenti</p>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div>
-                  <Label htmlFor="segment" className="text-sm font-semibold mb-2 block">
-                    Destinatari
-                  </Label>
-                  <select
-                    id="segment"
-                    value={broadcastSegment}
-                    onChange={(e) => setBroadcastSegment(e.target.value)}
-                    className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
-                  >
-                    <option value="all">Tutti gli utenti ({userCount})</option>
-                    <option value="active">Solo abbonamenti attivi</option>
-                    <option value="trial">Solo utenti in trial</option>
-                    <option value="expired">Solo abbonamenti scaduti</option>
-                  </select>
-                </div>
+          <TabsContent value="broadcast" className="space-y-6">
+            <div className="flex justify-end">
+              <Button
+                onClick={handleNewBroadcast}
+                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Nuova Campagna Broadcast
+              </Button>
+            </div>
 
-                <div>
-                  <Label htmlFor="subject" className="text-sm font-semibold mb-2 block">
-                    Oggetto Email
-                  </Label>
-                  <Input
-                    id="subject"
-                    placeholder="Es: Novità MyWellness - Nuove funzionalità disponibili!"
-                    value={broadcastSubject}
-                    onChange={(e) => setBroadcastSubject(e.target.value)}
-                    className="h-12"
-                  />
-                </div>
+            {/* Bozze */}
+            {draftBroadcasts.length > 0 && (
+              <Card className="bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="w-5 h-5" />
+                    Bozze ({draftBroadcasts.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {draftBroadcasts.map(broadcast => (
+                    <div key={broadcast.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 mb-1">{broadcast.name}</h4>
+                          <p className="text-sm text-gray-600 mb-2">{broadcast.subject}</p>
+                          <Badge className="bg-gray-100 text-gray-700">{getSegmentName(broadcast.segment)}</Badge>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => handleEditBroadcast(broadcast)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDeleteBroadcast(broadcast)}>
+                            <Trash2 className="w-4 h-4 text-red-600" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
 
-                <div>
-                  <Label htmlFor="body" className="text-sm font-semibold mb-2 block">
-                    Corpo Email (HTML supportato)
-                  </Label>
-                  <Textarea
-                    id="body"
-                    placeholder="Scrivi il contenuto dell'email qui... Puoi usare HTML per formattare il testo."
-                    value={broadcastBody}
-                    onChange={(e) => setBroadcastBody(e.target.value)}
-                    rows={12}
-                    className="font-mono text-sm"
-                  />
-                  <p className="text-xs text-gray-500 mt-2">
-                    Puoi usare variabili: {'{'}user_name{'}'}, {'{'}user_email{'}'}
-                  </p>
-                </div>
+            {/* Programmate */}
+            {scheduledBroadcasts.length > 0 && (
+              <Card className="bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Calendar className="w-5 h-5" />
+                    Programmate ({scheduledBroadcasts.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {scheduledBroadcasts.map(broadcast => (
+                    <div key={broadcast.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 mb-1">{broadcast.name}</h4>
+                          <p className="text-sm text-gray-600 mb-2">{broadcast.subject}</p>
+                          <div className="flex items-center gap-2">
+                            <Badge className="bg-orange-100 text-orange-700">
+                              📅 {new Date(broadcast.scheduled_for).toLocaleString('it-IT')}
+                            </Badge>
+                            <Badge className="bg-blue-100 text-blue-700">{getSegmentName(broadcast.segment)}</Badge>
+                          </div>
+                        </div>
+                        <div className="flex items-center gap-2">
+                          <Button variant="ghost" size="sm" onClick={() => handleEditBroadcast(broadcast)}>
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => handleDeleteBroadcast(broadcast)}>
+                            <Trash2 className="w-4 h-4 text-red-600" />
+                          </Button>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
 
-                <div className="flex gap-3">
+            {/* Inviate */}
+            {sentBroadcasts.length > 0 && (
+              <Card className="bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="w-5 h-5" />
+                    Inviate ({sentBroadcasts.length})
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-3">
+                  {sentBroadcasts.map(broadcast => (
+                    <div key={broadcast.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h4 className="font-semibold text-gray-900 mb-1">{broadcast.name}</h4>
+                          <p className="text-sm text-gray-600 mb-2">{broadcast.subject}</p>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge className="bg-green-100 text-green-700">
+                              ✅ Inviata il {new Date(broadcast.sent_at).toLocaleDateString('it-IT')}
+                            </Badge>
+                            <Badge className="bg-blue-100 text-blue-700">
+                              {broadcast.sent_count}/{broadcast.recipients_count} destinatari
+                            </Badge>
+                            {broadcast.error_count > 0 && (
+                              <Badge className="bg-red-100 text-red-700">
+                                {broadcast.error_count} errori
+                              </Badge>
+                            )}
+                          </div>
+                        </div>
+                        <Button variant="ghost" size="sm" onClick={() => handleDeleteBroadcast(broadcast)}>
+                          <Trash2 className="w-4 h-4 text-red-600" />
+                        </Button>
+                      </div>
+                    </div>
+                  ))}
+                </CardContent>
+              </Card>
+            )}
+
+            {broadcasts.length === 0 && (
+              <Card className="bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-12 text-center">
+                  <Send className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Nessuna campagna broadcast ancora</h3>
+                  <p className="text-gray-600 mb-6">Crea la tua prima campagna email per iniziare</p>
                   <Button
-                    onClick={handleSendBroadcast}
-                    disabled={isSendingBroadcast || !broadcastSubject.trim() || !broadcastBody.trim()}
-                    className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white h-12"
+                    onClick={handleNewBroadcast}
+                    className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
                   >
-                    {isSendingBroadcast ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                        Invio in corso...
-                      </>
-                    ) : (
-                      <>
-                        <Send className="w-4 h-4 mr-2" />
-                        Invia Email a {getSegmentDescription()}
-                      </>
-                    )}
+                    <Send className="w-4 h-4 mr-2" />
+                    Crea Prima Campagna
                   </Button>
-                </div>
-
-                <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
-                  <p className="text-sm text-amber-900">
-                    ⚠️ <strong>Attenzione:</strong> L'invio di email broadcast è irreversibile. Controlla attentamente il contenuto prima di inviare.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </TabsContent>
         </Tabs>
       </div>
 
+      {/* System Email Preview Dialog */}
       <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -726,9 +885,7 @@ ${ctaHtml}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <Label className="text-sm font-semibold text-gray-700">Stato</Label>
-                  <Badge className="mt-1 bg-green-100 text-green-700">
-                    {previewEmail.status === 'planned' ? 'Da Implementare' : 'Attiva'}
-                  </Badge>
+                  <Badge className="mt-1 bg-green-100 text-green-700">Attiva</Badge>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold text-gray-700">ID Email</Label>
@@ -795,7 +952,7 @@ ${ctaHtml}
                       placeholder="Contenuto email..."
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                      Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}
+                      Variabili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
                     </p>
                   </div>
 
@@ -889,12 +1046,6 @@ ${ctaHtml}
                     </div>
                   </div>
 
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <p className="text-sm text-blue-900">
-                      💡 <strong>Variabili disponibili:</strong> {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}
-                    </p>
-                  </div>
-
                   <div className="flex gap-3 pt-4">
                     <Button
                       onClick={handleSendTestEmail}
@@ -925,6 +1076,215 @@ ${ctaHtml}
               )}
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Broadcast Editor Dialog */}
+      <Dialog open={showBroadcastDialog} onOpenChange={setShowBroadcastDialog}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold">
+              {editingBroadcast ? '✏️ Modifica Campagna' : '✨ Nuova Campagna Broadcast'}
+            </DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 pt-4">
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Nome Campagna</Label>
+                <Input
+                  value={broadcastData.name}
+                  onChange={(e) => setBroadcastData({...broadcastData, name: e.target.value})}
+                  placeholder="Es: Newsletter Gennaio 2025"
+                  className="h-12"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Segmento Destinatari</Label>
+                <select
+                  value={broadcastData.segment}
+                  onChange={(e) => setBroadcastData({...broadcastData, segment: e.target.value})}
+                  className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                >
+                  <optgroup label="📊 Generali">
+                    <option value="all">Tutti gli utenti ({userCount})</option>
+                    <option value="active_subscribers">Abbonamenti attivi</option>
+                    <option value="trial_users">Utenti in trial</option>
+                    <option value="expired_subscribers">Abbonamenti scaduti</option>
+                  </optgroup>
+                  
+                  <optgroup label="💼 Per Piano">
+                    <option value="base_plan">Piano Base</option>
+                    <option value="pro_plan">Piano Pro</option>
+                    <option value="premium_plan">Piano Premium</option>
+                  </optgroup>
+                  
+                  <optgroup label="🛒 Abbandono">
+                    <option value="quiz_abandoned">Quiz abbandonati</option>
+                    <option value="trial_setup_abandoned">Trial setup abbandonati</option>
+                    <option value="pricing_visited">Pricing visitato senza acquisto</option>
+                    <option value="checkout_abandoned">Checkout abbandonati</option>
+                  </optgroup>
+                  
+                  <optgroup label="💔 Win-Back">
+                    <option value="trial_expired_no_conversion">Trial scaduti senza conversione</option>
+                    <option value="inactive_7_days">Inattivi da 7+ giorni</option>
+                  </optgroup>
+                  
+                  <optgroup label="🔄 Rinnovi">
+                    <option value="renewal_7_days">Rinnovo tra 7 giorni</option>
+                    <option value="renewal_3_days">Rinnovo tra 3 giorni</option>
+                    <option value="renewal_1_day">Rinnovo domani</option>
+                  </optgroup>
+                  
+                  <optgroup label="🎯 Milestone">
+                    <option value="milestone_30_days">30 giorni di utilizzo</option>
+                    <option value="milestone_60_days">60 giorni di utilizzo</option>
+                    <option value="milestone_90_days">90 giorni di utilizzo</option>
+                  </optgroup>
+                  
+                  <optgroup label="💪 Fitness">
+                    <option value="goal_achievers">Obiettivi raggiunti</option>
+                    <option value="workout_streak">Streak allenamento</option>
+                    <option value="no_workout_week">Nessun workout questa settimana</option>
+                  </optgroup>
+                </select>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Da (Email)</Label>
+                <Input
+                  value={broadcastData.from_email}
+                  onChange={(e) => setBroadcastData({...broadcastData, from_email: e.target.value})}
+                  placeholder="info@projectmywellness.com"
+                  className="h-12"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Reply-To</Label>
+                <Input
+                  value={broadcastData.reply_to_email}
+                  onChange={(e) => setBroadcastData({...broadcastData, reply_to_email: e.target.value})}
+                  placeholder="no-reply@projectmywellness.com"
+                  className="h-12"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Oggetto Email</Label>
+              <Input
+                value={broadcastData.subject}
+                onChange={(e) => setBroadcastData({...broadcastData, subject: e.target.value})}
+                placeholder="Es: 🎉 Novità MyWellness - Nuove Funzionalità!"
+                className="h-12"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Saluto Iniziale</Label>
+              <Input
+                value={broadcastData.greeting}
+                onChange={(e) => setBroadcastData({...broadcastData, greeting: e.target.value})}
+                placeholder="Ciao {user_name},"
+                className="h-12"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
+              <Textarea
+                value={broadcastData.main_content}
+                onChange={(e) => setBroadcastData({...broadcastData, main_content: e.target.value})}
+                rows={12}
+                placeholder="Scrivi il contenuto dell'email qui..."
+                className="text-sm"
+              />
+              <p className="text-xs text-gray-500 mt-2">
+                Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
+              </p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA (Opzionale)</Label>
+                <Input
+                  value={broadcastData.call_to_action_text}
+                  onChange={(e) => setBroadcastData({...broadcastData, call_to_action_text: e.target.value})}
+                  placeholder="Es: Vai alla Dashboard"
+                  className="h-12"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">URL Pulsante CTA</Label>
+                <Input
+                  value={broadcastData.call_to_action_url}
+                  onChange={(e) => setBroadcastData({...broadcastData, call_to_action_url: e.target.value})}
+                  placeholder="{app_url}/Dashboard"
+                  className="h-12"
+                />
+              </div>
+            </div>
+
+            <div>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Footer (Opzionale)</Label>
+              <Input
+                value={broadcastData.footer_text}
+                onChange={(e) => setBroadcastData({...broadcastData, footer_text: e.target.value})}
+                placeholder="Il tuo percorso verso il benessere"
+                className="h-12"
+              />
+            </div>
+
+            <div>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                📅 Programma Invio (Opzionale)
+              </Label>
+              <Input
+                type="datetime-local"
+                value={broadcastData.scheduled_for}
+                onChange={(e) => setBroadcastData({...broadcastData, scheduled_for: e.target.value})}
+                className="h-12"
+              />
+              <p className="text-xs text-gray-500 mt-1">
+                Lascia vuoto per salvare come bozza
+              </p>
+            </div>
+
+            <div className="flex gap-3 pt-4 border-t border-gray-200">
+              <Button
+                onClick={() => handleSaveBroadcast('draft')}
+                variant="outline"
+                className="flex-1"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                Salva Bozza
+              </Button>
+              
+              {broadcastData.scheduled_for && (
+                <Button
+                  onClick={() => handleSaveBroadcast('schedule')}
+                  className="flex-1 bg-orange-600 hover:bg-orange-700 text-white"
+                >
+                  <Calendar className="w-4 h-4 mr-2" />
+                  Programma Invio
+                </Button>
+              )}
+              
+              <Button
+                onClick={() => handleSaveBroadcast('send_now')}
+                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+              >
+                <Send className="w-4 h-4 mr-2" />
+                Invia Subito
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
