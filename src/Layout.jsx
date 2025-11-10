@@ -1,7 +1,8 @@
+
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X } from "lucide-react";
+import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -76,7 +77,8 @@ export default function Layout({ children }) {
     createPageUrl('AdminEmails'),
     createPageUrl('AdminAnalytics'),
     createPageUrl('AdminMarketing'),
-    createPageUrl('AdminSalesTax')
+    createPageUrl('AdminSalesTax'),
+    createPageUrl('AdminClients')
   ];
 
   // Pagine che NON devono avere il layout
@@ -120,6 +122,7 @@ export default function Layout({ children }) {
 
   // Admin menu items (solo nel menu espandibile)
   const adminMenuItems = user && user.role === 'admin' ? [
+    { name: 'Clienti', icon: Users, path: 'AdminClients' },
     { name: 'Coupon', icon: Tag, path: 'AdminCoupons' },
     { name: 'Blog', icon: FileText, path: 'AdminBlog' },
     { name: 'Email', icon: Mail, path: 'AdminEmails' },
