@@ -488,26 +488,58 @@ ${ctaHtml}
   };
 
   const handleSaveBroadcast = async (action) => {
-    if (!broadcastData.name.trim() || !broadcastData.subject.trim() || !broadcastData.main_content.trim()) {
-      alert('Compila almeno nome, oggetto e contenuto');
+    // Validazione migliorata
+    const name = broadcastData.name?.trim() || '';
+    const subject = broadcastData.subject?.trim() || '';
+    const mainContent = broadcastData.main_content?.trim() || '';
+    
+    if (!name) {
+      alert('❌ Inserisci il nome della campagna');
+      return;
+    }
+    
+    if (!subject) {
+      alert('❌ Inserisci l\'oggetto dell\'email');
+      return;
+    }
+    
+    if (!mainContent) {
+      alert('❌ Inserisci il contenuto principale dell\'email');
       return;
     }
 
     try {
       const dataToSave = {
-        ...broadcastData,
-        status: action === 'draft' ? 'draft' : (action === 'schedule' ? 'scheduled' : 'draft')
+        name: name,
+        subject: subject,
+        greeting: broadcastData.greeting || 'Ciao {user_name},',
+        main_content: mainContent,
+        call_to_action_text: broadcastData.call_to_action_text || '',
+        call_to_action_url: broadcastData.call_to_action_url || '',
+        footer_text: broadcastData.footer_text || 'Il tuo percorso verso il benessere',
+        from_email: broadcastData.from_email || 'info@projectmywellness.com',
+        reply_to_email: broadcastData.reply_to_email || 'no-reply@projectmywellness.com',
+        filters: broadcastData.filters || {},
+        status: action === 'draft' ? 'draft' : (action === 'schedule' ? 'scheduled' : 'draft'),
+        scheduled_for: broadcastData.scheduled_for || undefined
       };
 
       if (action === 'send_now') {
-        // Invia immediatamente
-        if (!confirm(`Sei sicuro di voler inviare questa email ai destinatari filtrati?`)) {
+        const activeFilters = Object.keys(dataToSave.filters).filter(k => {
+          const val = dataToSave.filters[k];
+          return val !== undefined && val !== false && (!Array.isArray(val) || val.length > 0);
+        }).length;
+
+        const confirmMsg = activeFilters > 0 
+          ? `Sei sicuro di voler inviare questa email?\n\nFiltri attivi: ${activeFilters}\n\nL'email verrà inviata a tutti gli utenti che corrispondono ai filtri selezionati.`
+          : `Sei sicuro di voler inviare questa email a TUTTI gli utenti (${userCount})?`;
+
+        if (!confirm(confirmMsg)) {
           return;
         }
 
-        const response = await base44.functions.invoke('sendScheduledBroadcasts', {
-          broadcast_id: editingBroadcast?.id || 'immediate',
-          broadcast_data: dataToSave // broadcastData now contains 'filters'
+        const response = await base44.functions.invoke('sendBroadcastNow', {
+          broadcast_data: dataToSave
         });
 
         alert(`✅ Email inviata con successo!`);
@@ -516,7 +548,7 @@ ${ctaHtml}
         
       } else if (action === 'schedule') {
         if (!broadcastData.scheduled_for) {
-          alert('Seleziona data e ora per la programmazione');
+          alert('❌ Seleziona data e ora per la programmazione');
           return;
         }
 
@@ -532,7 +564,6 @@ ${ctaHtml}
         await loadBroadcasts();
         
       } else {
-        // Salva come bozza
         if (editingBroadcast) {
           await base44.entities.BroadcastEmail.update(editingBroadcast.id, dataToSave);
           alert('✅ Bozza aggiornata!');
@@ -562,8 +593,6 @@ ${ctaHtml}
       alert('❌ Errore durante l\'eliminazione: ' + error.message);
     }
   };
-
-  // Removed getSegmentName function as it's replaced by getFiltersSummary
 
   if (isLoading) {
     return (
@@ -1226,7 +1255,9 @@ ${ctaHtml}
           <div className="space-y-6 pt-4">
             {/* Nome Campagna */}
             <div>
-              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Nome Campagna</Label>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                Nome Campagna <span className="text-red-500">*</span>
+              </Label>
               <Input
                 value={broadcastData.name}
                 onChange={(e) => setBroadcastData({...broadcastData, name: e.target.value})}
@@ -1412,7 +1443,10 @@ ${ctaHtml}
                     </Button>
                   </div>
                   
-                  {Object.keys(broadcastData.filters).filter(k => broadcastData.filters[k] !== undefined && broadcastData.filters[k] !== false && (Array.isArray(broadcastData.filters[k]) ? broadcastData.filters[k].length > 0 : true)).length > 0 && (
+                  {Object.keys(broadcastData.filters).filter(k => {
+                    const val = broadcastData.filters[k];
+                    return val !== undefined && val !== false && (!Array.isArray(val) || val.length > 0);
+                  }).length > 0 && (
                     <div className="mt-3 p-3 bg-white rounded-lg border">
                       <p className="text-xs font-semibold text-gray-600 mb-2">Filtri Attivi:</p>
                       <p className="text-sm text-gray-800">{getFiltersSummary(broadcastData.filters)}</p>
@@ -1446,7 +1480,9 @@ ${ctaHtml}
             </div>
 
             <div>
-              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Oggetto Email</Label>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                Oggetto Email <span className="text-red-500">*</span>
+              </Label>
               <Input
                 value={broadcastData.subject}
                 onChange={(e) => setBroadcastData({...broadcastData, subject: e.target.value})}
@@ -1466,7 +1502,9 @@ ${ctaHtml}
             </div>
 
             <div>
-              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                Contenuto Principale <span className="text-red-500">*</span>
+              </Label>
               <Textarea
                 value={broadcastData.main_content}
                 onChange={(e) => setBroadcastData({...broadcastData, main_content: e.target.value})}
