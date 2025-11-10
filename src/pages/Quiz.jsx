@@ -78,15 +78,12 @@ function buildDynamicSteps(data) {
     { component: TargetWeightStep, label: "Peso Obiettivo" },
     { component: NeckCircumferenceStep, label: "Circonferenza Collo" },
     { component: WaistCircumferenceStep, label: "Circonferenza Vita" },
-    { component: HipCircumferenceStep, label: "Circonferenza Fianchi" }, // HipCircumferenceStep is now always included
+    { component: HipCircumferenceStep, label: "Circonferenza Fianchi" },
     { component: CurrentBodyTypeStep, label: "Aspetto Fisico Attuale" },
     { component: TargetZoneStep, label: "Zona Obiettivo" },
     { component: WeightLossSpeedStep, label: "Ritmo di Perdita Peso" },
     { component: TargetBodyTypeStep, label: "Aspetto Fisico Obiettivo" }
   ];
-
-  // No longer checking for gender to add HipCircumferenceStep
-  // The push for the remaining steps has been integrated directly into the `baseSteps` array above.
 
   return baseSteps;
 }
@@ -103,14 +100,15 @@ export default function Quiz() {
     const saved = localStorage.getItem('quizData');
     return saved ? JSON.parse(saved) : {};
   });
-  const [isSubmitting, setIsSubmitting] = useState(false); // Re-introduced as per outline
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [dynamicSteps, setDynamicSteps] = useState(() => buildDynamicSteps(quizData));
   const [isCalculating, setIsCalculating] = useState(false);
   const [showBodyFatReveal, setShowBodyFatReveal] = useState(false);
   const [bodyFatRevealed, setBodyFatRevealed] = useState(false);
   const [user, setUser] = useState(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
-  const [isSaving, setIsSaving] = useState(false); // NEW STATE: for final data persistence
+  const [isSaving, setIsSaving] = useState(false);
+  const [quizActivityTracked, setQuizActivityTracked] = useState(false); // NEW STATE for tracking
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -155,18 +153,14 @@ export default function Quiz() {
             fitness_goal: currentUser.fitness_goal || '',
             session_duration: currentUser.session_duration || ''
           });
-          console.log('🔄 Modalità Ricalibrazione - Rivedi i tuoi dati');
         }
         
       } catch (error) {
-        // Ignora completamente gli errori di autenticazione (è normale per utenti non loggati)
         if (error?.response?.status === 401 || 
             error?.message?.includes('401') || 
             error?.message?.includes('Authentication required')) {
-          // Utente non autenticato - non è un errore, è normale
           setUser(null);
         } else {
-          // Solo errori veri dovrebbero essere loggati
           console.error('Error loading user:', error);
           setUser(null);
         }
@@ -177,12 +171,35 @@ export default function Quiz() {
     loadUserData();
   }, [navigate, isRecapMode]);
 
+  // 🛒 TRACKING: Quiz Started (solo una volta)
+  useEffect(() => {
+    // Only track if user data is loaded, quiz not yet tracked, and we are on the first actual step (step 1 after intro)
+    if (!isLoadingUser && !quizActivityTracked && currentStep === 1) {
+      const trackQuizStarted = async () => {
+        try {
+          // Determine a user identifier; email if available, otherwise 'anonymous'
+          const userIdentifier = user?.email || quizData.email || 'anonymous';
+          await base44.entities.UserActivity.create({
+            user_id: userIdentifier,
+            event_type: 'quiz_started',
+            event_data: { step: currentStep }
+          });
+          console.log('📊 Quiz started tracked');
+          setQuizActivityTracked(true); // Mark as tracked
+        } catch (error) {
+          console.error('Error tracking quiz start:', error);
+        }
+      };
+      
+      trackQuizStarted();
+    }
+  }, [currentStep, isLoadingUser, quizActivityTracked, user, quizData.email]); // Dependencies
+
   useEffect(() => {
     localStorage.setItem('quizData', JSON.stringify(quizData));
     setDynamicSteps(buildDynamicSteps(quizData));
   }, [quizData]);
 
-  // Validation function for current step
   const isCurrentStepValid = () => {
     const stepComponent = dynamicSteps[currentStep]?.component;
     
@@ -237,6 +254,23 @@ export default function Quiz() {
       window.history.pushState({}, '', `${window.location.pathname}?step=${newStep}`);
     } else {
       // Ultimo step completato - vai direttamente al caricamento (calculation screen)
+      // 🛒 TRACKING: Quiz Completed
+      const trackQuizCompleted = async () => {
+        try {
+          const userIdentifier = user?.email || quizData.email || 'anonymous';
+          await base44.entities.UserActivity.create({
+            user_id: userIdentifier,
+            event_type: 'quiz_completed',
+            event_data: { total_steps: dynamicSteps.length }
+          });
+          console.log('📊 Quiz completed tracked');
+        } catch (error) {
+          console.error('Error tracking quiz completion:', error);
+        }
+      };
+      
+      trackQuizCompleted();
+      
       setIsCalculating(true);
       setTimeout(() => {
         setIsCalculating(false);

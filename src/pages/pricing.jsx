@@ -14,40 +14,65 @@ export default function Pricing() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [openFaqIndex, setOpenFaqIndex] = React.useState(null);
   
-  // Coupon state
   const [couponCode, setCouponCode] = React.useState('');
   const [couponValidating, setCouponValidating] = React.useState(false);
-  const [couponValid, setCouponValid] = React.useState(null); // null: not checked, true: valid, false: invalid
-  const [couponData, setCouponData] = React.useState(null); // stores discount_value, discount_type, or error
-  const [userEmail, setUserEmail] = React.useState(null); // stores user email if logged in
+  const [couponValid, setCouponValid] = React.useState(null);
+  const [couponData, setCouponData] = React.useState(null);
+  const [userEmail, setUserEmail] = React.useState(null);
+  const [pricingTracked, setPricingTracked] = React.useState(false);
 
-  // Scroll to top on mount
   React.useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Check for coupon in URL params
     const urlParams = new URLSearchParams(window.location.search);
     const couponParam = urlParams.get('coupon');
     if (couponParam) {
       setCouponCode(couponParam);
     }
     
-    // Get user email if logged in
     const loadUser = async () => {
       try {
         const currentUser = await base44.auth.me();
         setUserEmail(currentUser.email);
         
-        // Auto-validate coupon if present in URL and user is logged in
         if (couponParam && currentUser.email) {
           validateCoupon(couponParam, currentUser.email);
         }
       } catch (error) {
-        // User not logged in, userEmail remains null
+        // User not logged in
       }
     };
     loadUser();
   }, []);
+
+  // 🛒 TRACKING: Pricing Visited
+  React.useEffect(() => {
+    if (!pricingTracked) {
+      const trackPricingVisit = async () => {
+        try {
+          let userIdentifier = 'anonymous';
+          try {
+            const currentUser = await base44.auth.me();
+            userIdentifier = currentUser.email;
+          } catch (error) {
+            // Not logged in, userIdentifier remains 'anonymous'
+          }
+          
+          await base44.entities.UserActivity.create({
+            user_id: userIdentifier,
+            event_type: 'pricing_visited',
+            event_data: {}
+          });
+          console.log('📊 Pricing visit tracked');
+          setPricingTracked(true);
+        } catch (error) {
+          console.error('Error tracking pricing visit:', error);
+        }
+      };
+      
+      trackPricingVisit();
+    }
+  }, [pricingTracked]);
 
   const validateCoupon = async (code, email) => {
     if (!code || !email) return; // Ensure both code and email are available

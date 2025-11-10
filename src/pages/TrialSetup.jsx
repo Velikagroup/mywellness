@@ -81,6 +81,7 @@ export default function TrialSetup() {
   const [trafficSource, setTrafficSource] = useState(null);
   const [selectedPlan, setSelectedPlan] = useState('base');
   const [selectedBillingPeriod, setSelectedBillingPeriod] = useState('monthly');
+  const [trialSetupTracked, setTrialSetupTracked] = useState(false);
 
   // 🔐 VALIDAZIONE COUPON PERSONALIZZATO
   const validateCouponFromURL = async (code, email) => {
@@ -112,6 +113,21 @@ export default function TrialSetup() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+
+        // 🛒 TRACKING: Trial Setup Opened
+        if (!trialSetupTracked && currentUser) { // Ensure user is available before tracking
+          try {
+            await base44.entities.UserActivity.create({
+              user_id: currentUser.id, // Use user.id as per base44 docs if available, otherwise email
+              event_type: 'trial_setup_opened',
+              event_data: { plan: selectedPlan }
+            });
+            console.log('📊 Trial setup opened tracked');
+            setTrialSetupTracked(true);
+          } catch (error) {
+            console.error('Error tracking trial setup:', error);
+          }
+        }
 
         const queryParams = new URLSearchParams(location.search);
         const refSource = queryParams.get('ref');
@@ -214,7 +230,7 @@ export default function TrialSetup() {
     };
 
     checkAuth();
-  }, [navigate, location]);
+  }, [navigate, location, trialSetupTracked, selectedPlan]); // Add selectedPlan to dependencies for tracking
 
   useEffect(() => {
     window.scrollTo(0, 0);
