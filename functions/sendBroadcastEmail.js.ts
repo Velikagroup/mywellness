@@ -1,4 +1,3 @@
-
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -63,11 +62,60 @@ Deno.serve(async (req) => {
                     .replace(/\{user_name\}/g, targetUser.full_name || 'Utente')
                     .replace(/\{user_email\}/g, targetUser.email);
 
+                // Wrap in proper HTML template
+                const htmlEmail = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+            .content { padding: 30px 20px !important; }
+            .outer-wrapper { padding: 0 !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td style="background: white; padding: 40px 30px 24px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content" style="padding: 40px 30px;">
+                            ${personalizedBody}
+                        </td>
+                    </tr>
+                </table>
+                
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
+                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+                `;
+
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: targetUser.email,
-                    from_name: 'MyWellness Team <info@projectmywellness.com>',
+                    from_name: 'MyWellness <info@projectmywellness.com>',
                     subject: subject,
-                    body: personalizedBody
+                    body: htmlEmail
                 });
 
                 sentCount++;
