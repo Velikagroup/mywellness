@@ -1,4 +1,3 @@
-
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -38,7 +37,7 @@ Deno.serve(async (req) => {
                     status: 'sending'
                 });
 
-                const recipients = await getRecipientsBySegment(base44, broadcast.segment);
+                const recipients = await getRecipientsByFilters(base44, broadcast.filters || {});
                 
                 console.log(`👥 Recipients: ${recipients.length}`);
 
@@ -114,100 +113,136 @@ Deno.serve(async (req) => {
     }
 });
 
-async function getRecipientsBySegment(base44, segment) {
-    const allUsers = await base44.asServiceRole.entities.User.list();
+async function getRecipientsByFilters(base44, filters) {
+    console.log('🔍 Applying filters:', JSON.stringify(filters));
     
-    switch(segment) {
-        case 'all':
-            return allUsers;
-            
-        case 'active_subscribers':
-            return allUsers.filter(u => u.subscription_status === 'active');
-            
-        case 'trial_users':
-            return allUsers.filter(u => u.subscription_status === 'trial');
-            
-        case 'expired_subscribers':
-            return allUsers.filter(u => u.subscription_status === 'expired');
-            
-        case 'trial_expired_no_conversion':
-            return allUsers.filter(u => {
-                if (!u.subscription_period_end) return false;
-                const expiryDate = new Date(u.subscription_period_end);
-                const didNotPurchase = !u.last_payment_amount || u.last_payment_amount === 0;
-                return expiryDate < new Date() && didNotPurchase;
-            });
-            
-        case 'inactive_7_days':
-            const sevenDaysAgo = new Date();
-            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
-            return allUsers.filter(u => {
-                if (!u.last_login_date) return false;
-                return new Date(u.last_login_date) < sevenDaysAgo && u.subscription_status === 'active';
-            });
-            
-        case 'base_plan':
-            return allUsers.filter(u => u.subscription_plan === 'base' && u.subscription_status === 'active');
-            
-        case 'pro_plan':
-            return allUsers.filter(u => u.subscription_plan === 'pro' && u.subscription_status === 'active');
-            
-        case 'premium_plan':
-            return allUsers.filter(u => u.subscription_plan === 'premium' && u.subscription_status === 'active');
-            
-        case 'language_it':
-            return allUsers.filter(u => (u.language || 'it') === 'it');
-            
-        case 'language_en':
-            return allUsers.filter(u => u.language === 'en');
-            
-        case 'language_es':
-            return allUsers.filter(u => u.language === 'es');
-            
-        case 'language_fr':
-            return allUsers.filter(u => u.language === 'fr');
-            
-        case 'language_de':
-            return allUsers.filter(u => u.language === 'de');
-            
-        case 'language_pt':
-            return allUsers.filter(u => u.language === 'pt');
-            
-        case 'quiz_abandoned':
-            const quizActivities = await base44.asServiceRole.entities.UserActivity.filter({
-                event_type: 'quiz_started',
-                completed: false
-            });
-            const quizEmails = quizActivities.map(a => a.user_id);
-            return allUsers.filter(u => quizEmails.includes(u.email));
-            
-        case 'trial_setup_abandoned':
-            const trialActivities = await base44.asServiceRole.entities.UserActivity.filter({
-                event_type: 'trial_setup_opened',
-                completed: false
-            });
-            const trialEmails = trialActivities.map(a => a.user_id);
-            return allUsers.filter(u => trialEmails.includes(u.email));
-            
-        case 'pricing_visited':
-            const pricingActivities = await base44.asServiceRole.entities.UserActivity.filter({
-                event_type: 'pricing_visited',
-                completed: false
-            });
-            const pricingEmails = pricingActivities.map(a => a.user_id);
-            return allUsers.filter(u => pricingEmails.includes(u.email));
-            
-        case 'checkout_abandoned':
-            const checkoutActivities = await base44.asServiceRole.entities.UserActivity.filter({
-                event_type: 'checkout_started',
-                completed: false
-            });
-            const checkoutEmails = checkoutActivities.map(a => a.user_id);
-            return allUsers.filter(u => checkoutEmails.includes(u.email));
-            
-        default:
-            return allUsers;
+    let users = await base44.asServiceRole.entities.User.list();
+    
+    // Filtra per stato abbonamento
+    if (filters.subscription_status && filters.subscription_status.length > 0) {
+        users = users.filter(u => filters.subscription_status.includes(u.subscription_status));
+        console.log(`📊 After subscription_status filter: ${users.length} users`);
     }
+    
+    // Filtra per piano abbonamento
+    if (filters.subscription_plan && filters.subscription_plan.length > 0) {
+        users = users.filter(u => filters.subscription_plan.includes(u.subscription_plan));
+        console.log(`📊 After subscription_plan filter: ${users.length} users`);
+    }
+    
+    // Filtra per lingua
+    if (filters.languages && filters.languages.length > 0) {
+        users = users.filter(u => {
+            const userLang = u.language || 'it';
+            return filters.languages.includes(userLang);
+        });
+        console.log(`📊 After languages filter: ${users.length} users`);
+    }
+    
+    // Filtra per inattività
+    if (filters.inactive_days && filters.inactive_days > 0) {
+        const inactiveSince = new Date();
+        inactiveSince.setDate(inactiveSince.getDate() - filters.inactive_days);
+        users = users.filter(u => {
+            if (!u.last_login_date) return false;
+            return new Date(u.last_login_date) < inactiveSince;
+        });
+        console.log(`📊 After inactive_days filter: ${users.length} users`);
+    }
+    
+    // Filtra per trial scaduti senza conversione
+    if (filters.trial_expired_no_conversion === true) {
+        users = users.filter(u => {
+            if (!u.subscription_period_end) return false;
+            const expiryDate = new Date(u.subscription_period_end);
+            const didNotPurchase = !u.last_payment_amount || u.last_payment_amount === 0;
+            return expiryDate < new Date() && didNotPurchase;
+        });
+        console.log(`📊 After trial_expired_no_conversion filter: ${users.length} users`);
+    }
+    
+    // Filtra per landing offer acquistato
+    if (filters.purchased_landing_offer !== undefined) {
+        users = users.filter(u => u.purchased_landing_offer === filters.purchased_landing_offer);
+        console.log(`📊 After purchased_landing_offer filter: ${users.length} users`);
+    }
+    
+    // Filtra per quiz abbandonato
+    if (filters.quiz_abandoned === true) {
+        const quizActivities = await base44.asServiceRole.entities.UserActivity.filter({
+            event_type: 'quiz_started',
+            completed: false
+        });
+        const quizEmails = quizActivities.map(a => a.user_id);
+        users = users.filter(u => quizEmails.includes(u.email));
+        console.log(`📊 After quiz_abandoned filter: ${users.length} users`);
+    }
+    
+    // Filtra per trial setup abbandonato
+    if (filters.trial_setup_abandoned === true) {
+        const trialActivities = await base44.asServiceRole.entities.UserActivity.filter({
+            event_type: 'trial_setup_opened',
+            completed: false
+        });
+        const trialEmails = trialActivities.map(a => a.user_id);
+        users = users.filter(u => trialEmails.includes(u.email));
+        console.log(`📊 After trial_setup_abandoned filter: ${users.length} users`);
+    }
+    
+    // Filtra per pricing visitato
+    if (filters.pricing_visited === true) {
+        const pricingActivities = await base44.asServiceRole.entities.UserActivity.filter({
+            event_type: 'pricing_visited',
+            completed: false
+        });
+        const pricingEmails = pricingActivities.map(a => a.user_id);
+        users = users.filter(u => pricingEmails.includes(u.email));
+        console.log(`📊 After pricing_visited filter: ${users.length} users`);
+    }
+    
+    // Filtra per checkout abbandonato
+    if (filters.checkout_abandoned === true) {
+        const checkoutActivities = await base44.asServiceRole.entities.UserActivity.filter({
+            event_type: 'checkout_started',
+            completed: false
+        });
+        const checkoutEmails = checkoutActivities.map(a => a.user_id);
+        users = users.filter(u => checkoutEmails.includes(u.email));
+        console.log(`📊 After checkout_abandoned filter: ${users.length} users`);
+    }
+    
+    // Filtra per giorni al rinnovo
+    if (filters.renewal_days && filters.renewal_days > 0) {
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() + filters.renewal_days);
+        const targetDateStr = targetDate.toISOString().split('T')[0];
+        
+        users = users.filter(u => {
+            if (!u.subscription_period_end) return false;
+            if (!u.cancellation_at_period_end) return false;
+            const endDateStr = new Date(u.subscription_period_end).toISOString().split('T')[0];
+            return endDateStr === targetDateStr;
+        });
+        console.log(`📊 After renewal_days filter: ${users.length} users`);
+    }
+    
+    // Filtra per milestone giorni
+    if (filters.milestone_days && filters.milestone_days > 0) {
+        const targetDate = new Date();
+        targetDate.setDate(targetDate.getDate() - filters.milestone_days);
+        const targetDateStr = targetDate.toISOString().split('T')[0];
+        
+        users = users.filter(u => {
+            if (!u.created_date) return false;
+            if (u.subscription_status !== 'active') return false;
+            const createdDateStr = new Date(u.created_date).toISOString().split('T')[0];
+            return createdDateStr === targetDateStr;
+        });
+        console.log(`📊 After milestone_days filter: ${users.length} users`);
+    }
+    
+    console.log(`✅ Final recipients count: ${users.length}`);
+    return users;
 }
 
 function generateBroadcastEmail(broadcast, user) {
