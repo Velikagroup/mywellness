@@ -54,34 +54,33 @@ export default function Sfondo() {
         
         @keyframes gradientShift {
           0% {
-            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
+            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%, 50% 10%, 20% 70%;
           }
           33% {
-            background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%;
+            background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%, 90% 50%, 40% 90%;
           }
           66% {
-            background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%;
+            background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%, 60% 60%, 10% 30%;
           }
           100% {
-            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
+            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%, 50% 10%, 20% 70%;
           }
         }
         
         .animated-gradient-bg {
-          background: #e8f4f8;
+          background: #f9fafb;
           background-image: 
-            radial-gradient(circle at 10% 20%, rgba(59, 130, 246, 0.8) 0%, transparent 35%),
-            radial-gradient(circle at 85% 10%, rgba(16, 185, 129, 0.75) 0%, transparent 40%),
-            radial-gradient(circle at 20% 80%, rgba(168, 85, 247, 0.7) 0%, transparent 35%),
-            radial-gradient(circle at 70% 60%, rgba(236, 72, 153, 0.75) 0%, transparent 40%),
-            radial-gradient(circle at 50% 50%, rgba(251, 146, 60, 0.65) 0%, transparent 45%),
-            radial-gradient(circle at 90% 85%, rgba(99, 102, 241, 0.7) 0%, transparent 35%),
-            radial-gradient(circle at 40% 30%, rgba(14, 165, 233, 0.6) 0%, transparent 40%),
-            radial-gradient(circle at 60% 70%, rgba(251, 113, 133, 0.65) 0%, transparent 35%);
+            radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 30%),
+            radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 35%),
+            radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 30%),
+            radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 35%),
+            radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 40%),
+            radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 30%),
+            radial-gradient(circle at 40% 30%, #c2ebe6 0%, transparent 35%),
+            radial-gradient(circle at 60% 75%, #a8e0d7 0%, transparent 30%);
           background-size: 200% 200%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 200% 200%, 200% 200%;
           animation: gradientShift 45s linear infinite;
           background-attachment: fixed;
-          mix-blend-mode: normal;
         }
         
         @media (max-width: 768px) {
