@@ -10,6 +10,7 @@ import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
   Dialog,
   DialogContent,
@@ -37,7 +38,8 @@ import {
   Save,
   FileText,
   X,
-  Globe
+  Globe,
+  Filter
 } from 'lucide-react';
 
 export default function AdminEmails() {
@@ -64,11 +66,12 @@ export default function AdminEmails() {
     footer_text: 'Il tuo percorso verso il benessere',
     from_email: 'info@projectmywellness.com',
     reply_to_email: 'no-reply@projectmywellness.com',
-    segment: 'all',
+    filters: {}, // Changed from 'segment: 'all'' to a filters object
     scheduled_for: ''
   });
   const [broadcasts, setBroadcasts] = useState([]);
   const [editingBroadcast, setEditingBroadcast] = useState(null);
+  const [estimatedRecipients, setEstimatedRecipients] = useState(null);
 
   const loadEmailTemplates = async () => {
     try {
@@ -315,17 +318,173 @@ ${ctaHtml}
       footer_text: 'Il tuo percorso verso il benessere',
       from_email: 'info@projectmywellness.com',
       reply_to_email: 'no-reply@projectmywellness.com',
-      segment: 'all',
+      filters: {}, // Initialize with empty filters
       scheduled_for: ''
     });
     setEditingBroadcast(null);
+    setEstimatedRecipients(null); // Reset estimated recipients
     setShowBroadcastDialog(true);
   };
 
   const handleEditBroadcast = (broadcast) => {
-    setBroadcastData(broadcast);
+    setBroadcastData({
+      ...broadcast,
+      filters: broadcast.filters || {} // Ensure filters is an object
+    });
     setEditingBroadcast(broadcast);
+    setEstimatedRecipients(null); // Reset estimated recipients
     setShowBroadcastDialog(true);
+  };
+
+  const handleFilterChange = (filterKey, value) => {
+    setBroadcastData(prev => ({
+      ...prev,
+      filters: {
+        ...prev.filters,
+        [filterKey]: value
+      }
+    }));
+    setEstimatedRecipients(null); // Recalculate recipients after filter change
+  };
+
+  const handleCheckboxFilterChange = (filterKey, checked) => {
+    setBroadcastData(prev => {
+      const newFilters = { ...prev.filters };
+      if (checked) {
+        newFilters[filterKey] = true;
+      } else {
+        delete newFilters[filterKey]; // Remove filter if unchecked
+      }
+      return {
+        ...prev,
+        filters: newFilters
+      };
+    });
+    setEstimatedRecipients(null); // Recalculate recipients after filter change
+  };
+
+  const toggleLanguage = (lang) => {
+    setBroadcastData(prev => {
+      const currentLangs = prev.filters.languages || [];
+      const newLangs = currentLangs.includes(lang)
+        ? currentLangs.filter(l => l !== lang)
+        : [...currentLangs, lang];
+      
+      const newFilters = { ...prev.filters };
+      if (newLangs.length > 0) {
+        newFilters.languages = newLangs;
+      } else {
+        delete newFilters.languages; // Remove filter if no languages selected
+      }
+      
+      return {
+        ...prev,
+        filters: newFilters
+      };
+    });
+    setEstimatedRecipients(null); // Recalculate recipients after filter change
+  };
+
+  const toggleSubscriptionStatus = (status) => {
+    setBroadcastData(prev => {
+      const currentStatuses = prev.filters.subscription_status || [];
+      const newStatuses = currentStatuses.includes(status)
+        ? currentStatuses.filter(s => s !== status)
+        : [...currentStatuses, status];
+      
+      const newFilters = { ...prev.filters };
+      if (newStatuses.length > 0) {
+        newFilters.subscription_status = newStatuses;
+      } else {
+        delete newFilters.subscription_status; // Remove filter if no status selected
+      }
+
+      return {
+        ...prev,
+        filters: newFilters
+      };
+    });
+    setEstimatedRecipients(null); // Recalculate recipients after filter change
+  };
+
+  const toggleSubscriptionPlan = (plan) => {
+    setBroadcastData(prev => {
+      const currentPlans = prev.filters.subscription_plan || [];
+      const newPlans = currentPlans.includes(plan)
+        ? currentPlans.filter(p => p !== plan)
+        : [...currentPlans, plan];
+      
+      const newFilters = { ...prev.filters };
+      if (newPlans.length > 0) {
+        newFilters.subscription_plan = newPlans;
+      } else {
+        delete newFilters.subscription_plan; // Remove filter if no plans selected
+      }
+
+      return {
+        ...prev,
+        filters: newFilters
+      };
+    });
+    setEstimatedRecipients(null); // Recalculate recipients after filter change
+  };
+
+  const calculateEstimatedRecipients = async () => {
+    try {
+      const response = await base44.functions.invoke('calculateBroadcastRecipients', {
+        filters: broadcastData.filters
+      });
+      setEstimatedRecipients(response.count);
+    } catch (error) {
+      console.error('Error calculating recipients:', error);
+      alert('Errore nel calcolo destinatari');
+    }
+  };
+
+  const getFiltersSummary = (filters) => {
+    const parts = [];
+    const activeFilters = Object.keys(filters).filter(key => {
+      const value = filters[key];
+      return value !== undefined && value !== null && value !== '' &&
+             !(Array.isArray(value) && value.length === 0);
+    });
+
+    if (activeFilters.length === 0) {
+      return 'Tutti gli utenti';
+    }
+    
+    if (filters.subscription_status?.length > 0) {
+      const labels = {
+        trial: 'Trial',
+        active: 'Attivi',
+        expired: 'Scaduti',
+        cancelled: 'Cancellati'
+      };
+      parts.push(`Stato: ${filters.subscription_status.map(s => labels[s] || s).join(', ')}`);
+    }
+    
+    if (filters.subscription_plan?.length > 0) {
+      const labels = { base: 'Base', pro: 'Pro', premium: 'Premium' };
+      parts.push(`Piano: ${filters.subscription_plan.map(p => labels[p] || p).join(', ')}`);
+    }
+    
+    if (filters.languages?.length > 0) {
+      const flags = { it: '🇮🇹', en: '🇬🇧', es: '🇪🇸', fr: '🇫🇷', de: '🇩🇪', pt: '🇵🇹' };
+      parts.push(`Lingua: ${filters.languages.map(l => flags[l] || l.toUpperCase()).join(' ')}`);
+    }
+    
+    if (filters.inactive_days) parts.push(`Inattivi da ${filters.inactive_days} giorni`);
+    if (filters.quiz_abandoned) parts.push('Quiz Abbandonato');
+    if (filters.trial_setup_abandoned) parts.push('Trial Setup Abbandonato');
+    if (filters.pricing_visited) parts.push('Pricing Visitato');
+    if (filters.checkout_abandoned) parts.push('Checkout Abbandonato');
+    if (filters.trial_expired_no_conversion) parts.push('Trial Scaduto (no conv.)');
+    if (filters.purchased_landing_offer) parts.push('Landing Offer Acquistata');
+
+    if (filters.renewal_days) parts.push(`Rinnovo tra ${filters.renewal_days} giorni`);
+    if (filters.milestone_days) parts.push(`Milestone: ${filters.milestone_days} giorni`);
+    
+    return parts.join(' • ');
   };
 
   const handleSaveBroadcast = async (action) => {
@@ -342,13 +501,13 @@ ${ctaHtml}
 
       if (action === 'send_now') {
         // Invia immediatamente
-        if (!confirm(`Sei sicuro di voler inviare questa email al segmento "${getSegmentName(broadcastData.segment)}"?`)) {
+        if (!confirm(`Sei sicuro di voler inviare questa email ai destinatari filtrati?`)) {
           return;
         }
 
         const response = await base44.functions.invoke('sendScheduledBroadcasts', {
           broadcast_id: editingBroadcast?.id || 'immediate',
-          broadcast_data: dataToSave
+          broadcast_data: dataToSave // broadcastData now contains 'filters'
         });
 
         alert(`✅ Email inviata con successo!`);
@@ -400,43 +559,11 @@ ${ctaHtml}
       await loadBroadcasts();
     } catch (error) {
       console.error('Error deleting broadcast:', error);
-      alert('❌ Errore: ' + error.message);
+      alert('❌ Errore durante l\'eliminazione: ' + error.message);
     }
   };
 
-  const getSegmentName = (segment) => {
-    const segments = {
-      all: 'Tutti gli utenti',
-      active_subscribers: 'Abbonamenti attivi',
-      trial_users: 'Utenti in trial',
-      expired_subscribers: 'Abbonamenti scaduti',
-      trial_expired_no_conversion: 'Trial scaduti senza conversione',
-      inactive_7_days: 'Inattivi da 7+ giorni',
-      goal_achievers: 'Obiettivi raggiunti',
-      workout_streak: 'Streak allenamento',
-      no_workout_week: 'Nessun workout questa settimana',
-      renewal_7_days: 'Rinnovo tra 7 giorni',
-      renewal_3_days: 'Rinnovo tra 3 giorni',
-      renewal_1_day: 'Rinnovo domani',
-      milestone_30_days: '30 giorni di utilizzo',
-      milestone_60_days: '60 giorni di utilizzo',
-      milestone_90_days: '90 giorni di utilizzo',
-      quiz_abandoned: 'Quiz abbandonati',
-      trial_setup_abandoned: 'Trial setup abbandonati',
-      pricing_visited: 'Pricing visitato senza acquisto',
-      checkout_abandoned: 'Checkout abbandonati',
-      base_plan: 'Piano Base',
-      pro_plan: 'Piano Pro',
-      premium_plan: 'Piano Premium',
-      language_it: '🇮🇹 Utenti Italiani',
-      language_en: '🇬🇧 Utenti Inglesi',
-      language_es: '🇪🇸 Utenti Spagnoli',
-      language_fr: '🇫🇷 Utenti Francesi',
-      language_de: '🇩🇪 Utenti Tedeschi',
-      language_pt: '🇵🇹 Utenti Portoghesi'
-    };
-    return segments[segment] || segment;
-  };
+  // Removed getSegmentName function as it's replaced by getFiltersSummary
 
   if (isLoading) {
     return (
@@ -732,7 +859,7 @@ ${ctaHtml}
                         <div className="flex-1">
                           <h4 className="font-semibold text-gray-900 mb-1">{broadcast.name}</h4>
                           <p className="text-sm text-gray-600 mb-2">{broadcast.subject}</p>
-                          <Badge className="bg-gray-100 text-gray-700">{getSegmentName(broadcast.segment)}</Badge>
+                          <Badge className="bg-gray-100 text-gray-700">{getFiltersSummary(broadcast.filters)}</Badge>
                         </div>
                         <div className="flex items-center gap-2">
                           <Button variant="ghost" size="sm" onClick={() => handleEditBroadcast(broadcast)}>
@@ -769,7 +896,7 @@ ${ctaHtml}
                             <Badge className="bg-orange-100 text-orange-700">
                               📅 {new Date(broadcast.scheduled_for).toLocaleString('it-IT')}
                             </Badge>
-                            <Badge className="bg-blue-100 text-blue-700">{getSegmentName(broadcast.segment)}</Badge>
+                            <Badge className="bg-blue-100 text-blue-700">{getFiltersSummary(broadcast.filters)}</Badge>
                           </div>
                         </div>
                         <div className="flex items-center gap-2">
@@ -1089,87 +1216,213 @@ ${ctaHtml}
 
       {/* Broadcast Editor Dialog */}
       <Dialog open={showBroadcastDialog} onOpenChange={setShowBroadcastDialog}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold">
+            <DialogTitle className="text-2xl font-bold">
               {editingBroadcast ? '✏️ Modifica Campagna' : '✨ Nuova Campagna Broadcast'}
             </DialogTitle>
           </DialogHeader>
           
           <div className="space-y-6 pt-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Nome Campagna</Label>
-                <Input
-                  value={broadcastData.name}
-                  onChange={(e) => setBroadcastData({...broadcastData, name: e.target.value})}
-                  placeholder="Es: Newsletter Gennaio 2025"
-                  className="h-12"
-                />
-              </div>
-              
-              <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Segmento Destinatari</Label>
-                <select
-                  value={broadcastData.segment}
-                  onChange={(e) => setBroadcastData({...broadcastData, segment: e.target.value})}
-                  className="w-full h-12 px-4 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
-                >
-                  <optgroup label="📊 Generali">
-                    <option value="all">Tutti gli utenti ({userCount})</option>
-                    <option value="active_subscribers">Abbonamenti attivi</option>
-                    <option value="trial_users">Utenti in trial</option>
-                    <option value="expired_subscribers">Abbonamenti scaduti</option>
-                  </optgroup>
-                  
-                  <optgroup label="🌍 Per Lingua">
-                    <option value="language_it">🇮🇹 Utenti Italiani</option>
-                    <option value="language_en">🇬🇧 Utenti Inglesi</option>
-                    <option value="language_es">🇪🇸 Utenti Spagnoli</option>
-                    <option value="language_fr">🇫🇷 Utenti Francesi</option>
-                    <option value="language_de">🇩🇪 Utenti Tedeschi</option>
-                    <option value="language_pt">🇵🇹 Utenti Portoghesi</option>
-                  </optgroup>
-
-                  <optgroup label="💼 Per Piano">
-                    <option value="base_plan">Piano Base</option>
-                    <option value="pro_plan">Piano Pro</option>
-                    <option value="premium_plan">Piano Premium</option>
-                  </optgroup>
-                  
-                  <optgroup label="🛒 Abbandono">
-                    <option value="quiz_abandoned">Quiz abbandonati</option>
-                    <option value="trial_setup_abandoned">Trial setup abbandonati</option>
-                    <option value="pricing_visited">Pricing visitato senza acquisto</option>
-                    <option value="checkout_abandoned">Checkout abbandonati</option>
-                  </optgroup>
-                  
-                  <optgroup label="💔 Win-Back">
-                    <option value="trial_expired_no_conversion">Trial scaduti senza conversione</option>
-                    <option value="inactive_7_days">Inattivi da 7+ giorni</option>
-                  </optgroup>
-                  
-                  <optgroup label="🔄 Rinnovi">
-                    <option value="renewal_7_days">Rinnovo tra 7 giorni</option>
-                    <option value="renewal_3_days">Rinnovo tra 3 giorni</option>
-                    <option value="renewal_1_day">Rinnovo domani</option>
-                  </optgroup>
-                  
-                  <optgroup label="🎯 Milestone">
-                    <option value="milestone_30_days">30 giorni di utilizzo</option>
-                    <option value="milestone_60_days">60 giorni di utilizzo</option>
-                    <option value="milestone_90_days">90 giorni di utilizzo</option>
-                  </optgroup>
-                  
-                  <optgroup label="💪 Fitness">
-                    <option value="goal_achievers">Obiettivi raggiunti</option>
-                    <option value="workout_streak">Streak allenamento</option>
-                    <option value="no_workout_week">Nessun workout questa settimana</option>
-                  </optgroup>
-                </select>
-              </div>
+            {/* Nome Campagna */}
+            <div>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Nome Campagna</Label>
+              <Input
+                value={broadcastData.name}
+                onChange={(e) => setBroadcastData({...broadcastData, name: e.target.value})}
+                placeholder="Es: Newsletter Gennaio 2025"
+                className="h-12"
+              />
             </div>
 
+            {/* FILTRI COMBINABILI */}
+            <Card className="bg-gradient-to-br from-blue-50 to-purple-50 border-2 border-blue-200">
+              <CardHeader>
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <Filter className="w-5 h-5" />
+                  🎯 Filtri Destinatari (Combinabili)
+                </CardTitle>
+                <p className="text-sm text-gray-600 mt-2">
+                  Seleziona più filtri per restringere il pubblico. I filtri si combinano con logica AND.
+                </p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                
+                {/* Stato Abbonamento */}
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700 mb-3 block">📊 Stato Abbonamento</Label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {[
+                      { value: 'trial', label: 'Trial', icon: '🔬' },
+                      { value: 'active', label: 'Attivo', icon: '✅' },
+                      { value: 'expired', label: 'Scaduto', icon: '⏰' },
+                      { value: 'cancelled', label: 'Cancellato', icon: '❌' }
+                    ].map(status => (
+                      <div
+                        key={status.value}
+                        onClick={() => toggleSubscriptionStatus(status.value)}
+                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                          broadcastData.filters.subscription_status?.includes(status.value)
+                            ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-[var(--brand-primary)]'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">{status.icon}</div>
+                          <div className="text-sm font-semibold">{status.label}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Piano Abbonamento */}
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700 mb-3 block">💼 Piano Abbonamento</Label>
+                  <div className="grid grid-cols-3 gap-3">
+                    {[
+                      { value: 'base', label: 'Base', icon: '🥉' },
+                      { value: 'pro', label: 'Pro', icon: '🥈' },
+                      { value: 'premium', label: 'Premium', icon: '🥇' }
+                    ].map(plan => (
+                      <div
+                        key={plan.value}
+                        onClick={() => toggleSubscriptionPlan(plan.value)}
+                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                          broadcastData.filters.subscription_plan?.includes(plan.value)
+                            ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-[var(--brand-primary)]'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">{plan.icon}</div>
+                          <div className="text-sm font-semibold">{plan.label}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Lingua */}
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700 mb-3 block">🌍 Lingua Utente</Label>
+                  <div className="grid grid-cols-3 md:grid-cols-6 gap-3">
+                    {[
+                      { value: 'it', label: 'Italiano', flag: '🇮🇹' },
+                      { value: 'en', label: 'Inglese', flag: '🇬🇧' },
+                      { value: 'es', label: 'Spagnolo', flag: '🇪🇸' },
+                      { value: 'fr', label: 'Francese', flag: '🇫🇷' },
+                      { value: 'de', label: 'Tedesco', flag: '🇩🇪' },
+                      { value: 'pt', label: 'Portoghese', flag: '🇵🇹' }
+                    ].map(lang => (
+                      <div
+                        key={lang.value}
+                        onClick={() => toggleLanguage(lang.value)}
+                        className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
+                          broadcastData.filters.languages?.includes(lang.value)
+                            ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
+                            : 'bg-white text-gray-700 border-gray-200 hover:border-[var(--brand-primary)]'
+                        }`}
+                      >
+                        <div className="text-center">
+                          <div className="text-2xl mb-1">{lang.flag}</div>
+                          <div className="text-xs font-semibold">{lang.label}</div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Filtri Boolean */}
+                <div>
+                  <Label className="text-sm font-semibold text-gray-700 mb-3 block">🛒 Comportamenti</Label>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    {[
+                      { key: 'quiz_abandoned', label: 'Quiz Abbandonato' },
+                      { key: 'trial_setup_abandoned', label: 'Trial Setup Abbandonato' },
+                      { key: 'pricing_visited', label: 'Pricing Visitato' },
+                      { key: 'checkout_abandoned', label: 'Checkout Abbandonato' },
+                      { key: 'trial_expired_no_conversion', label: 'Trial Scaduto Senza Conversione' },
+                      { key: 'purchased_landing_offer', label: 'Ha Acquistato Landing Offer' }
+                    ].map(filter => (
+                      <div key={filter.key} className="flex items-center space-x-2 p-3 bg-white rounded-lg border">
+                        <Checkbox
+                          id={filter.key}
+                          checked={!!broadcastData.filters[filter.key]}
+                          onCheckedChange={(checked) => handleCheckboxFilterChange(filter.key, checked)}
+                        />
+                        <Label htmlFor={filter.key} className="text-sm font-medium cursor-pointer">
+                          {filter.label}
+                        </Label>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Filtri Numerici */}
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      ⏰ Inattivi da X giorni
+                    </Label>
+                    <Input
+                      type="number"
+                      placeholder="Es: 7"
+                      value={broadcastData.filters.inactive_days || ''}
+                      onChange={(e) => handleFilterChange('inactive_days', e.target.value ? parseInt(e.target.value) : undefined)}
+                      className="h-10"
+                    />
+                  </div>
+                  
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                      🔄 Giorni al Rinnovo
+                    </Label>
+                    <select
+                      value={broadcastData.filters.renewal_days || ''}
+                      onChange={(e) => handleFilterChange('renewal_days', e.target.value ? parseInt(e.target.value) : undefined)}
+                      className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
+                    >
+                      <option value="">Nessun filtro</option>
+                      <option value="1">1 giorno</option>
+                      <option value="3">3 giorni</option>
+                      <option value="7">7 giorni</option>
+                    </select>
+                  </div>
+                </div>
+
+                {/* Stima Destinatari */}
+                <div className="pt-4 border-t border-blue-200">
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <p className="text-sm font-semibold text-gray-700 mb-1">👥 Destinatari Stimati</p>
+                      {estimatedRecipients !== null && (
+                        <p className="text-3xl font-bold text-[var(--brand-primary)]">
+                          {estimatedRecipients} utenti
+                        </p>
+                      )}
+                    </div>
+                    <Button
+                      onClick={calculateEstimatedRecipients}
+                      variant="outline"
+                      size="sm"
+                    >
+                      <Users className="w-4 h-4 mr-2" />
+                      Calcola
+                    </Button>
+                  </div>
+                  
+                  {Object.keys(broadcastData.filters).filter(k => broadcastData.filters[k] !== undefined && broadcastData.filters[k] !== false && (Array.isArray(broadcastData.filters[k]) ? broadcastData.filters[k].length > 0 : true)).length > 0 && (
+                    <div className="mt-3 p-3 bg-white rounded-lg border">
+                      <p className="text-xs font-semibold text-gray-600 mb-2">Filtri Attivi:</p>
+                      <p className="text-sm text-gray-800">{getFiltersSummary(broadcastData.filters)}</p>
+                    </div>
+                  )}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Email Settings */}
             <div className="grid grid-cols-2 gap-4">
               <div>
                 <Label className="text-sm font-semibold text-gray-700 mb-2 block">Da (Email)</Label>
