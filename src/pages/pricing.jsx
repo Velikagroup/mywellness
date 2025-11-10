@@ -2,7 +2,8 @@
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp } from 'lucide-react';
+import { Input } from '@/components/ui/input';
+import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -12,17 +13,89 @@ export default function Pricing() {
   const [isAnnual, setIsAnnual] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [openFaqIndex, setOpenFaqIndex] = React.useState(null);
+  
+  // Coupon state
+  const [couponCode, setCouponCode] = React.useState('');
+  const [couponValidating, setCouponValidating] = React.useState(false);
+  const [couponValid, setCouponValid] = React.useState(null); // null: not checked, true: valid, false: invalid
+  const [couponData, setCouponData] = React.useState(null); // stores discount_value, discount_type, or error
+  const [userEmail, setUserEmail] = React.useState(null); // stores user email if logged in
 
   // Scroll to top on mount
   React.useEffect(() => {
     window.scrollTo(0, 0);
+    
+    // Check for coupon in URL params
+    const urlParams = new URLSearchParams(window.location.search);
+    const couponParam = urlParams.get('coupon');
+    if (couponParam) {
+      setCouponCode(couponParam);
+    }
+    
+    // Get user email if logged in
+    const loadUser = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUserEmail(currentUser.email);
+        
+        // Auto-validate coupon if present in URL and user is logged in
+        if (couponParam && currentUser.email) {
+          validateCoupon(couponParam, currentUser.email);
+        }
+      } catch (error) {
+        // User not logged in, userEmail remains null
+      }
+    };
+    loadUser();
   }, []);
+
+  const validateCoupon = async (code, email) => {
+    if (!code || !email) return; // Ensure both code and email are available
+
+    setCouponValidating(true);
+    setCouponValid(null); // Reset validation status
+    setCouponData(null); // Reset coupon data
+
+    try {
+      const response = await base44.functions.invoke('validatePersonalCoupon', {
+        couponCode: code,
+        userEmail: email
+      });
+
+      if (response.valid) {
+        setCouponValid(true);
+        setCouponData({
+          discount_value: response.discount_value,
+          discount_type: response.discount_type
+        });
+      } else {
+        setCouponValid(false);
+        setCouponData({ error: response.error || 'Codice sconto non valido o già utilizzato.' }); // Provide a default error message
+      }
+    } catch (error) {
+      console.error('Error validating coupon:', error);
+      setCouponValid(false);
+      setCouponData({ error: 'Errore di validazione. Riprova più tardi.' });
+    } finally {
+      setCouponValidating(false);
+    }
+  };
+
+  const handleApplyCoupon = async () => {
+    if (!userEmail) {
+      alert('Devi effettuare il login o creare un account per applicare un coupon. Se sei già registrato, effettua il login.');
+      return;
+    }
+    validateCoupon(couponCode, userEmail);
+  };
 
   const plans = [
     {
       name: "Base",
       priceMonthly: 19,
       priceAnnual: 15.2,
+      stripePriceIdMonthly: "price_1SNDMW2OXBs6ZYwlp5UgCO8Y",
+      stripePriceIdAnnual: "price_1SNDMW2OXBs6ZYwlUfiZP4Su",
       icon: Target,
       iconColor: "text-blue-600",
       iconBg: "bg-blue-100",
@@ -42,6 +115,8 @@ export default function Pricing() {
       name: "Pro",
       priceMonthly: 29,
       priceAnnual: 23.2,
+      stripePriceIdMonthly: "price_1SNDMX2OXBs6ZYwlx6jXOgFf",
+      stripePriceIdAnnual: "price_1SNDMX2OXBs6ZYwlvGtzkQKA",
       icon: Zap,
       iconColor: "text-[var(--brand-primary)]",
       iconBg: "bg-[var(--brand-primary-light)]",
@@ -62,6 +137,8 @@ export default function Pricing() {
       name: "Premium",
       priceMonthly: 39,
       priceAnnual: 31.2,
+      stripePriceIdMonthly: "price_1SNDMX2OXBs6ZYwlKR7FIudX",
+      stripePriceIdAnnual: "price_1SNDMY2OXBs6ZYwlcZzmNSnk",
       icon: Crown,
       iconColor: "text-purple-600",
       iconBg: "bg-purple-100",
@@ -189,7 +266,6 @@ export default function Pricing() {
   ];
 
   const handleSelectPlan = async (planName) => {
-    // Determina il tipo di piano (base, pro, premium)
     let planType = 'base';
     if (planName.toLowerCase().includes('pro')) {
       planType = 'pro';
@@ -198,39 +274,46 @@ export default function Pricing() {
     }
 
     try {
-      // Controlla se l'utente è già loggato
       const currentUser = await base44.auth.me();
       
-      // Se arriviamo qui, l'utente è loggato
       if (currentUser.subscription_status === 'trial' || 
           currentUser.subscription_status === 'active') {
-        // Ha già abbonamento → vai alla Dashboard
         navigate(createPageUrl('Dashboard'));
       } else {
-        // Non ha abbonamento → vai a TrialSetup con il piano selezionato
-        navigate(createPageUrl('TrialSetup') + `?plan=${planType}`);
+        // Passa il coupon se valido
+        const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
+        navigate(createPageUrl('TrialSetup') + `?plan=${planType}${couponParam}`);
       }
     } catch (error) {
       // Utente non loggato → fai login con redirect a TrialSetup
-      const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + `?plan=${planType}`;
+      const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
+      const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + `?plan=${planType}${couponParam}`;
       await base44.auth.redirectToLogin(trialSetupUrl);
     }
   };
 
   const handleLogin = async () => {
-    // Login diretto con redirect al TrialSetup (piano base di default)
     const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + '?plan=base';
     await base44.auth.redirectToLogin(trialSetupUrl);
   };
 
   const getPrice = (plan) => {
-    return isAnnual ? plan.priceAnnual : plan.priceMonthly;
+    let basePrice = isAnnual ? plan.priceAnnual : plan.priceMonthly;
+    if (couponValid && couponData && couponData.discount_value) {
+      const discount = (basePrice * couponData.discount_value) / 100;
+      return (basePrice - discount).toFixed(2);
+    }
+    return basePrice.toFixed(2);
   };
 
   const getSavings = (plan) => {
     const monthlyCost = plan.priceMonthly;
     const annualMonthlyCost = plan.priceAnnual;
     return (monthlyCost - annualMonthlyCost).toFixed(1);
+  };
+
+  const getOriginalPrice = (plan) => {
+    return (isAnnual ? plan.priceAnnual : plan.priceMonthly).toFixed(2);
   };
 
   return (
@@ -651,6 +734,51 @@ export default function Pricing() {
               Iniza subito con 3 giorni gratuiti. Cancella quando vuoi, senza vincoli.
             </p>
 
+            {/* Coupon Input */}
+            <div className="max-w-md mx-auto mb-8">
+              <div className="water-glass-effect rounded-2xl p-4 shadow-lg">
+                <div className="flex items-center gap-2 mb-2">
+                  <Tag className="w-5 h-5 text-[var(--brand-primary)]" />
+                  <span className="text-sm font-semibold text-gray-700">Hai un codice sconto?</span>
+                </div>
+                <div className="flex gap-2">
+                  <Input
+                    type="text"
+                    placeholder="Inserisci il codice"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    className="flex-1"
+                    disabled={couponValidating}
+                  />
+                  <Button
+                    onClick={handleApplyCoupon}
+                    disabled={couponValidating || !couponCode}
+                    className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                  >
+                    {couponValidating ? 'Verifica...' : 'Applica'}
+                  </Button>
+                </div>
+                
+                {couponValid === true && couponData && (
+                  <div className="mt-3 p-3 bg-green-50 border-2 border-green-200 rounded-lg">
+                    <div className="flex items-center gap-2 text-green-700">
+                      <CheckCircle className="w-5 h-5" />
+                      <span className="font-semibold">Codice valido! Sconto del {couponData.discount_value}% applicato</span>
+                    </div>
+                  </div>
+                )}
+                
+                {couponValid === false && couponData && (
+                  <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
+                    <div className="flex items-center gap-2 text-red-700">
+                      <X className="w-5 h-5" />
+                      <span className="font-semibold">{couponData.error}</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+
             {/* Billing Toggle */}
             <div className="inline-flex items-center gap-4 water-glass-effect rounded-full p-2 shadow-lg">
               <button
@@ -715,18 +843,32 @@ export default function Pricing() {
                   
                   <div className="price-display">
                     <div className="mb-2">
+                      {couponValid && couponData && (
+                        <div className="mb-2">
+                          <span className="text-2xl font-bold text-gray-400 line-through">€{getOriginalPrice(plan)}</span>
+                        </div>
+                      )}
                       <span className="text-6xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
                         €{getPrice(plan)}
                       </span>
                       <span className="text-gray-600 ml-2 text-lg font-semibold">/mese</span>
                     </div>
                     
-                    {isAnnual && (
+                    {isAnnual && !couponValid && (
                       <div className="space-y-1">
                         <p className="text-sm text-gray-500 line-through">€{plan.priceMonthly}/mese</p>
                         <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
                           <Check className="w-3 h-3" />
                           Risparmi €{getSavings(plan)}/mese
+                        </div>
+                      </div>
+                    )}
+                    
+                    {couponValid && couponData && (
+                      <div className="mt-2">
+                        <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
+                          <Check className="w-3 h-3" />
+                          -{couponData.discount_value}% SCONTO APPLICATO
                         </div>
                       </div>
                     )}
@@ -748,7 +890,7 @@ export default function Pricing() {
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="feature-item flex items-start gap-3 group">
-                        <div className="flex-shrink0 w-6 h-6 rounded-full bg-[var(--brand-primary)] flex items-center justify-center mt-0.5 shadow-md group-hover:shadow-lg transition-all">
+                        <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--brand-primary)] flex items-center justify-center mt-0.5 shadow-md group-hover:shadow-lg transition-all">
                           <Check className="w-3.5 h-3.5 text-white font-bold" strokeWidth={3} />
                         </div>
                         <span className="text-gray-700 text-sm leading-relaxed font-medium">{feature}</span>
