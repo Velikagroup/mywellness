@@ -35,6 +35,7 @@ Deno.serve(async (req) => {
             planType = 'base',
             billingPeriod = 'monthly',
             orderBumpSelected = false,
+            appliedCouponCode = null,
             trafficSource = null,
             billingInfo 
         } = body;
@@ -43,7 +44,7 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing payment information' }, { status: 400 });
         }
 
-        console.log(`📋 Plan: ${planType}, Billing: ${billingPeriod}, Payment Method: ${paymentMethodId ? 'Apple Pay' : 'Card'}`);
+        console.log(`📋 Plan: ${planType}, Billing: ${billingPeriod}, Coupon: ${appliedCouponCode || 'None'}`);
 
         const PRICE_IDS = {
             base: {
@@ -100,7 +101,7 @@ Deno.serve(async (req) => {
 
         if (paymentMethodId) {
             // Apple Pay - il Payment Method è già creato da Stripe.js
-            console.log('🍎 Using Apple Pay payment method:', paymentMethodId);
+            console.log('🍎 Using digital wallet payment method:', paymentMethodId);
             finalPaymentMethodId = paymentMethodId;
         } else {
             // Card - creiamo il Payment Method sul backend
@@ -108,7 +109,7 @@ Deno.serve(async (req) => {
                 type: 'card',
                 card: {
                     number: cardData.number,
-                    exp_month: cardData.exp_month,
+                    exp_month: cardData.exp_year,
                     exp_year: cardData.exp_year,
                     cvc: cardData.cvc,
                 },
@@ -155,7 +156,8 @@ Deno.serve(async (req) => {
                 plan_type: planType,
                 billing_period: billingPeriod,
                 order_bump_selected: orderBumpSelected.toString(),
-                traffic_source: trafficSource || 'direct'
+                traffic_source: trafficSource || 'direct',
+                coupon_code: appliedCouponCode || 'none'
             }
         });
 
@@ -195,6 +197,19 @@ Deno.serve(async (req) => {
         });
 
         console.log('✅ User updated with subscription data');
+
+        // 🔐 MARCA COUPON COME USATO
+        if (appliedCouponCode) {
+            try {
+                await base44.asServiceRole.functions.invoke('markCouponAsUsed', {
+                    couponCode: appliedCouponCode,
+                    userEmail: user.email
+                });
+                console.log(`🎫 Coupon ${appliedCouponCode} marked as used`);
+            } catch (couponError) {
+                console.error('⚠️ Failed to mark coupon as used (non-critical):', couponError.message);
+            }
+        }
 
         try {
             const functionUrl = `${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/functions/sendTrialWelcomeEmail`;
