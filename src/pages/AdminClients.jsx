@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -21,6 +21,7 @@ import ClientDetailModal from '../components/admin/ClientDetailModal';
 
 export default function AdminClients() {
   const navigate = useNavigate();
+  const fileInputRef = useRef(null);
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [clients, setClients] = useState([]);
@@ -28,6 +29,7 @@ export default function AdminClients() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedClient, setSelectedClient] = useState(null);
   const [showClientModal, setShowClientModal] = useState(false);
+  const [isImporting, setIsImporting] = useState(false);
   const [stats, setStats] = useState({
     totalClients: 0,
     maleCount: 0,
@@ -79,9 +81,7 @@ export default function AdminClients() {
     const totalRevenue = clientsList.reduce((sum, c) => sum + (c.last_payment_amount || 0), 0);
     const avgLifetimeValue = totalClients > 0 ? totalRevenue / totalClients : 0;
     
-    // Tasso di riacquisto: clienti con più di un pagamento
     const repeatCustomers = clientsWithPurchases.filter(c => {
-      // Stima basata su subscription_status e last_payment_date
       return c.subscription_status === 'active' && c.last_payment_date;
     }).length;
     const repurchaseRate = clientsWithPurchases.length > 0 ? (repeatCustomers / clientsWithPurchases.length) * 100 : 0;
@@ -124,34 +124,201 @@ export default function AdminClients() {
   };
 
   const handleExportClients = () => {
-    const csvData = clients.map(c => ({
-      Nome: c.full_name || '',
-      Email: c.email || '',
-      Piano: c.subscription_plan || '',
-      Stato: c.subscription_status || '',
-      'Spesa Totale': c.last_payment_amount || 0,
-      'Data Iscrizione': c.created_date || '',
-      Lingua: c.language || 'it'
-    }));
+    try {
+      // Prepara i dati CSV con tutti i campi rilevanti
+      const csvRows = [];
+      
+      // Header con tutte le colonne
+      const headers = [
+        'Nome Completo',
+        'Email',
+        'Telefono',
+        'Genere',
+        'Età',
+        'Piano',
+        'Stato Abbonamento',
+        'Data Iscrizione',
+        'Scadenza Abbonamento',
+        'Spesa Totale (€)',
+        'Ultimo Pagamento',
+        'Lingua',
+        'Sorgente Traffico',
+        'Peso Attuale (kg)',
+        'Peso Obiettivo (kg)',
+        'Altezza (cm)',
+        'BMR (kcal)',
+        'Massa Grassa (%)',
+        'Landing Offer',
+        'Città',
+        'Paese',
+        'Quiz Completato'
+      ];
+      csvRows.push(headers.join(','));
 
-    const headers = Object.keys(csvData[0]).join(',');
-    const rows = csvData.map(row => Object.values(row).join(',')).join('\n');
-    const csv = headers + '\n' + rows;
+      // Aggiungi i dati di ogni cliente
+      clients.forEach(c => {
+        const row = [
+          `"${(c.full_name || '').replace(/"/g, '""')}"`,
+          `"${(c.email || '').replace(/"/g, '""')}"`,
+          `"${(c.phone_number || '').replace(/"/g, '""')}"`,
+          c.gender === 'male' ? 'Uomo' : c.gender === 'female' ? 'Donna' : '',
+          c.age || '',
+          c.subscription_plan || '',
+          c.subscription_status || '',
+          c.created_date ? new Date(c.created_date).toLocaleDateString('it-IT') : '',
+          c.subscription_period_end ? new Date(c.subscription_period_end).toLocaleDateString('it-IT') : '',
+          (c.last_payment_amount || 0).toFixed(2),
+          c.last_payment_date ? new Date(c.last_payment_date).toLocaleDateString('it-IT') : '',
+          c.language || 'it',
+          c.traffic_source || '',
+          c.current_weight || '',
+          c.target_weight || '',
+          c.height || '',
+          c.bmr || '',
+          c.body_fat_percentage || '',
+          c.purchased_landing_offer ? 'Sì' : 'No',
+          `"${(c.billing_city || '').replace(/"/g, '""')}"`,
+          c.billing_country || '',
+          c.quiz_completed ? 'Sì' : 'No'
+        ];
+        csvRows.push(row.join(','));
+      });
 
-    const blob = new Blob([csv], { type: 'text/csv' });
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `clienti_mywellness_${new Date().toISOString().split('T')[0]}.csv`;
-    document.body.appendChild(a);
-    a.click();
-    window.URL.revokeObjectURL(url);
-    a.remove();
+      // Crea il file CSV con BOM per Excel
+      const BOM = '\uFEFF';
+      const csvContent = BOM + csvRows.join('\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `clienti_mywellness_${new Date().toISOString().split('T')[0]}.csv`;
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(url);
+      a.remove();
+      
+      alert(`✅ Esportati ${clients.length} clienti con successo!`);
+    } catch (error) {
+      console.error('Export error:', error);
+      alert('❌ Errore durante l\'esportazione: ' + error.message);
+    }
   };
 
   const handleImportClients = () => {
-    alert('Funzione di importazione: carica un file CSV con colonne Email, Nome, Piano, etc.');
-    // TODO: Implementare upload CSV e bulk import
+    fileInputRef.current?.click();
+  };
+
+  const handleFileSelect = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (!file.name.endsWith('.csv')) {
+      alert('❌ Per favore seleziona un file CSV');
+      return;
+    }
+
+    setIsImporting(true);
+
+    try {
+      const text = await file.text();
+      const lines = text.split('\n').filter(line => line.trim());
+      
+      if (lines.length < 2) {
+        alert('❌ File CSV vuoto o non valido');
+        setIsImporting(false);
+        return;
+      }
+
+      // Parse header
+      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+      
+      // Parse data rows
+      const users = [];
+      for (let i = 1; i < lines.length; i++) {
+        const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+        
+        // Mappa base: Nome, Email, Piano, Stato
+        const userData = {};
+        
+        headers.forEach((header, index) => {
+          const value = values[index];
+          
+          // Mappatura campi
+          if (header.toLowerCase().includes('nome') || header.toLowerCase().includes('name')) {
+            userData.full_name = value;
+          } else if (header.toLowerCase().includes('email')) {
+            userData.email = value;
+          } else if (header.toLowerCase().includes('piano') || header.toLowerCase().includes('plan')) {
+            userData.subscription_plan = value.toLowerCase();
+          } else if (header.toLowerCase().includes('stato') || header.toLowerCase().includes('status')) {
+            userData.subscription_status = value.toLowerCase();
+          } else if (header.toLowerCase().includes('lingua') || header.toLowerCase().includes('language')) {
+            userData.language = value.toLowerCase();
+          } else if (header.toLowerCase().includes('telefono') || header.toLowerCase().includes('phone')) {
+            userData.phone_number = value;
+          }
+        });
+
+        if (userData.email) {
+          users.push(userData);
+        }
+      }
+
+      if (users.length === 0) {
+        alert('❌ Nessun utente valido trovato nel CSV');
+        setIsImporting(false);
+        return;
+      }
+
+      const confirmMsg = `Trovati ${users.length} utenti nel CSV.\n\nNOTA: Verranno importati solo utenti con email non già esistenti.\n\nProcedere?`;
+      
+      if (!confirm(confirmMsg)) {
+        setIsImporting(false);
+        return;
+      }
+
+      // Importa utenti
+      let imported = 0;
+      let skipped = 0;
+      
+      for (const userData of users) {
+        try {
+          // Verifica se esiste già
+          const existing = await base44.entities.User.filter({ email: userData.email });
+          if (existing && existing.length > 0) {
+            skipped++;
+            continue;
+          }
+
+          // Crea nuovo utente (solo dati base)
+          await base44.entities.User.create({
+            email: userData.email,
+            full_name: userData.full_name || 'Utente Importato',
+            subscription_plan: userData.subscription_plan || 'base',
+            subscription_status: userData.subscription_status || 'trial',
+            language: userData.language || 'it',
+            phone_number: userData.phone_number || '',
+            role: 'user'
+          });
+          
+          imported++;
+        } catch (error) {
+          console.error(`Error importing ${userData.email}:`, error);
+          skipped++;
+        }
+      }
+
+      alert(`✅ Importazione completata!\n\n• ${imported} utenti importati\n• ${skipped} utenti saltati (già esistenti o errori)`);
+      
+      await loadClients();
+      
+    } catch (error) {
+      console.error('Import error:', error);
+      alert('❌ Errore durante l\'importazione: ' + error.message);
+    }
+
+    setIsImporting(false);
+    event.target.value = '';
   };
 
   if (isLoading) {
@@ -171,13 +338,30 @@ export default function AdminClients() {
             <p className="text-gray-600">Database completo degli utenti MyWellness</p>
           </div>
           <div className="flex items-center gap-3">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept=".csv"
+              onChange={handleFileSelect}
+              className="hidden"
+            />
             <Button
               onClick={handleImportClients}
+              disabled={isImporting}
               variant="outline"
               className="flex items-center gap-2"
             >
-              <Upload className="w-4 h-4" />
-              Importa
+              {isImporting ? (
+                <>
+                  <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-[var(--brand-primary)]"></div>
+                  Importando...
+                </>
+              ) : (
+                <>
+                  <Upload className="w-4 h-4" />
+                  Importa CSV
+                </>
+              )}
             </Button>
             <Button
               onClick={handleExportClients}
