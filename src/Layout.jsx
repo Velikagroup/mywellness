@@ -2,7 +2,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X } from "lucide-react";
+import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Sparkles } from "lucide-react"; // Added Sparkles icon
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -77,7 +77,8 @@ export default function Layout({ children }) {
     createPageUrl('AdminEmails'),
     createPageUrl('AdminAnalytics'), // Added for AdminAnalytics
     createPageUrl('AdminMarketing'),
-    createPageUrl('AdminSalesTax') // Added for AdminSalesTax
+    createPageUrl('AdminSalesTax'), // Added for AdminSalesTax
+    createPageUrl('Sfondo') // Added for Sfondo
   ];
 
   // Pagine che NON devono avere il layout
@@ -126,7 +127,8 @@ export default function Layout({ children }) {
     { name: 'Email', icon: Mail, path: 'AdminEmails' },
     { name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' },
     { name: 'Marketing', icon: Target, path: 'AdminMarketing' },
-    { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
+    { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' },
+    { name: 'Sfondo', icon: Sparkles, path: 'Sfondo' } // Added Sfondo item
   ] : [];
 
   // Per desktop, tutti gli item insieme
