@@ -353,6 +353,14 @@ ${ctaHtml}
       function: 'stripeCreateOneTimePayment'
     },
     {
+      id: 'standard_subscription_welcome',
+      name: 'Benvenuto Abbonamento Standard',
+      description: 'Email di benvenuto per utenti che acquistano un abbonamento standard (non trial/landing)',
+      trigger: 'Acquisto abbonamento standard',
+      status: 'active',
+      function: 'stripeCreateTrialSubscription'
+    },
+    {
       id: 'renewal_confirmation',
       name: 'Conferma Rinnovo Automatico',
       description: 'Email di conferma inviata dopo il rinnovo automatico dell\'abbonamento (solo per utenti che NON hanno cancellato)',
@@ -383,6 +391,126 @@ ${ctaHtml}
       trigger: 'Cron giornaliero (1 giorno prima scadenza, con cancellazione attiva)',
       status: 'active',
       function: 'sendRenewalReminders'
+    },
+    {
+      id: 'cancellation_confirmed',
+      name: 'Conferma Cancellazione Rinnovo',
+      description: 'Email di conferma quando l\'utente cancella il rinnovo automatico',
+      trigger: 'Utente cancella rinnovo automatico dalla Dashboard',
+      status: 'active',
+      function: 'Da implementare'
+    },
+    {
+      id: 'subscription_expired',
+      name: 'Abbonamento Scaduto',
+      description: 'Email inviata il giorno dopo la scadenza con offerta di rinnovo',
+      trigger: 'Subscription status diventa expired',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'trial_expired_no_conversion',
+      name: 'Trial Scaduto Senza Conversione',
+      description: 'Email con offerta 20% sconto per trial scaduti senza conversione',
+      trigger: 'Trial scaduto + nessun pagamento',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'goal_weight_achieved',
+      name: 'Obiettivo Peso Raggiunto',
+      description: 'Email celebrativa quando l\'utente raggiunge il peso obiettivo',
+      trigger: 'current_weight raggiunge target_weight',
+      status: 'active',
+      function: 'Da implementare'
+    },
+    {
+      id: 'milestone_30_days',
+      name: 'Milestone - 30 Giorni',
+      description: 'Email celebrativa con statistiche dopo 30 giorni',
+      trigger: 'Cron - 30 giorni dall\'iscrizione',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'milestone_60_days',
+      name: 'Milestone - 60 Giorni',
+      description: 'Email celebrativa con statistiche dopo 60 giorni',
+      trigger: 'Cron - 60 giorni dall\'iscrizione',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'milestone_90_days',
+      name: 'Milestone - 90 Giorni',
+      description: 'Email celebrativa speciale dopo 90 giorni con reward',
+      trigger: 'Cron - 90 giorni dall\'iscrizione',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'inactive_user_7_days',
+      name: 'Utente Inattivo 7 Giorni',
+      description: 'Email re-engagement per utenti che non accedono da 7 giorni',
+      trigger: 'Cron - Nessun login per 7 giorni',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'quiz_completed_no_plan',
+      name: 'Quiz Completato Senza Piano',
+      description: 'Reminder per utenti che hanno completato il quiz ma non generato il piano',
+      trigger: 'Cron - 24h dopo quiz senza piano generato',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'workout_streak_7_days',
+      name: 'Streak Allenamenti 7 Giorni',
+      description: 'Email celebrativa per 7 giorni consecutivi di workout',
+      trigger: '7 workout completati in 7 giorni consecutivi',
+      status: 'active',
+      function: 'Da implementare'
+    },
+    {
+      id: 'no_workout_this_week',
+      name: 'Nessun Workout Questa Settimana',
+      description: 'Gentle nudge per utenti senza workout nella settimana',
+      trigger: 'Cron Lunedì - 0 workout settimana precedente',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'feedback_request',
+      name: 'Richiesta Feedback',
+      description: 'Survey dopo 2 settimane di utilizzo attivo',
+      trigger: 'Cron - 14 giorni di utilizzo attivo',
+      status: 'active',
+      function: 'Da implementare - Cron'
+    },
+    {
+      id: 'password_reset_completed',
+      name: 'Password Reset Completato',
+      description: 'Conferma sicurezza dopo reset password',
+      trigger: 'Password reset completato con successo',
+      status: 'active',
+      function: 'Da implementare'
+    },
+    {
+      id: 'plan_upgrade',
+      name: 'Upgrade Piano',
+      description: 'Conferma upgrade con nuove funzionalità disponibili',
+      trigger: 'Cambio piano a tier superiore',
+      status: 'active',
+      function: 'Da implementare'
+    },
+    {
+      id: 'plan_downgrade',
+      name: 'Downgrade Piano',
+      description: 'Conferma downgrade con funzionalità modificate',
+      trigger: 'Cambio piano a tier inferiore',
+      status: 'active',
+      function: 'Da implementare'
     },
     {
       id: 'weekly_report',
