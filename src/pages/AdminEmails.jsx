@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -361,8 +362,8 @@ ${ctaHtml}
       icon: Heart,
       color: 'pink',
       emails: [
-        { id: 'trial_expired_winback', name: 'Trial Scaduto Senza Conversione', trigger: 'Trial scaduto + nessun pagamento', function: 'sendTrialExpiredWinback' },
-        { id: 'subscription_expired', name: 'Abbonamento Scaduto', trigger: 'Subscription status = expired', function: 'sendSubscriptionExpired' }
+        { id: 'trial_expired_winback', name: 'Trial Scaduto Senza Conversione', trigger: 'Cron - Trial scaduto + nessun pagamento', function: 'sendTrialExpiredWinback' },
+        { id: 'subscription_expired', name: 'Abbonamento Scaduto', trigger: 'Cron - Subscription status = expired', function: 'sendSubscriptionExpired' }
       ]
     },
     engagement: {
@@ -410,11 +411,11 @@ ${ctaHtml}
       icon: ShoppingCart,
       color: 'amber',
       emails: [
-        { id: 'quiz_started_abandoned', name: 'Quiz Iniziato ma Non Completato', trigger: 'Cron - 2h dopo quiz iniziato', function: 'sendQuizStartedAbandoned', status: 'planned' },
+        { id: 'quiz_started_abandoned', name: 'Quiz Iniziato ma Non Completato', trigger: 'Cron - 2h dopo quiz iniziato', function: 'sendQuizStartedAbandoned' },
         { id: 'quiz_completed_abandoned', name: 'Quiz Completato Senza Piano', trigger: 'Cron - 24h dopo quiz senza piano', function: 'sendQuizReminderNoPlan' },
-        { id: 'trial_setup_abandoned', name: 'Trial Setup Abbandonato', trigger: 'Cron - 1h dopo apertura senza pagamento', function: 'sendTrialSetupAbandoned', status: 'planned' },
-        { id: 'pricing_visited_abandoned', name: 'Pricing Visitato ma Non Acquistato', trigger: 'Cron - 24h dopo visita pricing', function: 'sendPricingVisitedAbandoned', status: 'planned' },
-        { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 3h dopo inizio checkout', function: 'sendCartCheckoutAbandoned', status: 'planned' }
+        { id: 'trial_setup_abandoned', name: 'Trial Setup Abbandonato', trigger: 'Cron - 1h dopo apertura senza pagamento', function: 'sendTrialSetupAbandoned' },
+        { id: 'pricing_visited_abandoned', name: 'Pricing Visitato ma Non Acquistato', trigger: 'Cron - 24h dopo visita pricing', function: 'sendPricingVisitedAbandoned' },
+        { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 3h dopo inizio checkout', function: 'sendCartCheckoutAbandoned' }
       ]
     }
   };
@@ -439,7 +440,7 @@ ${ctaHtml}
 
   const totalEmails = Object.values(emailCategories).reduce((sum, cat) => sum + cat.emails.length, 0);
   const activeEmails = Object.values(emailCategories).reduce((sum, cat) => 
-    sum + cat.emails.filter(e => e.status !== 'planned').length, 0
+    sum + cat.emails.filter(e => !e.status || e.status !== 'planned').length, 0
   );
 
   return (
@@ -552,7 +553,7 @@ ${ctaHtml}
                         <p className="text-sm text-gray-500">{category.emails.length} email configurate</p>
                       </div>
                       <Badge className={getCategoryColor(category.color)}>
-                        {category.emails.filter(e => e.status !== 'planned').length} attive
+                        {category.emails.filter(e => !e.status || e.status !== 'planned').length} attive
                       </Badge>
                     </div>
 
@@ -680,7 +681,6 @@ ${ctaHtml}
         </Tabs>
       </div>
 
-      {/* Preview Dialog - keep existing code */}
       <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
