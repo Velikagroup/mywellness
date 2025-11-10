@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
-    console.log('🎁 sendTrialExpiredWinback CRON - Start');
+    console.log('💔 sendTrialExpiredWinback CRON - Start');
     
     try {
         const base44 = createClientFromRequest(req);
@@ -21,12 +21,11 @@ Deno.serve(async (req) => {
 
         const allUsers = await base44.asServiceRole.entities.User.list();
         const trialExpiredYesterday = allUsers.filter(u => {
-            if (u.subscription_status !== 'trial' && u.subscription_status !== 'expired') return false;
             if (!u.subscription_period_end) return false;
-            if (u.purchased_landing_offer) return false; // Skip landing offer users
-            
             const expiryDate = new Date(u.subscription_period_end);
-            return expiryDate.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0];
+            const isYesterday = expiryDate.toISOString().split('T')[0] === yesterday.toISOString().split('T')[0];
+            const didNotPurchase = !u.last_payment_amount || u.last_payment_amount === 0;
+            return isYesterday && didNotPurchase;
         });
 
         console.log(`👥 Found ${trialExpiredYesterday.length} trials expired yesterday without conversion`);
@@ -39,21 +38,33 @@ Deno.serve(async (req) => {
 
         for (const user of trialExpiredYesterday) {
             try {
-                const emailBody = generateTrialWinbackEmail(user, appUrl);
+                // 🔐 GENERA COUPON PERSONALIZZATO
+                const couponResponse = await base44.asServiceRole.functions.invoke('generatePersonalCoupon', {
+                    userId: user.id,
+                    baseCode: 'TRIAL20',
+                    discountValue: 20,
+                    emailTrigger: 'trial_expired_winback'
+                });
+
+                const personalCouponCode = couponResponse.coupon_code;
+                console.log(`🎫 Generated personal coupon: ${personalCouponCode}`);
+
+                const emailBody = generateWinbackEmail(user, personalCouponCode, appUrl);
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
                     from_name: `MyWellness Team <${fromEmail}>`,
-                    subject: '🎁 Offerta Esclusiva: 20% di sconto per te!',
+                    subject: '💔 Ci hai provato e poi hai lasciato... Torna con il 20% OFF!',
                     body: emailBody
                 });
 
                 sentCount++;
-                console.log(`✅ Trial winback email sent to ${user.email}`);
+                console.log(`✅ Winback email sent to ${user.email} with coupon ${personalCouponCode}`);
                 
                 results.push({
                     user_id: user.id,
                     email: user.email,
+                    coupon: personalCouponCode,
                     status: 'sent'
                 });
 
@@ -70,7 +81,7 @@ Deno.serve(async (req) => {
             }
         }
 
-        console.log(`🎉 Trial winback emails sent: ${sentCount}/${trialExpiredYesterday.length}`);
+        console.log(`🎉 Winback emails sent: ${sentCount}/${trialExpiredYesterday.length}`);
 
         return Response.json({
             success: true,
@@ -87,7 +98,7 @@ Deno.serve(async (req) => {
     }
 });
 
-function generateTrialWinbackEmail(user, appUrl) {
+function generateWinbackEmail(user, couponCode, appUrl) {
     return `
 <!DOCTYPE html>
 <html>
@@ -122,71 +133,61 @@ function generateTrialWinbackEmail(user, appUrl) {
                         <td class="content-cell">
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
                             
+                            <h2 style="color: #111827; margin: 0 0 15px 0; font-size: 24px;">💔 Ti abbiamo visto provare... e poi sparire</h2>
+                            
                             <p style="color: #374151; line-height: 1.6;">
-                                Il tuo trial di 3 giorni è terminato, ma non è troppo tardi!
+                                Abbiamo notato che hai completato il nostro quiz e poi non hai continuato il tuo percorso. Capiamo che iniziare può essere difficile.
                             </p>
 
-                            <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                                <h3 style="color: #065f46; margin: 0 0 10px 0;">💪 Durante il trial hai:</h3>
-                                <div style="margin: 10px 0; padding-left: 25px; position: relative; color: #065f46;">
-                                    <span style="position: absolute; left: 0; color: #10b981; font-weight: bold;">✓</span>
-                                    Generato il tuo piano personalizzato
+                            <p style="color: #374151; line-height: 1.6;">
+                                Ecco perché vogliamo darti una <strong>seconda chance</strong> con uno sconto esclusivo.
+                            </p>
+
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
+                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 28px;">🎁 20% DI SCONTO</h2>
+                                <p style="margin: 0 0 15px 0; color: #92400e; font-size: 16px;">Il tuo codice esclusivo personale:</p>
+                                <div style="background: white; padding: 15px 25px; border-radius: 8px; display: inline-block;">
+                                    <p style="margin: 0; font-size: 28px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${couponCode}</p>
                                 </div>
-                                <div style="margin: 10px 0; padding-left: 25px; position: relative; color: #065f46;">
-                                    <span style="position: absolute; left: 0; color: #10b981; font-weight: bold;">✓</span>
-                                    Iniziato a tracciare i progressi
-                                </div>
-                                <div style="margin: 10px 0; padding-left: 25px; position: relative; color: #065f46;">
-                                    <span style="position: absolute; left: 0; color: #10b981; font-weight: bold;">✓</span>
-                                    Visto il potenziale di MyWellness
-                                </div>
+                                <p style="margin: 15px 0 0 0; color: #92400e; font-size: 14px; font-weight: bold;">⏰ Valido per le prossime 48 ore</p>
+                                <p style="margin: 5px 0 0 0; color: #b45309; font-size: 12px;">🔒 Codice univoco - non condivisibile</p>
                             </div>
 
-                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 16px; padding: 30px; text-align: center; margin: 30px 0;">
-                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 32px;">🎁 SOLO PER TE</h2>
-                                <p style="margin: 0 0 20px 0; font-size: 24px; color: #78350f; font-weight: bold;">
-                                    20% di sconto<br>sul primo mese!
-                                </p>
-                                <div style="background: white; padding: 15px; border-radius: 8px; display: inline-block; margin-bottom: 15px;">
-                                    <p style="margin: 0; font-size: 14px; color: #6b7280;">Codice sconto:</p>
-                                    <p style="margin: 5px 0 0 0; font-size: 32px; font-weight: bold; color: #f59e0b; letter-spacing: 2px;">TRIAL20</p>
-                                </div>
-                                <p style="margin: 0; font-size: 14px; color: #92400e;">
-                                    ⏰ Valido per le prossime <strong>48 ore</strong>
-                                </p>
-                            </div>
-
-                            <h3 style="color: #991b1b; margin: 30px 0 15px 0;">✗ Senza MyWellness perdi:</h3>
+                            <h3 style="color: #111827; margin: 30px 0 15px 0;">🎯 Con MyWellness ottieni:</h3>
                             
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #6b7280;">
-                                <span style="position: absolute; left: 0; color: #ef4444; font-weight: bold; font-size: 18px;">•</span>
-                                Piano nutrizionale personalizzato
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Piano nutrizionale AI personalizzato con ricette e foto
                             </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #6b7280;">
-                                <span style="position: absolute; left: 0; color: #ef4444; font-weight: bold; font-size: 18px;">•</span>
-                                Allenamenti adattivi
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Allenamenti adattivi basati sui tuoi progressi reali
                             </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #6b7280;">
-                                <span style="position: absolute; left: 0; color: #ef4444; font-weight: bold; font-size: 18px;">•</span>
-                                Analisi AI delle foto pasti
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Conta calorie automatica con foto AI
                             </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #6b7280;">
-                                <span style="position: absolute; left: 0; color: #ef4444; font-weight: bold; font-size: 18px;">•</span>
-                                Tracciamento progressi
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Dashboard scientifica con BMR e massa grassa
+                            </div>
+                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
+                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
+                                Lista della spesa automatica per tutta la settimana
                             </div>
 
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${appUrl}/pricing?coupon=TRIAL20" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            💎 Attiva Abbonamento con 20% OFF
+                                        <a href="${appUrl}/pricing?coupon=${couponCode}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            🚀 Inizia Ora con il 20% OFF
                                         </a>
                                     </td>
                                 </tr>
                             </table>
 
-                            <p style="color: #ef4444; font-size: 14px; text-align: center; margin: 20px 0 0 0;">
-                                ⏰ <strong>Questa offerta scade tra 48 ore.</strong> Non lasciartela scappare!
+                            <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
+                                ⏰ Offerta valida solo per 48 ore - Non perdere questa opportunità!
                             </p>
                         </td>
                     </tr>

@@ -17,20 +17,16 @@ Deno.serve(async (req) => {
         const fourteenDaysAgo = new Date(today);
         fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
-        console.log(`📅 Checking users active for exactly 14 days`);
+        console.log(`📅 Looking for users created on ${fourteenDaysAgo.toISOString().split('T')[0]}`);
 
         const allUsers = await base44.asServiceRole.entities.User.list();
-        const usersAt14Days = allUsers.filter(u => {
-            if (u.subscription_status !== 'active') return false;
-            if (!u.created_date) return false;
-            
+        const targetUsers = allUsers.filter(u => {
+            if (!u.created_date || u.subscription_status !== 'active') return false;
             const createdDate = new Date(u.created_date);
-            const daysSinceCreation = Math.floor((today - createdDate) / (1000 * 60 * 60 * 24));
-            
-            return daysSinceCreation === 14;
+            return createdDate.toISOString().split('T')[0] === fourteenDaysAgo.toISOString().split('T')[0];
         });
 
-        console.log(`👥 Found ${usersAt14Days.length} users at 14 days milestone`);
+        console.log(`👥 Found ${targetUsers.length} users at 14-day mark`);
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
         const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
@@ -38,23 +34,35 @@ Deno.serve(async (req) => {
         let sentCount = 0;
         const results = [];
 
-        for (const user of usersAt14Days) {
+        for (const user of targetUsers) {
             try {
-                const emailBody = generateFeedbackEmail(user, appUrl);
+                // 🔐 GENERA COUPON PERSONALIZZATO
+                const couponResponse = await base44.asServiceRole.functions.invoke('generatePersonalCoupon', {
+                    userId: user.id,
+                    baseCode: 'FEEDBACK10',
+                    discountValue: 10,
+                    emailTrigger: 'feedback_request_14_days'
+                });
+
+                const personalCouponCode = couponResponse.coupon_code;
+                console.log(`🎫 Generated personal coupon: ${personalCouponCode}`);
+
+                const emailBody = generateFeedbackEmail(user, personalCouponCode, appUrl);
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
                     from_name: `MyWellness Team <${fromEmail}>`,
-                    subject: '💬 La tua opinione conta! 2 settimane con MyWellness',
+                    subject: '💬 La tua opinione vale! (+ 10% sconto omaggio)',
                     body: emailBody
                 });
 
                 sentCount++;
-                console.log(`✅ Feedback request sent to ${user.email}`);
+                console.log(`✅ Feedback request sent to ${user.email} with coupon ${personalCouponCode}`);
                 
                 results.push({
                     user_id: user.id,
                     email: user.email,
+                    coupon: personalCouponCode,
                     status: 'sent'
                 });
 
@@ -71,22 +79,26 @@ Deno.serve(async (req) => {
             }
         }
 
-        console.log(`🎉 Feedback requests sent: ${sentCount}/${usersAt14Days.length}`);
+        console.log(`🎉 Feedback requests sent: ${sentCount}/${targetUsers.length}`);
 
         return Response.json({
             success: true,
             sent_count: sentCount,
-            total_users: usersAt14Days.length,
+            total_users: targetUsers.length,
             results: results
         });
 
     } catch (error) {
         console.error('❌ CRON Error:', error);
-        return Response.json({ error: error.message }, { status: 500 });
+        return Response.json({ 
+            error: error.message 
+        }, { status: 500 });
     }
 });
 
-function generateFeedbackEmail(user, appUrl) {
+function generateFeedbackEmail(user, couponCode, appUrl) {
+    const replyEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+    
     return `
 <!DOCTYPE html>
 <html>
@@ -121,66 +133,48 @@ function generateFeedbackEmail(user, appUrl) {
                         <td class="content-cell">
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
                             
+                            <h2 style="color: #111827; margin: 0 0 15px 0; font-size: 24px;">💬 Come sta andando con MyWellness?</h2>
+                            
                             <p style="color: #374151; line-height: 1.6;">
-                                Sono passate <strong>2 settimane</strong> da quando hai iniziato il tuo percorso con MyWellness!
+                                Sono passate 2 settimane dal tuo primo giorno con noi. Vorremmo sapere come sta andando il tuo percorso e se c'è qualcosa che possiamo migliorare.
                             </p>
 
-                            <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
-                                <h2 style="color: #26847F; margin: 0 0 15px 0; font-size: 28px;">💬 La tua opinione è preziosa!</h2>
-                                <p style="margin: 0; color: #1a5753; font-size: 16px;">
-                                    Aiutaci a migliorare MyWellness per te e per tutti gli altri utenti
-                                </p>
+                            <div style="background: #eff6ff; border: 2px solid #3b82f6; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                                <h3 style="color: #1e40af; margin: 0 0 15px 0; font-size: 18px;">🤔 Ci piacerebbe sapere:</h3>
+                                <ul style="color: #374151; line-height: 1.8; margin: 0; padding-left: 20px;">
+                                    <li>Le funzionalità ti sono utili?</li>
+                                    <li>Hai trovato difficoltà nell'usare l'app?</li>
+                                    <li>Cosa ti piace di più?</li>
+                                    <li>Cosa potremmo migliorare?</li>
+                                </ul>
                             </div>
 
-                            <h3 style="color: #111827; margin: 30px 0 15px 0;">🎯 Ci vogliono solo 2 minuti:</h3>
-                            
-                            <div style="background: #f9fafb; border: 2px solid #e5e7eb; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                                <h4 style="color: #111827; margin: 0 0 15px 0;">📝 Domande rapide:</h4>
-                                <div style="margin: 10px 0; color: #374151;">
-                                    ✓ Come valuti l'esperienza finora? (1-5 stelle)
-                                </div>
-                                <div style="margin: 10px 0; color: #374151;">
-                                    ✓ Quale funzionalità ti piace di più?
-                                </div>
-                                <div style="margin: 10px 0; color: #374151;">
-                                    ✓ Cosa potremmo migliorare?
-                                </div>
-                                <div style="margin: 10px 0; color: #374151;">
-                                    ✓ Consiglieresti MyWellness?
-                                </div>
-                            </div>
-
-                            <div style="background: #fffbeb; border: 2px solid #fbbf24; border-radius: 12px; padding: 20px; margin: 30px 0;">
-                                <h3 style="color: #92400e; margin: 0 0 10px 0;">🎁 GRAZIE per il tuo tempo!</h3>
-                                <p style="margin: 0; color: #78350f; line-height: 1.6;">
-                                    Come ringraziamento per il tuo feedback, riceverai un <strong>codice sconto del 10%</strong> da usare sul prossimo rinnovo!
-                                </p>
-                            </div>
-
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 20px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="mailto:velika.03@outlook.it?subject=Feedback MyWellness - ${user.full_name}&body=Ciao! Ecco il mio feedback dopo 2 settimane:%0D%0A%0D%0A1. Valutazione (1-5): %0D%0A%0D%0A2. Funzionalità preferita: %0D%0A%0D%0A3. Cosa migliorare: %0D%0A%0D%0A4. Consiglierei ad altri? %0D%0A%0D%0A5. Note aggiuntive: %0D%0A" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            💬 Lascia il tuo Feedback
+                                        <a href="mailto:${replyEmail}?subject=Feedback MyWellness - ${user.email}&body=Ciao Team MyWellness,%0D%0A%0D%0AEcco il mio feedback:" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            💬 Lascia il Tuo Feedback
                                         </a>
                                     </td>
                                 </tr>
                             </table>
 
-                            <p style="color: #6b7280; text-align: center; font-size: 14px; margin: 20px 0;">
-                                Oppure rispondi direttamente a questa email con le tue impressioni!
-                            </p>
-
-                            <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 20px; margin: 30px 0;">
-                                <h4 style="color: #065f46; margin: 0 0 10px 0;">💡 Il tuo feedback ci aiuta a:</h4>
-                                <p style="margin: 5px 0; color: #047857; font-size: 14px;">• Migliorare l'AI per piani ancora più personalizzati</p>
-                                <p style="margin: 5px 0; color: #047857; font-size: 14px;">• Aggiungere le funzionalità che desideri</p>
-                                <p style="margin: 5px 0; color: #047857; font-size: 14px;">• Rendere l'esperienza più facile e intuitiva</p>
-                                <p style="margin: 5px 0; color: #047857; font-size: 14px;">• Aiutare altri utenti come te</p>
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
+                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 24px;">🎁 GRAZIE IN ANTICIPO!</h2>
+                                <p style="margin: 0 0 15px 0; color: #92400e; font-size: 16px;">Come ringraziamento per il tuo tempo, ecco il tuo codice sconto personale:</p>
+                                <div style="background: white; padding: 15px 25px; border-radius: 8px; display: inline-block;">
+                                    <p style="margin: 0; font-size: 28px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${couponCode}</p>
+                                </div>
+                                <p style="margin: 15px 0 0 0; color: #92400e; font-size: 18px; font-weight: bold;">= 10% DI SCONTO</p>
+                                <p style="margin: 5px 0 0 0; color: #b45309; font-size: 12px;">🔒 Codice univoco - non condivisibile</p>
                             </div>
 
-                            <p style="color: #26847F; text-align: center; font-size: 16px; margin: 30px 0; font-weight: bold;">
-                                Grazie per essere parte della community MyWellness! 💚
+                            <p style="color: #6b7280; font-size: 14px; line-height: 1.6; margin: 20px 0;">
+                                <strong>Nota:</strong> Puoi anche rispondere direttamente a questa email con il tuo feedback. Leggiamo personalmente ogni messaggio e lo usiamo per migliorare continuamente l'app.
+                            </p>
+
+                            <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 30px 0 0 0;">
+                                Grazie per essere parte della famiglia MyWellness! 💚
                             </p>
                         </td>
                     </tr>

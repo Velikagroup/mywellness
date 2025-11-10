@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
-    console.log('🏆 sendMilestones CRON - Start');
+    console.log('🎯 sendMilestones CRON - Start');
     
     try {
         const base44 = createClientFromRequest(req);
@@ -14,15 +14,20 @@ Deno.serve(async (req) => {
         }
 
         const today = new Date();
-        console.log(`📅 Checking milestones for date: ${today.toISOString().split('T')[0]}`);
+        console.log(`📅 Checking milestones for ${today.toISOString().split('T')[0]}`);
 
         const allUsers = await base44.asServiceRole.entities.User.list();
-        const activeUsers = allUsers.filter(u => u.subscription_status === 'active' && u.created_date);
+        const activeUsers = allUsers.filter(u => 
+            u.subscription_status === 'active' && u.quiz_completed
+        );
+
+        console.log(`👥 Found ${activeUsers.length} active users to check`);
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-        const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
 
-        let sent30 = 0, sent60 = 0, sent90 = 0;
+        let sent30 = 0;
+        let sent60 = 0;
+        let sent90 = 0;
         const results = [];
 
         for (const user of activeUsers) {
@@ -36,16 +41,41 @@ Deno.serve(async (req) => {
 
             if (!milestone) continue;
 
-            try {
-                const [weightHistory, workoutLogs, mealLogs] = await Promise.all([
-                    base44.asServiceRole.entities.WeightHistory.filter({ user_id: user.id }, ['-date'], 50),
-                    base44.asServiceRole.entities.WorkoutLog.filter({ user_id: user.id }),
-                    base44.asServiceRole.entities.MealLog.filter({ user_id: user.id }, ['-date'], 100)
-                ]);
+            console.log(`🎯 User ${user.email}: ${milestone} days milestone`);
 
-                const stats = calculateMilestoneStats(user, weightHistory, workoutLogs, mealLogs, milestone);
-                const emailBody = getMilestoneEmailTemplate(user, stats, milestone, appUrl);
-                const subject = getSubjectForMilestone(milestone);
+            try {
+                const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
+                    { user_id: user.id },
+                    ['-date'],
+                    100
+                );
+
+                const workoutLogs = await base44.asServiceRole.entities.WorkoutLog.filter(
+                    { user_id: user.id }
+                );
+
+                const mealLogs = await base44.asServiceRole.entities.MealLog.filter(
+                    { user_id: user.id }
+                );
+
+                const stats = calculateStats(user, weightHistory, workoutLogs, mealLogs, daysSinceCreation);
+
+                let personalCouponCode = null;
+                
+                // 🔐 GENERA COUPON PERSONALIZZATO SOLO PER 90 GIORNI
+                if (milestone === 90) {
+                    const couponResponse = await base44.asServiceRole.functions.invoke('generatePersonalCoupon', {
+                        userId: user.id,
+                        baseCode: 'CHAMPION90',
+                        discountValue: 100,
+                        emailTrigger: 'milestone_90_days'
+                    });
+                    personalCouponCode = couponResponse.coupon_code;
+                    console.log(`🎫 Generated 90-day coupon: ${personalCouponCode}`);
+                }
+
+                const subject = getMilestoneSubject(milestone);
+                const emailBody = getMilestoneTemplate(milestone, user, stats, personalCouponCode);
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
@@ -58,12 +88,13 @@ Deno.serve(async (req) => {
                 else if (milestone === 60) sent60++;
                 else if (milestone === 90) sent90++;
 
-                console.log(`✅ ${milestone}-day milestone sent to ${user.email}`);
+                console.log(`✅ ${milestone}-day milestone email sent to ${user.email}${personalCouponCode ? ` with coupon ${personalCouponCode}` : ''}`);
                 
                 results.push({
                     user_id: user.id,
                     email: user.email,
                     milestone: milestone,
+                    coupon: personalCouponCode,
                     status: 'sent'
                 });
 
@@ -81,75 +112,68 @@ Deno.serve(async (req) => {
             }
         }
 
-        console.log(`🎉 Milestones sent: 30d=${sent30}, 60d=${sent60}, 90d=${sent90}`);
+        console.log('🎉 Milestone emails completed');
+        console.log(`📊 Sent: ${sent30} (30d) + ${sent60} (60d) + ${sent90} (90d)`);
 
         return Response.json({
             success: true,
             sent_30_days: sent30,
             sent_60_days: sent60,
             sent_90_days: sent90,
+            total_sent: sent30 + sent60 + sent90,
             results: results
         });
 
     } catch (error) {
         console.error('❌ CRON Error:', error);
-        return Response.json({ error: error.message }, { status: 500 });
+        return Response.json({ 
+            error: error.message 
+        }, { status: 500 });
     }
 });
 
-function calculateMilestoneStats(user, weightHistory, workoutLogs, mealLogs, milestone) {
+function calculateStats(user, weightHistory, workoutLogs, mealLogs, days) {
     const workoutsCompleted = workoutLogs.filter(w => w.completed).length;
-    const adherence = Math.round((workoutsCompleted / (milestone / 7 * (user.workout_days || 3))) * 100);
-    
-    const weightChange = weightHistory.length >= 2 
-        ? (weightHistory[weightHistory.length - 1].weight - weightHistory[0].weight).toFixed(1)
-        : '0';
-    
-    const currentWeight = weightHistory.length > 0 ? weightHistory[0].weight.toFixed(1) : user.current_weight;
-    const startWeight = user.current_weight;
-    const targetWeight = user.target_weight;
-    const totalDistance = Math.abs(startWeight - targetWeight);
-    const distanceCovered = Math.abs(startWeight - parseFloat(currentWeight));
-    const progress = totalDistance > 0 ? Math.round((distanceCovered / totalDistance) * 100) : 0;
-    const distanceRemaining = (totalDistance - distanceCovered).toFixed(1);
+    const plannedWorkouts = user.workout_days ? user.workout_days * Math.floor(days / 7) : 0;
+    const adherence = plannedWorkouts > 0 ? Math.round((workoutsCompleted / plannedWorkouts) * 100) : 0;
 
-    const totalCalories = mealLogs.reduce((sum, m) => sum + (m.actual_calories || 0), 0);
-    const avgCalories = mealLogs.length > 0 ? Math.round(totalCalories / mealLogs.length) : 0;
+    let weightChange = 0;
+    if (weightHistory.length >= 2) {
+        const latest = weightHistory[0].weight;
+        const oldest = weightHistory[weightHistory.length - 1].weight;
+        weightChange = (oldest - latest).toFixed(1);
+    }
 
-    const weeklyAvg = milestone >= 7 ? (Math.abs(parseFloat(weightChange)) / (milestone / 7)).toFixed(1) : '0';
+    const avgCalories = mealLogs.length > 0
+        ? Math.round(mealLogs.reduce((sum, log) => sum + (log.actual_calories || 0), 0) / mealLogs.length)
+        : user.daily_calories || 0;
 
     return {
         workoutsCompleted,
         adherence,
         weightChange,
-        currentWeight,
-        targetWeight,
-        progress,
-        distanceRemaining,
         avgCalories,
-        weeklyAvg
+        days
     };
 }
 
-function getSubjectForMilestone(milestone) {
+function getMilestoneSubject(milestone) {
     const subjects = {
-        30: '🏆 30 Giorni con MyWellness - I tuoi progressi!',
-        60: '🔥 60 Giorni di Costanza - Risultati Incredibili!',
-        90: '👑 90 GIORNI! Sei un CAMPIONE assoluto!'
+        30: '🎉 30 giorni insieme! I tuoi primi progressi',
+        60: '🔥 2 mesi di trasformazione! Sei sulla strada giusta',
+        90: '👑 90 GIORNI! Sei un CAMPIONE - Ricompensa Speciale Dentro!'
     };
-    return subjects[milestone];
+    return subjects[milestone] || 'Milestone raggiunto!';
 }
 
-function getMilestoneEmailTemplate(user, stats, milestone, appUrl) {
-    const templates = {
-        30: get30DayTemplate,
-        60: get60DayTemplate,
-        90: get90DayTemplate
-    };
-    return templates[milestone](user, stats, appUrl);
+function getMilestoneTemplate(milestone, user, stats, couponCode) {
+    if (milestone === 30) return get30DayEmail(user, stats);
+    if (milestone === 60) return get60DayEmail(user, stats);
+    if (milestone === 90) return get90DayEmail(user, stats, couponCode);
 }
 
-function get30DayTemplate(user, stats, appUrl) {
+function get30DayEmail(user, stats) {
+    const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
     return `
 <!DOCTYPE html>
 <html>
@@ -164,9 +188,67 @@ function get30DayTemplate(user, stats, appUrl) {
             .logo-cell { padding: 60px 60px 24px 60px !important; }
             .content-cell { padding: 60px 60px 40px 60px !important; }
         }
-        @media only screen and (max-width: 600px) {
-            .container { width: 100% !important; border-radius: 0 !important; }
-            .outer-wrapper { padding: 0 !important; }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td class="logo-cell">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content-cell">
+                            <h2 style="color: #26847F; margin: 0 0 20px 0;">🎉 30 Giorni di Progressi!</h2>
+                            <p style="color: #111827; font-size: 16px;">Ciao ${user.full_name || 'Utente'},</p>
+                            <p style="color: #374151; line-height: 1.6;">È passato un mese dall'inizio del tuo percorso con MyWellness. Ecco i tuoi progressi:</p>
+                            
+                            <div style="background: #f0fdf4; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                                <p style="margin: 10px 0;"><strong>💪 Allenamenti:</strong> ${stats.workoutsCompleted} completati (${stats.adherence}% aderenza)</p>
+                                <p style="margin: 10px 0;"><strong>⚖️ Peso perso:</strong> ${stats.weightChange} kg</p>
+                                <p style="margin: 10px 0;"><strong>🍽️ Calorie medie:</strong> ${stats.avgCalories} kcal/giorno</p>
+                            </div>
+
+                            <p style="color: #374151; line-height: 1.6;">Continua così! I primi 30 giorni sono fondamentali per creare abitudini durature.</p>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: #26847F; color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold;">
+                                            📊 Vedi Dashboard Completa
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+    `;
+}
+
+function get60DayEmail(user, stats) {
+    const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        .logo-cell { padding: 60px 30px 24px 30px; }
+        .content-cell { padding: 40px 30px; }
+        @media only screen and (min-width: 600px) {
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 60px 60px 40px 60px !important; }
         }
     </style>
 </head>
@@ -176,56 +258,125 @@ function get30DayTemplate(user, stats, appUrl) {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td class="logo-cell" style="background: white;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                        <td class="logo-cell">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
                         </td>
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            <h1 style="color: #26847F; margin: 0 0 20px 0; font-size: 28px;">🎉 Congratulazioni! 30 Giorni con MyWellness!</h1>
+                            <h2 style="color: #26847F; margin: 0 0 20px 0;">🔥 2 Mesi di Trasformazione!</h2>
+                            <p style="color: #111827; font-size: 16px;">Ciao ${user.full_name || 'Utente'},</p>
+                            <p style="color: #374151; line-height: 1.6;">Sei a metà strada verso i 90 giorni necessari per consolidare un'abitudine permanente!</p>
                             
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
-                            
-                            <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0;">
-                                <h2 style="color: #26847F; margin: 0 0 15px 0; text-align: center;">📊 I TUOI PROGRESSI</h2>
-                                
-                                <div style="margin: 15px 0;">
-                                    <h3 style="color: #111827; margin: 0 0 10px 0; font-size: 16px;">🏋️ Allenamenti</h3>
-                                    <p style="margin: 5px 0; color: #374151;">• Completati: <strong>${stats.workoutsCompleted}</strong></p>
-                                    <p style="margin: 5px 0; color: #374151;">• Tasso di aderenza: <strong>${stats.adherence}%</strong></p>
-                                </div>
-
-                                <div style="margin: 15px 0;">
-                                    <h3 style="color: #111827; margin: 0 0 10px 0; font-size: 16px;">⚖️ Peso</h3>
-                                    <p style="margin: 5px 0; color: #374151;">• Variazione: <strong>${stats.weightChange} kg</strong></p>
-                                    <p style="margin: 5px 0; color: #374151;">• Peso attuale: <strong>${stats.currentWeight} kg</strong></p>
-                                </div>
-
-                                <div style="margin: 15px 0;">
-                                    <h3 style="color: #111827; margin: 0 0 10px 0; font-size: 16px;">🍽️ Nutrizione</h3>
-                                    <p style="margin: 5px 0; color: #374151;">• Calorie medie: <strong>${stats.avgCalories} kcal/giorno</strong></p>
-                                    <p style="margin: 5px 0; color: #374151;">• Aderenza piano: <strong>${stats.adherence}%</strong></p>
-                                </div>
+                            <div style="background: #fef3c7; border-radius: 12px; padding: 20px; margin: 20px 0;">
+                                <h3 style="margin: 0 0 15px 0; color: #92400e;">📊 I Tuoi Progressi in 60 Giorni:</h3>
+                                <p style="margin: 10px 0;"><strong>💪 Allenamenti:</strong> ${stats.workoutsCompleted} completati (${stats.adherence}% aderenza)</p>
+                                <p style="margin: 10px 0;"><strong>⚖️ Peso perso:</strong> ${stats.weightChange} kg</p>
+                                <p style="margin: 10px 0;"><strong>🍽️ Calorie medie:</strong> ${stats.avgCalories} kcal/giorno</p>
                             </div>
 
-                            <p style="color: #374151; line-height: 1.6; margin: 20px 0;">
-                                💪 <strong>Sei sulla strada giusta!</strong> I primi 30 giorni sono cruciali per stabilire le basi del successo, e tu li hai completati con determinazione!
-                            </p>
+                            <p style="color: #374151; line-height: 1.6;"><strong>Ancora 30 giorni</strong> e raggiungerai il traguardo dei 90 giorni - il punto in cui le nuove abitudini diventano parte permanente della tua vita!</p>
 
-                            <p style="color: #374151; line-height: 1.6; margin: 20px 0;">
-                                🎯 <strong>Prossimo traguardo: 60 giorni</strong><br>
-                                Continua così e i risultati saranno ancora più evidenti!
-                            </p>
-
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            📊 Vedi Dashboard Completa
+                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: #26847F; color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold;">
+                                            🎯 Continua il Percorso
                                         </a>
                                     </td>
                                 </tr>
                             </table>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+    `;
+}
+
+function get90DayEmail(user, stats, couponCode) {
+    const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+    return `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        .logo-cell { padding: 60px 30px 24px 30px; }
+        .content-cell { padding: 40px 30px; }
+        @media only screen and (min-width: 600px) {
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 60px 60px 40px 60px !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td class="logo-cell">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content-cell">
+                            <div style="text-align: center; margin-bottom: 30px;">
+                                <h1 style="color: #26847F; margin: 0; font-size: 48px;">👑🏆🎉</h1>
+                                <h2 style="color: #111827; margin: 10px 0; font-size: 32px; font-weight: bold;">SEI UN CAMPIONE!</h2>
+                                <p style="color: #6b7280; font-size: 18px; margin: 10px 0;">90 GIORNI COMPLETATI</p>
+                            </div>
+
+                            <p style="color: #111827; font-size: 16px;">Ciao ${user.full_name || 'Campione'},</p>
+                            
+                            <p style="color: #374151; line-height: 1.6; font-size: 16px;">
+                                Hai raggiunto un traguardo straordinario! <strong>90 giorni</strong> di costanza. Gli studi scientifici dimostrano che hai creato <strong>abitudini permanenti</strong> che ti accompagneranno per sempre.
+                            </p>
+
+                            <div style="background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%); border: 3px solid #10b981; border-radius: 12px; padding: 25px; margin: 20px 0;">
+                                <h3 style="color: #065f46; margin: 0 0 20px 0; text-align: center;">📊 La Tua Trasformazione Completa</h3>
+                                <p style="margin: 10px 0; text-align: center;"><strong style="font-size: 32px; color: #10b981;">${stats.workoutsCompleted}</strong><br><span style="color: #065f46;">Allenamenti Completati</span></p>
+                                <p style="margin: 10px 0; text-align: center;"><strong style="font-size: 32px; color: #10b981;">${stats.weightChange} kg</strong><br><span style="color: #065f46;">Peso Perso</span></p>
+                                <p style="margin: 10px 0; text-align: center;"><strong style="font-size: 32px; color: #10b981;">${stats.adherence}%</strong><br><span style="color: #065f46;">Aderenza al Piano</span></p>
+                            </div>
+
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
+                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 28px;">🎁 REGALO SPECIALE: 1 MESE GRATIS!</h2>
+                                <p style="margin: 0 0 15px 0; color: #92400e; font-size: 16px;">Per celebrare la tua incredibile costanza, ecco il tuo codice personale:</p>
+                                <div style="background: white; padding: 15px 25px; border-radius: 8px; display: inline-block;">
+                                    <p style="margin: 0; font-size: 28px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${couponCode}</p>
+                                </div>
+                                <p style="margin: 15px 0 0 0; color: #92400e; font-size: 14px; font-weight: bold;">= 100% SCONTO = 1 MESE GRATIS!</p>
+                                <p style="margin: 5px 0 0 0; color: #b45309; font-size: 12px;">🔒 Codice univoco - non condivisibile</p>
+                            </div>
+
+                            <p style="color: #374151; line-height: 1.6; font-size: 16px;">
+                                Hai trasformato completamente il tuo stile di vita. Sei la prova vivente che <strong>la costanza vince sempre</strong>.
+                            </p>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${appUrl}/pricing?coupon=${couponCode}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            👑 Riscatta il Tuo Mese Gratis
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <p style="color: #6b7280; font-size: 14px; text-align: center; font-style: italic; margin: 30px 0;">
+                                "Il successo è la somma di piccoli sforzi ripetuti giorno dopo giorno. E tu l'hai fatto per 90 giorni di fila."
+                            </p>
+
+                            <p style="color: #6b7280; font-size: 14px; text-align: center;">
+                                Siamo incredibilmente orgogliosi di te! 💚
+                            </p>
                         </td>
                     </tr>
                 </table>
@@ -245,104 +396,4 @@ function get30DayTemplate(user, stats, appUrl) {
 </body>
 </html>
     `;
-}
-
-function get60DayTemplate(user, stats, appUrl) {
-    return `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        .logo-cell { padding: 60px 30px 24px 30px; }
-        .content-cell { padding: 40px 30px; }
-        @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 24px 60px !important; }
-            .content-cell { padding: 60px 60px 40px 60px !important; }
-        }
-    </style>
-</head>
-<body>
-    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
-        <tr>
-            <td align="center">
-                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px;">
-                    <tr>
-                        <td class="logo-cell">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content-cell">
-                            <h1 style="color: #26847F; margin: 0 0 20px 0;">🔥 60 Giorni - La Costanza Sta Pagando!</h1>
-                            <p>Ciao ${user.full_name},</p>
-                            <p><strong>2 MESI con MyWellness!</strong> I cambiamenti sono ormai evidenti!</p>
-                            <div style="background: #e9f6f5; padding: 20px; border-radius: 12px; margin: 20px 0;">
-                                <h3>📈 Trasformazione:</h3>
-                                <p>• Variazione: ${stats.weightChange} kg</p>
-                                <p>• Progresso: ${stats.progress}%</p>
-                                <p>• Workout: ${stats.workoutsCompleted}</p>
-                            </div>
-                            <p>🎯 Obiettivo 90 giorni: quasi arrivati!</p>
-                            <a href="${appUrl}/Dashboard" style="display: inline-block; background: #26847F; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; margin: 20px 0;">Vedi Progressi</a>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>`;
-}
-
-function get90DayTemplate(user, stats, appUrl) {
-    return `<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        .logo-cell { padding: 60px 30px 24px 30px; }
-        .content-cell { padding: 40px 30px; }
-        @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 24px 60px !important; }
-            .content-cell { padding: 60px 60px 40px 60px !important; }
-        }
-    </style>
-</head>
-<body>
-    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
-        <tr>
-            <td align="center">
-                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px;">
-                    <tr>
-                        <td class="logo-cell">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content-cell">
-                            <h1 style="color: #26847F; margin: 0 0 20px 0;">👑 90 GIORNI! SEI UN CAMPIONE!</h1>
-                            <p>Ciao ${user.full_name},</p>
-                            <p><strong>3 MESI! HAI CREATO UNA NUOVA ABITUDINE!</strong></p>
-                            <div style="background: linear-gradient(135deg, #fef3c7, #fde68a); padding: 30px; border-radius: 16px; text-align: center; margin: 20px 0;">
-                                <h2 style="margin: 0;">🎁 REWARD SPECIALE</h2>
-                                <p style="font-size: 24px; font-weight: bold; margin: 10px 0;">1 MESE GRATIS</p>
-                                <p style="background: white; padding: 10px; border-radius: 8px; font-weight: bold; color: #f59e0b;">Codice: CHAMPION90</p>
-                            </div>
-                            <p>• Peso perso: ${stats.weightChange} kg</p>
-                            <p>• Workout: ${stats.workoutsCompleted}</p>
-                            <p>• Progresso: ${stats.progress}%</p>
-                            <p>🌟 <strong>Le abitudini sono permanenti!</strong></p>
-                            <a href="${appUrl}/Dashboard" style="display: inline-block; background: #26847F; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px; margin: 20px 0;">🎁 Riscatta Regalo</a>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>`;
 }
