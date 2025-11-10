@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -149,7 +148,6 @@ export default function AdminEmails() {
         setIsEditMode(false);
         setShowEmailPreview(false);
       } else if (previewEmail?.id && !previewEmail?.template?.id) {
-        // If systemEmail exists but no template for it, create a new template
         const newTemplateData = {
           template_id: previewEmail.id,
           from_email: editingContent.from_email || 'info@projectmywellness.com',
@@ -193,7 +191,6 @@ export default function AdminEmails() {
       const fromEmail = template.from_email || 'info@projectmywellness.com';
       const replyToEmail = template.reply_to_email || 'no-reply@projectmywellness.com';
       
-      // Prepara variabili di esempio realistiche
       const variables = {
         user_name: user.full_name || 'Mario Rossi',
         user_email: user.email,
@@ -213,7 +210,6 @@ export default function AdminEmails() {
         motivational_message: 'Ottimo lavoro questa settimana! Continua così 💪'
       };
 
-      // Helper function to replace variables
       const replaceVars = (text, vars) => {
         let result = text;
         Object.keys(vars).forEach(key => {
@@ -228,7 +224,6 @@ export default function AdminEmails() {
       const replacedSubject = replaceVars(template.subject, variables);
       const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
 
-      // Costruisci HTML email professionale con responsive design
       const htmlBody = `
 <!DOCTYPE html>
 <html>
@@ -250,7 +245,7 @@ export default function AdminEmails() {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="padding: 24px 30px;">
+                        <td style="padding: 40px 30px 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                         </td>
                     </tr>
@@ -259,7 +254,7 @@ export default function AdminEmails() {
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
                             <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
                             ${template.call_to_action_text && template.call_to_action_url ? `
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
                                     <td align="center">
                                         <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
@@ -289,7 +284,6 @@ export default function AdminEmails() {
 </html>
       `;
 
-      // Chiama la function sendTestEmailDirect che userà SendGrid API direttamente
       const response = await base44.functions.invoke('sendTestEmailDirect', {
         to: user.email,
         from_email: fromEmail,
@@ -315,7 +309,6 @@ export default function AdminEmails() {
     );
   }
 
-  // Email di sistema configurate
   const systemEmails = [
     {
       id: 'trial_welcome',
@@ -375,7 +368,6 @@ export default function AdminEmails() {
     }
   ];
 
-  // Sequenze da implementare
   const emailSequences = [
     {
       id: 'welcome_sequence',
@@ -426,13 +418,11 @@ export default function AdminEmails() {
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
-        {/* Header */}
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Email Manager</h1>
           <p className="text-gray-600">Gestisci le email di sistema, broadcast e sequenze automatiche</p>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-4">
@@ -491,7 +481,6 @@ export default function AdminEmails() {
           </Card>
         </div>
 
-        {/* Main Content - Tabs */}
         <Tabs defaultValue="system" className="space-y-6">
           <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="system" className="flex items-center gap-2">
@@ -508,7 +497,6 @@ export default function AdminEmails() {
             </TabsTrigger>
           </TabsList>
 
-          {/* EMAIL DI SISTEMA */}
           <TabsContent value="system" className="space-y-4">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
@@ -558,7 +546,6 @@ export default function AdminEmails() {
             </Card>
           </TabsContent>
 
-          {/* BROADCAST */}
           <TabsContent value="broadcast" className="space-y-4">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
@@ -566,7 +553,7 @@ export default function AdminEmails() {
                   <Send className="w-5 h-5" />
                   Invia Email Broadcast
                 </CardTitle>
-                <p className="text-sm text-gray-500 mt-1">Invia un'email a tutti o a un segmento specifico di utenti</p>
+                <p className="text-sm text-gray-500 mt-1">Invia un email a tutti o a un segmento specifico di utenti</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div>
@@ -638,14 +625,13 @@ export default function AdminEmails() {
 
                 <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                   <p className="text-sm text-amber-900">
-                    ⚠️ <strong>Attenzione:</strong> L'invio di email broadcast è irreversibile. Controlla attentamente il contenuto prima di inviare.
+                    ⚠️ <strong>Attenzione:</strong> L invio di email broadcast è irreversibile. Controlla attentamente il contenuto prima di inviare.
                   </p>
                 </div>
               </CardContent>
             </Card>
           </TabsContent>
 
-          {/* SEQUENZE */}
           <TabsContent value="sequences" className="space-y-4">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
@@ -688,23 +674,29 @@ export default function AdminEmails() {
 
                     <div className="space-y-2 mt-4">
                       <p className="text-xs font-semibold text-gray-500 uppercase">Email nella sequenza:</p>
-                      {sequence.emails.map((email, index) => (
-                        <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                          <div className="w-8 h-8 bg-[var(--brand-primary-light)] rounded-full flex items-center justify-center flex-shrink-0">
-                            <span className="text-xs font-bold text-[var(--brand-primary)]">{index + 1}</span>
+                      {sequence.emails.map((email, index) => {
+                        let timeText = '';
+                        if (email.day !== undefined) {
+                          timeText = email.day >= 0 ? `Giorno +${email.day}` : `Giorno ${email.day}`;
+                        } else if (email.week !== undefined) {
+                          timeText = `Settimana ${email.week}`;
+                        }
+
+                        return (
+                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                            <div className="w-8 h-8 bg-[var(--brand-primary-light)] rounded-full flex items-center justify-center flex-shrink-0">
+                              <span className="text-xs font-bold text-[var(--brand-primary)]">{index + 1}</span>
+                            </div>
+                            <div className="flex-1">
+                              <p className="text-sm font-medium text-gray-900">{email.subject}</p>
+                              <p className="text-xs text-gray-500">{timeText}</p>
+                            </div>
+                            <Badge variant="outline" className="text-xs">
+                              {email.status === 'planned' ? 'Pianificata' : 'Attiva'}
+                            </Badge>
                           </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-900">{email.subject}</p>
-                            <p className="text-xs text-gray-500">
-                              {email.day !== undefined && `Giorno ${email.day >= 0 ? '+' + email.day : email.day}`}
-                              {email.week !== undefined && `Settimana ${email.week}`}
-                            </p>
-                          </div>
-                          <Badge variant="outline" className="text-xs">
-                            {email.status === 'planned' ? 'Pianificata' : 'Attiva'}
-                          </Badge>
-                        </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   </div>
                 ))}
@@ -715,7 +707,7 @@ export default function AdminEmails() {
                     Implementazione Sequenze
                   </h4>
                   <p className="text-sm text-gray-700 mb-3">
-                    Le sequenze email automatiche richiedono l'implementazione di backend functions con trigger temporali.
+                    Le sequenze email automatiche richiedono implementazione di backend functions con trigger temporali.
                   </p>
                   <p className="text-sm text-gray-600">
                     📝 Per attivare una sequenza, contatta il team di sviluppo per implementare i trigger e le condizioni necessarie.
@@ -727,7 +719,6 @@ export default function AdminEmails() {
         </Tabs>
       </div>
 
-      {/* NEW: Email Preview Dialog */}
       <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
