@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Sparkles } from "lucide-react"; // Added Sparkles icon
+import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -75,10 +74,9 @@ export default function Layout({ children }) {
     createPageUrl('AdminCoupons'),
     createPageUrl('AdminBlog'),
     createPageUrl('AdminEmails'),
-    createPageUrl('AdminAnalytics'), // Added for AdminAnalytics
+    createPageUrl('AdminAnalytics'),
     createPageUrl('AdminMarketing'),
-    createPageUrl('AdminSalesTax'), // Added for AdminSalesTax
-    createPageUrl('Sfondo') // Added for Sfondo
+    createPageUrl('AdminSalesTax')
   ];
 
   // Pagine che NON devono avere il layout
@@ -127,8 +125,7 @@ export default function Layout({ children }) {
     { name: 'Email', icon: Mail, path: 'AdminEmails' },
     { name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' },
     { name: 'Marketing', icon: Target, path: 'AdminMarketing' },
-    { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' },
-    { name: 'Sfondo', icon: Sparkles, path: 'Sfondo' } // Added Sfondo item
+    { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
   ] : [];
 
   // Per desktop, tutti gli item insieme
@@ -218,8 +215,8 @@ export default function Layout({ children }) {
 
         .mobile-menu-expanded {
           animation: expandUp 0.3s ease-out forwards;
-          max-height: 0; /* Initial state for animation */
-          overflow: hidden; /* Hide content before expansion */
+          max-height: 0;
+          overflow: hidden;
         }
 
         @keyframes expandUp {
@@ -228,7 +225,7 @@ export default function Layout({ children }) {
             opacity: 0;
           }
           to {
-            max-height: 500px; /* Sufficiently large to reveal content */
+            max-height: 500px;
             opacity: 1;
           }
         }
