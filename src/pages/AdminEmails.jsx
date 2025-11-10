@@ -250,7 +250,7 @@ export default function AdminEmails() {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="padding: 40px 30px 24px 30px;">
+                        <td style="padding: 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                         </td>
                     </tr>
@@ -259,7 +259,7 @@ export default function AdminEmails() {
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
                             <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
                             ${template.call_to_action_text && template.call_to_action_url ? `
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
                                 <tr>
                                     <td align="center">
                                         <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
@@ -695,7 +695,7 @@ export default function AdminEmails() {
                           </div>
                           <div className="flex-1">
                             <p className="text-sm font-medium text-gray-900">{email.subject}</p>
-                            <p className="text-xs text-gray-500}>
+                            <p className="text-xs text-gray-500">
                               {email.day !== undefined && `Giorno ${email.day >= 0 ? '+' + email.day : email.day}`}
                               {email.week !== undefined && `Settimana ${email.week}`}
                             </p>
