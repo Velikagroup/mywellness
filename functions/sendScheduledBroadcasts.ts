@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -16,7 +17,6 @@ Deno.serve(async (req) => {
         const now = new Date();
         console.log(`📅 Checking for scheduled broadcasts at ${now.toISOString()}`);
 
-        // Trova broadcast schedulati per ora o prima
         const scheduledBroadcasts = await base44.asServiceRole.entities.BroadcastEmail.filter({
             status: 'scheduled'
         });
@@ -34,12 +34,10 @@ Deno.serve(async (req) => {
             try {
                 console.log(`📧 Sending broadcast: ${broadcast.name}`);
 
-                // Marca come "sending"
                 await base44.asServiceRole.entities.BroadcastEmail.update(broadcast.id, {
                     status: 'sending'
                 });
 
-                // Ottieni destinatari
                 const recipients = await getRecipientsBySegment(base44, broadcast.segment);
                 
                 console.log(`👥 Recipients: ${recipients.length}`);
@@ -47,7 +45,6 @@ Deno.serve(async (req) => {
                 let sentCount = 0;
                 let errorCount = 0;
 
-                // Invia a tutti i destinatari
                 for (const recipient of recipients) {
                     try {
                         const emailBody = generateBroadcastEmail(broadcast, recipient);
@@ -68,7 +65,6 @@ Deno.serve(async (req) => {
                     }
                 }
 
-                // Aggiorna stato finale
                 await base44.asServiceRole.entities.BroadcastEmail.update(broadcast.id, {
                     status: 'sent',
                     sent_at: new Date().toISOString(),
@@ -90,7 +86,6 @@ Deno.serve(async (req) => {
             } catch (error) {
                 console.error(`❌ Error processing broadcast ${broadcast.name}:`, error.message);
                 
-                // Marca come draft con errore
                 await base44.asServiceRole.entities.BroadcastEmail.update(broadcast.id, {
                     status: 'draft'
                 });
@@ -159,6 +154,24 @@ async function getRecipientsBySegment(base44, segment) {
             
         case 'premium_plan':
             return allUsers.filter(u => u.subscription_plan === 'premium' && u.subscription_status === 'active');
+            
+        case 'language_it':
+            return allUsers.filter(u => (u.language || 'it') === 'it');
+            
+        case 'language_en':
+            return allUsers.filter(u => u.language === 'en');
+            
+        case 'language_es':
+            return allUsers.filter(u => u.language === 'es');
+            
+        case 'language_fr':
+            return allUsers.filter(u => u.language === 'fr');
+            
+        case 'language_de':
+            return allUsers.filter(u => u.language === 'de');
+            
+        case 'language_pt':
+            return allUsers.filter(u => u.language === 'pt');
             
         case 'quiz_abandoned':
             const quizActivities = await base44.asServiceRole.entities.UserActivity.filter({

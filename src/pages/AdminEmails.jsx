@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -35,7 +36,8 @@ import {
   Calendar,
   Save,
   FileText,
-  X
+  X,
+  Globe
 } from 'lucide-react';
 
 export default function AdminEmails() {
@@ -425,7 +427,13 @@ ${ctaHtml}
       checkout_abandoned: 'Checkout abbandonati',
       base_plan: 'Piano Base',
       pro_plan: 'Piano Pro',
-      premium_plan: 'Piano Premium'
+      premium_plan: 'Piano Premium',
+      language_it: '🇮🇹 Utenti Italiani',
+      language_en: '🇬🇧 Utenti Inglesi',
+      language_es: '🇪🇸 Utenti Spagnoli',
+      language_fr: '🇫🇷 Utenti Francesi',
+      language_de: '🇩🇪 Utenti Tedeschi',
+      language_pt: '🇵🇹 Utenti Portoghesi'
     };
     return segments[segment] || segment;
   };
@@ -1114,6 +1122,15 @@ ${ctaHtml}
                     <option value="expired_subscribers">Abbonamenti scaduti</option>
                   </optgroup>
                   
+                  <optgroup label="🌍 Per Lingua">
+                    <option value="language_it">🇮🇹 Utenti Italiani</option>
+                    <option value="language_en">🇬🇧 Utenti Inglesi</option>
+                    <option value="language_es">🇪🇸 Utenti Spagnoli</option>
+                    <option value="language_fr">🇫🇷 Utenti Francesi</option>
+                    <option value="language_de">🇩🇪 Utenti Tedeschi</option>
+                    <option value="language_pt">🇵🇹 Utenti Portoghesi</option>
+                  </optgroup>
+
                   <optgroup label="💼 Per Piano">
                     <option value="base_plan">Piano Base</option>
                     <option value="pro_plan">Piano Pro</option>
