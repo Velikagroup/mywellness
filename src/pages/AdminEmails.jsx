@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -27,7 +26,13 @@ import {
   Zap,
   Eye,
   Edit,
-  Trash2
+  Trash2,
+  AlertCircle,
+  TrendingUp,
+  Heart,
+  Shield,
+  BarChart3,
+  ShoppingCart
 } from 'lucide-react';
 
 export default function AdminEmails() {
@@ -44,6 +49,7 @@ export default function AdminEmails() {
   const [editingContent, setEditingContent] = useState({});
   const [isEditMode, setIsEditMode] = useState(false);
   const [emailTemplates, setEmailTemplates] = useState([]);
+  const [selectedCategory, setSelectedCategory] = useState('all');
 
   const loadEmailTemplates = async () => {
     try {
@@ -276,13 +282,13 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <td align="center">
 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
 <tr>
-<td class="logo-cell" style="background: white;">
-<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+<td class="logo-cell">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
 </td>
 </tr>
 <tr>
 <td class="content-cell">
-<p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${replacedGreeting}</p>
+<p style="color: #111827; font-size: 16px;">${replacedGreeting}</p>
 <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
 ${ctaHtml}
 </td>
@@ -291,7 +297,7 @@ ${ctaHtml}
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
 <tr>
 <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
-<p style="margin: 5px 0; font-size: 12px; font-weight: 600;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
+<p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
 <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
 <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
 </td>
@@ -327,254 +333,121 @@ ${ctaHtml}
     );
   }
 
-  const systemEmails = [
-    {
-      id: 'trial_welcome',
-      name: 'Trial Setup - Benvenuto',
-      description: 'Email di benvenuto inviata dopo il setup del trial con guida ai prossimi passi',
-      trigger: 'Completamento Trial Setup',
-      status: 'active',
-      function: 'sendTrialWelcomeEmail'
+  const emailCategories = {
+    critical: {
+      name: 'Critical',
+      icon: AlertCircle,
+      color: 'red',
+      emails: [
+        { id: 'trial_welcome', name: 'Trial Setup - Benvenuto', trigger: 'Completamento Trial Setup', function: 'sendTrialWelcomeEmail' },
+        { id: 'landing_new_user', name: 'Landing Offer - Nuovo Utente', trigger: 'Acquisto Landing Offer (nuovo utente)', function: 'stripeCreateOneTimePayment' },
+        { id: 'landing_existing_user', name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' },
+        { id: 'standard_subscription_welcome', name: 'Benvenuto Abbonamento Standard', trigger: 'Acquisto abbonamento standard', function: 'stripeCreateTrialSubscription' },
+        { id: 'renewal_confirmation', name: 'Conferma Rinnovo Automatico', trigger: 'Rinnovo automatico abbonamento (Stripe webhook)', function: 'sendRenewalConfirmation' }
+      ]
     },
-    {
-      id: 'landing_new_user',
-      name: 'Landing Offer - Nuovo Utente',
-      description: 'Email inviata ai nuovi utenti dopo l\'acquisto della Landing Offer con password temporanea',
-      trigger: 'Acquisto Landing Offer (nuovo utente)',
-      status: 'active',
-      function: 'stripeCreateOneTimePayment'
+    renewal: {
+      name: 'Renewal',
+      icon: Clock,
+      color: 'orange',
+      emails: [
+        { id: 'renewal_7_days', name: 'Reminder Rinnovo - 7 Giorni', trigger: 'Cron (7 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
+        { id: 'renewal_3_days', name: 'Reminder Rinnovo - 3 Giorni', trigger: 'Cron (3 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
+        { id: 'renewal_1_day', name: 'Reminder Rinnovo - 1 Giorno', trigger: 'Cron (1 giorno prima scadenza, con cancellazione)', function: 'sendRenewalReminders' }
+      ]
     },
-    {
-      id: 'landing_existing_user',
-      name: 'Landing Offer - Utente Esistente',
-      description: 'Email di conferma per utenti esistenti che acquistano la Landing Offer',
-      trigger: 'Acquisto Landing Offer (utente esistente)',
-      status: 'active',
-      function: 'stripeCreateOneTimePayment'
+    winback: {
+      name: 'Win-Back',
+      icon: Heart,
+      color: 'pink',
+      emails: [
+        { id: 'trial_expired_winback', name: 'Trial Scaduto Senza Conversione', trigger: 'Trial scaduto + nessun pagamento', function: 'sendTrialExpiredWinback' },
+        { id: 'subscription_expired', name: 'Abbonamento Scaduto', trigger: 'Subscription status = expired', function: 'sendSubscriptionExpired' }
+      ]
     },
-    {
-      id: 'standard_subscription_welcome',
-      name: 'Benvenuto Abbonamento Standard',
-      description: 'Email di benvenuto per utenti che acquistano un abbonamento standard (non trial/landing)',
-      trigger: 'Acquisto abbonamento standard',
-      status: 'active',
-      function: 'stripeCreateTrialSubscription'
+    engagement: {
+      name: 'Engagement',
+      icon: TrendingUp,
+      color: 'green',
+      emails: [
+        { id: 'goal_weight_achieved', name: 'Obiettivo Peso Raggiunto', trigger: 'current_weight raggiunge target_weight', function: 'sendGoalWeightAchieved' },
+        { id: 'milestone_30_days', name: 'Milestone - 30 Giorni', trigger: 'Cron - 30 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: 'milestone_60_days', name: 'Milestone - 60 Giorni', trigger: 'Cron - 60 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: 'milestone_90_days', name: 'Milestone - 90 Giorni (+ Reward)', trigger: 'Cron - 90 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: 'workout_streak_7_days', name: 'Streak Allenamenti 7 Giorni', trigger: '7 workout consecutivi', function: 'sendWorkoutStreak7Days' },
+        { id: 'no_workout_week', name: 'Nessun Workout Questa Settimana', trigger: 'Cron Lunedì - 0 workout settimana', function: 'sendNoWorkoutWeek' }
+      ]
     },
-    {
-      id: 'renewal_confirmation',
-      name: 'Conferma Rinnovo Automatico',
-      description: 'Email di conferma inviata dopo il rinnovo automatico dell\'abbonamento (solo per utenti che NON hanno cancellato)',
-      trigger: 'Rinnovo automatico abbonamento (Stripe webhook)',
-      status: 'active',
-      function: 'sendRenewalConfirmation'
+    motivational: {
+      name: 'Motivational',
+      icon: Zap,
+      color: 'purple',
+      emails: [
+        { id: 'inactive_user_7_days', name: 'Utente Inattivo 7 Giorni', trigger: 'Cron - Nessun login per 7 giorni', function: 'sendInactiveUserReminder' },
+        { id: 'feedback_request', name: 'Richiesta Feedback', trigger: 'Cron - 14 giorni di utilizzo', function: 'sendFeedbackRequest' }
+      ]
     },
-    {
-      id: 'renewal_7_days',
-      name: 'Reminder Rinnovo - 7 Giorni',
-      description: 'Email inviata 7 giorni prima della scadenza SOLO per utenti che hanno cancellato il rinnovo automatico',
-      trigger: 'Cron giornaliero (7 giorni prima scadenza, con cancellazione attiva)',
-      status: 'active',
-      function: 'sendRenewalReminders'
+    technical: {
+      name: 'Technical',
+      icon: Shield,
+      color: 'blue',
+      emails: [
+        { id: 'password_reset_confirmed', name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
+        { id: 'plan_upgrade', name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
+        { id: 'plan_downgrade', name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' }
+      ]
     },
-    {
-      id: 'renewal_3_days',
-      name: 'Reminder Rinnovo - 3 Giorni',
-      description: 'Email inviata 3 giorni prima della scadenza SOLO per utenti che hanno cancellato il rinnovo automatico',
-      trigger: 'Cron giornaliero (3 giorni prima scadenza, con cancellazione attiva)',
-      status: 'active',
-      function: 'sendRenewalReminders'
+    reporting: {
+      name: 'Reporting',
+      icon: BarChart3,
+      color: 'indigo',
+      emails: [
+        { id: 'weekly_report', name: 'Report Settimanale Progressi', trigger: 'Cron settimanale (ogni Lunedì)', function: 'sendWeeklyReport' }
+      ]
     },
-    {
-      id: 'renewal_1_day',
-      name: 'Reminder Rinnovo - 1 Giorno',
-      description: 'Email urgente inviata 1 giorno prima della scadenza SOLO per utenti che hanno cancellato il rinnovo automatico',
-      trigger: 'Cron giornaliero (1 giorno prima scadenza, con cancellazione attiva)',
-      status: 'active',
-      function: 'sendRenewalReminders'
-    },
-    {
-      id: 'cancellation_confirmed',
-      name: 'Conferma Cancellazione Rinnovo',
-      description: 'Email di conferma quando l\'utente cancella il rinnovo automatico',
-      trigger: 'Utente cancella rinnovo automatico dalla Dashboard',
-      status: 'active',
-      function: 'Da implementare'
-    },
-    {
-      id: 'subscription_expired',
-      name: 'Abbonamento Scaduto',
-      description: 'Email inviata il giorno dopo la scadenza con offerta di rinnovo',
-      trigger: 'Subscription status diventa expired',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'trial_expired_no_conversion',
-      name: 'Trial Scaduto Senza Conversione',
-      description: 'Email con offerta 20% sconto per trial scaduti senza conversione',
-      trigger: 'Trial scaduto + nessun pagamento',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'goal_weight_achieved',
-      name: 'Obiettivo Peso Raggiunto',
-      description: 'Email celebrativa quando l\'utente raggiunge il peso obiettivo',
-      trigger: 'current_weight raggiunge target_weight',
-      status: 'active',
-      function: 'Da implementare'
-    },
-    {
-      id: 'milestone_30_days',
-      name: 'Milestone - 30 Giorni',
-      description: 'Email celebrativa con statistiche dopo 30 giorni',
-      trigger: 'Cron - 30 giorni dall\'iscrizione',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'milestone_60_days',
-      name: 'Milestone - 60 Giorni',
-      description: 'Email celebrativa con statistiche dopo 60 giorni',
-      trigger: 'Cron - 60 giorni dall\'iscrizione',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'milestone_90_days',
-      name: 'Milestone - 90 Giorni',
-      description: 'Email celebrativa speciale dopo 90 giorni con reward',
-      trigger: 'Cron - 90 giorni dall\'iscrizione',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'inactive_user_7_days',
-      name: 'Utente Inattivo 7 Giorni',
-      description: 'Email re-engagement per utenti che non accedono da 7 giorni',
-      trigger: 'Cron - Nessun login per 7 giorni',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'quiz_completed_no_plan',
-      name: 'Quiz Completato Senza Piano',
-      description: 'Reminder per utenti che hanno completato il quiz ma non generato il piano',
-      trigger: 'Cron - 24h dopo quiz senza piano generato',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'workout_streak_7_days',
-      name: 'Streak Allenamenti 7 Giorni',
-      description: 'Email celebrativa per 7 giorni consecutivi di workout',
-      trigger: '7 workout completati in 7 giorni consecutivi',
-      status: 'active',
-      function: 'Da implementare'
-    },
-    {
-      id: 'no_workout_this_week',
-      name: 'Nessun Workout Questa Settimana',
-      description: 'Gentle nudge per utenti senza workout nella settimana',
-      trigger: 'Cron Lunedì - 0 workout settimana precedente',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'feedback_request',
-      name: 'Richiesta Feedback',
-      description: 'Survey dopo 2 settimane di utilizzo attivo',
-      trigger: 'Cron - 14 giorni di utilizzo attivo',
-      status: 'active',
-      function: 'Da implementare - Cron'
-    },
-    {
-      id: 'password_reset_completed',
-      name: 'Password Reset Completato',
-      description: 'Conferma sicurezza dopo reset password',
-      trigger: 'Password reset completato con successo',
-      status: 'active',
-      function: 'Da implementare'
-    },
-    {
-      id: 'plan_upgrade',
-      name: 'Upgrade Piano',
-      description: 'Conferma upgrade con nuove funzionalità disponibili',
-      trigger: 'Cambio piano a tier superiore',
-      status: 'active',
-      function: 'Da implementare'
-    },
-    {
-      id: 'plan_downgrade',
-      name: 'Downgrade Piano',
-      description: 'Conferma downgrade con funzionalità modificate',
-      trigger: 'Cambio piano a tier inferiore',
-      status: 'active',
-      function: 'Da implementare'
-    },
-    {
-      id: 'weekly_report',
-      name: 'Report Settimanale Progressi',
-      description: 'Report automatico con statistiche settimanali (peso, calorie, allenamenti, aderenza)',
-      trigger: 'Cron settimanale (ogni Lunedì)',
-      status: 'active',
-      function: 'sendWeeklyReport'
+    abandonment: {
+      name: 'Abbandono',
+      icon: ShoppingCart,
+      color: 'amber',
+      emails: [
+        { id: 'quiz_started_abandoned', name: 'Quiz Iniziato ma Non Completato', trigger: 'Cron - 2h dopo quiz iniziato', function: 'sendQuizStartedAbandoned', status: 'planned' },
+        { id: 'quiz_completed_abandoned', name: 'Quiz Completato Senza Piano', trigger: 'Cron - 24h dopo quiz senza piano', function: 'sendQuizReminderNoPlan' },
+        { id: 'trial_setup_abandoned', name: 'Trial Setup Abbandonato', trigger: 'Cron - 1h dopo apertura senza pagamento', function: 'sendTrialSetupAbandoned', status: 'planned' },
+        { id: 'pricing_visited_abandoned', name: 'Pricing Visitato ma Non Acquistato', trigger: 'Cron - 24h dopo visita pricing', function: 'sendPricingVisitedAbandoned', status: 'planned' },
+        { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 3h dopo inizio checkout', function: 'sendCartCheckoutAbandoned', status: 'planned' }
+      ]
     }
-  ];
+  };
 
-  const emailSequences = [
-    {
-      id: 'welcome_sequence',
-      name: 'Sequenza di Benvenuto (Trial)',
-      description: 'Serie di email per guidare l\'utente nei primi giorni di trial',
-      emails: [
-        { day: 0, subject: 'Benvenuto in MyWellness! Inizia qui 🎯', status: 'planned' },
-        { day: 1, subject: 'Come generare il tuo piano nutrizionale personalizzato', status: 'planned' },
-        { day: 2, subject: 'Ultimo giorno di trial - Non perdere il tuo piano! ⏰', status: 'planned' }
-      ],
-      status: 'planned'
-    },
-    {
-      id: 'renewal_reminder',
-      name: 'Reminder Rinnovo',
-      description: 'Email di promemoria prima della scadenza dell\'abbonamento',
-      emails: [
-        { day: -7, subject: 'Il tuo abbonamento scade tra 7 giorni', status: 'planned' },
-        { day: -3, subject: 'Ultimi 3 giorni - Rinnova ora e continua il tuo percorso', status: 'planned' },
-        { day: -1, subject: 'Ultimo giorno! Non perdere i tuoi progressi', status: 'planned' }
-      ],
-      status: 'planned'
-    },
-    {
-      id: 'engagement_sequence',
-      name: 'Sequenza Engagement',
-      description: 'Email per mantenere gli utenti attivi e motivati',
-      emails: [
-        { week: 1, subject: 'I tuoi primi progressi! 📊', status: 'planned' },
-        { week: 2, subject: 'Consigli per massimizzare i risultati', status: 'planned' },
-        { week: 4, subject: 'Report mensile dei tuoi progressi', status: 'planned' }
-      ],
-      status: 'planned'
-    },
-    {
-      id: 'win_back',
-      name: 'Win-Back Sequence',
-      description: 'Recupera utenti che hanno cancellato l\'abbonamento',
-      emails: [
-        { day: 7, subject: 'Ci manchi! Torna con un\'offerta speciale', status: 'planned' },
-        { day: 14, subject: 'Il tuo piano ti sta aspettando', status: 'planned' },
-        { day: 30, subject: 'Ultima possibilità: 50% di sconto per te', status: 'planned' }
-      ],
-      status: 'planned'
-    }
-  ];
+  const getCategoryColor = (color) => {
+    const colors = {
+      red: 'bg-red-100 text-red-700 border-red-200',
+      orange: 'bg-orange-100 text-orange-700 border-orange-200',
+      pink: 'bg-pink-100 text-pink-700 border-pink-200',
+      green: 'bg-green-100 text-green-700 border-green-200',
+      purple: 'bg-purple-100 text-purple-700 border-purple-200',
+      blue: 'bg-blue-100 text-blue-700 border-blue-200',
+      indigo: 'bg-indigo-100 text-indigo-700 border-indigo-200',
+      amber: 'bg-amber-100 text-amber-700 border-amber-200'
+    };
+    return colors[color] || 'bg-gray-100 text-gray-700 border-gray-200';
+  };
+
+  const filteredCategories = selectedCategory === 'all' 
+    ? emailCategories 
+    : { [selectedCategory]: emailCategories[selectedCategory] };
+
+  const totalEmails = Object.values(emailCategories).reduce((sum, cat) => sum + cat.emails.length, 0);
+  const activeEmails = Object.values(emailCategories).reduce((sum, cat) => 
+    sum + cat.emails.filter(e => e.status !== 'planned').length, 0
+  );
 
   return (
     <div className="min-h-screen pb-20">
       <div className="max-w-7xl mx-auto p-6 space-y-8">
         <div>
           <h1 className="text-3xl font-bold text-gray-900 mb-2">Email Manager</h1>
-          <p className="text-gray-600">Gestisci le email di sistema, broadcast e sequenze automatiche</p>
+          <p className="text-gray-600">Gestisci le email di sistema automatizzate e broadcast manuali</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -585,8 +458,8 @@ ${ctaHtml}
                   <Mail className="w-5 h-5 text-blue-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Email Sistema</p>
-                  <p className="text-2xl font-bold text-gray-900">{systemEmails.length}</p>
+                  <p className="text-sm text-gray-500">Email Totali</p>
+                  <p className="text-2xl font-bold text-gray-900">{totalEmails}</p>
                 </div>
               </div>
             </CardContent>
@@ -599,8 +472,8 @@ ${ctaHtml}
                   <CheckCircle className="w-5 h-5 text-green-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Sequenze Attive</p>
-                  <p className="text-2xl font-bold text-gray-900">0</p>
+                  <p className="text-sm text-gray-500">Email Attive</p>
+                  <p className="text-2xl font-bold text-gray-900">{activeEmails}</p>
                 </div>
               </div>
             </CardContent>
@@ -627,8 +500,8 @@ ${ctaHtml}
                   <Clock className="w-5 h-5 text-orange-600" />
                 </div>
                 <div>
-                  <p className="text-sm text-gray-500">Sequenze Pianificate</p>
-                  <p className="text-2xl font-bold text-gray-900">{emailSequences.length}</p>
+                  <p className="text-sm text-gray-500">Categorie</p>
+                  <p className="text-2xl font-bold text-gray-900">{Object.keys(emailCategories).length}</p>
                 </div>
               </div>
             </CardContent>
@@ -636,7 +509,7 @@ ${ctaHtml}
         </div>
 
         <Tabs defaultValue="system" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="system" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Email di Sistema
@@ -645,57 +518,76 @@ ${ctaHtml}
               <Send className="w-4 h-4" />
               Broadcast
             </TabsTrigger>
-            <TabsTrigger value="sequences" className="flex items-center gap-2">
-              <Zap className="w-4 h-4" />
-              Sequenze
-            </TabsTrigger>
           </TabsList>
 
-          <TabsContent value="system" className="space-y-4">
+          <TabsContent value="system" className="space-y-6">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Mail className="w-5 h-5" />
-                  Email di Sistema Configurate
-                </CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <Mail className="w-5 h-5" />
+                    Email Automatizzate per Categoria
+                  </CardTitle>
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                  >
+                    <option value="all">Tutte le Categorie</option>
+                    {Object.entries(emailCategories).map(([key, cat]) => (
+                      <option key={key} value={key}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
               </CardHeader>
-              <CardContent className="space-y-4">
-                {systemEmails.map(email => (
-                  <div key={email.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
-                    <div className="flex items-start justify-between">
-                      <div className="flex-1">
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-semibold text-gray-900">{email.name}</h3>
-                          <Badge className="bg-green-100 text-green-700">
-                            {email.status === 'active' ? 'Attiva' : 'Inattiva'}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600 mb-2">{email.description}</p>
-                        <div className="flex items-center gap-4 text-xs text-gray-500">
-                          <span className="flex items-center gap-1">
-                            <Zap className="w-3 h-3" />
-                            Trigger: {email.trigger}
-                          </span>
-                          <span>Function: {email.function}</span>
-                        </div>
+              <CardContent className="space-y-8">
+                {Object.entries(filteredCategories).map(([categoryKey, category]) => (
+                  <div key={categoryKey}>
+                    <div className="flex items-center gap-3 mb-4">
+                      <div className={`w-10 h-10 ${getCategoryColor(category.color)} rounded-lg flex items-center justify-center border-2`}>
+                        <category.icon className="w-5 h-5" />
                       </div>
-                      <Button
-                        variant="ghost"
-                        size="sm"
-                        onClick={() => handleOpenPreview(email)}
-                      >
-                        <Eye className="w-4 h-4" />
-                      </Button>
+                      <div className="flex-1">
+                        <h3 className="text-xl font-bold text-gray-900">{category.name}</h3>
+                        <p className="text-sm text-gray-500">{category.emails.length} email configurate</p>
+                      </div>
+                      <Badge className={getCategoryColor(category.color)}>
+                        {category.emails.filter(e => e.status !== 'planned').length} attive
+                      </Badge>
+                    </div>
+
+                    <div className="space-y-3">
+                      {category.emails.map(email => (
+                        <div key={email.id} className="border rounded-lg p-4 hover:bg-gray-50 transition-colors">
+                          <div className="flex items-start justify-between">
+                            <div className="flex-1">
+                              <div className="flex items-center gap-3 mb-2">
+                                <h4 className="font-semibold text-gray-900">{email.name}</h4>
+                                <Badge className={email.status === 'planned' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700'}>
+                                  {email.status === 'planned' ? 'Da Implementare' : 'Attiva'}
+                                </Badge>
+                              </div>
+                              <div className="flex items-center gap-4 text-xs text-gray-500">
+                                <span className="flex items-center gap-1">
+                                  <Zap className="w-3 h-3" />
+                                  {email.trigger}
+                                </span>
+                                <span>Function: {email.function}</span>
+                              </div>
+                            </div>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleOpenPreview(email)}
+                            >
+                              <Eye className="w-4 h-4" />
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 ))}
-
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                  <p className="text-sm text-blue-900">
-                    💡 <strong>Info:</strong> Le email di sistema sono automaticamente inviate quando si verificano determinati eventi (acquisti, trial, ecc.).
-                    Per modificarle, edita le backend functions corrispondenti.
-                  </p>
-                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -779,92 +671,7 @@ ${ctaHtml}
 
                 <div className="p-4 bg-amber-50 rounded-lg border border-amber-200">
                   <p className="text-sm text-amber-900">
-                    ⚠️ <strong>Attenzione:</strong> L invio di email broadcast è irreversibile. Controlla attentamente il contenuto prima di inviare.
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-
-          <TabsContent value="sequences" className="space-y-4">
-            <Card className="bg-white/80 backdrop-blur-sm">
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Zap className="w-5 h-5" />
-                      Sequenze Email Automatiche
-                    </CardTitle>
-                    <p className="text-sm text-gray-500 mt-1">Email automation per engagement e retention</p>
-                  </div>
-                  <Button className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]">
-                    <Zap className="w-4 h-4 mr-2" />
-                    Nuova Sequenza
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {emailSequences.map(sequence => (
-                  <div key={sequence.id} className="border rounded-xl p-5 hover:shadow-md transition-shadow">
-                    <div className="flex items-start justify-between mb-4">
-                      <div>
-                        <div className="flex items-center gap-3 mb-2">
-                          <h3 className="font-bold text-gray-900 text-lg">{sequence.name}</h3>
-                          <Badge className="bg-orange-100 text-orange-700">
-                            {sequence.status === 'planned' ? 'Da Implementare' : 'Attiva'}
-                          </Badge>
-                        </div>
-                        <p className="text-sm text-gray-600">{sequence.description}</p>
-                      </div>
-                      <div className="flex gap-2">
-                        <Button variant="ghost" size="sm">
-                          <Edit className="w-4 h-4" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Eye className="w-4 h-4" />
-                        </Button>
-                      </div>
-                    </div>
-
-                    <div className="space-y-2 mt-4">
-                      <p className="text-xs font-semibold text-gray-500 uppercase">Email nella sequenza:</p>
-                      {sequence.emails.map((email, index) => {
-                        let timeText = '';
-                        if (email.day !== undefined) {
-                          timeText = email.day >= 0 ? `Giorno +${email.day}` : `Giorno ${email.day}`;
-                        } else if (email.week !== undefined) {
-                          timeText = `Settimana ${email.week}`;
-                        }
-
-                        return (
-                          <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
-                            <div className="w-8 h-8 bg-[var(--brand-primary-light)] rounded-full flex items-center justify-center flex-shrink-0">
-                              <span className="text-xs font-bold text-[var(--brand-primary)]">{index + 1}</span>
-                            </div>
-                            <div className="flex-1">
-                              <p className="text-sm font-medium text-gray-900">{email.subject}</p>
-                              <p className="text-xs text-gray-500">{timeText}</p>
-                            </div>
-                            <Badge variant="outline" className="text-xs">
-                              {email.status === 'planned' ? 'Pianificata' : 'Attiva'}
-                            </Badge>
-                          </div>
-                        );
-                      })}
-                    </div>
-                  </div>
-                ))}
-
-                <div className="mt-6 p-6 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl border border-purple-200">
-                  <h4 className="font-bold text-gray-900 mb-2 flex items-center gap-2">
-                    <Zap className="w-5 h-5 text-purple-600" />
-                    Implementazione Sequenze
-                  </h4>
-                  <p className="text-sm text-gray-700 mb-3">
-                    Le sequenze email automatiche richiedono implementazione di backend functions con trigger temporali.
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    📝 Per attivare una sequenza, contatta il team di sviluppo per implementare i trigger e le condizioni necessarie.
+                    ⚠️ <strong>Attenzione:</strong> L'invio di email broadcast è irreversibile. Controlla attentamente il contenuto prima di inviare.
                   </p>
                 </div>
               </CardContent>
@@ -873,6 +680,7 @@ ${ctaHtml}
         </Tabs>
       </div>
 
+      {/* Preview Dialog - keep existing code */}
       <Dialog open={showEmailPreview} onOpenChange={setShowEmailPreview}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
@@ -919,18 +727,13 @@ ${ctaHtml}
                 <div>
                   <Label className="text-sm font-semibold text-gray-700">Stato</Label>
                   <Badge className="mt-1 bg-green-100 text-green-700">
-                    {previewEmail.status === 'active' ? 'Attiva' : 'Inattiva'}
+                    {previewEmail.status === 'planned' ? 'Da Implementare' : 'Attiva'}
                   </Badge>
                 </div>
                 <div>
                   <Label className="text-sm font-semibold text-gray-700">ID Email</Label>
                   <p className="text-sm text-gray-900 mt-1">{previewEmail.id}</p>
                 </div>
-              </div>
-
-              <div>
-                <Label className="text-sm font-semibold text-gray-700">Descrizione</Label>
-                <p className="text-sm text-gray-600 mt-1">{previewEmail.description}</p>
               </div>
 
               <div>
@@ -992,7 +795,7 @@ ${ctaHtml}
                       placeholder="Contenuto email..."
                     />
                     <p className="text-xs text-gray-500 mt-2">
-                      Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}, {'{'}weight_change{'}'}, {'{'}current_weight{'}'}, {'{'}target_weight{'}'}, {'{'}avg_calories{'}'}, {'{'}workouts_completed{'}'}, {'{'}planned_workouts{'}'}, {'{'}adherence{'}'}, {'{'}progress{'}'}, {'{'}distance_remaining{'}'}, {'{'}week_range{'}'}, {'{'}motivational_message{'}'}
+                      Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}
                     </p>
                   </div>
 
@@ -1088,7 +891,7 @@ ${ctaHtml}
 
                   <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
                     <p className="text-sm text-blue-900">
-                      💡 <strong>Variabili disponibili:</strong> {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}, {'{'}weight_change{'}'}, {'{'}current_weight{'}'}, {'{'}target_weight{'}'}, {'{'}avg_calories{'}'}, {'{'}workouts_completed{'}'}, {'{'}planned_workouts{'}'}, {'{'}adherence{'}'}, {'{'}progress{'}'}, {'{'}distance_remaining{'}'}, {'{'}week_range{'}'}, {'{'}motivational_message{'}'}
+                      💡 <strong>Variabili disponibili:</strong> {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}expiry_date{'}'}, {'{'}temp_password{'}'}, {'{'}app_url{'}'}
                     </p>
                   </div>
 
