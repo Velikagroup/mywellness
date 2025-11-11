@@ -731,127 +731,134 @@ All content MUST be in Italian.`;
       });
 
       const allGeneratedMeals = [];
-      const progressPerDay = 60 / daysToGenerate.length;
+      const totalMealsToGenerate = daysToGenerate.length * mealStructure.length;
+      let generatedMealCount = 0;
+      let totalIngredientsAdded = 0;
 
-      // 🔥 GENERA UN GIORNO ALLA VOLTA (più affidabile!)
+      // 🔥 GENERA UN PASTO ALLA VOLTA (ultra affidabile!)
       for (let dayIndex = 0; dayIndex < daysToGenerate.length; dayIndex++) {
         const day = daysToGenerate[dayIndex];
-        const baseProgress = 20 + (dayIndex * progressPerDay);
         
-        updateProgress(baseProgress, `Generazione ${day}... (${dayIndex + 1}/${daysToGenerate.length})`);
+        for (let mealIndex = 0; mealIndex < mealStructure.length; mealIndex++) {
+          const mealType = mealStructure[mealIndex];
+          const targetCals = mealCalorieDistribution[mealType];
+          
+          generatedMealCount++;
+          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 60); // 20-80% for meal generation
+          updateProgress(progress, `Generazione ${day} - ${getMealTypeLabel(mealType)} (${generatedMealCount}/${totalMealsToGenerate})`);
 
-        const dayMealPrompt = `You are an expert AI nutritionist. Create ${mealsPerDay} meals for ${day} in ITALIAN.
+          const mealPrompt = `You are an expert AI nutritionist with access to comprehensive nutritional databases. Create ONE single meal in ITALIAN language.
 
-🔴 CRITICAL: DAILY TOTAL MUST BE ${dailyCalories} kcal
+🔴 ULTRA CRITICAL REQUIREMENT 🔴
+Target Calories: EXACTLY ${targetCals} kcal
+Tolerance: MAXIMUM ±5 kcal (ideally 0 kcal error)
 
-EXACT CALORIE PER MEAL:
-${Object.entries(mealCalorieDistribution).map(([type, cals]) => `- ${type}: ${cals} kcal`).join('\n')}
+🔥 CRITICAL DIET TYPE: ${(generationPrefs.diet_type || 'mediterranean').toUpperCase()}
 
-🚨 NUTRITIONAL ACCURACY RULES:
+📋 STRICT DIET RULES FOR ${(generationPrefs.diet_type || 'mediterranean').toUpperCase()}:
 
-1. USE VERIFIED DATABASE VALUES (USDA/CREA):
-   - Uovo medio (60g): 86 kcal, 7.5g prot, 0.3g carbs, 6.0g fat
-   - Manzo magro (100g): 121 kcal, 20.5g prot, 0.0g carbs, 4.0g fat
-   - Pollo (100g): 110 kcal, 23.0g prot, 0.0g carbs, 1.2g fat
-   - Salmone (100g): 208 kcal, 20.0g prot, 0.0g carbs, 13.4g fat
-   - Olio oliva (10ml): 90 kcal, 0.0g prot, 0.0g carbs, 10.0g fat
+✅ ALLOWED INGREDIENTS:
+${dietRules.allowed}
 
-2. ALL macros EXACTLY 1 decimal place
-3. Small amounts matter (eggs have 0.3g carbs!)
-4. Verify: (protein×4 + carbs×4 + fat×9) ≈ calories
+❌ ABSOLUTELY FORBIDDEN INGREDIENTS:
+${dietRules.forbidden}
 
-🔥 DIET: ${generationPrefs.diet_type.toUpperCase()}
+🎯 DIET FOCUS:
+${dietRules.focus}
 
-✅ ALLOWED: ${dietRules.allowed}
-❌ FORBIDDEN: ${dietRules.forbidden}
+⚠️ YOU MUST RESPECT THESE RULES 100% - NO EXCEPTIONS!
 
-User: ${nutritionData.gender}, ${nutritionData.age}y, ${nutritionData.current_weight}kg
-${nutritionData.allergies?.length > 0 ? `Allergies: ${nutritionData.allergies.join(', ')}` : ''}
+User Profile:
+- Gender: ${nutritionData.gender}, Age: ${nutritionData.age} anni, Weight: ${nutritionData.current_weight}kg
+${nutritionData.allergies?.length > 0 ? `- Allergies: ${nutritionData.allergies.join(', ')}` : ''}
+${nutritionData.favorite_foods?.length > 0 ? `- Favorite Foods: ${nutritionData.favorite_foods.join(', ')}` : ''}
 
-TASK: Generate ${mealsPerDay} meals hitting EXACT calorie targets.
-Use ONLY allowed ingredients with VERIFIED nutritional data.
-ALL content in Italian.`;
+Meal Type: ${mealType}
 
-        const dayMeals = await base44.integrations.Core.InvokeLLM({
-          prompt: dayMealPrompt,
-          response_json_schema: {
-            type: "object",
-            properties: {
-              meals: {
-                type: "array",
-                items: {
-                  type: "object",
-                  properties: {
-                    meal_type: { type: "string", enum: mealStructure },
-                    name: { type: "string" },
-                    ingredients: {
-                      type: "array",
-                      items: {
-                        type: "object",
-                        properties: {
-                          name: { type: "string" },
-                          quantity: { type: "number" },
-                          unit: { type: "string" },
-                          calories: { type: "number" },
-                          protein: { type: "number" },
-                          carbs: { type: "number" },
-                          fat: { type: "number" }
-                        }
-                      }
-                    },
-                    instructions: { type: "array", items: { type: "string" } },
-                    prep_time: { type: "number" },
-                    difficulty: { type: "string" }
+🚨 ABSOLUTE MANDATORY NUTRITIONAL ACCURACY RULES:
+
+1. CONSULT VERIFIED DATABASES:
+   - Use USDA FoodData Central
+   - Use CREA-Alimenti (Italian food database)
+   - Cross-reference multiple sources for accuracy
+
+2. REALISTIC NUTRITIONAL VALUES (verified from USDA/CREA):
+   - Uovo medio intero (60g): calories=86, protein=7.5g, carbs=0.3g, fat=6.0g
+   - Manzo magro (100g): calories=121, protein=20.5g, carbs=0.0g, fat=4.0g
+   - Petto di pollo (100g): calories=110, protein=23.0g, carbs=0.0g, fat=1.2g
+   - Salmone fresco (100g): calories=208, protein=20.0g, carbs=0.0g, fat=13.4g
+   - Olio d'oliva (10ml): calories=90, protein=0.0g, carbs=0.0g, fat=10.0g
+   - Burro (10g): calories=75, protein=0.1g, carbs=0.1g, fat=8.3g
+   - Spinaci freschi (100g): calories=23, protein=2.9g, carbs=3.6g, fat=0.4g
+   - Riso basmati cotto (100g): calories=121, protein=2.7g, carbs=25.2g, fat=0.4g
+
+3. PRECISION REQUIREMENTS:
+   - ALL macronutrients MUST be rounded to EXACTLY 1 decimal place
+   - NEVER use 0 for macros unless scientifically verified (meat=0 carbs, salt=0 macros)
+   - Small amounts matter: eggs have ~0.3-0.4g carbs per egg, butter has trace protein/carbs
+   - Verify: sum of (protein×4 + carbs×4 + fat×9) ≈ total calories (±10% tolerance)
+
+4. CALCULATION ACCURACY:
+   - Calculate PRECISELY to hit ${targetCals} kcal (±5 kcal MAX)
+   - Verify: sum of ingredient calories MUST equal ${targetCals} kcal
+   - If too low: add healthy fats (butter, olive oil, nuts allowed in diet)
+   - If too high: reduce portions proportionally
+
+Task:
+Generate ONE meal in Italian hitting EXACTLY ${targetCals} kcal.
+Use ONLY ingredients from the ALLOWED list.
+Use VERIFIED nutritional data from USDA/CREA databases.
+Calculate ALL macros with scientific PRECISION (1 decimal place).
+
+All content MUST be in Italian.`;
+
+          const llmResponse = await base44.integrations.Core.InvokeLLM({
+            prompt: mealPrompt,
+            response_json_schema: {
+              type: "object",
+              properties: {
+                name: { type: "string" },
+                ingredients: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                      quantity: { type: "number" },
+                      unit: { type: "string" },
+                      calories: { type: "number" },
+                      protein: { type: "number" },
+                      carbs: { type: "number" },
+                      fat: { type: "number" }
+                    }
                   }
-                }
+                },
+                instructions: { type: "array", items: { type: "string" } },
+                prep_time: { type: "number" },
+                difficulty: { type: "string" }
               }
             }
+          });
+
+          if (!llmResponse || !llmResponse.ingredients) {
+            console.error(`❌ Pasto invalido per ${day} ${mealType}:`, llmResponse);
+            continue;
           }
-        });
 
-        if (!dayMeals.meals || dayMeals.meals.length === 0) {
-          throw new Error(`Nessun pasto generato per ${day}`);
-        }
-
-        // Processa i pasti del giorno
-        const processedDayMeals = dayMeals.meals.map(meal => {
-          const roundedIngredients = meal.ingredients.map(ing => ({
+          let roundedIngredients = llmResponse.ingredients.map(ing => ({
             ...ing,
             protein: Math.round((ing.protein || 0) * 10) / 10,
             carbs: Math.round((ing.carbs || 0) * 10) / 10,
             fat: Math.round((ing.fat || 0) * 10) / 10
           }));
 
-          const calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
-          
-          return {
-            day_of_week: day,
-            meal_type: meal.meal_type,
-            name: meal.name,
-            ingredients: roundedIngredients,
-            instructions: meal.instructions,
-            total_calories: calculatedCalories,
-            total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
-            total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
-            total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
-            prep_time: meal.prep_time || 15,
-            difficulty: meal.difficulty || 'easy'
-          };
-        });
+          let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
+          const diff = targetCals - calculatedCalories;
 
-        // Aggiustamento calorie giornaliero
-        let currentDayCalories = processedDayMeals.reduce((sum, m) => sum + m.total_calories, 0);
-        const calorieDiff = dailyCalories - currentDayCalories;
-        
-        console.log(`📅 ${day}: ${currentDayCalories} kcal (target: ${dailyCalories}, diff: ${calorieDiff})`);
-
-        if (Math.abs(calorieDiff) > 20) {
-          console.log(`⚙️ Aggiustamento ${day}: ${calorieDiff} kcal`);
-          
-          if (calorieDiff > 0) {
-            const largestMeal = processedDayMeals.reduce((max, m) => m.total_calories > max.total_calories ? m : max);
-            const oilMl = Math.round(calorieDiff / 9);
-            largestMeal.ingredients.push({
+          // Simple adjustment for single meal if outside tolerance and too low
+          if (diff > 5) { // If significantly lower than target
+            const oilMl = Math.round(diff / 9);
+            roundedIngredients.push({
               name: "olio d'oliva extra vergine",
               quantity: oilMl,
               unit: "ml",
@@ -860,34 +867,42 @@ ALL content in Italian.`;
               carbs: 0.0,
               fat: Math.round(oilMl * 10) / 10
             });
-            largestMeal.total_calories += oilMl * 9;
-            largestMeal.total_fat = Math.round((largestMeal.total_fat + oilMl) * 10) / 10;
-          } else {
-            const scaleFactor = dailyCalories / currentDayCalories;
-            processedDayMeals.forEach(meal => {
-              meal.ingredients = meal.ingredients.map(ing => ({
-                ...ing,
-                quantity: Math.round(ing.quantity * scaleFactor * 10) / 10,
-                calories: Math.round(ing.calories * scaleFactor),
-                protein: Math.round(ing.protein * scaleFactor * 10) / 10,
-                carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
-                fat: Math.round(ing.fat * scaleFactor * 10) / 10
+            calculatedCalories += oilMl * 9;
+            console.log(`⚙️ Aggiustato ${mealType} di ${day} con ${oilMl}ml olio (+${oilMl * 9} kcal)`);
+          } else if (diff < -5) { // If significantly higher than target, attempt a small proportional scale down if necessary.
+              const scaleFactor = targetCals / calculatedCalories;
+              roundedIngredients = roundedIngredients.map(ing => ({
+                  ...ing,
+                  quantity: Math.round(ing.quantity * scaleFactor * 100) / 100, // Keep 2 decimal places for quantity
+                  calories: Math.round(ing.calories * scaleFactor),
+                  protein: Math.round(ing.protein * scaleFactor * 10) / 10,
+                  carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
+                  fat: Math.round(ing.fat * scaleFactor * 10) / 10
               }));
-              meal.total_calories = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.calories, 0));
-              meal.total_protein = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
-              meal.total_carbs = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
-              meal.total_fat = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
-            });
+              calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
+              console.log(`⚙️ Scalato ${mealType} di ${day} a ${calculatedCalories} kcal (target ${targetCals})`);
           }
-        }
 
-        allGeneratedMeals.push(...processedDayMeals);
-        console.log(`✅ ${day} completato`);
+          allGeneratedMeals.push({
+            day_of_week: day,
+            meal_type: mealType,
+            name: llmResponse.name,
+            ingredients: roundedIngredients,
+            instructions: llmResponse.instructions || [],
+            total_calories: calculatedCalories,
+            total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
+            total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
+            total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
+            prep_time: llmResponse.prep_time || 15,
+            difficulty: llmResponse.difficulty || 'easy'
+          });
+          
+          console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal (Target: ${targetCals} kcal, Final Diff: ${calculatedCalories - targetCals} kcal)`);
+        }
       }
 
       updateProgress(80, "Salvataggio ingredienti nel database...");
       
-      // Salva ingredienti nel database (background, non critico)
       try {
         const allIngredients = [];
         allGeneratedMeals.forEach(meal => {
@@ -898,39 +913,33 @@ ALL content in Italian.`;
           ingredients: allIngredients
         });
         
-        console.log(`🗃️ Database: +${dbResponse.data?.new_ingredients_added || 0} nuovi ingredienti`);
+        totalIngredientsAdded = dbResponse.data?.new_ingredients_added || 0;
+        console.log(`🗃️ Database: +${totalIngredientsAdded} nuovi ingredienti`);
       } catch (dbError) {
         console.warn('⚠️ Errore database (non critico):', dbError);
       }
 
       updateProgress(85, "Generazione immagini AI...");
 
-      const totalMeals = allGeneratedMeals.length;
-      const batchSize = 5;
-
-      for (let i = 0; i < totalMeals; i += batchSize) {
-        const batch = allGeneratedMeals.slice(i, i + batchSize);
-        const batchProgress = 85 + Math.round((i / totalMeals) * 10);
-        updateProgress(batchProgress, `Immagini: ${i + batch.length}/${totalMeals}`);
+      for (let i = 0; i < totalMealsToGenerate; i++) {
+        const meal = allGeneratedMeals[i];
+        const progress = 85 + Math.round((i / totalMealsToGenerate) * 10);
+        updateProgress(progress, `Immagine ${i + 1}/${totalMealsToGenerate}`);
         
-        const mealsWithImages = await Promise.all(batch.map(async (meal) => {
-          try {
-            const ingredientsString = meal.ingredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
-            const imagePrompt = `Professional food photography of "${meal.name}". Ingredients: ${ingredientsString}. 45-degree angle, modern plate, natural lighting.`;
-            const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
-            return { ...meal, image_url: imageResponse.url };
-          } catch (error) {
-            console.error(`Image error for ${meal.name}:`, error);
-            return { ...meal, image_url: null };
-          }
-        }));
-
-        for (const meal of mealsWithImages) {
-          await createMealMutation.mutateAsync({
-            user_id: user.id,
-            ...meal
-          });
+        try {
+          const ingredientsString = meal.ingredients.map(ing => `${ing.quantity}${ing.unit} ${ing.name}`).join(', ');
+          const imagePrompt = `Professional food photography of "${meal.name}". Ingredients: ${ingredientsString}. 45-degree angle, modern plate, natural lighting.`;
+          const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
+          meal.image_url = imageResponse.url;
+        } catch (error) {
+          console.error(`Image error for ${meal.name}:`, error);
+          meal.image_url = null;
         }
+
+        await createMealMutation.mutateAsync({
+          user_id: user.id,
+          ...meal
+        });
       }
 
       updateProgress(100, "Piano generato con successo!");
@@ -941,6 +950,9 @@ ALL content in Italian.`;
         setShowGenerator(false);
         await loadMealPlans();
         setAddedDays([]);
+        if (totalIngredientsAdded > 0) {
+          alert(`✅ Piano generato!\n🗃️ +${totalIngredientsAdded} nuovi ingredienti aggiunti al database.`);
+        }
       }, 1000);
 
     } catch (error) {
