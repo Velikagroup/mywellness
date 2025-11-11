@@ -395,7 +395,7 @@ export default function Dashboard() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Analisi Progressi</h1>
               <p className="text-gray-600">Tracciamento dettagliato e proiezioni</p>
             </div>
-            <Link to={createPageUrl("Quiz") + "?mode=recap"}>
+            <Link to={createPageUrl("Quiz")}>
               <Button 
                 variant="outline" 
                 className="bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl w-full lg:w-auto"
@@ -415,7 +415,7 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-600">Tracciamento dettagliato e proiezioni</p>
               </div>
             </div>
-            <Link to={createPageUrl("Quiz") + "?mode=recap"} className="block">
+            <Link to={createPageUrl("Quiz")} className="block">
               <Button 
                 variant="outline" 
                 className="w-full bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"

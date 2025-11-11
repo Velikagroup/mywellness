@@ -129,6 +129,15 @@ export default function Layout({ children }) {
 
   const allNavItems = [...mainNavItems, ...adminMenuItems];
 
+  const getMenuMaxWidth = () => {
+    const itemCount = allNavItems.length;
+    // Ogni icona occupa circa 90px (70px min-width + padding)
+    const baseWidth = itemCount * 90;
+    // Aggiungi padding laterale
+    const totalWidth = baseWidth + 40;
+    return Math.min(totalWidth, 1280); // Max 1280px
+  };
+
   const handleMenuItemClick = (path) => {
     setMobileMenuOpen(false);
     navigate(createPageUrl(path));
@@ -234,7 +243,7 @@ export default function Layout({ children }) {
         {children}
       </main>
 
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 max-w-2xl sm:max-w-5xl">
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4" style={{ maxWidth: `${getMenuMaxWidth()}px` }}>
         <div className="water-glass-effect rounded-3xl py-3 px-2">
           <div className="hidden sm:flex items-center justify-around">
             {allNavItems.map((item) => (

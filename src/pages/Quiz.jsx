@@ -117,42 +117,21 @@ export default function Quiz() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
+        // Se l'utente ha già completato il quiz e NON è in recap mode → vai alla Dashboard
         if (currentUser && currentUser.quiz_completed && !isRecapMode) {
           navigate(createPageUrl('Dashboard'), { replace: true });
           return;
         }
         
-        if (isRecapMode && currentUser && currentUser.quiz_completed) {
+        // ✅ FIX RECAP MODE: Carica i dati dell'utente MA cancella i dati salvati localmente
+        if (isRecapMode && currentUser) {
+          // Svuota il localStorage per forzare il riavvio del quiz
+          localStorage.removeItem('quizData');
           setQuizData({
             gender: currentUser.gender || '',
-            birthdate: currentUser.birthdate || '',
-            age: currentUser.age || null,
-            height: currentUser.height || '',
-            current_weight: currentUser.current_weight || '',
-            target_weight: currentUser.target_weight || '',
-            neck_circumference: currentUser.neck_circumference || '',
-            waist_circumference: currentUser.waist_circumference || '',
-            hip_circumference: currentUser.hip_circumference || '',
-            current_body_fat_visual: currentUser.current_body_fat_visual || null,
-            target_body_fat_visual: currentUser.target_body_fat_visual || null,
-            target_zone: currentUser.target_zone || '',
-            weight_loss_speed: currentUser.weight_loss_speed || '',
-            activity_level: currentUser.activity_level || '',
-            intermittent_fasting: currentUser.intermittent_fasting || false,
-            if_skip_meal: currentUser.if_skip_meal || '',
-            if_meal_structure: currentUser.if_meal_structure || '',
-            diet_type: currentUser.diet_type || '',
-            allergies: currentUser.allergies || [],
-            favorite_foods: currentUser.favorite_foods || [],
-            joint_pain: currentUser.joint_pain || [],
-            fitness_experience: currentUser.fitness_experience || '',
-            workout_location: currentUser.workout_location || '',
-            equipment: currentUser.equipment || [],
-            workout_days: currentUser.workout_days || null,
-            workout_days_selected: currentUser.workout_days_selected || [],
-            fitness_goal: currentUser.fitness_goal || '',
-            session_duration: currentUser.session_duration || ''
           });
+          setCurrentStep(0); // ✅ RIPARTE DALLO STEP 0 (intro)
+          window.history.replaceState({}, '', `${window.location.pathname}?step=0`);
         }
         
       } catch (error) {

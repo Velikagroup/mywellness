@@ -182,8 +182,8 @@ export default function MealsPage() {
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
     queryFn: async () => {
-      const response = await base44.get('/users/me');
-      return response.data.data;
+      const currentUser = await base44.auth.me();
+      return currentUser;
     },
     staleTime: 5 * 60 * 1000, // 5 minutes
     retry: false, // Don't retry on 401
@@ -270,18 +270,24 @@ export default function MealsPage() {
 
   const handleShowGenerator = useCallback((currentUser) => {
     if (currentUser) {
+      const currentDietType = currentUser.diet_type || 'mediterranean';
+      const currentIF = currentUser.intermittent_fasting || false;
+      const currentSkipMeal = currentUser.if_skip_meal || null;
+      const currentStructure = currentUser.if_meal_structure || null;
+      
       setGenerationPrefs({
-        diet_type: currentUser.diet_type,
-        intermittent_fasting: currentUser.intermittent_fasting,
-        if_skip_meal: currentUser.if_skip_meal || null,
-        if_meal_structure: currentUser.if_meal_structure || null,
+        diet_type: currentDietType,
+        intermittent_fasting: currentIF,
+        if_skip_meal: currentSkipMeal,
+        if_meal_structure: currentStructure,
       });
-      if (currentUser.intermittent_fasting && currentUser.if_meal_structure) {
-        if (currentUser.if_meal_structure === '2_meals') {
+      
+      if (currentIF && currentStructure) {
+        if (currentStructure === '2_meals') {
           setMealsPerDay(2);
-        } else if (currentUser.if_meal_structure === '3_meals') {
+        } else if (currentStructure === '3_meals') {
           setMealsPerDay(3);
-        } else if (currentUser.if_meal_structure === '3_meals_snacks') {
+        } else if (currentStructure === '3_meals_snacks') {
           setMealsPerDay(5);
         } else {
           setMealsPerDay(5);
@@ -606,7 +612,22 @@ RESPONSE JSON SCHEMA:
   };
 
   const generateMealPlan = async () => {
-    if (!user || !generationPrefs || !nutritionData) return;
+    if (!user || !generationPrefs || !nutritionData) {
+      console.error('❌ Missing data:', { user: !!user, generationPrefs: !!generationPrefs, nutritionData: !!nutritionData });
+      alert('Errore: dati utente mancanti. Ricarica la pagina.');
+      return;
+    }
+    
+    if (!nutritionData.daily_calories || nutritionData.daily_calories <= 0) {
+      alert('Errore: target calorico non valido. Vai su "Ricalibra" per aggiornare i tuoi dati.');
+      return;
+    }
+    
+    console.log('✅ Starting generation with:', { 
+      mealsPerDay, 
+      dailyCalories: nutritionData.daily_calories,
+      dietType: generationPrefs.diet_type 
+    });
     
     setIsGenerating(true);
     setGenerationProgress(0);
@@ -938,7 +959,7 @@ RESPONSE JSON SCHEMA:
               .map(i => `${i.quantity}${i.unit} ${i.name}`)
               .join(', ');
             
-            const imagePrompt = `Professional food photography of a meal called "${meal.name}". The dish contains: ${ingredientsString}. Shot from 45-degree angle, clean modern plate, bright natural lighting, shallow depth of field.`;
+            const imagePrompt = `Photorealistic professional food photography of a meal called "${meal.name}". The dish contains: ${ingredientsString}. Shot from 45-degree angle, clean modern plate, bright natural lighting, shallow depth of field.`;
             
             const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
             return { ...meal, image_url: imageResponse.url };
@@ -987,7 +1008,11 @@ RESPONSE JSON SCHEMA:
     } catch (error) {
       console.error("Error generating meal plan:", error);
       setGenerationStatus(`Errore: ${error.message}. Riprova.`);
-      setTimeout(() => setIsGenerating(false), 5000);
+      setTimeout(() => {
+        setIsGenerating(false);
+        setGenerationProgress(0);
+        setGenerationStatus('');
+      }, 5000);
     }
   };
 
