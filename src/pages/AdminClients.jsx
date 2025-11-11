@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -20,7 +21,11 @@ import {
   Filter,
   ArrowRight,
   CheckCircle,
-  XCircle
+  XCircle,
+  User, // Added
+  Activity, // Added
+  CreditCard, // Added
+  MapPin // Added
 } from 'lucide-react';
 import ClientDetailModal from '../components/admin/ClientDetailModal';
 
@@ -35,13 +40,13 @@ export default function AdminClients() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [showClientModal, setShowClientModal] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-  
+
   // Import mapping state
   const [showMappingDialog, setShowMappingDialog] = useState(false);
   const [csvHeaders, setCsvHeaders] = useState([]);
   const [csvData, setCsvData] = useState([]);
   const [columnMapping, setColumnMapping] = useState({});
-  
+
   const [stats, setStats] = useState({
     totalClients: 0,
     maleCount: 0,
@@ -54,26 +59,55 @@ export default function AdminClients() {
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
 
-  // Campi disponibili per la mappatura
-  const availableFields = [
+  // Campi raggruppati logicamente
+  const fieldGroups = {
+    base: {
+      title: "📋 Informazioni Base",
+      icon: User,
+      fields: [
+        { value: 'email', label: '📧 Email', required: true },
+        { value: 'full_name', label: '👤 Nome Completo' },
+        { value: 'phone_number', label: '📱 Telefono' },
+        { value: 'gender', label: '⚧ Genere (male/female)' },
+        { value: 'age', label: '🎂 Età' },
+        { value: 'language', label: '🌍 Lingua (it/en/es/fr/de/pt)' }
+      ]
+    },
+    physical: {
+      title: "💪 Dati Fisici",
+      icon: Activity,
+      fields: [
+        { value: 'current_weight', label: '⚖️ Peso Attuale (kg)' },
+        { value: 'target_weight', label: '🎯 Peso Obiettivo (kg)' },
+        { value: 'height', label: '📏 Altezza (cm)' }
+      ]
+    },
+    subscription: {
+      title: "💼 Abbonamento",
+      icon: CreditCard,
+      fields: [
+        { value: 'subscription_plan', label: '📦 Piano (base/pro/premium)' },
+        { value: 'subscription_status', label: '📊 Stato (trial/active/expired/cancelled)' }
+      ]
+    },
+    billing: {
+      title: "🏢 Fatturazione",
+      icon: MapPin,
+      fields: [
+        { value: 'billing_address', label: '📍 Indirizzo' },
+        { value: 'billing_city', label: '🏙️ Città' },
+        { value: 'billing_zip', label: '📮 CAP' },
+        { value: 'billing_country', label: '🌐 Paese' },
+        { value: 'company_name', label: '🏢 Nome Azienda' },
+        { value: 'tax_id', label: '💳 Partita IVA/Codice Fiscale' }
+      ]
+    }
+  };
+
+  // Combine all available fields for the "unmapped" dropdown
+  const allAvailableFields = [
     { value: '', label: '❌ Non importare' },
-    { value: 'email', label: '📧 Email (obbligatoria)', required: true },
-    { value: 'full_name', label: '👤 Nome Completo' },
-    { value: 'phone_number', label: '📱 Telefono' },
-    { value: 'gender', label: '⚧ Genere (male/female)' },
-    { value: 'age', label: '🎂 Età' },
-    { value: 'subscription_plan', label: '💼 Piano (base/pro/premium)' },
-    { value: 'subscription_status', label: '📊 Stato Abbonamento' },
-    { value: 'language', label: '🌍 Lingua (it/en/es/fr/de/pt)' },
-    { value: 'current_weight', label: '⚖️ Peso Attuale (kg)' },
-    { value: 'target_weight', label: '🎯 Peso Obiettivo (kg)' },
-    { value: 'height', label: '📏 Altezza (cm)' },
-    { value: 'billing_city', label: '🏙️ Città' },
-    { value: 'billing_country', label: '🌐 Paese' },
-    { value: 'billing_address', label: '📍 Indirizzo' },
-    { value: 'billing_zip', label: '📮 CAP' },
-    { value: 'company_name', label: '🏢 Nome Azienda' },
-    { value: 'tax_id', label: '💳 Partita IVA/Codice Fiscale' }
+    ...Object.values(fieldGroups).flatMap(group => group.fields)
   ];
 
   useEffect(() => {
@@ -110,11 +144,11 @@ export default function AdminClients() {
     const totalClients = clientsList.length;
     const maleCount = clientsList.filter(c => c.gender === 'male').length;
     const femaleCount = clientsList.filter(c => c.gender === 'female').length;
-    
+
     const clientsWithPurchases = clientsList.filter(c => c.last_payment_amount && c.last_payment_amount > 0);
     const totalRevenue = clientsList.reduce((sum, c) => sum + (c.last_payment_amount || 0), 0);
     const avgLifetimeValue = totalClients > 0 ? totalRevenue / totalClients : 0;
-    
+
     const repeatCustomers = clientsWithPurchases.filter(c => {
       return c.subscription_status === 'active' && c.last_payment_date;
     }).length;
@@ -160,7 +194,7 @@ export default function AdminClients() {
   const handleExportClients = () => {
     try {
       const csvRows = [];
-      
+
       const headers = [
         'Nome Completo',
         'Email',
@@ -226,7 +260,7 @@ export default function AdminClients() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-      
+
       alert(`✅ Esportati ${clients.length} clienti con successo!`);
     } catch (error) {
       console.error('Export error:', error);
@@ -239,17 +273,19 @@ export default function AdminClients() {
   };
 
   const parseCSV = (text) => {
-    const lines = text.trim().split('\n');
+    const lines = text.trim().split(/\r?\n/); // Handle Windows and Unix line endings
     const result = [];
-    
+
     for (let line of lines) {
+      if (!line.trim()) continue; // Skip empty lines
+
       const row = [];
       let current = '';
       let inQuotes = false;
-      
+
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
-        
+
         if (char === '"') {
           if (inQuotes && line[i + 1] === '"') {
             current += '"';
@@ -265,9 +301,12 @@ export default function AdminClients() {
         }
       }
       row.push(current.trim());
-      result.push(row);
+
+      if (row.some(cell => cell.trim())) { // Only push if the row has at least one non-empty cell
+        result.push(row);
+      }
     }
-    
+
     return result;
   };
 
@@ -282,28 +321,33 @@ export default function AdminClients() {
 
     try {
       const text = await file.text();
-      
       // Rimuovi BOM se presente
       const cleanText = text.replace(/^\uFEFF/, '');
-      
+
       const parsedData = parseCSV(cleanText);
-      
-      if (parsedData.length < 2) {
+
+      if (parsedData.length < 2) { // At least header + one data row
         alert('❌ File CSV vuoto o non valido');
         return;
       }
 
       const headers = parsedData[0].map(h => h.replace(/"/g, '').trim());
-      const dataRows = parsedData.slice(1).filter(row => row.some(cell => cell.trim()));
+      const dataRows = parsedData.slice(1); // parseCSV now handles filtering empty data rows
+
+      console.log('📊 CSV Parsed:', {
+        totalRows: parsedData.length,
+        headers: headers.length,
+        dataRows: dataRows.length
+      });
 
       setCsvHeaders(headers);
       setCsvData(dataRows);
-      
+
       // Auto-mappatura intelligente
       const autoMapping = {};
       headers.forEach((header, index) => {
         const lowerHeader = header.toLowerCase();
-        
+
         if (lowerHeader.includes('email') || lowerHeader.includes('e-mail')) {
           autoMapping[index] = 'email';
         } else if (lowerHeader.includes('nome') || lowerHeader.includes('name')) {
@@ -345,7 +389,7 @@ export default function AdminClients() {
 
       setColumnMapping(autoMapping);
       setShowMappingDialog(true);
-      
+
     } catch (error) {
       console.error('File parse error:', error);
       alert('❌ Errore durante la lettura del file: ' + error.message);
@@ -370,7 +414,7 @@ export default function AdminClients() {
     }
 
     const confirmMsg = `Procedere con l'importazione di ${csvData.length} utenti?\n\nSaranno ignorati gli utenti con email già esistente.`;
-    
+
     if (!confirm(confirmMsg)) {
       return;
     }
@@ -385,13 +429,13 @@ export default function AdminClients() {
 
       for (const row of csvData) {
         const userData = {};
-        
+
         // Mappa i dati in base alla configurazione
         Object.keys(columnMapping).forEach(colIndex => {
           const fieldName = columnMapping[colIndex];
           if (fieldName && row[colIndex]) {
             let value = row[colIndex].trim();
-            
+
             // Conversioni tipo
             if (fieldName === 'age' || fieldName === 'current_weight' || fieldName === 'target_weight' || fieldName === 'height') {
               value = parseFloat(value) || null;
@@ -406,7 +450,7 @@ export default function AdminClients() {
             } else if (fieldName === 'language') {
               value = value.toLowerCase().substring(0, 2);
             }
-            
+
             userData[fieldName] = value;
           }
         });
@@ -432,7 +476,7 @@ export default function AdminClients() {
 
           await base44.entities.User.create(userData);
           imported++;
-          
+
         } catch (error) {
           console.error(`Error importing ${userData.email}:`, error);
           errors.push(userData.email);
@@ -444,10 +488,10 @@ export default function AdminClients() {
       if (errors.length > 0) {
         message += `\n\nErrori su: ${errors.slice(0, 5).join(', ')}${errors.length > 5 ? '...' : ''}`;
       }
-      
+
       alert(message);
       await loadClients();
-      
+
     } catch (error) {
       console.error('Import error:', error);
       alert('❌ Errore durante l\'importazione: ' + error.message);
@@ -584,7 +628,7 @@ export default function AdminClients() {
                   className="pl-10 h-12"
                 />
               </div>
-              
+
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -631,7 +675,7 @@ export default function AdminClients() {
                     <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                       {(client.full_name || client.email || 'U')[0].toUpperCase()}
                     </div>
-                    
+
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-gray-900">{client.full_name || 'Nome non disponibile'}</h3>
@@ -644,9 +688,9 @@ export default function AdminClients() {
                         {client.subscription_status && (
                           <Badge className={
                             client.subscription_status === 'active' ? 'bg-green-100 text-green-700' :
-                            client.subscription_status === 'trial' ? 'bg-blue-100 text-blue-700' :
-                            client.subscription_status === 'expired' ? 'bg-orange-100 text-orange-700' :
-                            'bg-gray-100 text-gray-700'
+                              client.subscription_status === 'trial' ? 'bg-blue-100 text-blue-700' :
+                                client.subscription_status === 'expired' ? 'bg-orange-100 text-orange-700' :
+                                  'bg-gray-100 text-gray-700'
                           }>
                             {client.subscription_status}
                           </Badge>
@@ -681,7 +725,7 @@ export default function AdminClients() {
                   </div>
                 </div>
               ))}
-              
+
               {filteredClients.length === 0 && (
                 <div className="text-center py-12 text-gray-500">
                   Nessun cliente trovato
@@ -692,111 +736,196 @@ export default function AdminClients() {
         </Card>
       </div>
 
-      {/* Column Mapping Dialog */}
+      {/* Column Mapping Dialog - REDESIGNED */}
       <Dialog open={showMappingDialog} onOpenChange={setShowMappingDialog}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-bold">🎯 Mappatura Colonne CSV</DialogTitle>
+            <DialogTitle className="text-2xl font-bold flex items-center gap-3">
+              🎯 Mappatura Colonne CSV
+              <Badge className="bg-blue-100 text-blue-700 text-base px-3 py-1">
+                {csvData.length} righe trovate
+              </Badge>
+            </DialogTitle>
           </DialogHeader>
-          
-          <div className="space-y-6 pt-4">
-            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
-              <p className="text-sm text-blue-900">
-                <strong>📋 Istruzioni:</strong> Associa ogni colonna del tuo CSV a un campo di MyWellness. 
-                Puoi selezionare "Non importare" per le colonne che non ti servono. 
-                <strong className="text-red-600"> L'email è obbligatoria.</strong>
-              </p>
-            </div>
 
-            <div className="bg-gray-50 rounded-xl p-4">
-              <p className="text-sm font-semibold text-gray-700 mb-2">
-                📊 Preview dati: {csvData.length} righe trovate
-              </p>
-            </div>
-
-            <div className="space-y-4">
-              {csvHeaders.map((header, index) => (
-                <div key={index} className="border rounded-lg p-4 bg-white">
-                  <div className="grid grid-cols-3 gap-4 items-center">
-                    <div>
-                      <Label className="text-sm font-semibold text-gray-700 mb-1 block">
-                        Colonna CSV:
-                      </Label>
-                      <div className="flex items-center gap-2">
-                        <Badge variant="outline" className="text-base px-3 py-1">
-                          {header || `Colonna ${index + 1}`}
-                        </Badge>
-                      </div>
-                    </div>
-
-                    <div className="flex items-center justify-center">
-                      <ArrowRight className="w-6 h-6 text-gray-400" />
-                    </div>
-
-                    <div>
-                      <Label className="text-sm font-semibold text-gray-700 mb-1 block">
-                        Campo MyWellness:
-                      </Label>
-                      <select
-                        value={columnMapping[index] || ''}
-                        onChange={(e) => handleMappingChange(index, e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
-                      >
-                        {availableFields.map(field => (
-                          <option key={field.value} value={field.value}>
-                            {field.label}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
-                  </div>
-
-                  {/* Preview dati */}
-                  <div className="mt-3 pt-3 border-t border-gray-200">
-                    <p className="text-xs text-gray-500 mb-1">Preview prime 3 righe:</p>
-                    <div className="flex gap-2">
-                      {csvData.slice(0, 3).map((row, rowIndex) => (
-                        <Badge key={rowIndex} variant="outline" className="text-xs">
-                          {row[index] || '(vuoto)'}
-                        </Badge>
-                      ))}
-                    </div>
-                  </div>
+          <div className="flex-1 overflow-y-auto space-y-6 pr-2">
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-4">
+              <div className="flex items-start gap-3">
+                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-6 h-6 text-white" />
                 </div>
-              ))}
+                <div>
+                  <p className="font-bold text-blue-900 mb-1">📋 Come Funziona</p>
+                  <p className="text-sm text-blue-800">
+                    Per ogni colonna del tuo CSV, seleziona il campo MyWellness corrispondente nel menu a tendina.
+                    Usa "❌ Non importare" per le colonne che non ti servono.
+                    <strong className="text-red-600 ml-1">L'email è obbligatoria.</strong>
+                  </p>
+                </div>
+              </div>
             </div>
 
-            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
-              <div>
-                {Object.values(columnMapping).includes('email') ? (
-                  <div className="flex items-center gap-2 text-green-600">
-                    <CheckCircle className="w-5 h-5" />
-                    <span className="font-semibold">Email mappato ✓</span>
-                  </div>
-                ) : (
-                  <div className="flex items-center gap-2 text-red-600">
-                    <XCircle className="w-5 h-5" />
-                    <span className="font-semibold">Email non mappato - obbligatorio!</span>
-                  </div>
-                )}
-              </div>
+            {/* Grouped Fields */}
+            {Object.entries(fieldGroups).map(([groupKey, group]) => {
+              const columnsInGroup = csvHeaders
+                .map((header, idx) => ({ header, idx, mapping: columnMapping[idx] }))
+                .filter(col => {
+                  const mappedField = col.mapping;
+                  return group.fields.some(f => f.value === mappedField);
+                });
 
-              <div className="flex gap-3">
-                <Button
-                  onClick={() => setShowMappingDialog(false)}
-                  variant="outline"
-                >
-                  Annulla
-                </Button>
-                <Button
-                  onClick={handleConfirmImport}
-                  disabled={!Object.values(columnMapping).includes('email')}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
-                >
-                  <Upload className="w-4 h-4 mr-2" />
-                  Conferma Importazione ({csvData.length} utenti)
-                </Button>
-              </div>
+              if (columnsInGroup.length === 0) return null;
+
+              return (
+                <Card key={groupKey} className="border-2">
+                  <CardHeader className="pb-3 bg-gradient-to-r from-gray-50 to-gray-100">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      <group.icon className="w-5 h-5" />
+                      {group.title}
+                      <Badge variant="outline">{columnsInGroup.length} colonne</Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4 space-y-3">
+                    {columnsInGroup.map(({ header, idx }) => (
+                      <div key={idx} className="grid grid-cols-12 gap-3 items-center p-3 bg-gray-50 rounded-lg">
+                        <div className="col-span-4">
+                          <Label className="text-xs text-gray-500 mb-1 block">Colonna CSV</Label>
+                          <Badge className="text-sm px-3 py-1 bg-white">
+                            {header || `Colonna ${idx + 1}`}
+                          </Badge>
+                        </div>
+
+                        <div className="col-span-1 flex justify-center">
+                          <ArrowRight className="w-5 h-5 text-[var(--brand-primary)]" />
+                        </div>
+
+                        <div className="col-span-4">
+                          <Label className="text-xs text-gray-500 mb-1 block">Campo MyWellness</Label>
+                          <select
+                            value={columnMapping[idx] || ''}
+                            onChange={(e) => handleMappingChange(idx, e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                          >
+                            <option value="">❌ Non importare</option>
+                            {group.fields.map(field => (
+                              <option key={field.value} value={field.value}>
+                                {field.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="col-span-3">
+                          <Label className="text-xs text-gray-500 mb-1 block">Preview</Label>
+                          <div className="flex gap-1 overflow-x-auto">
+                            {csvData.slice(0, 2).map((row, rowIdx) => (
+                              <Badge key={rowIdx} variant="outline" className="text-xs whitespace-nowrap">
+                                {(row[idx] || '(vuoto)').substring(0, 15)}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              );
+            })}
+
+            {/* Unmapped Columns */}
+            {(() => {
+              const unmapped = csvHeaders
+                .map((header, idx) => ({ header, idx }))
+                .filter(col => !columnMapping[col.idx] || columnMapping[col.idx] === '');
+
+              if (unmapped.length === 0) return null;
+
+              return (
+                <Card className="border-2 border-dashed border-gray-300">
+                  <CardHeader className="pb-3 bg-gray-50">
+                    <CardTitle className="text-lg flex items-center gap-2">
+                      ❓ Colonne Non Mappate
+                      <Badge variant="outline">{unmapped.length} colonne</Badge>
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="pt-4 space-y-3">
+                    {unmapped.map(({ header, idx }) => (
+                      <div key={idx} className="grid grid-cols-12 gap-3 items-center p-3 bg-gray-50 rounded-lg">
+                        <div className="col-span-4">
+                          <Label className="text-xs text-gray-500 mb-1 block">Colonna CSV</Label>
+                          <Badge className="text-sm px-3 py-1 bg-white">
+                            {header || `Colonna ${idx + 1}`}
+                          </Badge>
+                        </div>
+
+                        <div className="col-span-1 flex justify-center">
+                          <ArrowRight className="w-5 h-5 text-gray-300" />
+                        </div>
+
+                        <div className="col-span-4">
+                          <Label className="text-xs text-gray-500 mb-1 block">Assegna a</Label>
+                          <select
+                            value={columnMapping[idx] || ''} // Set value from mapping
+                            onChange={(e) => handleMappingChange(idx, e.target.value)}
+                            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                          >
+                            {allAvailableFields.map(field => (
+                              <option key={field.value} value={field.value}>
+                                {field.label}
+                              </option>
+                            ))}
+                          </select>
+                        </div>
+
+                        <div className="col-span-3">
+                          <Label className="text-xs text-gray-500 mb-1 block">Preview</Label>
+                          <div className="flex gap-1 overflow-x-auto">
+                            {csvData.slice(0, 2).map((row, rowIdx) => (
+                              <Badge key={rowIdx} variant="outline" className="text-xs whitespace-nowrap">
+                                {(row[idx] || '(vuoto)').substring(0, 15)}
+                              </Badge>
+                            ))}
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </CardContent>
+                </Card>
+              );
+            })()}
+          </div>
+
+          <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-4">
+            <div>
+              {Object.values(columnMapping).includes('email') ? (
+                <div className="flex items-center gap-2 text-green-600">
+                  <CheckCircle className="w-6 h-6" />
+                  <span className="font-bold text-lg">Email mappato ✓ Pronto per importare</span>
+                </div>
+              ) : (
+                <div className="flex items-center gap-2 text-red-600">
+                  <XCircle className="w-6 h-6" />
+                  <span className="font-bold text-lg">Email non mappato - obbligatorio!</span>
+                </div>
+              )}
+            </div>
+
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setShowMappingDialog(false)}
+                variant="outline"
+                className="px-6"
+              >
+                Annulla
+              </Button>
+              <Button
+                onClick={handleConfirmImport}
+                disabled={!Object.values(columnMapping).includes('email')}
+                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-8"
+              >
+                <Upload className="w-4 h-4 mr-2" />
+                Importa {csvData.length} Utenti
+              </Button>
             </div>
           </div>
         </DialogContent>
