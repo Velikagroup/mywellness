@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -290,65 +291,82 @@ export default function AdminClients() {
     return detectedSep;
   };
 
+  // PARSER CSV COMPLETAMENTE RISCRITTO - Gestisce newline dentro celle quotate
   const parseCSV = (text, separator = ',') => {
     const cleanText = text.replace(/^\uFEFF/, '').trim();
     
-    // Conta le righe PRIMA del parsing per debug
-    const rawLines = cleanText.split(/\r?\n/);
-    console.log('🔢 Righe RAW nel file:', rawLines.length);
-    console.log('📝 Prima riga:', rawLines[0]);
-    console.log('📝 Seconda riga:', rawLines[1]?.substring(0, 100));
+    console.log('📄 Inizio parsing - Lunghezza testo:', cleanText.length, 'caratteri');
     
-    const result = [];
+    const rows = [];
+    let currentRow = [];
+    let currentCell = '';
+    let inQuotes = false;
     
-    for (let lineIndex = 0; lineIndex < rawLines.length; lineIndex++) {
-      const line = rawLines[lineIndex];
+    for (let i = 0; i < cleanText.length; i++) {
+      const char = cleanText[i];
+      const nextChar = cleanText[i + 1];
       
-      // Skip righe completamente vuote
-      if (!line || !line.trim()) {
-        console.log(`⏭️ Riga ${lineIndex + 1} vuota - skip`);
-        continue;
-      }
-      
-      const row = [];
-      let current = '';
-      let inQuotes = false;
-      
-      for (let i = 0; i < line.length; i++) {
-        const char = line[i];
-        
-        if (char === '"') {
-          if (inQuotes && line[i + 1] === '"') {
-            current += '"';
-            i++;
-          } else {
-            inQuotes = !inQuotes;
-          }
-        } else if (char === separator && !inQuotes) {
-          row.push(current.trim());
-          current = '';
+      if (char === '"') {
+        if (inQuotes && nextChar === '"') {
+          // Quote doppia dentro cella quotata = quote letterale
+          currentCell += '"';
+          i++; // Skip prossimo carattere
         } else {
-          current += char;
+          // Toggle stato quotes
+          inQuotes = !inQuotes;
         }
-      }
-      row.push(current.trim());
-      
-      // Aggiungi solo se la riga ha almeno UNA cella con contenuto
-      const hasContent = row.some(cell => cell && cell.length > 0);
-      if (hasContent) {
-        result.push(row);
-        if (result.length <= 3) {
-          console.log(`✅ Riga ${lineIndex + 1} parsata:`, row.length, 'colonne -', row.slice(0, 3));
+      } else if (char === separator && !inQuotes) {
+        // Fine cella
+        currentRow.push(currentCell.trim());
+        currentCell = '';
+      } else if ((char === '\n' || (char === '\r' && nextChar === '\n')) && !inQuotes) {
+        // Fine riga (solo se NON dentro quotes)
+        currentRow.push(currentCell.trim());
+        
+        // Aggiungi riga solo se ha almeno UNA cella con contenuto
+        if (currentRow.some(cell => cell.length > 0)) {
+          rows.push(currentRow);
         }
-      } else {
-        console.log(`⏭️ Riga ${lineIndex + 1} senza contenuto - skip`);
+        
+        currentRow = [];
+        currentCell = '';
+        
+        // Skip \n se era \r\n
+        if (char === '\r' && nextChar === '\n') {
+          i++;
+        }
+      } else if (char !== '\r') {
+        // Aggiungi carattere alla cella (skip solo \r standalone)
+        currentCell += char;
       }
     }
     
-    console.log('🎯 TOTALE RIGHE PARSATE (incluso header):', result.length);
-    console.log('📊 Righe dati (senza header):', result.length - 1);
+    // Aggiungi ultima cella e riga
+    if (currentCell.length > 0 || currentRow.length > 0) {
+      currentRow.push(currentCell.trim());
+      if (currentRow.some(cell => cell.length > 0)) {
+        rows.push(currentRow);
+      }
+    }
     
-    return result;
+    console.log('🎯 PARSING COMPLETATO:');
+    console.log('  📊 Righe totali:', rows.length);
+    console.log('  📋 Header:', rows[0]);
+    console.log('  🔢 Colonne attese:', rows[0]?.length);
+    console.log('  📝 Prima riga dati:', rows[1]);
+    console.log('  📝 Seconda riga dati:', rows[2]);
+    
+    // Validazione: controlla righe con numero colonne diverso
+    if (rows.length > 0) {
+      const expectedCols = rows[0].length;
+      const invalidRows = rows.slice(1).filter(row => row.length !== expectedCols);
+      if (invalidRows.length > 0) {
+        console.warn(`⚠️ ATTENZIONE: ${invalidRows.length} righe hanno numero di colonne diverso da ${expectedCols}`);
+        console.warn('  📌 Esempi righe problematiche:', invalidRows.slice(0, 3).map(r => `${r.length} colonne`));
+      }
+    }
+    
+    return rows;
   };
 
   const handleFileSelect = async (event) => {
@@ -361,11 +379,11 @@ export default function AdminClients() {
     }
 
     try {
-      console.log('📁 File selezionato:', file.name, '- Dimensione:', file.size, 'bytes');
+      console.log('📁 File selezionato:', file.name, '- Dimensione:', (file.size / 1024).toFixed(1), 'KB');
       
       const text = await file.text();
       
-      console.log('📄 Contenuto file caricato - Lunghezza testo:', text.length, 'caratteri');
+      console.log('📄 File caricato - Lunghezza:', text.length, 'caratteri');
       
       // Rileva il separatore automaticamente
       const separator = detectSeparator(text);
@@ -393,7 +411,7 @@ export default function AdminClients() {
         lastHeader: headers[headers.length - 1]
       };
       
-      console.log('🎯 RIEPILOGO PARSING:', debugInfo);
+      console.log('✅ RIEPILOGO FINALE:', debugInfo);
       setParseDebugInfo(debugInfo);
 
       setCsvHeaders(headers);
@@ -495,7 +513,7 @@ export default function AdminClients() {
             } else if (fieldName === 'gender') {
               value = value.toLowerCase();
               if (value === 'uomo' || value === 'm' || value === 'maschio' || value === 'male') value = 'male';
-              if (value === 'donna' || value === 'f' || value === 'femmina' || value === 'female') value = 'female';
+              else if (value === 'donna' || value === 'f' || value === 'femmina' || value === 'female') value = 'female';
             } else if (fieldName === 'subscription_plan') {
               value = value.toLowerCase();
             } else if (fieldName === 'subscription_status') {
@@ -786,7 +804,7 @@ export default function AdminClients() {
         </Card>
       </div>
 
-      {/* Column Mapping Dialog - CON DEBUG INFO */}
+      {/* Column Mapping Dialog */}
       <Dialog open={showMappingDialog} onOpenChange={setShowMappingDialog}>
         <DialogContent className="max-w-[95vw] w-[1400px] h-[90vh] flex flex-col">
           <DialogHeader className="border-b pb-4">
