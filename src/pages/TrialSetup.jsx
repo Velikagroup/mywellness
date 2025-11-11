@@ -230,7 +230,7 @@ export default function TrialSetup() {
     };
 
     checkAuth();
-  }, [navigate, location, trialSetupTracked, selectedPlan]); // Add selectedPlan to dependencies for tracking
+  }, [navigate, location, trialSetupTracked, selectedPlan]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -459,19 +459,10 @@ export default function TrialSetup() {
             marketingConsent: marketingConsent
           };
 
-          const response = await fetch(`${window.location.origin}/functions/stripeCreateTrialSubscription`, {
-            method: 'POST',
-            headers: { 
-              'Content-Type': 'application/json',
-              'Authorization': `Bearer ${await base44.auth.getToken()}`
-            },
-            body: JSON.stringify(payload)
-          });
+          const response = await base44.functions.invoke('stripeCreateTrialSubscription', payload);
 
-          const result = await response.json();
-
-          if (!result.success) {
-            throw new Error(result.error || 'Setup failed');
+          if (!response.success) {
+            throw new Error(response.error || 'Setup failed');
           }
 
           ev.complete('success');
@@ -496,7 +487,7 @@ export default function TrialSetup() {
 
   const handleCompleteSetup = async () => {
     if (!isFormValid) {
-      alert("Per favore, compila tutti i campi obbligatori correttamente.");
+      alert("Per favorE, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
@@ -513,7 +504,7 @@ export default function TrialSetup() {
       
       const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
 
-      let payload = {
+      const payload = {
         cardData: {
           number: cardData.number.replace(/\s/g, ''),
           exp_month: exp_month,
@@ -543,17 +534,7 @@ export default function TrialSetup() {
         marketingConsent: marketingConsent
       };
 
-      const functionUrl = `${window.location.origin}/functions/stripeCreateTrialSubscription`;
-      const response = await fetch(functionUrl, {
-        method: 'POST',
-        headers: { 
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${await base44.auth.getToken()}`
-        },
-        body: JSON.stringify(payload)
-      });
-
-      const result = await response.json();
+      const result = await base44.functions.invoke('stripeCreateTrialSubscription', payload);
 
       if (!result.success) {
         throw new Error(result.error || result.details || 'Setup failed');
