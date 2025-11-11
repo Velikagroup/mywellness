@@ -324,7 +324,7 @@ export default function Quiz() {
         body_fat_percentage: bodyFat !== null ? parseFloat(bodyFat.toFixed(1)) : null,
         bmr: Math.round(bmr),
         daily_calories: Math.round(dailyCalories),
-        quiz_completed: false,
+        quiz_completed: true, // ✅ SETTA QUIZ_COMPLETED A TRUE SUBITO
       };
 
       // Controlla se l'utente è già loggato
