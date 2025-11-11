@@ -277,6 +277,8 @@ export default function TrialSetup() {
           '::placeholder': {
             color: '#9ca3af',
           },
+          // Add padding to base style to match the new p-4 class
+          padding: '12px 14px',
         },
         invalid: {
           color: '#ef4444',
@@ -303,7 +305,7 @@ export default function TrialSetup() {
       console.log('🧹 Unmounting Card Element');
       card.unmount();
     };
-  }, [stripe, paymentMethod]);
+  }, [stripe, paymentMethod, cardElement]);
 
   // Initialize Payment Request for digital wallets
   useEffect(() => {
@@ -692,9 +694,10 @@ export default function TrialSetup() {
         }
         
         /* Stripe Element styling */
+        /* Removed .StripeElement as padding is now controlled by p-4 class */
         .StripeElement {
-          height: 40px;
-          padding: 12px 14px;
+          height: 40px; /* still need height */
+          /* padding: 12px 14px; removed */
           border-radius: 8px;
           background-color: white;
           transition: all 0.3s ease;
@@ -1121,8 +1124,8 @@ export default function TrialSetup() {
                   </Label>
                   <div 
                     ref={cardElementRef}
-                    className="border-2 border-gray-300 rounded-xl bg-white transition-all min-h-[50px]"
-                    style={{ padding: '0px' }}
+                    id="card-element"
+                    className="border-2 border-gray-300 rounded-xl bg-white p-4 transition-all focus-within:border-[var(--brand-primary)] focus-within:ring-2 focus-within:ring-[var(--brand-primary)]/20"
                   />
                   <p className="text-xs text-gray-500 mt-2">
                     🔒 Pagamento sicuro gestito da Stripe. I tuoi dati sono protetti.
