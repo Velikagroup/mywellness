@@ -1,22 +1,21 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { X, ArrowRight, ArrowLeft, Sparkles } from 'lucide-react';
+import { ArrowRight, ArrowLeft, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 
 const discoveryOptions = [
-  { id: 'instagram', label: 'Instagram', emoji: '📸', gradient: 'from-pink-500 to-purple-600' },
-  { id: 'tiktok', label: 'TikTok', emoji: '🎵', gradient: 'from-gray-900 to-pink-600' },
-  { id: 'facebook', label: 'Facebook', emoji: '👥', gradient: 'from-blue-500 to-blue-700' },
-  { id: 'youtube', label: 'YouTube', emoji: '▶️', gradient: 'from-red-500 to-red-700' },
-  { id: 'google_search', label: 'Google', emoji: '🔍', gradient: 'from-blue-400 to-green-500' },
-  { id: 'friend_recommendation', label: 'Un amico', emoji: '🤝', gradient: 'from-amber-500 to-orange-600' },
-  { id: 'influencer', label: 'Influencer', emoji: '⭐', gradient: 'from-yellow-400 to-yellow-600' },
-  { id: 'blog_article', label: 'Blog', emoji: '📰', gradient: 'from-gray-700 to-gray-900' },
-  { id: 'podcast', label: 'Podcast', emoji: '🎙️', gradient: 'from-purple-500 to-indigo-600' },
-  { id: 'other', label: 'Altro', emoji: '💡', gradient: 'from-teal-500 to-cyan-600' }
+  { id: 'instagram', label: 'Instagram' },
+  { id: 'tiktok', label: 'TikTok' },
+  { id: 'facebook', label: 'Facebook' },
+  { id: 'youtube', label: 'YouTube' },
+  { id: 'google_search', label: 'Google' },
+  { id: 'friend_recommendation', label: 'Un amico' },
+  { id: 'influencer', label: 'Influencer' },
+  { id: 'blog_article', label: 'Blog' },
+  { id: 'podcast', label: 'Podcast' },
+  { id: 'other', label: 'Altro' }
 ];
 
 export default function OnboardingTour({ user, onComplete }) {
@@ -29,34 +28,26 @@ export default function OnboardingTour({ user, onComplete }) {
   const steps = [
     {
       id: 'welcome',
-      title: 'Benvenuto in MyWellness! 🎉',
+      title: 'Benvenuto in MyWellness!',
       subtitle: 'Come ci hai scoperti?',
-      description: 'Raccontaci come sei arrivato fino a noi! La tua risposta ci aiuta a migliorare.',
-      type: 'modal',
-      action: 'select_source'
+      description: 'Raccontaci come sei arrivato fino a noi. La tua risposta ci aiuta a migliorare.',
+      type: 'modal'
     },
     {
       id: 'dashboard_intro',
       title: 'La Tua Dashboard',
-      emoji: '📊',
-      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi verso il tuo obiettivo.',
-      gradient: 'from-blue-500 to-indigo-600'
+      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi.'
     },
     {
       id: 'track_progress',
       title: 'Traccia i Progressi',
-      emoji: '📈',
-      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate e visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati.',
-      gradient: 'from-[#26847F] to-teal-600'
+      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate e visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati.'
     },
     {
       id: 'nutrition_start',
       title: 'Crea il Tuo Piano',
-      emoji: '🍽️',
       description: 'Sei pronto per iniziare! Clicca qui sotto per generare il tuo piano alimentare personalizzato con l\'intelligenza artificiale.',
-      gradient: 'from-green-500 to-emerald-600',
-      final: true,
-      action: 'navigate_to_meals'
+      final: true
     }
   ];
 
@@ -154,115 +145,75 @@ export default function OnboardingTour({ user, onComplete }) {
     return (
       <>
         <style>{`
-          @keyframes fadeInScale {
-            from {
-              opacity: 0;
-              transform: scale(0.95);
-            }
-            to {
-              opacity: 1;
-              transform: scale(1);
-            }
+          @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+          * {
+            font-family: 'Inter', sans-serif;
           }
-          
-          @keyframes shimmer {
+
+          @keyframes gradientShift {
             0% {
-              background-position: -200% center;
+              background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
+            }
+            33% {
+              background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%;
+            }
+            66% {
+              background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%;
             }
             100% {
-              background-position: 200% center;
+              background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
             }
           }
           
-          .animate-fade-in-scale {
-            animation: fadeInScale 0.3s ease-out;
-          }
-          
-          .shimmer-text {
-            background: linear-gradient(90deg, #26847F 0%, #14b8a6 50%, #26847F 100%);
-            background-size: 200% auto;
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-            animation: shimmer 3s linear infinite;
-          }
-          
-          .source-button {
-            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-          }
-          
-          .source-button:hover {
-            transform: translateY(-2px);
-          }
-          
-          .source-button:active {
-            transform: translateY(0px);
+          .animated-gradient-bg-onboarding {
+            background: #1a1a2e;
+            background-image: 
+              radial-gradient(circle at 10% 20%, rgba(38, 132, 127, 0.15) 0%, transparent 50%),
+              radial-gradient(circle at 85% 10%, rgba(20, 184, 166, 0.12) 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, rgba(168, 224, 215, 0.08) 0%, transparent 50%),
+              radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(252, 231, 243, 0.05) 0%, transparent 60%),
+              radial-gradient(circle at 90% 85%, rgba(224, 204, 255, 0.08) 0%, transparent 50%);
+            background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
+            animation: gradientShift 45s ease-in-out infinite;
           }
         `}</style>
         
-        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl p-4 animate-fade-in-scale">
-          <div className="max-w-3xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden">
-            {/* Header con gradiente */}
-            <div className="bg-gradient-to-br from-[#26847F] via-teal-600 to-emerald-600 p-8 md:p-10 text-white relative overflow-hidden">
-              <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
-              <div className="relative z-10">
-                <div className="flex items-center justify-center mb-4">
-                  <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-2xl flex items-center justify-center shadow-xl">
-                    <Sparkles className="w-10 h-10 text-white" />
-                  </div>
-                </div>
-                <h2 className="text-3xl md:text-4xl font-black text-center mb-3">{currentStepData.title}</h2>
-                <p className="text-teal-50 text-center text-lg md:text-xl font-medium">{currentStepData.subtitle}</p>
-              </div>
-            </div>
-            
-            {/* Content */}
-            <div className="p-6 md:p-8">
-              <p className="text-gray-600 text-center mb-8 text-base md:text-lg leading-relaxed">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center animated-gradient-bg-onboarding p-4">
+          <div className="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden">
+            <div className="p-6">
+              <h2 className="text-xl font-bold text-gray-900 mb-1 text-center">
+                {currentStepData.title}
+              </h2>
+              <p className="text-sm text-gray-600 mb-6 text-center">
                 {currentStepData.description}
               </p>
               
-              <div className="grid grid-cols-2 gap-3 md:gap-4 mb-8">
+              <div className="space-y-2 mb-6">
                 {discoveryOptions.map((option) => (
                   <button
                     key={option.id}
                     onClick={() => setSelectedSource(option.id)}
-                    className={`source-button relative p-4 md:p-5 rounded-2xl border-2 text-left overflow-hidden ${
+                    className={`w-full px-4 py-3 text-left text-sm font-medium rounded-lg transition-all ${
                       selectedSource === option.id
-                        ? 'border-[#26847F] shadow-xl scale-105'
-                        : 'border-gray-200 hover:border-[#26847F]/30 hover:shadow-lg'
+                        ? 'bg-[#26847F] text-white'
+                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
                     }`}
                   >
-                    {selectedSource === option.id && (
-                      <div className={`absolute inset-0 bg-gradient-to-br ${option.gradient} opacity-10`}></div>
-                    )}
-                    <div className="relative z-10 flex flex-col items-center justify-center gap-2 text-center">
-                      <span className="text-4xl md:text-5xl">{option.emoji}</span>
-                      <span className={`font-bold text-sm md:text-base ${
-                        selectedSource === option.id ? 'text-[#26847F]' : 'text-gray-800'
-                      }`}>
-                        {option.label}
-                      </span>
-                    </div>
-                    {selectedSource === option.id && (
-                      <div className="absolute top-2 right-2 w-6 h-6 bg-[#26847F] rounded-full flex items-center justify-center">
-                        <svg className="w-4 h-4 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                        </svg>
-                      </div>
-                    )}
+                    {option.label}
                   </button>
                 ))}
               </div>
               
               {(selectedSource === 'influencer' || selectedSource === 'other') && (
-                <div className="mb-6 animate-fade-in-scale">
+                <div className="mb-6">
                   <input
                     type="text"
                     value={sourceDetails}
                     onChange={(e) => setSourceDetails(e.target.value)}
-                    placeholder={selectedSource === 'influencer' ? '✨ Nome dell\'influencer (opzionale)' : '💭 Raccontaci di più (opzionale)'}
-                    className="w-full px-5 py-4 border-2 border-gray-200 rounded-2xl focus:border-[#26847F] focus:outline-none text-base transition-all"
+                    placeholder={selectedSource === 'influencer' ? 'Nome influencer (opzionale)' : 'Dettagli (opzionale)'}
+                    className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:border-[#26847F] focus:outline-none"
                   />
                 </div>
               )}
@@ -270,19 +221,9 @@ export default function OnboardingTour({ user, onComplete }) {
               <Button
                 onClick={handleSourceSelect}
                 disabled={!selectedSource || isSaving}
-                className="w-full h-14 bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white text-lg font-bold rounded-2xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSaving ? (
-                  <span className="flex items-center gap-2">
-                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    Salvataggio...
-                  </span>
-                ) : (
-                  <span className="flex items-center justify-center gap-2">
-                    Continua
-                    <ArrowRight className="w-5 h-5" />
-                  </span>
-                )}
+                {isSaving ? 'Salvataggio...' : 'Continua'}
               </Button>
             </div>
           </div>
@@ -295,107 +236,109 @@ export default function OnboardingTour({ user, onComplete }) {
   return (
     <>
       <style>{`
-        @keyframes slideUpFade {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+
+        * {
+          font-family: 'Inter', sans-serif;
+        }
+
+        @keyframes gradientShift {
+          0% {
+            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
           }
-          to {
-            opacity: 1;
-            transform: translateY(0);
+          33% {
+            background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%;
+          }
+          66% {
+            background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%;
+          }
+          100% {
+            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
           }
         }
         
-        .animate-slide-up {
-          animation: slideUpFade 0.4s ease-out;
+        .animated-gradient-bg-onboarding {
+          background: #1a1a2e;
+          background-image: 
+            radial-gradient(circle at 10% 20%, rgba(38, 132, 127, 0.15) 0%, transparent 50%),
+            radial-gradient(circle at 85% 10%, rgba(20, 184, 166, 0.12) 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, rgba(168, 224, 215, 0.08) 0%, transparent 50%),
+            radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, rgba(252, 231, 243, 0.05) 0%, transparent 60%),
+            radial-gradient(circle at 90% 85%, rgba(224, 204, 255, 0.08) 0%, transparent 50%);
+          background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
+          animation: gradientShift 45s ease-in-out infinite;
         }
       `}</style>
       
-      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-gradient-to-br from-gray-900/95 via-gray-800/95 to-gray-900/95 backdrop-blur-xl p-4">
-        <div className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden animate-slide-up">
-          {/* Header con gradiente ed emoji */}
-          <div className={`bg-gradient-to-br ${currentStepData.gradient} p-8 md:p-10 text-white relative overflow-hidden`}>
-            <button 
-              onClick={handleSkip} 
-              className="absolute top-4 right-4 z-10 w-10 h-10 bg-white/20 hover:bg-white/30 backdrop-blur-sm rounded-full flex items-center justify-center transition-all"
-            >
-              <X className="w-5 h-5" />
-            </button>
-            
-            <div className="absolute inset-0 bg-white/10 backdrop-blur-sm"></div>
-            
-            <div className="relative z-10 flex flex-col items-center text-center">
-              <div className="text-7xl md:text-8xl mb-4">
-                {currentStepData.emoji}
-              </div>
-              <h2 className="text-3xl md:text-4xl font-black mb-2">{currentStepData.title}</h2>
+      <div className="fixed inset-0 z-[200] flex items-center justify-center animated-gradient-bg-onboarding p-4">
+        <div className="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden">
+          <div className="p-6">
+            <div className="flex items-start justify-between mb-4">
+              <h2 className="text-xl font-bold text-gray-900">
+                {currentStepData.title}
+              </h2>
+              <button 
+                onClick={handleSkip} 
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </div>
-          </div>
-          
-          {/* Content */}
-          <div className="p-6 md:p-8">
-            <p className="text-gray-700 text-center text-lg md:text-xl leading-relaxed mb-8">
+            
+            <p className="text-sm text-gray-600 mb-8 leading-relaxed">
               {currentStepData.description}
             </p>
             
-            {/* Se è l'ultimo step, mostra il bottone speciale per andare a Nutrizione */}
             {currentStepData.final ? (
-              <div className="space-y-4">
+              <div className="space-y-3">
                 <Button
                   onClick={handleNavigateToMeals}
-                  className="w-full h-16 bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white text-xl font-black rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105"
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold"
                 >
-                  <span className="flex items-center justify-center gap-3">
-                    <span className="text-2xl">🍽️</span>
-                    Vai a Nutrizione
-                    <ArrowRight className="w-6 h-6" />
-                  </span>
+                  Vai a Nutrizione
                 </Button>
                 
-                <div className="text-center">
-                  <button
-                    onClick={handleSkip}
-                    className="text-sm text-gray-500 hover:text-gray-700 font-medium transition-colors"
-                  >
-                    Salta e resta sulla Dashboard
-                  </button>
-                </div>
+                <button
+                  onClick={handleSkip}
+                  className="w-full text-sm text-gray-500 hover:text-gray-700 font-medium"
+                >
+                  Resta sulla Dashboard
+                </button>
               </div>
             ) : (
-              <div className="space-y-6">
-                {/* Progress dots */}
-                <div className="flex items-center justify-center gap-2">
+              <div className="space-y-4">
+                <div className="flex items-center justify-center gap-1.5">
                   {steps.slice(1).map((_, index) => (
                     <div
                       key={index}
-                      className={`h-2.5 rounded-full transition-all duration-300 ${
+                      className={`h-1.5 rounded-full transition-all ${
                         index + 1 <= currentStep 
-                          ? 'bg-gradient-to-r from-[#26847F] to-teal-600 w-10' 
-                          : 'bg-gray-300 w-2.5'
+                          ? 'bg-[#26847F] w-8' 
+                          : 'bg-gray-300 w-1.5'
                       }`}
                     />
                   ))}
                 </div>
                 
-                {/* Navigation buttons */}
-                <div className="flex items-center justify-center gap-3">
+                <div className="flex items-center justify-between gap-2">
                   {currentStep > 1 && (
                     <Button
                       onClick={handlePrevious}
                       variant="outline"
-                      className="h-12 px-6 rounded-xl border-2 font-semibold"
+                      className="flex-1 font-semibold"
                     >
-                      <ArrowLeft className="w-4 h-4 mr-2" />
+                      <ArrowLeft className="w-4 h-4 mr-1" />
                       Indietro
                     </Button>
                   )}
                   
                   <Button
                     onClick={handleNext}
-                    className="h-12 px-8 bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                    className={`bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold ${currentStep > 1 ? 'flex-1' : 'w-full'}`}
                   >
                     Avanti
-                    <ArrowRight className="w-4 h-4 ml-2" />
+                    <ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </div>
               </div>
