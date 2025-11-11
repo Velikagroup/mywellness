@@ -242,10 +242,6 @@ export default function TrialSetup() {
     const initializePaymentRequest = async () => {
       try {
         console.log('🔍 Initializing Payment Request...');
-        console.log('📱 User Agent:', navigator.userAgent);
-        console.log('🌐 Platform:', navigator.platform);
-        console.log('🔧 Is Safari:', /^((?!chrome|android).)*safari/i.test(navigator.userAgent));
-        console.log('📲 Is iOS:', /iPad|iPhone|iPod/.test(navigator.userAgent));
         
         const pr = stripe.paymentRequest({
           country: 'IT',
