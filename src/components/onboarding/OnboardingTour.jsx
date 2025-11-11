@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
@@ -24,6 +24,17 @@ export default function OnboardingTour({ user, onComplete }) {
   const [selectedSource, setSelectedSource] = useState(null);
   const [sourceDetails, setSourceDetails] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [targetRect, setTargetRect] = useState(null);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const steps = [
     {
@@ -36,22 +47,52 @@ export default function OnboardingTour({ user, onComplete }) {
     {
       id: 'dashboard_intro',
       title: 'La Tua Dashboard',
-      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi.'
+      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi.',
+      target: '.technical-stats-card'
     },
     {
       id: 'track_progress',
       title: 'Traccia i Progressi',
-      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate e visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati.'
+      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate e visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati.',
+      target: '.progress-chart-section'
     },
     {
       id: 'nutrition_start',
       title: 'Crea il Tuo Piano',
       description: 'Sei pronto per iniziare! Clicca qui sotto per generare il tuo piano alimentare personalizzato con l\'intelligenza artificiale.',
+      target: '.dashboard-stats-section',
       final: true
     }
   ];
 
   const currentStepData = steps[currentStep];
+
+  useEffect(() => {
+    if (currentStepData?.target) {
+      updateTargetPosition();
+      window.addEventListener('resize', updateTargetPosition);
+      window.addEventListener('scroll', updateTargetPosition);
+      return () => {
+        window.removeEventListener('resize', updateTargetPosition);
+        window.removeEventListener('scroll', updateTargetPosition);
+      };
+    }
+  }, [currentStep, currentStepData]);
+
+  const updateTargetPosition = () => {
+    if (!currentStepData?.target) return;
+    
+    const element = document.querySelector(currentStepData.target);
+    if (element) {
+      const rect = element.getBoundingClientRect();
+      setTargetRect({
+        top: rect.top,
+        left: rect.left,
+        width: rect.width,
+        height: rect.height
+      });
+    }
+  };
 
   const handleSourceSelect = async () => {
     if (!selectedSource) return;
@@ -285,7 +326,51 @@ export default function OnboardingTour({ user, onComplete }) {
     );
   }
 
-  // Info cards per gli step successivi
+  // Spotlight overlay per gli step successivi
+  const getTooltipPosition = () => {
+    if (!targetRect) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+    
+    const padding = 20;
+    const tooltipWidth = isMobile ? 320 : 380;
+    const tooltipHeight = 250;
+    
+    // Desktop: posiziona a destra o sinistra del target
+    if (!isMobile) {
+      const spaceRight = window.innerWidth - (targetRect.left + targetRect.width);
+      const spaceLeft = targetRect.left;
+      
+      if (spaceRight > tooltipWidth + padding) {
+        // A destra
+        return {
+          top: `${targetRect.top + (targetRect.height / 2)}px`,
+          left: `${targetRect.left + targetRect.width + padding}px`,
+          transform: 'translateY(-50%)'
+        };
+      } else if (spaceLeft > tooltipWidth + padding) {
+        // A sinistra
+        return {
+          top: `${targetRect.top + (targetRect.height / 2)}px`,
+          right: `${window.innerWidth - targetRect.left + padding}px`,
+          transform: 'translateY(-50%)'
+        };
+      } else {
+        // Sotto
+        return {
+          top: `${targetRect.top + targetRect.height + padding}px`,
+          left: `${targetRect.left + (targetRect.width / 2)}px`,
+          transform: 'translateX(-50%)'
+        };
+      }
+    } else {
+      // Mobile: sempre centrato in basso
+      return {
+        bottom: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)'
+      };
+    }
+  };
+
   return (
     <>
       <style>{`
@@ -294,34 +379,24 @@ export default function OnboardingTour({ user, onComplete }) {
         * {
           font-family: 'Inter', sans-serif;
         }
-
-        @keyframes gradientShift {
-          0% {
-            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
-          }
-          33% {
-            background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%;
-          }
-          66% {
-            background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
-          }
+        
+        .spotlight-overlay {
+          position: fixed;
+          inset: 0;
+          background: rgba(0, 0, 0, 0.75);
+          z-index: 199;
+          pointer-events: none;
         }
         
-        .animated-gradient-bg-onboarding {
-          background: #f9fafb;
-          background-image: 
-            radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
-            radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
-            radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
-            radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
-            radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%);
-          background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
-          animation: gradientShift 45s ease-in-out infinite;
-          background-attachment: fixed;
+        .spotlight-target {
+          position: fixed;
+          z-index: 200;
+          pointer-events: none;
+          border-radius: 16px;
+          box-shadow: 
+            0 0 0 4px rgba(38, 132, 127, 0.5),
+            0 0 0 9999px rgba(0, 0, 0, 0.75);
+          transition: all 0.3s ease-out;
         }
         
         .liquid-glass-modal {
@@ -364,16 +439,33 @@ export default function OnboardingTour({ user, onComplete }) {
         }
       `}</style>
       
-      <div className="fixed inset-0 z-[200] flex items-center justify-center animated-gradient-bg-onboarding backdrop-blur-md p-4">
-        <div className="max-w-md w-full liquid-glass-modal rounded-xl shadow-2xl overflow-hidden">
+      {/* Spotlight highlight */}
+      {targetRect && (
+        <div
+          className="spotlight-target"
+          style={{
+            top: `${targetRect.top - 8}px`,
+            left: `${targetRect.left - 8}px`,
+            width: `${targetRect.width + 16}px`,
+            height: `${targetRect.height + 16}px`
+          }}
+        />
+      )}
+      
+      {/* Tooltip popup */}
+      <div
+        className="fixed z-[201] px-4"
+        style={getTooltipPosition()}
+      >
+        <div className={`liquid-glass-modal rounded-xl shadow-2xl overflow-hidden ${isMobile ? 'w-[320px]' : 'w-[380px]'}`}>
           <div className="p-6">
             <div className="flex items-start justify-between mb-4">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-gray-900 pr-8">
                 {currentStepData.title}
               </h2>
               <button 
                 onClick={handleSkip} 
-                className="text-gray-400 hover:text-gray-600 transition-colors"
+                className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0"
               >
                 <X className="w-5 h-5" />
               </button>
