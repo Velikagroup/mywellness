@@ -459,19 +459,21 @@ export default function TrialSetup() {
             marketingConsent: marketingConsent
           };
 
+          console.log('📤 Sending payload:', payload);
           const response = await base44.functions.invoke('stripeCreateTrialSubscription', payload);
+          console.log('📥 Response received:', response);
 
-          if (!response.success) {
-            throw new Error(response.error || 'Setup failed');
+          if (!response || !response.success) {
+            throw new Error(response?.error || response?.details || 'Setup failed');
           }
 
           ev.complete('success');
           navigate(createPageUrl('Dashboard'), { replace: true });
 
         } catch (error) {
-          console.error('Digital Wallet payment error:', error);
+          console.error('💥 Digital Wallet payment error:', error);
           ev.complete('fail');
-          alert('Errore con il pagamento: ' + error.message);
+          alert('Errore con il pagamento: ' + (error?.message || 'Errore sconosciuto'));
           setIsSaving(false);
         }
       });
@@ -479,15 +481,15 @@ export default function TrialSetup() {
       paymentRequest.show();
 
     } catch (error) {
-      console.error('Digital Wallet initialization error:', error);
-      alert('Errore nell\'inizializzazione del wallet: ' + error.message);
+      console.error('💥 Digital Wallet initialization error:', error);
+      alert('Errore nell\'inizializzazione del wallet: ' + (error?.message || 'Errore sconosciuto'));
       setIsSaving(false);
     }
   };
 
   const handleCompleteSetup = async () => {
     if (!isFormValid) {
-      alert("Per favorE, compila tutti i campi obbligatori correttamente.");
+      alert("Per favore, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
@@ -534,17 +536,21 @@ export default function TrialSetup() {
         marketingConsent: marketingConsent
       };
 
+      console.log('📤 Sending card payload:', payload);
       const result = await base44.functions.invoke('stripeCreateTrialSubscription', payload);
+      console.log('📥 Card response received:', result);
 
-      if (!result.success) {
-        throw new Error(result.error || result.details || 'Setup failed');
+      if (!result || !result.success) {
+        const errorMsg = result?.error || result?.details || 'Setup failed';
+        console.error('❌ Setup failed:', errorMsg);
+        throw new Error(errorMsg);
       }
 
       navigate(createPageUrl('Dashboard'), { replace: true });
 
     } catch (error) {
-      console.error('Setup error:', error);
-      alert('Errore durante l\'attivazione: ' + error.message);
+      console.error('💥 Setup error:', error);
+      alert('Errore durante l\'attivazione: ' + (error?.message || 'Errore sconosciuto. Riprova.'));
     } finally {
       setIsSaving(false);
     }
