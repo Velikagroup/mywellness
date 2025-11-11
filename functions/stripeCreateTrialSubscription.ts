@@ -1,4 +1,3 @@
-
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 import Stripe from 'npm:stripe@14.10.0';
 
@@ -100,16 +99,17 @@ Deno.serve(async (req) => {
         let finalPaymentMethodId;
 
         if (paymentMethodId) {
-            // Apple Pay - il Payment Method è già creato da Stripe.js
-            console.log('🍎 Using digital wallet payment method:', paymentMethodId);
+            // Digital wallet - il Payment Method è già creato da Stripe.js
+            console.log('💳 Using digital wallet payment method:', paymentMethodId);
             finalPaymentMethodId = paymentMethodId;
         } else {
             // Card - creiamo il Payment Method sul backend
+            console.log('💳 Creating card payment method...');
             const paymentMethod = await stripe.paymentMethods.create({
                 type: 'card',
                 card: {
                     number: cardData.number,
-                    exp_month: cardData.exp_year,
+                    exp_month: cardData.exp_month,
                     exp_year: cardData.exp_year,
                     cvc: cardData.cvc,
                 },
@@ -193,7 +193,17 @@ Deno.serve(async (req) => {
             trial_ends_at: trialEndsAt.toISOString(),
             stripe_subscription_id: subscription.id,
             stripe_customer_id: stripeCustomerId,
-            traffic_source: trafficSource || 'direct'
+            traffic_source: trafficSource || 'direct',
+            phone_number: body.phoneNumber || user.phone_number,
+            billing_name: billingInfo?.name || user.full_name,
+            billing_address: billingInfo?.address,
+            billing_city: billingInfo?.city,
+            billing_zip: billingInfo?.zip,
+            billing_country: billingInfo?.country,
+            company_name: billingInfo?.companyName,
+            tax_id: billingInfo?.taxId,
+            pec_sdi: billingInfo?.pecSdi,
+            billing_type: billingInfo?.billingType || 'private'
         });
 
         console.log('✅ User updated with subscription data');
@@ -212,14 +222,8 @@ Deno.serve(async (req) => {
         }
 
         try {
-            const functionUrl = `${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/functions/sendTrialWelcomeEmail`;
-            await fetch(functionUrl, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${await base44.asServiceRole.auth.getToken()}`
-                },
-                body: JSON.stringify({ userId: user.id })
+            await base44.asServiceRole.functions.invoke('sendTrialWelcomeEmail', {
+                userId: user.id
             });
             console.log('📧 Trial welcome email trigger sent');
         } catch (emailError) {
@@ -243,7 +247,8 @@ Deno.serve(async (req) => {
         console.error('❌ Stripe subscription error:', error);
         return Response.json({ 
             error: error.message,
-            type: error.type
+            type: error.type,
+            details: error.raw?.message || error.toString()
         }, { status: 500 });
     }
 });
