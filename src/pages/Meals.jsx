@@ -231,7 +231,6 @@ export default function MealsPage() {
     staleTime: 0,
   });
 
-  const startOfWeek = getStartOfWeek();
   const { data: shoppingLists = [], isLoading: isLoadingShoppingLists } = useQuery({
     queryKey: ['shoppingLists', user?.id, startOfWeek],
     queryFn: async () => {
@@ -417,20 +416,18 @@ export default function MealsPage() {
     setRegeneratingMealId(mealToRegenerate.id);
     
     try {
-      // ✅ Calculate target calories: use original if valid, otherwise calculate from meal type
       let targetCalories = Math.round(mealToRegenerate.total_calories || 0);
       
-      // Se il pasto ha 0 o null calorie, calcola in base al tipo di pasto
       if (targetCalories <= 0) {
         const dailyTarget = nutritionData.daily_calories || 1586;
         const mealTypeCalories = {
-          'breakfast': Math.round(dailyTarget * 0.20),     // 20%
-          'snack1': Math.round(dailyTarget * 0.08),        // 8%
-          'lunch': Math.round(dailyTarget * 0.30),         // 30%
-          'snack2': Math.round(dailyTarget * 0.08),        // 8%
-          'dinner': Math.round(dailyTarget * 0.25),        // 25%
-          'snack3': Math.round(dailyTarget * 0.05),        // 5%
-          'snack4': Math.round(dailyTarget * 0.04)         // 4%
+          'breakfast': Math.round(dailyTarget * 0.20),
+          'snack1': Math.round(dailyTarget * 0.08),
+          'lunch': Math.round(dailyTarget * 0.30),
+          'snack2': Math.round(dailyTarget * 0.08),
+          'dinner': Math.round(dailyTarget * 0.25),
+          'snack3': Math.round(dailyTarget * 0.05),
+          'snack4': Math.round(dailyTarget * 0.04)
         };
         
         targetCalories = mealTypeCalories[mealToRegenerate.meal_type] || Math.round(dailyTarget * 0.15);
@@ -439,14 +436,30 @@ export default function MealsPage() {
 
       console.log(`🎯 Target ESATTO per rigenerazione: ${targetCalories} kcal`);
 
+      const dietRules = getDietRules(nutritionData.diet_type || 'mediterranean');
+
       const singleMealPrompt = `You are an expert AI nutritionist. Create ONE single meal in ITALIAN language.
 
 🔴 ULTRA CRITICAL REQUIREMENT 🔴
 Target Calories: EXACTLY ${targetCalories} kcal
 Tolerance: MAXIMUM ±5 kcal (ideally 0 kcal error)
 
+🔥 CRITICAL DIET TYPE: ${(nutritionData.diet_type || 'mediterranean').toUpperCase()}
+
+📋 STRICT DIET RULES FOR ${(nutritionData.diet_type || 'mediterranean').toUpperCase()}:
+
+✅ ALLOWED INGREDIENTS:
+${dietRules.allowed}
+
+❌ ABSOLUTELY FORBIDDEN INGREDIENTS:
+${dietRules.forbidden}
+
+🎯 DIET FOCUS:
+${dietRules.focus}
+
+⚠️ YOU MUST RESPECT THESE RULES 100% - NO EXCEPTIONS!
+
 User Profile:
-- Diet Type: ${nutritionData.diet_type}
 - Gender: ${nutritionData.gender}, Age: ${nutritionData.age} anni, Weight: ${nutritionData.current_weight}kg
 ${nutritionData.allergies?.length > 0 ? `- Allergies: ${nutritionData.allergies.join(', ')}` : ''}
 ${nutritionData.favorite_foods?.length > 0 ? `- Favorite Foods: ${nutritionData.favorite_foods.join(', ')}` : ''}
@@ -455,17 +468,25 @@ Meal Type: ${mealToRegenerate.meal_type}
 
 🚨 ABSOLUTE MANDATORY RULES:
 1. Calculate PRECISELY to hit ${targetCalories} kcal (±5 kcal MAX)
-2. Use standard nutritional values: protein/carbs = 4 kcal/g, fat = 9 kcal/g
-3. Each ingredient MUST have ALL fields with PRECISE numbers
-4. NEVER round quantities too much - use decimals for precision
-5. Verify: sum of ingredient calories MUST equal ${targetCalories} kcal
-6. If too low: add olive oil (9 kcal/ml)
-7. If too high: reduce portion sizes proportionally
+2. Use REALISTIC nutritional values from actual food databases
+3. Each ingredient MUST have ALL fields with PRECISE numbers (1 decimal place for macros)
+4. NEVER use 0 for macros unless truly zero (e.g., salt has 0 protein/carbs/fat)
+5. Examples of REALISTIC values (these are just examples, AI should use its own knowledge for other foods):
+   - Egg (60g): calories=86, protein=7.5g, carbs=0.6g, fat=5.7g
+   - Beef (100g): calories=250, protein=26.0g, carbs=0.0g, fat=15.0g
+   - Chicken breast (100g): calories=165, protein=31.0g, carbs=0.0g, fat=3.6g
+   - Salmon (100g): calories=208, protein=20.0g, carbs=0.0g, fat=13.0g
+   - Butter (10g): calories=75, protein=0.1g, carbs=0.1g, fat=8.3g
+6. ALL macronutrients MUST be rounded to 1 decimal place
+7. Verify: sum of ingredient calories MUST equal ${targetCalories} kcal
+8. If too low: add fats (butter, olive oil)
+9. If too high: reduce portions proportionally
 
 Task:
 Generate ONE meal in Italian hitting EXACTLY ${targetCalories} kcal.
 Must be DIFFERENT from: "${mealToRegenerate.name}"
-Double-check math before returning!
+Use ONLY ingredients from the ALLOWED list.
+Calculate macros with PRECISION (1 decimal).
 
 All content MUST be in Italian.`;
 
@@ -499,7 +520,6 @@ All content MUST be in Italian.`;
         }
       });
 
-      // ✅ Validate ingredients: remove any with null/undefined values
       let validIngredients = llmResponse.ingredients.filter(ing => 
         ing.name && 
         ing.quantity != null && 
@@ -514,18 +534,24 @@ All content MUST be in Italian.`;
         throw new Error('Nessun ingrediente valido generato dall\'AI');
       }
 
+      // Round all macros to 1 decimal place
+      validIngredients = validIngredients.map(ing => ({
+        ...ing,
+        protein: Math.round(ing.protein * 10) / 10,
+        carbs: Math.round(ing.carbs * 10) / 10,
+        fat: Math.round(ing.fat * 10) / 10
+      }));
+
       let currentCalories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
-      let calorieDifference = targetCalories - currentCalories;
+      const calorieDifference = targetCalories - currentCalories;
       
       console.log(`🔍 Calorie AI: ${currentCalories} kcal, Target: ${targetCalories} kcal, Diff: ${calorieDifference} kcal`);
 
-      // ✅ AUTO-CORRECTION: Adjust to hit EXACT target
-      if (Math.abs(calorieDifference) > 0) {
+      if (calorieDifference !== 0) {
         console.log(`⚙️ Aggiustamento automatico di ${calorieDifference} kcal...`);
         
         if (calorieDifference > 0) {
-          // Aggiungi olio d'oliva per colmare il gap
-          const oilMl = Math.ceil(calorieDifference / 9); // Use ceil to ensure we cover the diff
+          const oilMl = Math.round(calorieDifference / 9);
           const oilCalories = oilMl * 9;
           
           validIngredients.push({
@@ -533,71 +559,50 @@ All content MUST be in Italian.`;
             quantity: oilMl,
             unit: "ml",
             calories: oilCalories,
-            protein: 0,
-            carbs: 0,
-            fat: oilMl
+            protein: 0.0,
+            carbs: 0.0,
+            fat: Math.round(oilMl * 10) / 10
           });
           
           currentCalories += oilCalories;
           console.log(`✅ Aggiunti ${oilMl}ml di olio (+${oilCalories} kcal)`);
         } else {
-          // Reduce ingredients proportionally
-          // First, check if there's any oil to reduce from
-          let oilIngredientIndex = validIngredients.findIndex(ing => ing.name.toLowerCase().includes("olio d'oliva"));
-          if (oilIngredientIndex !== -1 && validIngredients[oilIngredientIndex].calories > 0) {
-            let oilIngredient = validIngredients[oilIngredientIndex];
-            const oilReductionPossible = Math.floor(oilIngredient.calories / 9); // Max ml of oil we can remove
-            const deficitToCover = Math.abs(calorieDifference);
-
-            if (oilReductionPossible * 9 >= deficitToCover) {
-              const mlToRemove = Math.ceil(deficitToCover / 9);
-              oilIngredient.quantity = Math.max(0, oilIngredient.quantity - mlToRemove);
-              oilIngredient.calories = Math.max(0, oilIngredient.calories - (mlToRemove * 9));
-              oilIngredient.fat = Math.max(0, oilIngredient.fat - mlToRemove);
-              currentCalories -= (mlToRemove * 9);
-              calorieDifference += (mlToRemove * 9); // Reduce the deficit
-              console.log(`✅ Ridotto ${mlToRemove}ml di olio (-${mlToRemove * 9} kcal)`);
-            }
-          }
+          const scaleFactor = targetCalories / currentCalories;
+          console.log(`📉 Scala ingredienti del ${(scaleFactor * 100).toFixed(1)}%`);
           
-          // If still a deficit or no oil was present/sufficient, scale other ingredients
-          if (Math.abs(calorieDifference) > 0) {
-            const finalTarget = currentCalories + calorieDifference; // Target after potential oil adjustment
-            const scaleFactor = finalTarget / currentCalories;
-            console.log(`📉 Scala ingredienti del ${(scaleFactor * 100).toFixed(1)}%`);
-            
-            validIngredients = validIngredients.map(ing => {
-              const newQuantity = parseFloat((ing.quantity * scaleFactor).toFixed(2));
-              const newCalories = Math.round(ing.calories * scaleFactor);
-              const newProtein = parseFloat((ing.protein * scaleFactor).toFixed(1));
-              const newCarbs = parseFloat((ing.carbs * scaleFactor).toFixed(1));
-              const newFat = parseFloat((ing.fat * scaleFactor).toFixed(1));
-
-              return {
-                ...ing,
-                quantity: newQuantity,
-                calories: newCalories,
-                protein: newProtein,
-                carbs: newCarbs,
-                fat: newFat
-              };
-            });
-            
-            currentCalories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
-          }
+          validIngredients = validIngredients.map(ing => ({
+            ...ing,
+            quantity: Math.round(ing.quantity * scaleFactor * 100) / 100,
+            calories: Math.round(ing.calories * scaleFactor),
+            protein: Math.round(ing.protein * scaleFactor * 10) / 10,
+            carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
+            fat: Math.round(ing.fat * scaleFactor * 10) / 10
+          }));
+          
+          currentCalories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
         }
       }
 
-      // ✅ Final adjustment if still not exact (handle rounding issues)
-      let finalRemainingDiff = targetCalories - currentCalories;
-      if (finalRemainingDiff !== 0) {
-        console.log(`🔧 Aggiustamento finale residuo: ${finalRemainingDiff} kcal`);
+      const remainingDiff = targetCalories - currentCalories;
+      if (remainingDiff !== 0) {
+        console.log(`🔧 Aggiustamento finale: ${remainingDiff} kcal`);
         
-        // Try to adjust the largest ingredient by its calories directly
-        let largestIngredient = validIngredients.reduce((max, ing) => (ing.calories > max.calories ? ing : max), validIngredients[0]);
-        if (largestIngredient) {
-            largestIngredient.calories += finalRemainingDiff;
-            currentCalories = targetCalories; // Force to target after this final adjustment
+        let ingredientToAdjust = validIngredients.find(ing => 
+            ing.name.toLowerCase().includes("olio d'oliva") || 
+            ing.name.toLowerCase().includes("burro") || 
+            ing.name.toLowerCase().includes("avocado")
+        );
+        
+        if (!ingredientToAdjust && validIngredients.length > 0) {
+            ingredientToAdjust = validIngredients.reduce((max, ing) => (ing.calories > max.calories ? ing : max), validIngredients[0]);
+        }
+
+        if (ingredientToAdjust) {
+            ingredientToAdjust.calories += remainingDiff;
+            currentCalories += remainingDiff;
+            if (ingredientToAdjust.name.toLowerCase().includes("olio d'oliva")) {
+                ingredientToAdjust.fat = Math.round((ingredientToAdjust.fat + (remainingDiff / 9)) * 10) / 10;
+            }
         }
       }
 
@@ -606,6 +611,7 @@ All content MUST be in Italian.`;
       const total_fat = Math.round(validIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
       
       console.log(`✅ Calorie finali: ${currentCalories} kcal (Target: ${targetCalories} kcal, Errore: ${currentCalories - targetCalories} kcal)`);
+      console.log(`📊 Macros: Proteine=${total_protein}g, Carbs=${total_carbs}g, Grassi=${total_fat}g`);
       
       const ingredientsString = validIngredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
       const imagePrompt = `Professional food photography of "${llmResponse.name}". Ingredients: ${ingredientsString}. 45-degree angle, modern plate, natural lighting.`;
@@ -709,7 +715,6 @@ All content MUST be in Italian.`;
       console.log('🎯 Distribuzione calorie:', mealCalorieDistribution);
       console.log('✅ Totale distribuzione:', Object.values(mealCalorieDistribution).reduce((a,b) => a+b, 0), 'kcal');
 
-      // 🔴 OTTIENI LE REGOLE SPECIFICHE DELLA DIETA
       const dietRules = getDietRules(generationPrefs.diet_type);
 
       const mealPlanPrompt = `You are an expert AI nutritionist. Create ${daysToGenerate.length * mealsPerDay} meals in ITALIAN.
@@ -725,10 +730,17 @@ TOTAL DAILY: ${Object.values(mealCalorieDistribution).reduce((a,b) => a+b, 0)} k
 
 🚨 MANDATORY RULES:
 1. Each meal MUST hit its EXACT calorie target (±10 kcal max tolerance)
-2. Use realistic ingredient portions to reach calorie goals
-3. If a meal is low in calories, ADD MORE FOOD (bigger portions, healthy fats like olive oil, nuts, avocado)
-4. DO NOT create tiny meals - every meal must be satisfying and nutritious
-5. Calculate ingredient calories precisely
+2. Use REALISTIC nutritional values from actual food databases
+3. ALL macronutrients MUST be rounded to 1 decimal place
+4. NEVER use 0 for macros unless truly zero (e.g., salt)
+5. Examples of REALISTIC values (these are just examples, AI should use its own knowledge for other foods):
+   - Egg (60g): calories=86, protein=7.5g, carbs=0.6g, fat=5.7g
+   - Beef (100g): calories=250, protein=26.0g, carbs=0.0g, fat=15.0g
+   - Chicken breast (100g): calories=165, protein=31.0g, carbs=0.0g, fat=3.6g
+   - Salmon (100g): calories=208, protein=20.0g, carbs=0.0g, fat=13.0g
+   - Butter (10g): calories=75, protein=0.1g, carbs=0.1g, fat=8.3g
+6. If a meal is low in calories, ADD MORE FOOD (bigger portions, healthy fats)
+7. DO NOT create tiny meals - every meal must be satisfying
 
 🔥 CRITICAL DIET TYPE: ${generationPrefs.diet_type.toUpperCase()}
 
@@ -758,6 +770,7 @@ Meal types per day: ${mealStructure.join(', ')}
 TASK: Generate ${daysToGenerate.length * mealsPerDay} meals total.
 CRITICAL: Each meal MUST match its target calories from the distribution above.
 CRITICAL: Each meal MUST ONLY use ingredients from the ALLOWED list above.
+CRITICAL: Calculate macros with PRECISION (1 decimal place).
 
 Return Italian names, ingredients with precise quantities/calories, and instructions.`;
 
@@ -821,13 +834,22 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
         const dayMeals = llmResponse.meal_plans.filter(m => m.day_of_week === day);
         
         const recalculatedDayMeals = dayMeals.map(meal => {
-          const calculatedCalories = Math.round(meal.ingredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
+          // Round all macros to 1 decimal place
+          const roundedIngredients = meal.ingredients.map(ing => ({
+            ...ing,
+            protein: Math.round((ing.protein || 0) * 10) / 10,
+            carbs: Math.round((ing.carbs || 0) * 10) / 10,
+            fat: Math.round((ing.fat || 0) * 10) / 10
+          }));
+
+          const calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
           return {
             ...meal,
+            ingredients: roundedIngredients,
             total_calories: calculatedCalories,
-            total_protein: Math.round(meal.ingredients.reduce((sum, ing) => sum + (ing.protein || 0), 0) * 10) / 10,
-            total_carbs: Math.round(meal.ingredients.reduce((sum, ing) => sum + (ing.carbs || 0), 0) * 10) / 10,
-            total_fat: Math.round(meal.ingredients.reduce((sum, ing) => sum + (ing.fat || 0), 0) * 10) / 10,
+            total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
+            total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
+            total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
           };
         });
         
@@ -850,12 +872,12 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                 quantity: oilMl,
                 unit: "ml",
                 calories: oilMl * 9,
-                protein: 0,
-                carbs: 0,
-                fat: oilMl
+                protein: 0.0,
+                carbs: 0.0,
+                fat: Math.round(oilMl * 10) / 10
               });
               meal.total_calories += oilMl * 9;
-              meal.total_fat += oilMl;
+              meal.total_fat = Math.round((meal.total_fat + oilMl) * 10) / 10;
             } else if (mealAdjustment < 0) {
               const scaleFactor = (meal.total_calories + mealAdjustment) / meal.total_calories;
               meal.ingredients = meal.ingredients.map(ing => ({
@@ -891,8 +913,8 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                 const extraOil = Math.ceil(remainingDiff / 9);
                 oilIngredient.quantity += extraOil;
                 oilIngredient.calories += extraOil * 9;
-                oilIngredient.fat += extraOil;
-                largestMeal.total_fat += extraOil;
+                oilIngredient.fat = Math.round((oilIngredient.fat + extraOil) * 10) / 10;
+                largestMeal.total_fat = Math.round((largestMeal.total_fat + extraOil) * 10) / 10;
               }
             }
           }
@@ -1078,7 +1100,7 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                 <div className="space-y-6">
                   <div className="p-4 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg border-2 border-[var(--brand-primary)]/30">
                     <Label className="text-sm font-semibold text-gray-800 mb-3 block">🍽️ Quanti pasti al giorno?</Label>
-                    <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-2">
                       {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                         <button
                           key={num}
