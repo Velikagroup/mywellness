@@ -48,9 +48,11 @@ export default function Dashboard() {
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
+    console.log('🔄 loadUserData called');
     setIsLoading(true);
     try {
       const currentUser = await base44.auth.me();
+      console.log('👤 User loaded:', currentUser.id);
       setUser(currentUser);
 
       const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
@@ -70,10 +72,15 @@ export default function Dashboard() {
       const [fetchedWeightHistory, fetchedTodayMeals, fetchedMealLogs, fetchedWorkoutPlans] = 
         await Promise.all([...basePromises, workoutPlanPromise]);
 
+      console.log('⚖️ Weight history fetched:', fetchedWeightHistory.length, 'records');
+      console.log('📊 Latest weights:', fetchedWeightHistory.slice(0, 3).map(w => ({ date: w.date, weight: w.weight })));
+      
       setWeightHistory(fetchedWeightHistory);
       setTodayMeals(fetchedTodayMeals);
       setMealLogs(fetchedMealLogs);
       setTodayWorkout(fetchedWorkoutPlans?.[0] || null);
+      
+      console.log('✅ Dashboard data updated');
 
     } catch (error) {
       if (error?.response?.status === 401 || error?.message?.includes('401')) {
