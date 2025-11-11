@@ -27,6 +27,54 @@ const dietTypes = [
   { id: 'vegan', label: 'Vegana' }
 ];
 
+// 🔴 REGOLE DETTAGLIATE PER OGNI DIETA
+const getDietRules = (dietType) => {
+  const rules = {
+    mediterranean: {
+      allowed: "frutta, verdura, legumi, cereali integrali (pasta, riso, pane integrale), pesce (salmone, tonno, branzino), olio d'oliva, noci, semi, pollame, latticini (yogurt, formaggi), uova",
+      forbidden: "carne rossa in eccesso, cibi ultra-processati, zuccheri raffinati",
+      focus: "Grassi sani (monoinsaturi), cereali integrali, pesce, verdure fresche"
+    },
+    low_carb: {
+      allowed: "carne (manzo, pollo, maiale), pesce, uova, formaggi, verdure a basso contenuto di carboidrati (broccoli, spinaci, zucchine, cavolfiore), avocado, noci, oli vegetali, burro",
+      forbidden: "pane, pasta, riso, patate, zuccheri, dolci, legumi, frutta ad alto contenuto di zuccheri",
+      focus: "Proteine alte, grassi sani, carboidrati molto bassi (<100g/giorno)"
+    },
+    soft_low_carb: {
+      allowed: "carne, pesce, uova, formaggi, verdure, avocado, noci, oli, piccole quantità di cereali integrali (avena, quinoa), frutta a basso indice glicemico (bacche, mele)",
+      forbidden: "pane bianco, pasta raffinata, riso bianco, patate, zuccheri raffinati, dolci industriali",
+      focus: "Riduzione carboidrati ma con più flessibilità rispetto alla Low Carb"
+    },
+    paleo: {
+      allowed: "carne magra (manzo, pollo, tacchino), pesce, frutti di mare, uova, verdura, frutta, noci, semi, oli sani (oliva, cocco, avocado), miele grezzo",
+      forbidden: "cereali (pane, pasta, riso), legumi (fagioli, lenticchie, ceci), latticini, zuccheri raffinati, oli vegetali processati, cibi industriali",
+      focus: "Solo alimenti disponibili nell'era paleolitica - niente cereali, legumi, latticini"
+    },
+    keto: {
+      allowed: "carne grassa (manzo, maiale, agnello), pesce grasso (salmone, sgombro), uova, formaggi grassi, burro, oli (oliva, cocco, MCT), avocado, noci, semi, verdure a foglia verde (spinaci, lattuga, rucola)",
+      forbidden: "cereali, pane, pasta, riso, patate, legumi, frutta (tranne piccole quantità di bacche), zuccheri, dolci",
+      focus: "Grassi molto alti (70-75%), proteine moderate (20-25%), carboidrati bassissimi (<20-50g/giorno) per indurre chetosi"
+    },
+    carnivore: {
+      allowed: "SOLO prodotti animali: carne rossa (manzo, vitello, agnello, maiale), frattaglie (fegato, cuore, reni), pesce, frutti di mare, uova, burro, ghee, strutto, sego, sale",
+      forbidden: "ASSOLUTAMENTE VIETATI: verdure, frutta, cereali, legumi, noci, semi, oli vegetali, latticini (eccetto burro/ghee), zuccheri, condimenti vegetali, spezie (tranne sale)",
+      focus: "100% prodotti animali - ZERO vegetali. Solo carne, pesce, uova, grassi animali, sale e acqua"
+    },
+    vegetarian: {
+      allowed: "frutta, verdura, cereali integrali, legumi (fagioli, lenticchie, ceci), latticini (latte, yogurt, formaggi), uova, tofu, tempeh, noci, semi, oli vegetali",
+      forbidden: "carne (manzo, pollo, maiale), pesce, frutti di mare",
+      focus: "Proteine da latticini, uova e legumi. Include tutti i vegetali"
+    },
+    vegan: {
+      allowed: "frutta, verdura, cereali integrali, legumi, tofu, tempeh, seitan, latte vegetale (soia, mandorla, avena), noci, semi, oli vegetali, nutritional yeast",
+      forbidden: "TUTTI i prodotti animali: carne, pesce, latticini, uova, miele, gelatina",
+      focus: "100% vegetale - proteine da legumi, tofu, tempeh, seitan"
+    }
+  };
+
+  return rules[dietType] || rules.mediterranean;
+};
+
 const getStartOfWeek = () => {
   const now = new Date();
   const dayOfWeek = now.getDay();
@@ -661,6 +709,9 @@ All content MUST be in Italian.`;
       console.log('🎯 Distribuzione calorie:', mealCalorieDistribution);
       console.log('✅ Totale distribuzione:', Object.values(mealCalorieDistribution).reduce((a,b) => a+b, 0), 'kcal');
 
+      // 🔴 OTTIENI LE REGOLE SPECIFICHE DELLA DIETA
+      const dietRules = getDietRules(generationPrefs.diet_type);
+
       const mealPlanPrompt = `You are an expert AI nutritionist. Create ${daysToGenerate.length * mealsPerDay} meals in ITALIAN.
 
 🔴 CRITICAL CALORIE REQUIREMENT 🔴
@@ -679,10 +730,25 @@ TOTAL DAILY: ${Object.values(mealCalorieDistribution).reduce((a,b) => a+b, 0)} k
 4. DO NOT create tiny meals - every meal must be satisfying and nutritious
 5. Calculate ingredient calories precisely
 
+🔥 CRITICAL DIET TYPE: ${generationPrefs.diet_type.toUpperCase()}
+
+📋 STRICT DIET RULES FOR ${generationPrefs.diet_type.toUpperCase()}:
+
+✅ ALLOWED INGREDIENTS:
+${dietRules.allowed}
+
+❌ ABSOLUTELY FORBIDDEN INGREDIENTS:
+${dietRules.forbidden}
+
+🎯 DIET FOCUS:
+${dietRules.focus}
+
+⚠️ YOU MUST RESPECT THESE RULES 100% - NO EXCEPTIONS!
+If you include ANY forbidden ingredient, the meal plan will be REJECTED.
+
 User Profile:
 - Gender: ${nutritionData.gender}, Age: ${nutritionData.age}, Weight: ${nutritionData.current_weight}kg
 - Activity: ${nutritionData.activity_level}
-- Diet Type: ${generationPrefs.diet_type}
 ${nutritionData.allergies?.length > 0 ? `- Allergies: ${nutritionData.allergies.join(', ')}` : ''}
 ${nutritionData.favorite_foods?.length > 0 ? `- Favorite Foods: ${nutritionData.favorite_foods.join(', ')}` : ''}
 
@@ -691,6 +757,7 @@ Meal types per day: ${mealStructure.join(', ')}
 
 TASK: Generate ${daysToGenerate.length * mealsPerDay} meals total.
 CRITICAL: Each meal MUST match its target calories from the distribution above.
+CRITICAL: Each meal MUST ONLY use ingredients from the ALLOWED list above.
 
 Return Italian names, ingredients with precise quantities/calories, and instructions.`;
 
