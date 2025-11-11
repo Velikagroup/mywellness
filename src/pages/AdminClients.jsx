@@ -104,7 +104,7 @@ export default function AdminClients() {
     }
   };
 
-  // Combine all available fields for the "unmapped" dropdown
+  // Combine all available fields for the "unmapped" dropdown - kept for reference, not used in new dialog render
   const allAvailableFields = [
     { value: '', label: '❌ Non importare' },
     ...Object.values(fieldGroups).flatMap(group => group.fields)
@@ -273,12 +273,15 @@ export default function AdminClients() {
   };
 
   const parseCSV = (text) => {
-    const lines = text.trim().split(/\r?\n/); // Handle Windows and Unix line endings
+    // Rimuovi BOM e spazi iniziali/finali
+    const cleanText = text.replace(/^\uFEFF/, '').trim();
+
+    // Split per righe gestendo \r\n e \n, e filtra le righe vuote
+    const lines = cleanText.split(/\r?\n/).filter(line => line.trim());
+
     const result = [];
 
     for (let line of lines) {
-      if (!line.trim()) continue; // Skip empty lines
-
       const row = [];
       let current = '';
       let inQuotes = false;
@@ -294,16 +297,18 @@ export default function AdminClients() {
             inQuotes = !inQuotes;
           }
         } else if (char === ',' && !inQuotes) {
-          row.push(current.trim());
+          row.push(current); // Push raw value, trim later
           current = '';
         } else {
           current += char;
         }
       }
-      row.push(current.trim());
+      row.push(current); // Push raw value, trim later
 
-      if (row.some(cell => cell.trim())) { // Only push if the row has at least one non-empty cell
-        result.push(row);
+      // Aggiungi solo se la riga ha almeno un valore non vuoto dopo il trim
+      // Esegui il trim su ogni cella della riga
+      if (row.some(cell => cell.trim())) {
+        result.push(row.map(cell => cell.trim()));
       }
     }
 
@@ -315,27 +320,29 @@ export default function AdminClients() {
     if (!file) return;
 
     if (!file.name.endsWith('.csv')) {
-      alert('❌ Per favore seleziona un file CSV');
+      alert('❌ Per favorere seleziona un file CSV');
       return;
     }
 
     try {
       const text = await file.text();
-      // Rimuovi BOM se presente
-      const cleanText = text.replace(/^\uFEFF/, '');
+      const parsedData = parseCSV(text);
 
-      const parsedData = parseCSV(cleanText);
+      console.log('📊 CSV Debug:', {
+        totalLines: parsedData.length,
+        firstRow: parsedData[0],
+        secondRow: parsedData[1]
+      });
 
       if (parsedData.length < 2) { // At least header + one data row
         alert('❌ File CSV vuoto o non valido');
         return;
       }
 
-      const headers = parsedData[0].map(h => h.replace(/"/g, '').trim());
-      const dataRows = parsedData.slice(1); // parseCSV now handles filtering empty data rows
+      const headers = parsedData[0];
+      const dataRows = parsedData.slice(1);
 
-      console.log('📊 CSV Parsed:', {
-        totalRows: parsedData.length,
+      console.log('✅ Parsed successfully:', {
         headers: headers.length,
         dataRows: dataRows.length
       });
@@ -348,39 +355,39 @@ export default function AdminClients() {
       headers.forEach((header, index) => {
         const lowerHeader = header.toLowerCase();
 
-        if (lowerHeader.includes('email') || lowerHeader.includes('e-mail')) {
+        if (lowerHeader.includes('email') || lowerHeader === 'e-mail') {
           autoMapping[index] = 'email';
-        } else if (lowerHeader.includes('nome') || lowerHeader.includes('name')) {
+        } else if ((lowerHeader.includes('nome') && !lowerHeader.includes('cognome')) || lowerHeader === 'name' || lowerHeader === 'firstname') {
           autoMapping[index] = 'full_name';
-        } else if (lowerHeader.includes('telefono') || lowerHeader.includes('phone') || lowerHeader.includes('tel')) {
+        } else if (lowerHeader.includes('telefono') || lowerHeader.includes('phone') || lowerHeader.includes('cellulare') || lowerHeader.includes('tel')) {
           autoMapping[index] = 'phone_number';
-        } else if (lowerHeader.includes('genere') || lowerHeader.includes('gender') || lowerHeader.includes('sesso')) {
+        } else if (lowerHeader.includes('genere') || lowerHeader === 'gender' || lowerHeader === 'sesso' || lowerHeader === 'sex') {
           autoMapping[index] = 'gender';
-        } else if (lowerHeader.includes('età') || lowerHeader.includes('age')) {
+        } else if (lowerHeader === 'età' || lowerHeader === 'age' || lowerHeader === 'eta') {
           autoMapping[index] = 'age';
-        } else if (lowerHeader.includes('piano') || lowerHeader.includes('plan')) {
+        } else if (lowerHeader.includes('piano') || lowerHeader === 'plan') {
           autoMapping[index] = 'subscription_plan';
-        } else if (lowerHeader.includes('stato') || lowerHeader.includes('status')) {
+        } else if (lowerHeader.includes('stato') || lowerHeader === 'status') {
           autoMapping[index] = 'subscription_status';
-        } else if (lowerHeader.includes('lingua') || lowerHeader.includes('language')) {
+        } else if (lowerHeader.includes('lingua') || lowerHeader === 'language' || lowerHeader === 'lang') {
           autoMapping[index] = 'language';
-        } else if (lowerHeader.includes('peso') && lowerHeader.includes('attuale')) {
+        } else if (lowerHeader.includes('peso attuale') || lowerHeader === 'current_weight' || lowerHeader === 'weight') {
           autoMapping[index] = 'current_weight';
-        } else if (lowerHeader.includes('peso') && (lowerHeader.includes('obiettivo') || lowerHeader.includes('target'))) {
+        } else if (lowerHeader.includes('peso obiettivo') || lowerHeader.includes('target weight')) {
           autoMapping[index] = 'target_weight';
-        } else if (lowerHeader.includes('altezza') || lowerHeader.includes('height')) {
+        } else if (lowerHeader.includes('altezza') || lowerHeader === 'height') {
           autoMapping[index] = 'height';
-        } else if (lowerHeader.includes('città') || lowerHeader.includes('city')) {
+        } else if (lowerHeader.includes('città') || lowerHeader === 'city' || lowerHeader === 'citta') {
           autoMapping[index] = 'billing_city';
-        } else if (lowerHeader.includes('paese') || lowerHeader.includes('country')) {
+        } else if (lowerHeader.includes('paese') || lowerHeader === 'country') {
           autoMapping[index] = 'billing_country';
-        } else if (lowerHeader.includes('indirizzo') || lowerHeader.includes('address')) {
+        } else if (lowerHeader.includes('indirizzo') || lowerHeader === 'address') {
           autoMapping[index] = 'billing_address';
-        } else if (lowerHeader.includes('cap') || lowerHeader.includes('zip') || lowerHeader.includes('postal')) {
+        } else if (lowerHeader === 'cap' || lowerHeader === 'zip' || lowerHeader.includes('postal')) {
           autoMapping[index] = 'billing_zip';
         } else if (lowerHeader.includes('azienda') || lowerHeader.includes('company')) {
           autoMapping[index] = 'company_name';
-        } else if (lowerHeader.includes('iva') || lowerHeader.includes('tax') || lowerHeader.includes('fiscale')) {
+        } else if (lowerHeader.includes('iva') || lowerHeader.includes('tax') || lowerHeader.includes('fiscale') || lowerHeader === 'vat') {
           autoMapping[index] = 'tax_id';
         } else {
           autoMapping[index] = '';
@@ -441,8 +448,8 @@ export default function AdminClients() {
               value = parseFloat(value) || null;
             } else if (fieldName === 'gender') {
               value = value.toLowerCase();
-              if (value === 'uomo' || value === 'm' || value === 'maschio') value = 'male';
-              if (value === 'donna' || value === 'f' || value === 'femmina') value = 'female';
+              if (value === 'uomo' || value === 'm' || value === 'maschio' || value === 'male') value = 'male';
+              if (value === 'donna' || value === 'f' || value === 'femmina' || value === 'female') value = 'female';
             } else if (fieldName === 'subscription_plan') {
               value = value.toLowerCase();
             } else if (fieldName === 'subscription_status') {
@@ -451,7 +458,9 @@ export default function AdminClients() {
               value = value.toLowerCase().substring(0, 2);
             }
 
-            userData[fieldName] = value;
+            if (value) { // Only assign if value is not empty or null after conversion
+              userData[fieldName] = value;
+            }
           }
         });
 
@@ -736,195 +745,163 @@ export default function AdminClients() {
         </Card>
       </div>
 
-      {/* Column Mapping Dialog - REDESIGNED */}
+      {/* Column Mapping Dialog - COMPLETAMENTE RIDISEGNATO */}
       <Dialog open={showMappingDialog} onOpenChange={setShowMappingDialog}>
-        <DialogContent className="max-w-7xl h-[90vh] flex flex-col">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-bold flex items-center gap-3">
+        <DialogContent className="max-w-[95vw] w-[1400px] h-[90vh] flex flex-col">
+          <DialogHeader className="border-b pb-4">
+            <DialogTitle className="text-3xl font-bold flex items-center gap-3">
               🎯 Mappatura Colonne CSV
-              <Badge className="bg-blue-100 text-blue-700 text-base px-3 py-1">
-                {csvData.length} righe trovate
+              <Badge className="bg-blue-100 text-blue-700 text-lg px-4 py-1">
+                {csvData.length} righe • {csvHeaders.length} colonne
               </Badge>
             </DialogTitle>
           </DialogHeader>
 
-          <div className="flex-1 overflow-y-auto space-y-6 pr-2">
-            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-xl p-4">
-              <div className="flex items-start gap-3">
-                <div className="w-10 h-10 bg-blue-500 rounded-full flex items-center justify-center flex-shrink-0">
-                  <CheckCircle className="w-6 h-6 text-white" />
+          <div className="flex-1 overflow-y-auto space-y-6 py-6 pr-2">
+            <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6">
+              <div className="flex items-start gap-4">
+                <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-7 h-7 text-white" />
                 </div>
                 <div>
-                  <p className="font-bold text-blue-900 mb-1">📋 Come Funziona</p>
-                  <p className="text-sm text-blue-800">
-                    Per ogni colonna del tuo CSV, seleziona il campo MyWellness corrispondente nel menu a tendina.
-                    Usa "❌ Non importare" per le colonne che non ti servono.
-                    <strong className="text-red-600 ml-1">L'email è obbligatoria.</strong>
+                  <p className="font-bold text-blue-900 mb-2 text-lg">📋 Come Funziona</p>
+                  <p className="text-blue-800 leading-relaxed">
+                    Per ogni colonna del tuo CSV, seleziona il campo MyWellness corrispondente.
+                    Usa <strong>"❌ Non importare"</strong> per le colonne che non ti servono.
+                    <strong className="text-red-600 ml-1">L'email è obbligatoria per procedere.</strong>
                   </p>
                 </div>
               </div>
             </div>
 
-            {/* Grouped Fields */}
-            {Object.entries(fieldGroups).map(([groupKey, group]) => {
-              const columnsInGroup = csvHeaders
-                .map((header, idx) => ({ header, idx, mapping: columnMapping[idx] }))
-                .filter(col => {
-                  const mappedField = col.mapping;
-                  return group.fields.some(f => f.value === mappedField);
-                });
-
-              if (columnsInGroup.length === 0) return null;
-
-              return (
-                <Card key={groupKey} className="border-2">
-                  <CardHeader className="pb-3 bg-gradient-to-r from-gray-50 to-gray-100">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      <group.icon className="w-5 h-5" />
-                      {group.title}
-                      <Badge variant="outline">{columnsInGroup.length} colonne</Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-4 space-y-3">
-                    {columnsInGroup.map(({ header, idx }) => (
-                      <div key={idx} className="grid grid-cols-12 gap-3 items-center p-3 bg-gray-50 rounded-lg">
-                        <div className="col-span-4">
-                          <Label className="text-xs text-gray-500 mb-1 block">Colonna CSV</Label>
-                          <Badge className="text-sm px-3 py-1 bg-white">
-                            {header || `Colonna ${idx + 1}`}
-                          </Badge>
-                        </div>
-
-                        <div className="col-span-1 flex justify-center">
-                          <ArrowRight className="w-5 h-5 text-[var(--brand-primary)]" />
-                        </div>
-
-                        <div className="col-span-4">
-                          <Label className="text-xs text-gray-500 mb-1 block">Campo MyWellness</Label>
-                          <select
-                            value={columnMapping[idx] || ''}
-                            onChange={(e) => handleMappingChange(idx, e.target.value)}
-                            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
-                          >
-                            <option value="">❌ Non importare</option>
-                            {group.fields.map(field => (
-                              <option key={field.value} value={field.value}>
-                                {field.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="col-span-3">
-                          <Label className="text-xs text-gray-500 mb-1 block">Preview</Label>
-                          <div className="flex gap-1 overflow-x-auto">
-                            {csvData.slice(0, 2).map((row, rowIdx) => (
-                              <Badge key={rowIdx} variant="outline" className="text-xs whitespace-nowrap">
-                                {(row[idx] || '(vuoto)').substring(0, 15)}
-                              </Badge>
-                            ))}
-                          </div>
+            {/* OGNI COLONNA IN UN BOX SEPARATO */}
+            <div className="space-y-4">
+              {csvHeaders.map((header, index) => (
+                <Card key={index} className="border-2 border-gray-200 shadow-md hover:shadow-lg transition-all">
+                  <CardContent className="p-6">
+                    <div className="grid grid-cols-12 gap-6 items-center">
+                      {/* Colonna CSV */}
+                      <div className="col-span-3">
+                        <Label className="text-sm font-bold text-gray-700 mb-2 block uppercase tracking-wide">
+                          Colonna CSV #{index + 1}
+                        </Label>
+                        <div className="bg-gradient-to-r from-gray-100 to-gray-50 border-2 border-gray-300 rounded-xl p-4">
+                          <p className="font-bold text-gray-900 text-lg break-words">
+                            {header || `Colonna ${index + 1}`}
+                          </p>
                         </div>
                       </div>
-                    ))}
-                  </CardContent>
-                </Card>
-              );
-            })}
 
-            {/* Unmapped Columns */}
-            {(() => {
-              const unmapped = csvHeaders
-                .map((header, idx) => ({ header, idx }))
-                .filter(col => !columnMapping[col.idx] || columnMapping[col.idx] === '');
-
-              if (unmapped.length === 0) return null;
-
-              return (
-                <Card className="border-2 border-dashed border-gray-300">
-                  <CardHeader className="pb-3 bg-gray-50">
-                    <CardTitle className="text-lg flex items-center gap-2">
-                      ❓ Colonne Non Mappate
-                      <Badge variant="outline">{unmapped.length} colonne</Badge>
-                    </CardTitle>
-                  </CardHeader>
-                  <CardContent className="pt-4 space-y-3">
-                    {unmapped.map(({ header, idx }) => (
-                      <div key={idx} className="grid grid-cols-12 gap-3 items-center p-3 bg-gray-50 rounded-lg">
-                        <div className="col-span-4">
-                          <Label className="text-xs text-gray-500 mb-1 block">Colonna CSV</Label>
-                          <Badge className="text-sm px-3 py-1 bg-white">
-                            {header || `Colonna ${idx + 1}`}
-                          </Badge>
-                        </div>
-
-                        <div className="col-span-1 flex justify-center">
-                          <ArrowRight className="w-5 h-5 text-gray-300" />
-                        </div>
-
-                        <div className="col-span-4">
-                          <Label className="text-xs text-gray-500 mb-1 block">Assegna a</Label>
-                          <select
-                            value={columnMapping[idx] || ''} // Set value from mapping
-                            onChange={(e) => handleMappingChange(idx, e.target.value)}
-                            className="w-full px-3 py-2 text-sm border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
-                          >
-                            {allAvailableFields.map(field => (
-                              <option key={field.value} value={field.value}>
-                                {field.label}
-                              </option>
-                            ))}
-                          </select>
-                        </div>
-
-                        <div className="col-span-3">
-                          <Label className="text-xs text-gray-500 mb-1 block">Preview</Label>
-                          <div className="flex gap-1 overflow-x-auto">
-                            {csvData.slice(0, 2).map((row, rowIdx) => (
-                              <Badge key={rowIdx} variant="outline" className="text-xs whitespace-nowrap">
-                                {(row[idx] || '(vuoto)').substring(0, 15)}
-                              </Badge>
-                            ))}
-                          </div>
+                      {/* Freccia */}
+                      <div className="col-span-1 flex justify-center">
+                        <div className="w-12 h-12 bg-[var(--brand-primary)] rounded-full flex items-center justify-center">
+                          <ArrowRight className="w-6 h-6 text-white" />
                         </div>
                       </div>
-                    ))}
+
+                      {/* Campo MyWellness */}
+                      <div className="col-span-4">
+                        <Label className="text-sm font-bold text-gray-700 mb-2 block uppercase tracking-wide">
+                          Assegna a Campo MyWellness
+                        </Label>
+                        <select
+                          value={columnMapping[index] || ''}
+                          onChange={(e) => handleMappingChange(index, e.target.value)}
+                          className="w-full px-4 py-3 text-base font-semibold border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] focus:border-[var(--brand-primary)] bg-white"
+                        >
+                          <option value="">❌ Non importare questa colonna</option>
+
+                          <optgroup label="📋 INFORMAZIONI BASE">
+                            <option value="email">📧 Email (OBBLIGATORIA)</option>
+                            <option value="full_name">👤 Nome Completo</option>
+                            <option value="phone_number">📱 Telefono</option>
+                            <option value="gender">⚧ Genere (male/female)</option>
+                            <option value="age">🎂 Età</option>
+                            <option value="language">🌍 Lingua (it/en/es/fr/de/pt)</option>
+                          </optgroup>
+
+                          <optgroup label="💪 DATI FISICI">
+                            <option value="current_weight">⚖️ Peso Attuale (kg)</option>
+                            <option value="target_weight">🎯 Peso Obiettivo (kg)</option>
+                            <option value="height">📏 Altezza (cm)</option>
+                          </optgroup>
+
+                          <optgroup label="💼 ABBONAMENTO">
+                            <option value="subscription_plan">📦 Piano (base/pro/premium)</option>
+                            <option value="subscription_status">📊 Stato Abbonamento</option>
+                          </optgroup>
+
+                          <optgroup label="🏢 FATTURAZIONE">
+                            <option value="billing_address">📍 Indirizzo</option>
+                            <option value="billing_city">🏙️ Città</option>
+                            <option value="billing_zip">📮 CAP</option>
+                            <option value="billing_country">🌐 Paese</option>
+                            <option value="company_name">🏢 Nome Azienda</option>
+                            <option value="tax_id">💳 P.IVA/Codice Fiscale</option>
+                          </optgroup>
+                        </select>
+                      </div>
+
+                      {/* Preview Dati */}
+                      <div className="col-span-4">
+                        <Label className="text-sm font-bold text-gray-700 mb-2 block uppercase tracking-wide">
+                          📊 Preview Prime 3 Righe
+                        </Label>
+                        <div className="space-y-2">
+                          {csvData.slice(0, 3).map((row, rowIdx) => (
+                            <div key={rowIdx} className="bg-white border-2 border-gray-200 rounded-lg p-3">
+                              <span className="text-sm font-mono text-gray-800 break-all">
+                                {row[index] ? (
+                                  row[index].length > 50 ? row[index].substring(0, 50) + '...' : row[index]
+                                ) : <span className="text-gray-400 italic">(vuoto)</span>}
+                              </span>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
-              );
-            })()}
+              ))}
+            </div>
           </div>
 
-          <div className="flex items-center justify-between pt-4 border-t border-gray-200 mt-4">
-            <div>
+          <div className="flex items-center justify-between pt-6 border-t-2 border-gray-200 mt-6 bg-gray-50 p-6 rounded-xl">
+            <div className="flex items-center gap-4">
               {Object.values(columnMapping).includes('email') ? (
-                <div className="flex items-center gap-2 text-green-600">
-                  <CheckCircle className="w-6 h-6" />
-                  <span className="font-bold text-lg">Email mappato ✓ Pronto per importare</span>
+                <div className="flex items-center gap-3 bg-green-50 border-2 border-green-200 rounded-xl px-6 py-3">
+                  <CheckCircle className="w-7 h-7 text-green-600" />
+                  <div>
+                    <p className="font-bold text-lg text-green-900">Email Mappato ✓</p>
+                    <p className="text-sm text-green-700">Pronto per importare</p>
+                  </div>
                 </div>
               ) : (
-                <div className="flex items-center gap-2 text-red-600">
-                  <XCircle className="w-6 h-6" />
-                  <span className="font-bold text-lg">Email non mappato - obbligatorio!</span>
+                <div className="flex items-center gap-3 bg-red-50 border-2 border-red-200 rounded-xl px-6 py-3">
+                  <XCircle className="w-7 h-7 text-red-600" />
+                  <div>
+                    <p className="font-bold text-lg text-red-900">Email Non Mappato!</p>
+                    <p className="text-sm text-red-700">Campo obbligatorio mancante</p>
+                  </div>
                 </div>
               )}
             </div>
 
-            <div className="flex gap-3">
+            <div className="flex gap-4">
               <Button
                 onClick={() => setShowMappingDialog(false)}
                 variant="outline"
-                className="px-6"
+                className="px-8 py-6 text-base"
               >
                 Annulla
               </Button>
               <Button
                 onClick={handleConfirmImport}
                 disabled={!Object.values(columnMapping).includes('email')}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-8"
+                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-8 py-6 text-base font-bold"
               >
-                <Upload className="w-4 h-4 mr-2" />
-                Importa {csvData.length} Utenti
+                <Upload className="w-5 h-5 mr-2" />
+                Conferma Importazione ({csvData.length} Utenti)
               </Button>
             </div>
           </div>
