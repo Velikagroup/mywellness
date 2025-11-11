@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { createPageUrl } from "@/utils";
+import { createPageUrl } => "@/utils";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -91,23 +91,8 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
           }
         }
 
-        @keyframes floatBounce {
-          0%, 100% {
-            transform: translateY(0) scale(1);
-          }
-          25% {
-            transform: translateY(-10px) scale(1.02);
-          }
-          50% {
-            transform: translateY(0) scale(1);
-          }
-          75% {
-            transform: translateY(-5px) scale(1.01);
-          }
-        }
-
         .animated-nutrition-container {
-          animation: floatBounce 3s ease-in-out infinite, containerGlow 2s ease-in-out infinite;
+          animation: containerGlow 2s ease-in-out infinite;
           background: linear-gradient(135deg, #26847F 0%, #14b8a6 50%, #22c55e 100%);
         }
 
@@ -966,6 +951,10 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                 </div>
               </CardContent>
             </Card>
+          )}
+
+          {mealPlans.length > 0 && (
+            <AIFeedbackBox user={user} onPlanRegenerated={loadMealPlans} />
           )}
 
           {mealPlans.length > 0 ? (
