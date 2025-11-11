@@ -59,7 +59,7 @@ export default function Dashboard() {
       const todayDate = new Date().toISOString().split('T')[0];
 
       const basePromises = [
-        base44.entities.WeightHistory.filter({ user_id: currentUser.id }, ['-date', '-created_date'], 30),
+        base44.entities.WeightHistory.filter({ user_id: currentUser.id }), // Changed: Fetch all, then sort/slice client-side
         base44.entities.MealPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek }),
         base44.entities.MealLog.filter({ user_id: currentUser.id, date: todayDate })
       ];
@@ -72,10 +72,17 @@ export default function Dashboard() {
       const [fetchedWeightHistory, fetchedTodayMeals, fetchedMealLogs, fetchedWorkoutPlans] = 
         await Promise.all([...basePromises, workoutPlanPromise]);
 
-      console.log('⚖️ Weight history fetched:', fetchedWeightHistory.length, 'records');
-      console.log('📊 Latest weights:', fetchedWeightHistory.slice(0, 3).map(w => ({ date: w.date, weight: w.weight })));
+      // Sort weight history client-side by date descending, then by created_date descending
+      const sortedWeightHistory = fetchedWeightHistory.sort((a, b) => {
+        const dateComparison = new Date(b.date) - new Date(a.date);
+        if (dateComparison !== 0) return dateComparison;
+        return new Date(b.created_date) - new Date(a.created_date);
+      }).slice(0, 30); // Keep only last 30 entries
+
+      console.log('⚖️ Weight history fetched:', sortedWeightHistory.length, 'records');
+      console.log('📊 Latest weights:', sortedWeightHistory.slice(0, 3).map(w => ({ date: w.date, weight: w.weight })));
       
-      setWeightHistory(fetchedWeightHistory);
+      setWeightHistory(sortedWeightHistory); // Use sorted and sliced history
       setTodayMeals(fetchedTodayMeals);
       setMealLogs(fetchedMealLogs);
       setTodayWorkout(fetchedWorkoutPlans?.[0] || null);
