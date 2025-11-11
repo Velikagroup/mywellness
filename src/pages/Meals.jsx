@@ -64,13 +64,57 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pt-0">
+      <style>{`
+        @keyframes floatBounce {
+          0%, 100% {
+            transform: translateY(0) scale(1);
+          }
+          25% {
+            transform: translateY(-15px) scale(1.05);
+          }
+          50% {
+            transform: translateY(0) scale(1);
+          }
+          75% {
+            transform: translateY(-8px) scale(1.02);
+          }
+        }
+
+        @keyframes pulseGlow {
+          0%, 100% {
+            box-shadow: 0 0 20px rgba(38, 132, 127, 0.3), 0 0 40px rgba(38, 132, 127, 0.2);
+          }
+          50% {
+            box-shadow: 0 0 30px rgba(38, 132, 127, 0.5), 0 0 60px rgba(38, 132, 127, 0.3);
+          }
+        }
+
+        @keyframes rotateUtensil {
+          0% {
+            transform: rotate(-5deg);
+          }
+          50% {
+            transform: rotate(5deg);
+          }
+          100% {
+            transform: rotate(-5deg);
+          }
+        }
+
+        .animated-icon-container {
+          animation: floatBounce 3s ease-in-out infinite, pulseGlow 2s ease-in-out infinite;
+          background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%);
+        }
+
+        .animated-utensil {
+          animation: rotateUtensil 2s ease-in-out infinite;
+        }
+      `}</style>
       <div className="max-w-2xl mx-auto">
         <Card className="max-w-2xl w-full bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl text-center">
           <CardHeader>
-            <div className="w-32 h-32 mx-auto mb-4 rounded-xl overflow-hidden shadow-lg">
-              <video autoPlay loop muted playsInline className="w-full h-full object-cover">
-                <source src="/videos/ai-generating-loop.mp4" type="video/mp4" />
-              </video>
+            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden animated-icon-container flex items-center justify-center">
+              <Utensils className="w-16 h-16 text-white animated-utensil" strokeWidth={2.5} />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Creazione Protocollo Nutrizionale AI</CardTitle>
           </CardHeader>
