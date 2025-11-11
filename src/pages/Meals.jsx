@@ -369,24 +369,51 @@ export default function MealsPage() {
     setRegeneratingMealId(mealToRegenerate.id);
     
     try {
-      // ✅ Use the ORIGINAL meal's calories as target
-      const targetCalories = Math.round(mealToRegenerate.total_calories);
+      // ✅ Calculate target calories: use original if valid, otherwise calculate from meal type
+      let targetCalories = Math.round(mealToRegenerate.total_calories || 0);
+      
+      // Se il pasto ha 0 o null calorie, calcola in base al tipo di pasto
+      if (targetCalories <= 0) {
+        const dailyTarget = nutritionData.daily_calories || 1586;
+        const mealTypeCalories = {
+          'breakfast': Math.round(dailyTarget * 0.20),     // 20%
+          'snack1': Math.round(dailyTarget * 0.08),        // 8%
+          'lunch': Math.round(dailyTarget * 0.30),         // 30%
+          'snack2': Math.round(dailyTarget * 0.08),        // 8%
+          'dinner': Math.round(dailyTarget * 0.25),        // 25%
+          'snack3': Math.round(dailyTarget * 0.05),        // 5%
+          'snack4': Math.round(dailyTarget * 0.04)         // 4%
+        };
+        
+        targetCalories = mealTypeCalories[mealToRegenerate.meal_type] || Math.round(dailyTarget * 0.15);
+        console.log(`⚠️ Pasto con calorie invalide (${mealToRegenerate.total_calories}). Usando target calcolato: ${targetCalories} kcal per ${mealToRegenerate.meal_type}`);
+      }
 
       const singleMealPrompt = `You are an expert AI nutritionist. Create ONE single meal in ITALIAN language.
 
-CRITICAL REQUIREMENT: The meal MUST have EXACTLY ${targetCalories} kcal (±10 kcal max tolerance).
+🔴 CRITICAL CALORIE REQUIREMENT 🔴
+Target Calories: EXACTLY ${targetCalories} kcal (±15 kcal max tolerance)
 
-Target Calories: ${targetCalories} kcal
-Diet Type: ${nutritionData.diet_type}
-User: ${nutritionData.gender}, ${nutritionData.age} anni, ${nutritionData.current_weight}kg
-Allergies: ${nutritionData.allergies?.join(', ') || 'none'}
-Favorite Foods: ${nutritionData.favorite_foods?.join(', ') || 'none'}
+User Profile:
+- Diet Type: ${nutritionData.diet_type}
+- Gender: ${nutritionData.gender}, Age: ${nutritionData.age} anni, Weight: ${nutritionData.current_weight}kg
+${nutritionData.allergies?.length > 0 ? `- Allergies: ${nutritionData.allergies.join(', ')}` : ''}
+${nutritionData.favorite_foods?.length > 0 ? `- Favorite Foods: ${nutritionData.favorite_foods.join(', ')}` : ''}
+
+Meal Type: ${mealToRegenerate.meal_type}
+
+🚨 MANDATORY RULES:
+1. The meal MUST hit EXACTLY ${targetCalories} kcal (±15 kcal tolerance)
+2. Use realistic ingredient portions with PRECISE nutritional values
+3. Each ingredient MUST have ALL fields: name, quantity, unit, calories, protein, carbs, fat
+4. NEVER use null, undefined, or 0 for nutritional values unless truly zero (like water)
+5. If calories are low, ADD healthy ingredients (olive oil, nuts, avocado, cheese)
+6. Create a COMPLETE, SATISFYING meal - not just water or minimal ingredients
 
 Task:
 Generate ONE creative meal in Italian that hits EXACTLY ${targetCalories} kcal.
 The meal must be DIFFERENT from: "${mealToRegenerate.name}"
-Use realistic ingredient portions to reach the calorie target precisely.
-If needed, add healthy fats (olive oil, nuts, avocado) or adjust portions to hit the exact calorie goal.
+Calculate each ingredient's calories PRECISELY based on quantity.
 
 All content MUST be in Italian: meal names, ingredient names (e.g., "petto di pollo", "riso integrale"), units (e.g., "g", "ml", "cucchiaio"), and instructions.`;
 
@@ -408,25 +435,45 @@ All content MUST be in Italian: meal names, ingredient names (e.g., "petto di po
                   protein: { type: "number" },
                   carbs: { type: "number" },
                   fat: { type: "number" }
-                }
+                },
+                required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
               }
             },
             instructions: { type: "array", items: { type: "string" } },
             prep_time: { type: "number" },
             difficulty: { type: "string" }
-          }
+          },
+          required: ["name", "ingredients", "instructions"]
         }
       });
 
-      const total_calories = Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.calories, 0));
+      // ✅ Validate ingredients: remove any with null/undefined values
+      const validIngredients = llmResponse.ingredients.filter(ing => 
+        ing.name && 
+        ing.quantity != null && 
+        ing.unit && 
+        ing.calories != null && 
+        ing.protein != null && 
+        ing.carbs != null && 
+        ing.fat != null
+      );
+
+      if (validIngredients.length === 0) {
+        throw new Error('Nessun ingrediente valido generato dall\'AI');
+      }
+
+      const total_calories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
+      const total_protein = Math.round(validIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
+      const total_carbs = Math.round(validIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
+      const total_fat = Math.round(validIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
       
-      // ✅ Validate that the generated meal is within acceptable range
+      // ✅ Validate final calories
       const calorieDifference = Math.abs(total_calories - targetCalories);
       if (calorieDifference > 50) {
         console.warn(`⚠️ Generated meal calories (${total_calories}) differ from target (${targetCalories}) by ${calorieDifference} kcal`);
       }
       
-      const ingredientsString = llmResponse.ingredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
+      const ingredientsString = validIngredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
       const imagePrompt = `Professional food photography of "${llmResponse.name}". Ingredients: ${ingredientsString}. 45-degree angle, modern plate, natural lighting.`;
       
       const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
@@ -435,14 +482,14 @@ All content MUST be in Italian: meal names, ingredient names (e.g., "petto di po
         id: mealToRegenerate.id,
         data: {
           name: llmResponse.name,
-          ingredients: llmResponse.ingredients,
+          ingredients: validIngredients,
           instructions: llmResponse.instructions,
           total_calories: total_calories,
-          total_protein: Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
-          total_carbs: Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
-          total_fat: Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
-          prep_time: llmResponse.prep_time,
-          difficulty: llmResponse.difficulty,
+          total_protein: total_protein,
+          total_carbs: total_carbs,
+          total_fat: total_fat,
+          prep_time: llmResponse.prep_time || 15,
+          difficulty: llmResponse.difficulty || 'easy',
           image_url: imageResponse.url
         }
       });
