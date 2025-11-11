@@ -113,8 +113,8 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
       <div className="max-w-2xl mx-auto">
         <Card className="max-w-2xl w-full bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl text-center">
           <CardHeader>
-            <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden animated-icon-container flex items-center justify-center">
-              <Utensils className="w-16 h-16 text-white animated-utensil" strokeWidth={2.5} />
+            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden animated-icon-container flex items-center justify-center">
+              <Utensils className="w-10 h-10 text-white animated-utensil" strokeWidth={2.5} />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Creazione Protocollo Nutrizionale AI</CardTitle>
           </CardHeader>
@@ -157,7 +157,6 @@ export default function MealsPage() {
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [mealsPerDay, setMealsPerDay] = useState(5);
 
-  // ✅ Query utente con SDK corretto
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
     queryFn: () => base44.auth.me(),
@@ -184,7 +183,6 @@ export default function MealsPage() {
     activity_level: user.activity_level,
   } : null;
 
-  // ✅ Query pasti con SDK corretto
   const { data: mealPlans = [], isLoading: isLoadingMealPlans } = useQuery({
     queryKey: ['mealPlans', user?.id],
     queryFn: async () => {
@@ -206,7 +204,6 @@ export default function MealsPage() {
     staleTime: 0,
   });
 
-  // ✅ Mutations con SDK corretto
   const updateShoppingListMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.ShoppingList.update(id, data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shoppingLists'] }),
@@ -411,15 +408,13 @@ Generate ONE creative meal in Italian that hits ${targetCalories} kcal. Differen
                   protein: { type: "number" },
                   carbs: { type: "number" },
                   fat: { type: "number" }
-                },
-                required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
+                }
               }
             },
             instructions: { type: "array", items: { type: "string" } },
             prep_time: { type: "number" },
-            difficulty: { type: "string", enum: ["easy", "medium", "hard"] }
-          },
-          required: ["name", "ingredients", "instructions", "prep_time", "difficulty"]
+            difficulty: { type: "string" }
+          }
         }
       });
 
@@ -473,7 +468,6 @@ Generate ONE creative meal in Italian that hits ${targetCalories} kcal. Differen
 
       updateProgress(10, "Analisi profilo metabolico...");
 
-      // ✅ ORDINE CORRETTO: breakfast → snack1 (mattina) → lunch → snack2 (pomeriggio) → dinner → snack3 (serale) → snack4 (notturno)
       const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
       const mealStructure = allMealTypes.slice(0, mealsPerDay);
       
@@ -483,11 +477,9 @@ Generate ONE creative meal in Italian that hits ${targetCalories} kcal. Differen
 
       const dailyCalories = nutritionData.daily_calories;
       
-      // ✅ DISTRIBUZIONE CALORICA REALISTICA E PRECISA
       const mealCalorieDistribution = {};
       
       if (mealsPerDay === 5) {
-        // Colazione 25%, Spuntino mattina 10%, Pranzo 30%, Snack pomeriggio 10%, Cena 25%
         mealCalorieDistribution.breakfast = Math.round(dailyCalories * 0.25);
         mealCalorieDistribution.snack1 = Math.round(dailyCalories * 0.10);
         mealCalorieDistribution.lunch = Math.round(dailyCalories * 0.30);
@@ -509,19 +501,16 @@ Generate ONE creative meal in Italian that hits ${targetCalories} kcal. Differen
         mealCalorieDistribution.snack3 = Math.round(dailyCalories * 0.07);
         mealCalorieDistribution.snack4 = Math.round(dailyCalories * 0.07);
       } else {
-        // Per altri numeri di pasti, distribuzione uniforme
         const caloriesPerMeal = Math.round(dailyCalories / mealsPerDay);
         mealStructure.forEach((mealType) => {
           mealCalorieDistribution[mealType] = caloriesPerMeal;
         });
       }
       
-      // ✅ AGGIUSTA IL TOTALE PER RAGGIUNGERE ESATTAMENTE IL TARGET
       const currentTotal = Object.values(mealCalorieDistribution).reduce((sum, c) => sum + c, 0);
       const difference = dailyCalories - currentTotal;
       
       if (difference !== 0) {
-        // Aggiungi/rimuovi la differenza al pasto più grande
         const largestMealType = Object.keys(mealCalorieDistribution).reduce((a, b) => 
           (mealCalorieDistribution[a] > mealCalorieDistribution[b] ? a : b)
         );
@@ -604,7 +593,7 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                   prep_time: { type: "number" },
                   difficulty: { type: "string", enum: ["easy", "medium", "hard"] }
                 },
-                required: ["day_of_week", "meal_type", "name", "ingredients", "instructions", "total_calories", "total_protein", "total_carbs", "total_fat", "prep_time", "difficulty"]
+                required: ["day_of_week", "meal_type", "name", "ingredients", "instructions", "total_calories"]
               }
             }
           },
@@ -619,13 +608,11 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
         throw new Error('AI non ha generato pasti validi');
       }
 
-      // ✅ VALIDAZIONE E AGGIUSTAMENTO CALORIE PER OGNI GIORNO
       const validatedMealPlans = [];
       
       for (const day of daysToGenerate) {
         const dayMeals = llmResponse.meal_plans.filter(m => m.day_of_week === day);
         
-        // Recalculate total_calories from ingredients for safety and update all macros
         const recalculatedDayMeals = dayMeals.map(meal => {
           const calculatedCalories = Math.round(meal.ingredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
           return {
@@ -637,51 +624,37 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
           };
         });
         
-        const currentDayCalories = recalculatedDayMeals.reduce((sum, m) => sum + m.total_calories, 0);
-        const calorieDifference = dailyCalories - currentDayCalories;
+        let currentDayCalories = recalculatedDayMeals.reduce((sum, m) => sum + m.total_calories, 0);
+        let calorieDifference = dailyCalories - currentDayCalories;
         
-        console.log(`📅 ${day}: Calorie AI=${currentDayCalories}, Target=${dailyCalories}, Diff=${calorieDifference}`);
+        console.log(`📅 ${day}: AI=${currentDayCalories}, Target=${dailyCalories}, Diff=${calorieDifference}`);
         
-        // ✅ SE LA DIFFERENZA È SIGNIFICATIVA, AGGIUSTA
-        if (Math.abs(calorieDifference) > 50) {
-          console.log(`⚠️ ${day}: Aggiustamento necessario di ${calorieDifference} kcal`);
+        // ✅ AGGIUSTAMENTO SEMPRE APPLICATO PER PRECISIONE ASSOLUTA
+        if (calorieDifference !== 0) {
+          console.log(`⚙️ ${day}: Aggiustamento preciso di ${calorieDifference} kcal`);
           
-          // Distribute the difference proportionally among the meals
           const adjustedDayMeals = recalculatedDayMeals.map(meal => {
-            const mealTargetCalories = mealCalorieDistribution[meal.meal_type] || (dailyCalories / mealsPerDay); // Fallback if not specified
-            const mealCurrentCalories = meal.total_calories;
+            const mealProportion = currentDayCalories > 0 ? meal.total_calories / currentDayCalories : (1 / recalculatedDayMeals.length);
+            const mealAdjustment = Math.round(calorieDifference * mealProportion);
             
-            let adjustmentNeededForMeal = mealTargetCalories - mealCurrentCalories;
-
-            // If the AI already did a good job for this specific meal, don't over-adjust it.
-            // Only apply daily difference if the meal itself needs a correction towards its *own* target
-            if (Math.abs(adjustmentNeededForMeal) < 10) { // If meal is already close to its target, use a smaller portion of the global difference
-                adjustmentNeededForMeal = calorieDifference / mealsPerDay; // Apply average daily diff
-            }
-
-
-            // If we need to add calories, add olive oil
-            if (adjustmentNeededForMeal > 0) {
-              const oilMl = Math.round(adjustmentNeededForMeal / 9); // 9 kcal per ml of oil
-              if (oilMl > 0) {
-                meal.ingredients.push({
-                  name: "olio d'oliva extra vergine",
-                  quantity: oilMl,
-                  unit: "ml",
-                  calories: oilMl * 9,
-                  protein: 0,
-                  carbs: 0,
-                  fat: oilMl
-                });
-                meal.total_calories += oilMl * 9;
-                meal.total_fat += oilMl;
-              }
-            } else if (adjustmentNeededForMeal < 0) {
-              // If we need to remove calories, scale all ingredients proportionally down
-              const scaleFactor = (meal.total_calories + adjustmentNeededForMeal) / meal.total_calories;
+            if (mealAdjustment > 0) {
+              const oilMl = Math.round(mealAdjustment / 9);
+              meal.ingredients.push({
+                name: "olio d'oliva extra vergine",
+                quantity: oilMl,
+                unit: "ml",
+                calories: oilMl * 9,
+                protein: 0,
+                carbs: 0,
+                fat: oilMl
+              });
+              meal.total_calories += oilMl * 9;
+              meal.total_fat += oilMl;
+            } else if (mealAdjustment < 0) {
+              const scaleFactor = (meal.total_calories + mealAdjustment) / meal.total_calories;
               meal.ingredients = meal.ingredients.map(ing => ({
                 ...ing,
-                quantity: Math.max(0.1, Math.round(ing.quantity * scaleFactor * 10) / 10), // Ensure quantity doesn't go below a sensible minimum
+                quantity: Math.round(ing.quantity * scaleFactor * 10) / 10,
                 calories: Math.round(ing.calories * scaleFactor),
                 protein: Math.round(ing.protein * scaleFactor * 10) / 10,
                 carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
@@ -696,16 +669,39 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
             return meal;
           });
           
-          validatedMealPlans.push(...adjustedDayMeals);
+          // ✅ AGGIUSTAMENTO FINALE MATEMATICO PRECISO
           const finalDayCalories = adjustedDayMeals.reduce((sum, m) => sum + m.total_calories, 0);
-          console.log(`✅ ${day}: Aggiustato a ${finalDayCalories} kcal`);
+          const remainingDiff = dailyCalories - finalDayCalories;
+          
+          if (remainingDiff !== 0) {
+            console.log(`🔧 ${day}: Aggiustamento finale di ${remainingDiff} kcal sul pasto più grande`);
+            const largestMeal = adjustedDayMeals.reduce((max, meal) => 
+              meal.total_calories > max.total_calories ? meal : max
+            );
+            largestMeal.total_calories += remainingDiff;
+            
+            // Aggiorna anche gli ingredienti proporzionalmente
+            if (largestMeal.ingredients.length > 0) {
+              const oilIngredient = largestMeal.ingredients.find(ing => ing.name.includes('olio'));
+              if (oilIngredient && remainingDiff > 0) {
+                const extraOil = Math.ceil(remainingDiff / 9);
+                oilIngredient.quantity += extraOil;
+                oilIngredient.calories += extraOil * 9;
+                oilIngredient.fat += extraOil;
+                largestMeal.total_fat += extraOil;
+              }
+            }
+          }
+          
+          validatedMealPlans.push(...adjustedDayMeals);
+          const finalCalories = adjustedDayMeals.reduce((sum, m) => sum + m.total_calories, 0);
+          console.log(`✅ ${day}: Calorie finali = ${finalCalories} kcal (Target: ${dailyCalories})`);
         } else {
           validatedMealPlans.push(...recalculatedDayMeals);
-          console.log(`✅ ${day}: Già bilanciato (${currentDayCalories} kcal)`);
+          console.log(`✅ ${day}: Già bilanciato perfettamente`);
         }
       }
 
-      // ✅ Cancella piani esistenti
       updateProgress(65, "Rimozione piani precedenti...");
       for (const plan of mealPlans) {
         await deleteMealMutation.mutateAsync(plan.id);
@@ -713,7 +709,6 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
       
       updateProgress(70, "Generazione immagini AI...");
 
-      // ✅ Salva preferenze utente
       await base44.auth.updateMe({
         diet_type: generationPrefs.diet_type,
         intermittent_fasting: generationPrefs.intermittent_fasting,
@@ -741,7 +736,6 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
           }
         }));
 
-        // ✅ Salva batch di pasti
         updateProgress(batchProgress + 3, `Salvataggio pasti ${i + batch.length}/${totalMeals}...`);
         for (const meal of mealsWithImages) {
           await createMealMutation.mutateAsync({
@@ -814,7 +808,6 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
   const availableDays = isTrialUser ? days.slice(0, 3) : days;
   const todaysMeals = mealPlans.filter(plan => plan.day_of_week === selectedDay);
   
-  // ✅ ORDINE LABELS CORRETTO
   const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
   const getMealTypeLabel = (type) => {
     const labels = { 

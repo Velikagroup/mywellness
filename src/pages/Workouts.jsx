@@ -556,8 +556,8 @@ export default function Workouts() {
         <div className="max-w-2xl mx-auto">
           <Card className="max-w-2xl w-full bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl text-center">
             <CardHeader>
-              <div className="w-32 h-32 mx-auto mb-4 rounded-2xl overflow-hidden animated-workout-container flex items-center justify-center">
-                <Dumbbell className="w-16 h-16 text-white animated-dumbbell" strokeWidth={2.5} />
+              <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden animated-workout-container flex items-center justify-center">
+                <Dumbbell className="w-10 h-10 text-white animated-dumbbell" strokeWidth={2.5} />
               </div>
               <CardTitle className="text-2xl font-bold text-gray-900">Creazione Protocollo Allenamento AI</CardTitle>
             </CardHeader>
