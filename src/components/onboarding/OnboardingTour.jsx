@@ -48,7 +48,7 @@ export default function OnboardingTour({ user, onComplete }) {
       id: 'dashboard_intro',
       title: 'La Tua Dashboard',
       description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi.',
-      target: '.technical-stats-card'
+      target: '.onboarding-technical-stats-wrapper'
     },
     {
       id: 'track_progress',
@@ -59,8 +59,8 @@ export default function OnboardingTour({ user, onComplete }) {
     {
       id: 'nutrition_start',
       title: 'Crea il Tuo Piano',
-      description: 'Sei pronto per iniziare! Clicca qui sotto per generare il tuo piano alimentare personalizzato con l\'intelligenza artificiale.',
-      target: '.dashboard-stats-section',
+      description: 'Sei pronto per iniziare! Clicca qui per generare il tuo piano alimentare personalizzato con l\'intelligenza artificiale.',
+      target: '.onboarding-nutrition-nav-link',
       final: true
     }
   ];
@@ -364,7 +364,7 @@ export default function OnboardingTour({ user, onComplete }) {
     } else {
       // Mobile: sempre centrato in basso
       return {
-        bottom: '20px',
+        bottom: '80px',
         left: '50%',
         transform: 'translateX(-50%)'
       };

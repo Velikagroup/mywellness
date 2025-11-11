@@ -517,7 +517,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="space-y-4 sm:space-y-6 technical-stats-card">
+            <div className="space-y-4 sm:space-y-6 onboarding-technical-stats-wrapper">
              <div className="relative">
               <TechnicalStatsCard
                 title="Target Calorico"

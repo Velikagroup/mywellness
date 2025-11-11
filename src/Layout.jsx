@@ -290,6 +290,8 @@ export default function Layout({ children }) {
                   key={item.name}
                   to={createPageUrl(item.path)}
                   className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
+                    item.path === 'Meals' ? 'onboarding-nutrition-nav-link' : ''
+                  } ${
                     location.pathname === createPageUrl(item.path)
                       ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
                       : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
