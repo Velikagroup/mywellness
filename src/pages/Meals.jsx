@@ -232,10 +232,10 @@ export default function MealsPage() {
   });
 
   const { data: shoppingLists = [], isLoading: isLoadingShoppingLists } = useQuery({
-    queryKey: ['shoppingLists', user?.id, startOfWeek],
+    queryKey: ['shoppingLists', user?.id, getStartOfWeek()],
     queryFn: async () => {
       if (!user?.id) return [];
-      return await base44.entities.ShoppingList.filter({ user_id: user.id, week_start_date: startOfWeek });
+      return await base44.entities.ShoppingList.filter({ user_id: user.id, week_start_date: getStartOfWeek() });
     },
     enabled: !!user?.id,
     staleTime: 0,
@@ -397,7 +397,7 @@ export default function MealsPage() {
       } else {
         await createShoppingListMutation.mutateAsync({
           user_id: user.id,
-          week_start_date: startOfWeek,
+          week_start_date: getStartOfWeek(),
           items: newItemsToAdd,
           last_updated: new Date().toISOString()
         });
@@ -438,7 +438,7 @@ export default function MealsPage() {
 
       const dietRules = getDietRules(nutritionData.diet_type || 'mediterranean');
 
-      const singleMealPrompt = `You are an expert AI nutritionist. Create ONE single meal in ITALIAN language.
+      const singleMealPrompt = `You are an expert AI nutritionist with access to comprehensive nutritional databases. Create ONE single meal in ITALIAN language.
 
 🔴 ULTRA CRITICAL REQUIREMENT 🔴
 Target Calories: EXACTLY ${targetCalories} kcal
@@ -466,27 +466,43 @@ ${nutritionData.favorite_foods?.length > 0 ? `- Favorite Foods: ${nutritionData.
 
 Meal Type: ${mealToRegenerate.meal_type}
 
-🚨 ABSOLUTE MANDATORY RULES:
-1. Calculate PRECISELY to hit ${targetCalories} kcal (±5 kcal MAX)
-2. Use REALISTIC nutritional values from actual food databases
-3. Each ingredient MUST have ALL fields with PRECISE numbers (1 decimal place for macros)
-4. NEVER use 0 for macros unless truly zero (e.g., salt has 0 protein/carbs/fat)
-5. Examples of REALISTIC values (these are just examples, AI should use its own knowledge for other foods):
-   - Egg (60g): calories=86, protein=7.5g, carbs=0.6g, fat=5.7g
-   - Beef (100g): calories=250, protein=26.0g, carbs=0.0g, fat=15.0g
-   - Chicken breast (100g): calories=165, protein=31.0g, carbs=0.0g, fat=3.6g
-   - Salmon (100g): calories=208, protein=20.0g, carbs=0.0g, fat=13.0g
-   - Butter (10g): calories=75, protein=0.1g, carbs=0.1g, fat=8.3g
-6. ALL macronutrients MUST be rounded to 1 decimal place
-7. Verify: sum of ingredient calories MUST equal ${targetCalories} kcal
-8. If too low: add fats (butter, olive oil)
-9. If too high: reduce portions proportionally
+🚨 ABSOLUTE MANDATORY NUTRITIONAL ACCURACY RULES:
+
+1. CONSULT VERIFIED DATABASES:
+   - Use USDA FoodData Central
+   - Use CREA-Alimenti (Italian food database)
+   - Use INRAN (Italian reference values)
+   - Cross-reference multiple sources for accuracy
+
+2. REALISTIC NUTRITIONAL VALUES (examples from verified databases):
+   - Uovo medio intero (60g): calories=86, protein=7.5g, carbs=0.3g, fat=6.0g
+   - Uovo grande (70g): calories=100, protein=8.8g, carbs=0.4g, fat=7.0g
+   - Manzo magro (100g): calories=121, protein=20.5g, carbs=0.0g, fat=4.0g
+   - Petto di pollo (100g): calories=110, protein=23.0g, carbs=0.0g, fat=1.2g
+   - Salmone fresco (100g): calories=208, protein=20.0g, carbs=0.0g, fat=13.4g
+   - Olio d'oliva (10ml): calories=90, protein=0.0g, carbs=0.0g, fat=10.0g
+   - Burro (10g): calories=75, protein=0.1g, carbs=0.1g, fat=8.3g
+   - Riso basmati cotto (100g): calories=121, protein=2.7g, carbs=25.2g, fat=0.4g
+   - Spinaci freschi (100g): calories=23, protein=2.9g, carbs=3.6g, fat=0.4g
+
+3. PRECISION REQUIREMENTS:
+   - ALL macronutrients MUST be rounded to EXACTLY 1 decimal place
+   - NEVER use 0 for macros unless scientifically accurate (e.g., meat has 0 carbs, salt has 0 macros)
+   - Small amounts matter: eggs have ~0.3-0.4g carbs, butter has 0.1g protein/carbs
+   - Verify calculations: sum of (protein×4 + carbs×4 + fat×9) should approximately equal total calories
+
+4. CALCULATION ACCURACY:
+   - Calculate PRECISELY to hit ${targetCalories} kcal (±5 kcal MAX)
+   - Verify: sum of all ingredient calories MUST equal ${targetCalories} kcal
+   - If too low: add healthy fats (butter, olive oil, nuts)
+   - If too high: reduce portions proportionally
 
 Task:
 Generate ONE meal in Italian hitting EXACTLY ${targetCalories} kcal.
 Must be DIFFERENT from: "${mealToRegenerate.name}"
 Use ONLY ingredients from the ALLOWED list.
-Calculate macros with PRECISION (1 decimal).
+Use VERIFIED nutritional data from databases like USDA/CREA.
+Calculate ALL macros with scientific PRECISION (1 decimal place).
 
 All content MUST be in Italian.`;
 
@@ -587,22 +603,13 @@ All content MUST be in Italian.`;
       if (remainingDiff !== 0) {
         console.log(`🔧 Aggiustamento finale: ${remainingDiff} kcal`);
         
-        let ingredientToAdjust = validIngredients.find(ing => 
-            ing.name.toLowerCase().includes("olio d'oliva") || 
-            ing.name.toLowerCase().includes("burro") || 
-            ing.name.toLowerCase().includes("avocado")
-        );
+        const largestNonOilIngredient = validIngredients
+          .filter(ing => !ing.name.toLowerCase().includes('olio'))
+          .reduce((max, ing) => ing.calories > max.calories ? ing : max, validIngredients[0]); // Fallback to first ingredient if all are oil or list is empty
         
-        if (!ingredientToAdjust && validIngredients.length > 0) {
-            ingredientToAdjust = validIngredients.reduce((max, ing) => (ing.calories > max.calories ? ing : max), validIngredients[0]);
-        }
-
-        if (ingredientToAdjust) {
-            ingredientToAdjust.calories += remainingDiff;
-            currentCalories += remainingDiff;
-            if (ingredientToAdjust.name.toLowerCase().includes("olio d'oliva")) {
-                ingredientToAdjust.fat = Math.round((ingredientToAdjust.fat + (remainingDiff / 9)) * 10) / 10;
-            }
+        if (largestNonOilIngredient) {
+          largestNonOilIngredient.calories += remainingDiff;
+          currentCalories += remainingDiff;
         }
       }
 
@@ -717,7 +724,7 @@ All content MUST be in Italian.`;
 
       const dietRules = getDietRules(generationPrefs.diet_type);
 
-      const mealPlanPrompt = `You are an expert AI nutritionist. Create ${daysToGenerate.length * mealsPerDay} meals in ITALIAN.
+      const mealPlanPrompt = `You are an expert AI nutritionist with access to comprehensive nutritional databases. Create ${daysToGenerate.length * mealsPerDay} meals in ITALIAN.
 
 🔴 CRITICAL CALORIE REQUIREMENT 🔴
 DAILY CALORIE TARGET: ${dailyCalories} kcal
@@ -728,19 +735,34 @@ ${Object.entries(mealCalorieDistribution).map(([type, cals]) => `- ${type}: ${ca
 
 TOTAL DAILY: ${Object.values(mealCalorieDistribution).reduce((a,b) => a+b, 0)} kcal
 
-🚨 MANDATORY RULES:
-1. Each meal MUST hit its EXACT calorie target (±10 kcal max tolerance)
-2. Use REALISTIC nutritional values from actual food databases
-3. ALL macronutrients MUST be rounded to 1 decimal place
-4. NEVER use 0 for macros unless truly zero (e.g., salt)
-5. Examples of REALISTIC values (these are just examples, AI should use its own knowledge for other foods):
-   - Egg (60g): calories=86, protein=7.5g, carbs=0.6g, fat=5.7g
-   - Beef (100g): calories=250, protein=26.0g, carbs=0.0g, fat=15.0g
-   - Chicken breast (100g): calories=165, protein=31.0g, carbs=0.0g, fat=3.6g
-   - Salmon (100g): calories=208, protein=20.0g, carbs=0.0g, fat=13.0g
-   - Butter (10g): calories=75, protein=0.1g, carbs=0.1g, fat=8.3g
-6. If a meal is low in calories, ADD MORE FOOD (bigger portions, healthy fats)
-7. DO NOT create tiny meals - every meal must be satisfying
+🚨 ABSOLUTE MANDATORY NUTRITIONAL ACCURACY RULES:
+
+1. CONSULT VERIFIED DATABASES FOR ALL INGREDIENTS:
+   - USDA FoodData Central (primary source)
+   - CREA-Alimenti (Italian food database)
+   - INRAN (Italian reference values)
+   - Cross-reference multiple sources to ensure accuracy
+
+2. REALISTIC NUTRITIONAL VALUES (verified from databases):
+   - Uovo medio intero (60g): calories=86, protein=7.5g, carbs=0.3g, fat=6.0g
+   - Uovo grande (70g): calories=100, protein=8.8g, carbs=0.4g, fat=7.0g
+   - Manzo magro (100g): calories=121, protein=20.5g, carbs=0.0g, fat=4.0g
+   - Petto di pollo (100g): calories=110, protein=23.0g, carbs=0.0g, fat=1.2g
+   - Salmone fresco (100g): calories=208, protein=20.0g, carbs=0.0g, fat=13.4g
+   - Olio d'oliva (10ml): calories=90, protein=0.0g, carbs=0.0g, fat=10.0g
+   - Burro (10g): calories=75, protein=0.1g, carbs=0.1g, fat=8.3g
+   - Riso basmati cotto (100g): calories=121, protein=2.7g, carbs=25.2g, fat=0.4g
+   - Spinaci freschi (100g): calories=23, protein=2.9g, carbs=3.6g, fat=0.4g
+
+3. PRECISION REQUIREMENTS:
+   - ALL macronutrients MUST be rounded to EXACTLY 1 decimal place
+   - NEVER use 0 for macros unless scientifically accurate from verified databases
+   - Small amounts matter: eggs have ~0.3-0.4g carbs, butter has trace protein/carbs
+   - Verify: sum of (protein×4 + carbs×4 + fat×9) ≈ total calories (±10 kcal)
+
+4. Each meal MUST hit its EXACT calorie target (±10 kcal max tolerance)
+5. If a meal is low in calories, ADD MORE FOOD (bigger portions, healthy fats)
+6. DO NOT create tiny meals - every meal must be satisfying
 
 🔥 CRITICAL DIET TYPE: ${generationPrefs.diet_type.toUpperCase()}
 
@@ -770,9 +792,10 @@ Meal types per day: ${mealStructure.join(', ')}
 TASK: Generate ${daysToGenerate.length * mealsPerDay} meals total.
 CRITICAL: Each meal MUST match its target calories from the distribution above.
 CRITICAL: Each meal MUST ONLY use ingredients from the ALLOWED list above.
-CRITICAL: Calculate macros with PRECISION (1 decimal place).
+CRITICAL: Use VERIFIED nutritional data from USDA/CREA/INRAN databases.
+CRITICAL: Calculate ALL macros with scientific PRECISION (1 decimal place).
 
-Return Italian names, ingredients with precise quantities/calories, and instructions.`;
+Return Italian names, ingredients with precise verified quantities/calories, and instructions.`;
 
       updateProgress(20, "Generazione pasti con AI...");
 
@@ -1210,7 +1233,7 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                         }`}
                       >
                         <span>{day.label.substring(0, 3)}</span>
-                        {isAdded && <Check className="w-3 h-3 text-green-600" />}
+                        {isAdded && <Check className="w-3 h-3 mr-1 text-green-600" />}
                       </button>
                     );
                   })}
@@ -1281,7 +1304,7 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                           <div key={meal.id} className="relative w-full text-left bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors group">
                             <button onClick={() => setSelectedMeal(meal)} className="w-full flex items-center justify-between">
                               <div className="flex items-center gap-3 text-left">
-                                <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden">
+                                <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center mx-auto border overflow-hidden">
                                   {meal.image_url ? (
                                     <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
                                   ) : (
