@@ -138,24 +138,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   return (
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
       <CardContent className="p-6">
-        <div className="md:hidden mb-6 pb-6 border-b border-gray-200/30">
-          <div className="flex items-start justify-between gap-4 mb-4">
-            <div>
-              <h1 className="text-2xl font-bold text-gray-900 mb-1">Analisi Progressi</h1>
-              <p className="text-sm text-gray-600">Tracciamento dettagliato e proiezioni</p>
-            </div>
-          </div>
-          <Link to={createPageUrl("Quiz") + "?mode=recap"} className="block">
-            <Button 
-              variant="outline" 
-              className="w-full bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
-            >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              Ricalibra
-            </Button>
-          </Link>
-        </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="p-5 bg-gradient-to-br from-blue-50/70 to-blue-100/30 rounded-xl border border-blue-200/40 backdrop-blur-sm shadow-lg">
             <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Peso Iniziale</p>
