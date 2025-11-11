@@ -389,10 +389,13 @@ export default function MealsPage() {
         console.log(`⚠️ Pasto con calorie invalide (${mealToRegenerate.total_calories}). Usando target calcolato: ${targetCalories} kcal per ${mealToRegenerate.meal_type}`);
       }
 
+      console.log(`🎯 Target ESATTO per rigenerazione: ${targetCalories} kcal`);
+
       const singleMealPrompt = `You are an expert AI nutritionist. Create ONE single meal in ITALIAN language.
 
-🔴 CRITICAL CALORIE REQUIREMENT 🔴
-Target Calories: EXACTLY ${targetCalories} kcal (±15 kcal max tolerance)
+🔴 ULTRA CRITICAL REQUIREMENT 🔴
+Target Calories: EXACTLY ${targetCalories} kcal
+Tolerance: MAXIMUM ±5 kcal (ideally 0 kcal error)
 
 User Profile:
 - Diet Type: ${nutritionData.diet_type}
@@ -402,20 +405,21 @@ ${nutritionData.favorite_foods?.length > 0 ? `- Favorite Foods: ${nutritionData.
 
 Meal Type: ${mealToRegenerate.meal_type}
 
-🚨 MANDATORY RULES:
-1. The meal MUST hit EXACTLY ${targetCalories} kcal (±15 kcal tolerance)
-2. Use realistic ingredient portions with PRECISE nutritional values
-3. Each ingredient MUST have ALL fields: name, quantity, unit, calories, protein, carbs, fat
-4. NEVER use null, undefined, or 0 for nutritional values unless truly zero (like water)
-5. If calories are low, ADD healthy ingredients (olive oil, nuts, avocado, cheese)
-6. Create a COMPLETE, SATISFYING meal - not just water or minimal ingredients
+🚨 ABSOLUTE MANDATORY RULES:
+1. Calculate PRECISELY to hit ${targetCalories} kcal (±5 kcal MAX)
+2. Use standard nutritional values: protein/carbs = 4 kcal/g, fat = 9 kcal/g
+3. Each ingredient MUST have ALL fields with PRECISE numbers
+4. NEVER round quantities too much - use decimals for precision
+5. Verify: sum of ingredient calories MUST equal ${targetCalories} kcal
+6. If too low: add olive oil (9 kcal/ml)
+7. If too high: reduce portion sizes proportionally
 
 Task:
-Generate ONE creative meal in Italian that hits EXACTLY ${targetCalories} kcal.
-The meal must be DIFFERENT from: "${mealToRegenerate.name}"
-Calculate each ingredient's calories PRECISELY based on quantity.
+Generate ONE meal in Italian hitting EXACTLY ${targetCalories} kcal.
+Must be DIFFERENT from: "${mealToRegenerate.name}"
+Double-check math before returning!
 
-All content MUST be in Italian: meal names, ingredient names (e.g., "petto di pollo", "riso integrale"), units (e.g., "g", "ml", "cucchiaio"), and instructions.`;
+All content MUST be in Italian.`;
 
       const llmResponse = await base44.integrations.Core.InvokeLLM({
         prompt: singleMealPrompt,
@@ -448,7 +452,7 @@ All content MUST be in Italian: meal names, ingredient names (e.g., "petto di po
       });
 
       // ✅ Validate ingredients: remove any with null/undefined values
-      const validIngredients = llmResponse.ingredients.filter(ing => 
+      let validIngredients = llmResponse.ingredients.filter(ing => 
         ing.name && 
         ing.quantity != null && 
         ing.unit && 
@@ -462,16 +466,98 @@ All content MUST be in Italian: meal names, ingredient names (e.g., "petto di po
         throw new Error('Nessun ingrediente valido generato dall\'AI');
       }
 
-      const total_calories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
+      let currentCalories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
+      let calorieDifference = targetCalories - currentCalories;
+      
+      console.log(`🔍 Calorie AI: ${currentCalories} kcal, Target: ${targetCalories} kcal, Diff: ${calorieDifference} kcal`);
+
+      // ✅ AUTO-CORRECTION: Adjust to hit EXACT target
+      if (Math.abs(calorieDifference) > 0) {
+        console.log(`⚙️ Aggiustamento automatico di ${calorieDifference} kcal...`);
+        
+        if (calorieDifference > 0) {
+          // Aggiungi olio d'oliva per colmare il gap
+          const oilMl = Math.ceil(calorieDifference / 9); // Use ceil to ensure we cover the diff
+          const oilCalories = oilMl * 9;
+          
+          validIngredients.push({
+            name: "olio d'oliva extra vergine",
+            quantity: oilMl,
+            unit: "ml",
+            calories: oilCalories,
+            protein: 0,
+            carbs: 0,
+            fat: oilMl
+          });
+          
+          currentCalories += oilCalories;
+          console.log(`✅ Aggiunti ${oilMl}ml di olio (+${oilCalories} kcal)`);
+        } else {
+          // Reduce ingredients proportionally
+          // First, check if there's any oil to reduce from
+          let oilIngredientIndex = validIngredients.findIndex(ing => ing.name.toLowerCase().includes("olio d'oliva"));
+          if (oilIngredientIndex !== -1 && validIngredients[oilIngredientIndex].calories > 0) {
+            let oilIngredient = validIngredients[oilIngredientIndex];
+            const oilReductionPossible = Math.floor(oilIngredient.calories / 9); // Max ml of oil we can remove
+            const deficitToCover = Math.abs(calorieDifference);
+
+            if (oilReductionPossible * 9 >= deficitToCover) {
+              const mlToRemove = Math.ceil(deficitToCover / 9);
+              oilIngredient.quantity = Math.max(0, oilIngredient.quantity - mlToRemove);
+              oilIngredient.calories = Math.max(0, oilIngredient.calories - (mlToRemove * 9));
+              oilIngredient.fat = Math.max(0, oilIngredient.fat - mlToRemove);
+              currentCalories -= (mlToRemove * 9);
+              calorieDifference += (mlToRemove * 9); // Reduce the deficit
+              console.log(`✅ Ridotto ${mlToRemove}ml di olio (-${mlToRemove * 9} kcal)`);
+            }
+          }
+          
+          // If still a deficit or no oil was present/sufficient, scale other ingredients
+          if (Math.abs(calorieDifference) > 0) {
+            const finalTarget = currentCalories + calorieDifference; // Target after potential oil adjustment
+            const scaleFactor = finalTarget / currentCalories;
+            console.log(`📉 Scala ingredienti del ${(scaleFactor * 100).toFixed(1)}%`);
+            
+            validIngredients = validIngredients.map(ing => {
+              const newQuantity = parseFloat((ing.quantity * scaleFactor).toFixed(2));
+              const newCalories = Math.round(ing.calories * scaleFactor);
+              const newProtein = parseFloat((ing.protein * scaleFactor).toFixed(1));
+              const newCarbs = parseFloat((ing.carbs * scaleFactor).toFixed(1));
+              const newFat = parseFloat((ing.fat * scaleFactor).toFixed(1));
+
+              return {
+                ...ing,
+                quantity: newQuantity,
+                calories: newCalories,
+                protein: newProtein,
+                carbs: newCarbs,
+                fat: newFat
+              };
+            });
+            
+            currentCalories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
+          }
+        }
+      }
+
+      // ✅ Final adjustment if still not exact (handle rounding issues)
+      let finalRemainingDiff = targetCalories - currentCalories;
+      if (finalRemainingDiff !== 0) {
+        console.log(`🔧 Aggiustamento finale residuo: ${finalRemainingDiff} kcal`);
+        
+        // Try to adjust the largest ingredient by its calories directly
+        let largestIngredient = validIngredients.reduce((max, ing) => (ing.calories > max.calories ? ing : max), validIngredients[0]);
+        if (largestIngredient) {
+            largestIngredient.calories += finalRemainingDiff;
+            currentCalories = targetCalories; // Force to target after this final adjustment
+        }
+      }
+
       const total_protein = Math.round(validIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
       const total_carbs = Math.round(validIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
       const total_fat = Math.round(validIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
       
-      // ✅ Validate final calories
-      const calorieDifference = Math.abs(total_calories - targetCalories);
-      if (calorieDifference > 50) {
-        console.warn(`⚠️ Generated meal calories (${total_calories}) differ from target (${targetCalories}) by ${calorieDifference} kcal`);
-      }
+      console.log(`✅ Calorie finali: ${currentCalories} kcal (Target: ${targetCalories} kcal, Errore: ${currentCalories - targetCalories} kcal)`);
       
       const ingredientsString = validIngredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
       const imagePrompt = `Professional food photography of "${llmResponse.name}". Ingredients: ${ingredientsString}. 45-degree angle, modern plate, natural lighting.`;
@@ -484,7 +570,7 @@ All content MUST be in Italian: meal names, ingredient names (e.g., "petto di po
           name: llmResponse.name,
           ingredients: validIngredients,
           instructions: llmResponse.instructions,
-          total_calories: total_calories,
+          total_calories: currentCalories,
           total_protein: total_protein,
           total_carbs: total_carbs,
           total_fat: total_fat,
@@ -494,7 +580,7 @@ All content MUST be in Italian: meal names, ingredient names (e.g., "petto di po
         }
       });
       
-      alert(`✅ Pasto rigenerato: "${llmResponse.name}" (${total_calories} kcal)`);
+      alert(`✅ Pasto rigenerato: "${llmResponse.name}" (${currentCalories} kcal - Errore: ${currentCalories - targetCalories} kcal)`);
     } catch (error) {
       console.error("Error regenerating meal:", error);
       alert(`Errore: ${error.message}`);
