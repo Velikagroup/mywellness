@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -368,16 +369,26 @@ export default function MealsPage() {
     setRegeneratingMealId(mealToRegenerate.id);
     
     try {
-      const dailyCalories = nutritionData.daily_calories;
-      const targetCalories = Math.round(dailyCalories / mealsPerDay);
+      // ✅ Use the ORIGINAL meal's calories as target
+      const targetCalories = Math.round(mealToRegenerate.total_calories);
 
       const singleMealPrompt = `You are an expert AI nutritionist. Create ONE single meal in ITALIAN language.
 
-Target Calories: ${targetCalories} kcal (±20 kcal acceptable)
+CRITICAL REQUIREMENT: The meal MUST have EXACTLY ${targetCalories} kcal (±10 kcal max tolerance).
+
+Target Calories: ${targetCalories} kcal
 Diet Type: ${nutritionData.diet_type}
 User: ${nutritionData.gender}, ${nutritionData.age} anni, ${nutritionData.current_weight}kg
+Allergies: ${nutritionData.allergies?.join(', ') || 'none'}
+Favorite Foods: ${nutritionData.favorite_foods?.join(', ') || 'none'}
 
-Generate ONE creative meal in Italian that hits ${targetCalories} kcal. Different from: "${mealToRegenerate.name}"`;
+Task:
+Generate ONE creative meal in Italian that hits EXACTLY ${targetCalories} kcal.
+The meal must be DIFFERENT from: "${mealToRegenerate.name}"
+Use realistic ingredient portions to reach the calorie target precisely.
+If needed, add healthy fats (olive oil, nuts, avocado) or adjust portions to hit the exact calorie goal.
+
+All content MUST be in Italian: meal names, ingredient names (e.g., "petto di pollo", "riso integrale"), units (e.g., "g", "ml", "cucchiaio"), and instructions.`;
 
       const llmResponse = await base44.integrations.Core.InvokeLLM({
         prompt: singleMealPrompt,
@@ -408,6 +419,13 @@ Generate ONE creative meal in Italian that hits ${targetCalories} kcal. Differen
       });
 
       const total_calories = Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.calories, 0));
+      
+      // ✅ Validate that the generated meal is within acceptable range
+      const calorieDifference = Math.abs(total_calories - targetCalories);
+      if (calorieDifference > 50) {
+        console.warn(`⚠️ Generated meal calories (${total_calories}) differ from target (${targetCalories}) by ${calorieDifference} kcal`);
+      }
+      
       const ingredientsString = llmResponse.ingredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
       const imagePrompt = `Professional food photography of "${llmResponse.name}". Ingredients: ${ingredientsString}. 45-degree angle, modern plate, natural lighting.`;
       
