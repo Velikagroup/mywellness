@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -13,6 +14,7 @@ export default function AdminFeedback() {
   const [isLoading, setIsLoading] = useState(true);
   const [cancellationFeedbacks, setCancellationFeedbacks] = useState([]);
   const [emailFeedbacks, setEmailFeedbacks] = useState([]);
+  const [discoveryStats, setDiscoveryStats] = useState([]);
 
   useEffect(() => {
     checkAccess();
@@ -34,13 +36,30 @@ export default function AdminFeedback() {
 
   const loadData = async () => {
     try {
-      const [cancellations, aiFeedbacks] = await Promise.all([
+      const [cancellations, aiFeedbacks, onboardingData] = await Promise.all([
         base44.entities.CancellationFeedback.list(['-created_date']),
-        base44.entities.AIFeedback.list(['-created_date'])
+        base44.entities.AIFeedback.list(['-created_date']),
+        base44.entities.UserOnboarding.list()
       ]);
       
       setCancellationFeedbacks(cancellations);
       setEmailFeedbacks(aiFeedbacks);
+      
+      // Process discovery stats
+      const sourceCounts = {};
+      onboardingData.forEach(record => {
+        if (record.discovery_source) {
+          sourceCounts[record.discovery_source] = (sourceCounts[record.discovery_source] || 0) + 1;
+        }
+      });
+      
+      const stats = Object.entries(sourceCounts).map(([source, count]) => ({
+        source,
+        count,
+        percentage: ((count / onboardingData.length) * 100).toFixed(1)
+      })).sort((a, b) => b.count - a.count);
+      
+      setDiscoveryStats(stats);
     } catch (error) {
       console.error('Error loading feedback:', error);
     }
@@ -94,6 +113,27 @@ export default function AdminFeedback() {
     ? Math.round(cancellationFeedbacks.reduce((sum, f) => sum + (f.days_used || 0), 0) / cancellationFeedbacks.length)
     : 0;
 
+  const discoveryLabels = {
+    instagram: '📸 Instagram',
+    tiktok: '🎵 TikTok',
+    facebook: '👥 Facebook',
+    youtube: '▶️ YouTube',
+    google_search: '🔍 Google',
+    friend_recommendation: '🤝 Amico',
+    influencer: '⭐ Influencer',
+    blog_article: '📰 Blog',
+    podcast: '🎙️ Podcast',
+    other: '💡 Altro'
+  };
+
+  const DISCOVERY_COLORS = ['#3b82f6', '#8b5cf6', '#ec4899', '#f59e0b', '#10b981', '#14b8a6', '#6366f1', '#ef4444', '#06b6d4', '#a855f7'];
+
+  const discoveryPieData = discoveryStats.map((stat, index) => ({
+    name: discoveryLabels[stat.source] || stat.source,
+    value: stat.count,
+    percentage: stat.percentage
+  }));
+
   return (
     <div className="min-h-screen pb-20 overflow-x-hidden">
       <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
@@ -102,19 +142,105 @@ export default function AdminFeedback() {
           <p className="text-sm sm:text-base text-gray-600">Analisi cancellazioni e feedback utenti</p>
         </div>
 
-        <Tabs defaultValue="cancellations" className="w-full">
+        <Tabs defaultValue="discovery" className="w-full">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-2 gap-2 bg-gray-100/80 p-1 rounded-lg">
+            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-3 gap-2 bg-gray-100/80 p-1 rounded-lg">
+              <TabsTrigger value="discovery" className="text-xs sm:text-sm whitespace-nowrap">
+                <Users className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
+                Come Ci Hanno Trovati ({discoveryStats.reduce((sum, s) => sum + s.count, 0)})
+              </TabsTrigger>
               <TabsTrigger value="cancellations" className="text-xs sm:text-sm whitespace-nowrap">
                 <ThumbsDown className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Cancellazioni ({cancellationFeedbacks.length})
               </TabsTrigger>
               <TabsTrigger value="general" className="text-xs sm:text-sm whitespace-nowrap">
                 <MessageCircle className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
-                Feedback Generali ({emailFeedbacks.length})
+                Feedback AI ({emailFeedbacks.length})
               </TabsTrigger>
             </TabsList>
           </div>
+
+          <TabsContent value="discovery" className="space-y-6 mt-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              <Card className="bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-base sm:text-lg">Distribuzione Canali</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {discoveryPieData.length > 0 ? (
+                    <ResponsiveContainer width="100%" height={350}>
+                      <PieChart>
+                        <Pie
+                          data={discoveryPieData}
+                          cx="50%"
+                          cy="50%"
+                          labelLine={false}
+                          label={({ name, percentage }) => `${percentage}%`}
+                          outerRadius={100}
+                          fill="#8884d8"
+                          dataKey="value"
+                        >
+                          {discoveryPieData.map((entry, index) => (
+                            <Cell key={`cell-${index}`} fill={DISCOVERY_COLORS[index % DISCOVERY_COLORS.length]} />
+                          ))}
+                        </Pie>
+                        <Tooltip />
+                        <Legend wrapperStyle={{ fontSize: '13px' }} />
+                      </PieChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <p className="text-center text-gray-500 py-12">Nessun dato disponibile</p>
+                  )}
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/80 backdrop-blur-sm">
+                <CardHeader>
+                  <CardTitle className="text-base sm:text-lg">Classifica Canali di Acquisizione</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {discoveryStats.length > 0 ? (
+                    <div className="space-y-3">
+                      {discoveryStats.map((stat, index) => (
+                        <div key={stat.source} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors">
+                          <div className="flex items-center gap-3">
+                            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold text-sm`} style={{ backgroundColor: DISCOVERY_COLORS[index % DISCOVERY_COLORS.length] }}>
+                              {index + 1}
+                            </div>
+                            <span className="font-semibold text-gray-800">{discoveryLabels[stat.source] || stat.source}</span>
+                          </div>
+                          <div className="text-right">
+                            <p className="text-lg font-bold text-gray-900">{stat.count}</p>
+                            <p className="text-xs text-gray-500">{stat.percentage}%</p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-center text-gray-500 py-12">Nessun dato disponibile</p>
+                  )}
+                </CardContent>
+              </Card>
+            </div>
+
+            <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200">
+              <CardContent className="p-6">
+                <div className="flex items-start gap-4">
+                  <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
+                    <Users className="w-6 h-6 text-white" />
+                  </div>
+                  <div>
+                    <h3 className="font-bold text-blue-900 mb-2">📊 Insights Marketing</h3>
+                    <ul className="text-sm text-blue-800 space-y-1">
+                      <li>• <strong>Canale Top:</strong> {discoveryStats[0] ? (discoveryLabels[discoveryStats[0].source] || discoveryStats[0].source) : 'N/A'} ({discoveryStats[0]?.percentage}%)</li>
+                      <li>• <strong>Totale Utenti Tracciati:</strong> {discoveryStats.reduce((sum, s) => sum + s.count, 0)}</li>
+                      <li>• <strong>Canali Attivi:</strong> {discoveryStats.length}/{Object.keys(discoveryLabels).length}</li>
+                    </ul>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           <TabsContent value="cancellations" className="space-y-6 mt-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
