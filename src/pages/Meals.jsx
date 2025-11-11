@@ -1038,11 +1038,13 @@ RESPONSE JSON SCHEMA:
               </div>
           </div>
 
-          {/* AI Feedback Box */}
-          <AIFeedbackBox 
-            user={user} 
-            onPlanRegenerated={() => loadMealPlans(user?.id)}
-          />
+          {/* AI Feedback Box - mostra SOLO se c'è già un piano */}
+          {mealPlans.length > 0 && (
+            <AIFeedbackBox 
+              user={user} 
+              onPlanRegenerated={() => loadMealPlans(user?.id)}
+            />
+          )}
 
             {showGenerator && (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
