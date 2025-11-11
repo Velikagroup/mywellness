@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -81,15 +82,15 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
               </div>
               <div className="text-center">
                 <p className="text-xs text-gray-600 font-medium mb-0.5">Prot.</p>
-                <p className="text-lg font-bold text-red-600">{Math.round(dailyTotals.protein)}g</p>
+                <p className="text-lg font-bold text-red-600">{(Math.round(dailyTotals.protein * 10) / 10).toFixed(1)}g</p>
               </div>
               <div className="text-center">
                 <p className="text-xs text-gray-600 font-medium mb-0.5">Carb.</p>
-                <p className="text-lg font-bold text-blue-600">{Math.round(dailyTotals.carbs)}g</p>
+                <p className="text-lg font-bold text-blue-600">{(Math.round(dailyTotals.carbs * 10) / 10).toFixed(1)}g</p>
               </div>
               <div className="text-center">
                 <p className="text-xs text-gray-600 font-medium mb-0.5">Grassi</p>
-                <p className="text-lg font-bold text-yellow-600">{Math.round(dailyTotals.fat)}g</p>
+                <p className="text-lg font-bold text-yellow-600">{(Math.round(dailyTotals.fat * 10) / 10).toFixed(1)}g</p>
               </div>
             </div>
           </div>
