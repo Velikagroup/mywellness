@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -26,7 +25,7 @@ import {
   Activity,
   CreditCard,
   MapPin,
-  AlertCircle // Added
+  AlertCircle
 } from 'lucide-react';
 import ClientDetailModal from '../components/admin/ClientDetailModal';
 
@@ -41,14 +40,15 @@ export default function AdminClients() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [showClientModal, setShowClientModal] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
-
+  
   // Import mapping state
   const [showMappingDialog, setShowMappingDialog] = useState(false);
   const [csvHeaders, setCsvHeaders] = useState([]);
   const [csvData, setCsvData] = useState([]);
   const [columnMapping, setColumnMapping] = useState({});
-  const [detectedSeparator, setDetectedSeparator] = useState(','); // Added
-
+  const [detectedSeparator, setDetectedSeparator] = useState(',');
+  const [parseDebugInfo, setParseDebugInfo] = useState(null);
+  
   const [stats, setStats] = useState({
     totalClients: 0,
     maleCount: 0,
@@ -140,11 +140,11 @@ export default function AdminClients() {
     const totalClients = clientsList.length;
     const maleCount = clientsList.filter(c => c.gender === 'male').length;
     const femaleCount = clientsList.filter(c => c.gender === 'female').length;
-
+    
     const clientsWithPurchases = clientsList.filter(c => c.last_payment_amount && c.last_payment_amount > 0);
     const totalRevenue = clientsList.reduce((sum, c) => sum + (c.last_payment_amount || 0), 0);
     const avgLifetimeValue = totalClients > 0 ? totalRevenue / totalClients : 0;
-
+    
     const repeatCustomers = clientsWithPurchases.filter(c => {
       return c.subscription_status === 'active' && c.last_payment_date;
     }).length;
@@ -190,7 +190,7 @@ export default function AdminClients() {
   const handleExportClients = () => {
     try {
       const csvRows = [];
-
+      
       const headers = [
         'Nome Completo',
         'Email',
@@ -256,7 +256,7 @@ export default function AdminClients() {
       a.click();
       window.URL.revokeObjectURL(url);
       a.remove();
-
+      
       alert(`✅ Esportati ${clients.length} clienti con successo!`);
     } catch (error) {
       console.error('Export error:', error);
@@ -270,47 +270,53 @@ export default function AdminClients() {
 
   // Funzione per rilevare il separatore
   const detectSeparator = (text) => {
-    // Remove BOM and initial/final spaces
-    const cleanText = text.replace(/^\uFEFF/, '').trim();
-    const firstLine = cleanText.split(/\r?\n/)[0]; // Get the first non-empty line
-    if (!firstLine) return ','; // Default if file is empty or only newlines
-
+    const firstLine = text.split(/\r?\n/)[0];
     const separators = [',', ';', '\t', '|'];
-
+    
     let maxCount = 0;
     let detectedSep = ',';
-
+    
     for (const sep of separators) {
-      const count = (firstLine.match(new RegExp('\\' + sep, 'g')) || []).length;
+      const escapedSep = sep === '\t' ? '\t' : ('\\' + sep);
+      const regex = sep === '\t' ? /\t/g : new RegExp(escapedSep, 'g');
+      const count = (firstLine.match(regex) || []).length;
       if (count > maxCount) {
         maxCount = count;
         detectedSep = sep;
       }
     }
-
-    console.log('🔍 Separatore rilevato:', detectedSep === '\t' ? '\\t (TAB)' : detectedSep, '- Occorrenze:', maxCount);
+    
+    console.log('🔍 Separatore rilevato:', detectedSep === '\t' ? 'TAB' : detectedSep, '- Occorrenze:', maxCount);
     return detectedSep;
   };
 
   const parseCSV = (text, separator = ',') => {
-    // Rimuovi BOM e spazi iniziali/finali
     const cleanText = text.replace(/^\uFEFF/, '').trim();
-
-    // Split per righe gestendo \r\n e \n, e filtra le righe vuote
-    const lines = cleanText.split(/\r?\n/);
-
+    
+    // Conta le righe PRIMA del parsing per debug
+    const rawLines = cleanText.split(/\r?\n/);
+    console.log('🔢 Righe RAW nel file:', rawLines.length);
+    console.log('📝 Prima riga:', rawLines[0]);
+    console.log('📝 Seconda riga:', rawLines[1]?.substring(0, 100));
+    
     const result = [];
-
-    for (let line of lines) {
-      if (!line.trim()) continue; // Skip empty lines
-
+    
+    for (let lineIndex = 0; lineIndex < rawLines.length; lineIndex++) {
+      const line = rawLines[lineIndex];
+      
+      // Skip righe completamente vuote
+      if (!line || !line.trim()) {
+        console.log(`⏭️ Riga ${lineIndex + 1} vuota - skip`);
+        continue;
+      }
+      
       const row = [];
       let current = '';
       let inQuotes = false;
-
+      
       for (let i = 0; i < line.length; i++) {
         const char = line[i];
-
+        
         if (char === '"') {
           if (inQuotes && line[i + 1] === '"') {
             current += '"';
@@ -319,20 +325,29 @@ export default function AdminClients() {
             inQuotes = !inQuotes;
           }
         } else if (char === separator && !inQuotes) {
-          row.push(current.trim()); // Push trimmed value
+          row.push(current.trim());
           current = '';
         } else {
           current += char;
         }
       }
-      row.push(current.trim()); // Push trimmed value
-
-      // Aggiungi solo se la riga ha almeno un valore non vuoto dopo il trim
-      if (row.some(cell => cell)) { // Check for non-empty cell (already trimmed)
+      row.push(current.trim());
+      
+      // Aggiungi solo se la riga ha almeno UNA cella con contenuto
+      const hasContent = row.some(cell => cell && cell.length > 0);
+      if (hasContent) {
         result.push(row);
+        if (result.length <= 3) {
+          console.log(`✅ Riga ${lineIndex + 1} parsata:`, row.length, 'colonne -', row.slice(0, 3));
+        }
+      } else {
+        console.log(`⏭️ Riga ${lineIndex + 1} senza contenuto - skip`);
       }
     }
-
+    
+    console.log('🎯 TOTALE RIGHE PARSATE (incluso header):', result.length);
+    console.log('📊 Righe dati (senza header):', result.length - 1);
+    
     return result;
   };
 
@@ -341,61 +356,59 @@ export default function AdminClients() {
     if (!file) return;
 
     if (!file.name.endsWith('.csv')) {
-      alert('❌ Per favorere seleziona un file CSV');
+      alert('❌ Per favore seleziona un file CSV');
       return;
     }
 
     try {
+      console.log('📁 File selezionato:', file.name, '- Dimensione:', file.size, 'bytes');
+      
       const text = await file.text();
-
+      
+      console.log('📄 Contenuto file caricato - Lunghezza testo:', text.length, 'caratteri');
+      
       // Rileva il separatore automaticamente
       const separator = detectSeparator(text);
       setDetectedSeparator(separator);
-
+      
       const parsedData = parseCSV(text, separator);
-
-      console.log('📊 CSV Debug:', {
-        totalLines: parsedData.length,
-        separator: separator === '\t' ? 'TAB' : separator,
-        firstRow: parsedData[0],
-        secondRow: parsedData[1]
-      });
-
-      if (parsedData.length < 2) { // At least header + one data row
+      
+      if (parsedData.length < 2) {
         alert('❌ File CSV vuoto o non valido');
         return;
       }
 
       const headers = parsedData[0];
       const dataRows = parsedData.slice(1);
-
-      // Validazione: controlla che tutte le righe abbiano lo stesso numero di colonne
-      const expectedColumns = headers.length;
-      const invalidRows = dataRows.filter(row => row.length !== expectedColumns);
-
-      if (invalidRows.length > 0) {
-        console.warn(`⚠️ ${invalidRows.length} righe con numero di colonne diverso da ${expectedColumns}`);
-      }
-
-      console.log('✅ Parsed successfully:', {
-        headers: headers.length,
-        dataRows: dataRows.length,
-        invalidRows: invalidRows.length
-      });
+      
+      // Debug info
+      const debugInfo = {
+        fileName: file.name,
+        fileSize: file.size,
+        totalParsedLines: parsedData.length,
+        headerColumns: headers.length,
+        dataRowsCount: dataRows.length,
+        separator: separator === '\t' ? 'TAB' : separator,
+        firstHeader: headers[0],
+        lastHeader: headers[headers.length - 1]
+      };
+      
+      console.log('🎯 RIEPILOGO PARSING:', debugInfo);
+      setParseDebugInfo(debugInfo);
 
       setCsvHeaders(headers);
       setCsvData(dataRows);
-
+      
       // Auto-mappatura intelligente
       const autoMapping = {};
       headers.forEach((header, index) => {
         const lowerHeader = header.toLowerCase();
-
+        
         if (lowerHeader.includes('email') || lowerHeader === 'e-mail') {
           autoMapping[index] = 'email';
         } else if ((lowerHeader.includes('nome') && !lowerHeader.includes('cognome')) || lowerHeader === 'name' || lowerHeader === 'firstname') {
           autoMapping[index] = 'full_name';
-        } else if (lowerHeader.includes('telefono') || lowerHeader.includes('phone') || lowerHeader.includes('cellulare') || lowerHeader.includes('tel')) {
+        } else if (lowerHeader.includes('telefono') || lowerHeader.includes('phone') || lowerHeader.includes('cellulare')) {
           autoMapping[index] = 'phone_number';
         } else if (lowerHeader.includes('genere') || lowerHeader === 'gender' || lowerHeader === 'sesso' || lowerHeader === 'sex') {
           autoMapping[index] = 'gender';
@@ -432,7 +445,7 @@ export default function AdminClients() {
 
       setColumnMapping(autoMapping);
       setShowMappingDialog(true);
-
+      
     } catch (error) {
       console.error('File parse error:', error);
       alert('❌ Errore durante la lettura del file: ' + error.message);
@@ -449,7 +462,6 @@ export default function AdminClients() {
   };
 
   const handleConfirmImport = async () => {
-    // Verifica che email sia mappato
     const emailMapped = Object.values(columnMapping).includes('email');
     if (!emailMapped) {
       alert('❌ Devi mappare almeno la colonna Email per procedere con l\'importazione');
@@ -457,7 +469,7 @@ export default function AdminClients() {
     }
 
     const confirmMsg = `Procedere con l'importazione di ${csvData.length} utenti?\n\nSaranno ignorati gli utenti con email già esistente.`;
-
+    
     if (!confirm(confirmMsg)) {
       return;
     }
@@ -472,22 +484,18 @@ export default function AdminClients() {
 
       for (const row of csvData) {
         const userData = {};
-
-        // Mappa i dati in base alla configurazione
+        
         Object.keys(columnMapping).forEach(colIndex => {
           const fieldName = columnMapping[colIndex];
-          // Ensure row[colIndex] exists to avoid errors on malformed CSV rows
-          if (fieldName && row[colIndex] !== undefined && row[colIndex] !== null) {
+          if (fieldName && row[colIndex]) {
             let value = row[colIndex].trim();
-
-            // Conversioni tipo
+            
             if (fieldName === 'age' || fieldName === 'current_weight' || fieldName === 'target_weight' || fieldName === 'height') {
               value = parseFloat(value) || null;
             } else if (fieldName === 'gender') {
               value = value.toLowerCase();
               if (value === 'uomo' || value === 'm' || value === 'maschio' || value === 'male') value = 'male';
-              else if (value === 'donna' || value === 'f' || value === 'femmina' || value === 'female') value = 'female';
-              else value = null; // Set to null if unrecognized gender
+              if (value === 'donna' || value === 'f' || value === 'femmina' || value === 'female') value = 'female';
             } else if (fieldName === 'subscription_plan') {
               value = value.toLowerCase();
             } else if (fieldName === 'subscription_status') {
@@ -495,8 +503,8 @@ export default function AdminClients() {
             } else if (fieldName === 'language') {
               value = value.toLowerCase().substring(0, 2);
             }
-
-            if (value !== null && value !== '') { // Only assign if value is not empty or null after conversion
+            
+            if (value) {
               userData[fieldName] = value;
             }
           }
@@ -508,14 +516,12 @@ export default function AdminClients() {
         }
 
         try {
-          // Verifica se esiste già
           const existing = await base44.entities.User.filter({ email: userData.email });
           if (existing && existing.length > 0) {
             skipped++;
             continue;
           }
 
-          // Aggiungi campi default
           userData.role = 'user';
           if (!userData.subscription_plan) userData.subscription_plan = 'base';
           if (!userData.subscription_status) userData.subscription_status = 'trial';
@@ -523,7 +529,7 @@ export default function AdminClients() {
 
           await base44.entities.User.create(userData);
           imported++;
-
+          
         } catch (error) {
           console.error(`Error importing ${userData.email}:`, error);
           errors.push(userData.email);
@@ -535,10 +541,10 @@ export default function AdminClients() {
       if (errors.length > 0) {
         message += `\n\nErrori su: ${errors.slice(0, 5).join(', ')}${errors.length > 5 ? '...' : ''}`;
       }
-
+      
       alert(message);
       await loadClients();
-
+      
     } catch (error) {
       console.error('Import error:', error);
       alert('❌ Errore durante l\'importazione: ' + error.message);
@@ -599,7 +605,6 @@ export default function AdminClients() {
           </div>
         </div>
 
-        {/* Stats Cards */}
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           <Card className="bg-white/80 backdrop-blur-sm">
             <CardContent className="p-4">
@@ -662,7 +667,6 @@ export default function AdminClients() {
           </Card>
         </div>
 
-        {/* Filters & Search */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
@@ -675,7 +679,7 @@ export default function AdminClients() {
                   className="pl-10 h-12"
                 />
               </div>
-
+              
               <select
                 value={filterStatus}
                 onChange={(e) => setFilterStatus(e.target.value)}
@@ -702,7 +706,6 @@ export default function AdminClients() {
           </CardContent>
         </Card>
 
-        {/* Clients Table */}
         <Card className="bg-white/80 backdrop-blur-sm">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
@@ -722,7 +725,7 @@ export default function AdminClients() {
                     <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-full flex items-center justify-center text-white font-bold text-lg">
                       {(client.full_name || client.email || 'U')[0].toUpperCase()}
                     </div>
-
+                    
                     <div className="flex-1">
                       <div className="flex items-center gap-2 mb-1">
                         <h3 className="font-semibold text-gray-900">{client.full_name || 'Nome non disponibile'}</h3>
@@ -735,9 +738,9 @@ export default function AdminClients() {
                         {client.subscription_status && (
                           <Badge className={
                             client.subscription_status === 'active' ? 'bg-green-100 text-green-700' :
-                              client.subscription_status === 'trial' ? 'bg-blue-100 text-blue-700' :
-                                client.subscription_status === 'expired' ? 'bg-orange-100 text-orange-700' :
-                                  'bg-gray-100 text-gray-700'
+                            client.subscription_status === 'trial' ? 'bg-blue-100 text-blue-700' :
+                            client.subscription_status === 'expired' ? 'bg-orange-100 text-orange-700' :
+                            'bg-gray-100 text-gray-700'
                           }>
                             {client.subscription_status}
                           </Badge>
@@ -772,7 +775,7 @@ export default function AdminClients() {
                   </div>
                 </div>
               ))}
-
+              
               {filteredClients.length === 0 && (
                 <div className="text-center py-12 text-gray-500">
                   Nessun cliente trovato
@@ -783,22 +786,45 @@ export default function AdminClients() {
         </Card>
       </div>
 
-      {/* Column Mapping Dialog - COMPLETAMENTE RIDISEGNATO */}
+      {/* Column Mapping Dialog - CON DEBUG INFO */}
       <Dialog open={showMappingDialog} onOpenChange={setShowMappingDialog}>
         <DialogContent className="max-w-[95vw] w-[1400px] h-[90vh] flex flex-col">
           <DialogHeader className="border-b pb-4">
-            <DialogTitle className="text-3xl font-bold flex items-center gap-3">
+            <DialogTitle className="text-3xl font-bold flex items-center gap-3 flex-wrap">
               🎯 Mappatura Colonne CSV
               <Badge className="bg-blue-100 text-blue-700 text-lg px-4 py-1">
-                {csvData.length} righe • {csvHeaders.length} colonne
+                {csvData.length} righe dati • {csvHeaders.length} colonne
               </Badge>
               <Badge className="bg-purple-100 text-purple-700 text-sm px-3 py-1">
                 Separatore: {detectedSeparator === '\t' ? 'TAB' : detectedSeparator === ',' ? 'Virgola' : detectedSeparator === ';' ? 'Punto e virgola' : detectedSeparator}
               </Badge>
             </DialogTitle>
           </DialogHeader>
-
+          
           <div className="flex-1 overflow-y-auto space-y-6 py-6 pr-2">
+            {/* Debug Info Box */}
+            {parseDebugInfo && (
+              <div className="bg-amber-50 border-2 border-amber-300 rounded-xl p-4">
+                <div className="flex items-start gap-3">
+                  <AlertCircle className="w-6 h-6 text-amber-600 flex-shrink-0 mt-1" />
+                  <div className="flex-1">
+                    <p className="font-bold text-amber-900 mb-2">🔍 Info Parsing File</p>
+                    <div className="grid grid-cols-2 gap-x-6 gap-y-1 text-sm text-amber-800">
+                      <p>📁 File: <strong>{parseDebugInfo.fileName}</strong></p>
+                      <p>📏 Dimensione: <strong>{(parseDebugInfo.fileSize / 1024).toFixed(1)} KB</strong></p>
+                      <p>📊 Righe totali parsate: <strong>{parseDebugInfo.totalParsedLines}</strong></p>
+                      <p>📋 Righe dati (senza header): <strong>{parseDebugInfo.dataRowsCount}</strong></p>
+                      <p>🔢 Colonne: <strong>{parseDebugInfo.headerColumns}</strong></p>
+                      <p>🔧 Separatore: <strong>{parseDebugInfo.separator}</strong></p>
+                    </div>
+                    <p className="text-xs text-amber-700 mt-2 italic">
+                      Controlla la console del browser (F12) per log dettagliati del parsing
+                    </p>
+                  </div>
+                </div>
+              </div>
+            )}
+          
             <div className="bg-gradient-to-r from-blue-50 to-cyan-50 border-2 border-blue-200 rounded-2xl p-6">
               <div className="flex items-start gap-4">
                 <div className="w-12 h-12 bg-blue-500 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -807,8 +833,8 @@ export default function AdminClients() {
                 <div>
                   <p className="font-bold text-blue-900 mb-2 text-lg">📋 Come Funziona</p>
                   <p className="text-blue-800 leading-relaxed">
-                    Per ogni colonna del tuo CSV, seleziona il campo MyWellness corrispondente.
-                    Usa <strong>"❌ Non importare"</strong> per le colonne che non ti servono.
+                    Per ogni colonna del tuo CSV, seleziona il campo MyWellness corrispondente. 
+                    Usa <strong>"❌ Non importare"</strong> per le colonne che non ti servono. 
                     <strong className="text-red-600 ml-1">L'email è obbligatoria per procedere.</strong>
                   </p>
                 </div>
@@ -851,7 +877,7 @@ export default function AdminClients() {
                           className="w-full px-4 py-3 text-base font-semibold border-2 border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)] focus:border-[var(--brand-primary)] bg-white"
                         >
                           <option value="">❌ Non importare questa colonna</option>
-
+                          
                           <optgroup label="📋 INFORMAZIONI BASE">
                             <option value="email">📧 Email (OBBLIGATORIA)</option>
                             <option value="full_name">👤 Nome Completo</option>
@@ -860,18 +886,18 @@ export default function AdminClients() {
                             <option value="age">🎂 Età</option>
                             <option value="language">🌍 Lingua (it/en/es/fr/de/pt)</option>
                           </optgroup>
-
+                          
                           <optgroup label="💪 DATI FISICI">
                             <option value="current_weight">⚖️ Peso Attuale (kg)</option>
                             <option value="target_weight">🎯 Peso Obiettivo (kg)</option>
                             <option value="height">📏 Altezza (cm)</option>
                           </optgroup>
-
+                          
                           <optgroup label="💼 ABBONAMENTO">
                             <option value="subscription_plan">📦 Piano (base/pro/premium)</option>
                             <option value="subscription_status">📊 Stato Abbonamento</option>
                           </optgroup>
-
+                          
                           <optgroup label="🏢 FATTURAZIONE">
                             <option value="billing_address">📍 Indirizzo</option>
                             <option value="billing_city">🏙️ Città</option>
