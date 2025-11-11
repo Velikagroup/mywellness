@@ -22,6 +22,7 @@ import AdminAnalytics from './pages/AdminAnalytics';
 import AdminMarketing from './pages/AdminMarketing';
 import AdminSalesTax from './pages/AdminSalesTax';
 import AdminClients from './pages/AdminClients';
+import Settings from './pages/Settings';
 import Layout from './Layout.jsx';
 
 
@@ -50,6 +51,7 @@ export const PAGES = {
     "AdminMarketing": AdminMarketing,
     "AdminSalesTax": AdminSalesTax,
     "AdminClients": AdminClients,
+    "Settings": Settings,
 }
 
 export const pagesConfig = {

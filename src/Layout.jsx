@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, LogOut, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users } from "lucide-react";
+import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -12,7 +11,6 @@ export default function Layout({ children }) {
   const [user, setUser] = React.useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
-  // Scroll to top on page change
   React.useEffect(() => {
     window.scrollTo(0, 0);
   }, [location.pathname]);
@@ -23,14 +21,11 @@ export default function Layout({ children }) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
       } catch (error) {
-        // Ignora completamente gli errori di autenticazione (è normale per utenti non loggati)
         if (error?.response?.status === 401 ||
             error?.message?.includes('401') ||
             error?.message?.includes('Authentication required')) {
-          // Utente non autenticato - non è un errore, è normale
           setUser(null);
         } else {
-          // Solo errori veri dovrebbero essere loggati
           console.error("Error loading user in layout:", error);
         }
       }
@@ -67,11 +62,11 @@ export default function Layout({ children }) {
     }
   };
 
-  // Lista di pagine valide che DEVONO avere il layout con menu bottom
   const validPathsWithLayout = [
     createPageUrl('Dashboard'),
     createPageUrl('Meals'),
     createPageUrl('Workouts'),
+    createPageUrl('Settings'),
     createPageUrl('AdminCoupons'),
     createPageUrl('AdminBlog'),
     createPageUrl('AdminEmails'),
@@ -81,7 +76,6 @@ export default function Layout({ children }) {
     createPageUrl('AdminClients')
   ];
 
-  // Pagine che NON devono avere il layout
   const pathsWithoutLayout = [
     createPageUrl('Quiz'),
     createPageUrl('Home'),
@@ -100,19 +94,17 @@ export default function Layout({ children }) {
     '/'
   ];
 
-  // Se il path è esplicitamente senza layout O inizia con /blog/ O non è un path valido con layout
-  // (questo include la pagina 404 e qualsiasi altra pagina non prevista)
   if (pathsWithoutLayout.includes(location.pathname) || 
       location.pathname.startsWith('/blog/') ||
       !validPathsWithLayout.includes(location.pathname)) {
     return <>{children}</>;
   }
 
-  // Main navigation items (sempre visibili in mobile)
   const mainNavItems = [
     { name: 'Dashboard', icon: Home, path: 'Dashboard' },
     { name: 'Nutrizione', icon: Utensils, path: 'Meals' },
-    { name: 'Allenamento', icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' }
+    { name: 'Allenamento', icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' },
+    { name: 'Impostazioni', icon: SettingsIcon, path: 'Settings' }
   ].filter(item => {
     if (item.requiresFeature && user) {
       return hasFeatureAccess(user.subscription_plan, item.requiresFeature);
@@ -120,7 +112,6 @@ export default function Layout({ children }) {
     return true;
   });
 
-  // Admin menu items (solo nel menu espandibile)
   const adminMenuItems = user && user.role === 'admin' ? [
     { name: 'Clienti', icon: Users, path: 'AdminClients' },
     { name: 'Coupon', icon: Tag, path: 'AdminCoupons' },
@@ -131,17 +122,7 @@ export default function Layout({ children }) {
     { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
   ] : [];
 
-  // Per desktop, tutti gli item insieme
   const allNavItems = [...mainNavItems, ...adminMenuItems];
-
-  const handleLogout = async () => {
-    try {
-      const homeUrl = window.location.origin + createPageUrl('Home');
-      await base44.auth.logout(homeUrl);
-    } catch (error) {
-      console.error("Errore durante il logout:", error);
-    }
-  };
 
   const handleMenuItemClick = (path) => {
     setMobileMenuOpen(false);
@@ -234,7 +215,6 @@ export default function Layout({ children }) {
         }
       `}</style>
       
-      {/* Fixed Logo Navbar with Water Effect */}
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
         <div className="water-glass-effect rounded-full px-6 py-3">
           <img 
@@ -245,15 +225,12 @@ export default function Layout({ children }) {
         </div>
       </div>
 
-      {/* Main Content */}
       <main className="pt-28 pb-20">
         {children}
       </main>
 
-      {/* Bottom Navigation */}
       <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 max-w-2xl sm:max-w-5xl">
         <div className="water-glass-effect rounded-3xl py-3 px-2">
-          {/* Desktop - Single Row */}
           <div className="hidden sm:flex items-center justify-around">
             {allNavItems.map((item) => (
               <Link
@@ -269,19 +246,9 @@ export default function Layout({ children }) {
                 <span className="text-xs font-medium">{item.name}</span>
               </Link>
             ))}
-            
-            <button
-              onClick={handleLogout}
-              className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] text-gray-400 hover:text-red-600 hover:bg-red-50"
-            >
-              <LogOut className="w-5 h-5" />
-              <span className="text-xs font-medium">Esci</span>
-            </button>
           </div>
 
-          {/* Mobile - Menu con espansione */}
           <div className="sm:hidden">
-            {/* Menu espanso con pagine admin */}
             {mobileMenuOpen && adminMenuItems.length > 0 && (
               <div className="mobile-menu-expanded pb-4 mb-2 border-b border-gray-200">
                 <div className="grid grid-cols-4 gap-2 p-2">
@@ -299,20 +266,10 @@ export default function Layout({ children }) {
                       <span className="text-xs font-medium text-center leading-tight">{item.name}</span>
                     </button>
                   ))}
-                  
-                  {/* Logout nel menu espanso */}
-                  <button
-                    onClick={handleLogout}
-                    className="flex flex-col items-center gap-1 p-3 rounded-lg transition-colors text-red-600 hover:bg-red-50"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span className="text-xs font-medium">Esci</span>
-                  </button>
                 </div>
               </div>
             )}
 
-            {/* Barra principale sempre visibile */}
             <div className="flex items-center justify-around">
               {mainNavItems.map((item) => (
                 <Link
@@ -329,7 +286,6 @@ export default function Layout({ children }) {
                 </Link>
               ))}
               
-              {/* Pulsante Menu (solo se ci sono pagine admin) */}
               {adminMenuItems.length > 0 && (
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -341,17 +297,6 @@ export default function Layout({ children }) {
                 >
                   {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
                   <span className="text-xs font-medium">Menu</span>
-                </button>
-              )}
-              
-              {/* Se non ci sono pagine admin, mostra logout */}
-              {adminMenuItems.length === 0 && (
-                <button
-                  onClick={handleLogout}
-                  className="flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 text-gray-400 hover:text-red-600 hover:bg-red-50"
-                >
-                  <LogOut className="w-5 h-5" />
-                  <span className="text-xs font-medium">Esci</span>
                 </button>
               )}
             </div>
