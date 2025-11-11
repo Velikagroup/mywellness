@@ -144,6 +144,7 @@ export default function MealsPage() {
   const [nutritionData, setNutritionData] = useState(null);
   const [regeneratingMealId, setRegeneratingMealId] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [mealsPerDay, setMealsPerDay] = useState(5); // NEW STATE
 
   const navigate = useNavigate();
 
@@ -171,6 +172,20 @@ export default function MealsPage() {
         if_skip_meal: currentUser.if_skip_meal || null,
         if_meal_structure: currentUser.if_meal_structure || null,
       });
+      // Imposta il numero di pasti predefinito basato sulle preferenze utente
+      if (currentUser.intermittent_fasting && currentUser.if_meal_structure) {
+        if (currentUser.if_meal_structure === '2_meals') {
+          setMealsPerDay(2);
+        } else if (currentUser.if_meal_structure === '3_meals') {
+          setMealsPerDay(3);
+        } else if (currentUser.if_meal_structure === '3_meals_snacks') {
+          setMealsPerDay(5); // 3 meals + 2 snacks
+        } else {
+          setMealsPerDay(5); // Default if if_meal_structure is not recognized, but IF is active
+        }
+      } else {
+        setMealsPerDay(5); // Default for non-intermittent fasting
+      }
     }
     setShowGenerator(true);
   }, []);
@@ -412,7 +427,7 @@ export default function MealsPage() {
 
       const mealTypeLabels = {
         breakfast: 'Colazione', lunch: 'Pranzo', dinner: 'Cena',
-        snack1: 'Spuntino', snack2: 'Spuntino Serale'
+        snack1: 'Spuntino', snack2: 'Spuntino Serale', snack3: 'Snack 3', snack4: 'Snack 4'
       };
 
       const singleMealPrompt = `You are an expert AI nutritionist. Create ONE single meal in ITALIAN language.
@@ -434,6 +449,7 @@ USER PROFILE:
 - Daily Calories: ${dailyCalories} kcal
 - BMR: ${nutritionData.bmr} kcal
 - Diet: ${nutritionData.diet_type}
+${nutritionData.intermittent_fasting ? `- Intermittent Fasting: Yes (Skipping: ${nutritionData.if_skip_meal}, Structure: ${nutritionData.if_meal_structure})` : '- Intermittent Fasting: No'}
 ${nutritionData.allergies && nutritionData.allergies.length > 0 ? `- Allergies: ${nutritionData.allergies.join(', ')}` : ''}
 ${nutritionData.favorite_foods && nutritionData.favorite_foods.length > 0 ? `- Favorite Foods: ${nutritionData.favorite_foods.join(', ')}` : ''}
 
@@ -541,26 +557,9 @@ RESPONSE JSON SCHEMA:
 
       updateProgress(10, "Analisi profilo metabolico...");
 
-      let mealStructure = [];
-      
-      if (generationPrefs.intermittent_fasting && generationPrefs.if_skip_meal && generationPrefs.if_meal_structure) {
-        const skipMeal = generationPrefs.if_skip_meal;
-        const structure = generationPrefs.if_meal_structure;
-        
-        if (structure === '2_meals') {
-          mealStructure = ['breakfast', 'lunch', 'dinner'].filter(m => m !== skipMeal);
-        } else if (structure === '3_meals') {
-          mealStructure = ['breakfast', 'lunch', 'dinner'];
-        } else if (structure === '3_meals_snacks') {
-          mealStructure = ['breakfast', 'lunch', 'dinner', 'snack1', 'snack2'];
-        }
-      } else {
-        mealStructure = ['breakfast', 'lunch', 'dinner', 'snack1', 'snack2'];
-      }
-      
-      if (mealStructure.length === 0) {
-        mealStructure = ['breakfast', 'lunch', 'dinner', 'snack1', 'snack2'];
-      }
+      // Costruisci struttura pasti basata su mealsPerDay
+      const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
+      const mealStructure = allMealTypes.slice(0, mealsPerDay);
 
       const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
       const isTrialUser = user?.subscription_status === 'trial';
@@ -571,37 +570,21 @@ RESPONSE JSON SCHEMA:
       const totalMealsExpected = daysToGenerate.length * mealStructure.length;
 
       const dailyCalories = nutritionData.daily_calories;
-      let mealCalorieDistribution = {};
-
-      if (mealStructure.length === 5) {
-        mealCalorieDistribution.breakfast = Math.round(dailyCalories * 0.25);
-        mealCalorieDistribution.lunch = Math.round(dailyCalories * 0.30);
-        mealCalorieDistribution.dinner = Math.round(dailyCalories * 0.30);
-        mealCalorieDistribution.snack1 = Math.round(dailyCalories * 0.08);
-        mealCalorieDistribution.snack2 = Math.round(dailyCalories * 0.07);
-      } else if (mealStructure.length === 3) {
-        mealCalorieDistribution[mealStructure[0]] = Math.round(dailyCalories * 0.30);
-        mealCalorieDistribution[mealStructure[1]] = Math.round(dailyCalories * 0.40);
-        mealCalorieDistribution[mealStructure[2]] = Math.round(dailyCalories * 0.30);
-      } else if (mealStructure.length === 2) {
-        mealCalorieDistribution[mealStructure[0]] = Math.round(dailyCalories * 0.45);
-        mealCalorieDistribution[mealStructure[1]] = Math.round(dailyCalories * 0.55);
-      } else if (mealStructure.length === 4) {
-        mealCalorieDistribution[mealStructure[0]] = Math.round(dailyCalories * 0.25);
-        mealCalorieDistribution[mealStructure[1]] = Math.round(dailyCalories * 0.30);
-        mealCalorieDistribution[mealStructure[2]] = Math.round(dailyCalories * 0.30);
-        mealCalorieDistribution[mealStructure[3]] = Math.round(dailyCalories * 0.15);
-      }
       
-      const currentTotal = Object.values(mealCalorieDistribution).reduce((sum, c) => sum + c, 0);
-      const difference = dailyCalories - currentTotal;
+      // Distribuzione calorica uniforme basata sul numero di pasti
+      const mealCalorieDistribution = {};
+      const caloriesPerMealBase = Math.round(dailyCalories / mealsPerDay);
+      let remainingCalories = dailyCalories;
       
-      if (difference !== 0) {
-        const largestMealType = Object.keys(mealCalorieDistribution).reduce((a, b) => 
-          (mealCalorieDistribution[a] > mealCalorieDistribution[b] ? a : b)
-        );
-        mealCalorieDistribution[largestMealType] += difference;
-      }
+      mealStructure.forEach((mealType, index) => {
+        let caloriesForCurrentMeal = caloriesPerMealBase;
+        if (index === mealStructure.length - 1) {
+          // Ultimo pasto prende le calorie rimanenti per bilanciare il totale
+          caloriesForCurrentMeal = remainingCalories;
+        }
+        mealCalorieDistribution[mealType] = caloriesForCurrentMeal;
+        remainingCalories -= caloriesForCurrentMeal;
+      });
 
       console.log('🎯 Target giornaliero:', dailyCalories, 'kcal');
       console.log('🍽️ Struttura pasti:', mealStructure);
@@ -612,7 +595,7 @@ RESPONSE JSON SCHEMA:
 
 🔴 CRITICAL CALORIE REQUIREMENT 🔴
 DAILY CALORIE TARGET: ${dailyCalories} kcal
-NUMBER OF MEALS PER DAY: ${mealStructure.length}
+NUMBER OF MEALS PER DAY: ${mealsPerDay}
 
 EXACT CALORIE DISTRIBUTION (MUST FOLLOW):
 ${Object.entries(mealCalorieDistribution).map(([type, cals]) => 
@@ -632,19 +615,13 @@ User Profile:
 - Gender: ${nutritionData.gender}, Age: ${nutritionData.age}, Weight: ${nutritionData.current_weight}kg
 - Activity: ${nutritionData.activity_level}
 - Diet Type: ${generationPrefs.diet_type}
+${generationPrefs.intermittent_fasting ? `- Intermittent Fasting: Yes (Skipping: ${generationPrefs.if_skip_meal}, Structure: ${generationPrefs.if_meal_structure})` : '- Intermittent Fasting: No'}
 - Allergies: ${nutritionData.allergies?.join(', ') || 'None'}
 - Favorite Foods: ${nutritionData.favorite_foods?.join(', ') || 'None'}
 
-TASK: Generate ${totalMealsExpected} total meals (${mealStructure.length} meals × ${daysToGenerate.length} days).
+TASK: Generate ${totalMealsExpected} total meals (${mealsPerDay} meals × ${daysToGenerate.length} days).
 
-For EACH meal, calculate ingredients precisely:
-Example for breakfast (${mealCalorieDistribution.breakfast || mealCalorieDistribution[mealStructure[0]]} kcal):
-- 3 uova intere (210 kcal)
-- 50g pane integrale (120 kcal)
-- 10g burro (75 kcal)
-- 150g pomodori (27 kcal)
-- 10ml olio d'oliva (90 kcal)
-TOTAL: 522 kcal ✅
+For EACH meal, calculate ingredients precisely to hit the target calories.
 
 Return a flat array with each meal as a separate object.
 
@@ -785,7 +762,7 @@ RESPONSE JSON SCHEMA:
             if (mealAdjustment > 0) {
               let remainingCaloriesToAdjustForMeal = mealAdjustment;
 
-              if (remainingCaloriesToAdjustForMeal >= 45) {
+              if (remainingCaloriesToAdjustForMeal >= 45) { // Roughly 5ml of oil
                 const oilMl = Math.round(remainingCaloriesToAdjustForMeal / 9);
                 adjustedIngredients.push({
                   name: "olio d'oliva extra vergine",
@@ -825,15 +802,18 @@ RESPONSE JSON SCHEMA:
               }
 
             } else if (mealAdjustment < 0) {
-              const reductionFactor = (mealCaloriesBeforeAdjustment + mealAdjustment) / (mealCaloriesBeforeAdjustment || 1);
-              adjustedIngredients = adjustedIngredients.map(ing => ({
-                ...ing,
-                quantity: Math.round(ing.quantity * reductionFactor * 10) / 10,
-                calories: Math.round(ing.calories * reductionFactor),
-                protein: Math.round(ing.protein * reductionFactor * 10) / 10,
-                carbs: Math.round(ing.carbs * reductionFactor * 10) / 10,
-                fat: Math.round(ing.fat * reductionFactor * 10) / 10
-              }));
+              // Only reduce if meal has calories to reduce from
+              if (mealCaloriesBeforeAdjustment > 0) {
+                const reductionFactor = (mealCaloriesBeforeAdjustment + mealAdjustment) / mealCaloriesBeforeAdjustment;
+                adjustedIngredients = adjustedIngredients.map(ing => ({
+                  ...ing,
+                  quantity: Math.round(ing.quantity * reductionFactor * 10) / 10,
+                  calories: Math.round(ing.calories * reductionFactor),
+                  protein: Math.round(ing.protein * reductionFactor * 10) / 10,
+                  carbs: Math.round(ing.carbs * reductionFactor * 10) / 10,
+                  fat: Math.round(ing.fat * reductionFactor * 10) / 10
+                }));
+              }
             }
             
             const finalTotalCalories = adjustedIngredients.reduce((sum, i) => sum + i.calories, 0);
@@ -984,14 +964,16 @@ RESPONSE JSON SCHEMA:
     : days;
 
   const todaysMeals = mealPlans.filter(plan => plan.day_of_week === selectedDay);
-  const mealTypes = ['breakfast', 'lunch', 'dinner', 'snack1', 'snack2'];
+  const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4']; // Expanded for more flexibility
   const getMealTypeLabel = (type) => {
     const labels = { 
       breakfast: 'Colazione', 
       lunch: 'Pranzo', 
       dinner: 'Cena', 
       snack1: 'Spuntino', 
-      snack2: 'Spuntino Serale' 
+      snack2: 'Spuntino Serale',
+      snack3: 'Snack Pomeridiano',
+      snack4: 'Spuntino Notturno'
     };
     return labels[type] || type;
   };
@@ -1054,6 +1036,31 @@ RESPONSE JSON SCHEMA:
                 </CardHeader>
                 <CardContent>
                 <div className="space-y-6">
+                    {/* Selettore Numero Pasti */}
+                    <div className="p-4 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg border-2 border-[var(--brand-primary)]/30">
+                      <Label className="text-sm font-semibold text-gray-800 mb-3 block">
+                        🍽️ Quanti pasti al giorno?
+                      </Label>
+                      <div className="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                        {[1, 2, 3, 4, 5, 6, 7].map((num) => (
+                          <button
+                            key={num}
+                            onClick={() => setMealsPerDay(num)}
+                            className={`p-3 rounded-xl border-2 transition-all text-center font-bold ${
+                              mealsPerDay === num
+                                ? 'border-[var(--brand-primary)] bg-white shadow-lg scale-105'
+                                : 'border-gray-200 hover:border-[var(--brand-primary)]/50 hover:bg-white'
+                            }`}
+                          >
+                            <div className="text-2xl">{num}</div>
+                          </button>
+                        ))}
+                      </div>
+                      <p className="text-xs text-gray-600 mt-3 text-center">
+                        💡 Il target calorico giornaliero ({nutritionData?.daily_calories} kcal) verrà distribuito su {mealsPerDay} {mealsPerDay === 1 ? 'pasto' : 'pasti'}
+                      </p>
+                    </div>
+
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/70 rounded-lg border border-gray-200/50">
                     <div>
                         <Label htmlFor="diet-type-select" className="font-semibold text-gray-800">Tipo Dieta</Label>
