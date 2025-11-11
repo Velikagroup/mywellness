@@ -12,8 +12,9 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing userId' }, { status: 400 });
         }
 
-        // Recupera i dati utente
-        const user = await base44.asServiceRole.entities.User.get(userId);
+        // Recupera i dati utente usando il metodo corretto
+        const users = await base44.asServiceRole.entities.User.filter({ id: userId });
+        const user = users && users.length > 0 ? users[0] : null;
         
         if (!user || !user.email) {
             return Response.json({ error: 'User not found or no email' }, { status: 404 });
@@ -22,6 +23,7 @@ Deno.serve(async (req) => {
         console.log(`📬 Sending trial welcome email to ${user.email}`);
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+        const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
 
         const emailBody = `
 <!DOCTYPE html>
@@ -62,7 +64,7 @@ Deno.serve(async (req) => {
                             <div style="background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0 30px 0;">
                                 <p style="margin: 0 0 8px 0; color: #78350f; font-size: 14px;">⏰ Il tuo periodo di prova termina tra:</p>
                                 <strong style="color: #d97706; font-size: 24px; display: block; margin-bottom: 5px;">3 GIORNI</strong>
-                                <p style="margin: 8px 0 0 0; color: #78350f; font-size: 13px;">Dopo la prova: €39/mese (puoi cancellare quando vuoi)</p>
+                                <p style="margin: 8px 0 0 0; color: #78350f; font-size: 13px;">Dopo la prova: ${user.subscription_plan === 'premium' ? '€39' : user.subscription_plan === 'pro' ? '€29' : '€19'}/mese (puoi cancellare quando vuoi)</p>
                             </div>
 
                             <h2 style="color: #111827; margin: 30px 0 20px 0;">🚀 Cosa ti aspetta:</h2>
@@ -108,7 +110,7 @@ Deno.serve(async (req) => {
                             </table>
 
                             <div style="text-align: center; margin: 30px 0 10px 0;">
-                                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                     🎯 Vai alla Dashboard
                                 </a>
                             </div>
@@ -120,16 +122,6 @@ Deno.serve(async (req) => {
                                     <tr>
                                         <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">1</td>
                                         <td valign="top" style="padding-left: 15px;">
-                                            <strong style="color: #111827;">Completa il Quiz</strong>
-                                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">Rispondi alle domande per creare il tuo profilo perfetto</p>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                    <tr>
-                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">2</td>
-                                        <td valign="top" style="padding-left: 15px;">
                                             <strong style="color: #111827;">Genera il tuo Piano</strong>
                                             <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">L'AI creerà un piano nutrizionale e di allenamento personalizzato</p>
                                         </td>
@@ -138,7 +130,7 @@ Deno.serve(async (req) => {
 
                                 <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
                                     <tr>
-                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">3</td>
+                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">2</td>
                                         <td valign="top" style="padding-left: 15px;">
                                             <strong style="color: #111827;">Inizia Subito</strong>
                                             <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">Segui il piano e traccia i tuoi progressi ogni giorno</p>
@@ -148,7 +140,7 @@ Deno.serve(async (req) => {
 
                                 <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
                                     <tr>
-                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">4</td>
+                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">3</td>
                                         <td valign="top" style="padding-left: 15px;">
                                             <strong style="color: #111827;">Analizza i Risultati</strong>
                                             <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">Usa le foto AI per vedere i tuoi progressi</p>
@@ -159,7 +151,7 @@ Deno.serve(async (req) => {
 
                             <div style="background: #fef2f2; border: 2px solid #ef4444; border-radius: 8px; padding: 15px; margin: 20px 0;">
                                 <p style="margin: 0; color: #991b1b; font-size: 14px; line-height: 1.6;">
-                                    <strong>💡 Consiglio Pro:</strong> I primi 3 giorni sono cruciali! Dedica 10 minuti oggi per completare il quiz e generare il tuo piano. Gli utenti che iniziano subito hanno <span style="color: #d97706; font-weight: 700;">3x più probabilità</span> di raggiungere i loro obiettivi.
+                                    <strong>💡 Consiglio Pro:</strong> I primi 3 giorni sono cruciali! Dedica 10 minuti oggi per generare il tuo piano. Gli utenti che iniziano subito hanno <span style="color: #d97706; font-weight: 700;">3x più probabilità</span> di raggiungere i loro obiettivi.
                                 </p>
                             </div>
 
@@ -173,8 +165,8 @@ Deno.serve(async (req) => {
                                 <p style="margin: 0 0 10px 0;"><strong style="color: #111827;">MyWellness</strong></p>
                                 <p style="margin: 0 0 10px 0;">Il tuo percorso verso il benessere inizia oggi 🌟</p>
                                 <p style="margin: 0; font-size: 12px;">
-                                    <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Privacy" style="color: #26847F; text-decoration: none;">Privacy Policy</a> &middot; 
-                                    <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Terms" style="color: #26847F; text-decoration: none;">Termini di Servizio</a>
+                                    <a href="${appUrl}/Privacy" style="color: #26847F; text-decoration: none;">Privacy Policy</a> &middot; 
+                                    <a href="${appUrl}/Terms" style="color: #26847F; text-decoration: none;">Termini di Servizio</a>
                                 </p>
                             </div>
                         </td>

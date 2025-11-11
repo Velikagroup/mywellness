@@ -208,7 +208,7 @@ Deno.serve(async (req) => {
 
         console.log('✅ User updated with subscription data');
 
-        // 🔐 MARCA COUPON COME USATO
+        // 🔐 MARCA COUPON COME USATO (non-blocking)
         if (appliedCouponCode) {
             try {
                 await base44.asServiceRole.functions.invoke('markCouponAsUsed', {
@@ -221,15 +221,17 @@ Deno.serve(async (req) => {
             }
         }
 
-        try {
-            await base44.asServiceRole.functions.invoke('sendTrialWelcomeEmail', {
-                userId: user.id
-            });
+        // 📧 INVIA EMAIL DI BENVENUTO (non-blocking, in background)
+        // Non aspettiamo la risposta per non rallentare la subscription
+        base44.asServiceRole.functions.invoke('sendTrialWelcomeEmail', {
+            userId: user.id
+        }).then(() => {
             console.log('📧 Trial welcome email trigger sent');
-        } catch (emailError) {
+        }).catch((emailError) => {
             console.error('⚠️ Failed to send welcome email (non-critical):', emailError.message);
-        }
+        });
 
+        // IMPORTANTE: Restituisci subito la risposta senza aspettare l'email
         return Response.json({
             success: true,
             subscription: {
