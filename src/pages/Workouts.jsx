@@ -509,39 +509,23 @@ export default function Workouts() {
 
   if (isGenerating) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 pt-0">
+      <div className="min-h-screen flex items-center justify-center p-4 pt-8 md:pt-4">
         <style>{`
           @keyframes dumbellLift {
-            0%, 100% {
-              transform: translateY(0) rotate(0deg);
-            }
-            25% {
-              transform: translateY(-15px) rotate(-10deg);
-            }
-            50% {
-              transform: translateY(0) rotate(0deg);
-            }
-            75% {
-              transform: translateY(-10px) rotate(10deg);
-            }
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            25% { transform: translateY(-15px) rotate(-10deg); }
+            50% { transform: translateY(0) rotate(0deg); }
+            75% { transform: translateY(-10px) rotate(10deg); }
           }
 
           @keyframes pulseGlow {
-            0%, 100% {
-              box-shadow: 0 0 20px rgba(38, 132, 127, 0.3), 0 0 40px rgba(38, 132, 127, 0.2);
-            }
-            50% {
-              box-shadow: 0 0 30px rgba(38, 132, 127, 0.5), 0 0 60px rgba(38, 132, 127, 0.3);
-            }
+            0%, 100% { box-shadow: 0 0 20px rgba(38, 132, 127, 0.3), 0 0 40px rgba(38, 132, 127, 0.2); }
+            50% { box-shadow: 0 0 30px rgba(38, 132, 127, 0.5), 0 0 60px rgba(38, 132, 127, 0.3); }
           }
 
           @keyframes floatBounce {
-            0%, 100% {
-              transform: translateY(0) scale(1);
-            }
-            50% {
-              transform: translateY(-8px) scale(1.03);
-            }
+            0%, 100% { transform: translateY(0) scale(1); }
+            50% { transform: translateY(-8px) scale(1.03); }
           }
 
           .animated-workout-container {
@@ -553,25 +537,48 @@ export default function Workouts() {
             animation: dumbellLift 2.5s ease-in-out infinite;
           }
         `}</style>
-        <div className="max-w-2xl mx-auto">
-          <Card className="max-w-2xl w-full bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl text-center">
-            <CardHeader>
-              <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden animated-workout-container flex items-center justify-center">
-                <Dumbbell className="w-10 h-10 text-white animated-dumbbell" strokeWidth={2.5} />
+        
+        <div className="max-w-xl w-full">
+          <Card className="bg-white/60 backdrop-blur-md border-gray-200/40 shadow-xl rounded-2xl overflow-hidden">
+            <CardHeader className="pb-4 pt-6 px-6">
+              <div className="w-16 h-16 mx-auto mb-4 rounded-xl overflow-hidden animated-workout-container flex items-center justify-center">
+                <Dumbbell className="w-8 h-8 text-white animated-dumbbell" strokeWidth={2.5} />
               </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">Creazione Protocollo Allenamento AI</CardTitle>
+              <CardTitle className="text-xl font-bold text-gray-900 text-center">
+                Creazione Protocollo Allenamento AI
+              </CardTitle>
+              <p className="text-sm text-gray-600 text-center mt-2">
+                L'AI sta progettando il tuo allenamento personalizzato, analizzando ogni dettaglio del tuo profilo.
+              </p>
             </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <p className="text-gray-600">L'AI sta progettando il tuo allenamento personalizzato, analizzando ogni dettaglio del tuo profilo.</p>
-              <Progress value={generationProgress} className="w-full [&>div]:bg-[var(--brand-primary)]" />
-              <p className="text-sm text-[var(--brand-primary)] font-semibold h-5">{generationStatus}</p>
-              <div className="text-xs text-gray-500 list-inside text-left mx-auto max-w-md bg-gray-50/70 p-4 rounded-lg border border-gray-200/60">
-                <h4 className="font-semibold text-gray-700 mb-2">Analisi in corso:</h4>
-                <ul className="space-y-1">
-                  <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 10 ? 'text-green-500' : 'text-gray-300'}`} />Obiettivo: {trainingData.fitness_goal || user?.fitness_goal}</li>
-                  <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 30 ? 'text-green-500' : 'text-gray-300'}`} />Vincoli: Dolori, attrezzatura, esperienza</li>
-                  <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 60 ? 'text-green-500' : 'text-gray-300'}`} />Sinergia con protocollo nutrizionale</li>
-                  <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 85 ? 'text-green-500' : 'text-gray-300'}`} />Costruzione e bilanciamento settimana</li>
+            
+            <CardContent className="space-y-5 px-6 pb-6">
+              <div className="space-y-2">
+                <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[var(--brand-primary)]" />
+                <p className="text-sm text-[var(--brand-primary)] font-semibold text-center min-h-[20px]">
+                  {generationStatus}
+                </p>
+              </div>
+              
+              <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/60">
+                <h4 className="font-semibold text-gray-800 text-sm mb-3">Analisi in corso:</h4>
+                <ul className="space-y-2 text-xs">
+                  <li className="flex items-center">
+                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 10 ? 'text-green-500' : 'text-gray-300'}`} />
+                    <span className="text-gray-700">Obiettivo: {trainingData.fitness_goal || user?.fitness_goal}</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 30 ? 'text-green-500' : 'text-gray-300'}`} />
+                    <span className="text-gray-700">Vincoli: Dolori, attrezzatura, esperienza</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 60 ? 'text-green-500' : 'text-gray-300'}`} />
+                    <span className="text-gray-700">Sinergia con protocollo nutrizionale</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 85 ? 'text-green-500' : 'text-gray-300'}`} />
+                    <span className="text-gray-700">Costruzione e bilanciamento settimana</span>
+                  </li>
                 </ul>
               </div>
             </CardContent>
