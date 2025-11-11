@@ -22,10 +22,11 @@ import {
   ArrowRight,
   CheckCircle,
   XCircle,
-  User, // Added
-  Activity, // Added
-  CreditCard, // Added
-  MapPin // Added
+  User,
+  Activity,
+  CreditCard,
+  MapPin,
+  AlertCircle // Added
 } from 'lucide-react';
 import ClientDetailModal from '../components/admin/ClientDetailModal';
 
@@ -46,6 +47,7 @@ export default function AdminClients() {
   const [csvHeaders, setCsvHeaders] = useState([]);
   const [csvData, setCsvData] = useState([]);
   const [columnMapping, setColumnMapping] = useState({});
+  const [detectedSeparator, setDetectedSeparator] = useState(','); // Added
 
   const [stats, setStats] = useState({
     totalClients: 0,
@@ -103,12 +105,6 @@ export default function AdminClients() {
       ]
     }
   };
-
-  // Combine all available fields for the "unmapped" dropdown - kept for reference, not used in new dialog render
-  const allAvailableFields = [
-    { value: '', label: '❌ Non importare' },
-    ...Object.values(fieldGroups).flatMap(group => group.fields)
-  ];
 
   useEffect(() => {
     checkAccess();
@@ -272,16 +268,42 @@ export default function AdminClients() {
     fileInputRef.current?.click();
   };
 
-  const parseCSV = (text) => {
+  // Funzione per rilevare il separatore
+  const detectSeparator = (text) => {
+    // Remove BOM and initial/final spaces
+    const cleanText = text.replace(/^\uFEFF/, '').trim();
+    const firstLine = cleanText.split(/\r?\n/)[0]; // Get the first non-empty line
+    if (!firstLine) return ','; // Default if file is empty or only newlines
+
+    const separators = [',', ';', '\t', '|'];
+
+    let maxCount = 0;
+    let detectedSep = ',';
+
+    for (const sep of separators) {
+      const count = (firstLine.match(new RegExp('\\' + sep, 'g')) || []).length;
+      if (count > maxCount) {
+        maxCount = count;
+        detectedSep = sep;
+      }
+    }
+
+    console.log('🔍 Separatore rilevato:', detectedSep === '\t' ? '\\t (TAB)' : detectedSep, '- Occorrenze:', maxCount);
+    return detectedSep;
+  };
+
+  const parseCSV = (text, separator = ',') => {
     // Rimuovi BOM e spazi iniziali/finali
     const cleanText = text.replace(/^\uFEFF/, '').trim();
 
     // Split per righe gestendo \r\n e \n, e filtra le righe vuote
-    const lines = cleanText.split(/\r?\n/).filter(line => line.trim());
+    const lines = cleanText.split(/\r?\n/);
 
     const result = [];
 
     for (let line of lines) {
+      if (!line.trim()) continue; // Skip empty lines
+
       const row = [];
       let current = '';
       let inQuotes = false;
@@ -296,19 +318,18 @@ export default function AdminClients() {
           } else {
             inQuotes = !inQuotes;
           }
-        } else if (char === ',' && !inQuotes) {
-          row.push(current); // Push raw value, trim later
+        } else if (char === separator && !inQuotes) {
+          row.push(current.trim()); // Push trimmed value
           current = '';
         } else {
           current += char;
         }
       }
-      row.push(current); // Push raw value, trim later
+      row.push(current.trim()); // Push trimmed value
 
       // Aggiungi solo se la riga ha almeno un valore non vuoto dopo il trim
-      // Esegui il trim su ogni cella della riga
-      if (row.some(cell => cell.trim())) {
-        result.push(row.map(cell => cell.trim()));
+      if (row.some(cell => cell)) { // Check for non-empty cell (already trimmed)
+        result.push(row);
       }
     }
 
@@ -326,10 +347,16 @@ export default function AdminClients() {
 
     try {
       const text = await file.text();
-      const parsedData = parseCSV(text);
+
+      // Rileva il separatore automaticamente
+      const separator = detectSeparator(text);
+      setDetectedSeparator(separator);
+
+      const parsedData = parseCSV(text, separator);
 
       console.log('📊 CSV Debug:', {
         totalLines: parsedData.length,
+        separator: separator === '\t' ? 'TAB' : separator,
         firstRow: parsedData[0],
         secondRow: parsedData[1]
       });
@@ -342,9 +369,18 @@ export default function AdminClients() {
       const headers = parsedData[0];
       const dataRows = parsedData.slice(1);
 
+      // Validazione: controlla che tutte le righe abbiano lo stesso numero di colonne
+      const expectedColumns = headers.length;
+      const invalidRows = dataRows.filter(row => row.length !== expectedColumns);
+
+      if (invalidRows.length > 0) {
+        console.warn(`⚠️ ${invalidRows.length} righe con numero di colonne diverso da ${expectedColumns}`);
+      }
+
       console.log('✅ Parsed successfully:', {
         headers: headers.length,
-        dataRows: dataRows.length
+        dataRows: dataRows.length,
+        invalidRows: invalidRows.length
       });
 
       setCsvHeaders(headers);
@@ -440,7 +476,8 @@ export default function AdminClients() {
         // Mappa i dati in base alla configurazione
         Object.keys(columnMapping).forEach(colIndex => {
           const fieldName = columnMapping[colIndex];
-          if (fieldName && row[colIndex]) {
+          // Ensure row[colIndex] exists to avoid errors on malformed CSV rows
+          if (fieldName && row[colIndex] !== undefined && row[colIndex] !== null) {
             let value = row[colIndex].trim();
 
             // Conversioni tipo
@@ -449,7 +486,8 @@ export default function AdminClients() {
             } else if (fieldName === 'gender') {
               value = value.toLowerCase();
               if (value === 'uomo' || value === 'm' || value === 'maschio' || value === 'male') value = 'male';
-              if (value === 'donna' || value === 'f' || value === 'femmina' || value === 'female') value = 'female';
+              else if (value === 'donna' || value === 'f' || value === 'femmina' || value === 'female') value = 'female';
+              else value = null; // Set to null if unrecognized gender
             } else if (fieldName === 'subscription_plan') {
               value = value.toLowerCase();
             } else if (fieldName === 'subscription_status') {
@@ -458,7 +496,7 @@ export default function AdminClients() {
               value = value.toLowerCase().substring(0, 2);
             }
 
-            if (value) { // Only assign if value is not empty or null after conversion
+            if (value !== null && value !== '') { // Only assign if value is not empty or null after conversion
               userData[fieldName] = value;
             }
           }
@@ -753,6 +791,9 @@ export default function AdminClients() {
               🎯 Mappatura Colonne CSV
               <Badge className="bg-blue-100 text-blue-700 text-lg px-4 py-1">
                 {csvData.length} righe • {csvHeaders.length} colonne
+              </Badge>
+              <Badge className="bg-purple-100 text-purple-700 text-sm px-3 py-1">
+                Separatore: {detectedSeparator === '\t' ? 'TAB' : detectedSeparator === ',' ? 'Virgola' : detectedSeparator === ';' ? 'Punto e virgola' : detectedSeparator}
               </Badge>
             </DialogTitle>
           </DialogHeader>
