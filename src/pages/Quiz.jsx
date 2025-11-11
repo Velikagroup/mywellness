@@ -318,24 +318,38 @@ export default function Quiz() {
         quizData.hip_circumference
       );
 
-      const finalDataToSubmit = {
-        ...quizData,
+      // ✅ SOLO campi validi dell'entità User
+      const userDataToSave = {
+        gender: quizData.gender,
+        birthdate: quizData.birthdate,
         age: age,
+        height: quizData.height,
+        current_weight: quizData.current_weight,
+        target_weight: quizData.target_weight,
+        neck_circumference: quizData.neck_circumference,
+        waist_circumference: quizData.waist_circumference,
+        hip_circumference: quizData.hip_circumference,
+        current_body_fat_visual: quizData.current_body_fat_visual,
+        target_body_fat_visual: quizData.target_body_fat_visual,
+        target_zone: quizData.target_zone,
+        weight_loss_speed: quizData.weight_loss_speed,
         body_fat_percentage: bodyFat !== null ? parseFloat(bodyFat.toFixed(1)) : null,
         bmr: Math.round(bmr),
         daily_calories: Math.round(dailyCalories),
-        quiz_completed: true, // ✅ SETTA QUIZ_COMPLETED A TRUE SUBITO
+        quiz_completed: true,
       };
 
       // Controlla se l'utente è già loggato
       if (user && user.id) {
+        console.log('💾 Saving user data...', userDataToSave);
         // Utente loggato - salva dati direttamente e vai al TrialSetup
-        await base44.auth.updateMe(finalDataToSubmit);
+        await base44.auth.updateMe(userDataToSave);
         localStorage.removeItem('quizData');
+        console.log('✅ User data saved, redirecting to TrialSetup...');
         navigate(createPageUrl('TrialSetup'), { replace: true });
       } else {
         // Utente NON loggato - salva nel localStorage e fai login
-        localStorage.setItem('quizData', JSON.stringify(finalDataToSubmit));
+        localStorage.setItem('quizData', JSON.stringify({...quizData, ...userDataToSave}));
         localStorage.setItem('redirectToTrialSetup', 'true');
         
         const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
@@ -344,7 +358,7 @@ export default function Quiz() {
       
     } catch (error) {
       console.error("Error preparing quiz data:", error);
-      alert("Si è verificato un errore. Riprova.");
+      alert("Si è verificato un errore durante il salvataggio dei dati. Riprova.");
       setIsSaving(false);
     }
   };
