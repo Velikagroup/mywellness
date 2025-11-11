@@ -152,24 +152,53 @@ export default function TrialSetup() {
         console.log("Traffic Source:", refSource || storedSource || 'direct');
 
 
+        // 🔑 CARICA STRIPE PUBLISHABLE KEY DAL BACKEND
         const loadStripe = async () => {
-          const stripeKey = 'pk_live_51S6Kgr2OXBs6ZYwl4yACMzsDOQ72eT6A2glTBx5dXJWDmDEABHkXbDMzl77MMb3ZQOpXHWJpBiVQWJjZhZz34Nnl00FuwXVxIM';
-          if (!window.Stripe) {
-            return new Promise((resolve) => {
-              const script = document.createElement('script');
-              script.src = 'https://js.stripe.com/v3/';
-              script.async = true;
-              script.onload = () => {
-                resolve(window.Stripe(stripeKey));
-              };
-              document.body.appendChild(script);
-            });
-          } else {
-            return Promise.resolve(window.Stripe(stripeKey));
+          console.log('🔑 Loading Stripe publishable key from backend...');
+          
+          try {
+            const keyResponse = await base44.functions.invoke('getStripePublishableKey');
+            
+            console.log('📦 Backend response:', keyResponse);
+            
+            if (!keyResponse || !keyResponse.publishableKey) {
+              console.error('❌ No publishable key in response:', keyResponse);
+              throw new Error('Failed to load Stripe key');
+            }
+            
+            const stripeKey = keyResponse.publishableKey;
+            console.log('✅ Stripe key loaded:', stripeKey.substring(0, 20) + '...' + stripeKey.substring(stripeKey.length - 10));
+            console.log('📏 Key length:', stripeKey.length, 'chars');
+            
+            if (!window.Stripe) {
+              console.log('⏳ Loading Stripe.js library...');
+              return new Promise((resolve) => {
+                const script = document.createElement('script');
+                script.src = 'https://js.stripe.com/v3/';
+                script.async = true;
+                script.onload = () => {
+                  console.log('✅ Stripe.js loaded, initializing with key...');
+                  resolve(window.Stripe(stripeKey));
+                };
+                script.onerror = () => {
+                  console.error('❌ Failed to load Stripe.js script');
+                  throw new Error('Failed to load Stripe.js');
+                };
+                document.body.appendChild(script);
+              });
+            } else {
+              console.log('✅ Stripe.js already loaded, initializing with key...');
+              return Promise.resolve(window.Stripe(stripeKey));
+            }
+          } catch (error) {
+            console.error('❌ Error loading Stripe:', error);
+            alert('Errore nel caricamento di Stripe. Ricarica la pagina e riprova.');
+            throw error;
           }
         };
 
         const stripeInstance = await loadStripe();
+        console.log('✅ Stripe instance created:', stripeInstance ? 'SUCCESS' : 'FAILED');
         setStripe(stripeInstance);
         
         setBillingInfo(prev => ({
