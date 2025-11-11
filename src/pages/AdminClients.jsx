@@ -6,6 +6,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
 import {
   Users,
   Search,
@@ -15,7 +17,10 @@ import {
   TrendingUp,
   DollarSign,
   UserCheck,
-  Filter
+  Filter,
+  ArrowRight,
+  CheckCircle,
+  XCircle
 } from 'lucide-react';
 import ClientDetailModal from '../components/admin/ClientDetailModal';
 
@@ -30,6 +35,13 @@ export default function AdminClients() {
   const [selectedClient, setSelectedClient] = useState(null);
   const [showClientModal, setShowClientModal] = useState(false);
   const [isImporting, setIsImporting] = useState(false);
+  
+  // Import mapping state
+  const [showMappingDialog, setShowMappingDialog] = useState(false);
+  const [csvHeaders, setCsvHeaders] = useState([]);
+  const [csvData, setCsvData] = useState([]);
+  const [columnMapping, setColumnMapping] = useState({});
+  
   const [stats, setStats] = useState({
     totalClients: 0,
     maleCount: 0,
@@ -41,6 +53,28 @@ export default function AdminClients() {
   });
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
+
+  // Campi disponibili per la mappatura
+  const availableFields = [
+    { value: '', label: '❌ Non importare' },
+    { value: 'email', label: '📧 Email (obbligatoria)', required: true },
+    { value: 'full_name', label: '👤 Nome Completo' },
+    { value: 'phone_number', label: '📱 Telefono' },
+    { value: 'gender', label: '⚧ Genere (male/female)' },
+    { value: 'age', label: '🎂 Età' },
+    { value: 'subscription_plan', label: '💼 Piano (base/pro/premium)' },
+    { value: 'subscription_status', label: '📊 Stato Abbonamento' },
+    { value: 'language', label: '🌍 Lingua (it/en/es/fr/de/pt)' },
+    { value: 'current_weight', label: '⚖️ Peso Attuale (kg)' },
+    { value: 'target_weight', label: '🎯 Peso Obiettivo (kg)' },
+    { value: 'height', label: '📏 Altezza (cm)' },
+    { value: 'billing_city', label: '🏙️ Città' },
+    { value: 'billing_country', label: '🌐 Paese' },
+    { value: 'billing_address', label: '📍 Indirizzo' },
+    { value: 'billing_zip', label: '📮 CAP' },
+    { value: 'company_name', label: '🏢 Nome Azienda' },
+    { value: 'tax_id', label: '💳 Partita IVA/Codice Fiscale' }
+  ];
 
   useEffect(() => {
     checkAccess();
@@ -125,10 +159,8 @@ export default function AdminClients() {
 
   const handleExportClients = () => {
     try {
-      // Prepara i dati CSV con tutti i campi rilevanti
       const csvRows = [];
       
-      // Header con tutte le colonne
       const headers = [
         'Nome Completo',
         'Email',
@@ -155,7 +187,6 @@ export default function AdminClients() {
       ];
       csvRows.push(headers.join(','));
 
-      // Aggiungi i dati di ogni cliente
       clients.forEach(c => {
         const row = [
           `"${(c.full_name || '').replace(/"/g, '""')}"`,
@@ -184,7 +215,6 @@ export default function AdminClients() {
         csvRows.push(row.join(','));
       });
 
-      // Crea il file CSV con BOM per Excel
       const BOM = '\uFEFF';
       const csvContent = BOM + csvRows.join('\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -208,6 +238,39 @@ export default function AdminClients() {
     fileInputRef.current?.click();
   };
 
+  const parseCSV = (text) => {
+    const lines = text.trim().split('\n');
+    const result = [];
+    
+    for (let line of lines) {
+      const row = [];
+      let current = '';
+      let inQuotes = false;
+      
+      for (let i = 0; i < line.length; i++) {
+        const char = line[i];
+        
+        if (char === '"') {
+          if (inQuotes && line[i + 1] === '"') {
+            current += '"';
+            i++;
+          } else {
+            inQuotes = !inQuotes;
+          }
+        } else if (char === ',' && !inQuotes) {
+          row.push(current.trim());
+          current = '';
+        } else {
+          current += char;
+        }
+      }
+      row.push(current.trim());
+      result.push(row);
+    }
+    
+    return result;
+  };
+
   const handleFileSelect = async (event) => {
     const file = event.target.files?.[0];
     if (!file) return;
@@ -217,71 +280,142 @@ export default function AdminClients() {
       return;
     }
 
-    setIsImporting(true);
-
     try {
       const text = await file.text();
-      const lines = text.split('\n').filter(line => line.trim());
       
-      if (lines.length < 2) {
+      // Rimuovi BOM se presente
+      const cleanText = text.replace(/^\uFEFF/, '');
+      
+      const parsedData = parseCSV(cleanText);
+      
+      if (parsedData.length < 2) {
         alert('❌ File CSV vuoto o non valido');
-        setIsImporting(false);
         return;
       }
 
-      // Parse header
-      const headers = lines[0].split(',').map(h => h.trim().replace(/"/g, ''));
+      const headers = parsedData[0].map(h => h.replace(/"/g, '').trim());
+      const dataRows = parsedData.slice(1).filter(row => row.some(cell => cell.trim()));
+
+      setCsvHeaders(headers);
+      setCsvData(dataRows);
       
-      // Parse data rows
-      const users = [];
-      for (let i = 1; i < lines.length; i++) {
-        const values = lines[i].split(',').map(v => v.trim().replace(/^"|"$/g, ''));
+      // Auto-mappatura intelligente
+      const autoMapping = {};
+      headers.forEach((header, index) => {
+        const lowerHeader = header.toLowerCase();
         
-        // Mappa base: Nome, Email, Piano, Stato
+        if (lowerHeader.includes('email') || lowerHeader.includes('e-mail')) {
+          autoMapping[index] = 'email';
+        } else if (lowerHeader.includes('nome') || lowerHeader.includes('name')) {
+          autoMapping[index] = 'full_name';
+        } else if (lowerHeader.includes('telefono') || lowerHeader.includes('phone') || lowerHeader.includes('tel')) {
+          autoMapping[index] = 'phone_number';
+        } else if (lowerHeader.includes('genere') || lowerHeader.includes('gender') || lowerHeader.includes('sesso')) {
+          autoMapping[index] = 'gender';
+        } else if (lowerHeader.includes('età') || lowerHeader.includes('age')) {
+          autoMapping[index] = 'age';
+        } else if (lowerHeader.includes('piano') || lowerHeader.includes('plan')) {
+          autoMapping[index] = 'subscription_plan';
+        } else if (lowerHeader.includes('stato') || lowerHeader.includes('status')) {
+          autoMapping[index] = 'subscription_status';
+        } else if (lowerHeader.includes('lingua') || lowerHeader.includes('language')) {
+          autoMapping[index] = 'language';
+        } else if (lowerHeader.includes('peso') && lowerHeader.includes('attuale')) {
+          autoMapping[index] = 'current_weight';
+        } else if (lowerHeader.includes('peso') && (lowerHeader.includes('obiettivo') || lowerHeader.includes('target'))) {
+          autoMapping[index] = 'target_weight';
+        } else if (lowerHeader.includes('altezza') || lowerHeader.includes('height')) {
+          autoMapping[index] = 'height';
+        } else if (lowerHeader.includes('città') || lowerHeader.includes('city')) {
+          autoMapping[index] = 'billing_city';
+        } else if (lowerHeader.includes('paese') || lowerHeader.includes('country')) {
+          autoMapping[index] = 'billing_country';
+        } else if (lowerHeader.includes('indirizzo') || lowerHeader.includes('address')) {
+          autoMapping[index] = 'billing_address';
+        } else if (lowerHeader.includes('cap') || lowerHeader.includes('zip') || lowerHeader.includes('postal')) {
+          autoMapping[index] = 'billing_zip';
+        } else if (lowerHeader.includes('azienda') || lowerHeader.includes('company')) {
+          autoMapping[index] = 'company_name';
+        } else if (lowerHeader.includes('iva') || lowerHeader.includes('tax') || lowerHeader.includes('fiscale')) {
+          autoMapping[index] = 'tax_id';
+        } else {
+          autoMapping[index] = '';
+        }
+      });
+
+      setColumnMapping(autoMapping);
+      setShowMappingDialog(true);
+      
+    } catch (error) {
+      console.error('File parse error:', error);
+      alert('❌ Errore durante la lettura del file: ' + error.message);
+    }
+
+    event.target.value = '';
+  };
+
+  const handleMappingChange = (columnIndex, fieldValue) => {
+    setColumnMapping(prev => ({
+      ...prev,
+      [columnIndex]: fieldValue
+    }));
+  };
+
+  const handleConfirmImport = async () => {
+    // Verifica che email sia mappato
+    const emailMapped = Object.values(columnMapping).includes('email');
+    if (!emailMapped) {
+      alert('❌ Devi mappare almeno la colonna Email per procedere con l\'importazione');
+      return;
+    }
+
+    const confirmMsg = `Procedere con l'importazione di ${csvData.length} utenti?\n\nSaranno ignorati gli utenti con email già esistente.`;
+    
+    if (!confirm(confirmMsg)) {
+      return;
+    }
+
+    setIsImporting(true);
+    setShowMappingDialog(false);
+
+    try {
+      let imported = 0;
+      let skipped = 0;
+      const errors = [];
+
+      for (const row of csvData) {
         const userData = {};
         
-        headers.forEach((header, index) => {
-          const value = values[index];
-          
-          // Mappatura campi
-          if (header.toLowerCase().includes('nome') || header.toLowerCase().includes('name')) {
-            userData.full_name = value;
-          } else if (header.toLowerCase().includes('email')) {
-            userData.email = value;
-          } else if (header.toLowerCase().includes('piano') || header.toLowerCase().includes('plan')) {
-            userData.subscription_plan = value.toLowerCase();
-          } else if (header.toLowerCase().includes('stato') || header.toLowerCase().includes('status')) {
-            userData.subscription_status = value.toLowerCase();
-          } else if (header.toLowerCase().includes('lingua') || header.toLowerCase().includes('language')) {
-            userData.language = value.toLowerCase();
-          } else if (header.toLowerCase().includes('telefono') || header.toLowerCase().includes('phone')) {
-            userData.phone_number = value;
+        // Mappa i dati in base alla configurazione
+        Object.keys(columnMapping).forEach(colIndex => {
+          const fieldName = columnMapping[colIndex];
+          if (fieldName && row[colIndex]) {
+            let value = row[colIndex].trim();
+            
+            // Conversioni tipo
+            if (fieldName === 'age' || fieldName === 'current_weight' || fieldName === 'target_weight' || fieldName === 'height') {
+              value = parseFloat(value) || null;
+            } else if (fieldName === 'gender') {
+              value = value.toLowerCase();
+              if (value === 'uomo' || value === 'm' || value === 'maschio') value = 'male';
+              if (value === 'donna' || value === 'f' || value === 'femmina') value = 'female';
+            } else if (fieldName === 'subscription_plan') {
+              value = value.toLowerCase();
+            } else if (fieldName === 'subscription_status') {
+              value = value.toLowerCase();
+            } else if (fieldName === 'language') {
+              value = value.toLowerCase().substring(0, 2);
+            }
+            
+            userData[fieldName] = value;
           }
         });
 
-        if (userData.email) {
-          users.push(userData);
+        if (!userData.email) {
+          skipped++;
+          continue;
         }
-      }
 
-      if (users.length === 0) {
-        alert('❌ Nessun utente valido trovato nel CSV');
-        setIsImporting(false);
-        return;
-      }
-
-      const confirmMsg = `Trovati ${users.length} utenti nel CSV.\n\nNOTA: Verranno importati solo utenti con email non già esistenti.\n\nProcedere?`;
-      
-      if (!confirm(confirmMsg)) {
-        setIsImporting(false);
-        return;
-      }
-
-      // Importa utenti
-      let imported = 0;
-      let skipped = 0;
-      
-      for (const userData of users) {
         try {
           // Verifica se esiste già
           const existing = await base44.entities.User.filter({ email: userData.email });
@@ -290,26 +424,28 @@ export default function AdminClients() {
             continue;
           }
 
-          // Crea nuovo utente (solo dati base)
-          await base44.entities.User.create({
-            email: userData.email,
-            full_name: userData.full_name || 'Utente Importato',
-            subscription_plan: userData.subscription_plan || 'base',
-            subscription_status: userData.subscription_status || 'trial',
-            language: userData.language || 'it',
-            phone_number: userData.phone_number || '',
-            role: 'user'
-          });
-          
+          // Aggiungi campi default
+          userData.role = 'user';
+          if (!userData.subscription_plan) userData.subscription_plan = 'base';
+          if (!userData.subscription_status) userData.subscription_status = 'trial';
+          if (!userData.language) userData.language = 'it';
+
+          await base44.entities.User.create(userData);
           imported++;
+          
         } catch (error) {
           console.error(`Error importing ${userData.email}:`, error);
+          errors.push(userData.email);
           skipped++;
         }
       }
 
-      alert(`✅ Importazione completata!\n\n• ${imported} utenti importati\n• ${skipped} utenti saltati (già esistenti o errori)`);
+      let message = `✅ Importazione completata!\n\n• ${imported} utenti importati\n• ${skipped} utenti saltati`;
+      if (errors.length > 0) {
+        message += `\n\nErrori su: ${errors.slice(0, 5).join(', ')}${errors.length > 5 ? '...' : ''}`;
+      }
       
+      alert(message);
       await loadClients();
       
     } catch (error) {
@@ -318,7 +454,6 @@ export default function AdminClients() {
     }
 
     setIsImporting(false);
-    event.target.value = '';
   };
 
   if (isLoading) {
@@ -556,6 +691,116 @@ export default function AdminClients() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Column Mapping Dialog */}
+      <Dialog open={showMappingDialog} onOpenChange={setShowMappingDialog}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold">🎯 Mappatura Colonne CSV</DialogTitle>
+          </DialogHeader>
+          
+          <div className="space-y-6 pt-4">
+            <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+              <p className="text-sm text-blue-900">
+                <strong>📋 Istruzioni:</strong> Associa ogni colonna del tuo CSV a un campo di MyWellness. 
+                Puoi selezionare "Non importare" per le colonne che non ti servono. 
+                <strong className="text-red-600"> L'email è obbligatoria.</strong>
+              </p>
+            </div>
+
+            <div className="bg-gray-50 rounded-xl p-4">
+              <p className="text-sm font-semibold text-gray-700 mb-2">
+                📊 Preview dati: {csvData.length} righe trovate
+              </p>
+            </div>
+
+            <div className="space-y-4">
+              {csvHeaders.map((header, index) => (
+                <div key={index} className="border rounded-lg p-4 bg-white">
+                  <div className="grid grid-cols-3 gap-4 items-center">
+                    <div>
+                      <Label className="text-sm font-semibold text-gray-700 mb-1 block">
+                        Colonna CSV:
+                      </Label>
+                      <div className="flex items-center gap-2">
+                        <Badge variant="outline" className="text-base px-3 py-1">
+                          {header || `Colonna ${index + 1}`}
+                        </Badge>
+                      </div>
+                    </div>
+
+                    <div className="flex items-center justify-center">
+                      <ArrowRight className="w-6 h-6 text-gray-400" />
+                    </div>
+
+                    <div>
+                      <Label className="text-sm font-semibold text-gray-700 mb-1 block">
+                        Campo MyWellness:
+                      </Label>
+                      <select
+                        value={columnMapping[index] || ''}
+                        onChange={(e) => handleMappingChange(index, e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                      >
+                        {availableFields.map(field => (
+                          <option key={field.value} value={field.value}>
+                            {field.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {/* Preview dati */}
+                  <div className="mt-3 pt-3 border-t border-gray-200">
+                    <p className="text-xs text-gray-500 mb-1">Preview prime 3 righe:</p>
+                    <div className="flex gap-2">
+                      {csvData.slice(0, 3).map((row, rowIndex) => (
+                        <Badge key={rowIndex} variant="outline" className="text-xs">
+                          {row[index] || '(vuoto)'}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="flex items-center justify-between pt-4 border-t border-gray-200">
+              <div>
+                {Object.values(columnMapping).includes('email') ? (
+                  <div className="flex items-center gap-2 text-green-600">
+                    <CheckCircle className="w-5 h-5" />
+                    <span className="font-semibold">Email mappato ✓</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2 text-red-600">
+                    <XCircle className="w-5 h-5" />
+                    <span className="font-semibold">Email non mappato - obbligatorio!</span>
+                  </div>
+                )}
+              </div>
+
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => setShowMappingDialog(false)}
+                  variant="outline"
+                >
+                  Annulla
+                </Button>
+                <Button
+                  onClick={handleConfirmImport}
+                  disabled={!Object.values(columnMapping).includes('email')}
+                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                >
+                  <Upload className="w-4 h-4 mr-2" />
+                  Conferma Importazione ({csvData.length} utenti)
+                </Button>
+              </div>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {selectedClient && (
         <ClientDetailModal
