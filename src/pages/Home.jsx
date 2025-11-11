@@ -546,7 +546,7 @@ export default function Home() {
               ref={heroQuizButtonRef}
               onClick={handleGetStarted}
               disabled={isLoading}
-              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-6 py-3 text-sm font-medium">
+              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-4 text-base font-semibold shadow-xl hover:shadow-2xl transition-all">
               Quiz Gratuito
             </Button>
             <Button
