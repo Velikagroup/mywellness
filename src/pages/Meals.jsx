@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2 } from "lucide-react";
+import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Progress } from "@/components/ui/progress";
@@ -65,56 +65,61 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pt-0">
       <style>{`
+        @keyframes energyPulse {
+          0%, 100% {
+            transform: scale(1);
+            filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.4));
+          }
+          50% {
+            transform: scale(1.15);
+            filter: drop-shadow(0 0 20px rgba(34, 197, 94, 0.8));
+          }
+        }
+
+        @keyframes containerGlow {
+          0%, 100% {
+            box-shadow: 
+              0 0 20px rgba(38, 132, 127, 0.3), 
+              0 0 40px rgba(38, 132, 127, 0.2),
+              inset 0 0 15px rgba(34, 197, 94, 0.1);
+          }
+          50% {
+            box-shadow: 
+              0 0 30px rgba(38, 132, 127, 0.5), 
+              0 0 60px rgba(38, 132, 127, 0.3),
+              inset 0 0 25px rgba(34, 197, 94, 0.2);
+          }
+        }
+
         @keyframes floatBounce {
           0%, 100% {
             transform: translateY(0) scale(1);
           }
           25% {
-            transform: translateY(-15px) scale(1.05);
+            transform: translateY(-10px) scale(1.02);
           }
           50% {
             transform: translateY(0) scale(1);
           }
           75% {
-            transform: translateY(-8px) scale(1.02);
+            transform: translateY(-5px) scale(1.01);
           }
         }
 
-        @keyframes pulseGlow {
-          0%, 100% {
-            box-shadow: 0 0 20px rgba(38, 132, 127, 0.3), 0 0 40px rgba(38, 132, 127, 0.2);
-          }
-          50% {
-            box-shadow: 0 0 30px rgba(38, 132, 127, 0.5), 0 0 60px rgba(38, 132, 127, 0.3);
-          }
+        .animated-nutrition-container {
+          animation: floatBounce 3s ease-in-out infinite, containerGlow 2s ease-in-out infinite;
+          background: linear-gradient(135deg, #26847F 0%, #14b8a6 50%, #22c55e 100%);
         }
 
-        @keyframes rotateUtensil {
-          0% {
-            transform: rotate(-5deg);
-          }
-          50% {
-            transform: rotate(5deg);
-          }
-          100% {
-            transform: rotate(-5deg);
-          }
-        }
-
-        .animated-icon-container {
-          animation: floatBounce 3s ease-in-out infinite, pulseGlow 2s ease-in-out infinite;
-          background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%);
-        }
-
-        .animated-utensil {
-          animation: rotateUtensil 2s ease-in-out infinite;
+        .animated-energy-icon {
+          animation: energyPulse 1.5s ease-in-out infinite;
         }
       `}</style>
       <div className="max-w-2xl mx-auto">
         <Card className="max-w-2xl w-full bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl text-center">
           <CardHeader>
-            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden animated-icon-container flex items-center justify-center">
-              <Utensils className="w-10 h-10 text-white animated-utensil" strokeWidth={2.5} />
+            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden animated-nutrition-container flex items-center justify-center">
+              <Activity className="w-10 h-10 text-white animated-energy-icon" strokeWidth={2.5} />
             </div>
             <CardTitle className="text-2xl font-bold text-gray-900">Creazione Protocollo Nutrizionale AI</CardTitle>
           </CardHeader>
@@ -984,7 +989,7 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                         }`}
                       >
                         <span>{day.label.substring(0, 3)}</span>
-                        {isAdded && <Check className="w-3 h-3 text-green-600" />}
+                        {isAdded && <Check className="w-3 h-3 mr-0.5 text-green-600" />}
                       </button>
                     );
                   })}
