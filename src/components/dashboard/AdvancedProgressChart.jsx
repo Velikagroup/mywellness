@@ -1,3 +1,4 @@
+
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingDown, TrendingUp, Scale, Save, RefreshCw } from "lucide-react";
@@ -57,22 +58,39 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   }, [weightHistory]);
 
   const handleSaveWeight = async () => {
-    if (!weight || !user) return;
+    console.log('🔍 handleSaveWeight called', { weight, user: user?.id, isSaving });
+    
+    if (!weight || !user) {
+      console.warn('⚠️ Missing weight or user', { weight, userId: user?.id });
+      alert('Inserisci un peso valido');
+      return;
+    }
     
     setIsSaving(true);
     try {
       const today = new Date().toISOString().split('T')[0];
-      await base44.entities.WeightHistory.create({
+      const weightData = {
         user_id: user.id,
         weight: parseFloat(weight),
         date: today
-      });
+      };
       
+      console.log('💾 Saving weight:', weightData);
+      
+      await base44.entities.WeightHistory.create(weightData);
+      
+      console.log('✅ Weight saved successfully');
       setWeight('');
-      if (onWeightLogged) onWeightLogged();
+      
+      if (onWeightLogged) {
+        console.log('🔄 Calling onWeightLogged callback');
+        await onWeightLogged();
+      }
+      
+      alert('✅ Peso registrato con successo!');
     } catch (error) {
-      console.error("Errore nel salvare il peso:", error);
-      alert("Errore nel salvataggio del peso. Riprova.");
+      console.error("❌ Errore nel salvare il peso:", error);
+      alert(`Errore nel salvataggio del peso: ${error.message || 'Riprova'}`);
     }
     setIsSaving(false);
   };
