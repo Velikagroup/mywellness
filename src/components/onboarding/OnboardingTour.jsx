@@ -32,30 +32,23 @@ export default function OnboardingTour({ user, onComplete }) {
       action: 'select_source'
     },
     {
-      id: 'dashboard_overview',
-      title: '📊 La Tua Dashboard Scientifica',
-      description: 'Qui trovi tutti i tuoi dati metabolici calcolati con precisione scientifica. BMR, massa grassa, target calorico e progressi verso l\'obiettivo.',
-      target: '.technical-stats-card',
-      position: 'center'
-    },
-    {
-      id: 'edit_bmr',
-      title: '✏️ Personalizza i Tuoi Dati',
-      description: 'Puoi modificare manualmente il metabolismo basale, la massa grassa e il target calorico cliccando sull\'icona di modifica in alto a destra di ogni card.',
-      target: '.technical-stats-card',
-      position: 'center'
-    },
-    {
       id: 'progress_chart',
       title: '📈 Traccia i Tuoi Progressi',
-      description: 'Questo grafico mostra l\'andamento del tuo peso nel tempo. Puoi aggiungere nuove pesate direttamente da qui!',
+      description: 'Questo grafico mostra l\'andamento del tuo peso nel tempo. Scorri verso il basso per vedere il grafico e aggiungere nuove pesate!',
       target: '.progress-chart-section',
+      position: 'center'
+    },
+    {
+      id: 'dashboard_stats',
+      title: '📊 Panoramica Giornaliera',
+      description: 'Qui vedi il riepilogo nutrizionale e di allenamento della giornata. Dati sempre aggiornati in tempo reale!',
+      target: '.dashboard-stats-section',
       position: 'center'
     },
     {
       id: 'nutrition_meals',
       title: '🍽️ Vai al Piano Nutrizionale',
-      description: 'Ora sei pronto! Vai alla sezione Nutrizione per generare il tuo piano alimentare personalizzato con l\'AI.',
+      description: 'Ora sei pronto! Clicca su "Nutrizione" nel menu in basso per generare il tuo piano alimentare personalizzato con l\'AI.',
       target: 'a[href*="Meals"]',
       position: 'center',
       final: true
@@ -64,11 +57,40 @@ export default function OnboardingTour({ user, onComplete }) {
 
   const currentStepData = steps[currentStep];
 
+  // Funzione per verificare se un elemento esiste ed è visibile
+  const isElementVisible = (selector) => {
+    const element = document.querySelector(selector);
+    if (!element) return false;
+    
+    const rect = element.getBoundingClientRect();
+    return rect.width > 0 && rect.height > 0;
+  };
+
+  // Funzione per trovare il prossimo step valido
+  const findNextValidStep = (fromStep) => {
+    for (let i = fromStep + 1; i < steps.length; i++) {
+      const step = steps[i];
+      if (!step.target || isElementVisible(step.target)) {
+        return i;
+      }
+    }
+    return steps.length;
+  };
+
   useEffect(() => {
     if (currentStepData?.target) {
       const element = document.querySelector(currentStepData.target);
       if (element) {
-        element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        // Scroll con più margine per mobile
+        setTimeout(() => {
+          element.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }, 300);
+      } else {
+        // Se l'elemento non esiste, salta allo step successivo
+        const nextValid = findNextValidStep(currentStep);
+        if (nextValid < steps.length) {
+          setCurrentStep(nextValid);
+        }
       }
     }
   }, [currentStep, currentStepData]);
@@ -86,28 +108,36 @@ export default function OnboardingTour({ user, onComplete }) {
         onboarding_completed: false
       });
       
-      setCurrentStep(1);
+      // Trova il primo step valido dopo il modal
+      const nextValid = findNextValidStep(0);
+      setCurrentStep(nextValid);
     } catch (error) {
       console.error('Error saving discovery source:', error);
       alert('Errore nel salvataggio. Continuo comunque...');
-      setCurrentStep(1);
+      const nextValid = findNextValidStep(0);
+      setCurrentStep(nextValid);
     }
     setIsSaving(false);
   };
 
   const handleNext = async () => {
     if (currentStep < steps.length - 1) {
-      setCurrentStep(currentStep + 1);
-      
-      try {
-        const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
-        if (onboardingRecords.length > 0) {
-          await base44.entities.UserOnboarding.update(onboardingRecords[0].id, {
-            current_step: currentStep + 1
-          });
+      const nextValid = findNextValidStep(currentStep);
+      if (nextValid < steps.length) {
+        setCurrentStep(nextValid);
+        
+        try {
+          const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
+          if (onboardingRecords.length > 0) {
+            await base44.entities.UserOnboarding.update(onboardingRecords[0].id, {
+              current_step: nextValid
+            });
+          }
+        } catch (error) {
+          console.error('Error updating step:', error);
         }
-      } catch (error) {
-        console.error('Error updating step:', error);
+      } else {
+        handleComplete();
       }
     } else {
       handleComplete();
@@ -116,7 +146,14 @@ export default function OnboardingTour({ user, onComplete }) {
 
   const handlePrevious = () => {
     if (currentStep > 1) {
-      setCurrentStep(currentStep - 1);
+      // Trova lo step valido precedente
+      for (let i = currentStep - 1; i >= 1; i--) {
+        const step = steps[i];
+        if (!step.target || isElementVisible(step.target)) {
+          setCurrentStep(i);
+          break;
+        }
+      }
     }
   };
 
@@ -163,8 +200,8 @@ export default function OnboardingTour({ user, onComplete }) {
     if (!element) return {};
     
     const rect = element.getBoundingClientRect();
-    const padding = 15;
-    const verticalPadding = 8;
+    const padding = window.innerWidth < 768 ? 8 : 15;
+    const verticalPadding = window.innerWidth < 768 ? 8 : 8;
     
     return {
       top: rect.top - verticalPadding,
@@ -175,13 +212,24 @@ export default function OnboardingTour({ user, onComplete }) {
   };
 
   const getTooltipPosition = () => {
-    if (!currentStepData?.target) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
+    const isMobile = window.innerWidth < 768;
+    
+    if (!currentStepData?.target) {
+      return { 
+        top: '50%', 
+        left: '50%', 
+        transform: 'translate(-50%, -50%)' 
+      };
+    }
     
     const element = document.querySelector(currentStepData.target);
-    if (!element) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
-    
-    const rect = element.getBoundingClientRect();
-    const isMobile = window.innerWidth < 768;
+    if (!element) {
+      return { 
+        top: '50%', 
+        left: '50%', 
+        transform: 'translate(-50%, -50%)' 
+      };
+    }
     
     // Su mobile, posiziona sempre centrato in basso
     if (isMobile) {
@@ -195,58 +243,12 @@ export default function OnboardingTour({ user, onComplete }) {
       };
     }
     
-    // Desktop: posizionamento dinamico come prima
-    const tooltipWidth = 400;
-    const tooltipHeight = 200;
-    const gap = 20;
-    
-    let style = {};
-    
-    switch (currentStepData.position) {
-      case 'center':
-        style = {
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
-        };
-        break;
-      case 'top':
-        style = {
-          bottom: window.innerHeight - rect.top + gap,
-          left: rect.left + (rect.width / 2) - (tooltipWidth / 2),
-          transform: 'none'
-        };
-        break;
-      case 'bottom':
-        style = {
-          top: rect.bottom + gap,
-          left: rect.left + (rect.width / 2) - (tooltipWidth / 2),
-          transform: 'none'
-        };
-        break;
-      case 'left':
-        style = {
-          top: rect.top + (rect.height / 2) - (tooltipHeight / 2),
-          right: window.innerWidth - rect.left + gap,
-          transform: 'none'
-        };
-        break;
-      case 'right':
-        style = {
-          top: rect.top + (rect.height / 2) - (tooltipHeight / 2),
-          left: rect.right + gap,
-          transform: 'none'
-        };
-        break;
-      default:
-        style = {
-          top: '50%',
-          left: '50%',
-          transform: 'translate(-50%, -50%)'
-        };
-    }
-    
-    return style;
+    // Desktop: centrato sempre
+    return {
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)'
+    };
   };
 
   if (currentStepData?.type === 'modal') {
