@@ -21,6 +21,7 @@ import UpgradeModal from "../components/meals/UpgradeModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import OnboardingTour from "../components/onboarding/OnboardingTour";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -45,6 +46,7 @@ export default function Dashboard() {
   const [isSavingBMR, setIsSavingBMR] = useState(false);
   const [isSavingBodyFat, setIsSavingBodyFat] = useState(false);
   const [isSavingCalories, setIsSavingCalories] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -114,6 +116,29 @@ export default function Dashboard() {
 
     return () => window.removeEventListener('resize', handleResize);
   }, []);
+
+  // ✅ Check onboarding status
+  useEffect(() => {
+    const checkOnboarding = async () => {
+      if (user && !user.onboarding_completed) {
+        // Check if user has already started onboarding
+        try {
+          const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
+          if (onboardingRecords.length === 0 || !onboardingRecords[0].onboarding_completed) {
+            setShowOnboarding(true);
+          }
+        } catch (error) {
+          console.error('Error checking onboarding:', error);
+          // Show onboarding anyway if error
+          setShowOnboarding(true);
+        }
+      }
+    };
+
+    if (user && !isLoading) {
+      checkOnboarding();
+    }
+  }, [user, isLoading]);
 
   const handleMealUpdate = (updatedMeal) => {
     const updatedMeals = todayMeals.map(m => m.id === updatedMeal.id ? updatedMeal : m);
@@ -406,6 +431,13 @@ export default function Dashboard() {
     
   return (
     <>
+      {showOnboarding && user && (
+        <OnboardingTour 
+          user={user} 
+          onComplete={() => setShowOnboarding(false)} 
+        />
+      )}
+
       <div className="min-h-screen pb-20 overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 pt-0 pb-4 sm:p-6 space-y-4 sm:space-y-8">
           {/* Header Desktop - nascosto su mobile */}
@@ -445,7 +477,7 @@ export default function Dashboard() {
         )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8 progress-chart-section">
               <AdvancedProgressChart 
                 user={user} 
                 weightHistory={weightHistory} 
@@ -453,7 +485,7 @@ export default function Dashboard() {
                 isMobile={isMobile}
               />
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 dashboard-stats-section">
                 <NutritionOverview 
                   meals={todayMeals}
                   mealLogs={mealLogs}
@@ -485,7 +517,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-4 sm:space-y-6 technical-stats-card">
              <div className="relative">
               <TechnicalStatsCard
                 title="Target Calorico"
