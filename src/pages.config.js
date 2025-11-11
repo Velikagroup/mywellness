@@ -24,6 +24,7 @@ import AdminSalesTax from './pages/AdminSalesTax';
 import AdminClients from './pages/AdminClients';
 import Settings from './pages/Settings';
 import AdminSupportTickets from './pages/AdminSupportTickets';
+import AdminFeedback from './pages/AdminFeedback';
 import Layout from './Layout.jsx';
 
 
@@ -54,6 +55,7 @@ export const PAGES = {
     "AdminClients": AdminClients,
     "Settings": Settings,
     "AdminSupportTickets": AdminSupportTickets,
+    "AdminFeedback": AdminFeedback,
 }
 
 export const pagesConfig = {

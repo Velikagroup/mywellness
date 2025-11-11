@@ -72,6 +72,10 @@ export default function Settings() {
   
   // Dialogs
   const [showCancelDialog, setShowCancelDialog] = useState(false);
+  const [showCancelFeedbackDialog, setShowCancelFeedbackDialog] = useState(false);
+  const [cancellationReason, setCancellationReason] = useState('');
+  const [cancellationDetails, setCancellationDetails] = useState('');
+  const [wouldRecommend, setWouldRecommend] = useState(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [selectedNewPlan, setSelectedNewPlan] = useState('');
 
@@ -252,16 +256,52 @@ export default function Settings() {
     setIsSaving(false);
   };
 
+  const handleCancelClick = () => {
+    setShowCancelDialog(false);
+    setShowCancelFeedbackDialog(true);
+  };
+
   const handleCancelSubscription = async () => {
+    if (!cancellationReason) {
+      alert('❌ Seleziona un motivo');
+      return;
+    }
+
+    if (cancellationReason === 'altro' && !cancellationDetails.trim()) {
+      alert('❌ Specifica il motivo');
+      return;
+    }
+
+    if (wouldRecommend === null) {
+      alert('❌ Rispondi alla domanda finale');
+      return;
+    }
+
     setIsSaving(true);
     try {
-      const response = await base44.functions.invoke('cancelMySubscription');
+      // Salva feedback cancellazione
+      const accountAge = Math.floor((new Date() - new Date(user.created_date)) / (1000 * 60 * 60 * 24));
+      
+      await base44.entities.CancellationFeedback.create({
+        user_id: user.id,
+        user_email: user.email,
+        user_plan: user.subscription_plan,
+        cancellation_reason: cancellationReason,
+        additional_details: cancellationDetails || null,
+        would_recommend: wouldRecommend,
+        days_used: accountAge
+      });
 
+      // Cancella abbonamento
+      const response = await base44.functions.invoke('cancelMySubscription');
       const data = response.data || response;
 
       if (data.success) {
-        alert('✅ Abbonamento cancellato. Resterà attivo fino alla scadenza del periodo corrente.');
-        setShowCancelDialog(false);
+        alert('✅ Abbonamento cancellato. Grazie per il tuo feedback!');
+        setShowCancelFeedbackDialog(false);
+        setCancellationReason('');
+        setCancellationDetails('');
+        setWouldRecommend(null);
         await loadUserData();
       } else {
         alert('❌ Errore: ' + data.error);
@@ -876,23 +916,131 @@ export default function Settings() {
 
       {/* DIALOG CANCEL */}
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>
-        <DialogContent>
+        <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle>Cancella Abbonamento</DialogTitle>
-            <DialogDescription>
-              Sei sicuro di voler cancellare il tuo abbonamento? Potrai continuare a usare MyWellness fino alla fine del periodo già pagato.
-            </DialogDescription>
+            <DialogTitle className="text-xl font-bold text-gray-900">Cancella Abbonamento</DialogTitle>
           </DialogHeader>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowCancelDialog(false)}>Annulla</Button>
-            <Button 
-              onClick={handleCancelSubscription}
-              disabled={isSaving}
-              variant="destructive"
-            >
-              {isSaving ? 'Cancellazione...' : 'Conferma Cancellazione'}
-            </Button>
-          </DialogFooter>
+          <div className="space-y-4 py-4">
+            <p className="text-gray-700">
+              Sei sicuro di voler cancellare? L'abbonamento resterà attivo fino alla scadenza del periodo corrente.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-3">
+              <Button onClick={() => setShowCancelDialog(false)} variant="outline" className="flex-1">
+                No, torna indietro
+              </Button>
+              <Button onClick={handleCancelClick} variant="destructive" className="flex-1">
+                Sì, cancella
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={showCancelFeedbackDialog} onOpenChange={setShowCancelFeedbackDialog}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Prima di andartene...</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 py-4">
+            <p className="text-gray-700">
+              Ci dispiace vederti andare. Aiutaci a migliorare: perché hai deciso di cancellare?
+            </p>
+
+            <div className="space-y-3">
+              {[
+                { value: 'troppo_costoso', label: '💰 Troppo costoso per me', icon: '💰' },
+                { value: 'non_uso_abbastanza', label: '⏰ Non la uso abbastanza', icon: '⏰' },
+                { value: 'risultati_non_soddisfacenti', label: '📉 Non vedo i risultati sperati', icon: '📉' },
+                { value: 'troppo_complesso', label: '🤯 Troppo complicata da usare', icon: '🤯' },
+                { value: 'problemi_tecnici', label: '⚠️ Problemi tecnici o bug', icon: '⚠️' },
+                { value: 'mancano_funzionalita', label: '🔧 Mancano funzionalità che mi servono', icon: '🔧' },
+                { value: 'preferisco_altra_app', label: '🔄 Ho trovato un\'alternativa migliore', icon: '🔄' },
+                { value: 'obiettivo_raggiunto', label: '🎯 Ho raggiunto il mio obiettivo!', icon: '🎯' },
+                { value: 'altro', label: '📝 Altro motivo (specifica sotto)', icon: '📝' }
+              ].map((option) => (
+                <button
+                  key={option.value}
+                  onClick={() => setCancellationReason(option.value)}
+                  className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
+                    cancellationReason === option.value
+                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                      : 'border-gray-200 bg-white hover:border-gray-300'
+                  }`}
+                >
+                  <span className="text-sm sm:text-base font-medium text-gray-800">{option.label}</span>
+                </button>
+              ))}
+            </div>
+
+            {(cancellationReason === 'altro' || cancellationReason) && (
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                  {cancellationReason === 'altro' ? 'Raccontaci di più (obbligatorio):' : 'Vuoi aggiungere altri dettagli? (opzionale)'}
+                </Label>
+                <Textarea
+                  value={cancellationDetails}
+                  onChange={(e) => setCancellationDetails(e.target.value)}
+                  placeholder="Scrivi qui..."
+                  className="h-24 bg-white resize-none"
+                />
+              </div>
+            )}
+
+            {cancellationReason && (
+              <div className="pt-4 border-t border-gray-200">
+                <Label className="text-sm font-semibold text-gray-700 mb-3 block">
+                  Un'ultima domanda: consiglieresti MyWellness ad altri?
+                </Label>
+                <div className="flex gap-3">
+                  <button
+                    onClick={() => setWouldRecommend(true)}
+                    className={`flex-1 p-4 rounded-xl border-2 transition-all ${
+                      wouldRecommend === true
+                        ? 'border-green-500 bg-green-50'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <span className="text-2xl mb-2 block">👍</span>
+                    <span className="text-sm font-medium text-gray-800">Sì, lo consiglierei</span>
+                  </button>
+                  <button
+                    onClick={() => setWouldRecommend(false)}
+                    className={`flex-1 p-4 rounded-xl border-2 transition-all ${
+                      wouldRecommend === false
+                        ? 'border-red-500 bg-red-50'
+                        : 'border-gray-200 bg-white hover:border-gray-300'
+                    }`}
+                  >
+                    <span className="text-2xl mb-2 block">👎</span>
+                    <span className="text-sm font-medium text-gray-800">No, non lo consiglierei</span>
+                  </button>
+                </div>
+              </div>
+            )}
+
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              <Button
+                onClick={() => {
+                  setShowCancelFeedbackDialog(false);
+                  setCancellationReason('');
+                  setCancellationDetails('');
+                  setWouldRecommend(null);
+                }}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
+              </Button>
+              <Button
+                onClick={handleCancelSubscription}
+                disabled={isSaving || !cancellationReason || wouldRecommend === null || (cancellationReason === 'altro' && !cancellationDetails.trim())}
+                variant="destructive"
+                className="flex-1"
+              >
+                {isSaving ? 'Cancellazione...' : 'Conferma Cancellazione'}
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
