@@ -759,51 +759,6 @@ export default function Pricing() {
               Iniza subito con 3 giorni gratuiti. Cancella quando vuoi, senza vincoli.
             </p>
 
-            {/* Coupon Input */}
-            <div className="max-w-md mx-auto mb-8">
-              <div className="water-glass-effect rounded-2xl p-4 shadow-lg">
-                <div className="flex items-center gap-2 mb-2">
-                  <Tag className="w-5 h-5 text-[var(--brand-primary)]" />
-                  <span className="text-sm font-semibold text-gray-700">Hai un codice sconto?</span>
-                </div>
-                <div className="flex gap-2">
-                  <Input
-                    type="text"
-                    placeholder="Inserisci il codice"
-                    value={couponCode}
-                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                    className="flex-1"
-                    disabled={couponValidating}
-                  />
-                  <Button
-                    onClick={handleApplyCoupon}
-                    disabled={couponValidating || !couponCode}
-                    className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
-                  >
-                    {couponValidating ? 'Verifica...' : 'Applica'}
-                  </Button>
-                </div>
-                
-                {couponValid === true && couponData && (
-                  <div className="mt-3 p-3 bg-green-50 border-2 border-green-200 rounded-lg">
-                    <div className="flex items-center gap-2 text-green-700">
-                      <CheckCircle className="w-5 h-5" />
-                      <span className="font-semibold">Codice valido! Sconto del {couponData.discount_value}% applicato</span>
-                    </div>
-                  </div>
-                )}
-                
-                {couponValid === false && couponData && (
-                  <div className="mt-3 p-3 bg-red-50 border-2 border-red-200 rounded-lg">
-                    <div className="flex items-center gap-2 text-red-700">
-                      <X className="w-5 h-5" />
-                      <span className="font-semibold">{couponData.error}</span>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
             {/* Billing Toggle */}
             <div className="inline-flex items-center gap-4 water-glass-effect rounded-full p-2 shadow-lg">
               <button
