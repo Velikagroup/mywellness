@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -254,9 +255,7 @@ export default function Settings() {
   const handleCancelSubscription = async () => {
     setIsSaving(true);
     try {
-      const response = await base44.functions.invoke('cancelUserSubscription', {
-        userId: user.id
-      });
+      const response = await base44.functions.invoke('cancelMySubscription');
 
       const data = response.data || response;
 
@@ -411,6 +410,17 @@ export default function Settings() {
             </Card>
 
             {!user?.email?.includes('@') || !user?.email?.includes('google') ? (
+              <Card className="bg-blue-50 border-blue-200">
+                <CardContent className="pt-6">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-5 h-5 text-blue-600" />
+                    <p className="text-blue-900">
+                      Stai usando Google OAuth. La password è gestita da Google.
+                    </p>
+                  </div>
+                </CardContent>
+              </Card>
+            ) : (
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
                   <CardTitle>Cambio Password</CardTitle>
@@ -453,17 +463,6 @@ export default function Settings() {
                   >
                     {isSaving ? 'Salvataggio...' : 'Cambia Password'}
                   </Button>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-blue-600" />
-                    <p className="text-blue-900">
-                      Stai usando Google OAuth. La password è gestita da Google.
-                    </p>
-                  </div>
                 </CardContent>
               </Card>
             )}

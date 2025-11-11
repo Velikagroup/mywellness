@@ -6,13 +6,12 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         const body = await req.json();
-        const { userId } = body;
+        const { userId, transactionId } = body;
 
         if (!userId) {
             return Response.json({ error: 'Missing userId' }, { status: 400 });
         }
 
-        // Recupera i dati utente
         const user = await base44.asServiceRole.entities.User.get(userId);
         
         if (!user || !user.email) {
@@ -23,10 +22,32 @@ Deno.serve(async (req) => {
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
         
-        // Calcola la prossima data di rinnovo (1 mese o 1 anno dopo)
         const nextRenewalDate = user.subscription_period_end 
             ? new Date(user.subscription_period_end).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
             : 'non disponibile';
+
+        // 🧾 GENERA FATTURA SE PRESENTE TRANSACTION ID
+        let invoiceHTML = '';
+        let invoiceNumber = '';
+        
+        if (transactionId) {
+            try {
+                console.log('📄 Generating invoice for transaction:', transactionId);
+                const invoiceResponse = await base44.asServiceRole.functions.invoke('generateInvoicePDF', {
+                    transactionId: transactionId
+                });
+                
+                const invoiceData = invoiceResponse.data || invoiceResponse;
+                
+                if (invoiceData.success) {
+                    invoiceHTML = invoiceData.invoiceHTML;
+                    invoiceNumber = invoiceData.invoiceNumber;
+                    console.log('✅ Invoice generated:', invoiceNumber);
+                }
+            } catch (invoiceError) {
+                console.error('⚠️ Invoice generation error (non-critical):', invoiceError.message);
+            }
+        }
 
         const emailBody = `
 <!DOCTYPE html>
@@ -79,6 +100,15 @@ Deno.serve(async (req) => {
                                 </p>
                             </div>
 
+                            ${invoiceHTML ? `
+                            <div style="background: #fef3c7; border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
+                                <h3 style="color: #92400e; margin: 0 0 10px 0;">📄 Fattura Allegata</h3>
+                                <p style="color: #78350f; margin: 0; font-size: 14px;">
+                                    La tua fattura <strong>${invoiceNumber}</strong> è allegata a questa email
+                                </p>
+                            </div>
+                            ` : ''}
+
                             <h2 style="color: #111827; margin: 30px 0 20px 0;">💪 Continua il tuo percorso:</h2>
                             
                             <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
@@ -112,14 +142,14 @@ Deno.serve(async (req) => {
                             </table>
 
                             <div style="text-align: center; margin: 30px 0 10px 0;">
-                                <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                <a href="${Deno.env.get('APP_URL') || 'https://app.projectmywellness.com'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                     🎯 Vai alla Dashboard
                                 </a>
                             </div>
 
                             <div style="background: #fffbeb; border: 2px solid #fbbf24; border-radius: 12px; padding: 15px; margin: 30px 0;">
                                 <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
-                                    <strong>💡 Gestisci il tuo abbonamento:</strong> Puoi modificare o annullare il rinnovo automatico in qualsiasi momento dalla tua Dashboard.
+                                    <strong>💡 Gestisci il tuo abbonamento:</strong> Puoi modificare o annullare il rinnovo automatico in qualsiasi momento dalla sezione Impostazioni.
                                 </p>
                             </div>
 
@@ -133,8 +163,8 @@ Deno.serve(async (req) => {
                                 <p style="margin: 0 0 10px 0;"><strong style="color: #111827;">MyWellness</strong></p>
                                 <p style="margin: 0 0 10px 0;">Grazie per essere parte della nostra community 🌟</p>
                                 <p style="margin: 0; font-size: 12px;">
-                                    <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Privacy" style="color: #26847F; text-decoration: none;">Privacy Policy</a> &middot; 
-                                    <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Terms" style="color: #26847F; text-decoration: none;">Termini di Servizio</a>
+                                    <a href="${Deno.env.get('APP_URL') || 'https://app.projectmywellness.com'}/Privacy" style="color: #26847F; text-decoration: none;">Privacy Policy</a> &middot; 
+                                    <a href="${Deno.env.get('APP_URL') || 'https://app.projectmywellness.com'}/Terms" style="color: #26847F; text-decoration: none;">Termini di Servizio</a>
                                 </p>
                             </div>
                         </td>
@@ -153,6 +183,13 @@ Deno.serve(async (req) => {
             </td>
         </tr>
     </table>
+
+    ${invoiceHTML ? `
+    <!-- FATTURA ALLEGATA -->
+    <div style="margin-top: 40px; page-break-before: always;">
+        ${invoiceHTML}
+    </div>
+    ` : ''}
 </body>
 </html>
         `;
@@ -160,7 +197,7 @@ Deno.serve(async (req) => {
         await base44.asServiceRole.integrations.Core.SendEmail({
             to: user.email,
             from_name: `MyWellness <${fromEmail}>`,
-            subject: '✅ Abbonamento MyWellness Rinnovato - Grazie per la tua fiducia!',
+            subject: `✅ Abbonamento MyWellness Rinnovato${invoiceNumber ? ` - Fattura ${invoiceNumber}` : ''}`,
             body: emailBody
         });
 
