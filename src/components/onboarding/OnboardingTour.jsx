@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -35,8 +36,8 @@ export default function OnboardingTour({ user, onComplete }) {
       id: 'dashboard_overview',
       title: '📊 La Tua Dashboard Scientifica',
       description: 'Qui trovi tutti i tuoi dati metabolici calcolati con precisione scientifica. BMR, massa grassa, target calorico e progressi verso l\'obiettivo.',
-      target: '.dashboard-stats-section',
-      position: 'center'
+      target: '.technical-stats-card',
+      position: 'left'
     },
     {
       id: 'edit_bmr',
@@ -50,14 +51,14 @@ export default function OnboardingTour({ user, onComplete }) {
       title: '📈 Traccia i Tuoi Progressi',
       description: 'Questo grafico mostra l\'andamento del tuo peso nel tempo. Puoi aggiungere nuove pesate direttamente da qui!',
       target: '.progress-chart-section',
-      position: 'top'
+      position: 'bottom'
     },
     {
       id: 'nutrition_meals',
       title: '🍽️ Vai al Piano Nutrizionale',
       description: 'Ora sei pronto! Vai alla sezione Nutrizione per generare il tuo piano alimentare personalizzato con l\'AI.',
       target: 'a[href*="Meals"]',
-      position: 'bottom',
+      position: 'top',
       final: true
     }
   ];
@@ -173,13 +174,14 @@ export default function OnboardingTour({ user, onComplete }) {
     if (!element) return {};
     
     const rect = element.getBoundingClientRect();
-    const padding = 12;
+    const padding = 15;
+    const verticalPadding = 8;
     
     return {
-      top: rect.top - padding,
+      top: rect.top - verticalPadding,
       left: rect.left - padding,
       width: rect.width + (padding * 2),
-      height: rect.height + (padding * 2)
+      height: rect.height + (verticalPadding * 2)
     };
   };
 
