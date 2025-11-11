@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -13,8 +12,6 @@ import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
-import { CardElement, useStripe, useElements, Elements } from '@stripe/react-stripe-js';
-import { loadStripe } from '@stripe/stripe-js';
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -37,14 +34,15 @@ const countryCodeToFlag = (code) => {
 const TRIAL_DAYS = 3;
 const ORDER_BUMP_PRICE = 19.99;
 
-function TrialSetupForm() {
+export default function TrialSetup() {
   const navigate = useNavigate();
   const location = useLocation();
-  const stripe = useStripe();
-  const elements = useElements();
-  
+  const cardElementRef = useRef(null);
   const [isSaving, setIsSaving] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(null);
+  const [stripe, setStripe] = useState(null);
+  const [cardElement, setCardElement] = useState(null);
+  const [cardComplete, setCardComplete] = useState(false);
   const [paymentRequest, setPaymentRequest] = useState(null);
   const [canMakePayment, setCanMakePayment] = useState(null);
   const [showApplePay, setShowApplePay] = useState(false);
@@ -81,9 +79,7 @@ function TrialSetupForm() {
   const [selectedPlan, setSelectedPlan] = useState('base');
   const [selectedBillingPeriod, setSelectedBillingPeriod] = useState('monthly');
   const [trialSetupTracked, setTrialSetupTracked] = useState(false);
-  const [cardComplete, setCardComplete] = useState(false);
 
-  // 🔐 VALIDAZIONE COUPON PERSONALIZZATO
   const validateCouponFromURL = async (code, email) => {
     try {
       const response = await base44.functions.invoke('validatePersonalCoupon', {
@@ -91,15 +87,17 @@ function TrialSetupForm() {
         userEmail: email
       });
 
-      if (response.valid) {
+      const responseData = response.data || response;
+
+      if (responseData.valid) {
         setAppliedCoupon({
           code: code,
-          discount_type: response.discount_type,
-          discount_value: response.discount_value
+          discount_type: responseData.discount_type,
+          discount_value: responseData.discount_value
         });
         setDiscountError('');
       } else {
-        setDiscountError(response.error || 'Coupon non valido');
+        setDiscountError(responseData.error || 'Coupon non valido');
       }
     } catch (error) {
       console.error('Error validating coupon from URL:', error);
@@ -108,16 +106,15 @@ function TrialSetupForm() {
   };
 
   useEffect(() => {
-    const checkAuthAndUserData = async () => {
+    const checkAuth = async () => {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
-        // 🛒 TRACKING: Trial Setup Opened
-        if (!trialSetupTracked && currentUser) { // Ensure user is available before tracking
+        if (!trialSetupTracked && currentUser) {
           try {
             await base44.entities.UserActivity.create({
-              user_id: currentUser.id, // Use user.id as per base44 docs if available, otherwise email
+              user_id: currentUser.id,
               event_type: 'trial_setup_opened',
               event_data: { plan: selectedPlan }
             });
@@ -132,11 +129,9 @@ function TrialSetupForm() {
         const refSource = queryParams.get('ref');
         const storedSource = localStorage.getItem('trafficSource');
         
-        // 🎫 GESTIONE COUPON DA URL
         const couponParam = queryParams.get('coupon');
-        if (couponParam && currentUser.email) { // Ensure user email is available for validation
+        if (couponParam && currentUser.email) {
           setCouponCode(couponParam);
-          // Auto-valida il coupon
           await validateCouponFromURL(couponParam, currentUser.email);
         }
 
@@ -149,6 +144,56 @@ function TrialSetupForm() {
           setTrafficSource('direct');
         }
         console.log("Traffic Source:", refSource || storedSource || 'direct');
+
+        // 🔑 CARICA STRIPE
+        const loadStripe = async () => {
+          console.log('🔑 Loading Stripe publishable key from backend...');
+          
+          try {
+            const keyResponse = await base44.functions.invoke('getStripePublishableKey');
+            const responseData = keyResponse.data || keyResponse;
+            
+            if (!responseData.publishableKey) {
+              throw new Error('publishableKey missing from response');
+            }
+            
+            const stripeKey = responseData.publishableKey;
+            console.log('✅ Stripe key loaded');
+            
+            if (!window.Stripe) {
+              console.log('⏳ Loading Stripe.js library...');
+              return new Promise((resolve, reject) => {
+                const script = document.createElement('script');
+                script.src = 'https://js.stripe.com/v3/';
+                script.async = true;
+                script.onload = () => {
+                  console.log('✅ Stripe.js loaded');
+                  const stripeInstance = window.Stripe(stripeKey);
+                  resolve(stripeInstance);
+                };
+                script.onerror = () => reject(new Error('Failed to load Stripe.js'));
+                document.body.appendChild(script);
+              });
+            } else {
+              return Promise.resolve(window.Stripe(stripeKey));
+            }
+          } catch (error) {
+            console.error('❌ Error loading Stripe:', error);
+            throw error;
+          }
+        };
+
+        let stripeInstance;
+        try {
+          stripeInstance = await loadStripe();
+          console.log('✅ Stripe instance ready');
+        } catch (stripeError) {
+          console.error('💥 Stripe initialization failed:', stripeError);
+          setIsLoading(false);
+          return;
+        }
+        
+        setStripe(stripeInstance);
         
         setBillingInfo(prev => ({
           ...prev,
@@ -207,89 +252,102 @@ function TrialSetupForm() {
       }
     };
 
-    checkAuthAndUserData();
+    checkAuth();
   }, [navigate, location, trialSetupTracked, selectedPlan]);
+
+  // Initialize Stripe Card Element when stripe is ready and card method is selected
+  useEffect(() => {
+    if (!stripe || paymentMethod !== 'card' || !cardElementRef.current || cardElement) return;
+
+    console.log('🎨 Creating Stripe Card Element...');
+    const elements = stripe.elements();
+    const card = elements.create('card', {
+      style: {
+        base: {
+          fontSize: '16px',
+          color: '#1f2937',
+          fontFamily: "'Inter', sans-serif",
+          '::placeholder': {
+            color: '#9ca3af',
+          },
+        },
+        invalid: {
+          color: '#ef4444',
+          iconColor: '#ef4444'
+        }
+      },
+      hidePostalCode: true
+    });
+
+    card.mount(cardElementRef.current);
+    card.on('change', (event) => {
+      setCardComplete(event.complete);
+    });
+
+    setCardElement(card);
+    console.log('✅ Card Element mounted');
+
+    return () => {
+      card.unmount();
+    };
+  }, [stripe, paymentMethod, cardElement]);
+
+  // Initialize Payment Request for digital wallets
+  useEffect(() => {
+    if (!stripe || !user) return;
+
+    const initializePaymentRequest = async () => {
+      try {
+        const pr = stripe.paymentRequest({
+          country: 'IT',
+          currency: 'eur',
+          total: {
+            label: 'MyWellness - Prova Gratuita',
+            amount: 100,
+          },
+          requestPayerName: true,
+          requestPayerEmail: true,
+          requestPayerPhone: false,
+          requestBillingAddress: true,
+        });
+
+        const canMakePaymentResult = await pr.canMakePayment();
+        
+        if (canMakePaymentResult) {
+          setCanMakePayment(canMakePaymentResult);
+          setPaymentRequest(pr);
+          
+          if (canMakePaymentResult.applePay) {
+            setShowApplePay(true);
+          }
+          
+          if (canMakePaymentResult.googlePay) {
+            setShowGooglePay(true);
+          }
+          
+          if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
+            const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+            const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
+            
+            if (isIOS || isSafari || isMacOS) {
+              setShowApplePay(true);
+            } else {
+              setShowGooglePay(true);
+            }
+          }
+        }
+      } catch (error) {
+        console.error('Payment Request error:', error);
+      }
+    };
+
+    initializePaymentRequest();
+  }, [stripe, user]);
 
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
-
-  const initializePaymentRequest = async () => {
-    if (!stripe || !user) return;
-
-    try {
-      console.log('🔍 Initializing Payment Request...');
-      
-      const pr = stripe.paymentRequest({
-        country: 'IT',
-        currency: 'eur',
-        total: {
-          label: 'MyWellness - Prova Gratuita',
-          amount: 100, // Dummy amount, will be updated before .show()
-        },
-        requestPayerName: true,
-        requestPayerEmail: true,
-        requestPayerPhone: false,
-        requestBillingAddress: true,
-      });
-
-      const canMakePaymentResult = await pr.canMakePayment();
-      
-      console.log('💳 canMakePayment result:', canMakePaymentResult);
-      
-      if (canMakePaymentResult) {
-        setCanMakePayment(canMakePaymentResult);
-        setPaymentRequest(pr);
-        
-        if (canMakePaymentResult.applePay) {
-          console.log('✅ Apple Pay is available');
-          setShowApplePay(true);
-        }
-        
-        if (canMakePaymentResult.googlePay) {
-          console.log('✅ Google Pay is available');
-          setShowGooglePay(true);
-        }
-        
-        if (!canMakePaymentResult.applePay && !canMakePaymentResult.googlePay) {
-          console.log('⚠️ Payment Request available but no specific wallet detected - using platform detection');
-          const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-          const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-          const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
-          
-          if (isIOS || isSafari || isMacOS) {
-            console.log('🍎 iOS/Safari/macOS detected - showing Apple Pay');
-            setShowApplePay(true);
-          } else {
-            console.log('🤖 Showing Google Pay as default');
-            setShowGooglePay(true);
-          }
-        }
-      } else {
-        console.log('❌ No digital wallet available - canMakePayment returned null/false');
-        console.log('⚙️ Trying fallback detection anyway...');
-        
-        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-        const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
-        const isMacOS = /Macintosh|MacIntel|MacPPC|Mac68K/.test(navigator.platform);
-        
-        if (isIOS || isSafari || isMacOS) {
-          console.log('🍎 iOS/Safari/macOS detected via fallback - attempting to show Apple Pay');
-          setShowApplePay(true);
-          setPaymentRequest(pr);
-        }
-      }
-    } catch (error) {
-      console.error('❌ Payment Request initialization error:', error);
-    }
-  };
-
-  useEffect(() => {
-    if (stripe && user && !paymentRequest) { // Only initialize if stripe and user are available and paymentRequest is not yet set
-      initializePaymentRequest();
-    }
-  }, [stripe, user, paymentRequest]);
-
 
   const handleBillingInfoChange = (e) => {
     const { name, value } = e.target;
@@ -306,22 +364,23 @@ function TrialSetupForm() {
     setIsApplyingCoupon(true);
     setDiscountError('');
     try {
-      // Use the new base44 function to validate coupons
       const response = await base44.functions.invoke('validatePersonalCoupon', {
         couponCode: couponCode.toUpperCase(),
-        userEmail: user.email // Pass the user's email for personalized coupon validation
+        userEmail: user.email
       });
 
-      if (response.valid) {
+      const responseData = response.data || response;
+
+      if (responseData.valid) {
         setAppliedCoupon({
           code: couponCode.toUpperCase(),
-          discount_type: response.discount_type,
-          discount_value: response.discount_value
+          discount_type: responseData.discount_type,
+          discount_value: responseData.discount_value
         });
         setDiscountError("");
-        alert(`✅ Coupon applicato! Sconto del ${response.discount_value}%`);
+        alert(`✅ Coupon applicato! Sconto del ${responseData.discount_value}%`);
       } else {
-        setDiscountError(response.error || "Coupon non valido.");
+        setDiscountError(responseData.error || "Coupon non valido.");
         setAppliedCoupon(null);
       }
     } catch (error) {
@@ -337,8 +396,6 @@ function TrialSetupForm() {
       alert("Wallet digitale non disponibile.");
       return;
     }
-
-    console.log(`🔄 Initializing ${walletType} payment...`);
 
     if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
       alert("Per favore, compila tutti i campi obbligatori prima di procedere.");
@@ -398,12 +455,11 @@ function TrialSetupForm() {
             marketingConsent: marketingConsent
           };
 
-          console.log('📤 Sending payload:', payload);
           const response = await base44.functions.invoke('stripeCreateTrialSubscription', payload);
-          console.log('📥 Response received:', response);
+          const responseData = response.data || response;
 
-          if (!response || !response.success) {
-            throw new Error(response?.error || response?.details || 'Setup failed');
+          if (!responseData || !responseData.success) {
+            throw new Error(responseData?.error || responseData?.details || 'Setup failed');
           }
 
           ev.complete('success');
@@ -439,19 +495,14 @@ function TrialSetupForm() {
     setIsSaving(true);
 
     try {
-      if (!stripe || !elements) {
+      if (!stripe || !cardElement) {
         throw new Error('Stripe non inizializzato');
-      }
-
-      const cardElement = elements.getElement(CardElement);
-      if (!cardElement) {
-        throw new Error('Impossibile ottenere l\'elemento della carta.');
       }
 
       console.log('🔐 Creating secure payment method with Stripe Elements...');
       const { paymentMethod: stripePaymentMethod, error: stripeError } = await stripe.createPaymentMethod({
         type: 'card',
-        card: cardElement, // Use the CardElement
+        card: cardElement,
         billing_details: {
           name: billingInfo.name,
           email: billingInfo.email,
@@ -474,7 +525,7 @@ function TrialSetupForm() {
       const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
 
       const payload = {
-        paymentMethodId: stripePaymentMethod.id, // ✅ SOLO ID, non dati sensibili
+        paymentMethodId: stripePaymentMethod.id,
         planType: selectedPlan,
         billingPeriod: selectedBillingPeriod,
         orderBumpSelected: orderBumpSelected,
@@ -498,11 +549,9 @@ function TrialSetupForm() {
         marketingConsent: marketingConsent
       };
 
-      console.log('📤 Sending card payload:', payload);
+      console.log('📤 Sending payment payload...');
       const result = await base44.functions.invoke('stripeCreateTrialSubscription', payload);
-      console.log('📥 Card response received:', result);
-
-      const resultData = result.data || result; // Ensure we get the actual response data
+      const resultData = result.data || result;
 
       if (!resultData || !resultData.success) {
         const errorMsg = resultData?.error || resultData?.details || 'Setup failed';
@@ -521,7 +570,7 @@ function TrialSetupForm() {
   };
 
   const isFormValid = paymentMethod && 
-    (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay' || cardComplete) && // Use cardComplete for CardElement validation
+    (paymentMethod === 'apple_pay' || paymentMethod === 'google_pay' || cardComplete) &&
     billingInfo.name.length > 0 &&
     billingInfo.email.length > 0 &&
     /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(billingInfo.email) &&
@@ -569,25 +618,6 @@ function TrialSetupForm() {
       </div>
     );
   }
-
-  const CARD_ELEMENT_OPTIONS = {
-    style: {
-      base: {
-        fontSize: '16px',
-        color: '#1f2937',
-        fontFamily: "'Inter', sans-serif",
-        '::placeholder': {
-          color: '#9ca3af',
-        },
-        padding: '12px',
-      },
-      invalid: {
-        color: '#ef4444',
-        iconColor: '#ef4444'
-      }
-    },
-    hidePostalCode: true
-  };
 
   return (
     <div className="min-h-screen animated-gradient-bg">
@@ -646,6 +676,17 @@ function TrialSetupForm() {
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
+        
+        .StripeElement {
+          padding: 12px;
+          border-radius: 8px;
+        }
+        
+        .StripeElement--focus {
+          border-color: var(--brand-primary);
+          ring: 2px;
+          ring-color: rgba(38, 132, 127, 0.2);
+        }
       `}</style>
 
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
@@ -673,7 +714,6 @@ function TrialSetupForm() {
               {selectedPlan === 'premium' && 'Piano Premium - Accesso completo a tutte le funzionalità'}
             </p>
             
-            {/* 🎫 COUPON APPLIED BANNER */}
             {appliedCoupon && (
               <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
                 <div className="flex items-center justify-center gap-2">
@@ -1054,15 +1094,10 @@ function TrialSetupForm() {
                   <Label htmlFor="card-element" className="text-sm font-semibold text-gray-700 mb-2 block">
                     Dati Carta
                   </Label>
-                  <div className="relative">
-                    <div className="border-2 border-gray-200 rounded-lg p-4 bg-white focus-within:border-[var(--brand-primary)] focus-within:ring-2 focus-within:ring-[var(--brand-primary)]/20 transition-all">
-                      <CardElement
-                        id="card-element"
-                        options={CARD_ELEMENT_OPTIONS}
-                        onChange={(e) => setCardComplete(e.complete)}
-                      />
-                    </div>
-                  </div>
+                  <div 
+                    ref={cardElementRef}
+                    className="border-2 border-gray-200 rounded-lg p-4 bg-white focus-within:border-[var(--brand-primary)] focus-within:ring-2 focus-within:ring-[var(--brand-primary)]/20 transition-all"
+                  />
                   <p className="text-xs text-gray-500 mt-2">
                     🔒 I dati della tua carta sono protetti con crittografia SSL/TLS e gestiti in modo sicuro da Stripe
                   </p>
@@ -1210,48 +1245,5 @@ function TrialSetupForm() {
         </div>
       </footer>
     </div>
-  );
-}
-
-export default function TrialSetup() {
-  const [stripePromise, setStripePromise] = useState(null);
-
-  useEffect(() => {
-    const loadStripeKey = async () => {
-      try {
-        const keyResponse = await base44.functions.invoke('getStripePublishableKey');
-        const responseData = keyResponse.data || keyResponse;
-        
-        if (responseData.publishableKey) {
-          const stripe = await loadStripe(responseData.publishableKey);
-          setStripePromise(stripe);
-        } else {
-          console.error('No Stripe publishable key received from backend.');
-          // Optionally, render an error message to the user
-        }
-      } catch (error) {
-        console.error('Error loading Stripe:', error);
-        // Optionally, render an error message to the user
-      }
-    };
-
-    loadStripeKey();
-  }, []);
-
-  if (!stripePromise) {
-    return (
-      <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[var(--brand-primary)]"></div>
-          <p className="mt-4 text-gray-700 font-semibold text-lg">Caricamento sicuro...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <Elements stripe={stripePromise}>
-      <TrialSetupForm />
-    </Elements>
   );
 }
