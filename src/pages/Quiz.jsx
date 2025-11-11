@@ -117,21 +117,22 @@ export default function Quiz() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        // Se l'utente ha già completato il quiz e NON è in recap mode → vai alla Dashboard
-        if (currentUser && currentUser.quiz_completed && !isRecapMode) {
-          navigate(createPageUrl('Dashboard'), { replace: true });
-          return;
-        }
+        console.log('🔍 Quiz Mode Check:', { isRecapMode, quiz_completed: currentUser?.quiz_completed });
         
-        // ✅ FIX RECAP MODE: Carica i dati dell'utente MA cancella i dati salvati localmente
+        // ✅ FIX RECAP MODE: Se è recap mode, resetta SEMPRE
         if (isRecapMode && currentUser) {
-          // Svuota il localStorage per forzare il riavvio del quiz
+          console.log('🔄 RECAP MODE ATTIVO - Reset quiz data...');
           localStorage.removeItem('quizData');
           setQuizData({
             gender: currentUser.gender || '',
           });
-          setCurrentStep(0); // ✅ RIPARTE DALLO STEP 0 (intro)
-          window.history.replaceState({}, '', `${window.location.pathname}?step=0`);
+          setCurrentStep(0);
+          window.history.replaceState({}, '', createPageUrl('Quiz') + '?mode=recap&step=0');
+        } else if (currentUser && currentUser.quiz_completed && !isRecapMode) {
+          // Se l'utente ha già completato il quiz e NON è in recap mode → vai alla Dashboard
+          console.log('✅ Quiz già completato, redirect to Dashboard');
+          navigate(createPageUrl('Dashboard'), { replace: true });
+          return;
         }
         
       } catch (error) {
@@ -230,7 +231,10 @@ export default function Quiz() {
     if (currentStep < dynamicSteps.length - 1) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
-      window.history.pushState({}, '', `${window.location.pathname}?step=${newStep}`);
+      const url = isRecapMode 
+        ? `${createPageUrl('Quiz')}?mode=recap&step=${newStep}`
+        : `${createPageUrl('Quiz')}?step=${newStep}`;
+      window.history.pushState({}, '', url);
     } else {
       // Ultimo step completato - vai direttamente al caricamento (calculation screen)
       // 🛒 TRACKING: Quiz Completed
@@ -262,7 +266,10 @@ export default function Quiz() {
     if (currentStep > 0) {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
-      window.history.pushState({}, '', `${window.location.pathname}?step=${newStep}`);
+      const url = isRecapMode 
+        ? `${createPageUrl('Quiz')}?mode=recap&step=${newStep}`
+        : `${createPageUrl('Quiz')}?step=${newStep}`;
+      window.history.pushState({}, '', url);
     }
   };
 
@@ -321,11 +328,19 @@ export default function Quiz() {
       // Controlla se l'utente è già loggato
       if (user && user.id) {
         console.log('💾 Saving user data...', userDataToSave);
-        // Utente loggato - salva dati direttamente e vai al TrialSetup
+        // Utente loggato - salva dati direttamente
         await base44.auth.updateMe(userDataToSave);
         localStorage.removeItem('quizData');
-        console.log('✅ User data saved, redirecting to TrialSetup...');
-        navigate(createPageUrl('TrialSetup'), { replace: true });
+        console.log('✅ User data saved');
+        
+        // Se è recap mode, vai alla Dashboard, altrimenti al TrialSetup
+        if (isRecapMode) {
+          console.log('🔄 Recap mode: redirecting to Dashboard...');
+          navigate(createPageUrl('Dashboard'), { replace: true });
+        } else {
+          console.log('✅ Normal mode: redirecting to TrialSetup...');
+          navigate(createPageUrl('TrialSetup'), { replace: true });
+        }
       } else {
         // Utente NON loggato - salva nel localStorage e fai login
         localStorage.setItem('quizData', JSON.stringify({...quizData, ...userDataToSave}));
