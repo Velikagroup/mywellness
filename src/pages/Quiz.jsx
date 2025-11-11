@@ -108,7 +108,7 @@ export default function Quiz() {
   const [user, setUser] = useState(null);
   const [isLoadingUser, setIsLoadingUser] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
-  const [quizActivityTracked, setQuizActivityTracked] = useState(false); // NEW STATE for tracking
+  const [quizActivityTracked, setQuizActivityTracked] = useState(false);
 
   useEffect(() => {
     const loadUserData = async () => {
@@ -288,7 +288,6 @@ export default function Quiz() {
   };
 
   const handleRevealBodyFat = async () => {
-    // Salva i dati nel localStorage e reindirizza DIRETTAMENTE al login
     setIsSaving(true);
     
     try {
@@ -328,15 +327,20 @@ export default function Quiz() {
         quiz_completed: false,
       };
 
-      // Salva i dati nel localStorage (l'utente non è ancora loggato)
-      localStorage.setItem('quizData', JSON.stringify(finalDataToSubmit));
-      
-      // Salva flag per reindirizzare al TrialSetup dopo il login
-      localStorage.setItem('redirectToTrialSetup', 'true');
-      
-      // Reindirizza DIRETTAMENTE al login con TrialSetup come URL di ritorno
-      const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
-      await base44.auth.redirectToLogin(trialSetupUrl);
+      // Controlla se l'utente è già loggato
+      if (user && user.id) {
+        // Utente loggato - salva dati direttamente e vai al TrialSetup
+        await base44.auth.updateMe(finalDataToSubmit);
+        localStorage.removeItem('quizData');
+        navigate(createPageUrl('TrialSetup'), { replace: true });
+      } else {
+        // Utente NON loggato - salva nel localStorage e fai login
+        localStorage.setItem('quizData', JSON.stringify(finalDataToSubmit));
+        localStorage.setItem('redirectToTrialSetup', 'true');
+        
+        const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
+        await base44.auth.redirectToLogin(trialSetupUrl);
+      }
       
     } catch (error) {
       console.error("Error preparing quiz data:", error);
