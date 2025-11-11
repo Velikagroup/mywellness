@@ -26,6 +26,7 @@ export default function OnboardingTour({ user, onComplete }) {
   const [isSaving, setIsSaving] = useState(false);
   const [targetRect, setTargetRect] = useState(null);
   const [isMobile, setIsMobile] = useState(false);
+  const hasScrolledToTarget = useRef(false);
 
   useEffect(() => {
     const checkMobile = () => {
@@ -69,6 +70,7 @@ export default function OnboardingTour({ user, onComplete }) {
 
   useEffect(() => {
     if (currentStepData?.target) {
+      hasScrolledToTarget.current = false;
       updateTargetPosition();
       window.addEventListener('resize', updateTargetPosition);
       window.addEventListener('scroll', updateTargetPosition);
@@ -91,6 +93,20 @@ export default function OnboardingTour({ user, onComplete }) {
         width: rect.width,
         height: rect.height
       });
+      
+      // Auto-scroll su mobile per portare l'elemento in vista
+      if (isMobile && !hasScrolledToTarget.current) {
+        hasScrolledToTarget.current = true;
+        
+        // Delay per dare tempo al rendering
+        setTimeout(() => {
+          element.scrollIntoView({ 
+            behavior: 'smooth', 
+            block: 'center',
+            inline: 'center'
+          });
+        }, 100);
+      }
     }
   };
 
