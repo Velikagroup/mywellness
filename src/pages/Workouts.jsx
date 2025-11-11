@@ -112,18 +112,19 @@ export default function Workouts() {
       setIsLoading(true);
       try {
         const currentUser = await User.me();
-        if (currentUser.role !== 'admin') {
-          navigate(createPageUrl('Dashboard'));
-          return;
-        }
         setUser(currentUser);
         
-        if (currentUser && !hasFeatureAccess(currentUser.subscription_plan, 'workout_plan')) {
+        if (!currentUser) {
+          navigate(createPageUrl('Home'));
+          return;
+        }
+
+        if (!hasFeatureAccess(currentUser.subscription_plan, 'workout_plan')) {
           setIsLoading(false);
           return;
         }
 
-        if (currentUser && currentUser.id) {
+        if (currentUser.id) {
           await loadWorkoutPlans(currentUser.id);
           await checkForCheats(currentUser.id);
           setTrainingData({
@@ -136,8 +137,6 @@ export default function Workouts() {
             session_duration: currentUser.session_duration,
             fitness_goal: currentUser.fitness_goal
           });
-        } else if (!currentUser) {
-            navigate(createPageUrl("Home"));
         }
       } catch (error) {
         if (error?.response?.status === 401 || error?.message?.includes('401')) {

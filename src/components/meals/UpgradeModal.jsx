@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2 } from 'lucide-react';
@@ -93,7 +94,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       const data = response.data || response;
 
       if (data.success) {
-        alert(`✅ Piano aggiornato a ${selectedPlanToUpgrade.name}! La modifica sarà attiva alla fine del trial.`);
+        alert(`✅ Piano aggiornato a ${selectedPlanToUpgrade.name}!`);
         setShowConfirmDialog(false);
         onClose();
         window.location.reload();
@@ -281,10 +282,10 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       </div>
 
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-md z-[200]">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-900">
-              Conferma Upgrade
+              Conferma Upgrade Immediato
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
@@ -308,15 +309,21 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                   <div className="flex items-start gap-3">
                     <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div className="text-sm text-blue-900">
-                      <p className="font-semibold mb-1">Come funziona:</p>
+                      <p className="font-semibold mb-2">⚡ Upgrade Immediato:</p>
                       <ul className="space-y-1 text-blue-800">
                         <li>• Il piano verrà aggiornato immediatamente</li>
-                        <li>• Durante il trial, nessun addebito</li>
-                        <li>• Alla fine del trial (3 giorni), verrà addebitato il nuovo piano</li>
-                        <li>• Puoi sempre cancellare prima della fine del trial</li>
+                        <li>• La carta verrà addebitata SUBITO per il nuovo piano</li>
+                        <li>• Avrai accesso immediato a tutte le nuove funzionalità</li>
+                        <li>• Puoi sempre cancellare in qualsiasi momento</li>
                       </ul>
                     </div>
                   </div>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
+                  <p className="text-xs text-amber-800 font-medium">
+                    💳 La tua carta salvata verrà addebitata immediatamente per l'upgrade.
+                  </p>
                 </div>
 
                 <div className="flex gap-3">
@@ -338,7 +345,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                         Aggiornamento...
                       </>
                     ) : (
-                      'Conferma Upgrade'
+                      'Conferma e Addebita Ora'
                     )}
                   </Button>
                 </div>

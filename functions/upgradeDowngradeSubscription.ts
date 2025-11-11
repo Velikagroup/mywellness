@@ -60,28 +60,30 @@ Deno.serve(async (req) => {
         console.log('📦 Retrieving current subscription...');
         const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
 
-        console.log('🔄 Updating subscription to new price...');
-        const updatedSubscription = await stripe.subscriptions.update(user.stripe_subscription_id, {
+        // 💳 ADDEBITO IMMEDIATO: Crea una fattura prorata immediatamente
+        console.log('💰 Creating immediate proration invoice...');
+        await stripe.subscriptions.update(user.stripe_subscription_id, {
             items: [{
                 id: subscription.items.data[0].id,
                 price: newPriceId
             }],
-            proration_behavior: 'create_prorations'
+            proration_behavior: 'always_invoice',
+            billing_cycle_anchor: 'now',
+            trial_end: 'now'
         });
 
         console.log('💾 Updating user record...');
         await base44.asServiceRole.entities.User.update(user.id, {
-            subscription_plan: newPlan
+            subscription_plan: newPlan,
+            subscription_status: 'active',
+            trial_ends_at: null
         });
 
-        console.log('✅ Subscription updated successfully');
+        console.log('✅ Subscription updated successfully with immediate billing');
 
         return Response.json({
             success: true,
-            subscription: {
-                id: updatedSubscription.id,
-                status: updatedSubscription.status
-            }
+            message: 'Piano aggiornato e addebitato immediatamente'
         });
 
     } catch (error) {

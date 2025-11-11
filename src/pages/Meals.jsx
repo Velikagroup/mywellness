@@ -208,12 +208,6 @@ export default function MealsPage() {
             activity_level: currentUser.activity_level,
         });
 
-        if (!currentUser?.quiz_completed) {
-          console.warn("User quiz not completed, redirecting to Quiz.");
-          navigate(createPageUrl("Quiz"));
-          return;
-        }
-
         const plans = await loadMealPlans(currentUser.id);
         
         const startOfWeek = getStartOfWeek();
@@ -240,9 +234,6 @@ export default function MealsPage() {
           navigate(createPageUrl('Home'));
         } else {
           console.error("Error initializing Meals page:", error);
-          if (!currentUser?.quiz_completed) {
-            navigate(createPageUrl("Quiz"));
-          }
         }
       } finally {
         setIsLoading(false);
