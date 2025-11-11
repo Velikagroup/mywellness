@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -17,33 +18,45 @@ Deno.serve(async (req) => {
         console.log(`📅 Checking milestones for ${today.toISOString().split('T')[0]}`);
 
         const allUsers = await base44.asServiceRole.entities.User.list();
-        const activeUsers = allUsers.filter(u => 
-            u.subscription_status === 'active' && u.quiz_completed
-        );
+        // Updated: Removed quiz_completed filter to include all active subscribers
+        const activeUsers = allUsers.filter(u => u.subscription_status === 'active');
+
+        const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+        const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+
+        let sentCount = 0;
+        const results = [];
 
         console.log(`👥 Found ${activeUsers.length} active users to check`);
 
-        const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-
-        let sent30 = 0;
-        let sent60 = 0;
-        let sent90 = 0;
-        const results = [];
-
         for (const user of activeUsers) {
-            const createdDate = new Date(user.created_date);
-            const daysSinceCreation = Math.floor((today - createdDate) / (1000 * 60 * 60 * 24));
-
-            let milestone = null;
-            if (daysSinceCreation === 30) milestone = 30;
-            else if (daysSinceCreation === 60) milestone = 60;
-            else if (daysSinceCreation === 90) milestone = 90;
-
-            if (!milestone) continue;
-
-            console.log(`🎯 User ${user.email}: ${milestone} days milestone`);
-
             try {
+                // ✅ CONTROLLO PREFERENZE EMAIL: Skip if user has product_updates notifications disabled
+                if (user.email_notifications?.product_updates === false) {
+                    console.log(`⏭️ Skipping ${user.email} - product updates disabled`);
+                    results.push({
+                        user_id: user.id,
+                        email: user.email,
+                        status: 'skipped',
+                        reason: 'product_updates disabled'
+                    });
+                    continue;
+                }
+
+                const accountAge = Math.floor((today.getTime() - new Date(user.created_date).getTime()) / (1000 * 60 * 60 * 24));
+                
+                let milestone = null;
+                if (accountAge === 30) milestone = 30;
+                else if (accountAge === 60) milestone = 60;
+                else if (accountAge === 90) milestone = 90;
+
+                if (!milestone) {
+                    continue; // Skip if not a milestone day
+                }
+
+                console.log(`🎯 User ${user.email}: ${milestone} days milestone`);
+
+                // Fetch data needed for stats
                 const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
                     { user_id: user.id },
                     ['-date'],
@@ -58,24 +71,12 @@ Deno.serve(async (req) => {
                     { user_id: user.id }
                 );
 
-                const stats = calculateStats(user, weightHistory, workoutLogs, mealLogs, daysSinceCreation);
-
-                let personalCouponCode = null;
-                
-                // 🔐 GENERA COUPON PERSONALIZZATO SOLO PER 90 GIORNI
-                if (milestone === 90) {
-                    const couponResponse = await base44.asServiceRole.functions.invoke('generatePersonalCoupon', {
-                        userId: user.id,
-                        baseCode: 'CHAMPION90',
-                        discountValue: 100,
-                        emailTrigger: 'milestone_90_days'
-                    });
-                    personalCouponCode = couponResponse.coupon_code;
-                    console.log(`🎫 Generated 90-day coupon: ${personalCouponCode}`);
-                }
+                // Pass accountAge to calculateStats to maintain adherence calculation
+                const stats = calculateStats(user, workoutLogs, weightHistory, mealLogs, accountAge);
 
                 const subject = getMilestoneSubject(milestone);
-                const emailBody = getMilestoneTemplate(milestone, user, stats, personalCouponCode);
+                // Updated: Renamed function and passed appUrl, removed couponCode
+                const emailBody = getMilestoneEmailTemplate(milestone, user, stats, appUrl);
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
@@ -84,43 +85,36 @@ Deno.serve(async (req) => {
                     body: emailBody
                 });
 
-                if (milestone === 30) sent30++;
-                else if (milestone === 60) sent60++;
-                else if (milestone === 90) sent90++;
-
-                console.log(`✅ ${milestone}-day milestone email sent to ${user.email}${personalCouponCode ? ` with coupon ${personalCouponCode}` : ''}`);
+                sentCount++; // Increment generic sent counter
+                console.log(`✅ ${milestone}-day milestone email sent to ${user.email}`);
                 
                 results.push({
                     user_id: user.id,
                     email: user.email,
                     milestone: milestone,
-                    coupon: personalCouponCode,
                     status: 'sent'
                 });
 
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise(resolve => setTimeout(resolve, 100)); // Small delay to avoid rate limits
 
             } catch (error) {
-                console.error(`❌ Failed to send to ${user.email}:`, error.message);
+                console.error(`❌ Failed to process ${user.email}:`, error.message);
                 results.push({
                     user_id: user.id,
                     email: user.email,
-                    milestone: milestone,
+                    milestone: null, // Milestone might not be determined on error
                     status: 'failed',
                     error: error.message
                 });
             }
         }
 
-        console.log('🎉 Milestone emails completed');
-        console.log(`📊 Sent: ${sent30} (30d) + ${sent60} (60d) + ${sent90} (90d)`);
+        console.log(`🎉 Milestone emails sent: ${sentCount}/${activeUsers.length}`);
 
         return Response.json({
             success: true,
-            sent_30_days: sent30,
-            sent_60_days: sent60,
-            sent_90_days: sent90,
-            total_sent: sent30 + sent60 + sent90,
+            sent_count: sentCount,
+            total_checked: activeUsers.length,
             results: results
         });
 
@@ -132,8 +126,10 @@ Deno.serve(async (req) => {
     }
 });
 
-function calculateStats(user, weightHistory, workoutLogs, mealLogs, days) {
+// Updated: parameter order changed and 'days' parameter is kept to calculate adherence
+function calculateStats(user, workoutLogs, weightHistory, mealLogs, days) {
     const workoutsCompleted = workoutLogs.filter(w => w.completed).length;
+    // 'days' parameter is essential for plannedWorkouts calculation
     const plannedWorkouts = user.workout_days ? user.workout_days * Math.floor(days / 7) : 0;
     const adherence = plannedWorkouts > 0 ? Math.round((workoutsCompleted / plannedWorkouts) * 100) : 0;
 
@@ -153,7 +149,7 @@ function calculateStats(user, weightHistory, workoutLogs, mealLogs, days) {
         adherence,
         weightChange,
         avgCalories,
-        days
+        days // Keep days in stats if needed for further context
     };
 }
 
@@ -161,19 +157,21 @@ function getMilestoneSubject(milestone) {
     const subjects = {
         30: '🎉 30 giorni insieme! I tuoi primi progressi',
         60: '🔥 2 mesi di trasformazione! Sei sulla strada giusta',
-        90: '👑 90 GIORNI! Sei un CAMPIONE - Ricompensa Speciale Dentro!'
+        90: '👑 90 GIORNI! Sei un CAMPIONE!' // Removed coupon mention from subject
     };
     return subjects[milestone] || 'Milestone raggiunto!';
 }
 
-function getMilestoneTemplate(milestone, user, stats, couponCode) {
-    if (milestone === 30) return get30DayEmail(user, stats);
-    if (milestone === 60) return get60DayEmail(user, stats);
-    if (milestone === 90) return get90DayEmail(user, stats, couponCode);
+// Updated: Renamed function, changed signature to pass appUrl, removed couponCode
+function getMilestoneEmailTemplate(milestone, user, stats, appUrl) {
+    if (milestone === 30) return get30DayEmail(user, stats, appUrl);
+    if (milestone === 60) return get60DayEmail(user, stats, appUrl);
+    if (milestone === 90) return get90DayEmail(user, stats, appUrl); // Removed couponCode parameter
+    return ''; // Default return if no milestone matches
 }
 
-function get30DayEmail(user, stats) {
-    const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+// Updated: appUrl is now passed as a parameter
+function get30DayEmail(user, stats, appUrl) {
     return `
 <!DOCTYPE html>
 <html>
@@ -234,8 +232,8 @@ function get30DayEmail(user, stats) {
     `;
 }
 
-function get60DayEmail(user, stats) {
-    const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+// Updated: appUrl is now passed as a parameter
+function get60DayEmail(user, stats, appUrl) {
     return `
 <!DOCTYPE html>
 <html>
@@ -297,8 +295,8 @@ function get60DayEmail(user, stats) {
     `;
 }
 
-function get90DayEmail(user, stats, couponCode) {
-    const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+// Updated: appUrl is now passed as a parameter, couponCode removed
+function get90DayEmail(user, stats, appUrl) {
     return `
 <!DOCTYPE html>
 <html>
@@ -346,16 +344,6 @@ function get90DayEmail(user, stats, couponCode) {
                                 <p style="margin: 10px 0; text-align: center;"><strong style="font-size: 32px; color: #10b981;">${stats.adherence}%</strong><br><span style="color: #065f46;">Aderenza al Piano</span></p>
                             </div>
 
-                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
-                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 28px;">🎁 REGALO SPECIALE: 1 MESE GRATIS!</h2>
-                                <p style="margin: 0 0 15px 0; color: #92400e; font-size: 16px;">Per celebrare la tua incredibile costanza, ecco il tuo codice personale:</p>
-                                <div style="background: white; padding: 15px 25px; border-radius: 8px; display: inline-block;">
-                                    <p style="margin: 0; font-size: 28px; font-weight: bold; color: #26847F; letter-spacing: 2px;">${couponCode}</p>
-                                </div>
-                                <p style="margin: 15px 0 0 0; color: #92400e; font-size: 14px; font-weight: bold;">= 100% SCONTO = 1 MESE GRATIS!</p>
-                                <p style="margin: 5px 0 0 0; color: #b45309; font-size: 12px;">🔒 Codice univoco - non condivisibile</p>
-                            </div>
-
                             <p style="color: #374151; line-height: 1.6; font-size: 16px;">
                                 Hai trasformato completamente il tuo stile di vita. Sei la prova vivente che <strong>la costanza vince sempre</strong>.
                             </p>
@@ -363,8 +351,8 @@ function get90DayEmail(user, stats, couponCode) {
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${appUrl}/pricing?coupon=${couponCode}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            👑 Riscatta il Tuo Mese Gratis
+                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            👑 Continua il Tuo Percorso
                                         </a>
                                     </td>
                                 </tr>

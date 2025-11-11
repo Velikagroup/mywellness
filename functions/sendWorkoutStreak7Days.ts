@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -27,6 +28,19 @@ Deno.serve(async (req) => {
 
         for (const user of activeUsers) {
             try {
+                // ✅ CONTROLLO PREFERENZE EMAIL
+                if (user.email_notifications?.workout_reminders === false) {
+                    console.log(`⏭️ Skipping ${user.email} - workout reminders disabled`);
+                    results.push({
+                        user_id: user.id,
+                        email: user.email,
+                        status: 'skipped',
+                        reason: 'workout reminders disabled'
+                    });
+                    await new Promise(resolve => setTimeout(resolve, 100)); // Maintain delay for consistency
+                    continue;
+                }
+
                 const workoutLogs = await base44.asServiceRole.entities.WorkoutLog.filter(
                     { user_id: user.id },
                     ['-date'],
@@ -64,6 +78,14 @@ Deno.serve(async (req) => {
                         user_id: user.id,
                         email: user.email,
                         status: 'sent'
+                    });
+                } else {
+                    console.log(`ℹ️ No 7-day streak for ${user.email}`);
+                    results.push({
+                        user_id: user.id,
+                        email: user.email,
+                        status: 'not_eligible',
+                        reason: 'no 7-day streak'
                     });
                 }
 

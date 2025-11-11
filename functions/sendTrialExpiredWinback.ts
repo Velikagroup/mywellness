@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -38,6 +39,18 @@ Deno.serve(async (req) => {
 
         for (const user of trialExpiredYesterday) {
             try {
+                // ✅ CONTROLLO PREFERENZE EMAIL
+                if (user.email_notifications?.marketing === false) {
+                    console.log(`⏭️ Skipping ${user.email} - marketing emails disabled`);
+                    results.push({
+                        user_id: user.id,
+                        email: user.email,
+                        coupon: null, // No coupon generated if skipped
+                        status: 'skipped_marketing_disabled'
+                    });
+                    continue;
+                }
+
                 // 🔐 GENERA COUPON PERSONALIZZATO
                 const couponResponse = await base44.asServiceRole.functions.invoke('generatePersonalCoupon', {
                     userId: user.id,

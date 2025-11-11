@@ -1,7 +1,8 @@
+
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users } from "lucide-react";
+import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -73,7 +74,8 @@ export default function Layout({ children }) {
     createPageUrl('AdminAnalytics'),
     createPageUrl('AdminMarketing'),
     createPageUrl('AdminSalesTax'),
-    createPageUrl('AdminClients')
+    createPageUrl('AdminClients'),
+    createPageUrl('AdminSupportTickets')
   ];
 
   const pathsWithoutLayout = [
@@ -114,6 +116,7 @@ export default function Layout({ children }) {
 
   const adminMenuItems = user && user.role === 'admin' ? [
     { name: 'Clienti', icon: Users, path: 'AdminClients' },
+    { name: 'Ticket', icon: HelpCircle, path: 'AdminSupportTickets' },
     { name: 'Coupon', icon: Tag, path: 'AdminCoupons' },
     { name: 'Blog', icon: FileText, path: 'AdminBlog' },
     { name: 'Email', icon: Mail, path: 'AdminEmails' },

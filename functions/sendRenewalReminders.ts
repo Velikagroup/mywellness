@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -42,6 +43,12 @@ Deno.serve(async (req) => {
         const results = [];
 
         for (const user of usersWithCancelledRenewal) {
+            // ✅ CONTROLLO PREFERENZE EMAIL
+            if (user.email_notifications?.renewal_reminders === false) {
+                console.log(`⏭️ Skipping ${user.email} - renewal reminders disabled`);
+                continue;
+            }
+
             const expiresAt = new Date(user.subscription_period_end);
             const daysUntilExpiry = Math.ceil((expiresAt.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
 

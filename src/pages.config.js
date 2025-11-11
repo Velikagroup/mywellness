@@ -23,6 +23,7 @@ import AdminMarketing from './pages/AdminMarketing';
 import AdminSalesTax from './pages/AdminSalesTax';
 import AdminClients from './pages/AdminClients';
 import Settings from './pages/Settings';
+import AdminSupportTickets from './pages/AdminSupportTickets';
 import Layout from './Layout.jsx';
 
 
@@ -52,6 +53,7 @@ export const PAGES = {
     "AdminSalesTax": AdminSalesTax,
     "AdminClients": AdminClients,
     "Settings": Settings,
+    "AdminSupportTickets": AdminSupportTickets,
 }
 
 export const pagesConfig = {

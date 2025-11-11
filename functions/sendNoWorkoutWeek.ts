@@ -1,3 +1,4 @@
+
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -39,6 +40,17 @@ Deno.serve(async (req) => {
 
         for (const user of activeUsers) {
             try {
+                // ✅ CONTROLLO PREFERENZE EMAIL
+                if (user.email_notifications?.workout_reminders === false) {
+                    console.log(`⏭️ Skipping ${user.email} - workout reminders disabled`);
+                    results.push({
+                        user_id: user.id,
+                        email: user.email,
+                        status: 'skipped - notifications disabled'
+                    });
+                    continue;
+                }
+
                 // Check last 7 days (Monday to Sunday)
                 const last7Days = [];
                 for (let i = 1; i <= 7; i++) {
@@ -74,6 +86,13 @@ Deno.serve(async (req) => {
                         user_id: user.id,
                         email: user.email,
                         status: 'sent'
+                    });
+                } else {
+                    console.log(`👍 ${user.email} has completed workouts in the last week, skipping reminder.`);
+                    results.push({
+                        user_id: user.id,
+                        email: user.email,
+                        status: 'skipped - workouts completed'
                     });
                 }
 
