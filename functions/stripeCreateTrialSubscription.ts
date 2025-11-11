@@ -9,6 +9,7 @@ Deno.serve(async (req) => {
     if (!stripeSecretKey) {
         console.error('❌ STRIPE_SECRET_KEY not configured!');
         return Response.json({ 
+            success: false,
             error: 'Stripe configuration missing. Please contact support.' 
         }, { status: 500 });
     }
@@ -24,8 +25,11 @@ Deno.serve(async (req) => {
         const user = await base44.auth.me();
 
         if (!user) {
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+            console.error('❌ User not authenticated');
+            return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
         }
+
+        console.log('✅ User authenticated:', user.email);
 
         const body = await req.json();
         const { 
@@ -39,11 +43,12 @@ Deno.serve(async (req) => {
             billingInfo 
         } = body;
 
-        if (!cardData && !paymentMethodId) {
-            return Response.json({ error: 'Missing payment information' }, { status: 400 });
-        }
+        console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode });
 
-        console.log(`📋 Plan: ${planType}, Billing: ${billingPeriod}, Coupon: ${appliedCouponCode || 'None'}`);
+        if (!cardData && !paymentMethodId) {
+            console.error('❌ Missing payment information');
+            return Response.json({ success: false, error: 'Missing payment information' }, { status: 400 });
+        }
 
         const PRICE_IDS = {
             base: {
@@ -63,7 +68,9 @@ Deno.serve(async (req) => {
         const selectedPriceId = PRICE_IDS[planType]?.[billingPeriod];
         
         if (!selectedPriceId) {
+            console.error('❌ Invalid plan/billing combination');
             return Response.json({ 
+                success: false,
                 error: `Invalid plan/billing combination: ${planType}/${billingPeriod}` 
             }, { status: 400 });
         }
@@ -73,6 +80,7 @@ Deno.serve(async (req) => {
         let stripeCustomerId = user.stripe_customer_id;
         
         if (!stripeCustomerId) {
+            console.log('🆕 Creating new Stripe customer...');
             const customer = await stripe.customers.create({
                 email: user.email,
                 name: billingInfo?.name || user.full_name,
@@ -94,16 +102,16 @@ Deno.serve(async (req) => {
             });
             
             console.log(`✅ Customer created: ${stripeCustomerId}`);
+        } else {
+            console.log('✅ Using existing customer:', stripeCustomerId);
         }
 
         let finalPaymentMethodId;
 
         if (paymentMethodId) {
-            // Digital wallet - il Payment Method è già creato da Stripe.js
             console.log('💳 Using digital wallet payment method:', paymentMethodId);
             finalPaymentMethodId = paymentMethodId;
         } else {
-            // Card - creiamo il Payment Method sul backend
             console.log('💳 Creating card payment method...');
             const paymentMethod = await stripe.paymentMethods.create({
                 type: 'card',
@@ -129,10 +137,12 @@ Deno.serve(async (req) => {
             console.log(`✅ Card payment method created: ${finalPaymentMethodId}`);
         }
 
+        console.log('📌 Attaching payment method to customer...');
         await stripe.paymentMethods.attach(finalPaymentMethodId, {
             customer: stripeCustomerId,
         });
 
+        console.log('📌 Setting default payment method...');
         await stripe.customers.update(stripeCustomerId, {
             invoice_settings: {
                 default_payment_method: finalPaymentMethodId,
@@ -141,6 +151,7 @@ Deno.serve(async (req) => {
 
         console.log('✅ Payment method attached and set as default');
 
+        console.log('🔄 Creating subscription...');
         const subscription = await stripe.subscriptions.create({
             customer: stripeCustomerId,
             items: [{ price: selectedPriceId }],
@@ -165,6 +176,7 @@ Deno.serve(async (req) => {
 
         let orderBumpPaymentIntent = null;
         if (orderBumpSelected) {
+            console.log('💰 Processing order bump...');
             const orderBumpPrice = 1999;
             orderBumpPaymentIntent = await stripe.paymentIntents.create({
                 amount: orderBumpPrice,
@@ -187,6 +199,7 @@ Deno.serve(async (req) => {
         const trialEndsAt = new Date();
         trialEndsAt.setDate(trialEndsAt.getDate() + 3);
 
+        console.log('💾 Updating user record...');
         await base44.asServiceRole.entities.User.update(user.id, {
             subscription_status: 'trial',
             subscription_plan: planType,
@@ -208,30 +221,52 @@ Deno.serve(async (req) => {
 
         console.log('✅ User updated with subscription data');
 
-        // 🔐 MARCA COUPON COME USATO (non-blocking)
+        // 🔐 MARCA COUPON COME USATO (non-critical, non-blocking)
         if (appliedCouponCode) {
             try {
-                await base44.asServiceRole.functions.invoke('markCouponAsUsed', {
-                    couponCode: appliedCouponCode,
-                    userEmail: user.email
-                });
-                console.log(`🎫 Coupon ${appliedCouponCode} marked as used`);
+                console.log('🎫 Marking coupon as used...');
+                const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+                const couponUrl = `${appUrl}/functions/markCouponAsUsed`;
+                
+                fetch(couponUrl, {
+                    method: 'POST',
+                    headers: { 
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        couponCode: appliedCouponCode,
+                        userEmail: user.email
+                    })
+                }).catch(err => console.error('⚠️ Coupon marking failed (non-critical):', err.message));
+                
+                console.log(`🎫 Coupon marking triggered`);
             } catch (couponError) {
-                console.error('⚠️ Failed to mark coupon as used (non-critical):', couponError.message);
+                console.error('⚠️ Coupon marking error (non-critical):', couponError.message);
             }
         }
 
-        // 📧 INVIA EMAIL DI BENVENUTO (non-blocking, in background)
-        // Non aspettiamo la risposta per non rallentare la subscription
-        base44.asServiceRole.functions.invoke('sendTrialWelcomeEmail', {
-            userId: user.id
-        }).then(() => {
-            console.log('📧 Trial welcome email trigger sent');
-        }).catch((emailError) => {
-            console.error('⚠️ Failed to send welcome email (non-critical):', emailError.message);
-        });
+        // 📧 INVIA EMAIL DI BENVENUTO (non-critical, non-blocking)
+        try {
+            console.log('📧 Triggering welcome email...');
+            const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+            const emailUrl = `${appUrl}/functions/sendTrialWelcomeEmail`;
+            
+            fetch(emailUrl, {
+                method: 'POST',
+                headers: { 
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ userId: user.id })
+            }).catch(err => console.error('⚠️ Email sending failed (non-critical):', err.message));
+            
+            console.log('📧 Welcome email triggered');
+        } catch (emailError) {
+            console.error('⚠️ Email trigger error (non-critical):', emailError.message);
+        }
 
-        // IMPORTANTE: Restituisci subito la risposta senza aspettare l'email
+        console.log('✅ Subscription setup completed successfully');
+
+        // IMPORTANTE: Restituisci subito la risposta
         return Response.json({
             success: true,
             subscription: {
@@ -247,9 +282,14 @@ Deno.serve(async (req) => {
 
     } catch (error) {
         console.error('❌ Stripe subscription error:', error);
+        console.error('❌ Error stack:', error.stack);
+        console.error('❌ Error type:', error.type);
+        console.error('❌ Error raw:', error.raw);
+        
         return Response.json({ 
-            error: error.message,
-            type: error.type,
+            success: false,
+            error: error.message || 'Unknown error',
+            type: error.type || 'unknown',
             details: error.raw?.message || error.toString()
         }, { status: 500 });
     }
