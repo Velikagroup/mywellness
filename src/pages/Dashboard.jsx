@@ -572,13 +572,17 @@ export default function Dashboard() {
               icon={Target}
               status={goalStatus}
             />
-            <TechnicalStatsCard
-              title="Giorni di Allenamento"
-              value={user.workout_days || 0}
-              unit="giorni/sett"
-              icon={Calendar}
-              status="consistent"
-            />
+            
+            {/* ✅ Mostra "Giorni di Allenamento" SOLO se ha accesso al workout_plan */}
+            {hasFeatureAccess(user?.subscription_plan, 'workout_plan') && (
+              <TechnicalStatsCard
+                title="Giorni di Allenamento"
+                value={user.workout_days || 0}
+                unit="giorni/sett"
+                icon={Calendar}
+                status="consistent"
+              />
+            )}
           </div>
           </div>
         </div>
