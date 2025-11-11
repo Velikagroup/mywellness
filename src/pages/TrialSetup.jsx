@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -38,6 +39,8 @@ export default function TrialSetup() {
   const navigate = useNavigate();
   const location = useLocation();
   const cardElementRef = useRef(null);
+  const stripeLoadedRef = useRef(false);
+  
   const [isSaving, setIsSaving] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState(null);
   const [stripe, setStripe] = useState(null);
@@ -143,10 +146,9 @@ export default function TrialSetup() {
         } else {
           setTrafficSource('direct');
         }
-        console.log("Traffic Source:", refSource || storedSource || 'direct');
 
-        // 🔑 CARICA STRIPE
-        const loadStripe = async () => {
+        // 🔑 CARICA STRIPE (solo una volta!)
+        if (!stripeLoadedRef.current) {
           console.log('🔑 Loading Stripe publishable key from backend...');
           
           try {
@@ -160,40 +162,39 @@ export default function TrialSetup() {
             const stripeKey = responseData.publishableKey;
             console.log('✅ Stripe key loaded');
             
-            if (!window.Stripe) {
-              console.log('⏳ Loading Stripe.js library...');
-              return new Promise((resolve, reject) => {
-                const script = document.createElement('script');
-                script.src = 'https://js.stripe.com/v3/';
-                script.async = true;
-                script.onload = () => {
-                  console.log('✅ Stripe.js loaded');
-                  const stripeInstance = window.Stripe(stripeKey);
-                  resolve(stripeInstance);
-                };
-                script.onerror = () => reject(new Error('Failed to load Stripe.js'));
-                document.body.appendChild(script);
-              });
+            // Controlla se Stripe.js è già caricato
+            if (window.Stripe) {
+              console.log('✅ Stripe.js already loaded globally');
+              const stripeInstance = window.Stripe(stripeKey);
+              setStripe(stripeInstance);
+              stripeLoadedRef.current = true;
             } else {
-              return Promise.resolve(window.Stripe(stripeKey));
+              console.log('⏳ Loading Stripe.js library...');
+              const script = document.createElement('script');
+              script.src = 'https://js.stripe.com/v3/';
+              script.async = true;
+              script.onload = () => {
+                console.log('✅ Stripe.js loaded successfully');
+                const stripeInstance = window.Stripe(stripeKey);
+                setStripe(stripeInstance);
+                stripeLoadedRef.current = true;
+              };
+              script.onerror = () => {
+                console.error('❌ Failed to load Stripe.js');
+                alert('Errore nel caricamento del sistema di pagamento. Ricarica la pagina.');
+              };
+              
+              // Previeni doppio caricamento
+              if (!document.querySelector('script[src="https://js.stripe.com/v3/"]')) {
+                document.body.appendChild(script);
+              }
             }
-          } catch (error) {
-            console.error('❌ Error loading Stripe:', error);
-            throw error;
+          } catch (stripeError) {
+            console.error('💥 Stripe initialization failed:', stripeError);
+            setIsLoading(false);
+            return;
           }
-        };
-
-        let stripeInstance;
-        try {
-          stripeInstance = await loadStripe();
-          console.log('✅ Stripe instance ready');
-        } catch (stripeError) {
-          console.error('💥 Stripe initialization failed:', stripeError);
-          setIsLoading(false);
-          return;
         }
-        
-        setStripe(stripeInstance);
         
         setBillingInfo(prev => ({
           ...prev,
@@ -257,7 +258,13 @@ export default function TrialSetup() {
 
   // Initialize Stripe Card Element when stripe is ready and card method is selected
   useEffect(() => {
-    if (!stripe || paymentMethod !== 'card' || !cardElementRef.current || cardElement) return;
+    if (!stripe || paymentMethod !== 'card' || !cardElementRef.current) return;
+
+    // Se esiste già, non creare di nuovo
+    if (cardElement) {
+      console.log('⚠️ Card Element already exists, skipping creation');
+      return;
+    }
 
     console.log('🎨 Creating Stripe Card Element...');
     const elements = stripe.elements();
@@ -280,17 +287,23 @@ export default function TrialSetup() {
     });
 
     card.mount(cardElementRef.current);
+    
     card.on('change', (event) => {
+      console.log('💳 Card change:', event.complete ? 'Complete' : 'Incomplete');
       setCardComplete(event.complete);
+      if (event.error) {
+        console.error('❌ Card error:', event.error.message);
+      }
     });
 
     setCardElement(card);
-    console.log('✅ Card Element mounted');
+    console.log('✅ Card Element mounted successfully');
 
     return () => {
+      console.log('🧹 Unmounting Card Element');
       card.unmount();
     };
-  }, [stripe, paymentMethod, cardElement]);
+  }, [stripe, paymentMethod]);
 
   // Initialize Payment Request for digital wallets
   useEffect(() => {
@@ -398,7 +411,7 @@ export default function TrialSetup() {
     }
 
     if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
-      alert("Per favore, compila tutti i campi obbligatori prima di procedere.");
+      alert("Per favorere, compila tutti i campi obbligatori prima di procedere.");
       return;
     }
 
@@ -496,7 +509,7 @@ export default function TrialSetup() {
 
     try {
       if (!stripe || !cardElement) {
-        throw new Error('Stripe non inizializzato');
+        throw new Error('Stripe non inizializzato. Ricarica la pagina.');
       }
 
       console.log('🔐 Creating secure payment method with Stripe Elements...');
@@ -549,7 +562,7 @@ export default function TrialSetup() {
         marketingConsent: marketingConsent
       };
 
-      console.log('📤 Sending payment payload...');
+      console.log('📤 Sending payment payload to backend...');
       const result = await base44.functions.invoke('stripeCreateTrialSubscription', payload);
       const resultData = result.data || result;
 
@@ -559,6 +572,7 @@ export default function TrialSetup() {
         throw new Error(errorMsg);
       }
 
+      console.log('✅ Trial subscription created successfully!');
       navigate(createPageUrl('Dashboard'), { replace: true });
 
     } catch (error) {
@@ -613,7 +627,7 @@ export default function TrialSetup() {
       <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
         <div className="flex flex-col items-center">
           <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[var(--brand-primary)]"></div>
-          <p className="mt-4 text-gray-700 font-semibold text-lg">Caricamento...</p>
+          <p className="mt-4 text-gray-700 font-semibold text-lg">Caricamento sicuro...</p>
         </div>
       </div>
     );
@@ -677,15 +691,26 @@ export default function TrialSetup() {
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
         
+        /* Stripe Element styling */
         .StripeElement {
-          padding: 12px;
+          height: 40px;
+          padding: 12px 14px;
           border-radius: 8px;
+          background-color: white;
+          transition: all 0.3s ease;
         }
         
         .StripeElement--focus {
           border-color: var(--brand-primary);
-          ring: 2px;
-          ring-color: rgba(38, 132, 127, 0.2);
+          box-shadow: 0 0 0 3px rgba(38, 132, 127, 0.1);
+        }
+        
+        .StripeElement--invalid {
+          border-color: #ef4444;
+        }
+        
+        .StripeElement--complete {
+          border-color: #10b981;
         }
       `}</style>
 
@@ -1092,14 +1117,15 @@ export default function TrialSetup() {
               <div className="space-y-4 pt-4">
                 <div>
                   <Label htmlFor="card-element" className="text-sm font-semibold text-gray-700 mb-2 block">
-                    Dati Carta
+                    💳 Dati Carta
                   </Label>
                   <div 
                     ref={cardElementRef}
-                    className="border-2 border-gray-200 rounded-lg p-4 bg-white focus-within:border-[var(--brand-primary)] focus-within:ring-2 focus-within:ring-[var(--brand-primary)]/20 transition-all"
+                    className="border-2 border-gray-300 rounded-xl bg-white transition-all min-h-[50px]"
+                    style={{ padding: '0px' }}
                   />
                   <p className="text-xs text-gray-500 mt-2">
-                    🔒 I dati della tua carta sono protetti con crittografia SSL/TLS e gestiti in modo sicuro da Stripe
+                    🔒 Pagamento sicuro gestito da Stripe. I tuoi dati sono protetti.
                   </p>
                 </div>
               </div>
