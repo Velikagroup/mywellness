@@ -493,7 +493,7 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
             0 30px 80px -10px rgba(0, 0, 0, 0.18),
             0 15px 40px -10px rgba(0, 0, 0, 0.12),
             inset 0 1px 3px 0 rgba(255, 255, 255, 1),
-            inset 0 -1px 6px 0 rgba(0, 0, 0, 0.04);
+            inset 0 -1px 6px 0 rgba(0, 0, 0, 0.05);
         }
         
         .pricing-card-liquid::before {
@@ -759,7 +759,7 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
               <span className="text-[var(--brand-primary-dark-text)] font-semibold">3 Giorni Gratis su Tutti i Piani</span>
             </div>
             
-            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight px-2"> {/* Adjusted text size, added px-2 */}
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight px-2"> {/* Adjusted text size, added px-2 */}
               Scegli <span className="animated-text-gradient">il Piano Perfetto per Te</span> {/* Modified text */}
             </h1>
             <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 px-2"> {/* Adjusted text size, added px-2 */}

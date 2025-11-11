@@ -532,7 +532,7 @@ export default function Home() {
             </div>
           </div>
           
-          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
+          <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
             Il tuo percorso <span className="animated-text-gradient">Wellness</span>,
             guidato dall'<span className="animated-text-gradient">AI</span>
           </h1>
