@@ -1,12 +1,10 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { User } from "@/entities/User";
-import { MealPlan } from "@/entities/MealPlan";
-import { ShoppingList } from "@/entities/ShoppingList";
-import { InvokeLLM, GenerateImage } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw } from "lucide-react";
+import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Progress } from "@/components/ui/progress";
@@ -68,6 +66,23 @@ const categorizeIngredient = (ingredientName) => {
 
 // New component for the generation loading screen
 const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData }) => {
+  // Determina lo stato di ogni step: 'completed', 'in-progress', 'pending'
+  const getStepStatus = (stepThreshold) => {
+    if (generationProgress >= stepThreshold) return 'completed';
+    if (generationProgress >= stepThreshold - 15 && generationProgress < stepThreshold) return 'in-progress';
+    return 'pending';
+  };
+
+  const renderStepIcon = (status) => {
+    if (status === 'completed') {
+      return <CheckCircle className="inline w-3 h-3 mr-2 text-green-500" />;
+    } else if (status === 'in-progress') {
+      return <Loader2 className="inline w-3 h-3 mr-2 text-[var(--brand-primary)] animate-spin" />;
+    } else {
+      return <CheckCircle className="inline w-3 h-3 mr-2 text-gray-300" />;
+    }
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center p-4 pt-0">
       <style>{`
@@ -113,12 +128,30 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
             <div className="text-xs text-gray-500 list-inside text-left mx-auto max-w-md bg-gray-50/70 p-4 rounded-lg border border-gray-200/60">
               <h4 className="font-semibold text-gray-700 mb-2">Analisi in corso:</h4>
               <ul className="space-y-1">
-                <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 10 ? 'text-green-500' : 'text-gray-300'}`} />Profilo metabolico (BMR: {nutritionData?.bmr} kcal)</li>
-                <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 25 ? 'text-green-500' : 'text-gray-300'}`} />Target calorico ({nutritionData?.daily_calories} kcal/giorno)</li>
-                <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 50 ? 'text-green-500' : 'text-gray-300'}`} />Bilanciamento calorico automatico</li>
-                <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 60 ? 'text-green-500' : 'text-gray-300'}`} />Piano nutrizionale generato</li>
-                <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 70 ? 'text-green-500' : 'text-gray-300'}`} />Generazione immagini pasti</li>
-                <li><CheckCircle className={`inline w-3 h-3 mr-2 ${generationProgress >= 95 ? 'text-green-500' : 'text-gray-300'}`} />Costruzione e salvataggio piano</li>
+                <li>
+                  {renderStepIcon(getStepStatus(10))}
+                  Profilo metabolico (BMR: {nutritionData?.bmr} kcal)
+                </li>
+                <li>
+                  {renderStepIcon(getStepStatus(25))}
+                  Target calorico ({nutritionData?.daily_calories} kcal/giorno)
+                </li>
+                <li>
+                  {renderStepIcon(getStepStatus(50))}
+                  Bilanciamento calorico automatico
+                </li>
+                <li>
+                  {renderStepIcon(getStepStatus(60))}
+                  Piano nutrizionale generato
+                </li>
+                <li>
+                  {renderStepIcon(getStepStatus(70))}
+                  Generazione immagini pasti
+                </li>
+                <li>
+                  {renderStepIcon(getStepStatus(95))}
+                  Costruzione e salvataggio piano
+                </li>
               </ul>
             </div>
           </CardContent>
@@ -129,8 +162,7 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
 };
 
 export default function MealsPage() {
-  const [user, setUser] = useState(null);
-  const [mealPlans, setMealPlans] = useState([]);
+  const queryClient = useQueryClient();
   const [selectedDay, setSelectedDay] = useState('monday');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
@@ -140,29 +172,109 @@ export default function MealsPage() {
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
   const [addedDays, setAddedDays] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [nutritionData, setNutritionData] = useState(null);
   const [regeneratingMealId, setRegeneratingMealId] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [mealsPerDay, setMealsPerDay] = useState(5); // NEW STATE
 
   const navigate = useNavigate();
 
-  const loadMealPlans = useCallback(async (userId) => {
-    try {
-      const plans = await MealPlan.filter({ user_id: userId });
-      setMealPlans(plans);
-      return plans;
-    } catch (error) {
-      if (error?.response?.status === 401 || (error.message && error.message.includes('401'))) {
-        console.warn("Authentication error (401), redirecting to Home.");
-        navigate(createPageUrl('Home'));
-      } else {
-        console.error("Error loading meal plans:", error);
-      }
-      return [];
+  // Queries
+  const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
+    queryKey: ['currentUser'],
+    queryFn: async () => {
+      const response = await base44.get('/users/me');
+      return response.data.data;
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: false, // Don't retry on 401
+  });
+
+  const nutritionData = user ? {
+    bmr: user.bmr,
+    daily_calories: user.daily_calories,
+    diet_type: user.diet_type,
+    intermittent_fasting: user.intermittent_fasting,
+    if_skip_meal: user.if_skip_meal,
+    if_meal_structure: user.if_meal_structure,
+    allergies: user.allergies,
+    favorite_foods: user.favorite_foods,
+    weight_loss_speed: user.weight_loss_speed,
+    workout_days: user.workout_days,
+    age: user.age,
+    gender: user.gender,
+    current_weight: user.current_weight,
+    height: user.height,
+    target_weight: user.target_weight,
+    activity_level: user.activity_level,
+  } : null;
+
+  const { data: mealPlans = [], isLoading: isLoadingMealPlans, isRefetching: isRefetchingMealPlans } = useQuery({
+    queryKey: ['mealPlans', user?.id],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const response = await base44.get('/meal-plans', { params: { user_id: user.id } });
+      return response.data.data;
+    },
+    enabled: !!user?.id,
+    staleTime: 0, // Always refetch to get latest
+  });
+
+  const startOfWeek = getStartOfWeek();
+  const { data: shoppingLists = [], isLoading: isLoadingShoppingLists } = useQuery({
+    queryKey: ['shoppingLists', user?.id, startOfWeek],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      const response = await base44.get('/shopping-lists', { params: { user_id: user.id, week_start_date: startOfWeek } });
+      return response.data.data;
+    },
+    enabled: !!user?.id,
+    staleTime: 0,
+  });
+
+  // Mutations
+  const updateShoppingListMutation = useMutation({
+    mutationFn: (payload) => base44.put(`/shopping-lists/${payload.id}`, payload.data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shoppingLists'] }),
+  });
+
+  const createShoppingListMutation = useMutation({
+    mutationFn: (data) => base44.post('/shopping-lists', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shoppingLists'] }),
+  });
+
+  const updateMealMutation = useMutation({
+    mutationFn: (payload) => base44.put(`/meal-plans/${payload.id}`, payload.data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mealPlans'] }),
+  });
+
+  const createMealMutation = useMutation({
+    mutationFn: (data) => base44.post('/meal-plans', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mealPlans'] }),
+  });
+
+  const deleteMealMutation = useMutation({
+    mutationFn: (id) => base44.delete(`/meal-plans/${id}`),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mealPlans'] }),
+  });
+
+  const updateUserPreferencesMutation = useMutation({
+    mutationFn: (data) => base44.put('/users/me/preferences', data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['currentUser'] }),
+  });
+
+  const invokeLLMMutation = useMutation({
+    mutationFn: (payload) => base44.post('/llm/invoke', payload),
+  });
+
+  const generateImageMutation = useMutation({
+    mutationFn: (payload) => base44.post('/images/generate', payload),
+  });
+
+  const loadMealPlans = useCallback(async () => {
+    if (user?.id) {
+      await queryClient.invalidateQueries({ queryKey: ['mealPlans', user.id] });
     }
-  }, [navigate]);
+  }, [queryClient, user?.id]);
 
   const handleShowGenerator = useCallback((currentUser) => {
     if (currentUser) {
@@ -172,91 +284,53 @@ export default function MealsPage() {
         if_skip_meal: currentUser.if_skip_meal || null,
         if_meal_structure: currentUser.if_meal_structure || null,
       });
-      // Imposta il numero di pasti predefinito basato sulle preferenze utente
       if (currentUser.intermittent_fasting && currentUser.if_meal_structure) {
         if (currentUser.if_meal_structure === '2_meals') {
           setMealsPerDay(2);
         } else if (currentUser.if_meal_structure === '3_meals') {
           setMealsPerDay(3);
         } else if (currentUser.if_meal_structure === '3_meals_snacks') {
-          setMealsPerDay(5); // 3 meals + 2 snacks
+          setMealsPerDay(5);
         } else {
-          setMealsPerDay(5); // Default if if_meal_structure is not recognized, but IF is active
+          setMealsPerDay(5);
         }
       } else {
-        setMealsPerDay(5); // Default for non-intermittent fasting
+        setMealsPerDay(5);
       }
     }
     setShowGenerator(true);
   }, []);
   
   useEffect(() => {
-    const initializePage = async () => {
-      setIsLoading(true);
-      let currentUser = null;
-      try {
-        currentUser = await User.me();
-        setUser(currentUser);
+    if (isUserError && userError?.response?.status === 401) {
+      console.warn("Authentication error (401), redirecting to Home.");
+      navigate(createPageUrl('Home'));
+      return;
+    }
 
-        if (!currentUser) {
-          console.warn("User not found, redirecting to Home.");
-          navigate(createPageUrl('Home'));
-          return;
-        }
-
-        setNutritionData({
-            bmr: currentUser.bmr,
-            daily_calories: currentUser.daily_calories,
-            diet_type: currentUser.diet_type,
-            intermittent_fasting: currentUser.intermittent_fasting,
-            if_skip_meal: currentUser.if_skip_meal,
-            if_meal_structure: currentUser.if_meal_structure,
-            allergies: currentUser.allergies,
-            favorite_foods: currentUser.favorite_foods,
-            weight_loss_speed: currentUser.weight_loss_speed,
-            workout_days: currentUser.workout_days,
-            age: currentUser.age,
-            gender: currentUser.gender,
-            current_weight: currentUser.current_weight,
-            height: currentUser.height,
-            target_weight: currentUser.target_weight,
-            activity_level: currentUser.activity_level,
-        });
-
-        const plans = await loadMealPlans(currentUser.id);
-        
-        const startOfWeek = getStartOfWeek();
-        const existingLists = await ShoppingList.filter({ user_id: currentUser.id, week_start_date: startOfWeek });
-        if (existingLists.length > 0) {
-          const currentList = existingLists[0];
-          const daysInList = new Set();
-          currentList.items.forEach(item => {
-            item.days.forEach(day => daysInList.add(day));
-          });
-          setAddedDays(Array.from(daysInList));
-        }
-
-        if (plans.length === 0) {
-            const generatorShown = sessionStorage.getItem('mealGeneratorShown');
-            if (!generatorShown) {
-                handleShowGenerator(currentUser);
-                sessionStorage.setItem('mealGeneratorShown', 'true');
-            }
-        }
-      } catch (error) {
-        if (error?.response?.status === 401 || (error.message && error.message.includes('401'))) {
-          console.warn("Authentication error (401), redirecting to Home.");
-          navigate(createPageUrl('Home'));
-        } else {
-          console.error("Error initializing Meals page:", error);
-        }
-      } finally {
-        setIsLoading(false);
+    if (user && !isLoadingMealPlans && mealPlans.length === 0) {
+      const generatorShown = sessionStorage.getItem('mealGeneratorShown');
+      if (!generatorShown) {
+        handleShowGenerator(user);
+        sessionStorage.setItem('mealGeneratorShown', 'true');
       }
-    };
+    }
+  }, [user, isLoadingUser, isUserError, userError, mealPlans, isLoadingMealPlans, navigate, handleShowGenerator]);
 
-    initializePage();
-  }, [navigate, loadMealPlans, handleShowGenerator]);
+  useEffect(() => {
+    if (user && !isLoadingShoppingLists) {
+      if (shoppingLists.length > 0) {
+        const currentList = shoppingLists[0];
+        const daysInList = new Set();
+        currentList.items.forEach(item => {
+          item.days.forEach(day => daysInList.add(day));
+        });
+        setAddedDays(Array.from(daysInList));
+      } else {
+        setAddedDays([]);
+      }
+    }
+  }, [user, shoppingLists, isLoadingShoppingLists]);
   
   const handlePrefsChange = (key, value) => {
     const newPrefs = { ...generationPrefs, [key]: value };
@@ -269,10 +343,9 @@ export default function MealsPage() {
     setGenerationPrefs(newPrefs);
   };
 
-  const handleMealUpdate = (updatedMeal) => {
-    const updatedPlans = mealPlans.map(p => p.id === updatedMeal.id ? updatedMeal : p);
-    setMealPlans(updatedPlans);
-    setSelectedMeal(updatedMeal);
+  const handleMealUpdate = () => {
+    queryClient.invalidateQueries({ queryKey: ['mealPlans'] });
+    setSelectedMeal(null); // Close modal after update
   };
 
   const addDayToShoppingList = async (dayKey) => {
@@ -285,14 +358,7 @@ export default function MealsPage() {
         return;
       }
 
-      const startOfWeek = getStartOfWeek();
-      
-      let existingLists = await ShoppingList.filter({ 
-        user_id: user.id, 
-        week_start_date: startOfWeek 
-      });
-      
-      let currentList = existingLists.length > 0 ? existingLists[0] : null;
+      let currentList = shoppingLists.length > 0 ? shoppingLists[0] : null;
       
       const ingredientsMap = new Map();
       
@@ -337,12 +403,15 @@ export default function MealsPage() {
           }
         });
 
-        await ShoppingList.update(currentList.id, {
-          items: Array.from(existingItemsMap.values()),
-          last_updated: new Date().toISOString()
+        await updateShoppingListMutation.mutateAsync({
+          id: currentList.id,
+          data: {
+            items: Array.from(existingItemsMap.values()),
+            last_updated: new Date().toISOString()
+          }
         });
       } else {
-        await ShoppingList.create({
+        await createShoppingListMutation.mutateAsync({
           user_id: user.id,
           week_start_date: startOfWeek,
           items: newItemsToAdd,
@@ -401,7 +470,7 @@ export default function MealsPage() {
       } else if (mealStructure.length === 2) {
         mealCalorieDistribution[mealStructure[0]] = Math.round(dailyCalories * 0.45);
         mealCalorieDistribution[mealStructure[1]] = Math.round(dailyCalories * 0.55);
-      } else if (mealStructure.length === 4) {
+      } else if (mealStructure.length === 4) { // Assuming 4 meals case
         mealCalorieDistribution[mealStructure[0]] = Math.round(dailyCalories * 0.25);
         mealCalorieDistribution[mealStructure[1]] = Math.round(dailyCalories * 0.30);
         mealCalorieDistribution[mealStructure[2]] = Math.round(dailyCalories * 0.30);
@@ -474,7 +543,7 @@ RESPONSE JSON SCHEMA:
   "difficulty": "easy" | "medium" | "hard"
 }`;
 
-      const response = await InvokeLLM({
+      const llmResponse = await invokeLLMMutation.mutateAsync({
         prompt: singleMealPrompt,
         response_json_schema: {
           type: "object",
@@ -504,35 +573,37 @@ RESPONSE JSON SCHEMA:
         }
       });
 
-      const total_calories = Math.round(response.ingredients.reduce((sum, ing) => sum + ing.calories, 0));
-      const total_protein = Math.round(response.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
-      const total_carbs = Math.round(response.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
-      const total_fat = Math.round(response.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
+      const total_calories = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.calories, 0));
+      const total_protein = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
+      const total_carbs = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
+      const total_fat = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
 
-      const ingredientsString = response.ingredients
+      const ingredientsString = llmResponse.data.data.ingredients
         .map(i => `${i.quantity}${i.unit} ${i.name}`)
         .join(', ');
       
-      const imagePrompt = `Photorealistic professional food photography of "${response.name}". Main ingredients: ${ingredientsString}. Shot from 45-degree angle, shallow depth of field, clean modern plate, bright natural lighting, appetizing presentation.`;
+      const imagePrompt = `Photorealistic professional food photography of "${llmResponse.data.data.name}". Main ingredients: ${ingredientsString}. Shot from 45-degree angle, shallow depth of field, clean modern plate, bright natural lighting, appetizing presentation.`;
       
-      const { url: imageUrl } = await GenerateImage({ prompt: imagePrompt });
+      const imageResponse = await generateImageMutation.mutateAsync({ prompt: imagePrompt });
+      const imageUrl = imageResponse.data.data.url;
 
-      const updatedMeal = await MealPlan.update(mealToRegenerate.id, {
-        name: response.name,
-        ingredients: response.ingredients,
-        instructions: response.instructions,
-        total_calories: total_calories,
-        total_protein: total_protein,
-        total_carbs: total_carbs,
-        total_fat: total_fat,
-        prep_time: response.prep_time,
-        difficulty: response.difficulty,
-        image_url: imageUrl
+      await updateMealMutation.mutateAsync({
+        id: mealToRegenerate.id,
+        data: {
+          name: llmResponse.data.data.name,
+          ingredients: llmResponse.data.data.ingredients,
+          instructions: llmResponse.data.data.instructions,
+          total_calories: total_calories,
+          total_protein: total_protein,
+          total_carbs: total_carbs,
+          total_fat: total_fat,
+          prep_time: llmResponse.data.data.prep_time,
+          difficulty: llmResponse.data.data.difficulty,
+          image_url: imageUrl
+        }
       });
-
-      setMealPlans(prevMeals => prevMeals.map(m => m.id === updatedMeal.id ? updatedMeal : m));
       
-      alert(`✅ Pasto rigenerato con successo! Nuovo pasto: "${response.name}" (${total_calories} kcal)`);
+      alert(`✅ Pasto rigenerato con successo! Nuovo pasto: "${llmResponse.data.data.name}" (${total_calories} kcal)`);
       
     } catch (error) {
       console.error("Error regenerating meal:", error);
@@ -557,7 +628,6 @@ RESPONSE JSON SCHEMA:
 
       updateProgress(10, "Analisi profilo metabolico...");
 
-      // Costruisci struttura pasti basata su mealsPerDay
       const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
       const mealStructure = allMealTypes.slice(0, mealsPerDay);
 
@@ -571,7 +641,6 @@ RESPONSE JSON SCHEMA:
 
       const dailyCalories = nutritionData.daily_calories;
       
-      // Distribuzione calorica uniforme basata sul numero di pasti
       const mealCalorieDistribution = {};
       const caloriesPerMealBase = Math.round(dailyCalories / mealsPerDay);
       let remainingCalories = dailyCalories;
@@ -579,7 +648,6 @@ RESPONSE JSON SCHEMA:
       mealStructure.forEach((mealType, index) => {
         let caloriesForCurrentMeal = caloriesPerMealBase;
         if (index === mealStructure.length - 1) {
-          // Ultimo pasto prende le calorie rimanenti per bilanciare il totale
           caloriesForCurrentMeal = remainingCalories;
         }
         mealCalorieDistribution[mealType] = caloriesForCurrentMeal;
@@ -656,7 +724,7 @@ RESPONSE JSON SCHEMA:
 
       updateProgress(20, "Generazione piano nutrizionale con AI...");
 
-      const response = await InvokeLLM({
+      const llmResponse = await invokeLLMMutation.mutateAsync({
         prompt: mealPlanPrompt,
         response_json_schema: {
           type: "object",
@@ -702,13 +770,13 @@ RESPONSE JSON SCHEMA:
 
       updateProgress(50, "Piano nutrizionale creato! Validazione dati...");
 
-      if (!response.meal_plans || !Array.isArray(response.meal_plans)) {
+      if (!llmResponse.data.data.meal_plans || !Array.isArray(llmResponse.data.data.meal_plans)) {
         throw new Error("Risposta AI non valida: la proprietà 'meal_plans' è mancante o non è un array.");
       }
 
-      console.log('📊 Pasti ricevuti dall\'AI:', response.meal_plans.length);
+      console.log('📊 Pasti ricevuti dall\'AI:', llmResponse.data.data.meal_plans.length);
 
-      let cleanedMealPlans = response.meal_plans
+      let cleanedMealPlans = llmResponse.data.data.meal_plans
         .filter(meal => {
           if (!meal || typeof meal !== 'object') return false;
           if (!allDays.includes(meal.day_of_week)) return false;
@@ -762,7 +830,7 @@ RESPONSE JSON SCHEMA:
             if (mealAdjustment > 0) {
               let remainingCaloriesToAdjustForMeal = mealAdjustment;
 
-              if (remainingCaloriesToAdjustForMeal >= 45) { // Roughly 5ml of oil
+              if (remainingCaloriesToAdjustForMeal >= 45) { 
                 const oilMl = Math.round(remainingCaloriesToAdjustForMeal / 9);
                 adjustedIngredients.push({
                   name: "olio d'oliva extra vergine",
@@ -802,7 +870,6 @@ RESPONSE JSON SCHEMA:
               }
 
             } else if (mealAdjustment < 0) {
-              // Only reduce if meal has calories to reduce from
               if (mealCaloriesBeforeAdjustment > 0) {
                 const reductionFactor = (mealCaloriesBeforeAdjustment + mealAdjustment) / mealCaloriesBeforeAdjustment;
                 adjustedIngredients = adjustedIngredients.map(ing => ({
@@ -852,14 +919,12 @@ RESPONSE JSON SCHEMA:
       console.log('🎯 CALORIE FINALI PER GIORNO:', finalCaloriesPerDay);
       console.log('🎯 TARGET:', dailyCalories, 'kcal');
 
-      const existingPlans = await MealPlan.filter({ user_id: user.id });
-      for (const plan of existingPlans) {
-        await MealPlan.delete(plan.id);
-      }
+      // Delete existing meal plans for the user
+      await Promise.all(mealPlans.map(plan => deleteMealMutation.mutateAsync(plan.id)));
       
       updateProgress(70, "Inizio generazione immagini AI...");
 
-      await User.updateMyUserData({
+      await updateUserPreferencesMutation.mutateAsync({
         diet_type: generationPrefs.diet_type,
         intermittent_fasting: generationPrefs.intermittent_fasting,
         if_skip_meal: generationPrefs.if_skip_meal,
@@ -883,8 +948,8 @@ RESPONSE JSON SCHEMA:
             
             const imagePrompt = `Professional food photography of a meal called "${meal.name}". The dish contains: ${ingredientsString}. Shot from 45-degree angle, clean modern plate, bright natural lighting, shallow depth of field.`;
             
-            const { url } = await GenerateImage({ prompt: imagePrompt });
-            return { ...meal, image_url: url };
+            const imageResponse = await generateImageMutation.mutateAsync({ prompt: imagePrompt });
+            return { ...meal, image_url: imageResponse.data.data.url };
           } catch (error) {
             console.error(`Error generating image for ${meal.name}:`, error);
             return { ...meal, image_url: null };
@@ -897,8 +962,8 @@ RESPONSE JSON SCHEMA:
 
       updateProgress(95, "Salvataggio piano nutrizionale...");
 
-      for (const meal of mealsWithImages) {
-        await MealPlan.create({
+      await Promise.all(mealsWithImages.map(meal => 
+        createMealMutation.mutateAsync({
           user_id: user.id,
           day_of_week: meal.day_of_week,
           meal_type: meal.meal_type,
@@ -912,8 +977,8 @@ RESPONSE JSON SCHEMA:
           prep_time: meal.prep_time,
           difficulty: meal.difficulty,
           image_url: meal.image_url
-        });
-      }
+        })
+      ));
 
       updateProgress(100, "Piano generato con successo!");
       
@@ -922,7 +987,8 @@ RESPONSE JSON SCHEMA:
         setGenerationProgress(0);
         setGenerationStatus("");
         setShowGenerator(false);
-        await loadMealPlans(user.id);
+        await loadMealPlans(); // Trigger refetch of meal plans
+        queryClient.invalidateQueries({ queryKey: ['shoppingLists'] }); // Also refetch shopping lists
         setAddedDays([]);
       }, 1000);
 
@@ -933,7 +999,9 @@ RESPONSE JSON SCHEMA:
     }
   };
 
-  if (isLoading) {
+  const isPageLoading = isLoadingUser || isLoadingMealPlans || isLoadingShoppingLists;
+
+  if (isPageLoading) {
     return (
         <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
             <div className="flex flex-col items-center gap-4">
@@ -964,7 +1032,7 @@ RESPONSE JSON SCHEMA:
     : days;
 
   const todaysMeals = mealPlans.filter(plan => plan.day_of_week === selectedDay);
-  const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4']; // Expanded for more flexibility
+  const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
   const getMealTypeLabel = (type) => {
     const labels = { 
       breakfast: 'Colazione', 
@@ -981,7 +1049,7 @@ RESPONSE JSON SCHEMA:
   const dailyTotals = todaysMeals.reduce((totals, meal) => ({
     calories: totals.calories + (meal.total_calories || 0),
     protein: totals.protein + (meal.total_protein || 0),
-    carbs: totals.carbs + (meal.carbs || 0),
+    carbs: totals.carbs + (meal.total_carbs || 0),
     fat: totals.fat + (meal.total_fat || 0)
   }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
 
@@ -1024,7 +1092,7 @@ RESPONSE JSON SCHEMA:
           {mealPlans.length > 0 && (
             <AIFeedbackBox 
               user={user} 
-              onPlanRegenerated={() => loadMealPlans(user?.id)}
+              onPlanRegenerated={loadMealPlans}
             />
           )}
 
