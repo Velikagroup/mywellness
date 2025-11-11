@@ -340,28 +340,15 @@ export default function Settings() {
         </div>
 
         <Tabs defaultValue="account" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
-            <TabsTrigger value="account" className="text-xs sm:text-sm">
-              <User className="w-4 h-4 mr-2 hidden sm:inline-block" />
-              Account
-            </TabsTrigger>
-            <TabsTrigger value="subscription" className="text-xs sm:text-sm">
-              <Crown className="w-4 h-4 mr-2 hidden sm:inline-block" />
-              Abbonamento
-            </TabsTrigger>
-            <TabsTrigger value="billing" className="text-xs sm:text-sm">
-              <CreditCard className="w-4 h-4 mr-2 hidden sm:inline-block" />
-              Fatturazione
-            </TabsTrigger>
-            <TabsTrigger value="notifications" className="text-xs sm:text-sm">
-              <Bell className="w-4 h-4 mr-2 hidden sm:inline-block" />
-              Notifiche
-            </TabsTrigger>
-            <TabsTrigger value="help" className="text-xs sm:text-sm">
-              <HelpCircle className="w-4 h-4 mr-2 hidden sm:inline-block" />
-              Supporto
-            </TabsTrigger>
-          </TabsList>
+          <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-3 lg:grid-cols-5 gap-2 bg-gray-100/80 p-1 rounded-lg">
+              <TabsTrigger value="account" className="text-xs sm:text-sm whitespace-nowrap">Account</TabsTrigger>
+              <TabsTrigger value="subscription" className="text-xs sm:text-sm whitespace-nowrap">Abbonamento</TabsTrigger>
+              <TabsTrigger value="billing" className="text-xs sm:text-sm whitespace-nowrap">Fatturazione</TabsTrigger>
+              <TabsTrigger value="notifications" className="text-xs sm:text-sm whitespace-nowrap">Notifiche</TabsTrigger>
+              <TabsTrigger value="help" className="text-xs sm:text-sm whitespace-nowrap">Supporto</TabsTrigger>
+            </TabsList>
+          </div>
 
           {/* ACCOUNT */}
           <TabsContent value="account" className="space-y-6">
