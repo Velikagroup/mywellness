@@ -552,7 +552,7 @@ export default function Home() {
             <Button
               onClick={handleWatchDemo}
               variant="outline"
-              className="w-full sm:w-auto border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] rounded-full px-6 py-3 text-sm font-medium">
+              className="hidden w-full sm:w-auto border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] rounded-full px-6 py-3 text-sm font-medium">
               Guarda Demo
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
