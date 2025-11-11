@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -6,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { createPageUrl } => "@/utils";
+import { createPageUrl } from "@/utils";
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -619,7 +618,6 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
         
         console.log(`📅 ${day}: AI=${currentDayCalories}, Target=${dailyCalories}, Diff=${calorieDifference}`);
         
-        // ✅ AGGIUSTAMENTO SEMPRE APPLICATO PER PRECISIONE ASSOLUTA
         if (calorieDifference !== 0) {
           console.log(`⚙️ ${day}: Aggiustamento preciso di ${calorieDifference} kcal`);
           
@@ -659,7 +657,6 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
             return meal;
           });
           
-          // ✅ AGGIUSTAMENTO FINALE MATEMATICO PRECISO
           const finalDayCalories = adjustedDayMeals.reduce((sum, m) => sum + m.total_calories, 0);
           const remainingDiff = dailyCalories - finalDayCalories;
           
@@ -670,7 +667,6 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
             );
             largestMeal.total_calories += remainingDiff;
             
-            // Aggiorna anche gli ingredienti proporzionalmente
             if (largestMeal.ingredients.length > 0) {
               const oilIngredient = largestMeal.ingredients.find(ing => ing.name.includes('olio'));
               if (oilIngredient && remainingDiff > 0) {
@@ -804,7 +800,7 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
       breakfast: 'Colazione',
       snack1: 'Spuntino Mattina',
       lunch: 'Pranzo',
-      snack2: 'Spuntino Pomeridiano',
+      snack2: 'Snack Pomeridiano',
       dinner: 'Cena',
       snack3: 'Spuntino Serale',
       snack4: 'Spuntino Notturno'
@@ -953,10 +949,6 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
             </Card>
           )}
 
-          {mealPlans.length > 0 && (
-            <AIFeedbackBox user={user} onPlanRegenerated={loadMealPlans} />
-          )}
-
           {mealPlans.length > 0 ? (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
               <CardHeader className="border-b border-gray-200/30">
@@ -978,7 +970,7 @@ Return Italian names, ingredients with precise quantities/calories, and instruct
                         }`}
                       >
                         <span>{day.label.substring(0, 3)}</span>
-                        {isAdded && <Check className="w-3 h-3 mr-0.5 text-green-600" />}
+                        {isAdded && <Check className="w-3 h-3 text-green-600" />}
                       </button>
                     );
                   })}
