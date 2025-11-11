@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { X, ArrowRight, ArrowLeft, CheckCircle, Sparkles } from 'lucide-react';
+import { X, ArrowRight, ArrowLeft, CheckCircle, Sparkles, Target, TrendingUp, Utensils, Activity } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 const discoveryOptions = [
   { id: 'instagram', label: 'Instagram', emoji: '📸' },
@@ -18,6 +20,7 @@ const discoveryOptions = [
 ];
 
 export default function OnboardingTour({ user, onComplete }) {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [selectedSource, setSelectedSource] = useState(null);
   const [sourceDetails, setSourceDetails] = useState('');
@@ -33,18 +36,26 @@ export default function OnboardingTour({ user, onComplete }) {
     },
     {
       id: 'dashboard_intro',
-      title: '📊 La Tua Dashboard',
-      description: 'Questa è la tua dashboard personale! Qui trovi tutti i tuoi dati metabolici, progressi di peso, e il riepilogo giornaliero di nutrizione e allenamento.',
-      type: 'info',
-      emoji: '📊'
+      title: '📊 La Tua Dashboard Personale',
+      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi verso il tuo obiettivo.',
+      icon: Activity,
+      iconBg: 'from-blue-500 to-blue-600'
     },
     {
-      id: 'next_steps',
-      title: '🍽️ Inizia il Tuo Percorso',
-      description: 'Vai alla sezione "Nutrizione" nel menu qui in basso per generare il tuo piano alimentare personalizzato con l\'AI. Poi potrai creare anche il piano di allenamento se hai un piano Pro o Premium!',
-      type: 'info',
-      emoji: '🎯',
-      final: true
+      id: 'track_progress',
+      title: '📈 Traccia i Tuoi Progressi',
+      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate e visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati.',
+      icon: TrendingUp,
+      iconBg: 'from-[var(--brand-primary)] to-teal-600'
+    },
+    {
+      id: 'nutrition_start',
+      title: '🍽️ Crea il Tuo Piano Nutrizionale',
+      description: 'Sei pronto per iniziare! Vai alla sezione Nutrizione per generare il tuo piano alimentare personalizzato con l\'intelligenza artificiale.',
+      icon: Utensils,
+      iconBg: 'from-green-500 to-emerald-600',
+      final: true,
+      action: 'navigate_to_meals'
     }
   ];
 
@@ -133,6 +144,11 @@ export default function OnboardingTour({ user, onComplete }) {
     onComplete();
   };
 
+  const handleNavigateToMeals = async () => {
+    await handleComplete();
+    navigate(createPageUrl('Meals'));
+  };
+
   // Modal per la prima domanda (obbligatorio)
   if (currentStepData?.type === 'modal') {
     return (
@@ -201,26 +217,53 @@ export default function OnboardingTour({ user, onComplete }) {
     );
   }
 
-  // Info cards per gli step successivi (senza spotlight, solo informazioni)
-  if (currentStepData?.type === 'info') {
-    return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
-        <Card className="max-w-xl w-full bg-white shadow-2xl">
-          <CardContent className="p-6 md:p-8">
-            <div className="flex items-start justify-between mb-6">
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-xl flex items-center justify-center text-2xl">
-                  {currentStepData.emoji}
+  // Info cards per gli step successivi
+  const Icon = currentStepData?.icon;
+  
+  return (
+    <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+      <Card className="max-w-xl w-full bg-white shadow-2xl">
+        <CardContent className="p-6 md:p-8">
+          <div className="flex items-start justify-between mb-6">
+            <div className="flex items-center gap-4">
+              {Icon && (
+                <div className={`w-14 h-14 bg-gradient-to-br ${currentStepData.iconBg} rounded-xl flex items-center justify-center shadow-lg`}>
+                  <Icon className="w-7 h-7 text-white" />
                 </div>
-                <h2 className="text-xl md:text-2xl font-bold text-gray-900">{currentStepData.title}</h2>
-              </div>
-              <button onClick={handleSkip} className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
-                <X className="w-5 h-5" />
-              </button>
+              )}
+              <h2 className="text-xl md:text-2xl font-bold text-gray-900">{currentStepData.title}</h2>
             </div>
-            
-            <p className="text-gray-600 mb-8 text-base md:text-lg leading-relaxed">{currentStepData.description}</p>
-            
+            <button onClick={handleSkip} className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+          
+          <p className="text-gray-600 mb-8 text-base md:text-lg leading-relaxed">
+            {currentStepData.description}
+          </p>
+          
+          {/* Se è l'ultimo step, mostra il bottone speciale per andare a Nutrizione */}
+          {currentStepData.final ? (
+            <div className="space-y-4">
+              <Button
+                onClick={handleNavigateToMeals}
+                className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white py-6 text-lg font-bold shadow-xl hover:shadow-2xl transition-all"
+              >
+                <Utensils className="w-5 h-5 mr-2" />
+                Vai a Nutrizione
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </Button>
+              
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={handleSkip}
+                  className="text-sm text-gray-500 hover:text-gray-700 font-medium"
+                >
+                  Salta e resta sulla Dashboard
+                </button>
+              </div>
+            </div>
+          ) : (
             <div className="flex items-center justify-between gap-4">
               <div className="flex items-center gap-2">
                 {steps.slice(1).map((_, index) => (
@@ -250,25 +293,14 @@ export default function OnboardingTour({ user, onComplete }) {
                   className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
                   size="sm"
                 >
-                  {currentStepData.final ? (
-                    <>
-                      Inizia!
-                      <CheckCircle className="w-4 h-4 ml-2" />
-                    </>
-                  ) : (
-                    <>
-                      Avanti
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </>
-                  )}
+                  Avanti
+                  <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
             </div>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  return null;
+          )}
+        </CardContent>
+      </Card>
+    </div>
+  );
 }
