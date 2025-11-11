@@ -106,13 +106,13 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
   };
 
   const renderStepIcon = (status) => {
-    if (status === 'completed') return <CheckCircle className="inline w-3 h-3 mr-2 text-green-500" />;
-    if (status === 'in-progress') return <Loader2 className="inline w-3 h-3 mr-2 text-[var(--brand-primary)] animate-spin" />;
-    return <CheckCircle className="inline w-3 h-3 mr-2 text-gray-300" />;
+    if (status === 'completed') return <CheckCircle className="inline w-4 h-4 mr-2 text-green-500" />;
+    if (status === 'in-progress') return <Loader2 className="inline w-4 h-4 mr-2 text-[var(--brand-primary)] animate-spin" />;
+    return <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />;
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 pt-0">
+    <div className="min-h-screen flex items-center justify-center p-4 pt-8 md:pt-4">
       <style>{`
         @keyframes energyPulse {
           0%, 100% { transform: scale(1); filter: drop-shadow(0 0 8px rgba(34, 197, 94, 0.4)); }
@@ -122,31 +122,66 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
           0%, 100% { box-shadow: 0 0 20px rgba(38, 132, 127, 0.3), 0 0 40px rgba(38, 132, 127, 0.2), inset 0 0 15px rgba(34, 197, 94, 0.1); }
           50% { box-shadow: 0 0 30px rgba(38, 132, 127, 0.5), 0 0 60px rgba(38, 132, 127, 0.3), inset 0 0 25px rgba(34, 197, 94, 0.2); }
         }
-        .animated-nutrition-container { animation: containerGlow 2s ease-in-out infinite; background: linear-gradient(135deg, #26847F 0%, #14b8a6 50%, #22c55e 100%); }
+        .animated-nutrition-container { 
+          animation: containerGlow 2s ease-in-out infinite; 
+          background: linear-gradient(135deg, #26847F 0%, #14b8a6 50%, #22c55e 100%); 
+        }
         .animated-energy-icon { animation: energyPulse 1.5s ease-in-out infinite; }
       `}</style>
-      <div className="max-w-2xl mx-auto">
-        <Card className="max-w-2xl w-full bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl text-center">
-          <CardHeader>
-            <div className="w-20 h-20 mx-auto mb-4 rounded-2xl overflow-hidden animated-nutrition-container flex items-center justify-center">
-              <Activity className="w-10 h-10 text-white animated-energy-icon" strokeWidth={2.5} />
+      
+      <div className="max-w-xl w-full">
+        <Card className="bg-white/60 backdrop-blur-md border-gray-200/40 shadow-xl rounded-2xl overflow-hidden">
+          <CardHeader className="pb-4 pt-6 px-6">
+            <div className="w-16 h-16 mx-auto mb-4 rounded-xl overflow-hidden animated-nutrition-container flex items-center justify-center">
+              <Activity className="w-8 h-8 text-white animated-energy-icon" strokeWidth={2.5} />
             </div>
-            <CardTitle className="text-2xl font-bold text-gray-900">Creazione Protocollo Nutrizionale AI</CardTitle>
+            <CardTitle className="text-xl font-bold text-gray-900 text-center">
+              Creazione Protocollo Nutrizionale AI
+            </CardTitle>
+            <p className="text-sm text-gray-600 text-center mt-2">
+              L'AI sta elaborando migliaia di dati per creare un piano alimentare scientifico e su misura per te.
+            </p>
           </CardHeader>
-          <CardContent className="space-y-6 p-8">
-            <p className="text-gray-600">L'AI sta elaborando migliaia di dati per creare un piano alimentare scientifico e su misura per te.</p>
-            <Progress value={generationProgress} className="w-full [&>div]:bg-[var(--brand-primary)]" />
-            <p className="text-sm text-[var(--brand-primary)] font-semibold h-5">{generationStatus}</p>
-            <div className="text-xs text-gray-500 list-inside text-left mx-auto max-w-md bg-gray-50/70 p-4 rounded-lg border border-gray-200/60">
-              <h4 className="font-semibold text-gray-700 mb-2">Analisi in corso:</h4>
-              <ul className="space-y-1">
-                <li>{renderStepIcon(getStepStatus(10))}Profilo metabolico (BMR: {nutritionData?.bmr} kcal)</li>
-                <li>{renderStepIcon(getStepStatus(25))}Target calorico ({nutritionData?.daily_calories} kcal/giorno)</li>
-                <li>{renderStepIcon(getStepStatus(50))}Bilanciamento calorico automatico</li>
-                <li>{renderStepIcon(getStepStatus(60))}Piano nutrizionale generato</li>
-                <li>{renderStepIcon(getStepStatus(70))}Validazione database ingredienti</li>
-                <li>{renderStepIcon(getStepStatus(85))}Generazione immagini pasti</li>
-                <li>{renderStepIcon(getStepStatus(95))}Costruzione e salvataggio piano</li>
+          
+          <CardContent className="space-y-5 px-6 pb-6">
+            <div className="space-y-2">
+              <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[var(--brand-primary)]" />
+              <p className="text-sm text-[var(--brand-primary)] font-semibold text-center min-h-[20px]">
+                {generationStatus}
+              </p>
+            </div>
+            
+            <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/60">
+              <h4 className="font-semibold text-gray-800 text-sm mb-3">Analisi in corso:</h4>
+              <ul className="space-y-2 text-xs">
+                <li className="flex items-center">
+                  {renderStepIcon(getStepStatus(10))}
+                  <span className="text-gray-700">Profilo metabolico (BMR: {nutritionData?.bmr} kcal)</span>
+                </li>
+                <li className="flex items-center">
+                  {renderStepIcon(getStepStatus(25))}
+                  <span className="text-gray-700">Target calorico ({nutritionData?.daily_calories} kcal/giorno)</span>
+                </li>
+                <li className="flex items-center">
+                  {renderStepIcon(getStepStatus(50))}
+                  <span className="text-gray-700">Bilanciamento calorico automatico</span>
+                </li>
+                <li className="flex items-center">
+                  {renderStepIcon(getStepStatus(60))}
+                  <span className="text-gray-700">Piano nutrizionale generato</span>
+                </li>
+                <li className="flex items-center">
+                  {renderStepIcon(getStepStatus(70))}
+                  <span className="text-gray-700">Validazione database ingredienti</span>
+                </li>
+                <li className="flex items-center">
+                  {renderStepIcon(getStepStatus(85))}
+                  <span className="text-gray-700">Generazione immagini pasti</span>
+                </li>
+                <li className="flex items-center">
+                  {renderStepIcon(getStepStatus(95))}
+                  <span className="text-gray-700">Costruzione e salvataggio piano</span>
+                </li>
               </ul>
             </div>
           </CardContent>
@@ -1173,7 +1208,7 @@ All content MUST be in Italian.`;
                         }`}
                       >
                         <span>{day.label.substring(0, 3)}</span>
-                        {isAdded && <Check className="w-3 h-3 text-green-600" />}
+                        {isAdded && <Check className="w-3 h-3 mr-1 text-green-600" />}
                       </button>
                     );
                   })}
@@ -1244,7 +1279,7 @@ All content MUST be in Italian.`;
                           <div key={meal.id} className="relative w-full text-left bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors group">
                             <button onClick={() => setSelectedMeal(meal)} className="w-full flex items-center justify-between">
                               <div className="flex items-center gap-3 text-left">
-                                <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden">
+                                <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center mx-auto border overflow-hidden">
                                   {meal.image_url ? (
                                     <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
                                   ) : (
@@ -1320,3 +1355,4 @@ All content MUST be in Italian.`;
     </>
   );
 }
+```
