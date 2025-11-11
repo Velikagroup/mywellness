@@ -160,23 +160,20 @@ export default function TrialSetup() {
             const keyResponse = await base44.functions.invoke('getStripePublishableKey');
             
             console.log('📦 Backend response:', keyResponse);
-            console.log('📦 Response type:', typeof keyResponse);
-            console.log('📦 Response keys:', Object.keys(keyResponse || {}));
             
-            if (!keyResponse) {
-              console.error('❌ Response is null/undefined');
-              throw new Error('No response from backend');
-            }
+            // ⚠️ base44.functions.invoke returns Axios response: {data: {...}, status: 200}
+            const responseData = keyResponse.data || keyResponse;
             
-            if (!keyResponse.publishableKey) {
-              console.error('❌ No publishableKey in response:', keyResponse);
+            console.log('📋 Response data:', responseData);
+            
+            if (!responseData.publishableKey) {
+              console.error('❌ No publishableKey in response data:', responseData);
               throw new Error('publishableKey missing from response');
             }
             
-            const stripeKey = keyResponse.publishableKey;
-            console.log('✅ Stripe key loaded:', stripeKey.substring(0, 20) + '...' + stripeKey.substring(stripeKey.length - 10));
+            const stripeKey = responseData.publishableKey;
+            console.log('✅ Stripe key loaded:', stripeKey.substring(0, 20) + '...');
             console.log('📏 Key length:', stripeKey.length, 'chars');
-            console.log('🔤 Key starts with:', stripeKey.substring(0, 7));
             
             if (!window.Stripe) {
               console.log('⏳ Loading Stripe.js library...');
@@ -185,7 +182,7 @@ export default function TrialSetup() {
                 script.src = 'https://js.stripe.com/v3/';
                 script.async = true;
                 script.onload = () => {
-                  console.log('✅ Stripe.js loaded, initializing with key...');
+                  console.log('✅ Stripe.js loaded, initializing...');
                   try {
                     const stripeInstance = window.Stripe(stripeKey);
                     console.log('✅ Stripe instance created successfully');
@@ -202,20 +199,13 @@ export default function TrialSetup() {
                 document.body.appendChild(script);
               });
             } else {
-              console.log('✅ Stripe.js already loaded, initializing with key...');
-              try {
-                const stripeInstance = window.Stripe(stripeKey);
-                console.log('✅ Stripe instance created successfully');
-                return Promise.resolve(stripeInstance);
-              } catch (err) {
-                console.error('❌ Error creating Stripe instance (already loaded):', err);
-                return Promise.reject(err);
-              }
+              console.log('✅ Stripe.js already loaded, initializing...');
+              const stripeInstance = window.Stripe(stripeKey);
+              console.log('✅ Stripe instance created successfully');
+              return Promise.resolve(stripeInstance);
             }
           } catch (error) {
             console.error('❌ Error loading Stripe:', error);
-            console.error('❌ Error message:', error.message);
-            console.error('❌ Error stack:', error.stack);
             throw error;
           }
         };
