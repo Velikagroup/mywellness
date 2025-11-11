@@ -1,4 +1,17 @@
-// ... keep all imports exactly as they are ...
+import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Checkbox } from "@/components/ui/checkbox";
+import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -28,11 +41,217 @@ export default function TrialSetup() {
   const stripeLoadedRef = useRef(false);
   const cardMountedRef = useRef(false);
   
-  // ... keep all existing state declarations ...
+  const [isSaving, setIsSaving] = useState(false);
+  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [stripe, setStripe] = useState(null);
+  const [cardElement, setCardElement] = useState(null);
+  const [cardComplete, setCardComplete] = useState(false);
+  const [paymentRequest, setPaymentRequest] = useState(null);
+  const [canMakePayment, setCanMakePayment] = useState(null);
+  const [showApplePay, setShowApplePay] = useState(false);
+  const [showGooglePay, setShowGooglePay] = useState(false);
+  
+  const [billingInfo, setBillingInfo] = useState({
+    name: '',
+    email: '',
+    companyName: '',
+    taxId: '',
+    pecSdi: '',
+    billingType: 'private',
+    address: '',
+    city: '',
+    zip: '',
+    country: 'IT'
+  });
+  const [showBillingFields, setShowBillingFields] = useState(false);
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [couponCode, setCouponCode] = useState('');
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
+  const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
+  const [discountError, setDiscountError] = useState('');
+  const [orderBumpSelected, setOrderBumpSelected] = useState(false);
+  const [termsAccepted, setTermsAccepted] = useState(false);
+  const [privacyAccepted, setPrivacyAccepted] = useState(false);
+  const [marketingConsent, setMarketingConsent] = useState(false);
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
+  const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
+  const [user, setUser] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
+  const [trafficSource, setTrafficSource] = useState(null);
+  const [selectedPlan, setSelectedPlan] = useState('base');
+  const [selectedBillingPeriod, setSelectedBillingPeriod] = useState('monthly');
+  const [trialSetupTracked, setTrialSetupTracked] = useState(false);
 
-  // ... keep validateCouponFromURL function ...
+  const validateCouponFromURL = async (code, email) => {
+    try {
+      const response = await base44.functions.invoke('validatePersonalCoupon', {
+        couponCode: code,
+        userEmail: email
+      });
 
-  // ... keep first useEffect for checkAuth ...
+      const responseData = response.data || response;
+
+      if (responseData.valid) {
+        setAppliedCoupon({
+          code: code,
+          discount_type: responseData.discount_type,
+          discount_value: responseData.discount_value
+        });
+        setDiscountError('');
+      } else {
+        setDiscountError(responseData.error || 'Coupon non valido');
+      }
+    } catch (error) {
+      console.error('Error validating coupon from URL:', error);
+      setDiscountError('Errore di validazione del coupon.');
+    }
+  };
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+
+        if (!trialSetupTracked && currentUser) {
+          try {
+            await base44.entities.UserActivity.create({
+              user_id: currentUser.id,
+              event_type: 'trial_setup_opened',
+              event_data: { plan: selectedPlan }
+            });
+            console.log('📊 Trial setup opened tracked');
+            setTrialSetupTracked(true);
+          } catch (error) {
+            console.error('Error tracking trial setup:', error);
+          }
+        }
+
+        const queryParams = new URLSearchParams(location.search);
+        const refSource = queryParams.get('ref');
+        const storedSource = localStorage.getItem('trafficSource');
+        
+        const couponParam = queryParams.get('coupon');
+        if (couponParam && currentUser.email) {
+          setCouponCode(couponParam);
+          await validateCouponFromURL(couponParam, currentUser.email);
+        }
+
+        if (refSource) {
+          setTrafficSource(refSource);
+          localStorage.setItem('trafficSource', refSource);
+        } else if (storedSource) {
+          setTrafficSource(storedSource);
+        } else {
+          setTrafficSource('direct');
+        }
+
+        if (!stripeLoadedRef.current) {
+          console.log('🔑 Loading Stripe publishable key from backend...');
+          
+          try {
+            const keyResponse = await base44.functions.invoke('getStripePublishableKey');
+            const responseData = keyResponse.data || keyResponse;
+            
+            if (!responseData.publishableKey) {
+              throw new Error('publishableKey missing from response');
+            }
+            
+            const stripeKey = responseData.publishableKey;
+            console.log('✅ Stripe key loaded');
+            
+            if (window.Stripe) {
+              console.log('✅ Stripe.js already loaded globally');
+              const stripeInstance = window.Stripe(stripeKey);
+              setStripe(stripeInstance);
+              stripeLoadedRef.current = true;
+            } else {
+              console.log('⏳ Loading Stripe.js library...');
+              const script = document.createElement('script');
+              script.src = 'https://js.stripe.com/v3/';
+              script.async = true;
+              script.onload = () => {
+                console.log('✅ Stripe.js loaded successfully');
+                const stripeInstance = window.Stripe(stripeKey);
+                setStripe(stripeInstance);
+                stripeLoadedRef.current = true;
+              };
+              script.onerror = () => {
+                console.error('❌ Failed to load Stripe.js');
+                alert('Errore nel caricamento del sistema di pagamento. Ricarica la pagina.');
+              };
+              
+              if (!document.querySelector('script[src="https://js.stripe.com/v3/"]')) {
+                document.body.appendChild(script);
+              }
+            }
+          } catch (stripeError) {
+            console.error('💥 Stripe initialization failed:', stripeError);
+            setIsLoading(false);
+            return;
+          }
+        }
+        
+        setBillingInfo(prev => ({
+          ...prev,
+          name: currentUser.full_name || currentUser.billing_name || '',
+          email: currentUser.email || '',
+          address: currentUser.billing_address || '',
+          city: currentUser.billing_city || '',
+          zip: currentUser.billing_zip || '',
+          country: currentUser.billing_country || 'IT',
+          companyName: currentUser.company_name || '',
+          taxId: currentUser.tax_id || '',
+          pecSdi: currentUser.pec_sdi || '',
+          billingType: currentUser.billing_type || 'private'
+        }));
+
+        if (currentUser.phone_number) {
+          const phoneMatch = currentUser.phone_number.match(/\+\d+\s*(.+)/);
+          if (phoneMatch) {
+            setPhoneNumber(phoneMatch[1].trim());
+          } else {
+            setPhoneNumber(currentUser.phone_number);
+          }
+        }
+
+        if (currentUser && currentUser.subscription_status === 'active') {
+          navigate(createPageUrl('Dashboard'), { replace: true });
+          return;
+        }
+
+        const fromLanding = location.state?.fromLanding || false;
+        if (fromLanding) {
+          setSelectedPlan('premium');
+        } else {
+          setSelectedPlan('base');
+        }
+
+        const savedQuizData = localStorage.getItem('quizData');
+        if (savedQuizData) {
+          try {
+            const quizData = JSON.parse(savedQuizData);
+            await base44.auth.updateMe(quizData);
+            console.log('Quiz data saved to user profile');
+            localStorage.removeItem('quizData');
+          } catch (error) {
+            console.error('Error saving quiz data:', error);
+          }
+        }
+
+      } catch (error) {
+        console.error('Authentication error:', error);
+        localStorage.setItem('redirectToTrialSetup', 'true');
+        const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
+        await base44.auth.redirectToLogin(trialSetupUrl);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, [navigate, location, trialSetupTracked, selectedPlan]);
 
   // Initialize Stripe Card Element - FIXED VERSION
   useEffect(() => {
@@ -106,151 +325,4 @@ export default function TrialSetup() {
     };
   }, [stripe, paymentMethod]);
 
-  // ... keep all other useEffects and functions unchanged ...
-
-  // ... keep isFormValid, isCtaDisabled, subtotal, discount, total, planPrices, monthlyPrice ...
-
-  if (isLoading) {
-    return (
-      <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
-        <div className="flex flex-col items-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-[var(--brand-primary)]"></div>
-          <p className="mt-4 text-gray-700 font-semibold text-lg">Caricamento sicuro...</p>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="min-h-screen animated-gradient-bg">
-      <style>{`
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
-
-        * {
-          font-family: 'Inter', sans-serif;
-        }
-
-        :root {
-          --brand-primary: #26847F;
-          --brand-primary-hover: #1f6b66;
-          --brand-primary-light: #e9f6f5;
-          --brand-primary-dark-text: #1a5753;
-        }
-
-        @keyframes gradientShift {
-          0% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
-          33% { background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%; }
-          66% { background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%; }
-          100% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
-        }
-
-        .animated-gradient-bg {
-          background: #f9fafb;
-          background-image:
-            radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
-            radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
-            radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
-            radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
-            radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%);
-          background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
-          animation: gradientShift 45s ease-in-out infinite;
-          background-attachment: fixed;
-        }
-
-        .water-glass-effect {
-          backdrop-filter: blur(12px) saturate(180%);
-          background: linear-gradient(135deg,
-            rgba(249, 250, 251, 0.75) 0%,
-            rgba(243, 244, 246, 0.65) 50%),
-            rgba(249, 250, 251, 0.75) 100%
-          );
-          box-shadow:
-            0 8px 32px 0 rgba(31, 38, 135, 0.08),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
-        }
-        
-        /* Stripe Element Container - DO NOT ADD PADDING HERE */
-        #card-element-container {
-          border: 2px solid #d1d5db;
-          border-radius: 12px;
-          background-color: white;
-          transition: all 0.3s ease;
-          min-height: 44px;
-        }
-        
-        #card-element-container:focus-within {
-          border-color: var(--brand-primary);
-          box-shadow: 0 0 0 3px rgba(38, 132, 127, 0.1);
-        }
-        
-        /* Stripe Element Iframe Styles */
-        #card-element-container iframe {
-          height: 44px !important;
-        }
-      `}</style>
-
-      {/* ... keep navbar unchanged ... */}
-
-      <div className="flex items-center justify-center min-h-screen pt-28 pb-12 px-4">
-        <Card className="max-w-2xl w-full water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl overflow-hidden">
-          {/* ... keep CardHeader unchanged ... */}
-
-          <CardContent className="px-8 pb-8 space-y-6">
-            {/* ... keep all sections before payment method unchanged ... */}
-
-            <div className="space-y-4 pt-4 border-t border-gray-200/50">
-              <div className="flex items-center gap-3 mb-4">
-                <CreditCard className="w-5 h-5 text-[var(--brand-primary)]"/>
-                <h3 className="text-xl font-bold text-gray-800">Metodo di Pagamento</h3>
-              </div>
-              
-              <div className="space-y-3">
-                <button
-                  onClick={() => setPaymentMethod('card')}
-                  className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
-                    paymentMethod === 'card'
-                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                      : 'border-gray-200 bg-white hover:border-[var(--brand-primary)]'
-                  }`}
-                >
-                  <div className={`w-12 h-12 rounded-lg flex items-center justify-center ${
-                    paymentMethod === 'card' ? 'bg-white' : 'bg-gray-50'
-                  }`}>
-                    <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[var(--brand-primary)]' : 'text-gray-400'}`} />
-                  </div>
-                  <p className="text-base font-semibold text-gray-800">Carta di Credito / Debito</p>
-                </button>
-
-                {/* ... keep Apple Pay and Google Pay buttons unchanged ... */}
-              </div>
-            </div>
-
-            {paymentMethod === 'card' && (
-              <div className="space-y-4 pt-4">
-                <div>
-                  <Label htmlFor="card-element" className="text-sm font-semibold text-gray-700 mb-3 block">
-                    💳 Inserisci i Dati della Carta
-                  </Label>
-                  <div 
-                    id="card-element-container"
-                    ref={cardElementRef}
-                  />
-                  <p className="text-xs text-gray-500 mt-3 flex items-center gap-1.5">
-                    <Shield className="w-3.5 h-3.5" />
-                    Pagamento sicuro gestito da Stripe. I tuoi dati sono protetti con crittografia SSL.
-                  </p>
-                </div>
-              </div>
-            )}
-
-            {/* ... keep all remaining sections unchanged (digital wallet info, coupon, order bump, terms, CTA, etc.) ... */}
-          </CardContent>
-        </Card>
-      </div>
-
-      {/* ... keep footer unchanged ... */}
-    </div>
-  );
-}
+  // ... rest of code continues with Payment Request useEffect, scroll useEffect, and all handler functions ...
