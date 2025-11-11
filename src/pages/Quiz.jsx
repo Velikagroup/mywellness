@@ -236,8 +236,7 @@ export default function Quiz() {
         : `${createPageUrl('Quiz')}?step=${newStep}`;
       window.history.pushState({}, '', url);
     } else {
-      // Ultimo step completato - vai direttamente al caricamento (calculation screen)
-      // 🛒 TRACKING: Quiz Completed
+      // Ultimo step completato
       const trackQuizCompleted = async () => {
         try {
           const userIdentifier = user?.email || quizData.email || 'anonymous';
@@ -255,10 +254,19 @@ export default function Quiz() {
       trackQuizCompleted();
       
       setIsCalculating(true);
-      setTimeout(() => {
-        setIsCalculating(false);
-        setShowBodyFatReveal(true);
-      }, 5000); // Animation duration
+      
+      if (isRecapMode) {
+        // ✅ In recap mode, salta la schermata blur e salva direttamente
+        setTimeout(async () => {
+          await handleRevealBodyFat(); // Salva e reindirizza direttamente alla Dashboard
+        }, 5000);
+      } else {
+        // Comportamento normale: mostra schermata blur
+        setTimeout(() => {
+          setIsCalculating(false);
+          setShowBodyFatReveal(true);
+        }, 5000);
+      }
     }
   };
 
