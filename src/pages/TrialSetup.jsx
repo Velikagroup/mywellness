@@ -253,13 +253,11 @@ export default function TrialSetup() {
     checkAuth();
   }, [navigate, location, trialSetupTracked, selectedPlan]);
 
-  // Initialize Stripe Card Element - FIXED VERSION
   useEffect(() => {
     if (!stripe || paymentMethod !== 'card' || !cardElementRef.current) {
       return;
     }
 
-    // Prevent double mounting
     if (cardMountedRef.current || cardElement) {
       console.log('⚠️ Card Element already mounted, skipping');
       return;
@@ -323,9 +321,8 @@ export default function TrialSetup() {
         }
       }
     };
-  }, [stripe, paymentMethod]);
+  }, [stripe, paymentMethod, cardElement]);
 
-  // Initialize Payment Request for digital wallets
   useEffect(() => {
     if (!stripe || !user) return;
 
@@ -431,7 +428,7 @@ export default function TrialSetup() {
     }
 
     if (!billingInfo.name || !billingInfo.email || !phoneNumber || !billingInfo.address || !billingInfo.city || !billingInfo.zip || !billingInfo.country || !termsAccepted || !privacyAccepted) {
-      alert("Per favorere, compila tutti i campi obbligatori prima di procedere.");
+      alert("Per favore, compila tutti i campi obbligatori prima di procedere.");
       return;
     }
 
@@ -694,7 +691,6 @@ export default function TrialSetup() {
           box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
         
-        /* Stripe Element Container - Padding added with p-3 for proper spacing */
         #card-element-container {
           border: 2px solid #d1d5db;
           border-radius: 12px;
