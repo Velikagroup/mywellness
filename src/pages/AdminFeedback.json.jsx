@@ -54,7 +54,6 @@ export default function AdminFeedback() {
     );
   }
 
-  // Calcola statistiche cancellazioni
   const reasonLabels = {
     troppo_costoso: '💰 Troppo Costoso',
     non_uso_abbastanza: '⏰ Non Uso Abbastanza',
@@ -118,58 +117,58 @@ export default function AdminFeedback() {
           </div>
 
           <TabsContent value="cancellations" className="space-y-6 mt-6">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
               <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
-                      <TrendingDown className="w-5 h-5 text-red-600" />
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <TrendingDown className="w-4 h-4 sm:w-5 sm:h-5 text-red-600" />
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Totale Cancellazioni</p>
-                      <p className="text-2xl font-bold text-gray-900">{cancellationFeedbacks.length}</p>
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500 truncate">Totale</p>
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900">{cancellationFeedbacks.length}</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                      <Users className="w-5 h-5 text-green-600" />
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <Users className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Consiglierebbero</p>
-                      <p className="text-2xl font-bold text-gray-900">{recommendPercentage}%</p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                      <AlertCircle className="w-5 h-5 text-blue-600" />
-                    </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Giorni Medi Uso</p>
-                      <p className="text-2xl font-bold text-gray-900">{avgDaysUsed}</p>
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500 truncate">Consiglia</p>
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900">{recommendPercentage}%</p>
                     </div>
                   </div>
                 </CardContent>
               </Card>
 
               <Card className="bg-white/80 backdrop-blur-sm">
-                <CardContent className="p-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
-                      <ThumbsDown className="w-5 h-5 text-purple-600" />
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                     </div>
-                    <div>
-                      <p className="text-xs text-gray-500">Motivo Top</p>
-                      <p className="text-sm font-bold text-gray-900 truncate">
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500 truncate">Gg Medi</p>
+                      <p className="text-xl sm:text-2xl font-bold text-gray-900">{avgDaysUsed}</p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+
+              <Card className="bg-white/80 backdrop-blur-sm">
+                <CardContent className="p-3 sm:p-4">
+                  <div className="flex items-center gap-2 sm:gap-3">
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                      <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-xs text-gray-500 truncate">Top</p>
+                      <p className="text-xs sm:text-sm font-bold text-gray-900 truncate">
                         {barData[0]?.reason?.split(' ')[0] || 'N/A'}
                       </p>
                     </div>
@@ -181,7 +180,7 @@ export default function AdminFeedback() {
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="text-lg">Distribuzione Motivi</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">Distribuzione Motivi</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {pieData.length > 0 ? (
@@ -193,7 +192,7 @@ export default function AdminFeedback() {
                           cy="50%"
                           labelLine={false}
                           label={({ name, percentage }) => `${percentage}%`}
-                          outerRadius={100}
+                          outerRadius={80}
                           fill="#8884d8"
                           dataKey="value"
                         >
@@ -202,7 +201,7 @@ export default function AdminFeedback() {
                           ))}
                         </Pie>
                         <Tooltip />
-                        <Legend />
+                        <Legend wrapperStyle={{ fontSize: '12px' }} />
                       </PieChart>
                     </ResponsiveContainer>
                   ) : (
@@ -213,15 +212,15 @@ export default function AdminFeedback() {
 
               <Card className="bg-white/80 backdrop-blur-sm">
                 <CardHeader>
-                  <CardTitle className="text-lg">Classifica Motivi</CardTitle>
+                  <CardTitle className="text-base sm:text-lg">Classifica Motivi</CardTitle>
                 </CardHeader>
                 <CardContent>
                   {barData.length > 0 ? (
                     <ResponsiveContainer width="100%" height={300}>
-                      <BarChart data={barData} layout="vertical">
+                      <BarChart data={barData} layout="vertical" margin={{ left: 10 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis type="number" />
-                        <YAxis dataKey="reason" type="category" width={150} tick={{ fontSize: 11 }} />
+                        <YAxis dataKey="reason" type="category" width={120} tick={{ fontSize: 10 }} />
                         <Tooltip />
                         <Bar dataKey="count" fill="#26847F" />
                       </BarChart>
@@ -235,7 +234,7 @@ export default function AdminFeedback() {
 
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg">Feedback Dettagliati</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Feedback Dettagliati</CardTitle>
               </CardHeader>
               <CardContent>
                 {cancellationFeedbacks.length === 0 ? (
@@ -244,7 +243,7 @@ export default function AdminFeedback() {
                   <div className="space-y-3">
                     {cancellationFeedbacks.map((feedback) => (
                       <div key={feedback.id} className="p-4 border rounded-xl bg-white hover:shadow-md transition-all">
-                        <div className="flex items-start justify-between gap-3 mb-3">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-3">
                           <div className="flex-1 min-w-0">
                             <div className="flex items-center gap-2 mb-2 flex-wrap">
                               <Badge variant="outline" className="text-xs">{feedback.user_email}</Badge>
@@ -260,13 +259,16 @@ export default function AdminFeedback() {
                               {reasonLabels[feedback.cancellation_reason]}
                             </p>
                             {feedback.additional_details && (
-                              <p className="text-sm text-gray-600 italic">"{feedback.additional_details}"</p>
+                              <div className="bg-gray-50 rounded-lg p-3 mt-2">
+                                <p className="text-xs text-gray-500 mb-1">Dettagli:</p>
+                                <p className="text-sm text-gray-700 italic">"{feedback.additional_details}"</p>
+                              </div>
                             )}
                           </div>
-                          <div className="text-right flex-shrink-0">
-                            <p className="text-xs text-gray-500">{feedback.days_used || 0} giorni</p>
+                          <div className="text-left sm:text-right flex-shrink-0">
+                            <p className="text-xs text-gray-500">{feedback.days_used || 0} giorni uso</p>
                             <p className="text-xs text-gray-400">
-                              {new Date(feedback.created_date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' })}
+                              {new Date(feedback.created_date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })}
                             </p>
                           </div>
                         </div>
@@ -281,23 +283,24 @@ export default function AdminFeedback() {
           <TabsContent value="general" className="space-y-6 mt-6">
             <Card className="bg-white/80 backdrop-blur-sm">
               <CardHeader>
-                <CardTitle className="text-lg">Feedback Email Ricevuti</CardTitle>
+                <CardTitle className="text-base sm:text-lg">Feedback Email Ricevuti</CardTitle>
               </CardHeader>
               <CardContent>
                 {emailFeedbacks.length === 0 ? (
                   <div className="text-center py-12">
                     <Mail className="w-12 h-12 text-gray-300 mx-auto mb-3" />
                     <p className="text-gray-500">Nessun feedback via email ancora</p>
+                    <p className="text-xs text-gray-400 mt-2">I feedback arrivano automaticamente a 7, 30 e 60 giorni</p>
                   </div>
                 ) : (
                   <div className="space-y-3">
                     {emailFeedbacks.map((feedback) => (
                       <div key={feedback.id} className="p-4 border rounded-xl bg-white hover:shadow-md transition-all">
-                        <div className="flex items-start justify-between gap-3 mb-2">
-                          <div className="flex-1">
-                            <div className="flex items-center gap-2 mb-2">
+                        <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3 mb-2">
+                          <div className="flex-1 min-w-0">
+                            <div className="flex items-center gap-2 mb-2 flex-wrap">
                               <Badge variant="outline" className="text-xs">{feedback.user_id}</Badge>
-                              <Badge className="text-xs">{feedback.feedback_type}</Badge>
+                              <Badge className="text-xs capitalize">{feedback.feedback_type.replace('_', ' ')}</Badge>
                               <Badge className={`text-xs ${
                                 feedback.status === 'implemented' ? 'bg-green-100 text-green-700' :
                                 feedback.status === 'reviewed' ? 'bg-blue-100 text-blue-700' :
