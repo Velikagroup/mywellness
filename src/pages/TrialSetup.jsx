@@ -489,7 +489,7 @@ export default function TrialSetup() {
 
   const handleCompleteSetup = async () => {
     if (!isFormValid) {
-      alert("Per favore, compila tutti i campi obbligatori correttamente.");
+      alert("Per favor, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
@@ -500,19 +500,44 @@ export default function TrialSetup() {
     setIsSaving(true);
 
     try {
+      // 🔐 TOKENIZZA LA CARTA CON STRIPE.JS (sicuro e PCI-compliant)
       const [exp_month_str, exp_year_str] = cardData.expiry.split('/');
       const exp_month = parseInt(exp_month_str, 10);
       const exp_year = parseInt('20' + exp_year_str, 10);
       
-      const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
-
-      const payload = {
-        cardData: {
+      console.log('🔐 Creating secure payment method with Stripe.js...');
+      const { paymentMethod: stripePaymentMethod, error: stripeError } = await stripe.createPaymentMethod({
+        type: 'card',
+        card: {
           number: cardData.number.replace(/\s/g, ''),
           exp_month: exp_month,
           exp_year: exp_year,
           cvc: cardData.cvc,
         },
+        billing_details: {
+          name: billingInfo.name,
+          email: billingInfo.email,
+          address: {
+            line1: billingInfo.address,
+            city: billingInfo.city,
+            postal_code: billingInfo.zip,
+            country: billingInfo.country
+          }
+        }
+      });
+
+      if (stripeError) {
+        console.error('❌ Stripe payment method error:', stripeError);
+        throw new Error(stripeError.message);
+      }
+
+      console.log('✅ Payment method created:', stripePaymentMethod.id);
+      
+      const fullPhoneNumber = selectedCountry.dial_code + ' ' + phoneNumber;
+
+      // Ora invia SOLO il payment method ID (sicuro)
+      const payload = {
+        paymentMethodId: stripePaymentMethod.id, // ✅ SOLO ID, non dati sensibili
         planType: selectedPlan,
         billingPeriod: selectedBillingPeriod,
         orderBumpSelected: orderBumpSelected,
