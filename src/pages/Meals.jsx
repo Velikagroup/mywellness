@@ -262,14 +262,6 @@ export default function MealsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['currentUser'] }),
   });
 
-  const invokeLLMMutation = useMutation({
-    mutationFn: (payload) => base44.post('/llm/invoke', payload),
-  });
-
-  const generateImageMutation = useMutation({
-    mutationFn: (payload) => base44.post('/images/generate', payload),
-  });
-
   const loadMealPlans = useCallback(async () => {
     if (user?.id) {
       await queryClient.invalidateQueries({ queryKey: ['mealPlans', user.id] });
@@ -543,7 +535,7 @@ RESPONSE JSON SCHEMA:
   "difficulty": "easy" | "medium" | "hard"
 }`;
 
-      const llmResponse = await invokeLLMMutation.mutateAsync({
+      const llmResponse = await base44.integrations.Core.InvokeLLM({
         prompt: singleMealPrompt,
         response_json_schema: {
           type: "object",
@@ -573,37 +565,37 @@ RESPONSE JSON SCHEMA:
         }
       });
 
-      const total_calories = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.calories, 0));
-      const total_protein = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
-      const total_carbs = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
-      const total_fat = Math.round(llmResponse.data.data.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
+      const total_calories = Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.calories, 0));
+      const total_protein = Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
+      const total_carbs = Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
+      const total_fat = Math.round(llmResponse.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
 
-      const ingredientsString = llmResponse.data.data.ingredients
+      const ingredientsString = llmResponse.ingredients
         .map(i => `${i.quantity}${i.unit} ${i.name}`)
         .join(', ');
       
-      const imagePrompt = `Photorealistic professional food photography of "${llmResponse.data.data.name}". Main ingredients: ${ingredientsString}. Shot from 45-degree angle, shallow depth of field, clean modern plate, bright natural lighting, appetizing presentation.`;
+      const imagePrompt = `Photorealistic professional food photography of "${llmResponse.name}". Main ingredients: ${ingredientsString}. Shot from 45-degree angle, shallow depth of field, clean modern plate, bright natural lighting, appetizing presentation.`;
       
-      const imageResponse = await generateImageMutation.mutateAsync({ prompt: imagePrompt });
-      const imageUrl = imageResponse.data.data.url;
+      const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
+      const imageUrl = imageResponse.url;
 
       await updateMealMutation.mutateAsync({
         id: mealToRegenerate.id,
         data: {
-          name: llmResponse.data.data.name,
-          ingredients: llmResponse.data.data.ingredients,
-          instructions: llmResponse.data.data.instructions,
+          name: llmResponse.name,
+          ingredients: llmResponse.ingredients,
+          instructions: llmResponse.instructions,
           total_calories: total_calories,
           total_protein: total_protein,
           total_carbs: total_carbs,
           total_fat: total_fat,
-          prep_time: llmResponse.data.data.prep_time,
-          difficulty: llmResponse.data.data.difficulty,
+          prep_time: llmResponse.prep_time,
+          difficulty: llmResponse.difficulty,
           image_url: imageUrl
         }
       });
       
-      alert(`✅ Pasto rigenerato con successo! Nuovo pasto: "${llmResponse.data.data.name}" (${total_calories} kcal)`);
+      alert(`✅ Pasto rigenerato con successo! Nuovo pasto: "${llmResponse.name}" (${total_calories} kcal)`);
       
     } catch (error) {
       console.error("Error regenerating meal:", error);
@@ -724,7 +716,7 @@ RESPONSE JSON SCHEMA:
 
       updateProgress(20, "Generazione piano nutrizionale con AI...");
 
-      const llmResponse = await invokeLLMMutation.mutateAsync({
+      const llmResponse = await base44.integrations.Core.InvokeLLM({
         prompt: mealPlanPrompt,
         response_json_schema: {
           type: "object",
@@ -770,13 +762,13 @@ RESPONSE JSON SCHEMA:
 
       updateProgress(50, "Piano nutrizionale creato! Validazione dati...");
 
-      if (!llmResponse.data.data.meal_plans || !Array.isArray(llmResponse.data.data.meal_plans)) {
+      if (!llmResponse.meal_plans || !Array.isArray(llmResponse.meal_plans)) {
         throw new Error("Risposta AI non valida: la proprietà 'meal_plans' è mancante o non è un array.");
       }
 
-      console.log('📊 Pasti ricevuti dall\'AI:', llmResponse.data.data.meal_plans.length);
+      console.log('📊 Pasti ricevuti dall\'AI:', llmResponse.meal_plans.length);
 
-      let cleanedMealPlans = llmResponse.data.data.meal_plans
+      let cleanedMealPlans = llmResponse.meal_plans
         .filter(meal => {
           if (!meal || typeof meal !== 'object') return false;
           if (!allDays.includes(meal.day_of_week)) return false;
@@ -948,8 +940,8 @@ RESPONSE JSON SCHEMA:
             
             const imagePrompt = `Professional food photography of a meal called "${meal.name}". The dish contains: ${ingredientsString}. Shot from 45-degree angle, clean modern plate, bright natural lighting, shallow depth of field.`;
             
-            const imageResponse = await generateImageMutation.mutateAsync({ prompt: imagePrompt });
-            return { ...meal, image_url: imageResponse.data.data.url };
+            const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
+            return { ...meal, image_url: imageResponse.url };
           } catch (error) {
             console.error(`Error generating image for ${meal.name}:`, error);
             return { ...meal, image_url: null };
