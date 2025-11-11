@@ -361,6 +361,11 @@ export default function Dashboard() {
     return { progress: progressValue, status: statusValue };
   }, [user, weightHistory]);
 
+  const handleRecalibrate = () => {
+    // Naviga al Quiz in modalità recap
+    navigate(createPageUrl("Quiz") + "?mode=recap");
+  };
+
   if (isLoading || isRebalancing) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{
@@ -395,15 +400,14 @@ export default function Dashboard() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Analisi Progressi</h1>
               <p className="text-gray-600">Tracciamento dettagliato e proiezioni</p>
             </div>
-            <Link to={createPageUrl("Quiz") + "?mode=recap"}>
-              <Button 
-                variant="outline" 
-                className="bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl w-full lg:w-auto"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Ricalibra
-              </Button>
-            </Link>
+            <Button 
+              onClick={handleRecalibrate}
+              variant="outline" 
+              className="bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl w-full lg:w-auto"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Ricalibra
+            </Button>
           </div>
 
         {/* Header Mobile - visibile solo su mobile */}
@@ -415,15 +419,14 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-600">Tracciamento dettagliato e proiezioni</p>
               </div>
             </div>
-            <Link to={createPageUrl("Quiz") + "?mode=recap"} className="block">
-              <Button 
-                variant="outline" 
-                className="w-full bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
-              >
-                <RefreshCw className="w-4 h-4 mr-2" />
-                Ricalibra
-              </Button>
-            </Link>
+            <Button 
+              onClick={handleRecalibrate}
+              variant="outline" 
+              className="w-full bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
+            >
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Ricalibra
+            </Button>
           </div>
         )}
 
