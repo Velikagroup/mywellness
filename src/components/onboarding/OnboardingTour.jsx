@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft, X } from 'lucide-react';
@@ -48,7 +49,7 @@ export default function OnboardingTour({ user, onComplete }) {
     {
       id: 'dashboard_intro',
       title: 'La Tua Dashboard',
-      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi.',
+      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi. Puoi modificarli manualmente in qualsiasi momento.',
       target: '.onboarding-technical-stats-wrapper'
     },
     {
