@@ -167,21 +167,74 @@ export default function OnboardingTour({ user, onComplete }) {
           }
           
           .animated-gradient-bg-onboarding {
-            background: #1a1a2e;
+            background: #f9fafb;
             background-image: 
-              radial-gradient(circle at 10% 20%, rgba(38, 132, 127, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 85% 10%, rgba(20, 184, 166, 0.12) 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, rgba(168, 224, 215, 0.08) 0%, transparent 50%),
-              radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(252, 231, 243, 0.05) 0%, transparent 60%),
-              radial-gradient(circle at 90% 85%, rgba(224, 204, 255, 0.08) 0%, transparent 50%);
+              radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
+              radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+              radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+              radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%);
             background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
             animation: gradientShift 45s ease-in-out infinite;
+            background-attachment: fixed;
+          }
+          
+          .liquid-glass-modal {
+            backdrop-filter: blur(20px) saturate(180%);
+            background: linear-gradient(135deg, 
+              rgba(249, 250, 251, 0.85) 0%,
+              rgba(243, 244, 246, 0.75) 50%,
+              rgba(249, 250, 241, 0.85) 100%
+            );
+            box-shadow: 
+              0 8px 32px 0 rgba(31, 38, 135, 0.1),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+          }
+          
+          .liquid-glass-button {
+            backdrop-filter: blur(12px) saturate(180%);
+            background: linear-gradient(135deg, 
+              rgba(249, 250, 251, 0.6) 0%,
+              rgba(243, 244, 246, 0.5) 50%,
+              rgba(249, 250, 241, 0.6) 100%
+            );
+            box-shadow: 
+              0 4px 16px 0 rgba(31, 38, 135, 0.06),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.8),
+              inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03);
+            transition: all 0.2s ease;
+          }
+          
+          .liquid-glass-button:hover {
+            background: linear-gradient(135deg, 
+              rgba(249, 250, 251, 0.75) 0%,
+              rgba(243, 244, 246, 0.65) 50%,
+              rgba(249, 250, 241, 0.75) 100%
+            );
+            box-shadow: 
+              0 6px 20px 0 rgba(31, 38, 135, 0.08),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 -1px 1px 0 rgba(0, 0, 0, 0.04);
+          }
+          
+          .liquid-glass-button-selected {
+            backdrop-filter: blur(12px) saturate(180%);
+            background: linear-gradient(135deg, 
+              rgba(38, 132, 127, 0.25) 0%,
+              rgba(20, 184, 166, 0.20) 50%,
+              rgba(38, 132, 127, 0.25) 100%
+            );
+            box-shadow: 
+              0 4px 16px 0 rgba(38, 132, 127, 0.15),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+              inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
           }
         `}</style>
         
-        <div className="fixed inset-0 z-[200] flex items-center justify-center animated-gradient-bg-onboarding p-4">
-          <div className="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden">
+        <div className="fixed inset-0 z-[200] flex items-center justify-center animated-gradient-bg-onboarding backdrop-blur-md p-4">
+          <div className="max-w-md w-full liquid-glass-modal rounded-xl shadow-2xl overflow-hidden">
             <div className="p-6">
               <h2 className="text-xl font-bold text-gray-900 mb-1 text-center">
                 {currentStepData.title}
@@ -195,10 +248,10 @@ export default function OnboardingTour({ user, onComplete }) {
                   <button
                     key={option.id}
                     onClick={() => setSelectedSource(option.id)}
-                    className={`w-full px-4 py-3 text-left text-sm font-medium rounded-lg transition-all ${
+                    className={`w-full px-4 py-3 text-left text-sm font-medium rounded-lg ${
                       selectedSource === option.id
-                        ? 'bg-[#26847F] text-white'
-                        : 'bg-gray-50 text-gray-700 hover:bg-gray-100'
+                        ? 'liquid-glass-button-selected text-[#26847F]'
+                        : 'liquid-glass-button text-gray-700'
                     }`}
                   >
                     {option.label}
@@ -213,7 +266,7 @@ export default function OnboardingTour({ user, onComplete }) {
                     value={sourceDetails}
                     onChange={(e) => setSourceDetails(e.target.value)}
                     placeholder={selectedSource === 'influencer' ? 'Nome influencer (opzionale)' : 'Dettagli (opzionale)'}
-                    className="w-full px-4 py-2.5 text-sm border border-gray-200 rounded-lg focus:border-[#26847F] focus:outline-none"
+                    className="w-full px-4 py-2.5 text-sm liquid-glass-button rounded-lg focus:outline-none border border-gray-200/30"
                   />
                 </div>
               )}
@@ -221,7 +274,7 @@ export default function OnboardingTour({ user, onComplete }) {
               <Button
                 onClick={handleSourceSelect}
                 disabled={!selectedSource || isSaving}
-                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full liquid-glass-button-selected hover:opacity-90 text-[#26847F] font-semibold disabled:opacity-50 disabled:cursor-not-allowed border-none"
               >
                 {isSaving ? 'Salvataggio...' : 'Continua'}
               </Button>
@@ -258,21 +311,61 @@ export default function OnboardingTour({ user, onComplete }) {
         }
         
         .animated-gradient-bg-onboarding {
-          background: #1a1a2e;
+          background: #f9fafb;
           background-image: 
-            radial-gradient(circle at 10% 20%, rgba(38, 132, 127, 0.15) 0%, transparent 50%),
-            radial-gradient(circle at 85% 10%, rgba(20, 184, 166, 0.12) 0%, transparent 50%),
-            radial-gradient(circle at 20% 80%, rgba(168, 224, 215, 0.08) 0%, transparent 50%),
-            radial-gradient(circle at 70% 60%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
-            radial-gradient(circle at 50% 50%, rgba(252, 231, 243, 0.05) 0%, transparent 60%),
-            radial-gradient(circle at 90% 85%, rgba(224, 204, 255, 0.08) 0%, transparent 50%);
+            radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
+            radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+            radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+            radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%);
           background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
           animation: gradientShift 45s ease-in-out infinite;
+          background-attachment: fixed;
+        }
+        
+        .liquid-glass-modal {
+          backdrop-filter: blur(20px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(249, 250, 251, 0.85) 0%,
+            rgba(243, 244, 246, 0.75) 50%,
+            rgba(249, 250, 241, 0.85) 100%
+          );
+          box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.1),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+        
+        .liquid-glass-button {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(249, 250, 251, 0.6) 0%,
+            rgba(243, 244, 246, 0.5) 50%,
+            rgba(249, 250, 241, 0.6) 100%
+          );
+          box-shadow: 
+            0 4px 16px 0 rgba(31, 38, 135, 0.06),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.8),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.03);
+        }
+        
+        .liquid-glass-button-selected {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(38, 132, 127, 0.25) 0%,
+            rgba(20, 184, 166, 0.20) 50%,
+            rgba(38, 132, 127, 0.25) 100%
+          );
+          box-shadow: 
+            0 4px 16px 0 rgba(38, 132, 127, 0.15),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.5),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
       `}</style>
       
-      <div className="fixed inset-0 z-[200] flex items-center justify-center animated-gradient-bg-onboarding p-4">
-        <div className="max-w-md w-full bg-white rounded-xl shadow-2xl overflow-hidden">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center animated-gradient-bg-onboarding backdrop-blur-md p-4">
+        <div className="max-w-md w-full liquid-glass-modal rounded-xl shadow-2xl overflow-hidden">
           <div className="p-6">
             <div className="flex items-start justify-between mb-4">
               <h2 className="text-xl font-bold text-gray-900">
@@ -294,7 +387,7 @@ export default function OnboardingTour({ user, onComplete }) {
               <div className="space-y-3">
                 <Button
                   onClick={handleNavigateToMeals}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold"
+                  className="w-full liquid-glass-button-selected hover:opacity-90 text-[#26847F] font-semibold border-none"
                 >
                   Vai a Nutrizione
                 </Button>
@@ -325,8 +418,7 @@ export default function OnboardingTour({ user, onComplete }) {
                   {currentStep > 1 && (
                     <Button
                       onClick={handlePrevious}
-                      variant="outline"
-                      className="flex-1 font-semibold"
+                      className="flex-1 font-semibold liquid-glass-button text-gray-700 border-none hover:opacity-90"
                     >
                       <ArrowLeft className="w-4 h-4 mr-1" />
                       Indietro
@@ -335,7 +427,7 @@ export default function OnboardingTour({ user, onComplete }) {
                   
                   <Button
                     onClick={handleNext}
-                    className={`bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold ${currentStep > 1 ? 'flex-1' : 'w-full'}`}
+                    className={`liquid-glass-button-selected hover:opacity-90 text-[#26847F] font-semibold border-none ${currentStep > 1 ? 'flex-1' : 'w-full'}`}
                   >
                     Avanti
                     <ArrowRight className="w-4 h-4 ml-1" />
