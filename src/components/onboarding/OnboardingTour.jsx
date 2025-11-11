@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -37,28 +36,28 @@ export default function OnboardingTour({ user, onComplete }) {
       title: '📊 La Tua Dashboard Scientifica',
       description: 'Qui trovi tutti i tuoi dati metabolici calcolati con precisione scientifica. BMR, massa grassa, target calorico e progressi verso l\'obiettivo.',
       target: '.technical-stats-card',
-      position: 'left'
+      position: 'center'
     },
     {
       id: 'edit_bmr',
       title: '✏️ Personalizza i Tuoi Dati',
       description: 'Puoi modificare manualmente il metabolismo basale, la massa grassa e il target calorico cliccando sull\'icona di modifica in alto a destra di ogni card.',
       target: '.technical-stats-card',
-      position: 'left'
+      position: 'center'
     },
     {
       id: 'progress_chart',
       title: '📈 Traccia i Tuoi Progressi',
       description: 'Questo grafico mostra l\'andamento del tuo peso nel tempo. Puoi aggiungere nuove pesate direttamente da qui!',
       target: '.progress-chart-section',
-      position: 'bottom'
+      position: 'center'
     },
     {
       id: 'nutrition_meals',
       title: '🍽️ Vai al Piano Nutrizionale',
       description: 'Ora sei pronto! Vai alla sezione Nutrizione per generare il tuo piano alimentare personalizzato con l\'AI.',
       target: 'a[href*="Meals"]',
-      position: 'top',
+      position: 'center',
       final: true
     }
   ];
@@ -141,22 +140,12 @@ export default function OnboardingTour({ user, onComplete }) {
 
   const handleSkip = async () => {
     try {
-      if (currentStep === 0 && !selectedSource) {
-        await base44.entities.UserOnboarding.create({
-          user_id: user.id,
-          discovery_source: 'other',
-          discovery_details: 'Skipped',
+      const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
+      if (onboardingRecords.length > 0) {
+        await base44.entities.UserOnboarding.update(onboardingRecords[0].id, {
           onboarding_completed: true,
           completed_date: new Date().toISOString()
         });
-      } else {
-        const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
-        if (onboardingRecords.length > 0) {
-          await base44.entities.UserOnboarding.update(onboardingRecords[0].id, {
-            onboarding_completed: true,
-            completed_date: new Date().toISOString()
-          });
-        }
       }
       
       await base44.auth.updateMe({ onboarding_completed: true });
@@ -192,6 +181,21 @@ export default function OnboardingTour({ user, onComplete }) {
     if (!element) return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)' };
     
     const rect = element.getBoundingClientRect();
+    const isMobile = window.innerWidth < 768;
+    
+    // Su mobile, posiziona sempre centrato in basso
+    if (isMobile) {
+      return {
+        position: 'fixed',
+        bottom: '20px',
+        left: '50%',
+        transform: 'translateX(-50%)',
+        width: 'calc(100vw - 2rem)',
+        maxWidth: '500px'
+      };
+    }
+    
+    // Desktop: posizionamento dinamico come prima
     const tooltipWidth = 400;
     const tooltipHeight = 200;
     const gap = 20;
@@ -199,6 +203,13 @@ export default function OnboardingTour({ user, onComplete }) {
     let style = {};
     
     switch (currentStepData.position) {
+      case 'center':
+        style = {
+          top: '50%',
+          left: '50%',
+          transform: 'translate(-50%, -50%)'
+        };
+        break;
       case 'top':
         style = {
           bottom: window.innerHeight - rect.top + gap,
@@ -240,37 +251,34 @@ export default function OnboardingTour({ user, onComplete }) {
 
   if (currentStepData?.type === 'modal') {
     return (
-      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm">
-        <Card className="max-w-2xl w-full mx-4 bg-white shadow-2xl">
-          <CardContent className="p-8">
-            <div className="flex items-center justify-between mb-6">
+      <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/60 backdrop-blur-sm p-4">
+        <Card className="max-w-2xl w-full bg-white shadow-2xl">
+          <CardContent className="p-6 md:p-8">
+            <div className="flex items-center justify-center mb-6">
               <div className="flex items-center gap-3">
                 <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-xl flex items-center justify-center">
                   <Sparkles className="w-6 h-6 text-white" />
                 </div>
-                <h2 className="text-2xl font-bold text-gray-900">{currentStepData.title}</h2>
+                <h2 className="text-xl md:text-2xl font-bold text-gray-900">{currentStepData.title}</h2>
               </div>
-              <button onClick={handleSkip} className="text-gray-400 hover:text-gray-600 transition-colors">
-                <X className="w-5 h-5" />
-              </button>
             </div>
             
-            <p className="text-gray-600 mb-6 text-lg">{currentStepData.description}</p>
+            <p className="text-gray-600 mb-6 text-base md:text-lg text-center">{currentStepData.description}</p>
             
             <div className="grid grid-cols-2 gap-3 mb-6">
               {discoveryOptions.map((option) => (
                 <button
                   key={option.id}
                   onClick={() => setSelectedSource(option.id)}
-                  className={`p-4 rounded-xl border-2 transition-all text-left hover:scale-105 ${
+                  className={`p-3 md:p-4 rounded-xl border-2 transition-all text-left hover:scale-105 ${
                     selectedSource === option.id
                       ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] shadow-lg'
                       : 'border-gray-200 hover:border-[var(--brand-primary)]/50'
                   }`}
                 >
-                  <div className="flex items-center gap-3">
-                    <span className="text-3xl">{option.emoji}</span>
-                    <span className="font-semibold text-gray-800">{option.label}</span>
+                  <div className="flex items-center gap-2 md:gap-3">
+                    <span className="text-2xl md:text-3xl">{option.emoji}</span>
+                    <span className="font-semibold text-gray-800 text-sm md:text-base">{option.label}</span>
                   </div>
                 </button>
               ))}
@@ -288,17 +296,11 @@ export default function OnboardingTour({ user, onComplete }) {
               </div>
             )}
             
-            <div className="flex items-center justify-between">
-              <button
-                onClick={handleSkip}
-                className="text-gray-500 hover:text-gray-700 font-medium"
-              >
-                Salta
-              </button>
+            <div className="flex items-center justify-center">
               <Button
                 onClick={handleSourceSelect}
                 disabled={!selectedSource || isSaving}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-8"
+                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-8 w-full md:w-auto"
               >
                 {isSaving ? 'Salvataggio...' : (
                   <>
@@ -353,20 +355,20 @@ export default function OnboardingTour({ user, onComplete }) {
       
       {/* Tooltip */}
       <Card 
-        className="absolute bg-white shadow-2xl max-w-md animate-in fade-in slide-in-from-bottom-4"
+        className="absolute bg-white shadow-2xl animate-in fade-in slide-in-from-bottom-4"
         style={tooltipStyle}
       >
-        <CardContent className="p-6">
+        <CardContent className="p-4 md:p-6">
           <div className="flex items-start justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-900 pr-8">{currentStepData.title}</h3>
-            <button onClick={handleSkip} className="text-gray-400 hover:text-gray-600 transition-colors">
+            <h3 className="text-lg md:text-xl font-bold text-gray-900 pr-8">{currentStepData.title}</h3>
+            <button onClick={handleSkip} className="text-gray-400 hover:text-gray-600 transition-colors flex-shrink-0">
               <X className="w-5 h-5" />
             </button>
           </div>
           
-          <p className="text-gray-600 mb-6">{currentStepData.description}</p>
+          <p className="text-gray-600 mb-6 text-sm md:text-base">{currentStepData.description}</p>
           
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
               {steps.slice(1).map((_, index) => (
                 <div
@@ -378,12 +380,13 @@ export default function OnboardingTour({ user, onComplete }) {
               ))}
             </div>
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-shrink-0">
               {currentStep > 1 && (
                 <Button
                   onClick={handlePrevious}
                   variant="outline"
                   size="sm"
+                  className="hidden md:flex"
                 >
                   <ArrowLeft className="w-4 h-4 mr-2" />
                   Indietro
