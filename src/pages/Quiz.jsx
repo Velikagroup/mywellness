@@ -95,10 +95,13 @@ export default function Quiz() {
   const urlStep = parseInt(urlParams.get('step')) || 0;
   const isRecapMode = urlParams.get('mode') === 'recap';
 
-  const [currentStep, setCurrentStep] = useState(0); // ✅ Sempre parte da 0
-  const [quizData, setQuizData] = useState({});
+  const [currentStep, setCurrentStep] = useState(urlStep);
+  const [quizData, setQuizData] = useState(() => {
+    const saved = localStorage.getItem('quizData');
+    return saved ? JSON.parse(saved) : {};
+  });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dynamicSteps, setDynamicSteps] = useState(() => buildDynamicSteps({}));
+  const [dynamicSteps, setDynamicSteps] = useState(() => buildDynamicSteps(quizData));
   const [isCalculating, setIsCalculating] = useState(false);
   const [showBodyFatReveal, setShowBodyFatReveal] = useState(false);
   const [bodyFatRevealed, setBodyFatRevealed] = useState(false);
@@ -114,21 +117,21 @@ export default function Quiz() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        // ✅ Se è recap mode → RESET COMPLETO del quiz
-        if (isRecapMode) {
-          console.log('🔄 RECAP MODE: Resetting quiz to step 0');
-          localStorage.removeItem('quizData');
-          setQuizData({ gender: currentUser.gender || '' });
-          setCurrentStep(0);
-          window.history.replaceState({}, '', `${window.location.pathname}?mode=recap&step=0`);
-          setIsLoadingUser(false);
+        // Se l'utente ha già completato il quiz e NON è in recap mode → vai alla Dashboard
+        if (currentUser && currentUser.quiz_completed && !isRecapMode) {
+          navigate(createPageUrl('Dashboard'), { replace: true });
           return;
         }
         
-        // Se l'utente ha già completato il quiz e NON è in recap mode → vai alla Dashboard
-        if (currentUser && currentUser.quiz_completed) {
-          navigate(createPageUrl('Dashboard'), { replace: true });
-          return;
+        // ✅ FIX RECAP MODE: Carica i dati dell'utente MA cancella i dati salvati localmente
+        if (isRecapMode && currentUser) {
+          // Svuota il localStorage per forzare il riavvio del quiz
+          localStorage.removeItem('quizData');
+          setQuizData({
+            gender: currentUser.gender || '',
+          });
+          setCurrentStep(0); // ✅ RIPARTE DALLO STEP 0 (intro)
+          window.history.replaceState({}, '', `${window.location.pathname}?step=0`);
         }
         
       } catch (error) {
@@ -315,37 +318,100 @@ export default function Quiz() {
         quiz_completed: true,
       };
 
-      console.log('💾 Quiz data to save:', userDataToSave);
-
+      // Controlla se l'utente è già loggato
       if (user && user.id) {
-        console.log('✅ User logged in, saving directly...');
+        console.log('💾 Saving user data...', userDataToSave);
+        // Utente loggato - salva dati direttamente e vai al TrialSetup
         await base44.auth.updateMe(userDataToSave);
         localStorage.removeItem('quizData');
-        
-        // ✅ Se è recap mode → torna alla Dashboard
-        if (isRecapMode) {
-          console.log('🔄 Recap complete, redirecting to Dashboard...');
-          navigate(createPageUrl('Dashboard'), { replace: true });
-        } else {
-          // Nuovo utente → vai al TrialSetup
-          navigate(createPageUrl('TrialSetup'), { replace: true });
-        }
+        console.log('✅ User data saved, redirecting to TrialSetup...');
+        navigate(createPageUrl('TrialSetup'), { replace: true });
       } else {
+        // Utente NON loggato - salva nel localStorage e fai login
         localStorage.setItem('quizData', JSON.stringify({...quizData, ...userDataToSave}));
         localStorage.setItem('redirectToTrialSetup', 'true');
+        
         const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
         await base44.auth.redirectToLogin(trialSetupUrl);
       }
       
     } catch (error) {
-      console.error("Error saving quiz data:", error);
-      alert("Errore durante il salvataggio. Riprova.");
+      console.error("Error preparing quiz data:", error);
+      alert("Si è verificato un errore durante il salvataggio dei dati. Riprova.");
       setIsSaving(false);
     }
   };
 
-  // The handleProceedToDashboard function is no longer needed as its logic is covered by handleRevealBodyFat
-  // which now correctly handles both logged-in and unauthenticated users for quiz completion and redirection.
+  const handleProceedToDashboard = async () => {
+    setShowBodyFatReveal(false);
+    setIsSaving(true); // Indicate that final data saving is in progress
+    
+    try {
+      const age = quizData.age || calculateAge(quizData.birthdate);
+
+      // The quiz no longer includes gender selection. If the user is logged in,
+      // `currentUser.gender` should be available. If not, `quizData.gender` might
+      // be undefined, which calculateBMR handles by returning 0.
+      // This implies gender should ideally be set prior to this point or be
+      // a part of a previous step not covered by the current dynamic steps definition.
+      // For now, assuming `quizData.gender` will eventually be populated, perhaps from user profile.
+      // If quizData.gender is missing, BMR calculation will be 0, leading to 0 daily calories.
+      // This needs a robust solution if gender is not captured anywhere.
+      // For now, adhering strictly to the provided outline, which removed GenderStep.
+      const bmr = calculateBMR(
+        quizData.current_weight,
+        quizData.height,
+        age,
+        quizData.gender // gender might be missing now if not pre-filled or user not logged in
+      );
+
+      // Activity level, daily calories, etc. are not part of the initial quiz anymore
+      // Set default values or remove if not needed for initial completion
+      const activityMultiplier = getActivityMultiplier(quizData.activity_level || 'sedentary'); // Default to sedentary
+      let dailyCalories = bmr * activityMultiplier;
+
+      // Assuming a default weight loss speed or handling based on whether it was asked
+      // For now, let's keep the existing logic, but note it might be based on an unasked question
+      if (quizData.weight_loss_speed === 'very_fast') {
+        dailyCalories *= 0.75;
+      } else if (quizData.weight_loss_speed === 'moderate') {
+        dailyCalories *= 0.8;
+      } else if (quizData.weight_loss_speed === 'slow') {
+        dailyCalories *= 0.9;
+      }
+
+      // bodyFat also depends on `quizData.gender`
+      const bodyFat = calculateBodyFat(
+        quizData.gender, // gender might be missing
+        quizData.height,
+        quizData.waist_circumference,
+        quizData.neck_circumference,
+        quizData.hip_circumference
+      );
+
+      const finalDataToSubmit = {
+        ...quizData,
+        age: age,
+        body_fat_percentage: bodyFat !== null ? parseFloat(bodyFat.toFixed(1)) : null,
+        bmr: Math.round(bmr),
+        daily_calories: Math.round(dailyCalories),
+        quiz_completed: false, // Updated to false; quiz completion will be managed later for trial setup
+      };
+
+      await base44.auth.updateMe(finalDataToSubmit);
+      
+      localStorage.removeItem('quizData');
+      
+      // Reindirizza alla home page per login/registrazione, non più alla Dashboard direttamente
+      navigate(createPageUrl('Home'), { replace: true });
+      
+    } catch (error) {
+      console.error("Error saving quiz data:", error); // Updated error message
+      alert("Si è verificato un errore durante il salvataggio dei dati. Riprova.");
+    } finally {
+      setIsSaving(false);
+    }
+  };
 
   if (isLoadingUser) {
     return (

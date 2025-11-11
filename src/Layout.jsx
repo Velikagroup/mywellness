@@ -129,6 +129,15 @@ export default function Layout({ children }) {
 
   const allNavItems = [...mainNavItems, ...adminMenuItems];
 
+  const getMenuMaxWidth = () => {
+    const itemCount = allNavItems.length;
+    // Ogni icona occupa circa 90px (70px min-width + padding)
+    const baseWidth = itemCount * 90;
+    // Aggiungi padding laterale
+    const totalWidth = baseWidth + 40;
+    return Math.min(totalWidth, 1280); // Max 1280px
+  };
+
   const handleMenuItemClick = (path) => {
     setMobileMenuOpen(false);
     navigate(createPageUrl(path));
@@ -234,28 +243,21 @@ export default function Layout({ children }) {
         {children}
       </main>
 
-      {/* ✅ MENU DINAMICO - si adatta al numero di icone */}
-      <div 
-        className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-4 transition-all duration-300"
-        style={{ 
-          width: '100%',
-          maxWidth: window.innerWidth >= 640 ? `${Math.min(allNavItems.length * 90 + 40, 1280)}px` : '100%'
-        }}
-      >
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4" style={{ maxWidth: `${getMenuMaxWidth()}px` }}>
         <div className="water-glass-effect rounded-3xl py-3 px-2">
-          <div className="hidden sm:flex items-center justify-around gap-1">
+          <div className="hidden sm:flex items-center justify-around">
             {allNavItems.map((item) => (
               <Link
                 key={item.name}
                 to={createPageUrl(item.path)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] flex-1 max-w-[100px] ${
+                className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] ${
                   location.pathname === createPageUrl(item.path)
                     ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
                     : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
                 }`}
               >
                 <item.icon className="w-5 h-5" />
-                <span className="text-xs font-medium text-center truncate w-full">{item.name}</span>
+                <span className="text-xs font-medium">{item.name}</span>
               </Link>
             ))}
           </div>
