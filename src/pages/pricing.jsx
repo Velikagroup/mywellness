@@ -1,14 +1,14 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Import CardHeader
 import { Input } from '@/components/ui/input';
 import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 
-export default function Pricing() {
+export default function PricingPage() { // Renamed component from Pricing to PricingPage
   const navigate = useNavigate();
   const [isAnnual, setIsAnnual] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -20,6 +20,7 @@ export default function Pricing() {
   const [couponData, setCouponData] = React.useState(null);
   const [userEmail, setUserEmail] = React.useState(null);
   const [pricingTracked, setPricingTracked] = React.useState(false);
+  const [selectedPlan, setSelectedPlan] = React.useState(null); // Added state for selected plan
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -116,6 +117,7 @@ export default function Pricing() {
 
   const plans = [
     {
+      id: 'base', // Added id for selection
       name: "Base",
       priceMonthly: 19,
       priceAnnual: 15.2,
@@ -137,6 +139,7 @@ export default function Pricing() {
       popular: false
     },
     {
+      id: 'pro', // Added id for selection
       name: "Pro",
       priceMonthly: 29,
       priceAnnual: 23.2,
@@ -159,6 +162,7 @@ export default function Pricing() {
       popular: true
     },
     {
+      id: 'premium', // Added id for selection
       name: "Premium",
       priceMonthly: 39,
       priceAnnual: 31.2,
@@ -290,13 +294,16 @@ export default function Pricing() {
     }
   ];
 
-  const handleSelectPlan = async (planName) => {
+  const handleSelectPlan = async (planId) => { // Modified to accept planId
     let planType = 'base';
-    if (planName.toLowerCase().includes('pro')) {
+    if (planId.toLowerCase().includes('pro')) {
       planType = 'pro';
-    } else if (planName.toLowerCase().includes('premium')) {
+    } else if (planId.toLowerCase().includes('premium')) {
       planType = 'premium';
     }
+
+    // Set selected plan visually (briefly) before navigating
+    setSelectedPlan(planId); 
 
     try {
       const currentUser = await base44.auth.me();
@@ -342,7 +349,7 @@ export default function Pricing() {
   };
 
   return (
-    <div className="min-h-screen animated-gradient-bg">
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden"> {/* Added overflow-x-hidden */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
@@ -649,7 +656,7 @@ export default function Pricing() {
       `}</style>
 
       {/* NAVBAR */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[80%] max-w-sm md:w-auto md:max-w-none">
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:w-auto md:max-w-none px-2 md:px-0"> {/* Adjusted width and padding */}
         <div className="hidden md:flex water-glass-effect rounded-full items-center gap-8 px-6 py-3">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -743,20 +750,20 @@ export default function Pricing() {
       </nav>
 
       {/* Main Content */}
-      <div className="pt-32 pb-20 px-6">
-        <div className="max-w-7xl mx-auto">
+      <section className="pt-32 pb-12 px-4 md:px-6"> {/* Changed div to section, adjusted padding */}
+        <div className="max-w-6xl mx-auto"> {/* Changed max-w-7xl to max-w-6xl */}
           {/* Header */}
-          <div className="text-center mb-16">
+          <div className="text-center mb-12"> {/* Changed mb-16 to mb-12 */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary-light)] border border-[var(--brand-primary)]/30 rounded-full text-sm mb-6">
               <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />
               <span className="text-[var(--brand-primary-dark-text)] font-semibold">3 Giorni Gratis su Tutti i Piani</span>
             </div>
             
-            <h1 className="text-5xl md:text-6xl font-bold mb-4">
-              Scegli <span className="animated-text-gradient">il Tuo Piano</span>
+            <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold text-gray-900 mb-6 tracking-tight px-2"> {/* Adjusted text size, added px-2 */}
+              Scegli <span className="animated-text-gradient">il Piano Perfetto per Te</span> {/* Modified text */}
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto mb-8">
-              Iniza subito con 3 giorni gratuiti. Cancella quando vuoi, senza vincoli.
+            <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 px-2"> {/* Adjusted text size, added px-2 */}
+              3 giorni di prova gratuita su tutti i piani • Cancella quando vuoi {/* Modified text */}
             </p>
 
             {/* Billing Toggle */}
@@ -788,11 +795,11 @@ export default function Pricing() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid md:grid-cols-3 gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16"> {/* Adjusted gap */}
             {plans.map((plan, index) => (
-              <div 
-                key={plan.name}
-                className={`pricing-card-liquid ${plan.popular ? 'pricing-card-popular' : ''} rounded-3xl overflow-hidden`}
+              <Card 
+                key={plan.id} // Using plan.id for key
+                className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
               >
                 {plan.popular && (
                   <div className="popular-badge text-[var(--brand-primary)] text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
@@ -813,7 +820,7 @@ export default function Pricing() {
                   </div>
                 )}
 
-                <div className={`text-center ${plan.popular || plan.name === "Premium" ? 'pt-8' : 'pt-10'} pb-6 px-6`}>
+                <CardHeader className="text-center pb-6 pt-6 px-4 sm:px-6"> {/* Wrapped content in CardHeader, adjusted padding */}
                   <div className={`icon-container w-20 h-20 ${plan.iconBg} rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
                     <plan.icon className={`w-10 h-10 ${plan.iconColor}`} />
                   </div>
@@ -864,9 +871,9 @@ export default function Pricing() {
                       💳 Fatturato annualmente (€{(getPrice(plan) * 12).toFixed(0)}/anno)
                     </p>
                   )}
-                </div>
+                </CardHeader>
 
-                <div className="px-6 pb-8">
+                <CardContent className="px-4 sm:px-6 pb-6"> {/* Wrapped content in CardContent, adjusted padding */}
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="feature-item flex items-start gap-3 group">
@@ -879,7 +886,7 @@ export default function Pricing() {
                   </ul>
 
                   <button
-                    onClick={() => handleSelectPlan(plan.name)}
+                    onClick={() => handleSelectPlan(plan.id)} // Pass plan.id to handleSelectPlan
                     className={`cta-button w-full text-base font-bold py-4 rounded-2xl transition-all shadow-lg hover:shadow-2xl relative z-10 ${
                       plan.popular
                         ? 'bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white'
@@ -888,13 +895,13 @@ export default function Pricing() {
                   >
                     <span className="relative z-10">{plan.cta}</span>
                   </button>
-                </div>
-              </div>
+                </CardContent>
+              </Card>
             ))}
           </div>
 
           {/* FAQ Section */}
-          <div className="max-w-3xl mx-auto mt-32 mb-20">
+          <div className="max-w-3xl mx-auto mt-32 mb-20 px-4 sm:px-6"> {/* Adjusted padding */}
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-16">Domande <span className="animated-text-gradient">Frequenti</span></h2>
             
             <div className="space-y-4">
@@ -927,7 +934,7 @@ export default function Pricing() {
           </div>
 
           {/* Testimonials Section */}
-          <div className="mt-20 mb-16">
+          <div className="mt-20 mb-16 px-4 sm:px-6"> {/* Adjusted padding */}
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-12">
               <span className="animated-text-gradient">Cosa Dicono</span> i Nostri Utenti.
             </h2>
@@ -979,7 +986,7 @@ export default function Pricing() {
             </div>
           </footer>
         </div>
-      </div>
+      </section>
     </div>
   );
 }

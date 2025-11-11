@@ -208,19 +208,19 @@ export default function Home() {
   };
 
   return (
-    <div className="min-h-screen animated-gradient-bg">
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&family=Poppins:wght@900&display=swap');
         
         * {
           font-family: 'Inter', sans-serif;
-          max-width: 100%;
         }
         
-        html, body {
-          overflow-x: hidden;
-          max-width: 100vw;
+        html, body, #root {
+          overflow-x: hidden !important;
+          max-width: 100vw !important;
+          position: relative;
         }
         
         :root {
@@ -231,39 +231,21 @@ export default function Home() {
         }
 
         @keyframes borderGradientFlow {
-          0% {
-            background-position: 0% 50%;
-          }
-          100% {
-            background-position: 200% 50%;
-          }
+          0% { background-position: 0% 50%; }
+          100% { background-position: 200% 50%; }
         }
         
         @keyframes gradientShift {
-          0% {
-            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
-          }
-          33% {
-            background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%;
-          }
-          66% {
-            background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%;
-          }
+          0% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
+          33% { background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%; }
+          66% { background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%; }
+          100% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
         }
         
         @keyframes textGradientFlow {
-          0% {
-            background-position: 0% 50%;
-          }
-          50% {
-            background-position: 100% 50%;
-          }
-          100% {
-            background-position: 0% 50%;
-          }
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
         
         .animated-gradient-bg {
@@ -279,18 +261,6 @@ export default function Home() {
           animation: gradientShift 45s linear infinite;
           background-attachment: fixed;
         }
-        
-        @media (max-width: 768px) {
-          html, body, #root {
-            overflow-x: hidden !important;
-            max-width: 100vw !important;
-            position: relative;
-          }
-          .animated-gradient-bg {
-            animation: gradientShift 30s linear infinite;
-            overflow-x: hidden;
-          }
-        }
 
         .animated-text-gradient {
           background: linear-gradient(90deg, var(--brand-primary), #14b8a6, #10b981, #14b8a6, var(--brand-primary));
@@ -303,15 +273,8 @@ export default function Home() {
 
         .water-glass-effect {
           backdrop-filter: blur(12px) saturate(180%);
-          background: linear-gradient(135deg, 
-            rgba(249, 250, 251, 0.75) 0%,
-            rgba(243, 244, 246, 0.65) 50%),
-            rgba(249, 250, 241, 0.75) 100%
-          );
-          box-shadow: 
-            0 8px 32px 0 rgba(31, 38, 135, 0.08),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+          background: linear-gradient(135deg, rgba(249, 250, 251, 0.75) 0%, rgba(243, 244, 246, 0.65) 50%, rgba(249, 250, 241, 0.75) 100%);
+          box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
 
         .quiz-button-slide {
@@ -319,14 +282,8 @@ export default function Home() {
         }
 
         @keyframes slideInFromRight {
-          from {
-            opacity: 0;
-            transform: translateX(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateX(0);
-          }
+          from { opacity: 0; transform: translateX(20px); }
+          to { opacity: 1; transform: translateX(0); }
         }
 
         .mobile-floating-fade {
@@ -334,14 +291,8 @@ export default function Home() {
         }
 
         @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          from { opacity: 0; transform: translateY(20px); }
+          to { opacity: 1; transform: translateY(0); }
         }
 
         .nav-expand {
@@ -364,23 +315,11 @@ export default function Home() {
           height: 10px;
         }
 
-        .burger-line:first-child {
-          top: 0;
-        }
+        .burger-line:first-child { top: 0; }
+        .burger-line:last-child { bottom: 0; }
 
-        .burger-line:last-child {
-          bottom: 0;
-        }
-
-        .burger-open .burger-line:first-child {
-          top: 4px;
-          transform: rotate(45deg);
-        }
-
-        .burger-open .burger-line:last-child {
-          bottom: 4px;
-          transform: rotate(-45deg);
-        }
+        .burger-open .burger-line:first-child { top: 4px; transform: rotate(45deg); }
+        .burger-open .burger-line:last-child { bottom: 4px; transform: rotate(-45deg); }
 
         .mobile-menu {
           max-height: 0;
@@ -413,9 +352,7 @@ export default function Home() {
           z-index: 1;
         }
 
-        .step-image-container:hover::before {
-          opacity: 1;
-        }
+        .step-image-container:hover::before { opacity: 1; }
 
         .step-image {
           transition: transform 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
@@ -433,17 +370,14 @@ export default function Home() {
 
         /* Mobile H1 readability improvements */
         @media (max-width: 768px) {
-          .hero-title {
-            /* Box dietro rimosso - titolo normale */
-          }
-          
-          .hero-title .animated-text-gradient {
-            /* Mantieni gradiente pulito */
+          .animated-gradient-bg {
+            animation: gradientShift 30s linear infinite;
+            overflow-x: hidden;
           }
         }
       `}</style>
 
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[80%] max-w-sm md:w-auto md:max-w-none">
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:w-auto md:max-w-none px-2 md:px-0">
         <div className={`hidden md:flex water-glass-effect rounded-full items-center nav-expand transition-all ${showNavQuizButton ? 'gap-8 pl-6 pr-6 py-3' : 'gap-8 px-6 py-3'}`}>
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -534,17 +468,17 @@ export default function Home() {
 
       {/* Mobile Floating Quiz Button */}
       {showMobileFloatingButton &&
-      <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 flex justify-center mobile-floating-fade">
+      <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 px-4 mobile-floating-fade">
           <Button
           onClick={handleGetStarted} // Changed to handleGetStarted
           disabled={isLoading} // Added disabled state
-          className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-full px-8 py-6 text-base font-semibold shadow-2xl">
+          className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-full px-6 py-6 text-base font-semibold shadow-2xl">
             Quiz Gratuito
           </Button>
         </div>
       }
 
-      <section className="pt-32 pb-20 px-6">
+      <section className="pt-32 pb-20 px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-transparent border-2 border-transparent rounded-full text-sm shadow-lg" style={{
@@ -578,27 +512,27 @@ export default function Home() {
             </div>
           </div>
           
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1]">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
             Il tuo percorso <span className="animated-text-gradient">Wellness</span>,
             guidato dall'<span className="animated-text-gradient">AI</span>
           </h1>
           
-          <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed px-2">
             Piani nutrizionali e allenamenti personalizzati, creati dall'intelligenza artificiale e adattati in tempo reale ai tuoi progressi.
           </p>
           
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
             <Button
               ref={heroQuizButtonRef}
               onClick={handleGetStarted}
               disabled={isLoading}
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-6 py-3 text-sm font-medium">
+              className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-6 py-3 text-sm font-medium">
               Quiz Gratuito
             </Button>
             <Button
               onClick={handleWatchDemo}
               variant="outline"
-              className="border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] rounded-full px-6 py-3 text-sm font-medium">
+              className="w-full sm:w-auto border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] rounded-full px-6 py-3 text-sm font-medium">
               Guarda Demo
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>

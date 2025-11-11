@@ -11,7 +11,7 @@ export default function Privacy() {
   }, []);
 
   return (
-    <div className="min-h-screen" style={{
+    <div className="min-h-screen overflow-x-hidden" style={{
       background: '#f9fafb',
       backgroundImage: `
         radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%),
@@ -39,8 +39,8 @@ export default function Privacy() {
       `}</style>
 
       {/* Navbar */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="water-glass-effect rounded-full px-6 py-3">
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-[300px]">
+        <div className="water-glass-effect rounded-full px-6 py-3 flex justify-center">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
@@ -51,12 +51,12 @@ export default function Privacy() {
       </nav>
 
       {/* Main Content */}
-      <div className="pt-32 pb-20 px-6">
-        <div className="max-w-4xl mx-auto water-glass-effect rounded-3xl p-8 md:p-12">
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 mb-8">Privacy Policy</h1>
-          <p className="text-sm text-gray-500 mb-8">Ultimo aggiornamento: Gennaio 2025</p>
+      <div className="pt-32 pb-20 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto water-glass-effect rounded-3xl p-6 sm:p-8 md:p-12">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl font-bold text-gray-900 mb-6 sm:mb-8">Privacy Policy</h1>
+          <p className="text-xs sm:text-sm text-gray-500 mb-6 sm:mb-8">Ultimo aggiornamento: Gennaio 2025</p>
 
-          <div className="space-y-8 text-gray-700 leading-relaxed">
+          <div className="space-y-6 sm:space-y-8 text-sm sm:text-base text-gray-700 leading-relaxed">
             <section>
               <h2 className="text-2xl font-bold text-gray-900 mb-4">1. Introduzione</h2>
               <p>

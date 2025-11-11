@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -514,7 +515,7 @@ export default function TrialSetup() {
 
   const handleCompleteSetup = async () => {
     if (!isFormValid) {
-      alert("Per favore, compila tutti i campi obbligatori correttamente.");
+      alert("Per favor, compila tutti i campi obbligatori correttamente.");
       return;
     }
 
@@ -651,7 +652,7 @@ export default function TrialSetup() {
   }
 
   return (
-    <div className="min-h-screen animated-gradient-bg">
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -710,8 +711,8 @@ export default function TrialSetup() {
         }
       `}</style>
 
-      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="water-glass-effect rounded-full px-6 py-3">
+      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-[300px]">
+        <div className="water-glass-effect rounded-full px-6 py-3 flex justify-center">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
@@ -756,7 +757,7 @@ export default function TrialSetup() {
             )}
           </CardHeader>
 
-          <CardContent className="px-8 pb-8 space-y-6">
+          <CardContent className="px-4 sm:px-8 pb-8 space-y-6">
             <div className="bg-[var(--brand-primary-light)] rounded-xl p-5 border border-[var(--brand-primary)]/20">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
@@ -1202,27 +1203,27 @@ export default function TrialSetup() {
                   </div>
                 </div>
 
-                <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
-                  <Shield className="w-4 h-4" />
-                  <span>Pagamento sicuro e crittografato</span>
+                <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 pt-2">
+                  <Shield className="w-4 h-4 flex-shrink-0" />
+                  <span className="text-center">Pagamento sicuro e crittografato</span>
                 </div>
 
                 <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
-                  <div className="flex justify-between text-gray-700">
+                  <div className="flex justify-between text-sm sm:text-base text-gray-700">
                     <span>Subtotale</span>
                     <span>€{subtotal.toFixed(2)}</span>
                   </div>
                   {appliedCoupon && appliedCoupon.discount_type === 'percentage' && (
-                    <div className="flex justify-between text-green-600 font-semibold">
+                    <div className="flex justify-between text-sm sm:text-base text-green-600 font-semibold">
                       <span>Sconto ({appliedCoupon.code})</span>
                       <span>-€{discount.toFixed(2)}</span>
                     </div>
                   )}
-                  <div className="flex justify-between text-gray-700 font-semibold pt-2 border-t border-gray-200">
+                  <div className="flex justify-between text-sm sm:text-base text-gray-700 font-semibold pt-2 border-t border-gray-200">
                     <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
                     <span>€{total.toFixed(2)}</span>
                   </div>
-                  <p className="text-xs text-gray-500">
+                  <p className="text-xs text-gray-500 text-center pt-2">
                     Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
                   </p>
                 </div>
@@ -1230,7 +1231,7 @@ export default function TrialSetup() {
                 <Button
                   onClick={handleCompleteSetup}
                   disabled={isCtaDisabled}
-                  className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="w-full h-14 text-base sm:text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {isSaving ? (
                     <div className="flex items-center gap-2">
@@ -1242,7 +1243,7 @@ export default function TrialSetup() {
                   )}
                 </Button>
 
-                <p className="text-xs text-center text-gray-500 mt-4">
+                <p className="text-xs text-center text-gray-500 mt-4 px-2">
                   Nessun addebito durante i {TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.
                 </p>
               </>

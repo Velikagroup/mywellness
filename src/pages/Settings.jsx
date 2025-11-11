@@ -332,36 +332,34 @@ export default function Settings() {
   };
 
   return (
-    <div className="min-h-screen pb-20">
-      <div className="max-w-5xl mx-auto p-6 space-y-6">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Impostazioni</h1>
-            <p className="text-gray-600">Gestisci il tuo account e le preferenze</p>
-          </div>
+    <div className="min-h-screen pb-20 overflow-x-hidden">
+      <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6">
+        <div className="mb-6 sm:mb-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Impostazioni Account</h1>
+          <p className="text-sm sm:text-base text-gray-600">Gestisci il tuo profilo e preferenze</p>
         </div>
 
         <Tabs defaultValue="account" className="w-full">
-          <TabsList className="grid w-full grid-cols-5 mb-8">
-            <TabsTrigger value="account">
-              <User className="w-4 h-4 mr-2" />
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2">
+            <TabsTrigger value="account" className="text-xs sm:text-sm">
+              <User className="w-4 h-4 mr-2 hidden sm:inline-block" />
               Account
             </TabsTrigger>
-            <TabsTrigger value="subscription">
-              <Crown className="w-4 h-4 mr-2" />
+            <TabsTrigger value="subscription" className="text-xs sm:text-sm">
+              <Crown className="w-4 h-4 mr-2 hidden sm:inline-block" />
               Abbonamento
             </TabsTrigger>
-            <TabsTrigger value="billing">
-              <CreditCard className="w-4 h-4 mr-2" />
+            <TabsTrigger value="billing" className="text-xs sm:text-sm">
+              <CreditCard className="w-4 h-4 mr-2 hidden sm:inline-block" />
               Fatturazione
             </TabsTrigger>
-            <TabsTrigger value="notifications">
-              <Bell className="w-4 h-4 mr-2" />
+            <TabsTrigger value="notifications" className="text-xs sm:text-sm">
+              <Bell className="w-4 h-4 mr-2 hidden sm:inline-block" />
               Notifiche
             </TabsTrigger>
-            <TabsTrigger value="help">
-              <HelpCircle className="w-4 h-4 mr-2" />
-              Help
+            <TabsTrigger value="help" className="text-xs sm:text-sm">
+              <HelpCircle className="w-4 h-4 mr-2 hidden sm:inline-block" />
+              Supporto
             </TabsTrigger>
           </TabsList>
 

@@ -376,7 +376,7 @@ export default function Landing() {
   }
 
   return (
-    <div className="min-h-screen animated-gradient-bg">
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
@@ -454,7 +454,7 @@ export default function Landing() {
         }
       `}</style>
 
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-[300px]">
         <div className="hidden md:flex water-glass-effect rounded-full items-center gap-8 px-6 py-3">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -472,12 +472,12 @@ export default function Landing() {
         </div>
       </nav>
 
-      <section className="pt-32 pb-12 px-6">
+      <section className="pt-32 pb-12 px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center mb-8">
-          <h1 className="text-5xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1]">
+          <h1 className="text-4xl sm:text-5xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
             Scopri L'<span className="animated-text-gradient">AI</span> Che Ti Guida Nella <span className="animated-text-gradient">Perdita Di Peso</span>
           </h1>
-          <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed px-2">
             Guarda questo video e scopri il sistema che ha aiutato oltre 23.000 persone a raggiungere i loro obiettivi
           </p>
         </div>
@@ -576,7 +576,7 @@ export default function Landing() {
           </div>
         </div>
 
-        <p className="text-center text-gray-600 mt-6 max-w-2xl mx-auto">
+        <p className="text-center text-sm sm:text-base text-gray-600 mt-6 max-w-2xl mx-auto px-4">
           🎯 <strong>Attenzione:</strong> Questa pagina contiene un'offerta esclusiva disponibile solo per chi guarda il video completo
         </p>
       </section>
@@ -587,10 +587,10 @@ export default function Landing() {
             initial={{ opacity: 0, y: 40 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="max-w-2xl mx-auto mb-20 px-6"
+            className="max-w-2xl mx-auto mb-20 px-4 sm:px-6"
           >
             <Card className="border-0 shadow-2xl water-glass-effect overflow-hidden rounded-3xl">
-              <CardContent className="p-8 md:p-12">
+              <CardContent className="p-6 sm:p-8 md:p-12">
                 <div className="text-center mb-8">
                   <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-[var(--brand-primary)]/10 to-teal-500/10 rounded-full mb-6 border border-[var(--brand-primary)]/20">
                     <Sparkles className="w-5 h-5 text-[var(--brand-primary)]" />
@@ -637,7 +637,7 @@ export default function Landing() {
                 <button
                   onClick={handleCTA}
                   disabled={isLoading}
-                  className="mobile-button w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white py-6 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl"
+                  className="mobile-button w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white py-5 sm:py-6 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl"
                 >
                   {isLoading ? (
                     <div className="flex items-center justify-center gap-2">
@@ -660,7 +660,7 @@ export default function Landing() {
             </Card>
           </motion.div>
 
-          <section className="py-16 px-6">
+          <section className="py-16 px-4 sm:px-6">
             <div className="max-w-6xl mx-auto">
               <h2 className="text-5xl md:text-6xl font-bold text-center text-gray-900 mb-12">
                 Cosa Dicono i Nostri Utenti.
@@ -697,15 +697,15 @@ export default function Landing() {
             </div>
           </section>
 
-          <section className="py-12 px-6">
+          <section className="py-12 px-4 sm:px-6">
             <div className="max-w-2xl mx-auto text-center">
-              <h3 className="text-5xl md:text-6xl font-bold text-center text-gray-900 mb-6">
+              <h3 className="text-4xl sm:text-5xl md:text-6xl font-bold text-center text-gray-900 mb-6 px-2">
                 Trasforma Ora Il Tuo Corpo
               </h3>
               <button
                 onClick={handleCTA}
                 disabled={isLoading}
-                className="mobile-button w-full md:w-auto h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl px-12 shadow-xl"
+                className="mobile-button w-full sm:w-auto h-14 text-base sm:text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl px-8 sm:px-12 shadow-xl"
               >
                 {isLoading ? (
                   <div className="flex items-center gap-2">
@@ -719,7 +719,7 @@ export default function Landing() {
             </div>
           </section>
 
-          <section className="py-16 px-6">
+          <section className="py-16 px-4 sm:px-6">
             <div className="max-w-3xl mx-auto">
               <h2 className="text-5xl md:text-6xl font-bold text-center text-gray-900 mb-16">Domande Frequenti</h2>
               
@@ -753,7 +753,7 @@ export default function Landing() {
             </div>
           </section>
 
-          <section className="py-20 px-6">
+          <section className="py-20 px-4 sm:px-6">
             <div className="max-w-3xl mx-auto">
               <motion.div
                 initial={{ opacity: 0, y: 40 }}
@@ -762,7 +762,7 @@ export default function Landing() {
                 transition={{ duration: 0.6 }}
               >
                 <Card className="border-0 shadow-2xl water-glass-effect overflow-hidden rounded-3xl">
-                  <CardContent className="p-12 text-center">
+                  <CardContent className="p-8 sm:p-12 text-center">
                     <div className="w-20 h-20 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
                       <Target className="w-10 h-10 text-white" />
                     </div>
@@ -788,7 +788,7 @@ export default function Landing() {
                     <button
                       onClick={handleCTA}
                       disabled={isLoading}
-                      className="mobile-button bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-12 py-6 text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl"
+                      className="mobile-button w-full sm:w-auto bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-8 sm:px-12 py-5 sm:py-6 text-base sm:text-lg font-semibold shadow-xl hover:shadow-2xl transition-all duration-300 rounded-xl"
                     >
                       {isLoading ? (
                         <div className="flex items-center gap-2">
@@ -810,9 +810,9 @@ export default function Landing() {
         </>
       )}
 
-      <section className="py-8 px-6">
+      <section className="py-8 px-4 sm:px-6">
         <div className="max-w-4xl mx-auto">
-          <p className="text-xs text-gray-500 leading-relaxed text-center">
+          <p className="text-xs text-gray-500 leading-relaxed text-center px-2">
             <strong>Disclaimer:</strong> Le informazioni fornite da MyWellness, inclusi piani nutrizionali e di allenamento generati dall'intelligenza artificiale, hanno esclusivamente scopo informativo ed educativo e non costituiscono consulenza medica, diagnosi o trattamento. I risultati individuali possono variare significativamente in base a molteplici fattori personali. Prima di iniziare qualsiasi programma nutrizionale o di esercizio fisico, è fondamentale consultare il proprio medico o un professionista sanitario qualificato, specialmente in presenza di condizioni mediche preesistenti, gravidanza, allattamento o assunzione di farmaci. MyWellness e VELIKA GROUP LLC declinano ogni responsabilità per eventuali danni diretti, indiretti, consequenziali o incidentali derivanti dall'uso delle informazioni o dei servizi forniti. L'uso di questa applicazione implica l'accettazione di questi termini e il riconoscimento che l'utente agisce sotto la propria responsabilità. Le testimonianze presentate rappresentano esperienze individuali e non garantiscono risultati identici per tutti gli utenti.
           </p>
         </div>

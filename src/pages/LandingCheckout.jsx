@@ -666,7 +666,7 @@ export default function LandingCheckout() {
   const total = subtotalAfterDiscount;
 
   return (
-    <div className="min-h-screen animated-gradient-bg">
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -729,8 +729,8 @@ export default function LandingCheckout() {
         }
       `}</style>
 
-      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="water-glass-effect rounded-full px-6 py-3">
+      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-[300px]">
+        <div className="water-glass-effect rounded-full px-6 py-3 flex justify-center">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
@@ -740,40 +740,40 @@ export default function LandingCheckout() {
       </div>
 
       <div className="flex items-start justify-center min-h-screen pt-32 pb-12 px-4">
-        <div className="max-w-6xl w-full grid md:grid-cols-2 gap-8 items-start">
+        <div className="max-w-6xl w-full grid grid-cols-1 md:grid-cols-2 gap-6 md:gap-8 items-start">
           <Card className="water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl overflow-hidden">
-            <CardHeader className="text-center pb-6 pt-8">
+            <CardHeader className="text-center pb-6 pt-8 px-4 sm:px-6">
               <div className="w-20 h-20 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
                 <Sparkles className="w-10 h-10 text-white" />
               </div>
-              <CardTitle className="text-3xl font-bold text-gray-900 mb-3">
+              <CardTitle className="text-2xl sm:text-3xl font-bold text-gray-900 mb-3 px-2">
                 Offerta Esclusiva
               </CardTitle>
-              <p className="text-gray-600 text-base mb-4">
+              <p className="text-sm sm:text-base text-gray-600 mb-4 px-2">
                 Piano Premium - 3 Mesi a Prezzo Speciale
               </p>
               
               {/* PREZZO CON SCONTO EVIDENTE */}
-              <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-6 border-2 border-red-200">
-                <p className="text-sm text-gray-600 mb-2">Prezzo Normale</p>
+              <div className="bg-gradient-to-br from-red-50 to-orange-50 rounded-xl p-4 sm:p-6 border-2 border-red-200">
+                <p className="text-xs sm:text-sm text-gray-600 mb-2">Prezzo Normale</p>
                 <div className="relative inline-block mb-3">
-                  <span className="text-4xl font-black text-gray-400 line-through">€117</span>
-                  <div className="absolute -top-2 -right-12 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full transform rotate-12">
+                  <span className="text-3xl sm:text-4xl font-black text-gray-400 line-through">€117</span>
+                  <div className="absolute -top-2 -right-10 sm:-right-12 bg-red-500 text-white text-xs font-bold px-2 py-1 rounded-full transform rotate-12">
                     -43%
                   </div>
                 </div>
                 
-                <p className="text-sm text-[var(--brand-primary)] font-bold mb-1">Oggi Paghi Solo</p>
-                <div className="text-6xl font-black text-[var(--brand-primary)] mb-2">€67</div>
-                <p className="text-sm text-gray-600">per 3 mesi completi</p>
+                <p className="text-xs sm:text-sm text-[var(--brand-primary)] font-bold mb-1">Oggi Paghi Solo</p>
+                <div className="text-5xl sm:text-6xl font-black text-[var(--brand-primary)] mb-2">€67</div>
+                <p className="text-xs sm:text-sm text-gray-600">per 3 mesi completi</p>
                 
                 <div className="mt-4 pt-4 border-t border-red-200">
-                  <p className="text-lg font-bold text-green-600">✅ Risparmi €50!</p>
+                  <p className="text-base sm:text-lg font-bold text-green-600">✅ Risparmi €50!</p>
                 </div>
               </div>
             </CardHeader>
 
-            <CardContent className="px-8 pb-8 space-y-6">
+            <CardContent className="px-4 sm:px-8 pb-8 space-y-6">
             
 
               <div className="space-y-4 pt-4 border-t border-gray-200/50">
@@ -1197,9 +1197,9 @@ export default function LandingCheckout() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-center gap-2 text-sm text-gray-500 pt-2">
-                      <Shield className="w-4 h-4" />
-                      <span>Pagamento sicuro e crittografato</span>
+                    <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 pt-2">
+                      <Shield className="w-4 h-4 flex-shrink-0" />
+                      <span className="text-center">Pagamento sicuro e crittografato</span>
                     </div>
                   </div>
                 </>
@@ -1208,13 +1208,13 @@ export default function LandingCheckout() {
           </Card>
 
           <Card className="water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl overflow-hidden h-fit">
-            <CardHeader className="bg-gradient-to-br from-[var(--brand-primary)]/10 to-teal-50 pb-6 pt-8">
-              <CardTitle className="text-2xl font-bold text-gray-900 text-center">
+            <CardHeader className="bg-gradient-to-br from-[var(--brand-primary)]/10 to-teal-50 pb-6 pt-8 px-4 sm:px-6">
+              <CardTitle className="text-xl sm:text-2xl font-bold text-gray-900 text-center">
                 Riepilogo Ordine
               </CardTitle>
             </CardHeader>
 
-            <CardContent className="px-8 py-6 space-y-6">
+            <CardContent className="px-4 sm:px-8 py-6 space-y-6">
               <div className="space-y-3">
                 <div className="flex justify-between items-start">
                   <div>
@@ -1355,7 +1355,7 @@ export default function LandingCheckout() {
               <Button
                 onClick={handleCompletePayment}
                 disabled={isCtaDisabled}
-                className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
+                className="w-full h-14 text-base sm:text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all disabled:opacity-50 disabled:cursor-not-allowed mt-6"
               >
                 {isSaving ? (
                   <div className="flex items-center gap-2">
@@ -1367,7 +1367,7 @@ export default function LandingCheckout() {
                 )}
               </Button>
 
-              <p className="text-xs text-center text-gray-500 mt-4">
+              <p className="text-xs text-center text-gray-500 mt-4 px-2">
                 Riceverai un'email con le istruzioni per accedere
               </p>
             </CardContent>

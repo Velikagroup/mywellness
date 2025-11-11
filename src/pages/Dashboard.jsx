@@ -387,7 +387,7 @@ export default function Dashboard() {
     
   return (
     <>
-      <div className="min-h-screen pb-20">
+      <div className="min-h-screen pb-20 overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 pt-0 pb-4 sm:p-6 space-y-4 sm:space-y-8">
           {/* Header Desktop - nascosto su mobile */}
           <div className="hidden md:flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
@@ -428,7 +428,7 @@ export default function Dashboard() {
         )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-            <div className="lg:col-span-2 space-y-8">
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
               <AdvancedProgressChart 
                 user={user} 
                 weightHistory={weightHistory} 
@@ -468,7 +468,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
              <div className="relative">
               <TechnicalStatsCard
                 title="Target Calorico"
