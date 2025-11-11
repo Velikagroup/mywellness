@@ -221,52 +221,120 @@ Deno.serve(async (req) => {
 
         console.log('✅ User updated with subscription data');
 
-        // 🔐 MARCA COUPON COME USATO (non-critical, non-blocking)
+        // 🎫 MARCA COUPON COME USATO (se applicabile)
         if (appliedCouponCode) {
             try {
-                console.log('🎫 Marking coupon as used...');
-                const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
-                const couponUrl = `${appUrl}/functions/markCouponAsUsed`;
+                console.log(`🎫 Marking coupon ${appliedCouponCode} as used...`);
+                const coupons = await base44.asServiceRole.entities.Coupon.filter({ 
+                    code: appliedCouponCode.toUpperCase() 
+                });
                 
-                fetch(couponUrl, {
-                    method: 'POST',
-                    headers: { 
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        couponCode: appliedCouponCode,
-                        userEmail: user.email
-                    })
-                }).catch(err => console.error('⚠️ Coupon marking failed (non-critical):', err.message));
-                
-                console.log(`🎫 Coupon marking triggered`);
+                if (coupons && coupons.length > 0) {
+                    const coupon = coupons[0];
+                    await base44.asServiceRole.entities.Coupon.update(coupon.id, {
+                        is_used: true,
+                        used_by: user.email,
+                        used_at: new Date().toISOString()
+                    });
+                    console.log(`✅ Coupon marked as used`);
+                }
             } catch (couponError) {
                 console.error('⚠️ Coupon marking error (non-critical):', couponError.message);
             }
         }
 
-        // 📧 INVIA EMAIL DI BENVENUTO (non-critical, non-blocking)
-        try {
-            console.log('📧 Triggering welcome email...');
-            const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
-            const emailUrl = `${appUrl}/functions/sendTrialWelcomeEmail`;
-            
-            fetch(emailUrl, {
-                method: 'POST',
-                headers: { 
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ userId: user.id })
-            }).catch(err => console.error('⚠️ Email sending failed (non-critical):', err.message));
-            
-            console.log('📧 Welcome email triggered');
-        } catch (emailError) {
-            console.error('⚠️ Email trigger error (non-critical):', emailError.message);
-        }
+        // 📧 INVIA EMAIL DI BENVENUTO (in background, non blocca la risposta)
+        (async () => {
+            try {
+                console.log('📧 Sending welcome email...');
+                
+                const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+                const appUrl = 'https://app.projectmywellness.com';
+                
+                const htmlBody = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                </head>
+                <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                    <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                        <div style="background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800;">🎉 Benvenuto in MyWellness!</h1>
+                        </div>
+                        
+                        <div style="padding: 40px 30px;">
+                            <p style="font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 20px;">
+                                Ciao <strong>${user.full_name || 'benvenuto'}</strong>! 👋
+                            </p>
+                            
+                            <p style="font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 25px;">
+                                Grazie per aver scelto <strong>MyWellness</strong>! Il tuo percorso verso il benessere inizia ora. 🚀
+                            </p>
+                            
+                            <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ec 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid #26847F;">
+                                <h3 style="color: #26847F; margin: 0 0 15px 0; font-size: 18px;">✨ Prova Gratuita Attivata</h3>
+                                <p style="color: #1a5753; margin: 0; font-size: 15px; line-height: 1.6;">
+                                    Hai <strong>3 giorni gratis</strong> per esplorare tutte le funzionalità premium. Nessun addebito ora!
+                                </p>
+                            </div>
+                            
+                            <div style="margin-bottom: 30px;">
+                                <h3 style="color: #333; margin-bottom: 15px; font-size: 20px;">🎯 Cosa Fare Adesso:</h3>
+                                <ul style="list-style: none; padding: 0; margin: 0;">
+                                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                                        <strong style="color: #26847F;">1.</strong> Accedi alla tua dashboard personalizzata
+                                    </li>
+                                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                                        <strong style="color: #26847F;">2.</strong> Genera il tuo piano nutrizionale settimanale
+                                    </li>
+                                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                                        <strong style="color: #26847F;">3.</strong> Inizia il tuo piano di allenamento personalizzato
+                                    </li>
+                                    <li style="padding: 12px 0; font-size: 15px; color: #555;">
+                                        <strong style="color: #26847F;">4.</strong> Traccia i tuoi progressi giornalieri
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <div style="text-align: center; margin: 35px 0;">
+                                <a href="${appUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 20px rgba(38,132,127,0.3); transition: all 0.3s;">
+                                    Vai alla Dashboard →
+                                </a>
+                            </div>
+                            
+                            <div style="background: #f9fafb; padding: 20px; border-radius: 10px; margin-top: 30px;">
+                                <p style="color: #666; font-size: 13px; margin: 0; text-align: center; line-height: 1.6;">
+                                    Hai domande? Siamo qui per aiutarti! Rispondi a questa email o contattaci a <a href="mailto:${fromEmail}" style="color: #26847F; text-decoration: none;">${fromEmail}</a>
+                                </p>
+                            </div>
+                        </div>
+                        
+                        <div style="background: #f9fafb; padding: 25px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                            <p style="color: #999; font-size: 12px; margin: 0 0 5px 0;">© 2025 MyWellness by VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="color: #999; font-size: 11px; margin: 0;">30 N Gould St, Sheridan, WY 82801, United States</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+                `;
+                
+                await base44.asServiceRole.integrations.Core.SendEmail({
+                    from_name: 'MyWellness',
+                    to: user.email,
+                    subject: '🎉 Benvenuto in MyWellness - La Tua Prova Gratuita È Attiva!',
+                    body: htmlBody
+                });
+                
+                console.log('✅ Welcome email sent');
+            } catch (emailError) {
+                console.error('⚠️ Email error (non-critical):', emailError.message);
+            }
+        })();
 
         console.log('✅ Subscription setup completed successfully');
 
-        // IMPORTANTE: Restituisci subito la risposta
         return Response.json({
             success: true,
             subscription: {
@@ -282,15 +350,13 @@ Deno.serve(async (req) => {
 
     } catch (error) {
         console.error('❌ Stripe subscription error:', error);
+        console.error('❌ Error message:', error.message);
         console.error('❌ Error stack:', error.stack);
-        console.error('❌ Error type:', error.type);
-        console.error('❌ Error raw:', error.raw);
         
         return Response.json({ 
             success: false,
             error: error.message || 'Unknown error',
-            type: error.type || 'unknown',
-            details: error.raw?.message || error.toString()
+            details: error.toString()
         }, { status: 500 });
     }
 });
