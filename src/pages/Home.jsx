@@ -43,7 +43,27 @@ export default function Home() {
     window.scrollTo(0, 0);
   }, []);
 
-  // Rimosso il useEffect che controllava redirectToTrialSetup perché ora il login viene fatto direttamente dal Quiz
+  // ✅ CONTROLLO QUIZ COMPLETATO - Se l'utente è loggato MA non ha completato il quiz, mandalo al Quiz
+  useEffect(() => {
+    const checkQuizStatus = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        
+        // Se l'utente è loggato ma NON ha completato il quiz → vai al Quiz
+        if (currentUser && !currentUser.quiz_completed) {
+          console.log('🔄 User logged in but quiz not completed, redirecting to Quiz...');
+          navigate(createPageUrl('Quiz'), { replace: true });
+        }
+      } catch (error) {
+        // 401 è normale se l'utente non è loggato
+        if (error?.response?.status !== 401 && !error?.message?.includes('401')) {
+          console.error("Error checking quiz status:", error);
+        }
+      }
+    };
+
+    checkQuizStatus();
+  }, [navigate]);
 
   useEffect(() => {
     // Data aggiornata a oggi per partire da ~45136 utenti
@@ -875,6 +895,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 }
