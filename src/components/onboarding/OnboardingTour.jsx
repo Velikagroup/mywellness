@@ -380,15 +380,12 @@ export default function OnboardingTour({ user, onComplete }) {
           font-family: 'Inter', sans-serif;
         }
         
-        .spotlight-overlay-top,
-        .spotlight-overlay-right,
-        .spotlight-overlay-bottom,
-        .spotlight-overlay-left {
+        .spotlight-overlay {
           position: fixed;
+          inset: 0;
           background: rgba(0, 0, 0, 0.75);
           z-index: 199;
           pointer-events: none;
-          transition: all 0.3s ease-out;
         }
         
         .spotlight-target {
@@ -396,7 +393,9 @@ export default function OnboardingTour({ user, onComplete }) {
           z-index: 200;
           pointer-events: none;
           border-radius: 16px;
-          box-shadow: 0 0 0 4px rgba(38, 132, 127, 0.5);
+          box-shadow: 
+            0 0 0 4px rgba(38, 132, 127, 0.5),
+            0 0 0 9999px rgba(0, 0, 0, 0.75);
           transition: all 0.3s ease-out;
         }
         
@@ -440,67 +439,17 @@ export default function OnboardingTour({ user, onComplete }) {
         }
       `}</style>
       
-      {/* Spotlight overlays - 4 div separati */}
+      {/* Spotlight highlight */}
       {targetRect && (
-        <>
-          {/* Top overlay */}
-          <div
-            className="spotlight-overlay-top"
-            style={{
-              top: 0,
-              left: 0,
-              right: 0,
-              height: `${targetRect.top - 8}px`
-            }}
-          />
-          
-          {/* Right overlay */}
-          <div
-            className="spotlight-overlay-right"
-            style={{
-              top: 0,
-              left: `${targetRect.left + targetRect.width + 8}px`,
-              right: 0,
-              bottom: isMobile ? 0 : 'auto',
-              height: isMobile ? 'auto' : `${targetRect.top + targetRect.height + 16}px`
-            }}
-          />
-          
-          {/* Bottom overlay - finisce sotto il target su desktop, va fino in fondo su mobile */}
-          <div
-            className="spotlight-overlay-bottom"
-            style={{
-              top: `${targetRect.top + targetRect.height + 8}px`,
-              left: 0,
-              right: 0,
-              bottom: isMobile ? 0 : 'auto',
-              height: isMobile ? 'auto' : `80px`
-            }}
-          />
-          
-          {/* Left overlay */}
-          <div
-            className="spotlight-overlay-left"
-            style={{
-              top: 0,
-              left: 0,
-              width: `${targetRect.left - 8}px`,
-              bottom: isMobile ? 0 : 'auto',
-              height: isMobile ? 'auto' : `${targetRect.top + targetRect.height + 16}px`
-            }}
-          />
-          
-          {/* Spotlight ring */}
-          <div
-            className="spotlight-target"
-            style={{
-              top: `${targetRect.top - 8}px`,
-              left: `${targetRect.left - 8}px`,
-              width: `${targetRect.width + 16}px`,
-              height: `${targetRect.height + 16}px`
-            }}
-          />
-        </>
+        <div
+          className="spotlight-target"
+          style={{
+            top: `${targetRect.top - 8}px`,
+            left: `${targetRect.left - 8}px`,
+            width: `${targetRect.width + 16}px`,
+            height: `${targetRect.height + 16}px`
+          }}
+        />
       )}
       
       {/* Tooltip popup */}
