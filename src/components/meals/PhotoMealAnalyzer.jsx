@@ -1,12 +1,9 @@
-
 import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Camera, Upload, Loader2, CheckCircle, AlertTriangle, X, Plus, ArrowLeft, Sparkles, Zap } from 'lucide-react';
-import { UploadFile, InvokeLLM } from '@/integrations/Core';
-import { MealLog } from '@/entities/MealLog';
-import { MealPlan } from '@/entities/MealPlan';
+import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded }) {
@@ -76,7 +73,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
         }
         
         try {
-          const result = await UploadFile({ file: file });
+          const result = await base44.integrations.Core.UploadFile({ file: file });
           
           if (!result || !result.file_url) {
             throw new Error(`Upload fallito per foto ${i + 1}`);
@@ -102,62 +99,288 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
         `Foto ${idx + 1}: ${photo.description || 'Nessuna descrizione fornita'}`
       ).join('\n');
 
-      const analysisPrompt = `You are an expert nutritionist and food analyst. Analyze these meal photos with the user's descriptions and provide detailed nutritional information.
+      const analysisPrompt = `You are an EXPERT nutritionist, food scientist, and computer vision specialist. Perform a HIGHLY DETAILED and SCIENTIFIC analysis of this meal.
 
-      CRITICAL: Generate ALL content in ITALIAN language. Food item names in 'detected_items' MUST be in Italian, and 'suggested_meal_name' MUST be in Italian.
+CRITICAL: Generate ALL content in ITALIAN language. Food names, cut types, and analysis MUST be in Italian.
 
-      Planned Meal Info (for reference):
-      - Name: ${meal.name}
-      - Planned Calories: ${meal.total_calories} kcal
-      - Planned Protein: ${meal.total_protein}g
-      - Planned Carbs: ${meal.total_carbs}g
-      - Planned Fat: ${meal.total_fat}g
+**PLANNED MEAL (Reference):**
+- Name: ${meal.name}
+- Planned Calories: ${meal.total_calories} kcal
+- Planned Protein: ${meal.total_protein}g | Carbs: ${meal.total_carbs}g | Fat: ${meal.total_fat}g
 
-      User has provided ${updatedPhotos.length} photo(s) with these descriptions:
-      ${photoDescriptions}
+**USER PROVIDED ${updatedPhotos.length} PHOTO(S) WITH DESCRIPTIONS:**
+${photoDescriptions}
 
-      IMPORTANT: Use both the visual information from the photos AND the user's text descriptions to make your analysis. The descriptions contain crucial information about:
-      - Hidden ingredients (sauces, fillings, seasonings)
-      - Portion sizes and plate dimensions
-      - Cooking methods
-      - Specific ingredients not visible in photos
+---
 
-      Task:
-      1. Carefully analyze ALL photos together with their descriptions
-      2. Identify all food items (visible AND described by user) with Italian names (e.g., "petto di pollo alla griglia", "riso integrale", "zucchine saltate", "olio di oliva")
-      3. Estimate accurate portion sizes using both visual cues and user descriptions
-      4. Calculate total nutritional values considering ALL information
-      5. Compare with planned meal
-      6. Create a NEW, descriptive meal name in Italian based on what you actually see in the photos and descriptions (e.g., "Pollo alla Griglia con Insalata Mista", "Pasta Integrale al Pomodoro con Parmigiano")
-      7. Provide a brief assessment in Italian
+## 🔬 SCIENTIFIC ANALYSIS PROTOCOL
 
-      Return ONLY a JSON object with this structure. All text fields must be in Italian.`;
+### **STEP 1: DIMENSIONAL REFERENCE CALIBRATION**
+1. Identify the PLATE in the photo
+2. Estimate plate diameter (standard: 24-26cm, large: 28-30cm, small: 20-22cm)
+3. Use the plate as a REFERENCE SCALE for all measurements
+4. If cutlery is visible, use it as secondary reference (fork: ~20cm, spoon: ~18cm)
 
-      const analysis = await InvokeLLM({
+### **STEP 2: INGREDIENT-BY-INGREDIENT VISUAL ANALYSIS**
+For EVERY visible food item in the photo, perform this analysis:
+
+**A) IDENTIFICATION:**
+- Food name in Italian (e.g., "petto di pollo grigliato", "coscia di pollo arrosto", "salmone selvaggio")
+- Specific cut/type (e.g., "petto di pollo", "coscia", "filetto", "fesa")
+- Cooking method (e.g., "grigliato", "al forno", "bollito", "fritto")
+- Visible characteristics (color, texture, visible fat, marbling)
+
+**B) DIMENSIONAL MEASUREMENT:**
+- Length (cm) - compare to plate diameter
+- Width (cm) - compare to plate diameter
+- Estimated thickness/height (cm) - from visual perspective
+- Estimated volume (cm³) - calculate from dimensions
+
+**C) WEIGHT ESTIMATION:**
+Use these density references:
+- Lean meat (chicken breast): ~1.0-1.1 g/cm³
+- Fatty meat (chicken thigh): ~1.0-1.05 g/cm³
+- Fish (salmon): ~1.0-1.05 g/cm³
+- Cooked vegetables: ~0.5-0.7 g/cm³
+- Raw vegetables: ~0.9-1.0 g/cm³
+- Avocado: ~0.9 g/cm³
+- Oils (visible): estimate ml from surface area and depth
+
+**D) NUTRITIONAL CALCULATION:**
+Based on estimated weight and food type, calculate:
+- Calories (kcal)
+- Protein (g)
+- Carbs (g)
+- Fat (g)
+
+Use verified nutritional databases (USDA, CREA, INRAN) for accurate values per 100g.
+
+### **STEP 3: USER DESCRIPTION INTEGRATION**
+**A) VISIBLE IN PHOTO:**
+- Cross-reference user descriptions with visual analysis
+- If user mentions quantities (e.g., "150g chicken"), PRIORITIZE user data if reasonable
+- If discrepancy, note it and explain
+
+**B) NOT VISIBLE IN PHOTO (Hidden/Described Only):**
+For ingredients user mentions but NOT visible in photo:
+- Cooking oils used ("ho messo 2 cucchiai d'olio" = ~30ml = 270 kcal)
+- Sauces/dressings not visible
+- Seasonings with calories (butter, honey, etc.)
+- Internal fillings (stuffed foods)
+
+Calculate these separately based ENTIRELY on user descriptions.
+
+### **STEP 4: COMPREHENSIVE TOTALS**
+Sum all components:
+- VISIBLE items (from photo analysis)
+- HIDDEN items (from user description)
+
+### **STEP 5: COMPARISON & ASSESSMENT**
+Compare actual vs planned:
+- Calculate delta for each macro
+- Assess adherence level
+- Provide scientific reasoning
+
+---
+
+## 📊 REQUIRED OUTPUT STRUCTURE
+
+Return a JSON object with this EXACT structure (all in Italian):
+
+{
+  "plate_reference": {
+    "estimated_diameter_cm": number,
+    "confidence": "high" | "medium" | "low"
+  },
+  "visible_ingredients": [
+    {
+      "name": "string (in Italian, e.g., 'petto di pollo grigliato')",
+      "identification": {
+        "specific_type": "string (e.g., 'petto di pollo', 'coscia', 'filetto')",
+        "cut": "string (e.g., 'a fette', 'intero', 'a cubetti')",
+        "cooking_method": "string (e.g., 'grigliato', 'al forno', 'bollito')",
+        "visual_notes": "string (color, texture, visible fat)"
+      },
+      "dimensions": {
+        "length_cm": number,
+        "width_cm": number,
+        "thickness_cm": number,
+        "estimated_volume_cm3": number
+      },
+      "weight_estimation": {
+        "estimated_grams": number,
+        "density_used_g_per_cm3": number,
+        "confidence": "high" | "medium" | "low"
+      },
+      "nutrition_per_item": {
+        "calories": number,
+        "protein": number,
+        "carbs": number,
+        "fat": number
+      }
+    }
+  ],
+  "hidden_ingredients": [
+    {
+      "name": "string (in Italian)",
+      "source": "user_description",
+      "user_stated_amount": "string (e.g., '2 cucchiai', '15ml')",
+      "estimated_grams_or_ml": number,
+      "nutrition_per_item": {
+        "calories": number,
+        "protein": number,
+        "carbs": number,
+        "fat": number
+      }
+    }
+  ],
+  "total_actual_nutrition": {
+    "calories": number,
+    "protein": number,
+    "carbs": number,
+    "fat": number
+  },
+  "comparison_vs_planned": {
+    "delta_calories": number,
+    "delta_protein": number,
+    "delta_carbs": number,
+    "delta_fat": number
+  },
+  "detected_items": ["array of strings in Italian"],
+  "assessment": "string - detailed Italian explanation of analysis",
+  "adherence_level": "on_track" | "slightly_over" | "significantly_over" | "under",
+  "suggested_meal_name": "string in Italian"
+}
+
+---
+
+## ⚠️ IMPORTANT GUIDELINES:
+
+1. **BE PRECISE**: Use decimal points for accuracy (e.g., 7.5cm, not 8cm)
+2. **BE REALISTIC**: Don't overestimate or underestimate portions
+3. **USE CONTEXT**: If user says "pollo 150g" and visually looks 150g, use 150g
+4. **ACCOUNT FOR EVERYTHING**: Even small amounts of oil/butter add up
+5. **VISIBLE FAT**: If you see visible fat on meat, increase fat content estimate
+6. **COOKED vs RAW**: Cooked meat loses ~25% water weight
+7. **ALL IN ITALIAN**: Every food name must be in Italian
+
+Now perform the analysis.`;
+
+      const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
         file_urls: uploadedUrls,
         response_json_schema: {
           type: "object",
           properties: {
+            plate_reference: {
+              type: "object",
+              properties: {
+                estimated_diameter_cm: { type: "number" },
+                confidence: { type: "string", enum: ["high", "medium", "low"] }
+              }
+            },
+            visible_ingredients: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  identification: {
+                    type: "object",
+                    properties: {
+                      specific_type: { type: "string" },
+                      cut: { type: "string" },
+                      cooking_method: { type: "string" },
+                      visual_notes: { type: "string" }
+                    }
+                  },
+                  dimensions: {
+                    type: "object",
+                    properties: {
+                      length_cm: { type: "number" },
+                      width_cm: { type: "number" },
+                      thickness_cm: { type: "number" },
+                      estimated_volume_cm3: { type: "number" }
+                    }
+                  },
+                  weight_estimation: {
+                    type: "object",
+                    properties: {
+                      estimated_grams: { type: "number" },
+                      density_used_g_per_cm3: { type: "number" },
+                      confidence: { type: "string", enum: ["high", "medium", "low"] }
+                    }
+                  },
+                  nutrition_per_item: {
+                    type: "object",
+                    properties: {
+                      calories: { type: "number" },
+                      protein: { type: "number" },
+                      carbs: { type: "number" },
+                      fat: { type: "number" }
+                    }
+                  }
+                }
+              }
+            },
+            hidden_ingredients: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  source: { type: "string" },
+                  user_stated_amount: { type: "string" },
+                  estimated_grams_or_ml: { type: "number" },
+                  nutrition_per_item: {
+                    type: "object",
+                    properties: {
+                      calories: { type: "number" },
+                      protein: { type: "number" },
+                      carbs: { type: "number" },
+                      fat: { type: "number" }
+                    }
+                  }
+                }
+              }
+            },
+            total_actual_nutrition: {
+              type: "object",
+              properties: {
+                calories: { type: "number" },
+                protein: { type: "number" },
+                carbs: { type: "number" },
+                fat: { type: "number" }
+              }
+            },
+            comparison_vs_planned: {
+              type: "object",
+              properties: {
+                delta_calories: { type: "number" },
+                delta_protein: { type: "number" },
+                delta_carbs: { type: "number" },
+                delta_fat: { type: "number" }
+              }
+            },
             detected_items: { type: "array", items: { type: "string" } },
-            actual_calories: { type: "number" },
-            actual_protein: { type: "number" },
-            actual_carbs: { type: "number" },
-            actual_fat: { type: "number" },
             assessment: { type: "string" },
             adherence_level: { type: "string", enum: ["on_track", "slightly_over", "significantly_over", "under"] },
             suggested_meal_name: { type: "string" }
           },
-          required: ["detected_items", "actual_calories", "actual_protein", "actual_carbs", "actual_fat", "assessment", "adherence_level", "suggested_meal_name"]
+          required: ["total_actual_nutrition", "detected_items", "assessment", "adherence_level", "suggested_meal_name"]
         }
       });
 
-      const delta = analysis.actual_calories - meal.total_calories;
+      const delta = analysis.total_actual_nutrition.calories - meal.total_calories;
       
       setAnalysisResult({
         ...analysis,
         photo_urls: uploadedUrls,
-        delta_calories: delta
+        delta_calories: delta,
+        actual_calories: analysis.total_actual_nutrition.calories,
+        actual_protein: analysis.total_actual_nutrition.protein,
+        actual_carbs: analysis.total_actual_nutrition.carbs,
+        actual_fat: analysis.total_actual_nutrition.fat
       });
     } catch (error) {
       console.error("Error analyzing photos:", error);
@@ -171,7 +394,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
     try {
       const today = new Date().toISOString().split('T')[0];
       
-      await MealLog.create({
+      await base44.entities.MealLog.create({
         user_id: user.id,
         original_meal_id: meal.id,
         date: today,
@@ -187,7 +410,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
         rebalanced: false
       });
 
-      await MealPlan.update(meal.id, {
+      await base44.entities.MealPlan.update(meal.id, {
         image_url: analysisResult.photo_urls[0],
         name: analysisResult.suggested_meal_name
       });
@@ -209,7 +432,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
     try {
       const today = new Date().toISOString().split('T')[0];
       
-      await MealLog.create({
+      await base44.entities.MealLog.create({
         user_id: user.id,
         original_meal_id: meal.id,
         date: today,
@@ -225,7 +448,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
         rebalanced: true
       });
 
-      await MealPlan.update(meal.id, {
+      await base44.entities.MealPlan.update(meal.id, {
         image_url: analysisResult.photo_urls[0],
         name: analysisResult.suggested_meal_name
       });
@@ -248,9 +471,9 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
             </div>
             <div>
               <span className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-600 bg-clip-text text-transparent font-bold">
-                Analisi Pasto con AI
+                Analisi Scientifica Pasto AI
               </span>
-              <p className="text-sm text-gray-500 font-normal mt-1">Carica più foto e descrivi ogni dettaglio</p>
+              <p className="text-sm text-gray-500 font-normal mt-1">Analisi dimensionale e calcolo preciso ingrediente per ingrediente</p>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -267,8 +490,8 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
               {/* Upload Section */}
               <div className="relative border-2 border-dashed border-[var(--brand-primary)]/30 rounded-2xl p-8 text-center bg-gradient-to-br from-[var(--brand-primary-light)]/30 to-white hover:border-[var(--brand-primary)]/50 transition-all group">
                 <Camera className="w-12 h-12 text-[var(--brand-primary)] mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                <p className="text-gray-700 font-semibold mb-2">Carica una o più foto del tuo pasto</p>
-                <p className="text-sm text-gray-500 mb-6">Per risultati ottimali, inquadra bene il piatto e descrivi gli ingredienti</p>
+                <p className="text-gray-700 font-semibold mb-2">📸 Carica foto del tuo pasto</p>
+                <p className="text-sm text-gray-500 mb-6">L'AI farà analisi dimensionale per calcolare peso e nutrienti con precisione scientifica</p>
                 <div className="flex gap-3 justify-center flex-wrap">
                   <input
                     type="file"
@@ -284,10 +507,8 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                     onClick={() => document.getElementById('camera-input').click()}
                     className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-600 hover:from-[var(--brand-primary-hover)] hover:to-teal-700 shadow-lg hover:shadow-xl transition-all"
                   >
-                    <span>
-                      <Camera className="w-4 h-4 mr-2" />
-                      Scatta Foto
-                    </span>
+                    <Camera className="w-4 h-4 mr-2" />
+                    Scatta Foto
                   </Button>
                   
                   <input
@@ -304,10 +525,8 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                     variant="outline" 
                     className="border-2 border-[var(--brand-primary)]/30 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all"
                   >
-                    <span>
-                      <Upload className="w-4 h-4 mr-2" />
-                      Carica da Galleria
-                    </span>
+                    <Upload className="w-4 h-4 mr-2" />
+                    Carica da Galleria
                   </Button>
                 </div>
               </div>
@@ -339,10 +558,8 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                       size="sm" 
                       className="border-[var(--brand-primary)]/30 hover:border-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]"
                     >
-                      <span>
-                        <Plus className="w-4 h-4 mr-1" />
-                        Aggiungi Altra Foto
-                      </span>
+                      <Plus className="w-4 h-4 mr-1" />
+                      Aggiungi Altra Foto
                     </Button>
                   </div>
 
@@ -376,14 +593,15 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                         <div className="space-y-2">
                           <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
                             <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />
-                            Descrizione Dettagliata
+                            Descrizione Ingredienti (anche nascosti)
                           </label>
                           <Textarea
-                            placeholder="Es: Piatto di pasta al pomodoro, circa 200g. C'è parmigiano grattugiato sopra e un filo d'olio. La pasta è integrale."
+                            placeholder="Es: Petto di pollo 180g, ho messo 2 cucchiai d'olio per cucinarlo, c'è anche del burro sulle verdure che non si vede"
                             value={photo.description}
                             onChange={(e) => handleDescriptionChange(photo.id, e.target.value)}
                             className="h-24 border-2 border-gray-200 focus:border-[var(--brand-primary)] transition-all"
                           />
+                          <p className="text-xs text-gray-500">💡 Più dettagli fornisci, più sarà preciso il calcolo</p>
                         </div>
                       </motion.div>
                     ))}
@@ -396,7 +614,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                       disabled={photos.length === 0}
                     >
                       <Sparkles className="w-5 h-5 mr-2" />
-                      Analizza con AI
+                      Analizza con Precisione Scientifica
                     </Button>
                   )}
                 </motion.div>
@@ -412,8 +630,14 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                     <Loader2 className="w-16 h-16 animate-spin text-[var(--brand-primary)]" />
                     <Sparkles className="w-6 h-6 text-teal-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                   </div>
-                  <p className="text-gray-900 font-bold text-lg mb-2">L'AI sta analizzando {photos.length} {photos.length === 1 ? 'foto' : 'foto'}...</p>
-                  <p className="text-sm text-gray-600">Stiamo processando immagini e descrizioni per un'analisi accurata</p>
+                  <p className="text-gray-900 font-bold text-lg mb-2">🔬 Analisi scientifica in corso...</p>
+                  <p className="text-sm text-gray-600 mb-4">Calcolo dimensionale ingrediente per ingrediente</p>
+                  <div className="max-w-md mx-auto space-y-2 text-xs text-gray-500">
+                    <p>✓ Calibrazione riferimento piatto</p>
+                    <p>✓ Misurazione dimensioni alimenti</p>
+                    <p>✓ Stima peso per densità</p>
+                    <p>✓ Calcolo valori nutrizionali</p>
+                  </div>
                 </motion.div>
               )}
             </motion.div>
@@ -440,12 +664,106 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
               <div className="bg-gradient-to-r from-[var(--brand-primary-light)] to-teal-50 p-6 rounded-2xl border-2 border-[var(--brand-primary)]/30 shadow-lg">
                 <h4 className="text-sm font-semibold text-[var(--brand-primary-dark-text)] mb-2 flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Nome Pasto Suggerito dall'AI:
+                  Nome Pasto Analizzato:
                 </h4>
                 <p className="text-2xl font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-600 bg-clip-text text-transparent">
                   {analysisResult.suggested_meal_name}
                 </p>
               </div>
+
+              {/* Plate Reference (if available) */}
+              {analysisResult.plate_reference && (
+                <div className="bg-blue-50 p-4 rounded-xl border-2 border-blue-200">
+                  <p className="text-sm text-blue-800 font-semibold mb-1">
+                    📏 Riferimento Piatto: {analysisResult.plate_reference.estimated_diameter_cm}cm
+                  </p>
+                  <p className="text-xs text-blue-600">
+                    Confidenza: {analysisResult.plate_reference.confidence === 'high' ? '🟢 Alta' : analysisResult.plate_reference.confidence === 'medium' ? '🟡 Media' : '🔴 Bassa'}
+                  </p>
+                </div>
+              )}
+
+              {/* Visible Ingredients Breakdown */}
+              {analysisResult.visible_ingredients && analysisResult.visible_ingredients.length > 0 && (
+                <div className="bg-white p-5 rounded-xl border-2 border-gray-200 shadow-md">
+                  <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
+                    <Zap className="w-5 h-5 text-[var(--brand-primary)]" />
+                    Ingredienti Visibili (Analisi Dimensionale)
+                  </h4>
+                  <div className="space-y-4">
+                    {analysisResult.visible_ingredients.map((ing, idx) => (
+                      <div key={idx} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
+                        <p className="font-bold text-gray-900 mb-2">{ing.name}</p>
+                        <div className="grid grid-cols-2 gap-3 text-xs">
+                          {ing.identification && (
+                            <div className="col-span-2">
+                              <p className="text-gray-600">
+                                <strong>Tipo:</strong> {ing.identification.specific_type} | 
+                                <strong> Taglio:</strong> {ing.identification.cut} | 
+                                <strong> Cottura:</strong> {ing.identification.cooking_method}
+                              </p>
+                            </div>
+                          )}
+                          {ing.dimensions && (
+                            <div>
+                              <p className="text-gray-600">
+                                <strong>📏 Dimensioni:</strong><br/>
+                                {ing.dimensions.length_cm}cm × {ing.dimensions.width_cm}cm × {ing.dimensions.thickness_cm}cm
+                              </p>
+                            </div>
+                          )}
+                          {ing.weight_estimation && (
+                            <div>
+                              <p className="text-gray-600">
+                                <strong>⚖️ Peso Stimato:</strong><br/>
+                                {ing.weight_estimation.estimated_grams}g
+                                <span className="text-xs text-gray-500"> (densità: {ing.weight_estimation.density_used_g_per_cm3}g/cm³)</span>
+                              </p>
+                            </div>
+                          )}
+                          {ing.nutrition_per_item && (
+                            <div className="col-span-2 bg-white p-2 rounded border border-gray-200">
+                              <p className="text-gray-800 font-semibold">
+                                {ing.nutrition_per_item.calories} kcal | 
+                                P: {ing.nutrition_per_item.protein}g | 
+                                C: {ing.nutrition_per_item.carbs}g | 
+                                G: {ing.nutrition_per_item.fat}g
+                              </p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Hidden Ingredients */}
+              {analysisResult.hidden_ingredients && analysisResult.hidden_ingredients.length > 0 && (
+                <div className="bg-amber-50 p-5 rounded-xl border-2 border-amber-200 shadow-md">
+                  <h4 className="font-bold text-amber-900 mb-4 flex items-center gap-2">
+                    👁️‍🗨️ Ingredienti Nascosti (da Descrizione)
+                  </h4>
+                  <div className="space-y-3">
+                    {analysisResult.hidden_ingredients.map((ing, idx) => (
+                      <div key={idx} className="bg-white p-3 rounded-lg border border-amber-200">
+                        <p className="font-semibold text-gray-900 mb-1">{ing.name}</p>
+                        <p className="text-xs text-gray-600 mb-2">
+                          "{ing.user_stated_amount}" → {ing.estimated_grams_or_ml}{ing.name.includes('olio') ? 'ml' : 'g'}
+                        </p>
+                        {ing.nutrition_per_item && (
+                          <p className="text-xs text-gray-800 font-semibold bg-amber-100 px-2 py-1 rounded">
+                            {ing.nutrition_per_item.calories} kcal | 
+                            P: {ing.nutrition_per_item.protein}g | 
+                            C: {ing.nutrition_per_item.carbs}g | 
+                            G: {ing.nutrition_per_item.fat}g
+                          </p>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Adherence Badge */}
               <div className={`p-5 rounded-2xl border-2 shadow-lg ${
@@ -465,7 +783,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                       <AlertTriangle className="w-6 h-6 text-white" />
                     </div>
                   )}
-                  <h4 className="font-bold text-lg">Valutazione AI</h4>
+                  <h4 className="font-bold text-lg">Valutazione Scientifica AI</h4>
                 </div>
                 <p className="text-sm leading-relaxed">{analysisResult.assessment}</p>
               </div>
@@ -494,7 +812,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-[var(--brand-primary-light)] to-teal-50 p-5 rounded-xl border-2 border-[var(--brand-primary)]/30 shadow-md">
-                  <p className="text-sm text-[var(--brand-primary-dark-text)] font-medium mb-2">✨ Effettivo (AI)</p>
+                  <p className="text-sm text-[var(--brand-primary-dark-text)] font-medium mb-2">🔬 Analisi Scientifica</p>
                   <p className="text-3xl font-bold text-[var(--brand-primary)]">{analysisResult.actual_calories} kcal</p>
                   <div className="text-xs text-[var(--brand-primary-dark-text)] mt-3 space-y-1.5">
                     <div className="flex justify-between"><span>Proteine:</span><strong>{analysisResult.actual_protein}g</strong></div>
@@ -515,11 +833,10 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
                 </div>
               )}
 
-              {/* Detected Items */}
+              {/* Detected Items Summary */}
               <div className="bg-gradient-to-br from-gray-50 to-white p-5 rounded-xl border-2 border-gray-200 shadow-md">
                 <p className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  <Zap className="w-4 h-4 text-[var(--brand-primary)]" />
-                  Alimenti Rilevati dall'AI:
+                  📋 Riepilogo Alimenti Identificati:
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {analysisResult.detected_items.map((item, idx) => (
