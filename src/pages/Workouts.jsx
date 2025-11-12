@@ -1,9 +1,7 @@
 
 import React, { useState, useEffect, useCallback } from "react";
-import { User } from "@/entities/User";
-import { WorkoutPlan } from "@/entities/WorkoutPlan";
-import { Exercise } from "@/entities/Exercise";
-import { InvokeLLM } from "@/integrations/Core";
+import { base44 } from "@/api/base44Client";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Dumbbell, Settings, Database, Clock, Zap, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, CheckCircle2 } from "lucide-react";
@@ -13,7 +11,6 @@ import { createPageUrl } from "@/utils";
 import { useNavigate } from "react-router-dom";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { MealLog } from "@/entities/MealLog";
 
 import JointPainStep from "../components/quiz/JointPainStep";
 import FitnessExperienceStep from "../components/quiz/FitnessExperienceStep";
@@ -38,9 +35,21 @@ const TRAINING_STEPS = [
   { id: 'joint_pain', title: 'Dolori Articolari', component: JointPainStep }
 ];
 
+// Mappa dolori articolari -> gruppi muscolari da evitare
+const JOINT_PAIN_RESTRICTIONS = {
+  'ginocchia': ['quadricipiti', 'polpacci'], // Esercizi che stressano le ginocchia
+  'schiena': ['lombari'], // Esercizi con carico diretto sulla schiena
+  'spalle': ['deltoidi', 'deltoidi anteriori', 'deltoidi laterali', 'deltoidi posteriori'],
+  'gomiti': ['bicipiti', 'tricipiti'],
+  'polsi': ['avambracci'],
+  'anche': ['glutei', 'adduttori', 'abduttori'],
+  'caviglie': ['polpacci']
+};
+
 export default function Workouts() {
-  const [user, setUser] = useState(null);
-  const [workoutPlans, setWorkoutPlans] = useState([]);
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  
   const [selectedDay, setSelectedDay] = useState('monday');
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
@@ -48,7 +57,6 @@ export default function Workouts() {
   const [showAssessment, setShowAssessment] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [trainingData, setTrainingData] = useState({});
-  const navigate = useNavigate();
 
   const [showAdjustmentDialog, setShowAdjustmentDialog] = useState(false);
   const [adjustmentProblem, setAdjustmentProblem] = useState("");
@@ -62,28 +70,46 @@ export default function Workouts() {
   const [cheatPromptShown, setCheatPromptShown] = useState(false);
 
   const [logWorkout, setLogWorkout] = useState(null);
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoadingInitialData, setIsLoadingInitialData] = useState(true);
 
-  const loadWorkoutPlans = useCallback(async (userId) => {
-    try {
-      const plans = await WorkoutPlan.filter({ user_id: userId });
-      setWorkoutPlans(plans);
-    } catch (error) {
-      if (error?.response?.status === 401 || error?.message?.includes('401')) {
-        console.warn("Authentication error (401) in loadWorkoutPlans.");
-        navigate(createPageUrl('Home'));
-      } else {
-        console.error("Error loading workout plans:", error);
-      }
-    }
-  }, [navigate]);
+  // Query per workout plans
+  const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
+    queryKey: ['workoutPlans', trainingData.user_id],
+    queryFn: async () => {
+      if (!trainingData.user_id) return [];
+      return await base44.entities.WorkoutPlan.filter({ user_id: trainingData.user_id });
+    },
+    enabled: !!trainingData.user_id,
+  });
+
+  // Query per esercizi dal database
+  const { data: allExercises = [], isLoading: isLoadingExercises } = useQuery({
+    queryKey: ['exercises'],
+    queryFn: () => base44.entities.Exercise.list(),
+    staleTime: Infinity, // Gli esercizi non cambiano mai
+  });
+
+  const createWorkoutMutation = useMutation({
+    mutationFn: (data) => base44.entities.WorkoutPlan.create(data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workoutPlans'] }),
+  });
+
+  const updateWorkoutMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.WorkoutPlan.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workoutPlans'] }),
+  });
+
+  const deleteWorkoutMutation = useMutation({
+    mutationFn: (id) => base44.entities.WorkoutPlan.delete(id),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workoutPlans'] }),
+  });
 
   const checkForCheats = useCallback(async (userId) => {
     if (cheatPromptShown) return;
     
     try {
       const today = new Date().toISOString().split('T')[0];
-      const logs = await MealLog.filter({ user_id: userId, date: today });
+      const logs = await base44.entities.MealLog.filter({ user_id: userId, date: today });
       
       if (logs.length > 0) {
         const totalDelta = logs.reduce((sum, log) => sum + (log.delta_calories || 0), 0);
@@ -99,9 +125,7 @@ export default function Workouts() {
         }
       }
     } catch (error) {
-      if (error?.response?.status === 401 || error?.message?.includes('401')) {
-        console.warn("Authentication error (401) in checkForCheats.");
-      } else {
+      if (error?.response?.status !== 401 && !error?.message?.includes('401')) {
         console.error("Error checking for cheats:", error);
       }
     }
@@ -109,48 +133,44 @@ export default function Workouts() {
 
   useEffect(() => {
     const loadData = async () => {
-      setIsLoading(true);
+      setIsLoadingInitialData(true);
       try {
-        const currentUser = await User.me();
-        setUser(currentUser);
+        const currentUser = await base44.auth.me();
         
         if (!currentUser) {
           navigate(createPageUrl('Home'));
           return;
         }
 
-        if (!hasFeatureAccess(currentUser.subscription_plan, 'workout_plan')) {
-          setIsLoading(false);
-          return;
-        }
+        setTrainingData({
+          user_id: currentUser.id,
+          joint_pain: currentUser.joint_pain || [],
+          fitness_experience: currentUser.fitness_experience,
+          workout_location: currentUser.workout_location,
+          equipment: currentUser.equipment || [],
+          workout_days: currentUser.workout_days,
+          workout_days_selected: currentUser.workout_days_selected || [],
+          session_duration: currentUser.session_duration,
+          fitness_goal: currentUser.fitness_goal,
+          age: currentUser.age,
+          gender: currentUser.gender,
+          current_weight: currentUser.current_weight,
+          subscription_plan: currentUser.subscription_plan // Add subscription_plan to trainingData
+        });
 
-        if (currentUser.id) {
-          await loadWorkoutPlans(currentUser.id);
-          await checkForCheats(currentUser.id);
-          setTrainingData({
-            joint_pain: currentUser.joint_pain || [],
-            fitness_experience: currentUser.fitness_experience,
-            workout_location: currentUser.workout_location,
-            equipment: currentUser.equipment || [],
-            workout_days: currentUser.workout_days,
-            workout_days_selected: currentUser.workout_days_selected || [],
-            session_duration: currentUser.session_duration,
-            fitness_goal: currentUser.fitness_goal
-          });
-        }
+        await checkForCheats(currentUser.id);
       } catch (error) {
         if (error?.response?.status === 401 || error?.message?.includes('401')) {
-          console.warn("Authentication error (401), redirecting to Home.");
           navigate(createPageUrl("Home"));
         } else {
           console.error("Error loading data:", error);
-          navigate(createPageUrl("Home"));
+          navigate(createPageUrl("Home")); // Redirect on other critical errors too
         }
       }
-      setIsLoading(false);
+      setIsLoadingInitialData(false);
     };
     loadData();
-  }, [loadWorkoutPlans, checkForCheats, navigate]);
+  }, [checkForCheats, navigate]);
 
   useEffect(() => {
     setAdjustedWorkout(null);
@@ -162,13 +182,65 @@ export default function Workouts() {
   const prevStep = () => { if (currentStep > 0) setCurrentStep(currentStep - 1); };
 
   const startGeneration = async () => {
-    await User.updateMyUserData(trainingData);
+    await base44.auth.updateMe({
+      joint_pain: trainingData.joint_pain,
+      fitness_experience: trainingData.fitness_experience,
+      workout_location: trainingData.workout_location,
+      equipment: trainingData.equipment,
+      workout_days: trainingData.workout_days,
+      workout_days_selected: trainingData.workout_days_selected,
+      session_duration: trainingData.session_duration,
+      fitness_goal: trainingData.fitness_goal
+    });
     setShowAssessment(false);
     await generateWorkoutPlan();
   };
 
+  // ✅ NUOVA FUNZIONE: Filtra esercizi dal database
+  const getAvailableExercises = useCallback(() => {
+    if (!allExercises || allExercises.length === 0) return [];
+    
+    const userEquipment = trainingData.equipment || [];
+    const jointPain = trainingData.joint_pain || [];
+    const fitnessLevel = trainingData.fitness_experience || 'beginner';
+
+    // Gruppi muscolari da evitare in base ai dolori
+    const restrictedMuscleGroups = jointPain.flatMap(pain => 
+      JOINT_PAIN_RESTRICTIONS[pain] || []
+    );
+
+    return allExercises.filter(exercise => {
+      // 1. Filtra per attrezzatura disponibile
+      // 'corpo_libero' è sempre disponibile
+      if (exercise.equipment !== 'corpo_libero' && !userEquipment.includes(exercise.equipment)) {
+        return false;
+      }
+
+      // 2. Escludi esercizi che stressano articolazioni doloranti
+      const hasRestrictedMuscle = exercise.muscle_groups?.some(mg => 
+        restrictedMuscleGroups.some(rmg => mg.toLowerCase().includes(rmg.toLowerCase()))
+      );
+      if (hasRestrictedMuscle) {
+        return false;
+      }
+
+      // 3. Filtra per livello di difficoltà (semplificazione, potrebbe essere più granulare)
+      // Se l'utente è beginner, non mostriamo esercizi advanced
+      if (fitnessLevel === 'beginner' && exercise.difficulty === 'advanced') {
+        return false;
+      }
+      // Se l'utente è intermediate, non mostriamo solo esercizi advanced
+      if (fitnessLevel === 'intermediate' && exercise.difficulty === 'advanced') {
+        return false;
+      }
+
+
+      return true;
+    });
+  }, [allExercises, trainingData.equipment, trainingData.joint_pain, trainingData.fitness_experience]);
+
   const generateWorkoutPlan = async () => {
-    if (!user) return;
+    if (!trainingData.user_id) return;
 
     setIsGenerating(true);
     setGenerationProgress(0);
@@ -180,64 +252,78 @@ export default function Workouts() {
         setGenerationStatus(status);
       };
 
-      updateProgress(10, "Accesso a database di protocolli...");
+      updateProgress(10, `Analisi database di ${allExercises.length} esercizi...`);
 
-      const workoutDays = trainingData.workout_days || user.workout_days || 3;
-      const selectedDays = trainingData.workout_days_selected || user.workout_days_selected || [];
-
-      const workoutPlanPrompt = `You are a world-class AI personal trainer, physical therapist, and motivational coach. Create a hyper-personalized, 7-day weekly workout plan.
-
-      CRITICAL: Generate ALL content in ITALIAN language. Exercise names, descriptions, and all text MUST be in Italian.
-
-      User Profile & Vitals:
-      - Age: ${user.age}, Gender: ${user.gender}, Weight: ${user.current_weight}kg
-      - Primary Fitness Goal: ${trainingData.fitness_goal || user.fitness_goal}
-      - Calorie Target from Diet: ${user.daily_calories} kcal
-
-      User's Training Preferences & Constraints:
-      - Fitness Experience: ${trainingData.fitness_experience || user.fitness_experience}
-      - Workout Location: ${trainingData.workout_location || user.workout_location}
-      - Available Equipment: ${trainingData.equipment?.join(', ') || user.equipment?.join(', ') || 'none'}. Use ONLY exercises that require this equipment or bodyweight.
-      - Joint Pain/Limitation s: ${trainingData.joint_pain?.join(', ') || user.joint_pain?.join(', ') || 'none'}. Do NOT include exercises that stress these joints.
-      - Desired workouts per week: ${workoutDays}
-      - Specific days selected: ${selectedDays.length > 0 ? selectedDays.join(', ') : 'any ' + workoutDays + ' days'}
-      - Preferred session duration: ${trainingData.session_duration || user.session_duration}
-
-      CRITICAL REQUIREMENTS:
-      1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
-      2. EVERY workout plan MUST have a "day_of_week" field with one of these exact values: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-      3. ${selectedDays.length > 0 ? `The user wants to workout ONLY on these specific days: ${selectedDays.join(', ') || ''}. Create full workout plans for ONLY these days. For all other days, create rest plans.` : `The user wants ${workoutDays} workout days total. Distribute them logically across the week.`}
-      4. For workout days: provide 'plan_name' (in Italian), 'workout_type', 'warm_up' array (in Italian), 'exercises' array (in Italian), 'cool_down' array (in Italian), 'total_duration', 'calories_burned', 'difficulty_level'.
-      5. For rest days: provide 'plan_name' (e.g., "Recupero Attivo"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
-      6. Each exercise MUST have Italian names (e.g., "Squat con Manubri", "Flessioni", "Plank", "Affondi", "Curl Bicipiti").
-      7. 'reps' field must be in Italian format (e.g., "12 ripetizioni", "10-12 rip.", "30 secondi", "fino a cedimento").
-      8. 'rest' field must be in Italian (e.g., "60 secondi", "90 sec", "2 minuti").
-      9. 'difficulty_level' must be one of: "beginner", "intermediate", "advanced" (in English).
-      10. Don't train the same muscle groups on consecutive workout days.
+      // ✅ PESCA ESERCIZI DAL DATABASE
+      const availableExercises = getAvailableExercises();
       
-      EXAMPLE of correct JSON format with day_of_week:
-      {
-        "day_of_week": "monday",
-        "plan_name": "Allenamento Full Body",
-        "workout_type": "strength",
-        "exercises": [
-          {
-            "name": "Squat con Manubri",
-            "sets": 3,
-            "reps": "12 ripetizioni",
-            "rest": "90 secondi"
-          }
-        ],
-        "warm_up": [],
-        "cool_down": [],
-        "total_duration": 45,
-        "calories_burned": 300,
-        "difficulty_level": "intermediate"
-      }`;
+      if (availableExercises.length === 0) {
+        throw new Error("Nessun esercizio disponibile con le tue attrezzature o restrizioni. Riprova modificando le preferenze.");
+      }
 
-      updateProgress(30, "Analisi vincoli fisici e attrezzatura...");
+      console.log(`✅ ${availableExercises.length} esercizi disponibili dal database`);
 
-      const response = await InvokeLLM({
+      const workoutDays = trainingData.workout_days || 3;
+      const selectedDays = trainingData.workout_days_selected || [];
+
+      updateProgress(20, "Creazione prompt AI personalizzato...");
+
+      // ✅ CREA LISTA ESERCIZI FORMATTATA PER L'AI
+      const exercisesByMuscleGroup = availableExercises.reduce((acc, ex) => {
+        ex.muscle_groups.forEach(mg => {
+          if (!acc[mg]) acc[mg] = [];
+          acc[mg].push({
+            name: ex.name,
+            equipment: ex.equipment,
+            difficulty: ex.difficulty,
+            description: ex.description
+          });
+        });
+        return acc;
+      }, {});
+
+      const exerciseListForAI = Object.entries(exercisesByMuscleGroup)
+        .map(([muscleGroup, exercises]) => {
+          const exerciseNames = exercises.map(e => `"${e.name}"`).slice(0, 20).join(', '); // Limit to 20 per group to keep prompt size reasonable
+          return `${muscleGroup.toUpperCase()}: ${exerciseNames}`;
+        })
+        .join('\n');
+
+      const workoutPlanPrompt = `You are a world-class AI personal trainer, physical therapist, and motivational coach. Create a hyper-personalized, 7-day weekly workout plan. You MUST select exercises ONLY from the provided database.
+
+CRITICAL: Generate ALL content in ITALIAN language. Exercise names, descriptions, and all text MUST be in Italian.
+
+User Profile & Vitals:
+- Age: ${trainingData.age}, Gender: ${trainingData.gender}, Weight: ${trainingData.current_weight}kg
+- Primary Fitness Goal: ${trainingData.fitness_goal}
+- Experience: ${trainingData.fitness_experience}
+- Workout Location: ${trainingData.workout_location}
+- Available Equipment: ${trainingData.equipment?.join(', ') || 'none'}. Use ONLY exercises that require this equipment or bodyweight.
+- Joint Pain/Limitations: ${trainingData.joint_pain?.join(', ') || 'none'}. Do NOT include exercises that stress these joints.
+- Desired workouts per week: ${workoutDays}
+- Specific days selected: ${selectedDays.length > 0 ? selectedDays.join(', ') : 'any ' + workoutDays + ' days'}
+- Preferred session duration: ${trainingData.session_duration}
+
+Exercise Database (MUST choose ONLY from these Italian exercise names):
+${exerciseListForAI}
+
+CRITICAL REQUIREMENTS:
+1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
+2. EVERY workout plan MUST have a "day_of_week" field with one of these exact values: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
+3. ${selectedDays.length > 0 ? `The user wants to workout ONLY on these specific days: ${selectedDays.join(', ') || ''}. Create full workout plans for ONLY these days. For all other days, create rest plans.` : `The user wants ${workoutDays} workout days total. Distribute them logically across the week.`}
+4. For workout days: provide 'plan_name' (in Italian), 'workout_type', 'warm_up' array (in Italian), 'exercises' array (in Italian), 'cool_down' array (in Italian), 'total_duration', 'calories_burned', 'difficulty_level'.
+5. For rest days: provide 'plan_name' (e.g., "Recupero Attivo"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
+6. Each exercise MUST have Italian names (e.g., "Squat con Manubri", "Flessioni", "Plank", "Affondi", "Curl Bicipiti") AND MUST be present in the provided Exercise Database. DO NOT invent exercises.
+7. 'reps' field must be in Italian format (e.g., "12 ripetizioni", "10-12 rip.", "30 secondi", "fino a cedimento").
+8. 'rest' field must be in Italian (e.g., "60 secondi", "90 sec", "2 minuti").
+9. 'difficulty_level' must be one of: "beginner", "intermediate", "advanced" (in English).
+10. Don't train the same muscle groups on consecutive workout days.
+11. Ensure variety and progressive overload where appropriate for the user's fitness level.
+`;
+
+      updateProgress(40, "Generazione schede personalizzate...");
+
+      const response = await base44.integrations.Core.InvokeLLM({
         prompt: workoutPlanPrompt,
         response_json_schema: {
           type: "object",
@@ -303,53 +389,54 @@ export default function Workouts() {
         }
       });
 
-      updateProgress(60, "Progettazione sessioni e selezione esercizi...");
+      updateProgress(60, "Validazione esercizi generati...");
 
-      if (response.workout_plans && Array.isArray(response.workout_plans) && response.workout_plans.length === 7) {
-        const invalidPlans = response.workout_plans.filter(plan => !plan.day_of_week);
-        if (invalidPlans.length > 0) {
-          throw new Error(`${invalidPlans.length} piani senza day_of_week. Rigenerare.`);
-        }
-
-        const days = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-        const missingDays = days.filter(day => !response.workout_plans.some(plan => plan.day_of_week === day));
-        if (missingDays.length > 0) {
-          throw new Error(`Giorni mancanti: ${missingDays.join(', ')}. Rigenerare.`);
-        }
-
-        updateProgress(75, "Rimozione piani precedenti...");
-        try {
-          const existingPlans = await WorkoutPlan.filter({ user_id: user.id });
-          
-          const deletePromises = existingPlans.map(async (plan) => {
-            try {
-              await WorkoutPlan.delete(plan.id);
-            } catch (deleteError) {
-              console.warn(`Impossibile cancellare workout plan ${plan.id}:`, deleteError);
-            }
-          });
-          
-          await Promise.allSettled(deletePromises);
-        } catch (error) {
-          console.error("Errore durante la cancellazione dei piani esistenti:", error);
-        }
-
-        updateProgress(85, "Salvataggio protocollo personalizzato...");
-
-        for (const workoutData of response.workout_plans) {
-            if (!workoutData.day_of_week) {
-              console.error("Missing day_of_week in workout plan:", workoutData);
-              continue;
-            }
-            await WorkoutPlan.create({ user_id: user.id, ...workoutData });
-        }
-
-        updateProgress(100, "Protocollo di allenamento generato!");
-        await loadWorkoutPlans(user.id);
-        setTimeout(() => setIsGenerating(false), 1500);
-      } else {
-        throw new Error("L'AI non ha generato un piano completo di 7 giorni");
+      if (!response.workout_plans || response.workout_plans.length !== 7) {
+        throw new Error(`L'AI ha generato ${response.workout_plans?.length || 0} piani invece di 7.`);
       }
+
+      const allExerciseNamesFromDB = new Set(availableExercises.map(e => e.name.toLowerCase()));
+      
+      for (const plan of response.workout_plans) {
+        if (plan.exercises && Array.isArray(plan.exercises)) {
+          for (const exercise of plan.exercises) {
+            if (!allExerciseNamesFromDB.has(exercise.name.toLowerCase())) {
+              console.warn(`⚠️ Esercizio "${exercise.name}" non trovato nel database o non è tra quelli disponibili. L'AI ha allucinazioni?`);
+              // Optionally: throw an error here to force regeneration or remove the exercise
+            }
+          }
+        }
+      }
+
+      updateProgress(75, "Rimozione piani precedenti...");
+      
+      const deletePromises = workoutPlans.map(async (plan) => {
+        try {
+          await deleteWorkoutMutation.mutateAsync(plan.id);
+        } catch (deleteError) {
+          console.warn(`Impossibile cancellare workout plan ${plan.id}:`, deleteError);
+        }
+      });
+      await Promise.allSettled(deletePromises);
+
+      updateProgress(85, "Salvataggio nuovi workout...");
+
+      for (const workoutData of response.workout_plans) {
+        if (!workoutData.day_of_week) {
+          console.error("Missing day_of_week in workout plan:", workoutData);
+          continue;
+        }
+        await createWorkoutMutation.mutateAsync({ 
+          user_id: trainingData.user_id, 
+          ...workoutData 
+        });
+      }
+
+      updateProgress(100, "Protocollo di allenamento generato!");
+      // Invalidate the query to refetch workout plans
+      queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
+      setTimeout(() => setIsGenerating(false), 1500);
+
     } catch (error) {
       console.error("Error generating workout plan:", error);
       setGenerationStatus(`Errore: ${error.message}. Riprova.`);
@@ -363,42 +450,63 @@ export default function Workouts() {
 
     setIsAdjusting(true);
     setAdjustmentResult(null);
+    
     try {
+      // ✅ Filtra esercizi disponibili per la sostituzione
+      const availableExercises = getAvailableExercises();
+      const exerciseNames = availableExercises.map(e => `"${e.name}"`).join(', ');
+
       const adjustmentPrompt = `You are an expert AI personal trainer and physical therapist. A user needs an immediate adjustment to their workout for today due to a specific issue.
 
-      CRITICAL: Generate ALL content in ITALIAN language. Exercise names, advice, and explanations MUST be in Italian.
+CRITICAL: Generate ALL content in ITALIAN. Exercise names MUST come from this database:
+${exerciseNames}
 
-      User Profile: ${JSON.stringify({age: user.age, gender: user.gender, fitness_experience: user.fitness_experience, joint_pain: user.joint_pain})}
-      Today's Original Workout Plan: ${JSON.stringify(selectedDayWorkout)}
+User Profile: Age ${trainingData.age}, ${trainingData.gender}, Fitness Experience: ${trainingData.fitness_experience}
+Today's Original Workout Plan: ${JSON.stringify(selectedDayWorkout)}
 
-      User's Reported Problem TODAY (in Italian): "${adjustmentProblem}"
+User's Reported Problem TODAY (in Italian): "${adjustmentProblem}"
 
-      Your Task:
-      1. Provide empathetic and actionable advice in Italian in a 'consiglio_esperto' field (string, markdown format).
-      2. Analyze the original workout and the user's problem. Create a NEW, modified list of 'esercizi_modificati' with Italian exercise names (e.g., "Squat Bulgaro", "Flessioni su Ginocchia", "Plank Laterale"). Use your knowledge of exercises, ensuring they are safe and adhere to the user's available equipment: ${user.equipment?.join(', ') || 'corpo libero'}. These exercises should work around the user's problem. For each exercise, provide Italian name, sets, reps (in Italian like "10 ripetizioni"), and rest (in Italian like "60 secondi"). If a safe exercise exists, you can keep it. If no safe alternative exists for a muscle group, omit it.
-      3. Provide a brief 'spiegazione_modifiche' (string, in Italian) explaining why you made the changes.
-      4. Return ONLY a JSON object with 'consiglio_esperto', 'spiegazione_modifiche', and 'esercizi_modificati'.`;
+Your Task:
+1. Provide empathetic and actionable advice in Italian in a 'consiglio_esperto' field (string, markdown format).
+2. Analyze the original workout and the user's problem. Create a NEW, modified list of 'esercizi_modificati' with Italian exercise names. Use your knowledge of exercises, ensuring they are safe and adhere to the user's available equipment: ${trainingData.equipment?.join(', ') || 'corpo libero'}. These exercises should work around the user's problem and MUST be selected ONLY from the provided database. For each exercise, provide Italian name, sets, reps (in Italian like "10 ripetizioni"), and rest (in Italian like "60 secondi"). If a safe exercise exists, you can keep it. If no safe alternative exists for a muscle group, omit it. DO NOT invent new exercises.
+3. Provide a brief 'spiegazione_modifiche' (string, in Italian) explaining why you made the changes.
+4. Return ONLY a JSON object with 'consiglio_esperto', 'spiegazione_modifiche', and 'esercizi_modificati'.`;
 
-      const response = await InvokeLLM({
+      const response = await base44.integrations.Core.InvokeLLM({
         prompt: adjustmentPrompt,
         response_json_schema: {
           type: "object",
           properties: {
             consiglio_esperto: { type: "string" },
             spiegazione_modifiche: { type: "string" },
-            esercizi_modificati: { type: "array", items: { type: "object", properties: { name: { type: "string" }, sets: { type: "number" }, reps: { type: "string" }, rest: { type: "string" } } } }
+            esercizi_modificati: { 
+              type: "array", 
+              items: { 
+                type: "object", 
+                properties: { 
+                  name: { type: "string" }, 
+                  sets: { type: "number" }, 
+                  reps: { type: "string" }, 
+                  rest: { type: "string" } 
+                },
+                required: ["name", "sets", "reps", "rest"]
+              } 
+            }
           },
           required: ["consiglio_esperto", "spiegazione_modifiche", "esercizi_modificati"]
         }
       });
       setAdjustmentResult(response);
       setAdjustedWorkout({ ...selectedDayWorkout, exercises: response.esercizi_modificati });
-    } catch (e) { console.error(e) }
+    } catch (e) { 
+      console.error(e);
+      alert("Errore nella modifica. Riprova.");
+    }
     setIsAdjusting(false);
   };
 
   const compensateWithWorkout = async () => {
-    if (!user || !cheatData) return;
+    if (!trainingData.user_id || !cheatData) return;
     
     setIsCompensating(true);
     try {
@@ -411,27 +519,32 @@ export default function Workouts() {
         return;
       }
 
+      // ✅ Filtra esercizi disponibili
+      const availableExercises = getAvailableExercises();
+      const exerciseNames = availableExercises.map(e => `"${e.name}"`).join(', ');
+
       const compensationPrompt = `You are an expert personal trainer. The user has consumed ${cheatData.totalDelta > 0 ? 'extra' : 'fewer'} calories today: ${Math.abs(cheatData.totalDelta)} kcal.
 
-      CRITICAL: Generate ALL content in ITALIAN language. Exercise names and all text MUST be in Italian.
+CRITICAL: Generate ALL content in ITALIAN language. Exercise names MUST come from this database:
+${exerciseNames}
 
-      Current workout plan for today:
-      ${JSON.stringify(todayWorkout)}
+Current workout plan for today:
+${JSON.stringify(todayWorkout)}
 
-      User's constraints:
-      - Experience: ${user.fitness_experience}
-      - Equipment: ${user.equipment?.join(', ') || 'corpo libero'}
-      - Joint pain: ${user.joint_pain?.join(', ') || 'none'}
+User's constraints:
+- Experience: ${trainingData.fitness_experience}
+- Equipment: ${trainingData.equipment?.join(', ') || 'corpo libero'}
+- Joint pain: ${trainingData.joint_pain?.join(', ') || 'none'}
 
-      Task:
-      ${cheatData.totalDelta > 0 
-        ? `Modify the workout to burn approximately ${Math.abs(cheatData.totalDelta)} extra calories. You can: increase sets/reps, add cardio exercises (with Italian names like "Corsa sul posto", "Burpees", "Mountain Climbers"), reduce rest times, or add high-intensity intervals. Ensure the workout remains safe and effective given the user's constraints. The new total_duration and calories_burned should reflect the changes. All exercise names must be in Italian.`
-        : `The user has eaten less. Slightly reduce workout intensity to match their energy levels, aiming to decrease calorie expenditure and total duration. Ensure the workout remains safe and effective given the user's constraints. The new total_duration and calories_burned should reflect the changes. All exercise names must be in Italian.`
-      }
+Task:
+${cheatData.totalDelta > 0 
+  ? `Modify the workout to burn approximately ${Math.abs(cheatData.totalDelta)} extra calories. You can: increase sets/reps, add cardio exercises (with Italian names), reduce rest times, or add high-intensity intervals. Ensure the workout remains safe and effective given the user's constraints. The new total_duration and calories_burned should reflect the changes. All exercise names must be in Italian and MUST be chosen ONLY from the provided database.`
+  : `The user has eaten less. Slightly reduce workout intensity to match their energy levels, aiming to decrease calorie expenditure and total duration. Ensure the workout remains safe and effective given the user's constraints. The new total_duration and calories_burned should reflect the changes. All exercise names must be in Italian and MUST be chosen ONLY from the provided database.`
+}
 
-      Return a modified workout plan with Italian exercise names, reps (like "12 ripetizioni"), and rest (like "60 secondi"). The structure should match the original plan, including 'plan_name', 'workout_type', 'exercises', 'warm_up', 'cool_down', 'total_duration', 'calories_burned', 'difficulty_level'.`;
+Return a modified workout plan with Italian exercise names, reps (like "12 ripetizioni"), and rest (like "60 secondi"). The structure should match the original plan, including 'plan_name', 'workout_type', 'exercises', 'warm_up', 'cool_down', 'total_duration', 'calories_burned', 'difficulty_level'.`;
 
-      const modifiedWorkout = await InvokeLLM({
+      const modifiedWorkout = await base44.integrations.Core.InvokeLLM({
         prompt: compensationPrompt,
         response_json_schema: {
           type: "object",
@@ -447,11 +560,26 @@ export default function Workouts() {
                   sets: { type: "number" },
                   reps: { type: "string" },
                   rest: { type: "string" }
-                }
+                },
+                required: ["name", "sets", "reps", "rest"]
               }
             },
-            warm_up: { type: "array", items: { type: "object", properties: { name: { type: "string" }, duration: { type: "string" } } } },
-            cool_down: { type: "array", items: { type: "object", properties: { name: { type: "string" }, duration: { type: "string" } } } },
+            warm_up: { 
+              type: "array", 
+              items: { 
+                type: "object", 
+                properties: { name: { type: "string" }, duration: { type: "string" } },
+                required: ["name", "duration"]
+              } 
+            },
+            cool_down: { 
+              type: "array", 
+              items: { 
+                type: "object", 
+                properties: { name: { type: "string" }, duration: { type: "string" } },
+                required: ["name", "duration"]
+              } 
+            },
             total_duration: { type: "number" },
             calories_burned: { type: "number" },
             difficulty_level: { type: "string" }
@@ -460,17 +588,18 @@ export default function Workouts() {
         }
       });
       
-      await WorkoutPlan.update(todayWorkout.id, modifiedWorkout);
+      await updateWorkoutMutation.mutateAsync({
+        id: todayWorkout.id,
+        data: modifiedWorkout
+      });
       
       const todayISO = new Date().toISOString().split('T')[0];
-      const logs = await MealLog.filter({ user_id: user.id, date: todayISO });
+      const logs = await base44.entities.MealLog.filter({ user_id: trainingData.user_id, date: todayISO });
       for (const log of logs) {
         if (!log.rebalanced) {
-          await MealLog.update(log.id, { rebalanced: true });
+          await base44.entities.MealLog.update(log.id, { rebalanced: true });
         }
       }
-      
-      await loadWorkoutPlans(user.id);
       
       setShowCheatCompensation(false);
       setAdjustedWorkout(modifiedWorkout);
@@ -485,10 +614,10 @@ export default function Workouts() {
   const handleCloseCheatCompensation = async () => {
     try {
       const todayISO = new Date().toISOString().split('T')[0];
-      const logs = await MealLog.filter({ user_id: user.id, date: todayISO });
+      const logs = await base44.entities.MealLog.filter({ user_id: trainingData.user_id, date: todayISO });
       for (const log of logs) {
         if (!log.rebalanced) {
-          await MealLog.update(log.id, { rebalanced: true });
+          await base44.entities.MealLog.update(log.id, { rebalanced: true });
         }
       }
     } catch (error) {
@@ -502,10 +631,13 @@ export default function Workouts() {
   };
 
   const handleLogSaved = async () => {
-    await loadWorkoutPlans(user.id);
+    await queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
     setLogWorkout(null);
     setAdjustedWorkout(null);
   };
+
+  const isLoading = isLoadingInitialData || isLoadingWorkouts || isLoadingExercises;
+
 
   if (isGenerating) {
     return (
@@ -548,7 +680,7 @@ export default function Workouts() {
                 Creazione Protocollo Allenamento AI
               </CardTitle>
               <p className="text-sm text-gray-600 text-center mt-2">
-                L'AI sta progettando il tuo allenamento personalizzato, analizzando ogni dettaglio del tuo profilo.
+                L'AI sta pescando esercizi dal database di {allExercises.length} esercizi e creando il tuo piano personalizzato.
               </p>
             </CardHeader>
             
@@ -565,19 +697,23 @@ export default function Workouts() {
                 <ul className="space-y-2 text-xs">
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 10 ? 'text-green-500' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Obiettivo: {trainingData.fitness_goal || user?.fitness_goal}</span>
+                    <span className="text-gray-700">Database: {allExercises.length} esercizi disponibili</span>
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 30 ? 'text-green-500' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Vincoli: Dolori, attrezzatura, esperienza</span>
+                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 20 ? 'text-green-500' : 'text-gray-300'}`} />
+                    <span className="text-gray-700">Filtro per attrezzatura e dolori</span>
+                  </li>
+                  <li className="flex items-center">
+                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 40 ? 'text-green-500' : 'text-gray-300'}`} />
+                    <span className="text-gray-700">AI seleziona esercizi dal database</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 60 ? 'text-green-500' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Sinergia con protocollo nutrizionale</span>
+                    <span className="text-gray-700">Validazione esercizi generati</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 85 ? 'text-green-500' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Costruzione e bilanciamento settimana</span>
+                    <span className="text-gray-700">Salvataggio piano personalizzato</span>
                   </li>
                 </ul>
               </div>
@@ -600,7 +736,7 @@ export default function Workouts() {
     );
   }
 
-  if (!hasFeatureAccess(user?.subscription_plan, 'workout_plan')) {
+  if (!hasFeatureAccess(trainingData.subscription_plan, 'workout_plan')) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="max-w-2xl w-full">
@@ -612,7 +748,7 @@ export default function Workouts() {
     );
   }
   
-  if (!user) {
+  if (!trainingData.user_id) { // This check replaces `!user` as `trainingData` is the primary source now
     return null;
   }
 
@@ -745,7 +881,7 @@ export default function Workouts() {
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Protocollo di Allenamento</h1>
-              <p className="text-gray-600">Programmazione AI e gestione allenamenti personalizzati</p>
+              <p className="text-gray-600">Database: {allExercises.length} esercizi • Disponibili: {getAvailableExercises().length}</p>
             </div>
             <Button 
               onClick={() => setShowAssessment(true)} 
@@ -788,10 +924,10 @@ export default function Workouts() {
                                     variant="secondary" 
                                     size="sm"
                                     className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative whitespace-nowrap"
-                                    disabled={!hasFeatureAccess(user?.subscription_plan, 'workout_modification')}
+                                    disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')}
                                   >
                                     <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
-                                    {!hasFeatureAccess(user?.subscription_plan, 'workout_modification') && (
+                                    {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
                                       <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                                         Premium
                                       </span>
@@ -850,10 +986,10 @@ export default function Workouts() {
                                 <Button 
                                   variant="secondary" 
                                   className="w-full bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative"
-                                  disabled={!hasFeatureAccess(user?.subscription_plan, 'workout_modification')}
+                                  disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')}
                                 >
                                   <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
-                                  {!hasFeatureAccess(user?.subscription_plan, 'workout_modification') && (
+                                  {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
                                     <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                                       Premium
                                     </span>
@@ -971,7 +1107,7 @@ export default function Workouts() {
                 </div>
                 <CardTitle className="text-xl text-gray-900 mb-4">Nessun Protocollo di Allenamento</CardTitle>
                 <p className="text-gray-600 mb-6">
-                  Configura e genera il tuo piano personalizzato per iniziare.
+                  Genera il tuo piano personalizzato dal database di {allExercises.length} esercizi per iniziare.
                 </p>
               </CardContent>
             </Card>
@@ -982,7 +1118,7 @@ export default function Workouts() {
       {logWorkout && (
         <WorkoutLogger
           workout={logWorkout}
-          user={user}
+          user={{ id: trainingData.user_id }}
           onClose={() => setLogWorkout(null)}
           onLogSaved={handleLogSaved}
         />
