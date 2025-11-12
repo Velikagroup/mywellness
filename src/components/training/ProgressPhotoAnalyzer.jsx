@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -36,9 +37,12 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
   const [appliedChanges, setAppliedChanges] = useState(null);
   const [canApplyChanges, setCanApplyChanges] = useState(false);
   const [daysSinceLastAdjustment, setDaysSinceLastAdjustment] = useState(null);
+  const [proposedChanges, setProposedChanges] = useState(null);
+  const [isGeneratingProposals, setIsGeneratingProposals] = useState(false);
 
   const targetFileRefs = useRef({});
   const bodyFileRefs = useRef({});
+  const uploadedPhotoUrls = useRef(null);
 
   useEffect(() => {
     const loadPreviousPhoto = async () => {
@@ -48,7 +52,6 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         if (sortedPhotos.length > 0) {
           setPreviousPhoto(sortedPhotos[0]);
           
-          // Controlla quando è stata l'ultima modifica ai piani
           const lastPhotoWithAdjustments = sortedPhotos.find(p => 
             p.ai_analysis?.plans_adjusted === true
           );
@@ -60,7 +63,6 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
             setDaysSinceLastAdjustment(daysSince);
             setCanApplyChanges(daysSince >= 7);
           } else {
-            // Nessuna modifica precedente, può applicare
             setCanApplyChanges(true);
             setDaysSinceLastAdjustment(null);
           }
@@ -82,14 +84,36 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     setStep('target_photos');
   };
 
-  const handleTargetPhotoSelect = (e, photoType) => {
+  const getFileHash = async (file) => {
+    const buffer = await file.arrayBuffer();
+    const hashBuffer = await crypto.subtle.digest('SHA-256', buffer);
+    const hashArray = Array.from(new Uint8Array(hashBuffer));
+    const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+    return hashHex;
+  };
+
+  const handleTargetPhotoSelect = async (e, photoType) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    const fileHash = await getFileHash(file);
+    
+    // Controlla se questo hash è già stato caricato
+    const existingPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
+    const existingHashes = existingPhotos
+      .map(p => p.ai_analysis?.photo_hashes || [])
+      .flat();
+    
+    if (existingHashes.includes(fileHash)) {
+      alert('⚠️ Hai già caricato questa foto in precedenza. Per favore scatta una nuova foto per un confronto accurato.');
+      e.target.value = '';
+      return;
+    }
 
     if (!targetFileRefs.current[photoType]) {
       targetFileRefs.current[photoType] = {};
     }
-    targetFileRefs.current[photoType] = file;
+    targetFileRefs.current[photoType] = { file, hash: fileHash };
     
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -97,7 +121,8 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         ...prev,
         [photoType]: {
           previewUrl: event.target.result,
-          fileName: file.name
+          fileName: file.name,
+          hash: fileHash
         }
       }));
     };
@@ -106,14 +131,27 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     e.target.value = '';
   };
 
-  const handleBodyPhotoSelect = (e, photoType) => {
+  const handleBodyPhotoSelect = async (e, photoType) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    const fileHash = await getFileHash(file);
+    
+    const existingPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
+    const existingHashes = existingPhotos
+      .map(p => p.ai_analysis?.photo_hashes || [])
+      .flat();
+    
+    if (existingHashes.includes(fileHash)) {
+      alert('⚠️ Hai già caricato questa foto in precedenza. Per favore scatta una nuova foto per un confronto accurato.');
+      e.target.value = '';
+      return;
+    }
 
     if (!bodyFileRefs.current[photoType]) {
       bodyFileRefs.current[photoType] = {};
     }
-    bodyFileRefs.current[photoType] = file;
+    bodyFileRefs.current[photoType] = { file, hash: fileHash };
     
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -121,7 +159,8 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         ...prev,
         [photoType]: {
           previewUrl: event.target.result,
-          fileName: file.name
+          fileName: file.name,
+          hash: fileHash
         }
       }));
     };
@@ -144,73 +183,47 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     return !!(bodyPhotos.front && bodyPhotos.side_left && bodyPhotos.side_right && bodyPhotos.back);
   };
 
-  const checkForDuplicatePhotos = async (newPhotoUrls) => {
-    try {
-      const allPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
-      
-      // Controlla se una delle nuove foto è già stata caricata
-      for (const existingPhoto of allPhotos) {
-        const existingUrls = [
-          existingPhoto.photo_url,
-          ...(existingPhoto.ai_analysis?.target_photo_urls || []),
-          ...Object.values(existingPhoto.ai_analysis?.body_photo_urls || {})
-        ].filter(Boolean);
-        
-        for (const newUrl of newPhotoUrls) {
-          if (existingUrls.includes(newUrl)) {
-            return true; // Foto duplicata trovata
-          }
-        }
-      }
-      return false;
-    } catch (error) {
-      console.error('Error checking duplicates:', error);
-      return false;
-    }
-  };
-
   const analyzePhotos = async () => {
     if (!selectedZone) return;
     
     setIsAnalyzing(true);
     setStep('analysis');
+    setAnalysisResult(null);
+    setProposedChanges(null);
+    setAppliedChanges(null);
     
     try {
       const targetPhotoUrls = [];
+      const photoHashes = [];
       const zone = TARGET_ZONES.find(z => z.id === selectedZone.id);
       
       if (zone.photoCount === 1 && targetFileRefs.current.single) {
-        const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.single });
+        const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.single.file });
         targetPhotoUrls.push(file_url);
+        photoHashes.push(targetFileRefs.current.single.hash);
       } else if (zone.photoCount === 2) {
         if (targetFileRefs.current.left) {
-          const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.left });
+          const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.left.file });
           targetPhotoUrls.push(file_url);
+          photoHashes.push(targetFileRefs.current.left.hash);
         }
         if (targetFileRefs.current.right) {
-          const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.right });
+          const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.right.file });
           targetPhotoUrls.push(file_url);
+          photoHashes.push(targetFileRefs.current.right.hash);
         }
       }
 
       const bodyPhotoUrls = {};
       for (const photoType of ['front', 'side_left', 'side_right', 'back']) {
         if (bodyFileRefs.current[photoType]) {
-          const { file_url } = await base44.integrations.Core.UploadFile({ file: bodyFileRefs.current[photoType] });
+          const { file_url } = await base44.integrations.Core.UploadFile({ file: bodyFileRefs.current[photoType].file });
           bodyPhotoUrls[photoType] = file_url;
+          photoHashes.push(bodyFileRefs.current[photoType].hash);
         }
       }
 
-      // Controlla foto duplicate
-      const allUploadedUrls = [...targetPhotoUrls, ...Object.values(bodyPhotoUrls)];
-      const isDuplicate = await checkForDuplicatePhotos(allUploadedUrls);
-      
-      if (isDuplicate) {
-        alert('⚠️ Hai già caricato queste foto in precedenza. Per favore scatta nuove foto per un confronto accurato.');
-        setIsAnalyzing(false);
-        setStep('body_photos');
-        return;
-      }
+      uploadedPhotoUrls.current = { targetPhotoUrls, bodyPhotoUrls, photoHashes };
 
       let analysisPrompt;
 
@@ -257,7 +270,6 @@ CRITICAL INSTRUCTIONS:
 - Be EXTREMELY DETAILED and scientific
 - DO NOT estimate body fat percentage
 - DO NOT make assumptions about body parts not visible
-- Focus on helping the user NOTICE differences they might not see themselves
 
 User Context:
 - Gender: ${user.gender}
@@ -270,17 +282,15 @@ User Notes: ${notes || 'Nessuna nota'}
 
 IMPORTANT REMINDERS:
 ⚠️ Mantenere angolo fotografico e illuminazione simili tra le foto per confronti accurati
-⚠️ Queste foto sono private e viste solo dalla tecnologia AI
+⚠️ Queste foto sono private e vista solo dalla tecnologia AI
 
 Task:
 1. Compare the two sides (left vs right) in detail
-2. List observable differences WITHOUT judging them as good or bad (e.g., "Il lato sinistro mostra maggiore definizione muscolare", "Il lato destro presenta una circonferenza leggermente superiore")
-3. Help the user notice asymmetries or differences they might miss
+2. List observable differences WITHOUT judging them
+3. Help the user notice asymmetries
 4. Provide 3-4 specific recommendations to balance or improve both sides
 5. Suggest if workout adjustments are needed for symmetry
-6. Write an encouraging message in Italian
-
-Remember: NO positive or negative judgments - just objective observations to help the user notice differences.`;
+6. Write an encouraging message in Italian`;
       }
 
       const analysis = await base44.integrations.Core.InvokeLLM({
@@ -301,7 +311,7 @@ Remember: NO positive or negative judgments - just objective observations to hel
             visible_differences: {
               type: "array",
               items: { type: "string" },
-              description: "For dual zones: observable differences between left and right. For single zones: empty array."
+              description: "For dual zones: observable differences between left and right"
             },
             overall_assessment: { 
               type: "string",
@@ -322,10 +332,14 @@ Remember: NO positive or negative judgments - just objective observations to hel
 
       setAnalysisResult({
         ...analysis,
-        target_zone: selectedZone.id,
-        target_photo_urls: targetPhotoUrls,
-        body_photo_urls: bodyPhotoUrls
+        target_zone: selectedZone.id
       });
+
+      // Se può applicare modifiche, genera le proposte
+      if (canApplyChanges && (analysis.workout_adjustment_needed || analysis.diet_adjustment_needed)) {
+        await generateProposedChanges(analysis);
+      }
+
     } catch (error) {
       console.error("Error analyzing photos:", error);
       alert(`Errore nell'analisi: ${error.message || 'Errore sconosciuto'}`);
@@ -334,112 +348,118 @@ Remember: NO positive or negative judgments - just objective observations to hel
     setIsAnalyzing(false);
   };
 
-  const applyPlanAdjustments = async () => {
-    if (!analysisResult) return;
-    
-    setIsApplyingChanges(true);
-    const changes = { diet: [], workout: [] };
+  const generateProposedChanges = async (analysis) => {
+    setIsGeneratingProposals(true);
+    const proposals = { diet: [], workout: [] };
     
     try {
-      // 1. MODIFICA DIETA (se necessario e consentito)
-      if (analysisResult.diet_adjustment_needed && canApplyChanges) {
+      // 1. PROPOSTA MODIFICA DIETA
+      if (analysis.diet_adjustment_needed) {
         const currentCalories = user.daily_calories;
         const currentWeight = user.current_weight;
         const targetWeight = user.target_weight;
         const weightDifference = currentWeight - targetWeight;
         
-        // Aggiustamento MOLTO conservativo delle calorie (max ±100 kcal)
         let calorieAdjustment = 0;
+        let reason = '';
         
-        if (analysisResult.comparison_result === 'regressed' || Math.abs(weightDifference) > 5) {
-          // Leggero taglio calorico se regressione o lontano dall'obiettivo
+        if (analysis.comparison_result === 'regressed') {
+          calorieAdjustment = -75;
+          reason = 'Taglio calorico per contrastare la regressione e incentivare la definizione.';
+        } else if (analysis.comparison_result === 'maintained') {
           calorieAdjustment = -50;
-        } else if (analysisResult.comparison_result === 'improved') {
-          // Nessuna modifica se sta migliorando
-          calorieAdjustment = 0;
+          reason = 'Leggero aggiustamento calorico per stimolare ulteriori progressi e superare la fase di mantenimento.';
+        } else if (analysis.comparison_result === 'improved') {
+          if (user.fitness_goal === 'aumentare massa muscolare' && weightDifference < -1) { 
+              calorieAdjustment = 50;
+              reason = 'Aumento calorico per supportare ulteriormente la crescita muscolare, visti i progressi.';
+          } else {
+              calorieAdjustment = 0;
+              reason = 'Il piano nutrizionale è efficace, manteniamo l\'apporto calorico per consolidare i progressi.';
+          }
+        } else if (analysis.comparison_result === 'first_photo') {
+            calorieAdjustment = -50;
+            reason = 'Aggiustamento iniziale per ottimizzare il percorso in base all\'analisi visiva.';
         }
         
-        if (calorieAdjustment !== 0) {
-          const newCalories = currentCalories + calorieAdjustment;
-          await base44.auth.updateMe({ daily_calories: Math.round(newCalories) });
-          changes.diet.push(`Target calorico ${calorieAdjustment > 0 ? 'aumentato' : 'ridotto'} di ${Math.abs(calorieAdjustment)} kcal (da ${currentCalories} a ${newCalories} kcal)`);
-        } else {
-          changes.diet.push('Piano nutrizionale mantenuto (progressi positivi)');
-        }
+        calorieAdjustment = Math.max(-100, Math.min(100, calorieAdjustment));
+
+        const newCalories = Math.round(currentCalories + calorieAdjustment);
+        
+        proposals.diet.push({
+          type: 'calorie_adjustment',
+          current: currentCalories,
+          proposed: newCalories,
+          adjustment: calorieAdjustment,
+          reason: reason
+        });
       }
 
-      // 2. MODIFICA ALLENAMENTO (se necessario e consentito)
-      if (analysisResult.workout_adjustment_needed && canApplyChanges) {
+      // 2. PROPOSTA MODIFICA ALLENAMENTO
+      if (analysis.workout_adjustment_needed) {
         const workoutPlans = await base44.entities.WorkoutPlan.filter({ user_id: user.id });
         
-        if (workoutPlans.length > 0) {
-          // Identifica i giorni di allenamento attivi
-          const activeDays = workoutPlans.filter(p => p.workout_type !== 'rest');
+        const activeDays = workoutPlans.filter(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
+        
+        if (activeDays.length > 0) {
+          const targetMuscleGroups = {
+            'pancia': ['addominali', 'core'],
+            'petto': ['pettorali'],
+            'schiena': ['dorsali', 'lombari', 'gran dorsale'],
+            'braccia': ['bicipiti', 'tricipiti', 'avambraccio'],
+            'gambe': ['quadricipiti', 'polpacci', 'femorali', 'glutei'],
+            'glutei': ['glutei', 'femorali']
+          };
           
-          if (activeDays.length > 0) {
-            // Seleziona UN SOLO giorno da modificare (il più rilevante per la zona target)
-            const targetMuscleGroups = {
-              'pancia': ['addominali', 'core'],
-              'petto': ['pettorali'],
-              'schiena': ['dorsali', 'lombari'],
-              'braccia': ['bicipiti', 'tricipiti'],
-              'gambe': ['quadricipiti', 'polpacci', 'femorali'],
-              'glutei': ['glutei']
-            };
-            
-            const relevantMuscles = targetMuscleGroups[selectedZone.id] || [];
-            
-            // Trova il giorno con più esercizi rilevanti per la zona
-            let dayToModify = activeDays[0];
-            let maxRelevantExercises = 0;
-            
-            for (const day of activeDays) {
-              const relevantCount = day.exercises?.filter(ex => 
-                relevantMuscles.some(muscle => 
-                  ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
-                )
-              ).length || 0;
-              
-              if (relevantCount > maxRelevantExercises) {
-                maxRelevantExercises = relevantCount;
-                dayToModify = day;
-              }
-            }
-            
-            // Carica esercizi disponibili dal database
-            const allExercises = await base44.entities.Exercise.list();
-            const availableExercises = allExercises.filter(ex => 
+          const relevantMuscles = targetMuscleGroups[selectedZone.id] || [];
+          
+          let dayToModify = null;
+          let maxRelevantExercises = 0;
+          let exerciseToReplace = null;
+          
+          for (const day of activeDays) {
+            const relevantExercisesInDay = day.exercises.filter(ex => 
               relevantMuscles.some(muscle => 
                 ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
               )
             );
             
-            if (availableExercises.length > 0 && dayToModify.exercises?.length > 0) {
-              // Seleziona SOLO 1 esercizio da modificare
-              const exerciseToReplace = dayToModify.exercises.find(ex =>
-                relevantMuscles.some(muscle => 
-                  ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
-                )
-              ) || dayToModify.exercises[0];
-              
+            if (relevantExercisesInDay.length > maxRelevantExercises) {
+              maxRelevantExercises = relevantExercisesInDay.length;
+              dayToModify = day;
+              exerciseToReplace = relevantExercisesInDay[0];
+            }
+          }
+          
+          if (dayToModify && exerciseToReplace) {
+            const allExercises = await base44.entities.Exercise.list();
+            
+            const availableExercises = allExercises.filter(ex => 
+              relevantMuscles.some(muscle => 
+                ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+              ) && (user.equipment?.includes(ex.equipment) || ex.equipment === 'corpo_libero' || ex.equipment === 'nessuno')
+            );
+            
+            if (availableExercises.length > 0) {
               const adjustmentPrompt = `You are an expert personal trainer. Based on the user's progress analysis, suggest ONE alternative exercise to replace "${exerciseToReplace.name}".
-
+              
 CRITICAL INSTRUCTIONS:
 - Generate ALL content in ITALIAN language
-- Suggest ONLY ONE exercise from this database
-- The new exercise must target similar muscle groups but provide a slight variation
-- Keep changes MINIMAL - we're making small adjustments, not overhauling the program
+- Suggest ONLY ONE exercise from this database. The new exercise must be DIFFERENT from "${exerciseToReplace.name}".
+- The new exercise must target similar muscle groups but provide a slight variation or a new stimulus.
+- Keep changes MINIMAL - we're making small adjustments, not overhauling the program.
+- Ensure the exercise uses equipment available to the user.
 
-Available exercises for ${selectedZone.label}:
-${availableExercises.slice(0, 20).map(e => `"${e.name}" (${e.equipment}, ${e.difficulty})`).join(', ')}
+Available exercises for ${selectedZone.label} and user's equipment:
+${availableExercises.slice(0, 20).map(e => `"${e.name}" (equip: ${e.equipment}, diff: ${e.difficulty})`).join(', ')}
 
 User's equipment: ${user.equipment?.join(', ') || 'corpo libero'}
 User's experience: ${user.fitness_experience}
 
-Current exercise to replace: "${exerciseToReplace.name}" (${exerciseToReplace.sets} serie x ${exerciseToReplace.reps})
+Current exercise to replace: "${exerciseToReplace.name}" (sets: ${exerciseToReplace.sets}, reps: ${exerciseToReplace.reps})
 
 Task:
-Suggest ONE single exercise replacement with Italian name, sets, reps (in Italian format), rest, and brief explanation why this change helps.`;
+Suggest ONE single exercise replacement with Italian name, sets, reps (in Italian format, e.g., "12 ripetizioni"), rest (e.g., "60 secondi"), and brief explanation (2 sentences max) why this change helps for the ${selectedZone.label} area.`;
 
               const replacement = await base44.integrations.Core.InvokeLLM({
                 prompt: adjustmentPrompt,
@@ -450,31 +470,124 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     sets: { type: "number" },
                     reps: { type: "string" },
                     rest: { type: "string" },
-                    description: { type: "string" },
                     explanation: { type: "string" }
                   },
                   required: ["name", "sets", "reps", "rest", "explanation"]
                 }
               });
               
-              // Sostituisci l'esercizio nel piano
-              const updatedExercises = dayToModify.exercises.map(ex => 
-                ex.name === exerciseToReplace.name ? replacement : ex
-              );
-              
-              await base44.entities.WorkoutPlan.update(dayToModify.id, {
-                exercises: updatedExercises
-              });
-              
-              changes.workout.push(`${dayToModify.plan_name}: sostituito "${exerciseToReplace.name}" con "${replacement.name}" - ${replacement.explanation}`);
+              if (replacement && replacement.name && replacement.sets && replacement.reps && replacement.rest && replacement.explanation) {
+                if (replacement.name.toLowerCase() === exerciseToReplace.name.toLowerCase()) {
+                    const otherAvailableExercises = availableExercises.filter(ex => ex.name.toLowerCase() !== exerciseToReplace.name.toLowerCase());
+                    if (otherAvailableExercises.length > 0) {
+                        const fallbackReplacement = otherAvailableExercises[0];
+                        proposals.workout.push({
+                            type: 'exercise_replacement',
+                            day: dayToModify.plan_name,
+                            day_id: dayToModify.id,
+                            current_exercise: exerciseToReplace,
+                            proposed_exercise: {
+                                name: fallbackReplacement.name,
+                                sets: fallbackReplacement.sets,
+                                reps: fallbackReplacement.reps,
+                                rest: fallbackReplacement.rest,
+                                explanation: `Sostituzione per variare lo stimolo sui ${selectedZone.label}.`
+                            },
+                            reason: `Sostituito "${exerciseToReplace.name}" con "${fallbackReplacement.name}" per variare lo stimolo.`
+                        });
+                    } else {
+                        proposals.workout.push({
+                            type: 'no_change',
+                            reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun esercizio alternativo idoneo trovato).`
+                        });
+                    }
+                } else {
+                    proposals.workout.push({
+                        type: 'exercise_replacement',
+                        day: dayToModify.plan_name,
+                        day_id: dayToModify.id,
+                        current_exercise: exerciseToReplace,
+                        proposed_exercise: replacement,
+                        reason: replacement.explanation
+                    });
+                }
+              } else {
+                  console.warn("LLM returned incomplete replacement data:", replacement);
+                  proposals.workout.push({
+                      type: 'no_change',
+                      reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (LLM response incompleta).`
+                  });
+              }
+            } else {
+                proposals.workout.push({
+                    type: 'no_change',
+                    reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun esercizio alternativo idoneo trovato).`
+                });
             }
+          } else {
+              proposals.workout.push({
+                  type: 'no_change',
+                  reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun giorno o esercizio rilevante trovato).`
+              });
           }
+        } else {
+            proposals.workout.push({
+                type: 'no_change',
+                reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun piano di allenamento attivo trovato).`
+            });
+        }
+      }
+
+      setProposedChanges(proposals);
+    } catch (error) {
+      console.error('Error generating proposals:', error);
+      alert('Errore nella generazione delle proposte di modifica. Riprova.');
+    }
+    setIsGeneratingProposals(false);
+  };
+
+  const applyProposedChanges = async () => {
+    if (!proposedChanges) return;
+    
+    setIsApplyingChanges(true);
+    const changes = { diet: [], workout: [] };
+    
+    try {
+      // Applica modifiche dieta
+      for (const proposal of proposedChanges.diet) {
+        if (proposal.type === 'calorie_adjustment' && proposal.adjustment !== 0) {
+          await base44.auth.updateMe({ daily_calories: proposal.proposed });
+          changes.diet.push(`Target calorico ${proposal.adjustment > 0 ? 'aumentato' : 'ridotto'} di ${Math.abs(proposal.adjustment)} kcal (da ${proposal.current} a ${proposal.proposed} kcal) - ${proposal.reason}`);
+        } else if (proposal.type === 'no_change') {
+          changes.diet.push(proposal.reason);
+        }
+      }
+      
+      // Applica modifiche workout
+      for (const proposal of proposedChanges.workout) {
+        if (proposal.type === 'exercise_replacement') {
+          const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
+          const dayPlan = dayPlans[0];
+
+          if (dayPlan) {
+            const updatedExercises = dayPlan.exercises.map(ex => 
+              ex.name === proposal.current_exercise.name ? { ...proposal.proposed_exercise, id: ex.id } : ex
+            );
+            
+            await base44.entities.WorkoutPlan.update(proposal.day_id, {
+              exercises: updatedExercises
+            });
+            
+            changes.workout.push(`${proposal.day}: sostituito "${proposal.current_exercise.name}" con "${proposal.proposed_exercise.name}" - ${proposal.reason}`);
+          }
+        } else if (proposal.type === 'no_change') {
+          changes.workout.push(proposal.reason);
         }
       }
 
       setAppliedChanges(changes);
     } catch (error) {
-      console.error('Error applying plan adjustments:', error);
+      console.error('Error applying changes:', error);
       alert('Errore nell\'applicazione delle modifiche. L\'analisi verrà comunque salvata.');
     }
     setIsApplyingChanges(false);
@@ -483,23 +596,20 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
   const saveAnalysis = async () => {
     setIsSaving(true);
     
-    // Prima applica le modifiche ai piani (se possibile)
-    if ((analysisResult.workout_adjustment_needed || analysisResult.diet_adjustment_needed) && canApplyChanges) {
-      await applyPlanAdjustments();
-    }
-    
     try {
       const today = new Date().toISOString().split('T')[0];
+      const { targetPhotoUrls, bodyPhotoUrls, photoHashes } = uploadedPhotoUrls.current || { targetPhotoUrls: [], bodyPhotoUrls: {}, photoHashes: [] };
       
       await base44.entities.ProgressPhoto.create({
         user_id: user.id,
-        photo_url: analysisResult.target_photo_urls[0],
+        photo_url: targetPhotoUrls[0] || null,
         date: today,
         weight: user.current_weight,
         ai_analysis: {
           target_zone: analysisResult.target_zone,
-          target_photo_urls: analysisResult.target_photo_urls,
-          body_photo_urls: analysisResult.body_photo_urls,
+          target_photo_urls: targetPhotoUrls,
+          body_photo_urls: bodyPhotoUrls,
+          photo_hashes: photoHashes,
           comparison_result: analysisResult.comparison_result,
           visible_characteristics: analysisResult.visible_characteristics,
           visible_differences: analysisResult.visible_differences,
@@ -508,8 +618,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
           workout_adjustment_needed: analysisResult.workout_adjustment_needed,
           diet_adjustment_needed: analysisResult.diet_adjustment_needed,
           motivational_message: analysisResult.motivational_message,
-          plans_adjusted: canApplyChanges && (analysisResult.workout_adjustment_needed || analysisResult.diet_adjustment_needed),
-          applied_changes: appliedChanges
+          plans_adjusted: !!appliedChanges,
+          applied_changes: appliedChanges,
+          proposed_changes: proposedChanges
         },
         notes: notes
       });
@@ -573,7 +684,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
               {step === 'zone_selection' && 'Seleziona la zona da migliorare'}
               {step === 'target_photos' && `Foto: ${selectedZone?.label}`}
               {step === 'body_photos' && 'Foto corpo intero per archivio'}
-              {step === 'analysis' && 'Analisi completata'}
+              {step === 'analysis' && (isAnalyzing ? 'Analisi in corso...' : 'Analisi completata')}
             </p>
           </DialogHeader>
 
@@ -996,7 +1107,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   </Button>
                   <Button
                     onClick={analyzePhotos}
-                    disabled={!canProceedFromBodyPhotos()}
+                    disabled={!canProceedFromBodyPhotos() || isAnalyzing}
                     size="sm"
                     className="flex-1 bg-purple-600 hover:bg-purple-700"
                   >
@@ -1008,7 +1119,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
             )}
 
             {/* STEP 4: Analisi in Corso */}
-            {step === 'analysis' && !analysisResult && (
+            {step === 'analysis' && isAnalyzing && !analysisResult && (
               <motion.div
                 key="analyzing"
                 initial={{ opacity: 0 }}
@@ -1094,14 +1205,14 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   </div>
                 )}
 
-                {/* Info modifiche ai piani */}
+                {/* Limiti temporali */}
                 {!canApplyChanges && daysSinceLastAdjustment !== null && (
                   <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
                     <div className="flex items-start gap-2">
                       <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
                         <p className="text-xs text-amber-800 font-semibold mb-1">
-                          Modifiche ai piani non disponibili
+                          Modifiche non disponibili
                         </p>
                         <p className="text-xs text-amber-700">
                           Sono passati {daysSinceLastAdjustment} giorni dall'ultima modifica. 
@@ -1112,43 +1223,105 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   </div>
                 )}
 
-                {canApplyChanges && (analysisResult.workout_adjustment_needed || analysisResult.diet_adjustment_needed) && (
-                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
-                    <div className="flex items-start gap-2">
-                      <RefreshCw className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
-                      <div>
-                        <p className="text-xs text-green-800 font-semibold mb-1">
-                          L'AI applicherà modifiche parsimoniose ai tuoi piani
-                        </p>
-                        <ul className="text-xs text-green-700 space-y-0.5">
-                          {analysisResult.diet_adjustment_needed && (
-                            <li>• Leggero aggiustamento calorico (max ±50 kcal)</li>
-                          )}
-                          {analysisResult.workout_adjustment_needed && (
-                            <li>• Sostituzione di 1 solo esercizio per la zona {selectedZone.label}</li>
-                          )}
-                        </ul>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {isApplyingChanges && (
+                {/* Loading proposte */}
+                {isGeneratingProposals && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
                       <p className="text-sm text-blue-800 font-medium">
-                        Applicazione modifiche ai piani in corso...
+                        Generazione modifiche proposte dall'AI...
                       </p>
                     </div>
                   </div>
                 )}
 
+                {/* PROPOSTE DI MODIFICA */}
+                {proposedChanges && !appliedChanges && canApplyChanges && (
+                  <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-300">
+                    <h4 className="font-bold text-green-900 mb-3 text-base flex items-center gap-2">
+                      <Sparkles className="w-5 h-5" />
+                      Modifiche Proposte dall'AI
+                    </h4>
+                    
+                    {/* Proposte Dieta */}
+                    {proposedChanges.diet.length > 0 && (
+                      <div className="mb-4">
+                        <p className="text-sm font-semibold text-green-800 mb-2">🍽️ Piano Nutrizionale:</p>
+                        {proposedChanges.diet.map((proposal, idx) => (
+                          <div key={idx} className="bg-white/60 p-3 rounded-lg border border-green-200 mb-2">
+                            {proposal.type === 'calorie_adjustment' ? (
+                              <>
+                                <div className="flex items-center justify-between mb-1">
+                                  <span className="text-sm font-medium text-gray-900">Target Calorico:</span>
+                                  <span className="text-sm font-bold text-green-700">
+                                    {proposal.current} → {proposal.proposed} kcal ({proposal.adjustment > 0 ? '+' : ''}{proposal.adjustment})
+                                  </span>
+                                </div>
+                                <p className="text-xs text-gray-600">{proposal.reason}</p>
+                              </>
+                            ) : (
+                              <p className="text-sm text-gray-700">✓ {proposal.reason}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    {/* Proposte Workout */}
+                    {proposedChanges.workout.length > 0 && (
+                      <div className="mb-4">
+                        <p className="text-sm font-semibold text-green-800 mb-2">💪 Piano Allenamento:</p>
+                        {proposedChanges.workout.map((proposal, idx) => (
+                          <div key={idx} className="bg-white/60 p-3 rounded-lg border border-green-200 mb-2">
+                            {proposal.type === 'exercise_replacement' ? (
+                              <>
+                                <p className="text-xs font-medium text-gray-700 mb-1">
+                                  Giorno: <span className="font-bold">{proposal.day}</span>
+                                </p>
+                                <div className="flex items-center gap-2 mb-1">
+                                  <span className="text-xs text-red-600 line-through">{proposal.current_exercise.name}</span>
+                                  <ArrowRight className="w-3 h-3 text-gray-400" />
+                                  <span className="text-xs text-green-700 font-bold">{proposal.proposed_exercise.name}</span>
+                                </div>
+                                <p className="text-xs text-gray-600">
+                                  {proposal.proposed_exercise.sets} serie x {proposal.proposed_exercise.reps} • {proposal.proposed_exercise.rest} recupero
+                                </p>
+                                <p className="text-xs text-gray-600 mt-1">{proposal.reason}</p>
+                              </>
+                            ) : (
+                              <p className="text-sm text-gray-700">✓ {proposal.reason}</p>
+                            )}
+                          </div>
+                        ))}
+                      </div>
+                    )}
+
+                    <Button
+                      onClick={applyProposedChanges}
+                      className="w-full bg-green-600 hover:bg-green-700"
+                      disabled={isApplyingChanges}
+                    >
+                      {isApplyingChanges ? (
+                        <>
+                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                          Applicazione in corso...
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle2 className="w-4 h-4 mr-2" />
+                          Applica Modifiche
+                        </>
+                      )}
+                    </Button>
+                  </div>
+                )}
+
+                {/* MODIFICHE APPLICATE */}
                 {appliedChanges && (
                   <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                     <h4 className="font-semibold text-green-900 mb-2 text-sm flex items-center gap-2">
                       <CheckCircle2 className="w-4 h-4" />
-                      Modifiche Applicate
+                      ✅ Modifiche Applicate con Successo
                     </h4>
                     {appliedChanges.diet.length > 0 && (
                       <div className="mb-2">
@@ -1176,13 +1349,12 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                 <Button
                   onClick={saveAnalysis}
                   className="w-full bg-purple-600 hover:bg-purple-700"
-                  disabled={isSaving || isApplyingChanges}
-                  size="sm"
+                  disabled={isSaving || isApplyingChanges || isGeneratingProposals}
                 >
-                  {isSaving || isApplyingChanges ? (
+                  {isSaving ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      {isApplyingChanges ? 'Applicazione modifiche...' : 'Salvataggio...'}
+                      Salvataggio...
                     </>
                   ) : (
                     <>
