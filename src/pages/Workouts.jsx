@@ -693,11 +693,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     return (
       <div className="min-h-screen flex items-center justify-center p-4 pt-8 md:pt-4">
         <style>{`
-          @keyframes dumbellLift {
-            0%, 100% { transform: translateY(0) rotate(0deg); }
-            25% { transform: translateY(-15px) rotate(-10deg); }
-            50% { transform: translateY(0) rotate(0deg); }
-            75% { transform: translateY(-10px) rotate(10deg); }
+          @keyframes dumbellRotate {
+            0%, 100% { transform: rotate(0deg); }
+            25% { transform: rotate(-10deg); }
+            50% { transform: rotate(0deg); }
+            75% { transform: rotate(10deg); }
           }
 
           @keyframes pulseGlow {
@@ -705,18 +705,13 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
             50% { box-shadow: 0 0 30px rgba(38, 132, 127, 0.5), 0 0 60px rgba(38, 132, 127, 0.3); }
           }
 
-          @keyframes floatBounce {
-            0%, 100% { transform: translateY(0) scale(1); }
-            50% { transform: translateY(-8px) scale(1.03); }
-          }
-
           .animated-workout-container {
-            animation: floatBounce 3s ease-in-out infinite, pulseGlow 2s ease-in-out infinite;
+            animation: pulseGlow 2s ease-in-out infinite;
             background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%);
           }
 
           .animated-dumbbell {
-            animation: dumbellLift 2.5s ease-in-out infinite;
+            animation: dumbellRotate 2.5s ease-in-out infinite;
           }
         `}</style>
         
