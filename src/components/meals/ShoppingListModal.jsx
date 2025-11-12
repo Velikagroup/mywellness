@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -280,8 +279,8 @@ Return ONLY valid JSON, no markdown.`;
 
   return (
     <>
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto z-[90]">
+      <Dialog open={isOpen && !showUpgradeModal} onOpenChange={onClose}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
               <ShoppingCart className="w-6 h-6 text-[var(--brand-primary)]" />
@@ -371,12 +370,12 @@ Return ONLY valid JSON, no markdown.`;
       </Dialog>
 
       {/* Scanner Modal */}
-      <Dialog open={showScanner} onOpenChange={() => {
+      <Dialog open={showScanner && !showUpgradeModal} onOpenChange={() => {
         setShowScanner(false);
         setScanResult(null);
         setSelectedIngredient(null);
       }}>
-        <DialogContent className="max-w-xl z-[95]">
+        <DialogContent className="max-w-xl">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
@@ -515,7 +514,7 @@ Return ONLY valid JSON, no markdown.`;
         </DialogContent>
       </Dialog>
 
-      {/* Upgrade Modal */}
+      {/* Upgrade Modal - Completamente separato */}
       <UpgradeModal 
         isOpen={showUpgradeModal} 
         onClose={() => setShowUpgradeModal(false)} 
