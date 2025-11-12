@@ -11,12 +11,12 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Switch } from "@/components/ui/switch";
 import { Textarea } from "@/components/ui/textarea";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { 
-  User, 
-  CreditCard, 
-  Bell, 
-  HelpCircle, 
-  LogOut, 
+import {
+  User,
+  CreditCard,
+  Bell,
+  HelpCircle,
+  LogOut,
   Settings as SettingsIcon,
   Download,
   Trash2,
@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import UpgradeModal from '../components/meals/UpgradeModal';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -35,16 +36,16 @@ export default function Settings() {
   const [isSaving, setIsSaving] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [supportTickets, setSupportTickets] = useState([]);
-  
+
   // Account
   const [fullName, setFullName] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
-  
+
   // Password (solo se non Google OAuth)
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  
+
   // Notifiche
   const [emailNotifications, setEmailNotifications] = useState({
     marketing: true,
@@ -52,7 +53,7 @@ export default function Settings() {
     renewal_reminders: true,
     workout_reminders: true
   });
-  
+
   // Fatturazione
   const [billingInfo, setBillingInfo] = useState({
     billingType: 'private',
@@ -64,12 +65,12 @@ export default function Settings() {
     zip: '',
     country: 'IT'
   });
-  
+
   // Support Ticket
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketMessage, setTicketMessage] = useState('');
   const [ticketCategory, setTicketCategory] = useState('tecnico');
-  
+
   // Dialogs
   const [showCancelDialog, setShowCancelDialog] = useState(false);
   const [showCancelFeedbackDialog, setShowCancelFeedbackDialog] = useState(false);
@@ -77,7 +78,8 @@ export default function Settings() {
   const [cancellationDetails, setCancellationDetails] = useState('');
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-  const [selectedNewPlan, setSelectedNewPlan] = useState('');
+  // Removed selectedNewPlan state as per outline
+  // const [selectedNewPlan, setSelectedNewPlan] = useState('');
 
   useEffect(() => {
     loadUserData();
@@ -87,10 +89,10 @@ export default function Settings() {
     try {
       const currentUser = await base44.auth.me();
       setUser(currentUser);
-      
+
       setFullName(currentUser.full_name || '');
       setPhoneNumber(currentUser.phone_number || '');
-      
+
       setBillingInfo({
         billingType: currentUser.billing_type || 'private',
         companyName: currentUser.company_name || '',
@@ -204,7 +206,7 @@ export default function Settings() {
     setIsSaving(true);
     try {
       const priority = user.subscription_plan === 'premium' ? 'premium' : 'normale';
-      
+
       await base44.entities.SupportTicket.create({
         user_id: user.id,
         user_email: user.email,
@@ -227,33 +229,9 @@ export default function Settings() {
     setIsSaving(false);
   };
 
-  const handleUpgradePlan = async () => {
-    if (!selectedNewPlan) {
-      alert('❌ Seleziona un piano');
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
-        newPlan: selectedNewPlan,
-        newBillingPeriod: 'monthly'
-      });
-
-      const data = response.data || response;
-
-      if (data.success) {
-        alert('✅ Piano aggiornato con successo!');
-        setShowUpgradeDialog(false);
-        await loadUserData();
-      } else {
-        alert('❌ Errore: ' + data.error);
-      }
-    } catch (error) {
-      console.error('Error upgrading plan:', error);
-      alert('❌ Errore nell\'upgrade');
-    }
-    setIsSaving(false);
+  // Modified handleUpgradePlan as per outline
+  const handleUpgradePlan = () => {
+    setShowUpgradeDialog(true);
   };
 
   const handleCancelClick = () => {
@@ -281,7 +259,7 @@ export default function Settings() {
     try {
       // Salva feedback cancellazione
       const accountAge = Math.floor((new Date() - new Date(user.created_date)) / (1000 * 60 * 60 * 24));
-      
+
       await base44.entities.CancellationFeedback.create({
         user_id: user.id,
         user_email: user.email,
@@ -424,7 +402,7 @@ export default function Settings() {
                     className="bg-white"
                   />
                 </div>
-                <Button 
+                <Button
                   onClick={handleSavePersonalInfo}
                   disabled={isSaving}
                   className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
@@ -481,7 +459,7 @@ export default function Settings() {
                       className="bg-white"
                     />
                   </div>
-                  <Button 
+                  <Button
                     onClick={handleChangePassword}
                     disabled={isSaving}
                     variant="outline"
@@ -532,12 +510,12 @@ export default function Settings() {
 
                 <div className="flex gap-3">
                   <Button
-                    onClick={() => setShowUpgradeDialog(true)}
+                    onClick={handleUpgradePlan}
                     className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
                   >
                     {user?.subscription_plan === 'premium' ? 'Cambia Piano' : 'Upgrade Piano'}
                   </Button>
-                  
+
                   {user?.subscription_status === 'active' && !user?.cancellation_at_period_end && (
                     <Button
                       onClick={() => setShowCancelDialog(true)}
@@ -645,7 +623,7 @@ export default function Settings() {
                   </div>
                 </div>
 
-                <Button 
+                <Button
                   onClick={handleSaveBillingInfo}
                   disabled={isSaving}
                   className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
@@ -738,7 +716,7 @@ export default function Settings() {
                     onCheckedChange={(checked) => setEmailNotifications({...emailNotifications, workout_reminders: checked})}
                   />
                 </div>
-                <Button 
+                <Button
                   onClick={handleSaveNotifications}
                   disabled={isSaving}
                   className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
@@ -806,7 +784,7 @@ export default function Settings() {
                   />
                 </div>
 
-                <Button 
+                <Button
                   onClick={handleSubmitTicket}
                   disabled={isSaving}
                   className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] w-full"
@@ -866,53 +844,26 @@ export default function Settings() {
       </div>
 
       {/* DIALOG UPGRADE */}
-      <Dialog open={showUpgradeDialog} onOpenChange={setShowUpgradeDialog}>
-        <DialogContent>
-          <DialogHeader>
-            <DialogTitle>Cambia Piano</DialogTitle>
-            <DialogDescription>Seleziona il nuovo piano da attivare</DialogDescription>
-          </DialogHeader>
-          <div className="space-y-3 py-4">
-            <button
-              onClick={() => setSelectedNewPlan('base')}
-              className={`w-full p-4 border-2 rounded-xl transition-all ${
-                selectedNewPlan === 'base' ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]' : 'border-gray-200'
-              }`}
-            >
-              <p className="font-bold">Base - €19/mese</p>
-              <p className="text-sm text-gray-600">Piano nutrizionale completo</p>
-            </button>
-            <button
-              onClick={() => setSelectedNewPlan('pro')}
-              className={`w-full p-4 border-2 rounded-xl transition-all ${
-                selectedNewPlan === 'pro' ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]' : 'border-gray-200'
-              }`}
-            >
-              <p className="font-bold">Pro - €29/mese</p>
-              <p className="text-sm text-gray-600">Nutrizionale + Allenamento + AI</p>
-            </button>
-            <button
-              onClick={() => setSelectedNewPlan('premium')}
-              className={`w-full p-4 border-2 rounded-xl transition-all ${
-                selectedNewPlan === 'premium' ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]' : 'border-gray-200'
-              }`}
-            >
-              <p className="font-bold">Premium - €39/mese</p>
-              <p className="text-sm text-gray-600">Accesso completo + Supporto prioritario</p>
-            </button>
-          </div>
-          <DialogFooter>
-            <Button variant="outline" onClick={() => setShowUpgradeDialog(false)}>Annulla</Button>
-            <Button 
-              onClick={handleUpgradePlan}
-              disabled={!selectedNewPlan || isSaving}
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-            >
-              {isSaving ? 'Aggiornamento...' : 'Conferma Cambio Piano'}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      {showUpgradeDialog && (
+        <UpgradeModal
+          isOpen={showUpgradeDialog}
+          onClose={() => setShowUpgradeDialog(false)}
+          currentPlan={user?.subscription_plan || 'base'}
+          // These props are added to ensure the UpgradeModal can perform its function
+          // and update the parent component's state and data correctly.
+          isSaving={isSaving}
+          setIsSaving={setIsSaving}
+          onUpgradeSuccess={async () => {
+            alert('✅ Piano aggiornato con successo!');
+            setShowUpgradeDialog(false);
+            await loadUserData();
+          }}
+          onUpgradeError={(errorMsg) => {
+            alert('❌ Errore: ' + errorMsg);
+            // Optionally close the dialog on error or let the modal handle it
+          }}
+        />
+      )}
 
       {/* DIALOG CANCEL */}
       <Dialog open={showCancelDialog} onOpenChange={setShowCancelDialog}>

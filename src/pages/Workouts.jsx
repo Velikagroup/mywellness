@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Settings, Database, Clock, Zap, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, CheckCircle2, AlertCircle } from "lucide-react";
+import { Dumbbell, Settings, Database, Clock, Zap, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, CheckCircle2, AlertCircle, Crown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import ExerciseCard from "../components/workouts/ExerciseCard";
 import { createPageUrl } from "@/utils";
@@ -21,7 +21,8 @@ import SessionDurationStep from "../components/quiz/SessionDurationStep";
 import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
 import WorkoutLogger from "../components/workouts/WorkoutLogger";
 
-import { hasFeatureAccess, getGenerationLimit, PLANS, UpgradePrompt } from '@/components/utils/subscriptionPlans';
+import { hasFeatureAccess, getGenerationLimit, PLANS } from '@/components/utils/subscriptionPlans';
+import UpgradeModal from '../components/meals/UpgradeModal';
 
 import { motion } from "framer-motion";
 
@@ -885,9 +886,13 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="max-w-2xl w-full">
-          <div className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl p-8">
-            <UpgradePrompt requiredPlan={PLANS.PRO} featureName="Piano di Allenamento Personalizzato" />
-          </div>
+          <Button
+            onClick={() => setShowUpgradeModal(true)}
+            className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+          >
+            <Crown className="w-5 h-5 mr-2" />
+            Upgrade per Accedere al Piano Allenamento
+          </Button>
         </div>
       </div>
     );
@@ -1354,20 +1359,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
       )}
       
       {showUpgradeModal && (
-        <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
-          <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm p-6">
-            <DialogHeader>
-              <DialogTitle>Funzionalità Premium</DialogTitle>
-              <DialogDescription>
-                Questa funzionalità richiede un piano premium.
-              </DialogDescription>
-            </DialogHeader>
-            <UpgradePrompt requiredPlan={PLANS.PREMIUM} featureName="Generazioni Illimitate Piano Allenamento" />
-            <DialogFooter>
-              <Button onClick={() => setShowUpgradeModal(false)}>Chiudi</Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
+        <UpgradeModal 
+          isOpen={showUpgradeModal} 
+          onClose={() => setShowUpgradeModal(false)} 
+          currentPlan={trainingData.subscription_plan || 'base'} 
+        />
       )}
     </>
   );
