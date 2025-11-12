@@ -52,6 +52,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         if (sortedPhotos.length > 0) {
           setPreviousPhoto(sortedPhotos[0]);
           
+          // Trova l'ULTIMA foto con modifiche applicate
           const lastPhotoWithAdjustments = sortedPhotos.find(p => 
             p.ai_analysis?.plans_adjusted === true
           );
@@ -62,12 +63,16 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
             );
             setDaysSinceLastAdjustment(daysSince);
             setCanApplyChanges(daysSince >= 7);
+            
+            console.log('🔒 Ultima modifica applicata:', daysSince, 'giorni fa. Può applicare modifiche:', daysSince >= 7);
           } else {
             setCanApplyChanges(true);
             setDaysSinceLastAdjustment(null);
+            console.log('✅ Nessuna modifica precedente trovata, può applicare modifiche');
           }
         } else {
           setCanApplyChanges(true);
+          console.log('✅ Prima foto, può applicare modifiche');
         }
       } catch (error) {
         console.error("Error loading previous photo:", error);
@@ -144,7 +149,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
       .flat();
     
     if (existingHashes.includes(fileHash)) {
-      alert('⚠️ Hai già caricato questa foto in precedenza. Per favora scatta una nuova foto per un confronto accurato.');
+      alert('⚠️ Hai già caricato questa foto in precedenza. Per favore scatta una nuova foto per un confronto accurato.');
       e.target.value = '';
       return;
     }
@@ -198,7 +203,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     try {
       console.log('🔵 STARTING ANALYSIS...');
       console.log('🔵 bodyFileRefs.current:', bodyFileRefs.current);
-
+      
       const targetPhotoUrls = [];
       const photoHashes = [];
       const zone = TARGET_ZONES.find(z => z.id === selectedZone.id);
@@ -274,7 +279,7 @@ Task:
 1. Analyze the ${selectedZone.label} area in detail
 2. List visible characteristics (muscle definition, skin texture, symmetry, etc.)
 3. Provide 3-4 specific, actionable recommendations to improve this area
-4. Suggest if workout or diet adjustments are needed
+4. Suggest if workout or diet adjustments are needed ONLY if you see clear visual signs that require changes
 5. Write an encouraging, motivational message in Italian
 
 Remember: Focus ONLY on the specific area shown in the photo.`;
@@ -308,7 +313,7 @@ Task:
 2. List observable differences WITHOUT judging them
 3. Help the user notice asymmetries
 4. Provide 3-4 specific recommendations to balance or improve both sides
-5. Suggest if workout adjustments are needed for symmetry
+5. Suggest if workout adjustments are needed for symmetry ONLY if you see clear asymmetries
 6. Write an encouraging message in Italian`;
       }
 
@@ -354,9 +359,14 @@ Task:
         target_zone: selectedZone.id
       });
 
-      // Se può applicare modifiche, genera le proposte
+      // ✅ GENERA PROPOSTE SOLO SE PUÒ APPLICARE MODIFICHE (7+ giorni dall'ultima modifica)
       if (canApplyChanges && (analysis.workout_adjustment_needed || analysis.diet_adjustment_needed)) {
+        console.log('✅ Generazione proposte modifiche (può applicare modifiche)');
         await generateProposedChanges(analysis);
+      } else if (!canApplyChanges && daysSinceLastAdjustment !== null) {
+        console.log('🔒 NON genero proposte: ultime modifiche applicate', daysSinceLastAdjustment, 'giorni fa (minimo 7 giorni richiesti)');
+      } else {
+        console.log('ℹ️ AI non ha suggerito modifiche o non è il momento di applicarle.');
       }
 
     } catch (error) {
@@ -372,7 +382,7 @@ Task:
     const proposals = { diet: [], workout: [] };
     
     try {
-      // 1. PROPOSTA MODIFICA DIETA
+      // PROPOSTA MODIFICA DIETA - Solo se necessario
       if (analysis.diet_adjustment_needed) {
         const currentCalories = user.daily_calories;
         const currentWeight = user.current_weight;
@@ -397,24 +407,31 @@ Task:
               reason = 'Il piano nutrizionale è efficace, manteniamo l\'apporto calorico per consolidare i progressi.';
           }
         } else if (analysis.comparison_result === 'first_photo') {
-            calorieAdjustment = -50;
-            reason = 'Aggiustamento iniziale per ottimizzare il percorso in base all\'analisi visiva.';
+            calorieAdjustment = 0;
+            reason = 'Prima analisi: nessuna modifica necessaria, il piano attuale è ottimale per iniziare.';
         }
         
         calorieAdjustment = Math.max(-100, Math.min(100, calorieAdjustment));
 
-        const newCalories = Math.round(currentCalories + calorieAdjustment);
-        
-        proposals.diet.push({
-          type: 'calorie_adjustment',
-          current: currentCalories,
-          proposed: newCalories,
-          adjustment: calorieAdjustment,
-          reason: reason
-        });
+        if (calorieAdjustment !== 0) {
+          const newCalories = Math.round(currentCalories + calorieAdjustment);
+          
+          proposals.diet.push({
+            type: 'calorie_adjustment',
+            current: currentCalories,
+            proposed: newCalories,
+            adjustment: calorieAdjustment,
+            reason: reason
+          });
+        } else {
+          proposals.diet.push({
+            type: 'no_change',
+            reason: reason
+          });
+        }
       }
 
-      // 2. PROPOSTA MODIFICA ALLENAMENTO
+      // PROPOSTA MODIFICA ALLENAMENTO - Solo se necessario
       if (analysis.workout_adjustment_needed) {
         const workoutPlans = await base44.entities.WorkoutPlan.filter({ user_id: user.id });
         
@@ -572,17 +589,52 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
     const changes = { diet: [], workout: [] };
     
     try {
-      // Applica modifiche dieta
+      // 1. APPLICA MODIFICHE DIETA
       for (const proposal of proposedChanges.diet) {
         if (proposal.type === 'calorie_adjustment' && proposal.adjustment !== 0) {
+          // Aggiorna target calorico utente
           await base44.auth.updateMe({ daily_calories: proposal.proposed });
-          changes.diet.push(`Target calorico ${proposal.adjustment > 0 ? 'aumentato' : 'ridotto'} di ${Math.abs(proposal.adjustment)} kcal (da ${proposal.current} a ${proposal.proposed} kcal) - ${proposal.reason}`);
+          
+          // 🔥 SCALA PROPORZIONALMENTE TUTTI I PASTI
+          const scalingFactor = proposal.proposed / proposal.current;
+          console.log('📊 Scaling factor for meals:', scalingFactor);
+          
+          const allMealPlans = await base44.entities.MealPlan.filter({ user_id: user.id });
+          
+          for (const meal of allMealPlans) {
+            const scaledIngredients = meal.ingredients.map(ing => ({
+              ...ing,
+              quantity: Math.round(ing.quantity * scalingFactor * 10) / 10,
+              calories: Math.round(ing.calories * scalingFactor),
+              protein: Math.round(ing.protein * scalingFactor * 10) / 10,
+              carbs: Math.round(ing.carbs * scalingFactor * 10) / 10,
+              fat: Math.round(ing.fat * scalingFactor * 10) / 10
+            }));
+            
+            const newTotals = scaledIngredients.reduce((acc, ing) => ({
+              calories: acc.calories + ing.calories,
+              protein: acc.protein + ing.protein,
+              carbs: acc.carbs + ing.carbs,
+              fat: acc.fat + ing.fat
+            }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+            
+            await base44.entities.MealPlan.update(meal.id, {
+              ingredients: scaledIngredients,
+              total_calories: Math.round(newTotals.calories),
+              total_protein: Math.round(newTotals.protein * 10) / 10,
+              total_carbs: Math.round(newTotals.carbs * 10) / 10,
+              total_fat: Math.round(newTotals.fat * 10) / 10,
+              image_url: null // Reset immagine perché le porzioni sono cambiate
+            });
+          }
+          
+          changes.diet.push(`Target calorico ${proposal.adjustment > 0 ? 'aumentato' : 'ridotto'} di ${Math.abs(proposal.adjustment)} kcal (da ${proposal.current} a ${proposal.proposed} kcal). Tutti i pasti sono stati scalati proporzionalmente. ${proposal.reason}`);
         } else if (proposal.type === 'no_change') {
           changes.diet.push(proposal.reason);
         }
       }
       
-      // Applica modifiche workout
+      // 2. APPLICA MODIFICHE WORKOUT
       for (const proposal of proposedChanges.workout) {
         if (proposal.type === 'exercise_replacement') {
           const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
@@ -604,6 +656,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
         }
       }
 
+      console.log('✅ Modifiche applicate:', changes);
       setAppliedChanges(changes);
     } catch (error) {
       console.error('Error applying changes:', error);
@@ -625,7 +678,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
       console.log('💾 targetPhotoUrls:', targetPhotoUrls);
       console.log('💾 bodyPhotoUrls:', bodyPhotoUrls);
       console.log('💾 Number of body photos:', Object.keys(bodyPhotoUrls).length);
-
+      
       const dataToSave = {
         user_id: user.id,
         photo_url: targetPhotoUrls[0] || null,
@@ -650,9 +703,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
         },
         notes: notes
       };
-
+      
       console.log('💾 FULL DATA TO SAVE:', JSON.stringify(dataToSave, null, 2));
-
+      
       await base44.entities.ProgressPhoto.create(dataToSave);
       
       console.log('✅ SAVED TO DATABASE!');
@@ -721,46 +774,28 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
           </DialogHeader>
 
           <AnimatePresence mode="wait">
-            {/* STEP 1: Selezione Zona Target */}
             {step === 'zone_selection' && (
-              <motion.div
-                key="zone-selection"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
+              <motion.div key="zone-selection" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
                   <div className="flex items-start gap-2">
                     <AlertCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <div>
                       <p className="text-sm font-semibold text-purple-900 mb-1">Privacy Totale</p>
-                      <p className="text-xs text-purple-800">
-                        Le foto sono analizzate SOLO dall'AI. Scatta in intimo per precisione.
-                      </p>
+                      <p className="text-xs text-purple-800">Le foto sono analizzate SOLO dall'AI. Scatta in intimo per precisione.</p>
                     </div>
                   </div>
                 </div>
-
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3 text-sm">Quale zona vuoi migliorare?</h3>
                   <div className="space-y-2">
                     {TARGET_ZONES.map((zone) => (
-                      <button
-                        key={zone.id}
-                        onClick={() => handleZoneSelection(zone)}
-                        className="w-full p-3 rounded-lg border border-gray-200 hover:border-purple-400 hover:bg-purple-50 transition-all text-left"
-                      >
+                      <button key={zone.id} onClick={() => handleZoneSelection(zone)} className="w-full p-3 rounded-lg border border-gray-200 hover:border-purple-400 hover:bg-purple-50 transition-all text-left">
                         <div className="flex items-center justify-between">
                           <div>
-                            <h4 className="font-semibold text-gray-900 text-sm">
-                              {zone.label}
-                            </h4>
+                            <h4 className="font-semibold text-gray-900 text-sm">{zone.label}</h4>
                             <p className="text-xs text-gray-600 mt-0.5">{zone.description}</p>
                           </div>
-                          <div className="text-xs text-purple-600 font-medium">
-                            {zone.photoCount} foto
-                          </div>
+                          <div className="text-xs text-purple-600 font-medium">{zone.photoCount} foto</div>
                         </div>
                       </button>
                     ))}
@@ -769,88 +804,33 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
               </motion.div>
             )}
 
-            {/* STEP 2: Foto Zona Target */}
             {step === 'target_photos' && selectedZone && (
-              <motion.div
-                key="target-photos"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
+              <motion.div key="target-photos" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                  <p className="text-xs text-blue-800">
-                    ⚠️ Mantieni angolo e luci simili • Preferibilmente in intimo
-                  </p>
+                  <p className="text-xs text-blue-800">⚠️ Mantieni angolo e luci simili • Preferibilmente in intimo</p>
                 </div>
-
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-900 text-sm">
-                    Foto: {selectedZone.label}
-                  </h3>
-
+                  <h3 className="font-semibold text-gray-900 text-sm">Foto: {selectedZone.label}</h3>
                   {TARGET_ZONES.find(z => z.id === selectedZone.id).photoCount === 1 ? (
                     <div>
                       {!targetPhotos.single ? (
                         <div className="border-2 border-dashed border-gray-300 rounded-lg p-6 text-center">
                           <Camera className="w-10 h-10 text-gray-400 mx-auto mb-3" />
                           <div className="flex gap-2 justify-center">
-                            <input
-                              type="file"
-                              accept="image/*"
-                              capture="environment"
-                              onChange={(e) => handleTargetPhotoSelect(e, 'single')}
-                              className="hidden"
-                              id="target-camera-single"
-                            />
-                            <Button 
-                              type="button" 
-                              onClick={() => document.getElementById('target-camera-single').click()}
-                              size="sm"
-                              className="bg-purple-600 hover:bg-purple-700"
-                            >
-                              <Camera className="w-4 h-4 mr-1" />
-                              Scatta
+                            <input type="file" accept="image/*" capture="environment" onChange={(e) => handleTargetPhotoSelect(e, 'single')} className="hidden" id="target-camera-single" />
+                            <Button type="button" onClick={() => document.getElementById('target-camera-single').click()} size="sm" className="bg-purple-600 hover:bg-purple-700">
+                              <Camera className="w-4 h-4 mr-1" />Scatta
                             </Button>
-                            
-                            <input
-                              type="file"
-                              accept="image/*"
-                              onChange={(e) => handleTargetPhotoSelect(e, 'single')}
-                              className="hidden"
-                              id="target-gallery-single"
-                            />
-                            <Button 
-                              type="button" 
-                              onClick={() => document.getElementById('target-gallery-single').click()}
-                              variant="outline"
-                              size="sm"
-                            >
-                              <Upload className="w-4 h-4 mr-1" />
-                              Carica
+                            <input type="file" accept="image/*" onChange={(e) => handleTargetPhotoSelect(e, 'single')} className="hidden" id="target-gallery-single" />
+                            <Button type="button" onClick={() => document.getElementById('target-gallery-single').click()} variant="outline" size="sm">
+                              <Upload className="w-4 h-4 mr-1" />Carica
                             </Button>
                           </div>
                         </div>
                       ) : (
                         <div className="relative group">
-                          <img 
-                            src={targetPhotos.single.previewUrl} 
-                            alt="Foto zona" 
-                            className="w-full h-64 object-cover rounded-lg border-2 border-green-400"
-                          />
-                          <Button
-                            onClick={() => {
-                              setTargetPhotos(prev => {
-                                const updated = { ...prev };
-                                delete updated.single;
-                                return updated;
-                              });
-                              delete targetFileRefs.current.single;
-                            }}
-                            variant="destructive"
-                            size="icon"
-                            className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                          >
+                          <img src={targetPhotos.single.previewUrl} alt="Foto zona" className="w-full h-64 object-cover rounded-lg border-2 border-green-400" />
+                          <Button onClick={() => { setTargetPhotos(prev => { const updated = { ...prev }; delete updated.single; return updated; }); delete targetFileRefs.current.single; }} variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                             <X className="w-4 h-4" />
                           </Button>
                         </div>
@@ -864,132 +844,45 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                             <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                             <div className="space-y-1">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                capture="environment"
-                                onChange={(e) => handleTargetPhotoSelect(e, 'left')}
-                                className="hidden"
-                                id="target-camera-left"
-                              />
-                              <Button 
-                                type="button" 
-                                onClick={() => document.getElementById('target-camera-left').click()}
-                                size="sm"
-                                className="w-full bg-purple-600 hover:bg-purple-700 text-xs"
-                              >
-                                <Camera className="w-3 h-3 mr-1" />
-                                Scatta
+                              <input type="file" accept="image/*" capture="environment" onChange={(e) => handleTargetPhotoSelect(e, 'left')} className="hidden" id="target-camera-left" />
+                              <Button type="button" onClick={() => document.getElementById('target-camera-left').click()} size="sm" className="w-full bg-purple-600 hover:bg-purple-700 text-xs">
+                                <Camera className="w-3 h-3 mr-1" />Scatta
                               </Button>
-                              
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleTargetPhotoSelect(e, 'left')}
-                                className="hidden"
-                                id="target-gallery-left"
-                              />
-                              <Button 
-                                type="button" 
-                                onClick={() => document.getElementById('target-gallery-left').click()}
-                                variant="outline"
-                                size="sm"
-                                className="w-full text-xs"
-                              >
-                                <Upload className="w-3 h-3 mr-1" />
-                                Carica
+                              <input type="file" accept="image/*" onChange={(e) => handleTargetPhotoSelect(e, 'left')} className="hidden" id="target-gallery-left" />
+                              <Button type="button" onClick={() => document.getElementById('target-gallery-left').click()} variant="outline" size="sm" className="w-full text-xs">
+                                <Upload className="w-3 h-3 mr-1" />Carica
                               </Button>
                             </div>
                           </div>
                         ) : (
                           <div className="relative group">
-                            <img 
-                              src={targetPhotos.left.previewUrl} 
-                              alt="Sinistro" 
-                              className="w-full h-48 object-cover rounded-lg border-2 border-green-400"
-                            />
-                            <Button
-                              onClick={() => {
-                                setTargetPhotos(prev => {
-                                  const updated = { ...prev };
-                                  delete updated.left;
-                                  return updated;
-                                });
-                                delete targetFileRefs.current.left;
-                              }}
-                              variant="destructive"
-                              size="icon"
-                              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
+                            <img src={targetPhotos.left.previewUrl} alt="Sinistro" className="w-full h-48 object-cover rounded-lg border-2 border-green-400" />
+                            <Button onClick={() => { setTargetPhotos(prev => { const updated = { ...prev }; delete updated.left; return updated; }); delete targetFileRefs.current.left; }} variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <X className="w-4 h-4" />
                             </Button>
                           </div>
                         )}
                       </div>
-
                       <div>
                         <p className="text-xs font-medium text-gray-600 mb-2">Destro</p>
                         {!targetPhotos.right ? (
                           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                             <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                             <div className="space-y-1">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                capture="environment"
-                                onChange={(e) => handleTargetPhotoSelect(e, 'right')}
-                                className="hidden"
-                                id="target-camera-right"
-                              />
-                              <Button 
-                                type="button" 
-                                onClick={() => document.getElementById('target-camera-right').click()}
-                                size="sm"
-                                className="w-full bg-purple-600 hover:bg-purple-700 text-xs"
-                              >
-                                <Camera className="w-3 h-3 mr-1" />
-                                Scatta
+                              <input type="file" accept="image/*" capture="environment" onChange={(e) => handleTargetPhotoSelect(e, 'right')} className="hidden" id="target-camera-right" />
+                              <Button type="button" onClick={() => document.getElementById('target-camera-right').click()} size="sm" className="w-full bg-purple-600 hover:bg-purple-700 text-xs">
+                                <Camera className="w-3 h-3 mr-1" />Scatta
                               </Button>
-                              
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleTargetPhotoSelect(e, 'right')}
-                                className="hidden"
-                                id="target-gallery-right"
-                              />
-                              <Button 
-                                type="button" 
-                                onClick={() => document.getElementById('target-gallery-right').click()}
-                                variant="outline"
-                                size="sm"
-                                className="w-full text-xs"
-                              >
-                                <Upload className="w-3 h-3 mr-1" />
-                                Carica
+                              <input type="file" accept="image/*" onChange={(e) => handleTargetPhotoSelect(e, 'right')} className="hidden" id="target-gallery-right" />
+                              <Button type="button" onClick={() => document.getElementById('target-gallery-right').click()} variant="outline" size="sm" className="w-full text-xs">
+                                <Upload className="w-3 h-3 mr-1" />Carica
                               </Button>
                             </div>
                           </div>
                         ) : (
                           <div className="relative group">
-                            <img 
-                              src={targetPhotos.right.previewUrl} 
-                              alt="Destro" 
-                              className="w-full h-48 object-cover rounded-lg border-2 border-green-400"
-                            />
-                            <Button
-                              onClick={() => {
-                                setTargetPhotos(prev => {
-                                  const updated = { ...prev };
-                                  delete updated.right;
-                                  return updated;
-                                });
-                                delete targetFileRefs.current.right;
-                              }}
-                              variant="destructive"
-                              size="icon"
-                              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
+                            <img src={targetPhotos.right.previewUrl} alt="Destro" className="w-full h-48 object-cover rounded-lg border-2 border-green-400" />
+                            <Button onClick={() => { setTargetPhotos(prev => { const updated = { ...prev }; delete updated.right; return updated; }); delete targetFileRefs.current.right; }} variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <X className="w-4 h-4" />
                             </Button>
                           </div>
@@ -998,114 +891,45 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     </div>
                   )}
                 </div>
-
                 <div className="flex gap-2 pt-2">
-                  <Button
-                    onClick={() => setStep('zone_selection')}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-1" />
-                    Indietro
+                  <Button onClick={() => setStep('zone_selection')} variant="outline" size="sm" className="flex-1">
+                    <ArrowLeft className="w-4 h-4 mr-1" />Indietro
                   </Button>
-                  <Button
-                    onClick={() => setStep('body_photos')}
-                    disabled={!canProceedFromTargetPhotos()}
-                    size="sm"
-                    className="flex-1 bg-purple-600 hover:bg-purple-700"
-                  >
-                    Avanti
-                    <ArrowRight className="w-4 h-4 ml-1" />
+                  <Button onClick={() => setStep('body_photos')} disabled={!canProceedFromTargetPhotos()} size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
+                    Avanti<ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 3: Foto Corpo Intero */}
             {step === 'body_photos' && (
-              <motion.div
-                key="body-photos"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-4"
-              >
+              <motion.div key="body-photos" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <div className="bg-amber-50 p-3 rounded-lg border border-amber-200">
-                  <p className="text-xs text-amber-800 font-medium">
-                    📁 Foto per archivio storico (non analizzate, solo salvate)
-                  </p>
+                  <p className="text-xs text-amber-800 font-medium">📁 Foto per archivio storico (non analizzate, solo salvate)</p>
                 </div>
-
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3 text-sm">Corpo intero (4 angolazioni)</h3>
-                  
                   <div className="space-y-2">
                     {BODY_PHOTOS.map((bodyPhoto) => (
                       <div key={bodyPhoto.id}>
-                        <p className="text-xs font-medium text-gray-600 mb-2">
-                          {bodyPhoto.icon} {bodyPhoto.label}
-                        </p>
+                        <p className="text-xs font-medium text-gray-600 mb-2">{bodyPhoto.icon} {bodyPhoto.label}</p>
                         {!bodyPhotos[bodyPhoto.id] ? (
                           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                             <div className="flex gap-2 justify-center">
-                              <input
-                                type="file"
-                                accept="image/*"
-                                capture="environment"
-                                onChange={(e) => handleBodyPhotoSelect(e, bodyPhoto.id)}
-                                className="hidden"
-                                id={`body-camera-${bodyPhoto.id}`}
-                              />
-                              <Button 
-                                type="button" 
-                                onClick={() => document.getElementById(`body-camera-${bodyPhoto.id}`).click()}
-                                size="sm"
-                                className="bg-gray-700 hover:bg-gray-800 text-xs"
-                              >
-                                <Camera className="w-3 h-3 mr-1" />
-                                Scatta
+                              <input type="file" accept="image/*" capture="environment" onChange={(e) => handleBodyPhotoSelect(e, bodyPhoto.id)} className="hidden" id={`body-camera-${bodyPhoto.id}`} />
+                              <Button type="button" onClick={() => document.getElementById(`body-camera-${bodyPhoto.id}`).click()} size="sm" className="bg-gray-700 hover:bg-gray-800 text-xs">
+                                <Camera className="w-3 h-3 mr-1" />Scatta
                               </Button>
-                              
-                              <input
-                                type="file"
-                                accept="image/*"
-                                onChange={(e) => handleBodyPhotoSelect(e, bodyPhoto.id)}
-                                className="hidden"
-                                id={`body-gallery-${bodyPhoto.id}`}
-                              />
-                              <Button 
-                                type="button" 
-                                onClick={() => document.getElementById(`body-gallery-${bodyPhoto.id}`).click()}
-                                variant="outline"
-                                size="sm"
-                                className="text-xs"
-                              >
-                                <Upload className="w-3 h-3 mr-1" />
-                                Carica
+                              <input type="file" accept="image/*" onChange={(e) => handleBodyPhotoSelect(e, bodyPhoto.id)} className="hidden" id={`body-gallery-${bodyPhoto.id}`} />
+                              <Button type="button" onClick={() => document.getElementById(`body-gallery-${bodyPhoto.id}`).click()} variant="outline" size="sm" className="text-xs">
+                                <Upload className="w-3 h-3 mr-1" />Carica
                               </Button>
                             </div>
                           </div>
                         ) : (
                           <div className="relative group">
-                            <img 
-                              src={bodyPhotos[bodyPhoto.id].previewUrl} 
-                              alt={bodyPhoto.label} 
-                              className="w-full h-48 object-cover rounded-lg border-2 border-green-400"
-                            />
-                            <Button
-                              onClick={() => {
-                                setBodyPhotos(prev => {
-                                  const updated = { ...prev };
-                                  delete updated[bodyPhoto.id];
-                                  return updated;
-                                });
-                                delete bodyFileRefs.current[bodyPhoto.id];
-                              }}
-                              variant="destructive"
-                              size="icon"
-                              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
+                            <img src={bodyPhotos[bodyPhoto.id].previewUrl} alt={bodyPhoto.label} className="w-full h-48 object-cover rounded-lg border-2 border-green-400" />
+                            <Button onClick={() => { setBodyPhotos(prev => { const updated = { ...prev }; delete updated[bodyPhoto.id]; return updated; }); delete bodyFileRefs.current[bodyPhoto.id]; }} variant="destructive" size="icon" className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
                               <X className="w-4 h-4" />
                             </Button>
                           </div>
@@ -1114,68 +938,31 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     ))}
                   </div>
                 </div>
-
                 <div>
-                  <label className="text-xs font-medium text-gray-700 mb-2 block">
-                    Note (opzionali)
-                  </label>
-                  <Textarea
-                    placeholder="Es: 'Mi sento più forte', 'Ho seguito il piano'..."
-                    value={notes}
-                    onChange={(e) => setNotes(e.target.value)}
-                    className="h-20 text-sm"
-                  />
+                  <label className="text-xs font-medium text-gray-700 mb-2 block">Note (opzionali)</label>
+                  <Textarea placeholder="Es: 'Mi sento più forte', 'Ho seguito il piano'..." value={notes} onChange={(e) => setNotes(e.target.value)} className="h-20 text-sm" />
                 </div>
-
                 <div className="flex gap-2 pt-2">
-                  <Button
-                    onClick={() => setStep('target_photos')}
-                    variant="outline"
-                    size="sm"
-                    className="flex-1"
-                  >
-                    <ArrowLeft className="w-4 h-4 mr-1" />
-                    Indietro
+                  <Button onClick={() => setStep('target_photos')} variant="outline" size="sm" className="flex-1">
+                    <ArrowLeft className="w-4 h-4 mr-1" />Indietro
                   </Button>
-                  <Button
-                    onClick={analyzePhotos}
-                    disabled={!canProceedFromBodyPhotos() || isAnalyzing}
-                    size="sm"
-                    className="flex-1 bg-purple-600 hover:bg-purple-700"
-                  >
-                    <Sparkles className="w-4 h-4 mr-1" />
-                    Analizza
+                  <Button onClick={analyzePhotos} disabled={!canProceedFromBodyPhotos() || isAnalyzing} size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
+                    <Sparkles className="w-4 h-4 mr-1" />Analizza
                   </Button>
                 </div>
               </motion.div>
             )}
 
-            {/* STEP 4: Analisi in Corso */}
             {step === 'analysis' && isAnalyzing && !analysisResult && (
-              <motion.div
-                key="analyzing"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="text-center py-8"
-              >
+              <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8">
                 <Loader2 className="w-12 h-12 animate-spin text-purple-600 mx-auto mb-4" />
-                <p className="text-gray-900 font-semibold text-base mb-2">
-                  Analisi AI in corso...
-                </p>
-                <p className="text-xs text-gray-600">
-                  Sto analizzando la zona {selectedZone?.label}
-                </p>
+                <p className="text-gray-900 font-semibold text-base mb-2">Analisi AI in corso...</p>
+                <p className="text-xs text-gray-600">Sto analizzando la zona {selectedZone?.label}</p>
               </motion.div>
             )}
 
-            {/* STEP 5: Risultati Analisi */}
             {analysisResult && (
-              <motion.div
-                key="results"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="space-y-4"
-              >
+              <motion.div key="results" initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-4">
                 {(() => {
                   const config = getComparisonConfig(analysisResult.comparison_result);
                   const Icon = config.icon;
@@ -1200,10 +987,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     <h4 className="font-semibold text-blue-900 mb-2 text-sm">Caratteristiche</h4>
                     <ul className="space-y-1">
                       {analysisResult.visible_characteristics.map((char, idx) => (
-                        <li key={idx} className="text-xs text-blue-800 flex gap-2">
-                          <span>•</span>
-                          <span>{char}</span>
-                        </li>
+                        <li key={idx} className="text-xs text-blue-800 flex gap-2"><span>•</span><span>{char}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -1214,10 +998,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     <h4 className="font-semibold text-yellow-900 mb-2 text-sm">Differenze (Sx vs Dx)</h4>
                     <ul className="space-y-1">
                       {analysisResult.visible_differences.map((diff, idx) => (
-                        <li key={idx} className="text-xs text-yellow-800 flex gap-2">
-                          <span>↔️</span>
-                          <span>{diff}</span>
-                        </li>
+                        <li key={idx} className="text-xs text-yellow-800 flex gap-2"><span>↔️</span><span>{diff}</span></li>
                       ))}
                     </ul>
                   </div>
@@ -1228,54 +1009,38 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     <h4 className="font-semibold text-purple-900 mb-2 text-sm">Raccomandazioni</h4>
                     <ul className="space-y-1">
                       {analysisResult.recommendations.map((rec, idx) => (
-                        <li key={idx} className="text-xs text-purple-800 flex gap-2">
-                          <span>→</span>
-                          <span>{rec}</span>
-                        </li>
+                        <li key={idx} className="text-xs text-purple-800 flex gap-2"><span>→</span><span>{rec}</span></li>
                       ))}
                     </ul>
                   </div>
                 )}
 
-                {/* Limiti temporali */}
                 {!canApplyChanges && daysSinceLastAdjustment !== null && (
                   <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
                     <div className="flex items-start gap-2">
                       <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-xs text-amber-800 font-semibold mb-1">
-                          Modifiche non disponibili
-                        </p>
-                        <p className="text-xs text-amber-700">
-                          Sono passati {daysSinceLastAdjustment} giorni dall'ultima modifica. 
-                          Potrai applicare nuove modifiche tra {7 - daysSinceLastAdjustment} giorni.
-                        </p>
+                        <p className="text-xs text-amber-800 font-semibold mb-1">🔒 Modifiche ai Piani Non Disponibili</p>
+                        <p className="text-xs text-amber-700">Sono passati {daysSinceLastAdjustment} giorni dall'ultima modifica. Potrai applicare nuove modifiche tra {7 - daysSinceLastAdjustment} giorni per dare tempo al corpo di adattarsi.</p>
                       </div>
                     </div>
                   </div>
                 )}
 
-                {/* Loading proposte */}
                 {isGeneratingProposals && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
-                      <p className="text-sm text-blue-800 font-medium">
-                        Generazione modifiche proposte dall'AI...
-                      </p>
+                      <p className="text-sm text-blue-800 font-medium">Generazione modifiche proposte dall'AI...</p>
                     </div>
                   </div>
                 )}
 
-                {/* PROPOSTE DI MODIFICA */}
                 {proposedChanges && !appliedChanges && canApplyChanges && (
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-300">
                     <h4 className="font-bold text-green-900 mb-3 text-base flex items-center gap-2">
-                      <Sparkles className="w-5 h-5" />
-                      Modifiche Proposte dall'AI
+                      <Sparkles className="w-5 h-5" />Modifiche Proposte dall'AI
                     </h4>
-                    
-                    {/* Proposte Dieta */}
                     {proposedChanges.diet.length > 0 && (
                       <div className="mb-4">
                         <p className="text-sm font-semibold text-green-800 mb-2">🍽️ Piano Nutrizionale:</p>
@@ -1285,11 +1050,10 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                               <>
                                 <div className="flex items-center justify-between mb-1">
                                   <span className="text-sm font-medium text-gray-900">Target Calorico:</span>
-                                  <span className="text-sm font-bold text-green-700">
-                                    {proposal.current} → {proposal.proposed} kcal ({proposal.adjustment > 0 ? '+' : ''}{proposal.adjustment})
-                                  </span>
+                                  <span className="text-sm font-bold text-green-700">{proposal.current} → {proposal.proposed} kcal ({proposal.adjustment > 0 ? '+' : ''}{proposal.adjustment})</span>
                                 </div>
-                                <p className="text-xs text-gray-600">{proposal.reason}</p>
+                                <p className="text-xs text-gray-600 mb-1">{proposal.reason}</p>
+                                <p className="text-xs text-purple-700 font-semibold">✨ Tutti i pasti verranno scalati proporzionalmente</p>
                               </>
                             ) : (
                               <p className="text-sm text-gray-700">✓ {proposal.reason}</p>
@@ -1298,8 +1062,6 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         ))}
                       </div>
                     )}
-
-                    {/* Proposte Workout */}
                     {proposedChanges.workout.length > 0 && (
                       <div className="mb-4">
                         <p className="text-sm font-semibold text-green-800 mb-2">💪 Piano Allenamento:</p>
@@ -1307,17 +1069,13 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                           <div key={idx} className="bg-white/60 p-3 rounded-lg border border-green-200 mb-2">
                             {proposal.type === 'exercise_replacement' ? (
                               <>
-                                <p className="text-xs font-medium text-gray-700 mb-1">
-                                  Giorno: <span className="font-bold">{proposal.day}</span>
-                                </p>
+                                <p className="text-xs font-medium text-gray-700 mb-1">Giorno: <span className="font-bold">{proposal.day}</span></p>
                                 <div className="flex items-center gap-2 mb-1">
                                   <span className="text-xs text-red-600 line-through">{proposal.current_exercise.name}</span>
                                   <ArrowRight className="w-3 h-3 text-gray-400" />
                                   <span className="text-xs text-green-700 font-bold">{proposal.proposed_exercise.name}</span>
                                 </div>
-                                <p className="text-xs text-gray-600">
-                                  {proposal.proposed_exercise.sets} serie x {proposal.proposed_exercise.reps} • {proposal.proposed_exercise.rest} recupero
-                                </p>
+                                <p className="text-xs text-gray-600">{proposal.proposed_exercise.sets} serie x {proposal.proposed_exercise.reps} • {proposal.proposed_exercise.rest} recupero</p>
                                 <p className="text-xs text-gray-600 mt-1">{proposal.reason}</p>
                               </>
                             ) : (
@@ -1327,33 +1085,20 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         ))}
                       </div>
                     )}
-
-                    <Button
-                      onClick={applyProposedChanges}
-                      className="w-full bg-green-600 hover:bg-green-700"
-                      disabled={isApplyingChanges}
-                    >
+                    <Button onClick={applyProposedChanges} className="w-full bg-green-600 hover:bg-green-700" disabled={isApplyingChanges}>
                       {isApplyingChanges ? (
-                        <>
-                          <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                          Applicazione in corso...
-                        </>
+                        <><Loader2 className="w-4 h-4 animate-spin mr-2" />Applicazione in corso...</>
                       ) : (
-                        <>
-                          <CheckCircle2 className="w-4 h-4 mr-2" />
-                          Applica Modifiche
-                        </>
+                        <><CheckCircle2 className="w-4 h-4 mr-2" />Applica Modifiche</>
                       )}
                     </Button>
                   </div>
                 )}
 
-                {/* MODIFICHE APPLICATE */}
                 {appliedChanges && (
                   <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                     <h4 className="font-semibold text-green-900 mb-2 text-sm flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4" />
-                      ✅ Modifiche Applicate con Successo
+                      <CheckCircle2 className="w-4 h-4" />✅ Modifiche Applicate con Successo
                     </h4>
                     {appliedChanges.diet.length > 0 && (
                       <div className="mb-2">
@@ -1378,21 +1123,11 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   </div>
                 )}
 
-                <Button
-                  onClick={saveAnalysis}
-                  className="w-full bg-purple-600 hover:bg-purple-700"
-                  disabled={isSaving || isApplyingChanges || isGeneratingProposals}
-                >
+                <Button onClick={saveAnalysis} className="w-full bg-purple-600 hover:bg-purple-700" disabled={isSaving || isApplyingChanges || isGeneratingProposals}>
                   {isSaving ? (
-                    <>
-                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
-                      Salvataggio...
-                    </>
+                    <><Loader2 className="w-4 h-4 animate-spin mr-2" />Salvataggio...</>
                   ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Salva Analisi
-                    </>
+                    <><Sparkles className="w-4 h-4 mr-2" />Salva Analisi</>
                   )}
                 </Button>
               </motion.div>
