@@ -131,6 +131,7 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
         "Dashboard scientifica completa",
         "Piano nutrizionale settimanale personalizzato",
         "Ricette con foto AI e istruzioni",
+        "🔄 Sostituzione ingredienti AI", // Moved from Pro
         "Calcolo BMR e massa grassa",
         "Lista della spesa automatica",
         "Tracking peso e progressi"
@@ -155,8 +156,7 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
         "Workout con warm-up e cool-down",
         "Schede adattive al tuo livello",
         "📸 Analisi AI dei pasti con foto",
-        "🔄 Sostituzione ingredienti AI",
-        "⚖️ Ribilanciamento automatico calorie",
+        "⚖️ Ribilanciamento automatico calorie", // Re-ordered, "🔄 Sostituzione ingredienti AI" removed from here
         "Tracking allenamenti"
       ],
       cta: "Iniza Gratis",

@@ -28,6 +28,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
         'Dashboard scientifica completa',
         'Piano nutrizionale settimanale personalizzato',
         'Ricette con foto AI e istruzioni',
+        '🔥 Sostituzione ingredienti AI',
         'Calcolo BMR e massa grassa',
         'Lista della spesa automatica',
         'Tracking peso e progressi'
@@ -51,7 +52,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
         'Workout con warm-up e cool-down',
         'Schede adattive al tuo livello',
         '🔥 Analisi AI dei pasti con foto',
-        '🔥 Sostituzione ingredienti AI', // Moved here from Premium
         'Ribilanciamento automatico calorie',
         'Tracking allenamento'
       ]
