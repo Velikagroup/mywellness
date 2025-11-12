@@ -71,6 +71,8 @@ export default function Workouts() {
 
   const [logWorkout, setLogWorkout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false); // NEW STATE
 
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
@@ -193,14 +195,14 @@ export default function Workouts() {
     await generateWorkoutPlan();
   };
 
-  // ✅ NUOVA FUNZIONE: Filtra esercizi dal database per attrezzatura, dolori E OBIETTIVO
+  // Filtra esercizi dal database per attrezzatura, dolori E OBIETTIVO
   const getAvailableExercises = useCallback(() => {
     if (!allExercises || allExercises.length === 0) return [];
     
     const userEquipment = trainingData.equipment || [];
     const jointPain = trainingData.joint_pain || [];
     const fitnessLevel = trainingData.fitness_experience || 'beginner';
-    const fitnessGoal = trainingData.fitness_goal; // ✅ NUOVO
+    const fitnessGoal = trainingData.fitness_goal; 
 
     // Gruppi muscolari da evitare in base ai dolori
     const restrictedMuscleGroups = jointPain.flatMap(pain => 
@@ -232,7 +234,7 @@ export default function Workouts() {
         return false;
       }
 
-      // 4. ✅ NUOVO: Filtra per obiettivo fitness (soft filter - priorità ma non esclusivo)
+      // 4. Filtra per obiettivo fitness (soft filter - priorità ma non esclusivo)
       // Se l'utente ha un obiettivo specifico, diamo priorità agli esercizi che lo supportano
       // Ma NON escludiamo completamente gli altri (perché serve varietà e allenamento completo)
       // Questo verrà usato dall'AI per dare priorità, non per escludere
@@ -262,7 +264,7 @@ export default function Workouts() {
 
       updateProgress(10, `Caricamento database ${allExercises.length} esercizi...`);
 
-      // ✅ PESCA ESERCIZI DAL DATABASE
+      // PESCA ESERCIZI DAL DATABASE
       const availableExercises = getAvailableExercises();
       
       if (availableExercises.length === 0) {
@@ -276,7 +278,7 @@ export default function Workouts() {
 
       updateProgress(20, "Organizzazione esercizi per obiettivo...");
 
-      // ✅ CREA LISTA ESERCIZI FORMATTATA PER L'AI
+      // CREA LISTA ESERCIZI FORMATTATA PER L'AI
       const exercisesByMuscleGroup = availableExercises.reduce((acc, ex) => {
         ex.muscle_groups.forEach(mg => {
           if (!acc[mg]) acc[mg] = [];
@@ -286,7 +288,7 @@ export default function Workouts() {
             equipment: ex.equipment,
             difficulty: ex.difficulty,
             primary_for_goal: isPrimary,
-            description: ex.description // Include description for AI context if needed
+            description: ex.description 
           });
         });
         return acc;
@@ -296,7 +298,7 @@ export default function Workouts() {
       const exerciseListForAI = Object.entries(exercisesByMuscleGroup)
         .map(([muscleGroup, exercises]) => {
           const primaryExs = exercises.filter(e => e.primary_for_goal).map(e => `"${e.name}"`).slice(0, 15);
-          const secondaryExs = exercises.filter(e => !e.primary_for_goal).map(e => `"${e.name}"`).slice(0, 5); // Limit to 5 secondary per group
+          const secondaryExs = exercises.filter(e => !e.primary_for_goal).map(e => `"${e.name}"`).slice(0, 5); 
           
           let list = `${muscleGroup.toUpperCase()}:\n  PRIMARI per ${trainingData.fitness_goal}: ${primaryExs.join(', ')}`;
           if (secondaryExs.length > 0) {
@@ -493,7 +495,7 @@ CRITICAL REQUIREMENTS:
     setAdjustmentResult(null);
     
     try {
-      // ✅ Filtra esercizi disponibili per la sostituzione (prioritizzando quelli primari per l'obiettivo)
+      // Filtra esercizi disponibili per la sostituzione (prioritizzando quelli primari per l'obiettivo)
       const availableExercises = getAvailableExercises();
       const primaryExercises = availableExercises.filter(e => !e._is_secondary_for_goal);
       const exerciseNames = primaryExercises.map(e => `"${e.name}"`).join(', ');
@@ -561,7 +563,7 @@ Your Task:
         return;
       }
 
-      // ✅ Filtra esercizi disponibili
+      // Filtra esercizi disponibili
       const availableExercises = getAvailableExercises();
       const exerciseNames = availableExercises.map(e => `"${e.name}"`).join(', ');
 
@@ -968,10 +970,22 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                     size="sm"
                                     className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative whitespace-nowrap"
                                     disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')}
+                                    onClick={(e) => {
+                                      if (!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')) {
+                                        e.preventDefault();
+                                        setShowUpgradeModal(true);
+                                      }
+                                    }}
                                   >
                                     <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
                                     {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
-                                      <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                                      <span 
+                                        className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setShowUpgradeModal(true);
+                                        }}
+                                      >
                                         Premium
                                       </span>
                                     )}
@@ -1030,10 +1044,22 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   variant="secondary" 
                                   className="w-full bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative"
                                   disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')}
+                                  onClick={(e) => {
+                                    if (!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')) {
+                                      e.preventDefault();
+                                      setShowUpgradeModal(true);
+                                    }
+                                  }}
                                 >
                                   <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
                                   {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
-                                    <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                                    <span 
+                                      className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowUpgradeModal(true);
+                                      }}
+                                    >
                                       Premium
                                     </span>
                                   )}
@@ -1165,6 +1191,23 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           onClose={() => setLogWorkout(null)}
           onLogSaved={handleLogSaved}
         />
+      )}
+      
+      {showUpgradeModal && (
+        <Dialog open={showUpgradeModal} onOpenChange={setShowUpgradeModal}>
+          <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm p-6">
+            <DialogHeader>
+              <DialogTitle>Funzionalità Premium</DialogTitle>
+              <DialogDescription>
+                Questa funzionalità richiede un piano premium.
+              </DialogDescription>
+            </DialogHeader>
+            <UpgradePrompt requiredPlan={PLANS.PRO} featureName="Modifica Sessione Allenamento" />
+            <DialogFooter>
+              <Button onClick={() => setShowUpgradeModal(false)}>Chiudi</Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
       )}
     </>
   );

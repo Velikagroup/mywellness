@@ -602,8 +602,8 @@ Use verified nutritional data. All names and units in Italian.`;
       const mealStructure = allMealTypes.slice(0, mealsPerDay);
       
       const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-      const isTrialUser = user?.subscription_status === 'trial';
-      const daysToGenerate = isTrialUser ? allDays.slice(0, 3) : allDays;
+      // ✅ SEMPRE genera tutti e 7 i giorni (anche per utenti trial)
+      const daysToGenerate = allDays;
 
       const dailyCalories = nutritionData.daily_calories;
       
@@ -699,13 +699,15 @@ Use verified nutritional data. All names and units in Italian.`;
                       protein: { type: "number" },
                       carbs: { type: "number" },
                       fat: { type: "number" }
-                    }
+                    },
+                    required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
                   }
                 },
                 instructions: { type: "array", items: { type: "string" } },
                 prep_time: { type: "number" },
                 difficulty: { type: "string" }
-              }
+              },
+              required: ["name", "ingredients", "instructions"]
             }
           });
 
@@ -786,7 +788,7 @@ Use verified nutritional data. All names and units in Italian.`;
       }
 
       updateProgress(95, "Salvataggio pasti...");
-      const createdMealIds = []; // Store only IDs and the original meal object for image generation
+      const createdMealIds = [];
       
       for (let i = 0; i < allGeneratedMeals.length; i++) {
         const meal = allGeneratedMeals[i];
@@ -794,7 +796,7 @@ Use verified nutritional data. All names and units in Italian.`;
           user_id: user.id,
           ...meal
         });
-        createdMealIds.push({ id: createdMeal.id, meal }); // Store id and original meal object
+        createdMealIds.push({ id: createdMeal.id, meal });
       }
 
       updateProgress(100, "Completato!");
@@ -805,16 +807,13 @@ Use verified nutritional data. All names and units in Italian.`;
         await loadMealPlans();
         setAddedDays([]);
         
-        // ✅ NOTIFICA SEMPLICE senza dettagli tecnici
         alert(`✅ Piano nutrizionale generato con successo!`);
         
-        // ✅ Generazione immagini in BACKGROUND (silenzioso)
         console.log('🎨 Inizio generazione immagini in background...');
         
-        // Use a self-executing async function to keep it contained
         (async () => {
           for (let i = 0; i < createdMealIds.length; i++) {
-            const { id, meal } = createdMealIds[i]; // Destructure to get the id and the meal object
+            const { id, meal } = createdMealIds[i];
             
             try {
               const ingredientsString = meal.ingredients.map(ing => `${ing.quantity}${ing.unit} ${ing.name}`).join(', ');
@@ -822,7 +821,7 @@ Use verified nutritional data. All names and units in Italian.`;
               const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
               
               await updateMealMutation.mutateAsync({
-                id: id, // Use the ID from the created record
+                id: id,
                 data: { image_url: imageResponse.url }
               });
               
@@ -833,7 +832,7 @@ Use verified nutritional data. All names and units in Italian.`;
           }
           
           console.log('✅ Tutte le immagini generate!');
-          await loadMealPlans(); // Final refresh to show all images
+          await loadMealPlans();
         })();
         
       }, 1000);
@@ -877,7 +876,7 @@ Use verified nutritional data. All names and units in Italian.`;
   ];
 
   const isTrialUser = user?.subscription_status === 'trial';
-  const availableDays = isTrialUser ? days.slice(0, 3) : days;
+  const availableDays = days; // Now always all 7 days for selection
   const todaysMeals = mealPlans.filter(plan => plan.day_of_week === selectedDay);
   
   const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
@@ -931,8 +930,6 @@ Use verified nutritional data. All names and units in Italian.`;
               </Button>
             </div>
           </div>
-
-          {/* ✅ Box "Migliora l'AI" RIMOSSO */}
 
           {showGenerator && (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
@@ -1058,9 +1055,7 @@ Use verified nutritional data. All names and units in Italian.`;
                       </button>
                     );
                   })}
-                  {isTrialUser && Array(4).fill(0).map((_, i) => (
-                    <button key={`locked-${i}`} onClick={() => setShowUpgradeModal(true)} className="px-4 py-2 text-sm font-medium rounded-t-md text-gray-400 border-b-2 border-transparent hover:text-[var(--brand-primary)] hover:scale-105 transition-all cursor-pointer">🔒</button>
-                  ))}
+                  {/* Removed the trial user specific locked days, as per instruction to always generate all 7 days */}
                 </div>
 
                 <div className="min-h-[300px]">
