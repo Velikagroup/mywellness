@@ -95,18 +95,18 @@ export default function OnboardingTour({ user, onComplete }) {
         height: rect.height
       });
       
-      // Auto-scroll su mobile per portare l'elemento in vista
+      // Auto-scroll su mobile per portare l'elemento in vista - VELOCE
       if (isMobile && !hasScrolledToTarget.current) {
         hasScrolledToTarget.current = true;
         
-        // Delay per dare tempo al rendering
+        // Delay minimo per rendering + scroll immediato
         setTimeout(() => {
           element.scrollIntoView({ 
-            behavior: 'auto',           // Scroll immediato e veloce
-            block: 'center',            // Centra verticalmente
-            inline: 'center'            // Centra orizzontalmente
+            behavior: 'auto',           // Scroll immediato
+            block: 'center',
+            inline: 'center'
           });
-        }, 100);
+        }, 10);  // 10ms - quasi istantaneo
       }
     }
   };
