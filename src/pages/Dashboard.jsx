@@ -271,6 +271,7 @@ export default function Dashboard() {
     
     alert(message);
     setShowProgressPhoto(false);
+    loadUserData(); // Reload to refresh gallery
   };
 
   const handleOpenEditBMR = () => {
@@ -506,6 +507,7 @@ export default function Dashboard() {
                       setShowProgressPhoto(true);
                     }}
                     userPlan={user?.subscription_plan}
+                    userId={user?.id}
                   />
                 ) : (
                   <div className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl p-6">
