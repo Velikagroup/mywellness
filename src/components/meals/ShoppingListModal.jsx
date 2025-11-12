@@ -377,8 +377,8 @@ Return ONLY valid JSON, no markdown.`;
           setSelectedIngredient(null);
         }
       }}>
-        <DialogContent className="max-w-xl max-h-[85vh] p-0 gap-0">
-          <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex items-center justify-between">
+        <DialogContent className="max-w-xl max-h-[85vh] p-0 gap-0 flex flex-col">
+          <div className="flex-shrink-0 bg-white z-10 border-b px-6 py-4 flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
               <h3 className="font-semibold text-gray-900 text-sm">
@@ -397,7 +397,7 @@ Return ONLY valid JSON, no markdown.`;
             </button>
           </div>
 
-          <div className="overflow-y-auto px-6 py-4" style={{ maxHeight: 'calc(85vh - 64px)', WebkitOverflowScrolling: 'touch' }}>
+          <div className="flex-1 overflow-y-auto px-6 py-4" style={{ WebkitOverflowScrolling: 'touch' }}>
             {!scanResult ? (
               <div className="space-y-6">
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
@@ -466,7 +466,7 @@ Return ONLY valid JSON, no markdown.`;
                 </p>
               </div>
             ) : (
-              <div className="space-y-4 pb-32">
+              <div className="space-y-4">
                 <img
                   src={scanResult.photo_url}
                   alt="Product"
@@ -523,18 +523,13 @@ Return ONLY valid JSON, no markdown.`;
                   </div>
                 </div>
 
-                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <p className="text-sm text-amber-800">
-                    💡 Salvando questo prodotto, i valori nutrizionali delle tue ricette saranno aggiornati automaticamente!
-                  </p>
-                </div>
               </div>
             )}
           </div>
 
           {/* Bottoni fissi in basso */}
           {scanResult && (
-            <div className="sticky bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
+            <div className="flex-shrink-0 bg-white border-t shadow-lg p-4">
               <div className="flex flex-col gap-2">
                 <Button
                   onClick={handleSaveScannedProduct}
