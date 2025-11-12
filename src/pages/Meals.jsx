@@ -514,7 +514,7 @@ Use verified nutritional data. All names and units in Italian.`;
       const calorieDifference = targetCalories - currentCalories;
       
       if (calorieDifference !== 0) {
-        if (calorieDifference > 0) {
+        if (calorieDifference > 5) { // Add olive oil if significantly under target
           const oilMl = Math.round(calorieDifference / 9);
           const oilCalories = oilMl * 9;
           
@@ -529,7 +529,7 @@ Use verified nutritional data. All names and units in Italian.`;
           });
           
           currentCalories += oilCalories;
-        } else {
+        } else if (calorieDifference < -5) { // Scale down ingredients if significantly over target
           const scaleFactor = targetCalories / currentCalories;
           
           validIngredients = validIngredients.map(ing => ({
@@ -677,7 +677,7 @@ Use verified nutritional data. All names and units in Italian.`;
           
           generatedMealCount++;
           const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 70); // Reaches ~90%
-          updateProgress(progress, `${day} - ${mealType} (${generatedMealCount}/${totalMealsToGenerate})`);
+          updateProgress(progress, `${day} - ${getMealTypeLabel(mealType)} (${generatedMealCount}/${totalMealsToGenerate})`);
 
           const mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. Use verified data.`;
 
@@ -932,9 +932,7 @@ Use verified nutritional data. All names and units in Italian.`;
             </div>
           </div>
 
-          {mealPlans.length > 0 && (
-            <AIFeedbackBox user={user} onPlanRegenerated={loadMealPlans} />
-          )}
+          {/* ✅ Box "Migliora l'AI" RIMOSSO */}
 
           {showGenerator && (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
