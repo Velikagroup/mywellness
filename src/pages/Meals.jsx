@@ -1199,6 +1199,18 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
             </Card>
           )}
 
+          {showCheatMealStep && (
+            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+              <CardContent className="p-6">
+                <CheatMealStep
+                  weightLossSpeed={user?.weight_loss_speed || 'moderate'}
+                  onComplete={handleCheatMealComplete}
+                  onSkip={handleCheatMealSkip}
+                />
+              </CardContent>
+            </Card>
+          )}
+
           {mealPlans.length > 0 ? (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
               <CardHeader className="border-b border-gray-200/30">
