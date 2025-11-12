@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate } from 'react-router-dom';
@@ -19,7 +20,6 @@ import CurrentBodyTypeStep from '../components/quiz/CurrentBodyTypeStep';
 import TargetBodyTypeStep from '../components/quiz/TargetBodyTypeStep';
 import TargetZoneStep from '../components/quiz/TargetZoneStep';
 import WeightLossSpeedStep from '../components/quiz/WeightLossSpeedStep';
-import CheatMealStep from '../components/quiz/CheatMealStep';
 
 function calculateAge(birthdate) {
   if (!birthdate) return null;
@@ -82,7 +82,6 @@ function buildDynamicSteps(data) {
     { component: CurrentBodyTypeStep, label: "Aspetto Fisico Attuale" },
     { component: TargetZoneStep, label: "Zona Obiettivo" },
     { component: WeightLossSpeedStep, label: "Ritmo di Perdita Peso" },
-    { component: CheatMealStep, label: "Cheat Meal" },
     { component: TargetBodyTypeStep, label: "Aspetto Fisico Obiettivo" }
   ];
 
@@ -219,11 +218,6 @@ export default function Quiz() {
     }
     if (stepComponent === WeightLossSpeedStep) {
       return !!quizData.weight_loss_speed;
-    }
-    if (stepComponent === CheatMealStep) {
-      return quizData.cheat_meal_count !== undefined && 
-             (quizData.cheat_meal_count === 0 || 
-              (quizData.cheat_meal_slots && quizData.cheat_meal_slots.length === quizData.cheat_meal_count));
     }
     
     return true;
