@@ -281,7 +281,7 @@ Return ONLY valid JSON, no markdown.`;
   return (
     <>
       <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto z-[90]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
               <ShoppingCart className="w-6 h-6 text-[var(--brand-primary)]" />
@@ -376,7 +376,7 @@ Return ONLY valid JSON, no markdown.`;
         setScanResult(null);
         setSelectedIngredient(null);
       }}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl z-[95]">
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2">
               <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
