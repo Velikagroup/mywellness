@@ -2,7 +2,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, Upload, Loader2, TrendingUp, TrendingDown, Minus, CheckCircle2, Sparkles, X, Info, Zap, AlertCircle, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
+import { Camera, Upload, Loader2, TrendingUp, TrendingDown, Minus, CheckCircle2, Sparkles, X, Info, Zap, AlertCircle, ArrowRight, ArrowLeft, RefreshCw, Check, Microscope, Brain, FlaskConical, Target } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -22,6 +22,15 @@ const BODY_PHOTOS = [
   { id: 'back', label: 'Dietro', icon: '⬇️' }
 ];
 
+const ANALYSIS_STEPS = [
+  { id: 'upload', label: 'Caricamento foto sul server', icon: Upload },
+  { id: 'current_analysis', label: 'Analisi forense foto corrente', icon: Microscope },
+  { id: 'previous_data', label: 'Recupero dati foto precedente', icon: FlaskConical },
+  { id: 'comparison', label: 'Confronto scientifico Prima vs Dopo', icon: Brain },
+  { id: 'recommendations', label: 'Generazione raccomandazioni personalizzate', icon: Target },
+  { id: 'proposals', label: 'Creazione proposte modifiche ai piani', icon: Sparkles }
+];
+
 export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplete }) {
   const [step, setStep] = useState('zone_selection');
   const [selectedZone, setSelectedZone] = useState(null);
@@ -38,6 +47,9 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
   const [daysSinceLastAdjustment, setDaysSinceLastAdjustment] = useState(null);
   const [proposedChanges, setProposedChanges] = useState(null);
   const [isGeneratingProposals, setIsGeneratingProposals] = useState(false);
+  const [currentAnalysisStep, setCurrentAnalysisStep] = useState('');
+  const [completedSteps, setCompletedSteps] = useState([]);
+  const [currentPhotoDescription, setCurrentPhotoDescription] = useState(null);
 
   const targetFileRefs = useRef({});
   const bodyFileRefs = useRef({});
@@ -205,6 +217,10 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     return !!(bodyPhotos.front && bodyPhotos.side_left && bodyPhotos.side_right && bodyPhotos.back);
   };
 
+  const markStepComplete = (stepId) => {
+    setCompletedSteps(prev => [...prev, stepId]);
+  };
+
   const analyzePhotos = async () => {
     if (!selectedZone) return;
     
@@ -213,57 +229,89 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     setAnalysisResult(null);
     setProposedChanges(null);
     setAppliedChanges(null);
+    setCompletedSteps([]);
+    setCurrentAnalysisStep('upload');
     
     try {
       console.log('🔵 STARTING ANALYSIS...');
-      console.log('🔵 bodyFileRefs.current:', bodyFileRefs.current);
       
       const targetPhotoUrls = [];
       const photoHashes = [];
       const zone = TARGET_ZONES.find(z => z.id === selectedZone.id);
       
+      // STEP 1: Upload foto
       if (zone.photoCount === 1 && targetFileRefs.current.single) {
         const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.single.file });
         targetPhotoUrls.push(file_url);
         photoHashes.push(targetFileRefs.current.single.hash);
-        console.log('✅ Target photo uploaded:', file_url);
       } else if (zone.photoCount === 2) {
         if (targetFileRefs.current.left) {
           const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.left.file });
           targetPhotoUrls.push(file_url);
           photoHashes.push(targetFileRefs.current.left.hash);
-          console.log('✅ Target left photo uploaded:', file_url);
         }
         if (targetFileRefs.current.right) {
           const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.right.file });
           targetPhotoUrls.push(file_url);
           photoHashes.push(targetFileRefs.current.right.hash);
-          console.log('✅ Target right photo uploaded:', file_url);
         }
       }
 
-      console.log('🔵 UPLOADING BODY PHOTOS...');
       const bodyPhotoUrls = {};
       for (const photoType of ['front', 'side_left', 'side_right', 'back']) {
-        console.log(`🔵 Checking ${photoType}:`, bodyFileRefs.current[photoType]);
         if (bodyFileRefs.current[photoType]) {
-          console.log(`⬆️ Uploading ${photoType}...`);
           const { file_url } = await base44.integrations.Core.UploadFile({ file: bodyFileRefs.current[photoType].file });
           bodyPhotoUrls[photoType] = file_url;
           photoHashes.push(bodyFileRefs.current[photoType].hash);
-          console.log(`✅ ${photoType} uploaded:`, file_url);
-        } else {
-          console.warn(`⚠️ ${photoType} NOT FOUND in bodyFileRefs!`);
         }
       }
 
-      console.log('✅ ALL BODY PHOTOS UPLOADED:', bodyPhotoUrls);
-      console.log('📦 Photo hashes:', photoHashes);
-
       uploadedPhotoUrls.current = { targetPhotoUrls, bodyPhotoUrls, photoHashes };
-      console.log('✅ uploadedPhotoUrls.current SET:', uploadedPhotoUrls.current);
+      markStepComplete('upload');
 
-      // 🔥 ANALISI IN DUE FASI PER MASSIMA ACCURATEZZA
+      // STEP 2: Analisi foto corrente
+      setCurrentAnalysisStep('current_analysis');
+      
+      const descriptionPrompt = `You are an EXPERT body composition analyst with 20+ years of experience. Describe this photo of the ${selectedZone.label} area in EXTREME SCIENTIFIC DETAIL.
+
+CRITICAL: Generate ALL content in ITALIAN language.
+
+Analyze EVERY visible detail:
+- Muscle definition: Are muscle lines visible? How defined are they? (rate 1-10)
+- Fat layer: How thick is the subcutaneous fat? (estimate: 0-2mm, 2-5mm, 5-10mm, 10+mm)
+- Skin texture: Is it tight, smooth, loose, dimpled?
+- Vascularity: Are veins visible? How prominent? (none, slight, moderate, high)
+- Shape/Contour: Describe the exact shape you see
+- Muscle separation: Can you see individual muscle groups?
+
+User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}
+Target Area: ${selectedZone.label}
+
+Be FORENSICALLY detailed. Describe what you see like you're writing a medical report.`;
+
+      const currentDescription = await base44.integrations.Core.InvokeLLM({
+        prompt: descriptionPrompt,
+        file_urls: targetPhotoUrls,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            muscle_definition_score: { type: "number", description: "1-10 rating" },
+            fat_layer_thickness: { type: "string", enum: ["0-2mm", "2-5mm", "5-10mm", "10+mm"], description: "Estimate" },
+            skin_texture: { type: "string", description: "Description in Italian" },
+            vascularity_level: { type: "string", enum: ["none", "slight", "moderate", "high"] },
+            shape_description: { type: "string", description: "Shape in Italian" },
+            detailed_description: { type: "string", description: "Full forensic description in Italian" }
+          },
+          required: ["muscle_definition_score", "fat_layer_thickness", "skin_texture", "vascularity_level", "shape_description", "detailed_description"]
+        }
+      });
+
+      setCurrentPhotoDescription(currentDescription);
+      markStepComplete('current_analysis');
+
+      // STEP 3: Recupero foto precedente
+      setCurrentAnalysisStep('previous_data');
+      
       const previousPhotoUrls = [];
       let daysSincePrevious = null;
       let previousPhotoDescription = null;
@@ -272,178 +320,71 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         previousPhotoUrls.push(...previousPhoto.ai_analysis.target_photo_urls);
         daysSincePrevious = Math.floor((new Date() - new Date(previousPhoto.date)) / (1000 * 60 * 60 * 24));
         previousPhotoDescription = previousPhoto.ai_analysis?.photo_description || null;
-        console.log('📸 Foto precedente trovata:', previousPhotoUrls, '- Giorni fa:', daysSincePrevious);
       }
+      
+      markStepComplete('previous_data');
 
-      // 🔥 FASE 1: DESCRIVI LA FOTO CORRENTE IN DETTAGLIO ESTREMO
-      const descriptionPrompt = `You are an EXPERT body composition analyst. Describe this photo of the ${selectedZone.label} area in EXTREME SCIENTIFIC DETAIL.
+      // STEP 4: Confronto
+      setCurrentAnalysisStep('comparison');
 
-CRITICAL: Generate ALL content in ITALIAN language.
+      let comparisonPrompt;
 
-Analyze EVERY visible detail:
-- Muscle definition: Are muscle lines visible? How defined are they? (rate 1-10)
-- Fat layer: How thick is the subcutaneous fat? (estimate in mm: 0-2mm, 2-5mm, 5-10mm, 10+mm)
-- Skin texture: Is it tight, smooth, loose, dimpled?
-- Vascularity: Are veins visible? How prominent? (none, slight, moderate, high)
-- Shape/Contour: Describe the exact shape you see
-- Color: Skin tone, any redness or discoloration
-- Muscle separation: Can you see individual muscle groups?
-- Overall impression: What stands out most?
+      if (previousPhotoDescription && daysSincePrevious !== null) {
+        comparisonPrompt = `You are an EXPERT body composition analyst. COMPARE these two detailed analyses:
 
-User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}
-Target Area: ${selectedZone.label}
+🔴 FOTO PRECEDENTE (${daysSincePrevious} giorni fa):
+- Definizione Muscolare: ${previousPhotoDescription.muscle_definition_score}/10
+- Spessore Grasso: ${previousPhotoDescription.fat_layer_thickness}
+- Texture Pelle: ${previousPhotoDescription.skin_texture}
+- Vascolarizzazione: ${previousPhotoDescription.vascularity_level}
+- Forma: ${previousPhotoDescription.shape_description}
+- Descrizione: ${previousPhotoDescription.detailed_description}
 
-Be FORENSICALLY detailed. Describe what you see like you're writing a medical report.`;
+🟢 FOTO CORRENTE (OGGI):
+- Definizione Muscolare: ${currentDescription.muscle_definition_score}/10
+- Spessore Grasso: ${currentDescription.fat_layer_thickness}
+- Texture Pelle: ${currentDescription.skin_texture}
+- Vascolarizzazione: ${currentDescription.vascularity_level}
+- Forma: ${currentDescription.shape_description}
+- Descrizione: ${currentDescription.detailed_description}
 
-      console.log('🔍 FASE 1: Descrizione foto corrente...');
-      const currentPhotoDescription = await base44.integrations.Core.InvokeLLM({
-        prompt: descriptionPrompt,
-        file_urls: targetPhotoUrls,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            muscle_definition_score: { type: "number", description: "1-10 rating" },
-            fat_layer_thickness: { type: "string", description: "Estimate in mm" },
-            skin_texture: { type: "string" },
-            vascularity_level: { type: "string", enum: ["none", "slight", "moderate", "high"] },
-            shape_description: { type: "string" },
-            detailed_description: { type: "string", description: "Full forensic description in Italian" }
-          },
-          required: ["muscle_definition_score", "fat_layer_thickness", "skin_texture", "vascularity_level", "shape_description", "detailed_description"]
-        }
-      });
+CRITICAL INSTRUCTIONS (in ITALIAN):
+1. COMPARE EVERY SINGLE METRIC above
+2. Muscle definition: ${currentDescription.muscle_definition_score}/10 vs ${previousPhotoDescription.muscle_definition_score}/10 = ${currentDescription.muscle_definition_score - previousPhotoDescription.muscle_definition_score > 0 ? 'MIGLIORAMENTO' : currentDescription.muscle_definition_score - previousPhotoDescription.muscle_definition_score < 0 ? 'PEGGIORAMENTO' : 'STABILE'}
+3. Fat layer: "${currentDescription.fat_layer_thickness}" vs "${previousPhotoDescription.fat_layer_thickness}" - EXPLAIN if it got thinner or thicker
+4. Vascularity: "${currentDescription.vascularity_level}" vs "${previousPhotoDescription.vascularity_level}" - More veins = fat loss
+5. Skin: "${currentDescription.skin_texture}" vs "${previousPhotoDescription.skin_texture}" - Tighter = progress
+6. Write a MINIMUM 6-8 sentence paragraph in Italian explaining EVERY difference
+7. Be BRUTALLY HONEST - if numbers improved but you don't see it, explain why (lighting, posture, etc)
+8. If numbers show improvement, CELEBRATE IT with specifics
 
-      console.log('✅ Descrizione foto corrente:', currentPhotoDescription);
-
-      let analysisPrompt;
-
-      if (zone.photoCount === 1) {
-        analysisPrompt = `You are an EXPERT body composition analyst with 20+ years of experience.
-
-${previousPhotoUrls.length > 0 && previousPhotoDescription ? `
-🔥 CRITICAL COMPARISON TASK 🔥
-
-PREVIOUS PHOTO ANALYSIS (taken ${daysSincePrevious} days ago):
-${previousPhotoDescription.detailed_description}
-- Muscle Definition Score: ${previousPhotoDescription.muscle_definition_score}/10
-- Fat Layer: ${previousPhotoDescription.fat_layer_thickness}
-- Skin: ${previousPhotoDescription.skin_texture}
-- Vascularity: ${previousPhotoDescription.vascularity_level}
-- Shape: ${previousPhotoDescription.shape_description}
-
-CURRENT PHOTO ANALYSIS (TODAY):
-${currentPhotoDescription.detailed_description}
-- Muscle Definition Score: ${currentPhotoDescription.muscle_definition_score}/10
-- Fat Layer: ${currentPhotoDescription.fat_layer_thickness}
-- Skin: ${currentPhotoDescription.skin_texture}
-- Vascularity: ${currentPhotoDescription.vascularity_level}
-- Shape: ${currentPhotoDescription.shape_description}
-
-YOUR TASK: COMPARE these two descriptions and the photos. Find EVERY difference.
-
-COMPARISON CHECKLIST:
-✓ Muscle Definition: ${currentPhotoDescription.muscle_definition_score} vs ${previousPhotoDescription.muscle_definition_score} - what does this mean?
-✓ Fat Layer: "${currentPhotoDescription.fat_layer_thickness}" vs "${previousPhotoDescription.fat_layer_thickness}" - is it thinner/thicker?
-✓ Skin: "${currentPhotoDescription.skin_texture}" vs "${previousPhotoDescription.skin_texture}" - tighter/looser?
-✓ Vascularity: "${currentPhotoDescription.vascularity_level}" vs "${previousPhotoDescription.vascularity_level}" - more/less veins?
-✓ Shape: Has the contour changed?
-
-Write a DETAILED comparison explaining EVERY difference you notice between the two time points.
-` : 'This is the FIRST progress photo. Use the current description as baseline.'}
-
-CRITICAL INSTRUCTIONS:
-- Generate ALL content in ITALIAN language
-- Be EXTREMELY DETAILED and BRUTALLY HONEST
-- Use the numerical and descriptive data to guide your comparison
-- If muscle definition score increased, that's IMPROVEMENT - celebrate it
-- If fat layer got thinner, that's PROGRESS - explain it
-- If vascularity increased, that's fat loss - mention it
-
-User Context:
-- Gender: ${user.gender}
-- Current Weight: ${user.current_weight}kg
-- Target Weight: ${user.target_weight}kg
-- Fitness Goal: ${user.fitness_goal}
-- Selected Target Area: ${selectedZone.label}
-${previousPhotoUrls.length > 0 ? `- Days since previous photo: ${daysSincePrevious}` : ''}
-
-User Notes: ${notes || 'Nessuna nota'}
-
-Task:
-1. List visible characteristics in current photo
-2. ${previousPhotoUrls.length > 0 ? `Write "comparison_with_previous" (MINIMUM 6-8 sentences):
-   - Compare muscle definition scores (${currentPhotoDescription.muscle_definition_score} TODAY vs ${previousPhotoDescription?.muscle_definition_score || 'N/A'} BEFORE)
-   - Compare fat layer thickness
-   - Compare skin texture
-   - Compare vascularity
-   - Compare overall shape
-   - State if it's IMPROVED, MAINTAINED, or REGRESSED
-   - Explain WHY you see these changes
-   - Be SPECIFIC with details from the descriptions` : 'Establish baseline'}
-3. Determine result: improved/maintained/regressed/first_photo
-4. Provide 3-5 recommendations
-5. Suggest adjustments needed
-6. Write honest motivational message`;
+User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}, Area: ${selectedZone.label}
+Days passed: ${daysSincePrevious}
+User notes: ${notes || 'Nessuna nota'}`;
 
       } else {
-        analysisPrompt = `You are an EXPERT fitness coach, body composition analyst, and personal trainer with 20+ years of experience analyzing body transformations. You can detect EVEN THE SMALLEST changes.
+        comparisonPrompt = `This is the user's FIRST progress photo. Provide a baseline assessment.
 
-${previousPhotoUrls.length > 0 ? `
-🔥 CRITICAL PHOTO ANALYSIS TASK 🔥
+CURRENT PHOTO ANALYSIS:
+- Definizione Muscolare: ${currentDescription.muscle_definition_score}/10
+- Spessore Grasso: ${currentDescription.fat_layer_thickness}
+- Texture Pelle: ${currentDescription.skin_texture}
+- Vascolarizzazione: ${currentDescription.vascularity_level}
+- Descrizione: ${currentDescription.detailed_description}
 
-I'm providing you with 4 PHOTOS in this order:
-Photos #1 and #2 = CURRENT PHOTOS (LEFT and RIGHT, taken TODAY) - AFTER photos
-Photos #3 and #4 = PREVIOUS PHOTOS (LEFT and RIGHT, taken ${daysSincePrevious} days ago) - BEFORE photos
+User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}, Area: ${selectedZone.label}
 
-YOUR TASK: Compare TODAY's photos vs ${daysSincePrevious} DAYS AGO photos and detect ALL visible changes.
-
-WHAT TO LOOK FOR IN ${selectedZone.label.toUpperCase()}:
-🔍 Muscle Definition: More/less striations? Better separation?
-🔍 Fat Layer: Less/more subcutaneous fat?
-🔍 Vascularity: More/less visible veins?
-🔍 Skin Texture: Tighter or looser?
-🔍 Shape: Changed contour?
-🔍 Symmetry: Better/worse balance between sides?
-🔍 Size: Muscle growth or atrophy?
-
-EVEN IF CHANGES ARE SMALL (2-3%), YOU MUST NOTICE THEM.
-` : 'This is the user\'s FIRST progress photo. Compare LEFT vs RIGHT and provide baseline.'}
-
-CRITICAL INSTRUCTIONS:
-- Generate ALL content in ITALIAN language
-- Be EXTREMELY DETAILED and BRUTALLY HONEST
-- Compare sides AND compare with previous photos
-- Be SPECIFIC with measurements and observations
-
-User Context:
-- Gender: ${user.gender}
-- Current Weight: ${user.current_weight}kg
-- Target Weight: ${user.target_weight}kg
-- Fitness Goal: ${user.fitness_goal}
-- Selected Target Area: ${selectedZone.label}
-${previousPhotoUrls.length > 0 ? `- Days since previous photo: ${daysSincePrevious}` : ''}
-
-User Notes: ${notes || 'Nessuna nota'}
-
-Task:
-1. Compare left vs right in TODAY's photos
-2. List differences between left and right
-3. ${previousPhotoUrls.length > 0 ? 'Write a DETAILED "comparison_with_previous" section (MINIMUM 6-8 sentences) comparing TODAY vs BEFORE for BOTH sides. Be forensically detailed about muscle definition, fat reduction, skin texture, vascularity, shape changes.' : 'Establish baseline'}
-4. Determine progress: improved (any visible change), maintained, regressed, or first_photo
-5. Provide 3-5 specific recommendations
-6. Suggest adjustments
-7. Write honest motivational message
-
-${previousPhotoUrls.length > 0 ? '🎯 REMEMBER: Even small changes (1-2%) ARE VISIBLE to an expert eye. Be that expert.' : ''}`;
+Task (in ITALIAN):
+1. Describe current state as baseline
+2. Set comparison_result to "first_photo"
+3. List visible characteristics
+4. Provide 3-5 recommendations to improve this area
+5. Suggest if adjustments needed
+6. Write encouraging message`;
       }
 
-      // 🔥 INVIO FOTO IN ORDINE CHIARO: CURRENT FIRST, THEN PREVIOUS
-      const allPhotoUrls = [...targetPhotoUrls, ...previousPhotoUrls];
-      console.log('📸 Sending to AI in order: CURRENT photos:', targetPhotoUrls.length, ', PREVIOUS photos:', previousPhotoUrls.length);
-
       const analysis = await base44.integrations.Core.InvokeLLM({
-        prompt: analysisPrompt,
-        file_urls: allPhotoUrls,
+        prompt: comparisonPrompt,
         response_json_schema: {
           type: "object",
           properties: {
@@ -453,34 +394,36 @@ ${previousPhotoUrls.length > 0 ? '🎯 REMEMBER: Even small changes (1-2%) ARE V
             },
             visible_characteristics: {
               type: "array",
-              items: { type: "string" },
-              description: "Detailed observations about current photo"
+              items: { type: "string" }
             },
             visible_differences: {
               type: "array",
-              items: { type: "string" },
-              description: "For dual zones: observable differences between left and right"
+              items: { type: "string" }
             },
             comparison_with_previous: {
               type: "string",
-              description: "DETAILED, HONEST comparison with previous photo. Explain what changed (better or worse) and WHY. Be specific about muscle definition, fat, skin texture. If nothing changed, say it. If regressed, explain possible causes. Minimum 4-5 sentences. IN ITALIAN."
+              description: "DETAILED comparison in Italian, minimum 6 sentences"
             },
             overall_assessment: { 
-              type: "string",
-              description: "Detailed assessment of current state"
+              type: "string"
             },
             recommendations: { 
               type: "array", 
-              items: { type: "string" },
-              description: "3-5 specific, actionable recommendations in Italian"
+              items: { type: "string" }
             },
             workout_adjustment_needed: { type: "boolean" },
             diet_adjustment_needed: { type: "boolean" },
-            motivational_message: { type: "string", description: "Honest and encouraging message in Italian" }
+            motivational_message: { type: "string" }
           },
-          required: ["comparison_result", "visible_characteristics", "visible_differences", "comparison_with_previous", "overall_assessment", "recommendations", "workout_adjustment_needed", "diet_adjustment_needed", "motivational_message"]
+          required: ["comparison_result", "visible_characteristics", "overall_assessment", "recommendations", "workout_adjustment_needed", "diet_adjustment_needed", "motivational_message"]
         }
       });
+
+      markStepComplete('comparison');
+
+      // STEP 5: Raccomandazioni (già completate dall'analisi precedente)
+      setCurrentAnalysisStep('recommendations');
+      markStepComplete('recommendations');
 
       setAnalysisResult({
         ...analysis,
@@ -488,24 +431,29 @@ ${previousPhotoUrls.length > 0 ? '🎯 REMEMBER: Even small changes (1-2%) ARE V
         days_since_previous: daysSincePrevious
       });
 
+      // STEP 6: Proposte modifiche
       if (canApplyChanges && (analysis.workout_adjustment_needed || analysis.diet_adjustment_needed)) {
-        console.log('✅ Generazione proposte modifiche (può applicare modifiche)');
-        await generateProposedChanges(analysis);
-      } else if (!canApplyChanges && daysSinceLastAdjustment !== null) {
-        console.log('🔒 NON genero proposte: ultime modifiche applicate', daysSinceLastAdjustment, 'giorni fa (minimo 7 giorni richiesti)');
+        setCurrentAnalysisStep('proposals');
+        await generateProposedChanges(analysis, currentDescription);
+        markStepComplete('proposals');
       } else {
-        console.log('ℹ️ AI non ha suggerito modifiche');
+        markStepComplete('proposals');
       }
+
+      setCurrentAnalysisStep('');
 
     } catch (error) {
       console.error("Error analyzing photos:", error);
       alert(`Errore nell'analisi: ${error.message || 'Errore sconosciuto'}`);
       setStep('body_photos');
+      setIsAnalyzing(false);
+      setCurrentAnalysisStep('');
+      setCompletedSteps([]);
     }
     setIsAnalyzing(false);
   };
 
-  const generateProposedChanges = async (analysis) => {
+  const generateProposedChanges = async (analysis, currentDesc) => {
     setIsGeneratingProposals(true);
     const proposals = { diet: [], workout: [] };
     
@@ -647,9 +595,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                             current_exercise: exerciseToReplace,
                             proposed_exercise: {
                                 name: fallbackReplacement.name,
-                                sets: fallbackReplacement.sets,
-                                reps: fallbackReplacement.reps,
-                                rest: fallbackReplacement.rest,
+                                sets: fallbackReplacement.sets || 3,
+                                reps: fallbackReplacement.reps || "12 ripetizioni",
+                                rest: fallbackReplacement.rest || "60 secondi",
                                 explanation: `Sostituzione per variare lo stimolo sui ${selectedZone.label}.`
                             },
                             reason: `Sostituito "${exerciseToReplace.name}" con "${fallbackReplacement.name}" per variare lo stimolo.`
@@ -690,8 +638,6 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
           await base44.auth.updateMe({ daily_calories: proposal.proposed });
           
           const scalingFactor = proposal.proposed / proposal.current;
-          console.log('📊 Scaling factor for meals:', scalingFactor);
-          
           const allMealPlans = await base44.entities.MealPlan.filter({ user_id: user.id });
           
           for (const meal of allMealPlans) {
@@ -762,14 +708,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
     
     try {
       console.log('💾 SAVING ANALYSIS...');
-      console.log('💾 uploadedPhotoUrls.current:', uploadedPhotoUrls.current);
       
       const today = new Date().toISOString().split('T')[0];
       const { targetPhotoUrls, bodyPhotoUrls, photoHashes } = uploadedPhotoUrls.current || { targetPhotoUrls: [], bodyPhotoUrls: {}, photoHashes: [] };
-      
-      console.log('💾 targetPhotoUrls:', targetPhotoUrls);
-      console.log('💾 bodyPhotoUrls:', bodyPhotoUrls);
-      console.log('💾 Number of body photos:', Object.keys(bodyPhotoUrls).length);
       
       const dataToSave = {
         user_id: user.id,
@@ -783,9 +724,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
           photo_hashes: photoHashes,
           photo_description: currentPhotoDescription,
           comparison_result: analysisResult.comparison_result,
-          visible_characteristics: analysisResult.visible_characteristics,
-          visible_differences: analysisResult.visible_differences,
-          comparison_with_previous: analysisResult.comparison_with_previous,
+          visible_characteristics: analysisResult.visible_characteristics || [],
+          visible_differences: analysisResult.visible_differences || [],
+          comparison_with_previous: analysisResult.comparison_with_previous || '',
           days_since_previous: analysisResult.days_since_previous,
           overall_assessment: analysisResult.overall_assessment,
           recommendations: analysisResult.recommendations,
@@ -812,7 +753,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
       onClose();
     } catch (error) {
       console.error("❌ Error saving progress photos:", error);
-      alert("Errore nel salvataggio. Riprova.");
+      alert("Errore nel salvataggio: " + (error.message || 'Riprova'));
     }
     setIsSaving(false);
   };
@@ -864,7 +805,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
               {step === 'zone_selection' && 'Seleziona la zona da migliorare'}
               {step === 'target_photos' && `Foto: ${selectedZone?.label}`}
               {step === 'body_photos' && 'Foto corpo intero per archivio'}
-              {step === 'analysis' && (isAnalyzing ? 'Analisi in corso...' : 'Analisi completata')}
+              {step === 'analysis' && (isAnalyzing ? 'Analisi AI in corso...' : 'Analisi completata')}
             </p>
           </DialogHeader>
 
@@ -1049,10 +990,44 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
             )}
 
             {step === 'analysis' && isAnalyzing && !analysisResult && (
-              <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8">
-                <Loader2 className="w-12 h-12 animate-spin text-purple-600 mx-auto mb-4" />
-                <p className="text-gray-900 font-semibold text-base mb-2">Analisi AI in corso...</p>
-                <p className="text-xs text-gray-600">Confronto con foto precedente...</p>
+              <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6 py-4">
+                <div className="text-center">
+                  <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center">
+                    <Brain className="w-8 h-8 text-white animate-pulse" />
+                  </div>
+                  <p className="text-gray-900 font-bold text-lg mb-1">Analisi AI in Corso</p>
+                  <p className="text-xs text-gray-600">L'intelligenza artificiale sta analizzando i tuoi progressi</p>
+                </div>
+
+                <div className="bg-gray-50/80 rounded-xl p-5 border border-gray-200/60 space-y-3">
+                  <h4 className="font-semibold text-gray-800 text-sm mb-3">Protocollo Analisi AI:</h4>
+                  {ANALYSIS_STEPS.map((analysisStep, idx) => {
+                    const StepIcon = analysisStep.icon;
+                    const isCompleted = completedSteps.includes(analysisStep.id);
+                    const isCurrent = currentAnalysisStep === analysisStep.id;
+                    
+                    return (
+                      <div key={analysisStep.id} className="flex items-center gap-3">
+                        <div className={`w-6 h-6 rounded-full flex items-center justify-center flex-shrink-0 ${
+                          isCompleted ? 'bg-green-500' : isCurrent ? 'bg-purple-500' : 'bg-gray-200'
+                        }`}>
+                          {isCompleted ? (
+                            <Check className="w-4 h-4 text-white" />
+                          ) : isCurrent ? (
+                            <Loader2 className="w-4 h-4 text-white animate-spin" />
+                          ) : (
+                            <StepIcon className="w-3.5 h-3.5 text-gray-400" />
+                          )}
+                        </div>
+                        <div className="flex-1">
+                          <p className={`text-sm ${isCompleted ? 'text-green-700 font-semibold' : isCurrent ? 'text-purple-700 font-semibold' : 'text-gray-500'}`}>
+                            {analysisStep.label}
+                          </p>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
               </motion.div>
             )}
 
@@ -1072,7 +1047,6 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   );
                 })()}
 
-                {/* 🔥 CONFRONTO CON FOTO PRECEDENTE - SEZIONE PRINCIPALE */}
                 {analysisResult.comparison_with_previous && analysisResult.comparison_result !== 'first_photo' && (
                   <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-5 rounded-xl border-2 border-indigo-300 shadow-lg">
                     <div className="flex items-center gap-2 mb-3">

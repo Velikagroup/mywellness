@@ -1,6 +1,6 @@
 import React from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Camera, Crown, Image } from "lucide-react";
+import { Dumbbell, Camera, Crown, Image, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
@@ -87,33 +87,37 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
           </Button>
 
           {hasFeatureAccess(userPlan, 'progress_photo_analysis') ? (
-            <div className="flex gap-2">
+            <div className="grid grid-cols-1 gap-2">
               <Button
                 onClick={onProgressPhotoClick}
-                variant="outline"
-                className="flex-1 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] text-sm"
+                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-sm shadow-lg hover:shadow-xl transition-all group"
               >
-                <Camera className="w-4 h-4 mr-2" />
-                Analisi Progressi con AI
+                <div className="flex items-center justify-center gap-2">
+                  <Camera className="w-4 h-4 group-hover:scale-110 transition-transform" />
+                  <span className="font-semibold">Analisi Progressi con AI</span>
+                  <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                </div>
               </Button>
               <Button
                 onClick={onViewGalleryClick}
                 variant="outline"
-                className="border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] text-sm px-3"
-                title="Vedi Galleria Foto"
+                className="w-full border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] text-sm font-semibold"
               >
-                <Image className="w-4 h-4" />
+                <Image className="w-4 h-4 mr-2" />
+                Galleria Foto Progressi
               </Button>
             </div>
           ) : (
             <Button
               onClick={onProgressPhotoClick}
-              variant="outline"
-              className="w-full border-amber-400 text-amber-700 hover:bg-amber-50 text-sm relative"
+              className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white text-sm shadow-lg relative group"
             >
               <Camera className="w-4 h-4 mr-2" />
               Analisi Progressi con AI
-              <Crown className="w-4 h-4 absolute -top-1 -right-1 text-purple-600" />
+              <Crown className="w-4 h-4 ml-2 animate-pulse" />
+              <div className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                Premium
+              </div>
             </Button>
           )}
         </div>
