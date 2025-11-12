@@ -38,6 +38,62 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
 
   return (
     <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl h-full">
+      <style>{`
+        .liquid-glass-button {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(38, 132, 127, 0.15) 0%,
+            rgba(20, 184, 166, 0.1) 50%,
+            rgba(38, 132, 127, 0.15) 100%
+          );
+          border: 1px solid rgba(38, 132, 127, 0.3);
+          box-shadow: 
+            0 4px 16px 0 rgba(38, 132, 127, 0.12),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .liquid-glass-button:hover {
+          background: linear-gradient(135deg, 
+            rgba(38, 132, 127, 0.25) 0%,
+            rgba(20, 184, 166, 0.2) 50%,
+            rgba(38, 132, 127, 0.25) 100%
+          );
+          border: 1px solid rgba(38, 132, 127, 0.4);
+          box-shadow: 
+            0 6px 20px 0 rgba(38, 132, 127, 0.18),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.7),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .liquid-glass-button-ai {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(147, 51, 234, 0.15) 0%,
+            rgba(99, 102, 241, 0.1) 50%,
+            rgba(147, 51, 234, 0.15) 100%
+          );
+          border: 2px solid rgba(147, 51, 234, 0.3);
+          box-shadow: 
+            0 8px 24px 0 rgba(147, 51, 234, 0.2),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .liquid-glass-button-ai:hover {
+          background: linear-gradient(135deg, 
+            rgba(147, 51, 234, 0.25) 0%,
+            rgba(99, 102, 241, 0.2) 50%,
+            rgba(147, 51, 234, 0.25) 100%
+          );
+          border: 2px solid rgba(147, 51, 234, 0.4);
+          box-shadow: 
+            0 12px 32px 0 rgba(147, 51, 234, 0.25),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.7),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+          transform: translateY(-2px);
+        }
+      `}</style>
       <CardHeader className="pb-3">
         <CardTitle className="text-base sm:text-lg flex items-center gap-2">
           <Dumbbell className="w-5 h-5 text-[var(--brand-primary)]" />
@@ -78,47 +134,67 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Button
-            onClick={() => navigate(createPageUrl("Workouts"))}
-            className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-sm"
-          >
-            Vai alla Scheda Completa
-          </Button>
-
+        <div className="space-y-3">
+          {/* Pulsanti Vai alla Scheda e Galleria - Stessa riga con liquid glass */}
           {hasFeatureAccess(userPlan, 'progress_photo_analysis') ? (
-            <div className="grid grid-cols-1 gap-2">
-              <Button
-                onClick={onProgressPhotoClick}
-                className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white text-sm shadow-lg hover:shadow-xl transition-all group"
+            <div className="grid grid-cols-2 gap-2">
+              <button
+                onClick={() => navigate(createPageUrl("Workouts"))}
+                className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
               >
-                <div className="flex items-center justify-center gap-2">
-                  <Camera className="w-4 h-4 group-hover:scale-110 transition-transform" />
-                  <span className="font-semibold">Analisi Progressi con AI</span>
-                  <Sparkles className="w-4 h-4 group-hover:rotate-12 transition-transform" />
+                <div className="flex items-center justify-center gap-1.5">
+                  <Dumbbell className="w-4 h-4" />
+                  <span>Vai alla Scheda</span>
                 </div>
-              </Button>
-              <Button
+              </button>
+              <button
                 onClick={onViewGalleryClick}
-                variant="outline"
-                className="w-full border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] text-sm font-semibold"
+                className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
               >
-                <Image className="w-4 h-4 mr-2" />
-                Galleria Foto Progressi
-              </Button>
+                <div className="flex items-center justify-center gap-1.5">
+                  <Image className="w-4 h-4" />
+                  <span>Galleria</span>
+                </div>
+              </button>
             </div>
           ) : (
-            <Button
-              onClick={onProgressPhotoClick}
-              className="w-full bg-gradient-to-r from-amber-400 to-orange-500 hover:from-amber-500 hover:to-orange-600 text-white text-sm shadow-lg relative group"
+            <button
+              onClick={() => navigate(createPageUrl("Workouts"))}
+              className="w-full liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
             >
-              <Camera className="w-4 h-4 mr-2" />
-              Analisi Progressi con AI
-              <Crown className="w-4 h-4 ml-2 animate-pulse" />
-              <div className="absolute -top-1 -right-1 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+              <div className="flex items-center justify-center gap-1.5">
+                <Dumbbell className="w-4 h-4" />
+                <span>Vai alla Scheda Completa</span>
+              </div>
+            </button>
+          )}
+
+          {/* Pulsante Analisi Progressi - Più alto con liquid glass */}
+          {hasFeatureAccess(userPlan, 'progress_photo_analysis') ? (
+            <button
+              onClick={onProgressPhotoClick}
+              className="w-full liquid-glass-button-ai text-purple-700 font-bold text-base py-5 rounded-xl transition-all hover:scale-[1.02] group"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Camera className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span>Analisi Progressi con AI</span>
+                <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
+              </div>
+            </button>
+          ) : (
+            <button
+              onClick={onProgressPhotoClick}
+              className="w-full liquid-glass-button-ai text-purple-700 font-bold text-base py-5 rounded-xl transition-all hover:scale-[1.02] group relative"
+            >
+              <div className="flex items-center justify-center gap-2">
+                <Camera className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                <span>Analisi Progressi con AI</span>
+                <Crown className="w-5 h-5 animate-pulse" />
+              </div>
+              <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">
                 Premium
               </div>
-            </Button>
+            </button>
           )}
         </div>
       </CardContent>
