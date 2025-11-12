@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -8,6 +7,12 @@ import { Button } from "@/components/ui/button";
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 
 export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan }) {
+  const handlePhotoClick = () => {
+    if (onProgressPhotoClick) {
+      onProgressPhotoClick();
+    }
+  };
+
   return (
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
       <CardHeader className="pb-4">
@@ -84,15 +89,20 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
 
         {/* Progress Photo Button */}
         <Button
-          onClick={onProgressPhotoClick}
+          onClick={handlePhotoClick}
           variant="outline"
-          className="w-full border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all relative"
-          disabled={!hasFeatureAccess(userPlan, 'progress_photo_analysis')}
+          className="w-full border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all relative cursor-pointer"
         >
           <Camera className="w-4 h-4 mr-2" />
           📸 Analisi Foto Progresso con AI
           {!hasFeatureAccess(userPlan, 'progress_photo_analysis') && (
-            <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+            <span 
+              className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
+              onClick={(e) => {
+                e.stopPropagation();
+                handlePhotoClick();
+              }}
+            >
               Premium
             </span>
           )}
