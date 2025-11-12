@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -54,7 +55,6 @@ export default function AIFeedbackBox({ user, onPlanRegenerated }) {
     
     setIsSubmitting(true);
     try {
-      // Salva il feedback
       await base44.entities.AIFeedback.create({
         user_id: user.id,
         feedback_type: 'meal_plan',
@@ -62,13 +62,11 @@ export default function AIFeedbackBox({ user, onPlanRegenerated }) {
         status: 'pending'
       });
       
-      // Elimina tutti i pasti esistenti
       const existingMeals = await base44.entities.MealPlan.filter({ user_id: user.id });
       for (const meal of existingMeals) {
         await base44.entities.MealPlan.delete(meal.id);
       }
 
-      // Configurazione pasti
       const daysOfWeek = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
       const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner'];
       
@@ -80,7 +78,6 @@ export default function AIFeedbackBox({ user, onPlanRegenerated }) {
       const dailyCalories = user.daily_calories;
       const dietRules = getDietRules(user.diet_type || 'mediterranean');
       
-      // ✅ DISTRIBUZIONE CALORICA PRECISA
       const mealCalorieDistribution = {};
       const mealsPerDay = mealStructure.length;
       
@@ -106,7 +103,6 @@ export default function AIFeedbackBox({ user, onPlanRegenerated }) {
         });
       }
       
-      // ✅ CORREZIONE FINALE per raggiungere ESATTAMENTE il target
       const currentTotal = Object.values(mealCalorieDistribution).reduce((sum, c) => sum + c, 0);
       const difference = dailyCalories - currentTotal;
       
@@ -176,7 +172,6 @@ Return Italian meal with verified nutritional data.`;
 
           let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
           
-          // ✅ TOLLERANZA 0 KCAL - Bilanciamento ESATTO con olio
           const diff = targetCals - calculatedCalories;
           
           if (diff !== 0) {
@@ -227,46 +222,43 @@ Return Italian meal with verified nutritional data.`;
             image_url: null
           });
           
-          createdMealIds.push({ id: createdMeal.id, meal: llmResponse });
+          createdMealIds.push({ id: createdMeal.id, name: llmResponse.name, ingredients: roundedIngredients });
           
           console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal (target: ${targetCals})`);
         }
       }
       
-      // ✅ IMPORTANTE: Ferma il loader PRIMA di mostrare successo
       setIsSubmitting(false);
       setFeedback('');
       setShowSuccess(true);
       
-      // Notifica parent per ricaricare i dati
       if (onPlanRegenerated) {
         await onPlanRegenerated();
       }
       
       setTimeout(() => setShowSuccess(false), 4000);
       
-      // STEP 2: Genera immagini in BACKGROUND (silenzioso e NON blocca UI)
-      console.log('🎨 Inizio generazione immagini in background...');
+      // ✅ STEP 2: Rigenera TUTTE le immagini in background
+      console.log('🎨 Rigenerazione TUTTE le immagini in background...');
       
       (async () => {
         for (let i = 0; i < createdMealIds.length; i++) {
-          const { id, meal } = createdMealIds[i];
+          const { id, name, ingredients } = createdMealIds[i];
           
           try {
-            const ingredientsString = meal.ingredients.map(ing => `${ing.quantity}${ing.unit} ${ing.name}`).join(', ');
-            const imagePrompt = `Professional food photography of ${meal.name}. Ingredients: ${ingredientsString}. Modern plate.`;
+            const ingredientsString = ingredients.map(ing => `${ing.quantity}${ing.unit} ${ing.name}`).join(', ');
+            const imagePrompt = `Professional food photography of ${name}. Ingredients: ${ingredientsString}. Modern plate, 45-degree angle, natural lighting.`;
             const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
             
             await base44.entities.MealPlan.update(id, { image_url: imageResponse.url });
             
-            console.log(`🖼️ Immagine ${i + 1}/${createdMealIds.length}: ${meal.name}`);
+            console.log(`🖼️ Immagine ${i + 1}/${createdMealIds.length}: ${name}`);
           } catch (error) {
             console.error(`❌ Errore immagine:`, error);
           }
         }
         
-        console.log('✅ Immagini completate!');
-        // Ricarica una seconda volta per mostrare le immagini
+        console.log('✅ Tutte le immagini rigenerate!');
         if (onPlanRegenerated) {
           await onPlanRegenerated();
         }
@@ -308,7 +300,7 @@ Return Italian meal with verified nutritional data.`;
             >
               <CheckCircle className="w-12 h-12 text-green-500 mx-auto mb-3" />
               <p className="text-green-700 font-semibold">Piano rigenerato con successo!</p>
-              <p className="text-sm text-gray-600 mt-1">Il tuo feedback è stato applicato</p>
+              <p className="text-sm text-gray-600 mt-1">Le immagini verranno rigenerate in background</p>
             </motion.div>
           ) : (
             <motion.div
