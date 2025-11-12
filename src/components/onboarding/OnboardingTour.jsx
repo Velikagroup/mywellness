@@ -102,9 +102,9 @@ export default function OnboardingTour({ user, onComplete }) {
         // Delay per dare tempo al rendering
         setTimeout(() => {
           element.scrollIntoView({ 
-            behavior: 'smooth', 
-            block: 'center',
-            inline: 'center'
+            behavior: 'auto',           // Scroll immediato e veloce
+            block: 'center',            // Centra verticalmente
+            inline: 'center'            // Centra orizzontalmente
           });
         }, 100);
       }
