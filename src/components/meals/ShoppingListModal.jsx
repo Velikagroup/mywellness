@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -515,13 +516,11 @@ Return ONLY valid JSON, no markdown.`;
       </Dialog>
 
       {/* Upgrade Modal */}
-      {showUpgradeModal && (
-        <UpgradeModal 
-          isOpen={showUpgradeModal} 
-          onClose={() => setShowUpgradeModal(false)} 
-          currentPlan={user?.subscription_plan || 'base'} 
-        />
-      )}
+      <UpgradeModal 
+        isOpen={showUpgradeModal} 
+        onClose={() => setShowUpgradeModal(false)} 
+        currentPlan={user?.subscription_plan || 'base'} 
+      />
     </>
   );
 }
