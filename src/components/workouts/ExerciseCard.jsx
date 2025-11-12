@@ -4,42 +4,11 @@ import { Badge } from "@/components/ui/badge";
 import { Dumbbell, Repeat, Timer, ChevronDown, ChevronUp, Info, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-// Mappa muscoli coinvolti per esercizio (esempio per Squat con Bilanciere)
-const EXERCISE_DETAILS = {
-  'squat con bilanciere': {
-    description: 'Lo squat con bilanciere è uno degli esercizi fondamentali per lo sviluppo della forza e della massa muscolare delle gambe. Coinvolge praticamente tutti i gruppi muscolari della parte inferiore del corpo e richiede stabilità del core.',
-    form_tips: [
-      'Posiziona il bilanciere sulla parte superiore dei trapezi (high bar) o sulla parte posteriore delle spalle (low bar)',
-      'Piedi larghezza spalle, punte leggermente rivolte verso l\'esterno (10-15°)',
-      'Mantieni il petto in fuori e la schiena neutra durante tutto il movimento',
-      'Inspira profondamente prima di scendere, trattieni il respiro durante la discesa',
-      'Scendi fino a quando le cosce sono parallele al pavimento (o più in basso se la mobilità lo permette)',
-      'Spingi attraverso i talloni per risalire, mantenendo le ginocchia allineate con le punte dei piedi',
-      'Espira potentemente durante la fase di risalita',
-      'Evita di portare le ginocchia in avanti oltre le punte dei piedi eccessivamente'
-    ],
-    muscles: ['quadricipiti', 'glutei', 'femorali', 'core', 'lombari'],
-    muscle_image_url: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/squat_muscles.png'
-  },
-  // Altri esercizi possono essere aggiunti qui
-};
-
-const getMuscleHighlightImage = (exerciseName) => {
-  const normalizedName = exerciseName.toLowerCase();
-  const details = EXERCISE_DETAILS[normalizedName];
-  
-  if (details?.muscle_image_url) {
-    return details.muscle_image_url;
-  }
-  
-  // Immagine placeholder generica del corpo umano
-  return 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/body_muscles_generic.png';
-};
-
 export default function ExerciseCard({ exercise }) {
   const [showDetails, setShowDetails] = useState(false);
-  const normalizedName = exercise.name.toLowerCase();
-  const details = EXERCISE_DETAILS[normalizedName];
+  
+  // Leggi i dettagli direttamente dall'oggetto exercise (dal database)
+  const hasDetails = exercise.detailed_description && exercise.form_tips && exercise.target_muscles;
 
   return (
     <Card className="flex flex-col h-full bg-white/90 border border-gray-200/80 rounded-xl overflow-hidden shadow-sm hover:shadow-xl transition-shadow duration-300">
