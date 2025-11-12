@@ -477,7 +477,7 @@ export default function Dashboard() {
         )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-            <div className="lg:col-span-2 space-y-6 sm:space-y-8 onboarding-dashboard-overview">
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8">
               <div className="progress-chart-section">
                 <AdvancedProgressChart 
                   user={user} 
@@ -519,7 +519,7 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="space-y-4 sm:space-y-6 onboarding-technical-stats-wrapper">
+            <div className="space-y-4 sm:space-y-6">
              <div className="relative">
               <TechnicalStatsCard
                 title="Target Calorico"

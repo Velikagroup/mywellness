@@ -55,8 +55,8 @@ export default function OnboardingTour({ user, onComplete }) {
     {
       id: 'track_progress',
       title: 'Traccia i Progressi',
-      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate, visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati, e accedi al piano nutrizionale e alle feature Pro.',
-      target: '.onboarding-dashboard-overview'
+      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate e visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati.',
+      target: '.progress-chart-section'
     },
     {
       id: 'nutrition_start',
@@ -95,15 +95,15 @@ export default function OnboardingTour({ user, onComplete }) {
         height: rect.height
       });
       
-      // Auto-scroll su mobile per portare l'elemento in vista - VELOCE
+      // Auto-scroll su mobile per portare l'elemento in vista - ancorato in ALTO
       if (isMobile && !hasScrolledToTarget.current) {
         hasScrolledToTarget.current = true;
         
-        // Delay minimo per rendering + scroll immediato
+        // Delay minimo per rendering + scroll immediato ALLA PARTE ALTA
         setTimeout(() => {
           element.scrollIntoView({ 
             behavior: 'auto',           // Scroll immediato
-            block: 'center',
+            block: 'start',             // ✅ Ancora in ALTO invece che al centro
             inline: 'center'
           });
         }, 10);  // 10ms - quasi istantaneo
@@ -550,4 +550,3 @@ export default function OnboardingTour({ user, onComplete }) {
     </>
   );
 }
-
