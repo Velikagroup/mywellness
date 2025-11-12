@@ -762,6 +762,32 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     setAdjustedWorkout(null);
   };
 
+  // Calcola il numero di esercizi nella scheda settimanale
+  const totalExercisesInWeeklyPlan = React.useMemo(() => {
+    return workoutPlans.reduce((total, plan) => {
+      if (plan.exercises && Array.isArray(plan.exercises)) {
+        return total + plan.exercises.length;
+      }
+      return total;
+    }, 0);
+  }, [workoutPlans]);
+
+  // Formatta l'obiettivo fitness per display
+  const formatFitnessGoal = (goal) => {
+    const goalLabels = {
+      'forza_massimale': 'Forza Massimale',
+      'ipertrofia': 'Ipertrofia',
+      'dimagrimento': 'Dimagrimento',
+      'resistenza': 'Resistenza',
+      'esplosivita': 'Esplosività',
+      'mobilita': 'Mobilità',
+      'tonificazione': 'Tonificazione',
+      'cardio': 'Cardio',
+      'riabilitazione': 'Riabilitazione'
+    };
+    return goalLabels[goal] || goal;
+  };
+
 
   if (isGenerating) {
     return (
@@ -998,18 +1024,17 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Protocollo di Allenamento</h1>
               <p className="text-gray-600">
-                Database: {allExercises.length} esercizi • Disponibili: {getAvailableExercises().length} • Obiettivo: {trainingData.fitness_goal || 'non impostato'}
+                {workoutPlans.length > 0 
+                  ? `${totalExercisesInWeeklyPlan} esercizi in scheda • Obiettivo: ${formatFitnessGoal(trainingData.fitness_goal)}`
+                  : `Nessuna scheda generata • Obiettivo: ${trainingData.fitness_goal ? formatFitnessGoal(trainingData.fitness_goal) : 'non impostato'}`
+                }
               </p>
-              {remainingGenerations !== null && remainingGenerations !== -1 && (
+              {remainingGenerations !== null && remainingGenerations !== -1 && remainingGenerations !== 0 && (
                 <div className="flex items-center gap-2 mt-2">
                   <div className="flex items-center gap-1 text-sm">
-                    {generationLimitReached && remainingGenerations === 0 ? (
-                      <AlertCircle className="w-4 h-4 text-red-500" />
-                    ) : (
-                      <BrainCircuit className="w-4 h-4 text-[var(--brand-primary)]" />
-                    )}
-                    <span className={`font-semibold ${generationLimitReached && remainingGenerations === 0 ? 'text-red-600' : 'text-[var(--brand-primary)]'}`}>
-                      {remainingGenerations === 0 ? 'Limite di generazioni raggiunto questo mese' : `${remainingGenerations} generazioni rimaste questo mese`}
+                    <BrainCircuit className="w-4 h-4 text-[var(--brand-primary)]" />
+                    <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[var(--brand-primary)]'}`}>
+                      {remainingGenerations} generazioni rimaste questo mese
                     </span>
                   </div>
                 </div>
@@ -1024,7 +1049,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 }
               }}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-2 shadow-lg hover:shadow-xl transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto relative"
-              disabled={generationLimitReached && remainingGenerations === 0}
+              disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_plan') && remainingGenerations === 0}
             >
               <BrainCircuit className="w-5 h-5" /> 
               Rigenera Piano con AI
