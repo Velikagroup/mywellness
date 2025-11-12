@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Settings, Database, Clock, Zap, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Dumbbell, Settings, Database, Clock, Zap, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, CheckCircle2, AlertCircle } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import ExerciseCard from "../components/workouts/ExerciseCard";
 import { createPageUrl } from "@/utils";
@@ -21,7 +21,7 @@ import SessionDurationStep from "../components/quiz/SessionDurationStep";
 import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
 import WorkoutLogger from "../components/workouts/WorkoutLogger";
 
-import { hasFeatureAccess, PLANS, UpgradePrompt } from '@/components/utils/subscriptionPlans';
+import { hasFeatureAccess, getGenerationLimit, PLANS, UpgradePrompt } from '@/components/utils/subscriptionPlans';
 
 import { motion } from "framer-motion";
 
@@ -73,6 +73,8 @@ export default function Workouts() {
   const [isLoading, setIsLoading] = useState(true);
   
   const [showUpgradeModal, setShowUpgradeModal] = useState(false); // NEW STATE
+  const [remainingGenerations, setRemainingGenerations] = useState(null);
+  const [generationLimitReached, setGenerationLimitReached] = useState(false);
 
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
@@ -180,6 +182,45 @@ export default function Workouts() {
     loadData();
   }, [checkForCheats, navigate]);
 
+  // Calcola generazioni rimanenti
+  useEffect(() => {
+    const checkRemainingGenerations = async () => {
+      if (!trainingData.user_id || !trainingData.subscription_plan) return;
+      
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      const limit = getGenerationLimit(trainingData.subscription_plan, 'workout');
+      
+      if (limit === -1) { // Unlimited
+        setRemainingGenerations(-1);
+        setGenerationLimitReached(false);
+        return;
+      }
+      
+      if (limit === 0) { // No access
+        setRemainingGenerations(0);
+        setGenerationLimitReached(true);
+        return;
+      }
+      
+      try {
+        const generations = await base44.entities.PlanGeneration.filter({
+          user_id: trainingData.user_id,
+          plan_type: 'workout',
+          generation_month: currentMonth
+        });
+        
+        const used = generations.length;
+        const remaining = Math.max(0, limit - used);
+        setRemainingGenerations(remaining);
+        setGenerationLimitReached(remaining === 0);
+      } catch (error) {
+        console.error('Error checking workout generations:', error);
+      }
+    };
+    
+    checkRemainingGenerations();
+  }, [trainingData.user_id, trainingData.subscription_plan]);
+
   useEffect(() => {
     setAdjustedWorkout(null);
     setAdjustmentResult(null);
@@ -190,6 +231,13 @@ export default function Workouts() {
   const prevStep = () => { if (currentStep > 0) setCurrentStep(currentStep - 1); };
 
   const startGeneration = async () => {
+    // Controlla limite generazioni
+    if (generationLimitReached && remainingGenerations === 0) {
+      setShowAssessment(false);
+      setShowUpgradeModal(true);
+      return;
+    }
+    
     await base44.auth.updateMe(trainingData);
     setShowAssessment(false);
     await generateWorkoutPlan();
@@ -476,8 +524,32 @@ CRITICAL REQUIREMENTS:
       }
 
       updateProgress(100, "Protocollo di allenamento generato!");
+      
+      // Registra la generazione
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      await base44.entities.PlanGeneration.create({
+        user_id: trainingData.user_id,
+        plan_type: 'workout',
+        generation_month: currentMonth,
+        subscription_plan: trainingData.subscription_plan
+      });
+      
       // Invalidate the query to refetch workout plans
       queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
+      
+      // Aggiorna contatore generazioni
+      const limit = getGenerationLimit(trainingData.subscription_plan, 'workout');
+      if (limit !== -1 && limit !== 0) {
+        const generations = await base44.entities.PlanGeneration.filter({
+          user_id: trainingData.user_id,
+          plan_type: 'workout',
+          generation_month: currentMonth
+        });
+        const remaining = Math.max(0, limit - generations.length);
+        setRemainingGenerations(remaining);
+        setGenerationLimitReached(remaining === 0);
+      }
+
       setTimeout(() => setIsGenerating(false), 1500);
 
     } catch (error) {
@@ -783,7 +855,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     );
   }
 
-  if (!hasFeatureAccess(trainingData.subscription_plan, 'workout_plan')) {
+  if (!hasFeatureAccess(trainingData.subscription_plan, 'workout_plan') && remainingGenerations === 0) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <div className="max-w-2xl w-full">
@@ -852,6 +924,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 <Button 
                   onClick={startGeneration} 
                   className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-6 py-3 font-semibold rounded-full"
+                  disabled={generationLimitReached && remainingGenerations === 0}
                 >
                   Genera Piano 
                   <BrainCircuit className="w-4 h-4 ml-2" />
@@ -927,13 +1000,37 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               <p className="text-gray-600">
                 Database: {allExercises.length} esercizi • Disponibili: {getAvailableExercises().length} • Obiettivo: {trainingData.fitness_goal || 'non impostato'}
               </p>
+              {remainingGenerations !== null && remainingGenerations !== -1 && (
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="flex items-center gap-1 text-sm">
+                    {generationLimitReached && remainingGenerations === 0 ? (
+                      <AlertCircle className="w-4 h-4 text-red-500" />
+                    ) : (
+                      <BrainCircuit className="w-4 h-4 text-[var(--brand-primary)]" />
+                    )}
+                    <span className={`font-semibold ${generationLimitReached && remainingGenerations === 0 ? 'text-red-600' : 'text-[var(--brand-primary)]'}`}>
+                      {remainingGenerations === 0 ? 'Limite di generazioni raggiunto questo mese' : `${remainingGenerations} generazioni rimaste questo mese`}
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
             <Button 
-              onClick={() => setShowAssessment(true)} 
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-2 shadow-lg hover:shadow-xl transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto"
+              onClick={() => {
+                if (generationLimitReached && remainingGenerations === 0) {
+                  setShowUpgradeModal(true);
+                } else {
+                  setShowAssessment(true);
+                }
+              }}
+              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-2 shadow-lg hover:shadow-xl transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto relative"
+              disabled={generationLimitReached && remainingGenerations === 0}
             >
               <BrainCircuit className="w-5 h-5" /> 
               Rigenera Piano con AI
+              {generationLimitReached && remainingGenerations === 0 && (
+                <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
+              )}
             </Button>
           </div>
 

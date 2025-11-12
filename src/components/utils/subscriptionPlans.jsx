@@ -21,7 +21,9 @@ export const PLAN_FEATURES = {
     workout_tracking: false,
     workout_modification: false,
     progress_photo_analysis: false,
-    priority_support: false
+    priority_support: false,
+    meal_plan_generations_per_month: 4,
+    workout_plan_generations_per_month: 0
   },
   [PLANS.PRO]: {
     name: 'Pro',
@@ -38,7 +40,9 @@ export const PLAN_FEATURES = {
     workout_tracking: true,
     workout_modification: false,
     progress_photo_analysis: false,
-    priority_support: false
+    priority_support: false,
+    meal_plan_generations_per_month: 8,
+    workout_plan_generations_per_month: 4
   },
   [PLANS.PREMIUM]: {
     name: 'Premium',
@@ -55,7 +59,9 @@ export const PLAN_FEATURES = {
     workout_tracking: true,
     workout_modification: true,
     progress_photo_analysis: true,
-    priority_support: true
+    priority_support: true,
+    meal_plan_generations_per_month: -1, // -1 = illimitato
+    workout_plan_generations_per_month: -1 // -1 = illimitato
   }
 };
 
@@ -63,6 +69,15 @@ export const PLAN_FEATURES = {
 export const hasFeatureAccess = (userPlan, featureName) => {
   const plan = userPlan || PLANS.BASE;
   return PLAN_FEATURES[plan]?.[featureName] || false;
+};
+
+// Funzione per ottenere il limite di generazioni
+export const getGenerationLimit = (userPlan, planType) => {
+  const plan = userPlan || PLANS.BASE;
+  const featureName = planType === 'meal' 
+    ? 'meal_plan_generations_per_month' 
+    : 'workout_plan_generations_per_month';
+  return PLAN_FEATURES[plan]?.[featureName] || 0;
 };
 
 // Funzione per ottenere il nome del piano

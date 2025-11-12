@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity } from "lucide-react";
+import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Progress } from "@/components/ui/progress";
@@ -15,6 +15,7 @@ import MealDetailModal from "../components/meals/MealDetailModal";
 import ShoppingListModal from "../components/meals/ShoppingListModal";
 import AIFeedbackBox from '../components/meals/AIFeedbackBox';
 import UpgradeModal from '../components/meals/UpgradeModal';
+import { getGenerationLimit } from '@/components/utils/subscriptionPlans';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
@@ -207,6 +208,8 @@ export default function MealsPage() {
   const [regeneratingMealId, setRegeneratingMealId] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [mealsPerDay, setMealsPerDay] = useState(5);
+  const [remainingGenerations, setRemainingGenerations] = useState(null);
+  const [generationLimitReached, setGenerationLimitReached] = useState(false);
 
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
@@ -279,6 +282,39 @@ export default function MealsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mealPlans'] }),
   });
 
+  // Calcola generazioni rimanenti
+  useEffect(() => {
+    const checkRemainingGenerations = async () => {
+      if (!user?.id) return;
+      
+      const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+      const limit = getGenerationLimit(user.subscription_plan, 'meal');
+      
+      if (limit === -1) {
+        setRemainingGenerations(-1); // Illimitato
+        setGenerationLimitReached(false);
+        return;
+      }
+      
+      try {
+        const generations = await base44.entities.PlanGeneration.filter({
+          user_id: user.id,
+          plan_type: 'meal',
+          generation_month: currentMonth
+        });
+        
+        const used = generations.length;
+        const remaining = Math.max(0, limit - used);
+        setRemainingGenerations(remaining);
+        setGenerationLimitReached(remaining === 0);
+      } catch (error) {
+        console.error('Error checking generations:', error);
+      }
+    };
+    
+    checkRemainingGenerations();
+  }, [user]);
+
   const loadMealPlans = useCallback(async () => {
     if (user?.id) {
       await queryClient.invalidateQueries({ queryKey: ['mealPlans', user.id] });
@@ -286,6 +322,11 @@ export default function MealsPage() {
   }, [queryClient, user?.id]);
 
   const handleShowGenerator = useCallback((currentUser) => {
+    if (generationLimitReached && remainingGenerations === 0) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    
     if (currentUser) {
       setGenerationPrefs({
         diet_type: currentUser.diet_type || 'mediterranean',
@@ -304,7 +345,7 @@ export default function MealsPage() {
       }
     }
     setShowGenerator(true);
-  }, []);
+  }, [generationLimitReached, remainingGenerations]);
   
   useEffect(() => {
     if (isUserError && userError?.response?.status === 401) {
@@ -585,6 +626,12 @@ Use verified nutritional data. All names and units in Italian.`;
       return;
     }
     
+    // Controlla limite generazioni
+    if (generationLimitReached && remainingGenerations === 0) {
+      setShowUpgradeModal(true);
+      return;
+    }
+    
     console.log('🚀 Inizio generazione piano nutrizionale OTTIMIZZATO...');
     setIsGenerating(true);
     setGenerationProgress(0);
@@ -752,6 +799,7 @@ Use verified nutritional data. All names and units in Italian.`;
           }
 
           allGeneratedMeals.push({
+            user_id: user.id, // Ensure user_id is passed here
             day_of_week: day,
             meal_type: mealType,
             name: llmResponse.name,
@@ -792,20 +840,39 @@ Use verified nutritional data. All names and units in Italian.`;
       
       for (let i = 0; i < allGeneratedMeals.length; i++) {
         const meal = allGeneratedMeals[i];
-        const createdMeal = await createMealMutation.mutateAsync({
-          user_id: user.id,
-          ...meal
-        });
+        const createdMeal = await createMealMutation.mutateAsync(meal);
         createdMealIds.push({ id: createdMeal.id, meal });
       }
 
       updateProgress(100, "Completato!");
+      
+      // Registra la generazione
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      await base44.entities.PlanGeneration.create({
+        user_id: user.id,
+        plan_type: 'meal',
+        generation_month: currentMonth,
+        subscription_plan: user.subscription_plan
+      });
       
       setTimeout(async () => {
         setIsGenerating(false);
         setShowGenerator(false);
         await loadMealPlans();
         setAddedDays([]);
+        
+        // Aggiorna contatore generazioni
+        const limit = getGenerationLimit(user.subscription_plan, 'meal');
+        if (limit !== -1) {
+          const generations = await base44.entities.PlanGeneration.filter({
+            user_id: user.id,
+            plan_type: 'meal',
+            generation_month: currentMonth
+          });
+          const remaining = Math.max(0, limit - generations.length);
+          setRemainingGenerations(remaining);
+          setGenerationLimitReached(remaining === 0);
+        }
         
         alert(`✅ Piano nutrizionale generato con successo!`);
         
@@ -910,6 +977,16 @@ Use verified nutritional data. All names and units in Italian.`;
             <div>
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Protocollo Nutrizionale</h1>
               <p className="text-gray-600">Pianificazione e ottimizzazione dei pasti via AI</p>
+              {remainingGenerations !== null && remainingGenerations !== -1 && (
+                <div className="flex items-center gap-2 mt-2">
+                  <div className="flex items-center gap-1 text-sm">
+                    <BrainCircuit className="w-4 h-4 text-[var(--brand-primary)]" />
+                    <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[var(--brand-primary)]'}`}>
+                      {remainingGenerations} generazioni rimaste questo mese
+                    </span>
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex gap-2 w-full lg:w-auto">
               <Button
@@ -922,11 +999,15 @@ Use verified nutritional data. All names and units in Italian.`;
               </Button>
               <Button
                 onClick={() => handleShowGenerator(user)}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-3 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-3 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial relative"
+                disabled={generationLimitReached && remainingGenerations === 0}
               >
                 <BrainCircuit className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="hidden sm:inline">Rigenera Piano con AI</span>
                 <span className="sm:hidden">Rigenera</span>
+                {generationLimitReached && remainingGenerations === 0 && (
+                  <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
+                )}
               </Button>
             </div>
           </div>
@@ -941,7 +1022,7 @@ Use verified nutritional data. All names and units in Italian.`;
                 <div className="space-y-6">
                   <div className="p-4 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg border-2 border-[var(--brand-primary)]/30">
                     <Label className="text-sm font-semibold text-gray-800 mb-3 block">🍽️ Quanti pasti al giorno?</Label>
-                    <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-7 gap-2">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-2">
                       {[1, 2, 3, 4, 5, 6, 7].map((num) => (
                         <button
                           key={num}
