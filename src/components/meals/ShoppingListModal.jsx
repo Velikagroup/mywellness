@@ -377,28 +377,30 @@ Return ONLY valid JSON, no markdown.`;
           setSelectedIngredient(null);
         }
       }}>
-        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center justify-between gap-2">
-              <div className="flex items-center gap-2">
-                <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
-                Scansiona Etichetta - {selectedIngredient?.name}
-              </div>
-              <button
-                onClick={() => {
-                  setShowScanner(false);
-                  setScanResult(null);
-                  setSelectedIngredient(null);
-                }}
-                className="text-gray-400 hover:text-gray-600 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-xl max-h-[85vh] p-0 gap-0">
+          <div className="sticky top-0 bg-white z-10 border-b px-6 py-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
+              <h3 className="font-semibold text-gray-900 text-sm">
+                {selectedIngredient?.name}
+              </h3>
+            </div>
+            <button
+              onClick={() => {
+                setShowScanner(false);
+                setScanResult(null);
+                setSelectedIngredient(null);
+              }}
+              className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-full bg-gray-100 hover:bg-gray-200 transition-colors"
+            >
+              <X className="w-5 h-5 text-gray-600" />
+            </button>
+          </div>
 
-          <div className="space-y-6">
+          <div className="overflow-y-auto px-6 py-4" style={{ maxHeight: 'calc(85vh - 64px)' }}>
+
             {!scanResult ? (
+              <div className="space-y-6">
               <>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
@@ -464,10 +466,9 @@ Return ONLY valid JSON, no markdown.`;
                 <p className="text-xs text-gray-500 text-center">
                   💡 L'AI analizzerà i valori nutrizionali e darà un punteggio di salubrità
                 </p>
-              </>
+              </div>
             ) : (
-              <>
-                <div className="space-y-4">
+              <div className="space-y-4">
                   <img
                     src={scanResult.photo_url}
                     alt="Product"
