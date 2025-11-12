@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Camera, Dumbbell, CheckCircle, Clock, Flame, Crown, History } from 'lucide-react';
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
+import ProgressPhotoGallery from '../training/ProgressPhotoGallery';
 
-export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan }) {
+export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan, userId }) {
   const [showGallery, setShowGallery] = React.useState(false);
 
   return (
@@ -99,7 +100,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
         <ProgressPhotoGallery 
           isOpen={showGallery} 
           onClose={() => setShowGallery(false)} 
-          userId={workout?.user_id}
+          userId={userId}
         />
       )}
     </>
