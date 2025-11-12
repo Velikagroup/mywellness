@@ -1,8 +1,9 @@
+
 import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, Upload, Loader2, CheckCircle, AlertTriangle, X, Plus, ArrowLeft, Sparkles, Zap } from 'lucide-react';
+import { Camera, Upload, Loader2, CheckCircle, AlertTriangle, X, Plus, ArrowLeft, Sparkles, Zap, Info } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -130,13 +131,24 @@ For EVERY visible food item in the photo, perform this analysis:
 - Cooking method (e.g., "grigliato", "al forno", "bollito", "fritto")
 - Visible characteristics (color, texture, visible fat, marbling)
 
-**B) DIMENSIONAL MEASUREMENT:**
+**B) DETAILED NUTRITIONAL DESCRIPTION (CRITICAL):**
+For EACH ingredient, write a COMPREHENSIVE nutritional description in Italian (2-4 sentences) that includes:
+- What the food is and its nutritional characteristics
+- Main macronutrients and their health benefits
+- Specific nutritional notes (e.g., "ricco di proteine nobili", "fonte di grassi omega-3", "contiene vitamine del gruppo B")
+- Cooking method impact on nutrition if relevant
+- Any special properties (e.g., "il ghee è burro chiarificato, privo di lattosio e caseina")
+
+EXAMPLE FORMAT:
+"Il petto di pollo grigliato è una fonte eccellente di proteine nobili ad alto valore biologico (circa 31g per 100g), essenziali per il mantenimento e la crescita muscolare. Contiene pochi grassi saturi e fornisce vitamine del gruppo B, fondamentali per il metabolismo energetico. La cottura alla griglia preserva le proprietà nutrizionali riducendo l'aggiunta di grassi. È un alimento ideale per chi cerca un apporto proteico magro e di qualità."
+
+**C) DIMENSIONAL MEASUREMENT:**
 - Length (cm) - compare to plate diameter
 - Width (cm) - compare to plate diameter
 - Estimated thickness/height (cm) - from visual perspective
 - Estimated volume (cm³) - calculate from dimensions
 
-**C) WEIGHT ESTIMATION:**
+**D) WEIGHT ESTIMATION:**
 Use these density references:
 - Lean meat (chicken breast): ~1.0-1.1 g/cm³
 - Fatty meat (chicken thigh): ~1.0-1.05 g/cm³
@@ -146,7 +158,7 @@ Use these density references:
 - Avocado: ~0.9 g/cm³
 - Oils (visible): estimate ml from surface area and depth
 
-**D) NUTRITIONAL CALCULATION:**
+**E) NUTRITIONAL CALCULATION:**
 Based on estimated weight and food type, calculate:
 - Calories (kcal)
 - Protein (g)
@@ -167,6 +179,7 @@ For ingredients user mentions but NOT visible in photo:
 - Sauces/dressings not visible
 - Seasonings with calories (butter, honey, etc.)
 - Internal fillings (stuffed foods)
+- INCLUDE DETAILED NUTRITIONAL DESCRIPTION for each hidden ingredient too
 
 Calculate these separately based ENTIRELY on user descriptions.
 
@@ -195,6 +208,7 @@ Return a JSON object with this EXACT structure (all in Italian):
   "visible_ingredients": [
     {
       "name": "string (in Italian, e.g., 'petto di pollo grigliato')",
+      "detailed_nutritional_description": "string (2-4 sentences in Italian explaining nutritional properties, benefits, composition - MANDATORY)",
       "identification": {
         "specific_type": "string (e.g., 'petto di pollo', 'coscia', 'filetto')",
         "cut": "string (e.g., 'a fette', 'intero', 'a cubetti')",
@@ -223,6 +237,7 @@ Return a JSON object with this EXACT structure (all in Italian):
   "hidden_ingredients": [
     {
       "name": "string (in Italian)",
+      "detailed_nutritional_description": "string (2-4 sentences in Italian - MANDATORY)",
       "source": "user_description",
       "user_stated_amount": "string (e.g., '2 cucchiai', '15ml')",
       "estimated_grams_or_ml": number,
@@ -256,15 +271,16 @@ Return a JSON object with this EXACT structure (all in Italian):
 
 ## ⚠️ IMPORTANT GUIDELINES:
 
-1. **BE PRECISE**: Use decimal points for accuracy (e.g., 7.5cm, not 8cm)
-2. **BE REALISTIC**: Don't overestimate or underestimate portions
-3. **USE CONTEXT**: If user says "pollo 150g" and visually looks 150g, use 150g
-4. **ACCOUNT FOR EVERYTHING**: Even small amounts of oil/butter add up
-5. **VISIBLE FAT**: If you see visible fat on meat, increase fat content estimate
-6. **COOKED vs RAW**: Cooked meat loses ~25% water weight
-7. **ALL IN ITALIAN**: Every food name must be in Italian
+1. **DETAILED DESCRIPTIONS ARE MANDATORY**: Every ingredient MUST have a comprehensive nutritional description
+2. **BE PRECISE**: Use decimal points for accuracy (e.g., 7.5cm, not 8cm)
+3. **BE REALISTIC**: Don't overestimate or underestimate portions
+4. **USE CONTEXT**: If user says "pollo 150g" and visually looks 150g, use 150g
+5. **ACCOUNT FOR EVERYTHING**: Even small amounts of oil/butter add up
+6. **VISIBLE FAT**: If you see visible fat on meat, increase fat content estimate
+7. **COOKED vs RAW**: Cooked meat loses ~25% water weight
+8. **ALL IN ITALIAN**: Every food name and description must be in Italian
 
-Now perform the analysis.`;
+Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingredient.`;
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
@@ -285,6 +301,7 @@ Now perform the analysis.`;
                 type: "object",
                 properties: {
                   name: { type: "string" },
+                  detailed_nutritional_description: { type: "string" },
                   identification: {
                     type: "object",
                     properties: {
@@ -320,7 +337,8 @@ Now perform the analysis.`;
                       fat: { type: "number" }
                     }
                   }
-                }
+                },
+                required: ["name", "detailed_nutritional_description"]
               }
             },
             hidden_ingredients: {
@@ -329,6 +347,7 @@ Now perform the analysis.`;
                 type: "object",
                 properties: {
                   name: { type: "string" },
+                  detailed_nutritional_description: { type: "string" },
                   source: { type: "string" },
                   user_stated_amount: { type: "string" },
                   estimated_grams_or_ml: { type: "number" },
@@ -341,7 +360,8 @@ Now perform the analysis.`;
                       fat: { type: "number" }
                     }
                   }
-                }
+                },
+                required: ["name", "detailed_nutritional_description"]
               }
             },
             total_actual_nutrition: {
@@ -694,6 +714,19 @@ Now perform the analysis.`;
                     {analysisResult.visible_ingredients.map((ing, idx) => (
                       <div key={idx} className="bg-gray-50 p-4 rounded-lg border border-gray-200">
                         <p className="font-bold text-gray-900 mb-2">{ing.name}</p>
+                        
+                        {/* DETAILED NUTRITIONAL DESCRIPTION for visible ingredients */}
+                        {ing.detailed_nutritional_description && (
+                          <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-3 rounded-lg border-2 border-yellow-200 mb-3">
+                            <div className="flex items-start gap-2">
+                              <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                              <p className="text-sm text-gray-800 leading-relaxed">
+                                {ing.detailed_nutritional_description}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
                         <div className="grid grid-cols-2 gap-3 text-xs">
                           {ing.identification && (
                             <div className="col-span-2">
@@ -747,7 +780,20 @@ Now perform the analysis.`;
                   <div className="space-y-3">
                     {analysisResult.hidden_ingredients.map((ing, idx) => (
                       <div key={idx} className="bg-white p-3 rounded-lg border border-amber-200">
-                        <p className="font-semibold text-gray-900 mb-1">{ing.name}</p>
+                        <p className="font-semibold text-gray-900 mb-2">{ing.name}</p>
+                        
+                        {/* DETAILED NUTRITIONAL DESCRIPTION for hidden ingredients */}
+                        {ing.detailed_nutritional_description && (
+                          <div className="bg-gradient-to-r from-yellow-50 to-amber-50 p-3 rounded-lg border-2 border-yellow-200 mb-2">
+                            <div className="flex items-start gap-2">
+                              <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                              <p className="text-sm text-gray-800 leading-relaxed">
+                                {ing.detailed_nutritional_description}
+                              </p>
+                            </div>
+                          </div>
+                        )}
+                        
                         <p className="text-xs text-gray-600 mb-2">
                           "{ing.user_stated_amount}" → {ing.estimated_grams_or_ml}{ing.name.includes('olio') ? 'ml' : 'g'}
                         </p>
