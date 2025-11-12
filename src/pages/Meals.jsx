@@ -666,7 +666,6 @@ Use verified nutritional data. All names and units in Italian.`;
       const allGeneratedMeals = [];
       const totalMealsToGenerate = daysToGenerate.length * mealStructure.length;
       let generatedMealCount = 0;
-      let totalIngredientsAdded = 0;
 
       // ✅ STEP 1: Generazione pasti SENZA immagini (VELOCE)
       for (let dayIndex = 0; dayIndex < daysToGenerate.length; dayIndex++) {
@@ -677,7 +676,7 @@ Use verified nutritional data. All names and units in Italian.`;
           const targetCals = mealCalorieDistribution[mealType];
           
           generatedMealCount++;
-          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 65); // Reaches ~85%
+          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 70); // Reaches ~90%
           updateProgress(progress, `${day} - ${mealType} (${generatedMealCount}/${totalMealsToGenerate})`);
 
           const mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. Use verified data.`;
@@ -762,14 +761,14 @@ Use verified nutritional data. All names and units in Italian.`;
             total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
             prep_time: llmResponse.prep_time || 15,
             difficulty: llmResponse.difficulty || 'easy',
-            image_url: null // ✅ Nessuna immagine ancora
+            image_url: null
           });
           
           console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal`);
         }
       }
 
-      updateProgress(88, "Salvataggio ingredienti nel database..."); // Updated progress
+      updateProgress(90, "Salvataggio ingredienti nel database...");
       
       try {
         const allIngredients = [];
@@ -777,60 +776,59 @@ Use verified nutritional data. All names and units in Italian.`;
           meal.ingredients.forEach(ing => allIngredients.push(ing));
         });
         
-        const dbResponse = await base44.functions.invoke('validateAndSaveIngredient', {
+        await base44.functions.invoke('validateAndSaveIngredient', {
           ingredients: allIngredients
         });
         
-        totalIngredientsAdded = dbResponse.data?.new_ingredients_added || 0;
-        console.log(`🗃️ Database: +${totalIngredientsAdded} ingredienti`);
+        console.log(`🗃️ Database ingredienti aggiornato`);
       } catch (dbError) {
-        console.warn('⚠️ Database error (non critico):', dbError);
+        console.warn('⚠️ Database error:', dbError);
       }
 
-      // ✅ STEP 2: Salvataggio pasti SENZA immagini (mostro subito i pasti)
       updateProgress(95, "Salvataggio pasti...");
-      const createdMealRecords = []; // Store full records to get IDs and ingredients for image generation
+      const createdMealIds = []; // Store only IDs and the original meal object for image generation
       
       for (let i = 0; i < allGeneratedMeals.length; i++) {
         const meal = allGeneratedMeals[i];
-        const createdRecord = await createMealMutation.mutateAsync({
+        const createdMeal = await createMealMutation.mutateAsync({
           user_id: user.id,
           ...meal
         });
-        createdMealRecords.push(createdRecord); // Push the entire created record
+        createdMealIds.push({ id: createdMeal.id, meal }); // Store id and original meal object
       }
 
-      updateProgress(100, "Completato! Le immagini verranno generate in background.");
+      updateProgress(100, "Completato!");
       
-      // ✅ STEP 3: Mostra i pasti SUBITO (senza aspettare le immagini)
       setTimeout(async () => {
         setIsGenerating(false);
         setShowGenerator(false);
-        await loadMealPlans(); // Load plans to show the structure
+        await loadMealPlans();
         setAddedDays([]);
-        alert(`✅ Piano generato! +${totalIngredientsAdded} nuovi ingredienti nel database.\n\n🎨 Le immagini dei pasti verranno generate e aggiunte nei prossimi minuti.`);
         
-        // ✅ STEP 4: Generazione immagini in BACKGROUND (asincrono, non blocca l'utente)
+        // ✅ NOTIFICA SEMPLICE senza dettagli tecnici
+        alert(`✅ Piano nutrizionale generato con successo!`);
+        
+        // ✅ Generazione immagini in BACKGROUND (silenzioso)
         console.log('🎨 Inizio generazione immagini in background...');
         
         // Use a self-executing async function to keep it contained
         (async () => {
-          for (let i = 0; i < createdMealRecords.length; i++) {
-            const mealRecord = createdMealRecords[i];
+          for (let i = 0; i < createdMealIds.length; i++) {
+            const { id, meal } = createdMealIds[i]; // Destructure to get the id and the meal object
             
             try {
-              const ingredientsString = mealRecord.ingredients.map(ing => `${ing.quantity}${ing.unit} ${ing.name}`).join(', ');
-              const imagePrompt = `Professional food photography of ${mealRecord.name}. Ingredients: ${ingredientsString}. Modern plate.`;
+              const ingredientsString = meal.ingredients.map(ing => `${ing.quantity}${ing.unit} ${ing.name}`).join(', ');
+              const imagePrompt = `Professional food photography of ${meal.name}. Ingredients: ${ingredientsString}. Modern plate.`;
               const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
               
               await updateMealMutation.mutateAsync({
-                id: mealRecord.id, // Use the ID from the created record
+                id: id, // Use the ID from the created record
                 data: { image_url: imageResponse.url }
               });
               
-              console.log(`🖼️ Immagine ${i + 1}/${createdMealRecords.length} generata per: ${mealRecord.name}`);
+              console.log(`🖼️ Immagine ${i + 1}/${createdMealIds.length} generata: ${meal.name}`);
             } catch (error) {
-              console.error(`❌ Errore immagine per ${mealRecord.name}:`, error);
+              console.error(`❌ Errore immagine per ${meal.name}:`, error);
             }
           }
           
