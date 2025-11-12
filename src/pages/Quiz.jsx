@@ -220,6 +220,11 @@ export default function Quiz() {
     if (stepComponent === WeightLossSpeedStep) {
       return !!quizData.weight_loss_speed;
     }
+    if (stepComponent === CheatMealStep) {
+      return quizData.cheat_meal_count !== undefined && 
+             (quizData.cheat_meal_count === 0 || 
+              (quizData.cheat_meal_slots && quizData.cheat_meal_slots.length === quizData.cheat_meal_count));
+    }
     
     return true;
   };

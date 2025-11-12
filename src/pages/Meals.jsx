@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -714,6 +713,12 @@ Use verified nutritional data. All names and units in Italian.`;
       const totalMealsToGenerate = daysToGenerate.length * mealStructure.length;
       let generatedMealCount = 0;
 
+      // Identifico i cheat meal dall'utente
+      const cheatMealSlots = user.cheat_meal_slots || [];
+      const isCheatMeal = (day, mealType) => {
+        return cheatMealSlots.includes(`${day}_${mealType}`);
+      };
+
       // ✅ STEP 1: Generazione pasti SENZA immagini (VELOCE)
       for (let dayIndex = 0; dayIndex < daysToGenerate.length; dayIndex++) {
         const day = daysToGenerate[dayIndex];
@@ -721,12 +726,39 @@ Use verified nutritional data. All names and units in Italian.`;
         for (let mealIndex = 0; mealIndex < mealStructure.length; mealIndex++) {
           const mealType = mealStructure[mealIndex];
           const targetCals = mealCalorieDistribution[mealType];
+          const isCheat = isCheatMeal(day, mealType);
           
           generatedMealCount++;
-          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 70); // Reaches ~90%
-          updateProgress(progress, `${day} - ${getMealTypeLabel(mealType)} (${generatedMealCount}/${totalMealsToGenerate})`);
+          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 70);
+          updateProgress(progress, `${day} - ${getMealTypeLabel(mealType)} ${isCheat ? '🍕 CHEAT' : ''} (${generatedMealCount}/${totalMealsToGenerate})`);
 
-          const mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. Use verified data.`;
+          let mealPrompt;
+          
+          if (isCheat) {
+            // 🍕 CHEAT MEAL - Pasto libero ma con controllo calorico
+            mealPrompt = `You are creating a CHEAT MEAL in ITALIAN for a fitness person.
+
+🍕 CHEAT MEAL RULES:
+- This is a FREE meal - the user can enjoy their favorite indulgent foods
+- Examples: Pizza, Hamburger con patatine, Sushi, Pasta carbonara, Lasagne, Tiramisù, Gelato, etc.
+- Make it DELICIOUS and SATISFYING
+- BUT keep it around ${Math.round(targetCals * 1.3)} kcal (30% more than normal for satisfaction)
+- Include realistic portions and ingredients
+- All names in ITALIAN
+
+User preferences: ${nutritionData.favorite_foods?.join(', ') || 'pizza, hamburger, dolci'}
+
+Create ONE indulgent meal with:
+1. Name (make it appetizing!)
+2. Ingredients with quantities
+3. Simple instructions
+4. Precise nutritional values
+
+This should feel like a REWARD meal but still tracked for weekly balance.`;
+          } else {
+            // Pasto normale
+            mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. Use verified data.`;
+          }
 
           const llmResponse = await base44.integrations.Core.InvokeLLM({
             prompt: mealPrompt,
@@ -752,7 +784,8 @@ Use verified nutritional data. All names and units in Italian.`;
                 },
                 instructions: { type: "array", items: { type: "string" } },
                 prep_time: { type: "number" },
-                difficulty: { type: "string" }
+                difficulty: { type: "string" },
+                is_cheat_meal: { type: "boolean" }
               },
               required: ["name", "ingredients", "instructions"]
             }
@@ -799,10 +832,10 @@ Use verified nutritional data. All names and units in Italian.`;
           }
 
           allGeneratedMeals.push({
-            user_id: user.id, // Ensure user_id is passed here
+            user_id: user.id,
             day_of_week: day,
             meal_type: mealType,
-            name: llmResponse.name,
+            name: isCheat ? `🍕 ${llmResponse.name}` : llmResponse.name,
             ingredients: roundedIngredients,
             instructions: llmResponse.instructions || [],
             total_calories: calculatedCalories,
