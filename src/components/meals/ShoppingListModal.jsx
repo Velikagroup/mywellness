@@ -468,58 +468,57 @@ Return ONLY valid JSON, no markdown.`;
             ) : (
               <div className="space-y-4 pb-32">
                 <img
-                    src={scanResult.photo_url}
-                    alt="Product"
-                    className="w-full h-48 object-cover rounded-lg border"
-                  />
+                  src={scanResult.photo_url}
+                  alt="Product"
+                  className="w-full h-48 object-cover rounded-lg border"
+                />
 
-                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border">
-                    <h3 className="font-bold text-xl text-gray-900 mb-2">
-                      {scanResult.product_name}
-                    </h3>
-                    
-                    <div className="flex items-center justify-center gap-4 my-6">
-                      <div className="text-center">
-                        <div className={`text-5xl font-black ${getHealthScoreColor(scanResult.health_score)} rounded-full w-20 h-20 flex items-center justify-center mx-auto`}>
-                          {scanResult.health_score}
-                        </div>
-                        <p className="text-sm text-gray-600 mt-2 font-semibold">Health Score</p>
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border">
+                  <h3 className="font-bold text-xl text-gray-900 mb-2">
+                    {scanResult.product_name}
+                  </h3>
+                  
+                  <div className="flex items-center justify-center gap-4 my-6">
+                    <div className="text-center">
+                      <div className={`text-5xl font-black ${getHealthScoreColor(scanResult.health_score)} rounded-full w-20 h-20 flex items-center justify-center mx-auto`}>
+                        {scanResult.health_score}
                       </div>
-                      <div className="text-6xl">
-                        {getHealthScoreEmoji(scanResult.health_classification)}
-                      </div>
+                      <p className="text-sm text-gray-600 mt-2 font-semibold">Health Score</p>
                     </div>
-
-                    <div className={`${getHealthScoreColor(scanResult.health_score)} rounded-lg p-3 mb-4`}>
-                      <p className="font-bold text-center uppercase tracking-wider">
-                        {scanResult.health_classification}
-                      </p>
+                    <div className="text-6xl">
+                      {getHealthScoreEmoji(scanResult.health_classification)}
                     </div>
+                  </div>
 
-                    <p className="text-sm text-gray-700 leading-relaxed bg-white rounded-lg p-3 border">
-                      {scanResult.explanation}
+                  <div className={`${getHealthScoreColor(scanResult.health_score)} rounded-lg p-3 mb-4`}>
+                    <p className="font-bold text-center uppercase tracking-wider">
+                      {scanResult.health_classification}
                     </p>
                   </div>
 
-                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                    <p className="font-semibold text-blue-900 mb-2">Valori Nutrizionali (per 100g):</p>
-                    <div className="grid grid-cols-2 gap-2 text-sm">
-                      <div className="bg-white rounded p-2">
-                        <span className="text-gray-600">Calorie:</span>
-                        <span className="font-bold ml-2">{scanResult.calories_per_100g} kcal</span>
-                      </div>
-                      <div className="bg-white rounded p-2">
-                        <span className="text-gray-600">Proteine:</span>
-                        <span className="font-bold ml-2">{scanResult.protein_per_100g}g</span>
-                      </div>
-                      <div className="bg-white rounded p-2">
-                        <span className="text-gray-600">Carboidrati:</span>
-                        <span className="font-bold ml-2">{scanResult.carbs_per_100g}g</span>
-                      </div>
-                      <div className="bg-white rounded p-2">
-                        <span className="text-gray-600">Grassi:</span>
-                        <span className="font-bold ml-2">{scanResult.fat_per_100g}g</span>
-                      </div>
+                  <p className="text-sm text-gray-700 leading-relaxed bg-white rounded-lg p-3 border">
+                    {scanResult.explanation}
+                  </p>
+                </div>
+
+                <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                  <p className="font-semibold text-blue-900 mb-2">Valori Nutrizionali (per 100g):</p>
+                  <div className="grid grid-cols-2 gap-2 text-sm">
+                    <div className="bg-white rounded p-2">
+                      <span className="text-gray-600">Calorie:</span>
+                      <span className="font-bold ml-2">{scanResult.calories_per_100g} kcal</span>
+                    </div>
+                    <div className="bg-white rounded p-2">
+                      <span className="text-gray-600">Proteine:</span>
+                      <span className="font-bold ml-2">{scanResult.protein_per_100g}g</span>
+                    </div>
+                    <div className="bg-white rounded p-2">
+                      <span className="text-gray-600">Carboidrati:</span>
+                      <span className="font-bold ml-2">{scanResult.carbs_per_100g}g</span>
+                    </div>
+                    <div className="bg-white rounded p-2">
+                      <span className="text-gray-600">Grassi:</span>
+                      <span className="font-bold ml-2">{scanResult.fat_per_100g}g</span>
                     </div>
                   </div>
                 </div>
@@ -531,43 +530,43 @@ Return ONLY valid JSON, no markdown.`;
                 </div>
               </div>
             )}
+          </div>
 
-            {/* Bottoni fissi in basso */}
-            {scanResult && (
-              <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-20">
-                <div className="max-w-xl mx-auto flex flex-col gap-2">
+          {/* Bottoni fissi in basso */}
+          {scanResult && (
+            <div className="sticky bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4">
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={handleSaveScannedProduct}
+                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] py-6 text-base font-semibold"
+                >
+                  <Check className="w-5 h-5 mr-2" />
+                  Salva e Aggiorna Ricette
+                </Button>
+                <div className="grid grid-cols-2 gap-2">
                   <Button
-                    onClick={handleSaveScannedProduct}
-                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] py-6 text-base font-semibold"
+                    variant="outline"
+                    onClick={() => {
+                      setScanResult(null);
+                    }}
                   >
-                    <Check className="w-5 h-5 mr-2" />
-                    Salva e Aggiorna Ricette
+                    Scansiona Altro
                   </Button>
-                  <div className="grid grid-cols-2 gap-2">
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setScanResult(null);
-                      }}
-                    >
-                      Scansiona Altro
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={() => {
-                        setShowScanner(false);
-                        setScanResult(null);
-                        setSelectedIngredient(null);
-                      }}
-                    >
-                      <X className="w-4 h-4 mr-1" />
-                      Chiudi
-                    </Button>
-                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowScanner(false);
+                      setScanResult(null);
+                      setSelectedIngredient(null);
+                    }}
+                  >
+                    <X className="w-4 h-4 mr-1" />
+                    Chiudi
+                  </Button>
                 </div>
               </div>
-            )}
-          </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
 
