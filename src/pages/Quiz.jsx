@@ -338,6 +338,20 @@ export default function Quiz() {
         console.log('💾 Saving user data...', userDataToSave);
         // Utente loggato - salva dati direttamente
         await base44.auth.updateMe(userDataToSave);
+        
+        // ✅ NUOVO: Registra il peso iniziale nel grafico
+        const today = new Date().toISOString().split('T')[0];
+        try {
+          await base44.entities.WeightHistory.create({
+            user_id: user.id,
+            weight: quizData.current_weight,
+            date: today
+          });
+          console.log('✅ Peso iniziale registrato:', quizData.current_weight, 'kg');
+        } catch (weightError) {
+          console.warn('⚠️ Errore nel registrare peso iniziale (non critico):', weightError);
+        }
+        
         localStorage.removeItem('quizData');
         console.log('✅ User data saved');
         
