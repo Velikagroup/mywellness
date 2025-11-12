@@ -233,16 +233,19 @@ Return Italian meal with verified nutritional data.`;
         }
       }
       
+      // ✅ IMPORTANTE: Ferma il loader PRIMA di mostrare successo
+      setIsSubmitting(false);
       setFeedback('');
       setShowSuccess(true);
       
+      // Notifica parent per ricaricare i dati
       if (onPlanRegenerated) {
-        onPlanRegenerated();
+        await onPlanRegenerated();
       }
       
       setTimeout(() => setShowSuccess(false), 4000);
       
-      // STEP 2: Genera immagini in BACKGROUND (silenzioso)
+      // STEP 2: Genera immagini in BACKGROUND (silenzioso e NON blocca UI)
       console.log('🎨 Inizio generazione immagini in background...');
       
       (async () => {
@@ -263,16 +266,17 @@ Return Italian meal with verified nutritional data.`;
         }
         
         console.log('✅ Immagini completate!');
+        // Ricarica una seconda volta per mostrare le immagini
         if (onPlanRegenerated) {
-          onPlanRegenerated();
+          await onPlanRegenerated();
         }
       })();
       
     } catch (error) {
       console.error("Error submitting feedback and regenerating plan:", error);
       alert("Errore nell'invio del feedback. Riprova.");
+      setIsSubmitting(false);
     }
-    setIsSubmitting(false);
   };
 
   return (
