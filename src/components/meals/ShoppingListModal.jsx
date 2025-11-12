@@ -389,36 +389,63 @@ Return ONLY valid JSON, no markdown.`;
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600 mb-4">Carica una foto dell'etichetta nutrizionale</p>
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    onChange={handleFileUpload}
-                    disabled={isScanning}
-                    className="hidden"
-                    id="file-upload"
-                  />
-                  <label htmlFor="file-upload">
-                    <Button
-                      asChild
+                  
+                  <div className="flex flex-col sm:flex-row gap-3 justify-center">
+                    {/* Scatta Foto */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleFileUpload}
                       disabled={isScanning}
-                      className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                    >
-                      <span>
-                        {isScanning ? (
-                          <>
-                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                            Analisi in corso...
-                          </>
-                        ) : (
-                          <>
-                            <Camera className="w-4 h-4 mr-2" />
-                            Scatta/Carica Foto
-                          </>
-                        )}
-                      </span>
-                    </Button>
-                  </label>
+                      className="hidden"
+                      id="file-capture"
+                    />
+                    <label htmlFor="file-capture" className="flex-1 sm:flex-initial">
+                      <Button
+                        asChild
+                        disabled={isScanning}
+                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                      >
+                        <span>
+                          {isScanning ? (
+                            <>
+                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                              Analisi...
+                            </>
+                          ) : (
+                            <>
+                              <Camera className="w-4 h-4 mr-2" />
+                              Scatta Foto
+                            </>
+                          )}
+                        </span>
+                      </Button>
+                    </label>
+
+                    {/* Carica da Galleria */}
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleFileUpload}
+                      disabled={isScanning}
+                      className="hidden"
+                      id="file-upload"
+                    />
+                    <label htmlFor="file-upload" className="flex-1 sm:flex-initial">
+                      <Button
+                        asChild
+                        variant="outline"
+                        disabled={isScanning}
+                        className="w-full border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]"
+                      >
+                        <span>
+                          <Upload className="w-4 h-4 mr-2" />
+                          Carica
+                        </span>
+                      </Button>
+                    </label>
+                  </div>
                 </div>
                 <p className="text-xs text-gray-500 text-center">
                   💡 L'AI analizzerà i valori nutrizionali e darà un punteggio di salubrità
