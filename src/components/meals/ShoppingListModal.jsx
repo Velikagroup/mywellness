@@ -1,27 +1,33 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { ShoppingCart, Check, X } from 'lucide-react';
-import { ShoppingList } from '@/entities/ShoppingList';
-import { Badge } from '@/components/ui/badge';
-import { Checkbox } from '@/components/ui/checkbox';
+import { Check, X, ShoppingCart, Trash2, Camera, Upload, Loader2, Crown, AlertCircle } from 'lucide-react';
+import { base44 } from '@/api/base44Client';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 
 const CATEGORY_LABELS = {
-  frutta_verdura: { label: 'Frutta e Verdura', emoji: '🥗', color: 'bg-green-50 border-green-200' },
-  carne_pesce: { label: 'Carne e Pesce', emoji: '🥩', color: 'bg-red-50 border-red-200' },
-  latticini_uova: { label: 'Latticini e Uova', emoji: '🥛', color: 'bg-blue-50 border-blue-200' },
-  cereali_pasta: { label: 'Cereali e Pasta', emoji: '🌾', color: 'bg-yellow-50 border-yellow-200' },
-  legumi_frutta_secca: { label: 'Legumi e Frutta Secca', emoji: '🥜', color: 'bg-amber-50 border-amber-200' },
-  condimenti_spezie: { label: 'Condimenti e Spezie', emoji: '🧂', color: 'bg-orange-50 border-orange-200' },
-  bevande: { label: 'Bevande', emoji: '🥤', color: 'bg-cyan-50 border-cyan-200' },
-  altro: { label: 'Altro', emoji: '🛒', color: 'bg-gray-50 border-gray-200' }
+  frutta_verdura: { label: 'Frutta & Verdura', emoji: '🥬', bg: 'bg-green-50' },
+  carne_pesce: { label: 'Carne & Pesce', emoji: '🥩', bg: 'bg-red-50' },
+  latticini_uova: { label: 'Latticini & Uova', emoji: '🥛', bg: 'bg-blue-50' },
+  cereali_pasta: { label: 'Cereali & Pasta', emoji: '🌾', bg: 'bg-amber-50' },
+  legumi_frutta_secca: { label: 'Legumi & Frutta Secca', emoji: '🥜', bg: 'bg-orange-50' },
+  condimenti_spezie: { label: 'Condimenti & Spezie', emoji: '🧂', bg: 'bg-yellow-50' },
+  bevande: { label: 'Bevande', emoji: '🥤', bg: 'bg-cyan-50' },
+  altro: { label: 'Altro', emoji: '🛒', bg: 'bg-gray-50' }
 };
 
-export default function ShoppingListModal({ user, onClose }) {
+export default function ShoppingListModal({ isOpen, user, onClose }) {
+  const queryClient = useQueryClient();
   const [shoppingList, setShoppingList] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showScanner, setShowScanner] = useState(false);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
+  const [isScanning, setIsScanning] = useState(false);
+  const [scanResult, setScanResult] = useState(null);
+  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
 
-  const getStartOfWeek = () => {
+  const startOfWeek = (() => {
     const now = new Date();
     const dayOfWeek = now.getDay();
     const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
@@ -29,188 +35,537 @@ export default function ShoppingListModal({ user, onClose }) {
     monday.setDate(now.getDate() + diff);
     monday.setHours(0, 0, 0, 0);
     return monday.toISOString().split('T')[0];
-  };
+  })();
 
-  const loadShoppingList = useCallback(async () => {
-    setIsLoading(true);
-    try {
-      const startOfWeek = getStartOfWeek();
-      
-      // Prima prova a caricare tutte le liste dell'utente per debug
-      const allLists = await ShoppingList.filter({ user_id: user.id }, '-last_updated');
-      console.log('📋 Tutte le liste trovate:', allLists);
-      console.log('📅 Week start date cercata:', startOfWeek);
-      
-      // Poi filtra per week_start_date
-      const lists = allLists.filter(list => list.week_start_date === startOfWeek);
-      console.log('✅ Liste per questa settimana:', lists);
-      
-      if (lists.length > 0) {
-        console.log('🛒 Items nella lista:', lists[0].items);
-        setShoppingList(lists[0]);
-      } else {
-        console.warn('⚠️ Nessuna lista trovata per questa settimana');
-        setShoppingList(null);
-      }
-    } catch (error) {
-      console.error("❌ Error loading shopping list:", error);
-    }
-    setIsLoading(false);
-  }, [user.id]);
+  const { data: lists = [], isLoading: isLoadingLists } = useQuery({
+    queryKey: ['shoppingLists', user?.id, startOfWeek],
+    queryFn: async () => {
+      if (!user?.id) return [];
+      return await base44.entities.ShoppingList.filter({ 
+        user_id: user.id, 
+        week_start_date: startOfWeek 
+      });
+    },
+    enabled: !!user?.id && isOpen,
+  });
 
   useEffect(() => {
-    loadShoppingList();
-  }, [loadShoppingList]);
+    if (lists.length > 0) {
+      setShoppingList(lists[0]);
+    } else {
+      setShoppingList(null);
+    }
+    setIsLoading(false);
+  }, [lists]);
 
-  const toggleItem = async (itemIdx) => {
+  const updateShoppingListMutation = useMutation({
+    mutationFn: ({ id, data }) => base44.entities.ShoppingList.update(id, data),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shoppingLists'] }),
+  });
+
+  const toggleItem = async (itemIndex) => {
     if (!shoppingList) return;
     
-    const newItems = [...shoppingList.items];
-    newItems[itemIdx].checked = !newItems[itemIdx].checked;
+    const updatedItems = [...shoppingList.items];
+    updatedItems[itemIndex].checked = !updatedItems[itemIndex].checked;
     
-    try {
-      await ShoppingList.update(shoppingList.id, { 
-        items: newItems,
+    await updateShoppingListMutation.mutateAsync({
+      id: shoppingList.id,
+      data: {
+        items: updatedItems,
         last_updated: new Date().toISOString()
-      });
-      setShoppingList({ ...shoppingList, items: newItems });
-    } catch (error) {
-      console.error("Error updating item:", error);
-    }
-  };
-
-  const groupByCategory = () => {
-    if (!shoppingList || !shoppingList.items) return {};
-    
-    const grouped = {};
-    shoppingList.items.forEach(item => {
-      const cat = item.category || 'altro';
-      if (!grouped[cat]) grouped[cat] = [];
-      grouped[cat].push(item);
+      }
     });
-    return grouped;
   };
 
   const clearList = async () => {
     if (!shoppingList) return;
-    if (!confirm('Vuoi svuotare la lista della spesa?')) return;
+    if (!confirm('Vuoi davvero svuotare la lista della spesa?')) return;
     
+    await updateShoppingListMutation.mutateAsync({
+      id: shoppingList.id,
+      data: {
+        items: [],
+        last_updated: new Date().toISOString()
+      }
+    });
+  };
+
+  const handleScanClick = (ingredient) => {
+    if (!hasFeatureAccess(user?.subscription_plan, 'progress_photo_analysis')) {
+      setShowUpgradePrompt(true);
+      return;
+    }
+    setSelectedIngredient(ingredient);
+    setShowScanner(true);
+  };
+
+  const handleFileUpload = async (event) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    setIsScanning(true);
+    setScanResult(null);
+
     try {
-      await ShoppingList.delete(shoppingList.id);
-      setShoppingList(null);
-      onClose();
+      // Upload foto
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+
+      // Analisi AI dell'etichetta
+      const analysisPrompt = `You are a professional nutritionist analyzing a food product label.
+
+Analyze this product label photo and provide:
+1. Product name (in Italian)
+2. Nutritional values per 100g:
+   - Calories (kcal)
+   - Protein (g)
+   - Carbs (g)
+   - Fat (g)
+   - Fiber (g) if available
+3. Health score 0-10 (0=very unhealthy, 10=very healthy)
+4. Health classification: "male" (0-3), "medio" (4-6), "bene" (7-10)
+5. Brief explanation in Italian why this score
+
+Consider:
+- Added sugars (negative)
+- Saturated fats (negative)
+- Sodium content (negative)
+- Fiber (positive)
+- Protein quality (positive)
+- Processing level (negative for ultra-processed)
+- Additives and preservatives (negative)
+
+Return ONLY valid JSON, no markdown.`;
+
+      const analysis = await base44.integrations.Core.InvokeLLM({
+        prompt: analysisPrompt,
+        file_urls: [file_url],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            product_name: { type: "string" },
+            calories_per_100g: { type: "number" },
+            protein_per_100g: { type: "number" },
+            carbs_per_100g: { type: "number" },
+            fat_per_100g: { type: "number" },
+            fiber_per_100g: { type: "number" },
+            health_score: { type: "number" },
+            health_classification: { type: "string", enum: ["male", "medio", "bene"] },
+            explanation: { type: "string" }
+          },
+          required: ["product_name", "calories_per_100g", "protein_per_100g", "carbs_per_100g", "fat_per_100g", "health_score", "health_classification", "explanation"]
+        }
+      });
+
+      setScanResult({
+        ...analysis,
+        photo_url: file_url
+      });
     } catch (error) {
-      console.error("Error clearing list:", error);
+      console.error('Error scanning product:', error);
+      alert('Errore durante la scansione. Riprova.');
+    }
+    setIsScanning(false);
+  };
+
+  const handleSaveScannedProduct = async () => {
+    if (!scanResult || !selectedIngredient) return;
+
+    try {
+      // 1. Aggiorna o crea l'ingrediente nel database
+      const ingredientData = {
+        name_it: selectedIngredient.name,
+        name_en: selectedIngredient.name,
+        category: selectedIngredient.category || 'altro',
+        calories_per_100g: scanResult.calories_per_100g,
+        protein_per_100g: scanResult.protein_per_100g,
+        carbs_per_100g: scanResult.carbs_per_100g,
+        fat_per_100g: scanResult.fat_per_100g,
+        fiber_per_100g: scanResult.fiber_per_100g || 0,
+        verified: true,
+        data_sources: ['user_scanned'],
+        notes: `Scansionato: ${scanResult.product_name} - Health Score: ${scanResult.health_score}/10`
+      };
+
+      await base44.functions.invoke('validateAndSaveIngredient', {
+        ingredients: [ingredientData]
+      });
+
+      // 2. Aggiorna i piani alimentari che usano questo ingrediente
+      const mealPlans = await base44.entities.MealPlan.filter({ user_id: user.id });
+      
+      for (const plan of mealPlans) {
+        let updated = false;
+        const updatedIngredients = plan.ingredients.map(ing => {
+          if (ing.name.toLowerCase() === selectedIngredient.name.toLowerCase()) {
+            updated = true;
+            // Ricalcola i valori nutrizionali basati sulla quantità
+            const factor = ing.quantity / 100;
+            return {
+              ...ing,
+              calories: Math.round(scanResult.calories_per_100g * factor),
+              protein: Math.round(scanResult.protein_per_100g * factor * 10) / 10,
+              carbs: Math.round(scanResult.carbs_per_100g * factor * 10) / 10,
+              fat: Math.round(scanResult.fat_per_100g * factor * 10) / 10
+            };
+          }
+          return ing;
+        });
+
+        if (updated) {
+          // Ricalcola i totali del pasto
+          const newTotalCalories = Math.round(updatedIngredients.reduce((sum, i) => sum + (i.calories || 0), 0));
+          const newTotalProtein = Math.round(updatedIngredients.reduce((sum, i) => sum + (i.protein || 0), 0) * 10) / 10;
+          const newTotalCarbs = Math.round(updatedIngredients.reduce((sum, i) => sum + (i.carbs || 0), 0) * 10) / 10;
+          const newTotalFat = Math.round(updatedIngredients.reduce((sum, i) => sum + (i.fat || 0), 0) * 10) / 10;
+
+          await base44.entities.MealPlan.update(plan.id, {
+            ingredients: updatedIngredients,
+            total_calories: newTotalCalories,
+            total_protein: newTotalProtein,
+            total_carbs: newTotalCarbs,
+            total_fat: newTotalFat
+          });
+        }
+      }
+
+      // 3. Marca l'ingrediente come acquistato nella lista
+      const updatedItems = shoppingList.items.map(item => {
+        if (item.name.toLowerCase() === selectedIngredient.name.toLowerCase()) {
+          return { ...item, checked: true };
+        }
+        return item;
+      });
+
+      await updateShoppingListMutation.mutateAsync({
+        id: shoppingList.id,
+        data: {
+          items: updatedItems,
+          last_updated: new Date().toISOString()
+        }
+      });
+
+      alert(`✅ ${scanResult.product_name} salvato e piani alimentari aggiornati!`);
+      setShowScanner(false);
+      setScanResult(null);
+      setSelectedIngredient(null);
+    } catch (error) {
+      console.error('Error saving scanned product:', error);
+      alert('Errore nel salvataggio. Riprova.');
     }
   };
 
-  if (isLoading) {
-    return (
-      <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl">
-          <div className="text-center py-8">
-            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--brand-primary)] mx-auto"></div>
-            <p className="mt-4 text-gray-600">Caricamento lista...</p>
-          </div>
-        </DialogContent>
-      </Dialog>
-    );
-  }
+  const getHealthScoreColor = (score) => {
+    if (score <= 3) return 'text-red-600 bg-red-100';
+    if (score <= 6) return 'text-yellow-600 bg-yellow-100';
+    return 'text-green-600 bg-green-100';
+  };
 
-  if (!shoppingList || !shoppingList.items || shoppingList.items.length === 0) {
-    return (
-      <Dialog open={true} onOpenChange={onClose}>
-        <DialogContent className="max-w-2xl">
+  const getHealthScoreEmoji = (classification) => {
+    if (classification === 'male') return '❌';
+    if (classification === 'medio') return '⚠️';
+    return '✅';
+  };
+
+  if (!isOpen) return null;
+
+  const organizedItems = shoppingList?.items.reduce((acc, item) => {
+    const category = item.category || 'altro';
+    if (!acc[category]) acc[category] = [];
+    acc[category].push(item);
+    return acc;
+  }, {}) || {};
+
+  return (
+    <>
+      <Dialog open={isOpen} onOpenChange={onClose}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-[var(--brand-primary)]" />
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <ShoppingCart className="w-6 h-6 text-[var(--brand-primary)]" />
               Lista della Spesa
             </DialogTitle>
           </DialogHeader>
-          <div className="text-center py-8">
-            <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <p className="text-gray-600 font-medium">Nessun ingrediente in lista</p>
-            <p className="text-sm text-gray-500 mt-2">Aggiungi ingredienti dai pasti della settimana usando il pulsante "+"</p>
+
+          {isLoading || isLoadingLists ? (
+            <div className="flex items-center justify-center py-12">
+              <Loader2 className="w-8 h-8 text-[var(--brand-primary)] animate-spin" />
+            </div>
+          ) : !shoppingList || shoppingList.items.length === 0 ? (
+            <div className="text-center py-12">
+              <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+              <p className="text-gray-500 font-medium">Nessun ingrediente nella lista</p>
+              <p className="text-sm text-gray-400 mt-2">Aggiungi giorni dal piano nutrizionale</p>
+            </div>
+          ) : (
+            <div className="space-y-6">
+              <div className="flex items-center justify-between pb-3 border-b">
+                <p className="text-sm text-gray-600">
+                  {shoppingList.items.filter(i => i.checked).length} di {shoppingList.items.length} acquistati
+                </p>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={clearList}
+                  className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                >
+                  <Trash2 className="w-4 h-4 mr-2" />
+                  Svuota Lista
+                </Button>
+              </div>
+
+              {Object.entries(organizedItems).map(([category, items]) => (
+                <div key={category} className={`${CATEGORY_LABELS[category].bg} rounded-lg p-4 border`}>
+                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
+                    <span className="text-xl">{CATEGORY_LABELS[category].emoji}</span>
+                    {CATEGORY_LABELS[category].label}
+                  </h3>
+                  <div className="space-y-2">
+                    {items.map((item, idx) => (
+                      <div
+                        key={idx}
+                        className="flex items-center justify-between bg-white p-3 rounded-md border hover:shadow-sm transition-shadow"
+                      >
+                        <div className="flex items-center gap-3 flex-1">
+                          <button
+                            onClick={() => toggleItem(shoppingList.items.indexOf(item))}
+                            className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
+                              item.checked
+                                ? 'bg-[var(--brand-primary)] border-[var(--brand-primary)]'
+                                : 'border-gray-300 hover:border-[var(--brand-primary)]'
+                            }`}
+                          >
+                            {item.checked && <Check className="w-3 h-3 text-white" strokeWidth={3} />}
+                          </button>
+                          <div className="flex-1">
+                            <p className={`font-medium ${item.checked ? 'line-through text-gray-400' : 'text-gray-800'}`}>
+                              {item.name}
+                            </p>
+                            <p className="text-xs text-gray-500">
+                              {item.quantity} {item.unit}
+                            </p>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => handleScanClick(item)}
+                          className="ml-2 text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] hover:bg-[var(--brand-primary-light)] relative"
+                        >
+                          <Camera className="w-4 h-4 mr-1" />
+                          Scansiona
+                          {!hasFeatureAccess(user?.subscription_plan, 'progress_photo_analysis') && (
+                            <Crown className="w-3 h-3 absolute -top-1 -right-1 text-purple-600" />
+                          )}
+                        </Button>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Scanner Modal */}
+      <Dialog open={showScanner} onOpenChange={() => {
+        setShowScanner(false);
+        setScanResult(null);
+        setSelectedIngredient(null);
+      }}>
+        <DialogContent className="max-w-xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
+              Scansiona Etichetta - {selectedIngredient?.name}
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-6">
+            {!scanResult ? (
+              <>
+                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                  <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
+                  <p className="text-gray-600 mb-4">Carica una foto dell'etichetta nutrizionale</p>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    capture="environment"
+                    onChange={handleFileUpload}
+                    disabled={isScanning}
+                    className="hidden"
+                    id="file-upload"
+                  />
+                  <label htmlFor="file-upload">
+                    <Button
+                      asChild
+                      disabled={isScanning}
+                      className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                    >
+                      <span>
+                        {isScanning ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Analisi in corso...
+                          </>
+                        ) : (
+                          <>
+                            <Camera className="w-4 h-4 mr-2" />
+                            Scatta/Carica Foto
+                          </>
+                        )}
+                      </span>
+                    </Button>
+                  </label>
+                </div>
+                <p className="text-xs text-gray-500 text-center">
+                  💡 L'AI analizzerà i valori nutrizionali e darà un punteggio di salubrità
+                </p>
+              </>
+            ) : (
+              <>
+                <div className="space-y-4">
+                  <img
+                    src={scanResult.photo_url}
+                    alt="Product"
+                    className="w-full h-48 object-cover rounded-lg border"
+                  />
+
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-6 border">
+                    <h3 className="font-bold text-xl text-gray-900 mb-2">
+                      {scanResult.product_name}
+                    </h3>
+                    
+                    <div className="flex items-center justify-center gap-4 my-6">
+                      <div className="text-center">
+                        <div className={`text-5xl font-black ${getHealthScoreColor(scanResult.health_score)} rounded-full w-20 h-20 flex items-center justify-center mx-auto`}>
+                          {scanResult.health_score}
+                        </div>
+                        <p className="text-sm text-gray-600 mt-2 font-semibold">Health Score</p>
+                      </div>
+                      <div className="text-6xl">
+                        {getHealthScoreEmoji(scanResult.health_classification)}
+                      </div>
+                    </div>
+
+                    <div className={`${getHealthScoreColor(scanResult.health_score)} rounded-lg p-3 mb-4`}>
+                      <p className="font-bold text-center uppercase tracking-wider">
+                        {scanResult.health_classification}
+                      </p>
+                    </div>
+
+                    <p className="text-sm text-gray-700 leading-relaxed bg-white rounded-lg p-3 border">
+                      {scanResult.explanation}
+                    </p>
+                  </div>
+
+                  <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
+                    <p className="font-semibold text-blue-900 mb-2">Valori Nutrizionali (per 100g):</p>
+                    <div className="grid grid-cols-2 gap-2 text-sm">
+                      <div className="bg-white rounded p-2">
+                        <span className="text-gray-600">Calorie:</span>
+                        <span className="font-bold ml-2">{scanResult.calories_per_100g} kcal</span>
+                      </div>
+                      <div className="bg-white rounded p-2">
+                        <span className="text-gray-600">Proteine:</span>
+                        <span className="font-bold ml-2">{scanResult.protein_per_100g}g</span>
+                      </div>
+                      <div className="bg-white rounded p-2">
+                        <span className="text-gray-600">Carboidrati:</span>
+                        <span className="font-bold ml-2">{scanResult.carbs_per_100g}g</span>
+                      </div>
+                      <div className="bg-white rounded p-2">
+                        <span className="text-gray-600">Grassi:</span>
+                        <span className="font-bold ml-2">{scanResult.fat_per_100g}g</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-sm text-amber-800">
+                    💡 Salvando questo prodotto, i valori nutrizionali delle tue ricette saranno aggiornati automaticamente!
+                  </p>
+                </div>
+
+                <div className="flex gap-3">
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setScanResult(null);
+                    }}
+                    className="flex-1"
+                  >
+                    Scansiona Altro
+                  </Button>
+                  <Button
+                    onClick={handleSaveScannedProduct}
+                    className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                  >
+                    <Check className="w-4 h-4 mr-2" />
+                    Salva e Aggiorna Ricette
+                  </Button>
+                </div>
+              </>
+            )}
           </div>
         </DialogContent>
       </Dialog>
-    );
-  }
 
-  const groupedItems = groupByCategory();
-  const totalItems = shoppingList.items.length;
-  const checkedItems = shoppingList.items.filter(i => i.checked).length;
-
-  return (
-    <Dialog open={true} onOpenChange={onClose}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <div className="flex items-center justify-between">
-            <DialogTitle className="flex items-center gap-2">
-              <ShoppingCart className="w-5 h-5 text-[var(--brand-primary)]" />
-              Lista della Spesa
+      {/* Upgrade Prompt Modal */}
+      <Dialog open={showUpgradePrompt} onOpenChange={setShowUpgradePrompt}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2 text-xl">
+              <Crown className="w-6 h-6 text-purple-600" />
+              Funzionalità Premium
             </DialogTitle>
-            <Badge variant="outline" className="text-sm">
-              {checkedItems}/{totalItems} completati
-            </Badge>
-          </div>
-          <p className="text-sm text-gray-500">Settimana del {new Date(shoppingList.week_start_date).toLocaleDateString('it-IT')}</p>
-        </DialogHeader>
-
-        <div className="space-y-4">
-          {Object.entries(groupedItems).map(([category, items]) => (
-            <div key={category} className={`border-2 rounded-lg p-4 ${CATEGORY_LABELS[category].color}`}>
-              <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <span className="text-2xl">{CATEGORY_LABELS[category].emoji}</span>
-                {CATEGORY_LABELS[category].label}
-                <Badge variant="secondary" className="ml-auto">{items.length}</Badge>
-              </h3>
-              <div className="space-y-2">
-                {items.map((item, idx) => {
-                  const itemIdx = shoppingList.items.findIndex(i => i.name === item.name && i.category === item.category);
-                  return (
-                    <div
-                      key={idx}
-                      className={`flex items-center justify-between p-3 bg-white rounded-lg border transition-all ${
-                        item.checked ? 'opacity-50 border-gray-200' : 'border-gray-300'
-                      }`}
-                    >
-                      <div className="flex items-center gap-3 flex-1">
-                        <Checkbox
-                          checked={item.checked}
-                          onCheckedChange={() => toggleItem(itemIdx)}
-                          className="data-[state=checked]:bg-[var(--brand-primary)] data-[state=checked]:border-[var(--brand-primary)]"
-                        />
-                        <div className={item.checked ? 'line-through text-gray-500' : ''}>
-                          <p className="font-medium">{item.name}</p>
-                          <p className="text-sm text-gray-600">
-                            {item.quantity} {item.unit}
-                            {item.days && item.days.length > 0 && (
-                              <span className="ml-2 text-xs text-gray-500">
-                                ({item.days.map(d => d.substring(0, 3)).join(', ')})
-                              </span>
-                            )}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-purple-200">
+              <div className="text-center mb-4">
+                <Camera className="w-16 h-16 text-purple-600 mx-auto mb-3" />
+                <h3 className="text-lg font-bold text-gray-900 mb-2">
+                  Scansione Etichette con AI
+                </h3>
+                <p className="text-gray-600 text-sm">
+                  Scansiona le etichette dei prodotti e ottieni:
+                </p>
               </div>
+              <ul className="space-y-2 text-sm text-gray-700">
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  Health Score 0-10 con analisi AI
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  Valori nutrizionali precisi dal prodotto reale
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  Aggiornamento automatico delle ricette
+                </li>
+                <li className="flex items-center gap-2">
+                  <Check className="w-4 h-4 text-green-600" />
+                  Database personalizzato con i tuoi prodotti
+                </li>
+              </ul>
             </div>
-          ))}
-        </div>
-
-        <div className="flex gap-3 pt-4 border-t">
-          <Button onClick={clearList} variant="outline" className="text-red-600 hover:bg-red-50">
-            <X className="w-4 h-4 mr-2" />
-            Svuota Lista
-          </Button>
-          <Button onClick={onClose} className="ml-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]">
-            Chiudi
-          </Button>
-        </div>
-      </DialogContent>
-    </Dialog>
+            <Button
+              onClick={() => {
+                setShowUpgradePrompt(false);
+                // Qui potresti aprire il modal di upgrade
+                window.location.href = '/pricing';
+              }}
+              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-3"
+            >
+              <Crown className="w-4 h-4 mr-2" />
+              Upgrade a Premium
+            </Button>
+          </div>
+        </DialogContent>
+      </Dialog>
+    </>
   );
 }

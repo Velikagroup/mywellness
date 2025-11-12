@@ -182,7 +182,8 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
         "♾️ Generazioni ILLIMITATE piani allenamento",
         "💪 Modifica scheda AI per imprevisti",
         "📊 Analisi progressi con foto AI",
-        "🚀 Supporto prioritario"
+        "📸 Scansione etichette con Health Score AI",
+        "🎯 Supporto prioritario"
       ],
       cta: "Iniza Gratis",
       popular: false

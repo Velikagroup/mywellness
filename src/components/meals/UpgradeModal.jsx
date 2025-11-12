@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2 } from 'lucide-react';
@@ -75,6 +76,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
         '♾️ Generazioni ILLIMITATE piani allenamento',
         '🔥 Modifica schede AI per imprevisti',
         '🔥 Analisi progressi con foto AI',
+        '📸 Scansione etichette con Health Score AI',
         '🎯 Supporto prioritario'
       ]
     }
