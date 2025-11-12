@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -17,7 +18,8 @@ const TARGET_ZONES = [
 
 const BODY_PHOTOS = [
   { id: 'front', label: 'Fronte', icon: '⬆️' },
-  { id: 'side', label: 'Lato', icon: '➡️' },
+  { id: 'side_left', label: 'Lato Sinistro', icon: '⬅️' },
+  { id: 'side_right', label: 'Lato Destro', icon: '➡️' },
   { id: 'back', label: 'Dietro', icon: '⬇️' }
 ];
 
@@ -117,7 +119,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
   };
 
   const canProceedFromBodyPhotos = () => {
-    return !!(bodyPhotos.front && bodyPhotos.side && bodyPhotos.back);
+    return !!(bodyPhotos.front && bodyPhotos.side_left && bodyPhotos.side_right && bodyPhotos.back);
   };
 
   const analyzePhotos = async () => {
@@ -145,7 +147,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
       }
 
       const bodyPhotoUrls = {};
-      for (const photoType of ['front', 'side', 'back']) {
+      for (const photoType of ['front', 'side_left', 'side_right', 'back']) {
         if (bodyFileRefs.current[photoType]) {
           const { file_url } = await base44.integrations.Core.UploadFile({ file: bodyFileRefs.current[photoType] });
           bodyPhotoUrls[photoType] = file_url;
@@ -681,7 +683,7 @@ Remember: NO positive or negative judgments - just objective observations to hel
                 </div>
 
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3 text-sm">Corpo intero (3 angolazioni)</h3>
+                  <h3 className="font-semibold text-gray-900 mb-3 text-sm">Corpo intero (4 angolazioni)</h3>
                   
                   <div className="space-y-2">
                     {BODY_PHOTOS.map((bodyPhoto) => (
