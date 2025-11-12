@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -15,6 +14,7 @@ import MealDetailModal from "../components/meals/MealDetailModal";
 import ShoppingListModal from "../components/meals/ShoppingListModal";
 import AIFeedbackBox from '../components/meals/AIFeedbackBox';
 import UpgradeModal from '../components/meals/UpgradeModal';
+import CheatMealStep from '../components/meals/CheatMealStep';
 import { getGenerationLimit } from '@/components/utils/subscriptionPlans';
 
 const dietTypes = [
@@ -210,6 +210,8 @@ export default function MealsPage() {
   const [mealsPerDay, setMealsPerDay] = useState(5);
   const [remainingGenerations, setRemainingGenerations] = useState(null);
   const [generationLimitReached, setGenerationLimitReached] = useState(false);
+  const [showCheatMealStep, setShowCheatMealStep] = useState(false);
+  const [cheatMealConfig, setCheatMealConfig] = useState([]);
 
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
@@ -620,7 +622,25 @@ Use verified nutritional data. All names and units in Italian.`;
     }
   };
 
-  const generateMealPlan = async () => {
+  const startGenerationFlow = () => {
+    // Mostra lo step cheat meal PRIMA di generare
+    setShowGenerator(false);
+    setShowCheatMealStep(true);
+  };
+
+  const handleCheatMealComplete = (config) => {
+    setCheatMealConfig(config);
+    setShowCheatMealStep(false);
+    generateMealPlan(config);
+  };
+
+  const handleCheatMealSkip = () => {
+    setCheatMealConfig([]);
+    setShowCheatMealStep(false);
+    generateMealPlan([]);
+  };
+
+  const generateMealPlan = async (cheatMeals = []) => {
     if (!user || !generationPrefs || !nutritionData?.daily_calories) {
       alert('Errore: dati utente mancanti. Ricarica la pagina.');
       return;
@@ -633,6 +653,7 @@ Use verified nutritional data. All names and units in Italian.`;
     }
     
     console.log('🚀 Inizio generazione piano nutrizionale OTTIMIZZATO...');
+    console.log('🍕 Cheat meals configurati:', cheatMeals);
     setIsGenerating(true);
     setGenerationProgress(0);
     setGenerationStatus("Avvio protocollo AI...");
@@ -708,6 +729,7 @@ Use verified nutritional data. All names and units in Italian.`;
         intermittent_fasting: generationPrefs.intermittent_fasting,
         if_skip_meal: generationPrefs.if_skip_meal,
         if_meal_structure: generationPrefs.if_meal_structure,
+        cheat_meals_config: cheatMeals
       });
 
       const allGeneratedMeals = [];
@@ -722,11 +744,43 @@ Use verified nutritional data. All names and units in Italian.`;
           const mealType = mealStructure[mealIndex];
           const targetCals = mealCalorieDistribution[mealType];
           
+          // 🍕 Controlla se questo pasto è un CHEAT MEAL
+          const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
+          
           generatedMealCount++;
-          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 70); // Reaches ~90%
-          updateProgress(progress, `${day} - ${getMealTypeLabel(mealType)} (${generatedMealCount}/${totalMealsToGenerate})`);
+          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 70);
+          updateProgress(progress, `${day} - ${getMealTypeLabel(mealType)} ${isCheatMeal ? '🍕' : ''} (${generatedMealCount}/${totalMealsToGenerate})`);
 
-          const mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. Use verified data.`;
+          let mealPrompt;
+          
+          if (isCheatMeal) {
+            // 🍕 PROMPT CHEAT MEAL - pasti preferiti dell'utente, più calorici
+            mealPrompt = `You are an expert nutritionist. Create ONE CHEAT MEAL in ITALIAN for ${getMealTypeLabel(mealType)}.
+
+CRITICAL INSTRUCTIONS:
+- This is a CHEAT MEAL: user can enjoy their favorite foods!
+- Target calories: APPROXIMATELY ${targetCals} kcal (can go +20% over if needed for tastier meal)
+- Include foods from user's favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, hamburger, dolci'}
+- Make it DELICIOUS and SATISFYING
+- Still provide accurate nutritional data (be realistic)
+- IMPORTANT: Use ITALIAN names for all ingredients, meals, and units (e.g., "g", "ml", "cucchiaio")
+
+Examples of cheat meals: 
+- Pizza Margherita fatta in casa
+- Hamburger con patatine dolci al forno
+- Pasta carbonara
+- Lasagne al forno
+- Sushi misto
+- Tacos con guacamole
+
+Diet context: ${generationPrefs.diet_type} (but this is a CHEAT, so you can break the rules!)
+User profile: ${nutritionData.age} anni, ${nutritionData.gender}, Goal: ${nutritionData.current_weight}kg → ${nutritionData.target_weight}kg
+
+Task: Create a satisfying, realistic cheat meal with precise nutritional values. All content in ITALIAN.`;
+          } else {
+            // ✅ PROMPT NORMALE
+            mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. Use verified data.`;
+          }
 
           const llmResponse = await base44.integrations.Core.InvokeLLM({
             prompt: mealPrompt,
@@ -1132,11 +1186,11 @@ Use verified nutritional data. All names and units in Italian.`;
                   
                   <div className="flex gap-3 pt-4">
                     <Button
-                      onClick={generateMealPlan}
+                      onClick={startGenerationFlow}
                       className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
                       disabled={generationPrefs?.intermittent_fasting && (!generationPrefs?.if_skip_meal || !generationPrefs?.if_meal_structure)}
                     >
-                      Conferma e Genera
+                      Continua
                     </Button>
                     <Button variant="outline" onClick={() => setShowGenerator(false)}>Annulla</Button>
                   </div>
@@ -1291,6 +1345,18 @@ Use verified nutritional data. All names and units in Italian.`;
                 </CardContent>
               </Card>
             )
+          )}
+
+          {showCheatMealStep && (
+            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+              <CardContent className="p-6">
+                <CheatMealStep
+                  weightLossSpeed={user?.weight_loss_speed || 'moderate'}
+                  onComplete={handleCheatMealComplete}
+                  onSkip={handleCheatMealSkip}
+                />
+              </CardContent>
+            </Card>
           )}
         </div>
       </div>
