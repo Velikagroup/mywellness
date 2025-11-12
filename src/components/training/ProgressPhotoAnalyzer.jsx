@@ -99,18 +99,26 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     const file = e.target.files[0];
     if (!file) return;
 
+    console.log('🔍 TARGET PHOTO - Checking for duplicates...');
     const fileHash = await getFileHash(file);
+    console.log('🔍 TARGET PHOTO - File hash:', fileHash);
     
     const existingPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
+    console.log('🔍 TARGET PHOTO - Found', existingPhotos.length, 'existing photos');
+    
     const existingHashes = existingPhotos
       .map(p => p.ai_analysis?.photo_hashes || [])
       .flat();
+    console.log('🔍 TARGET PHOTO - Existing hashes:', existingHashes);
     
     if (existingHashes.includes(fileHash)) {
-      alert('⚠️ Hai già caricato questa foto in precedenza. Per favore scatta una nuova foto per un confronto accurato.');
+      console.log('🚫 TARGET PHOTO - DUPLICATE DETECTED! Blocking upload.');
+      alert('🚫 FOTO DUPLICATA!\n\nHai già caricato questa foto in precedenza.\n\nPer un confronto accurato, scatta una NUOVA foto della zona ' + selectedZone.label + '.');
       e.target.value = '';
       return;
     }
+
+    console.log('✅ TARGET PHOTO - No duplicate, proceeding...');
 
     if (!targetFileRefs.current[photoType]) {
       targetFileRefs.current[photoType] = {};
@@ -140,17 +148,25 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     console.log('🔵 BODY PHOTO SELECTED:', photoType, 'File:', file.name);
 
     const fileHash = await getFileHash(file);
+    console.log('🔍 BODY PHOTO - File hash:', fileHash);
     
     const existingPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
+    console.log('🔍 BODY PHOTO - Found', existingPhotos.length, 'existing photos');
+    
     const existingHashes = existingPhotos
       .map(p => p.ai_analysis?.photo_hashes || [])
       .flat();
+    console.log('🔍 BODY PHOTO - Existing hashes:', existingHashes);
     
     if (existingHashes.includes(fileHash)) {
-      alert('⚠️ Hai già caricato questa foto in precedenza. Per favore scatta una nuova foto per un confronto accurato.');
+      console.log('🚫 BODY PHOTO - DUPLICATE DETECTED! Blocking upload.');
+      const bodyPhotoLabel = BODY_PHOTOS.find(bp => bp.id === photoType)?.label || photoType;
+      alert('🚫 FOTO DUPLICATA!\n\nHai già caricato questa foto in precedenza.\n\nPer l\'archivio, scatta una NUOVA foto ' + bodyPhotoLabel + '.');
       e.target.value = '';
       return;
     }
+
+    console.log('✅ BODY PHOTO - No duplicate, proceeding...');
 
     if (!bodyFileRefs.current[photoType]) {
       bodyFileRefs.current[photoType] = {};
