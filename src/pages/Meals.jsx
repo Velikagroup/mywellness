@@ -853,7 +853,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
           }
 
           allGeneratedMeals.push({
-            user_id: user.id, // Ensure user_id is passed here
+            user_id: user.id,
             day_of_week: day,
             meal_type: mealType,
             name: llmResponse.name,
@@ -865,7 +865,8 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
             total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
             prep_time: llmResponse.prep_time || 15,
             difficulty: llmResponse.difficulty || 'easy',
-            image_url: null
+            image_url: null,
+            is_cheat_meal: isCheatMeal
           });
           
           console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal`);
@@ -1298,11 +1299,17 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                       {mealTypes.map((mealType) => {
                         const meal = todaysMeals.find(m => m.meal_type === mealType);
                         return meal ? (
-                          <div key={meal.id} className="relative w-full text-left bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors group">
+                          <div key={meal.id} className={`relative w-full text-left rounded-lg p-3 border transition-colors group ${
+                            meal.is_cheat_meal 
+                              ? 'bg-gradient-to-br from-orange-50 to-pink-50 border-orange-300/60 hover:bg-gradient-to-br hover:from-orange-100 hover:to-pink-100'
+                              : 'bg-gray-50/80 border-gray-200/60 hover:bg-gray-100'
+                          }`}>
                             <button onClick={() => setSelectedMeal(meal)} className="w-full flex items-center justify-between">
                               <div className="flex items-center gap-3 text-left">
                                 <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden">
-                                  {meal.image_url ? (
+                                  {meal.is_cheat_meal ? (
+                                    <span className="text-3xl">🍕</span>
+                                  ) : meal.image_url ? (
                                     <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
                                   ) : (
                                     <ImageIcon className="w-5 h-5 text-gray-400 animate-pulse"/>
@@ -1310,12 +1317,18 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                                 </div>
                                 <div className="text-left">
                                   <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
-                                  <p className="text-sm text-gray-600 truncate max-w-[150px] sm:max-w-xs">{meal.name}</p>
+                                  <p className={`text-sm truncate max-w-[150px] sm:max-w-xs ${
+                                    meal.is_cheat_meal ? 'text-orange-600 font-bold' : 'text-gray-600'
+                                  }`}>
+                                    {meal.is_cheat_meal ? 'CHEAT MEAL PIANIFICATO' : meal.name}
+                                  </p>
                                 </div>
                               </div>
-                              <div className="text-right">
-                                <p className="font-bold text-gray-800">{meal.total_calories} <span className="text-xs font-normal text-gray-500">kcal</span></p>
-                              </div>
+                              {!meal.is_cheat_meal && (
+                                <div className="text-right">
+                                  <p className="font-bold text-gray-800">{meal.total_calories} <span className="text-xs font-normal text-gray-500">kcal</span></p>
+                                </div>
+                              )}
                             </button>
                             <Button
                               variant="ghost"
