@@ -3,7 +3,6 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { ChefHat, Clock, BarChart2, Sprout, Image as ImageIcon, AlertTriangle, Replace, Loader2, MinusCircle, PlusCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
-import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 
 const MacroCircle = ({ label, value, unit, color }) => (
   <div className="flex flex-col items-center">
@@ -21,7 +20,6 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
     ingredients: meal.ingredients.map(ing => ({ ...ing, is_active: true }))
   }));
   const [replacingIngredient, setReplacingIngredient] = useState(null);
-  const [userPlan, setUserPlan] = useState(null);
 
   const generateAndSetImage = useCallback(async (mealToUpdate, replacementInfo = null) => {
     if (mealToUpdate.image_url && !replacementInfo && !isGeneratingImage) {
@@ -56,17 +54,6 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
   }, [onMealUpdate, isGeneratingImage]);
 
   useEffect(() => {
-    const loadUserPlan = async () => {
-      try {
-        const user = await base44.auth.me();
-        setUserPlan(user.subscription_plan);
-      } catch (error) {
-        console.error("Error loading user plan:", error);
-        setUserPlan('free'); 
-      }
-    };
-    loadUserPlan();
-
     setCurrentMeal({
       ...meal,
       ingredients: meal.ingredients.map(ing => ({ ...ing, is_active: true }))
@@ -100,11 +87,6 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
   };
 
   const handleReplaceIngredient = async (ingredientToReplace) => {
-    if (!hasFeatureAccess(userPlan, 'ingredient_substitution')) {
-      alert('🔄 Sostituzione ingredienti AI è disponibile solo con il piano Premium. Effettua l\'upgrade!');
-      return;
-    }
-
     setReplacingIngredient(ingredientToReplace.name);
     try {
         const replacementPrompt = `Given a meal and an ingredient to replace, suggest a single, nutritionally similar substitute.
@@ -276,10 +258,10 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
                       <Button 
                         variant="ghost" 
                         size="icon" 
-                        className={`w-8 h-8 ${hasFeatureAccess(userPlan, 'ingredient_substitution') ? 'text-gray-400 hover:text-blue-500 hover:bg-blue-50' : 'text-gray-300 cursor-not-allowed'}`}
+                        className="w-8 h-8 text-gray-400 hover:text-blue-500 hover:bg-blue-50"
                         onClick={() => handleReplaceIngredient(ing)} 
-                        disabled={!!replacingIngredient || isGeneratingImage || !hasFeatureAccess(userPlan, 'ingredient_substitution')}
-                        title={!hasFeatureAccess(userPlan, 'ingredient_substitution') ? 'Premium Feature' : 'Sostituisci ingrediente'}
+                        disabled={!!replacingIngredient || isGeneratingImage}
+                        title="Sostituisci ingrediente"
                       >
                         {replacingIngredient === ing.name ? <Loader2 className="w-4 h-4 animate-spin" /> : <Replace className="w-4 h-4" />}
                       </Button>
