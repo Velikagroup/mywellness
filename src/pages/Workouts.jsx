@@ -963,32 +963,108 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                             
                             {/* Pulsanti Desktop - nascosti su mobile, IN RIGA */}
                             <div className="hidden md:flex md:flex-row gap-2">
+                              {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') ? (
+                                <Button 
+                                  variant="secondary" 
+                                  size="sm"
+                                  className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative whitespace-nowrap cursor-pointer"
+                                  onClick={() => setShowUpgradeModal(true)}
+                                >
+                                  <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
+                                  <span 
+                                    className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      setShowUpgradeModal(true);
+                                    }}
+                                  >
+                                    Premium
+                                  </span>
+                                </Button>
+                              ) : (
+                                <Dialog open={showAdjustmentDialog} onOpenChange={setShowAdjustmentDialog}>
+                                  <DialogTrigger asChild>
+                                    <Button 
+                                      variant="secondary" 
+                                      size="sm"
+                                      className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative whitespace-nowrap"
+                                    >
+                                      <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
+                                    </Button>
+                                  </DialogTrigger>
+                                  <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm">
+                                    <DialogHeader>
+                                      <DialogTitle>Consulenza AI per la sessione di oggi</DialogTitle>
+                                    </DialogHeader>
+                                    {!adjustmentResult ? (
+                                      <div className="space-y-4 py-4">
+                                        <p className="text-sm text-gray-600">Descrivi un dolore, un affaticamento o qualsiasi problema tu stia riscontrando oggi. L'AI modificherà l'allenamento odierno per te, selezionando esercizi alternativi dal database.</p>
+                                        <Textarea placeholder="Es: 'Oggi sento un leggero dolore al ginocchio destro quando piego la gamba' oppure 'Sono molto stanco, preferirei una sessione più leggera'." value={adjustmentProblem} onChange={(e) => setAdjustmentProblem(e.target.value)} />
+                                      </div>
+                                    ) : (
+                                      <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
+                                        <div>
+                                          <h4 className="font-semibold text-gray-800">Consiglio dell'Esperto AI</h4>
+                                          <div className="text-sm text-gray-600 mt-2 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg prose-sm" dangerouslySetInnerHTML={{ __html: adjustmentResult.consiglio_esperto.replace(/\n/g, '<br />') }} />
+                                        </div>
+                                        <div>
+                                          <h4 className="font-semibold text-gray-800">Spiegazione Modifiche</h4>
+                                          <p className="text-sm text-gray-600 mt-2">{adjustmentResult.spiegazione_modifiche}</p>
+                                        </div>
+                                      </div>
+                                    )}
+                                    <DialogFooter>
+                                      {!adjustmentResult ? (
+                                        <Button onClick={handleDailyAdjustment} disabled={isAdjusting || !adjustmentProblem}>
+                                          {isAdjusting ? "L'AI sta pensando..." : "Richiedi Modifica"}
+                                        </Button>
+                                      ) : (
+                                        <Button onClick={() => {setShowAdjustmentDialog(false); setAdjustmentResult(null); setAdjustmentProblem('');}}>Chiudi</Button>
+                                      )}
+                                    </DialogFooter>
+                                  </DialogContent>
+                                </Dialog>
+                              )}
+                              
+                              <Button
+                                onClick={() => handleLogWorkout(workoutForSelectedDay)}
+                                size="sm"
+                                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] whitespace-nowrap"
+                              >
+                                <CheckCircle2 className="w-4 h-4 mr-2" />
+                                Registra Allenamento
+                              </Button>
+                            </div>
+                          </div>
+                        </CardHeader>
+                        <CardContent className="p-4 sm:p-6 space-y-6">
+                          {/* Pulsanti Mobile - nascosti su desktop */}
+                          <div className="flex md:hidden flex-col gap-3 pb-4 border-b border-gray-200/30">
+                            {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') ? (
+                              <Button 
+                                variant="secondary" 
+                                className="w-full bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative cursor-pointer"
+                                onClick={() => setShowUpgradeModal(true)}
+                              >
+                                <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
+                                <span 
+                                  className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
+                                  onClick={(e) => {
+                                    e.stopPropagation();
+                                    setShowUpgradeModal(true);
+                                  }}
+                                >
+                                  Premium
+                                </span>
+                              </Button>
+                            ) : (
                               <Dialog open={showAdjustmentDialog} onOpenChange={setShowAdjustmentDialog}>
                                 <DialogTrigger asChild>
                                   <Button 
                                     variant="secondary" 
-                                    size="sm"
-                                    className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative whitespace-nowrap"
-                                    disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')}
-                                    onClick={(e) => {
-                                      if (!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')) {
-                                        e.preventDefault();
-                                        setShowUpgradeModal(true);
-                                      }
-                                    }}
+                                    className="w-full bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative"
                                   >
                                     <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
-                                    {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
-                                      <span 
-                                        className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
-                                        onClick={(e) => {
-                                          e.stopPropagation();
-                                          setShowUpgradeModal(true);
-                                        }}
-                                      >
-                                        Premium
-                                      </span>
-                                    )}
                                   </Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm">
@@ -1023,80 +1099,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   </DialogFooter>
                                 </DialogContent>
                               </Dialog>
-                              
-                              <Button
-                                onClick={() => handleLogWorkout(workoutForSelectedDay)}
-                                size="sm"
-                                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] whitespace-nowrap"
-                              >
-                                <CheckCircle2 className="w-4 h-4 mr-2" />
-                                Registra Allenamento
-                              </Button>
-                            </div>
-                          </div>
-                        </CardHeader>
-                        <CardContent className="p-4 sm:p-6 space-y-6">
-                          {/* Pulsanti Mobile - nascosti su desktop */}
-                          <div className="flex md:hidden flex-col gap-3 pb-4 border-b border-gray-200/30">
-                            <Dialog open={showAdjustmentDialog} onOpenChange={setShowAdjustmentDialog}>
-                              <DialogTrigger asChild>
-                                <Button 
-                                  variant="secondary" 
-                                  className="w-full bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative"
-                                  disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')}
-                                  onClick={(e) => {
-                                    if (!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification')) {
-                                      e.preventDefault();
-                                      setShowUpgradeModal(true);
-                                    }
-                                  }}
-                                >
-                                  <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
-                                  {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
-                                    <span 
-                                      className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setShowUpgradeModal(true);
-                                      }}
-                                    >
-                                      Premium
-                                    </span>
-                                  )}
-                                </Button>
-                              </DialogTrigger>
-                              <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm">
-                                <DialogHeader>
-                                  <DialogTitle>Consulenza AI per la sessione di oggi</DialogTitle>
-                                </DialogHeader>
-                                {!adjustmentResult ? (
-                                  <div className="space-y-4 py-4">
-                                    <p className="text-sm text-gray-600">Descrivi un dolore, un affaticamento o qualsiasi problema tu stia riscontrando oggi. L'AI modificherà l'allenamento odierno per te, selezionando esercizi alternativi dal database.</p>
-                                    <Textarea placeholder="Es: 'Oggi sento un leggero dolore al ginocchio destro quando piego la gamba' oppure 'Sono molto stanco, preferirei una sessione più leggera'." value={adjustmentProblem} onChange={(e) => setAdjustmentProblem(e.target.value)} />
-                                  </div>
-                                ) : (
-                                  <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
-                                    <div>
-                                      <h4 className="font-semibold text-gray-800">Consiglio dell'Esperto AI</h4>
-                                      <div className="text-sm text-gray-600 mt-2 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg prose-sm" dangerouslySetInnerHTML={{ __html: adjustmentResult.consiglio_esperto.replace(/\n/g, '<br />') }} />
-                                    </div>
-                                    <div>
-                                      <h4 className="font-semibold text-gray-800">Spiegazione Modifiche</h4>
-                                      <p className="text-sm text-gray-600 mt-2">{adjustmentResult.spiegazione_modifiche}</p>
-                                    </div>
-                                  </div>
-                                )}
-                                <DialogFooter>
-                                  {!adjustmentResult ? (
-                                    <Button onClick={handleDailyAdjustment} disabled={isAdjusting || !adjustmentProblem}>
-                                      {isAdjusting ? "L'AI sta pensando..." : "Richiedi Modifica"}
-                                    </Button>
-                                  ) : (
-                                    <Button onClick={() => {setShowAdjustmentDialog(false); setAdjustmentResult(null); setAdjustmentProblem('');}}>Chiudi</Button>
-                                  )}
-                                </DialogFooter>
-                              </DialogContent>
-                            </Dialog>
+                            )}
                             
                             <Button
                               onClick={() => handleLogWorkout(workoutForSelectedDay)}
