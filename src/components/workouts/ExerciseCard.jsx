@@ -46,7 +46,7 @@ export default function ExerciseCard({ exercise }) {
       <CardContent className="p-4 flex-grow">
         <div className="flex items-start justify-between mb-3">
           <h3 className="text-base font-semibold text-gray-900 flex-1">{exercise.name}</h3>
-          {details && (
+          {hasDetails && (
             <Button
               variant="ghost"
               size="sm"
@@ -69,8 +69,8 @@ export default function ExerciseCard({ exercise }) {
           </div>
         </div>
 
-        {/* Dettagli espandibili */}
-        {showDetails && details && (
+        {/* Dettagli espandibili - Letti dal database */}
+        {showDetails && hasDetails && (
           <div className="mt-4 space-y-4 border-t pt-4 animate-in slide-in-from-top-2 duration-300">
             {/* Descrizione */}
             <div className="bg-blue-50/50 rounded-lg p-3 border border-blue-200/40">
@@ -78,7 +78,7 @@ export default function ExerciseCard({ exercise }) {
                 <Info className="w-4 h-4 text-blue-600" />
                 <h4 className="font-semibold text-sm text-blue-900">Descrizione</h4>
               </div>
-              <p className="text-xs text-gray-700 leading-relaxed">{details.description}</p>
+              <p className="text-xs text-gray-700 leading-relaxed">{exercise.detailed_description}</p>
             </div>
 
             {/* Consigli sulla forma */}
@@ -88,7 +88,7 @@ export default function ExerciseCard({ exercise }) {
                 <h4 className="font-semibold text-sm text-green-900">Consigli sulla Forma</h4>
               </div>
               <ul className="space-y-2">
-                {details.form_tips.map((tip, idx) => (
+                {exercise.form_tips?.map((tip, idx) => (
                   <li key={idx} className="flex items-start gap-2 text-xs text-gray-700">
                     <span className="text-green-600 mt-0.5">•</span>
                     <span className="flex-1">{tip}</span>
@@ -102,17 +102,16 @@ export default function ExerciseCard({ exercise }) {
               <h4 className="font-semibold text-sm text-purple-900 mb-2">Muscoli Coinvolti</h4>
               <div className="flex items-center justify-center bg-white rounded-lg p-2 mb-2">
                 <img 
-                  src={getMuscleHighlightImage(exercise.name)} 
+                  src={exercise.muscle_image_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/body_muscles_generic.png'} 
                   alt={`Muscoli coinvolti - ${exercise.name}`}
                   className="max-h-48 w-auto object-contain"
                   onError={(e) => {
-                    // Fallback a immagine placeholder se l'immagine non carica
                     e.target.src = 'https://via.placeholder.com/200x300/E9F6F5/26847F?text=Muscoli';
                   }}
                 />
               </div>
               <div className="flex flex-wrap gap-1">
-                {details.muscles.map((muscle, idx) => (
+                {exercise.target_muscles?.map((muscle, idx) => (
                   <Badge key={idx} className="text-xs bg-purple-100 text-purple-800 border-purple-300 capitalize">
                     {muscle}
                   </Badge>
