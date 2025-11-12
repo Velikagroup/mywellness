@@ -1012,6 +1012,40 @@ Use verified nutritional data. All names and units in Italian.`;
             </div>
           </div>
 
+          {/* Alert quando finiscono le generazioni */}
+          {generationLimitReached && remainingGenerations === 0 && (
+            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 shadow-xl rounded-xl">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-amber-200 rounded-full flex items-center justify-center">
+                      <AlertCircle className="w-8 h-8 text-amber-700" />
+                    </div>
+                  </div>
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-xl font-bold text-amber-900 mb-2">
+                      🚫 Limite Generazioni Raggiunto
+                    </h3>
+                    <p className="text-amber-800 mb-1">
+                      Hai utilizzato tutte le <strong>{getGenerationLimit(user?.subscription_plan, 'meal')} generazioni</strong> disponibili questo mese con il piano <strong className="capitalize">{user?.subscription_plan || 'Base'}</strong>.
+                    </p>
+                    <p className="text-sm text-amber-700">
+                      💡 Fai l'upgrade per ottenere più generazioni o generazioni illimitate!
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Button
+                      onClick={() => setShowUpgradeModal(true)}
+                      className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                    >
+                      ⬆️ Upgrade Piano
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {showGenerator && (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
               <CardHeader>

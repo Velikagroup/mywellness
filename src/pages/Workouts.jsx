@@ -1034,6 +1034,40 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
             </Button>
           </div>
 
+          {/* Alert quando finiscono le generazioni */}
+          {generationLimitReached && remainingGenerations === 0 && hasFeatureAccess(trainingData.subscription_plan, 'workout_plan') && (
+            <Card className="bg-gradient-to-br from-amber-50 to-orange-50 border-2 border-amber-300 shadow-xl rounded-xl">
+              <CardContent className="p-6">
+                <div className="flex flex-col md:flex-row items-center gap-4">
+                  <div className="flex-shrink-0">
+                    <div className="w-16 h-16 bg-amber-200 rounded-full flex items-center justify-center">
+                      <AlertCircle className="w-8 h-8 text-amber-700" />
+                    </div>
+                  </div>
+                  <div className="flex-1 text-center md:text-left">
+                    <h3 className="text-xl font-bold text-amber-900 mb-2">
+                      🚫 Limite Generazioni Raggiunto
+                    </h3>
+                    <p className="text-amber-800 mb-1">
+                      Hai utilizzato tutte le <strong>4 generazioni</strong> disponibili questo mese con il piano <strong className="capitalize">{trainingData.subscription_plan || 'Pro'}</strong>.
+                    </p>
+                    <p className="text-sm text-amber-700">
+                      💡 Fai l'upgrade al piano Premium per generazioni illimitate!
+                    </p>
+                  </div>
+                  <div className="flex-shrink-0">
+                    <Button
+                      onClick={() => setShowUpgradeModal(true)}
+                      className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                    >
+                      ⬆️ Upgrade a Premium
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           {workoutPlans.length > 0 ? (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
               <CardHeader className="border-b border-gray-200/30">
@@ -1269,18 +1303,19 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               </CardContent>
             </Card>
           ) : (
-            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
-              <CardContent className="p-8 text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
-                  <Database className="w-8 h-8 text-gray-400" />
-                </div>
-                <CardTitle className="text-xl text-gray-900 mb-4">Nessun Protocollo di Allenamento</CardTitle>
-                <p className="text-gray-600 mb-6">
-                  Genera il tuo piano personalizzato dal database di {allExercises.length} esercizi per iniziare.
-                </p>
-              </CardContent>
-            </Card>
-          )}
+              <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+                <CardContent className="p-8 text-center">
+                  <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
+                    <Database className="w-8 h-8 text-gray-400" />
+                  </div>
+                  <CardTitle className="text-xl text-gray-900 mb-4">Nessun Protocollo di Allenamento</CardTitle>
+                  <p className="text-gray-600 mb-6">
+                    Genera il tuo piano personalizzato dal database di {allExercises.length} esercizi per iniziare.
+                  </p>
+                </CardContent>
+              </Card>
+            )
+          }
         </div>
       </div>
 
@@ -1302,7 +1337,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 Questa funzionalità richiede un piano premium.
               </DialogDescription>
             </DialogHeader>
-            <UpgradePrompt requiredPlan={PLANS.PRO} featureName="Modifica Sessione Allenamento" />
+            <UpgradePrompt requiredPlan={PLANS.PREMIUM} featureName="Generazioni Illimitate Piano Allenamento" />
             <DialogFooter>
               <Button onClick={() => setShowUpgradeModal(false)}>Chiudi</Button>
             </DialogFooter>
