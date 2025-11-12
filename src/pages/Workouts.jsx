@@ -22,6 +22,7 @@ import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
 import WorkoutLogger from "../components/workouts/WorkoutLogger";
 
 import { hasFeatureAccess, PLANS, UpgradePrompt } from '@/components/utils/subscriptionPlans';
+import UpgradeModal from "../components/meals/UpgradeModal";
 
 import { motion } from "framer-motion";
 
@@ -71,6 +72,7 @@ export default function Workouts() {
 
   const [logWorkout, setLogWorkout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
@@ -971,9 +973,15 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   >
                                     <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
                                     {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
-                                      <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                                      <button
+                                        onClick={(e) => {
+                                          e.stopPropagation();
+                                          setShowUpgradeModal(true);
+                                        }}
+                                        className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold hover:bg-purple-600 transition-colors cursor-pointer"
+                                      >
                                         Premium
-                                      </span>
+                                      </button>
                                     )}
                                   </Button>
                                 </DialogTrigger>
@@ -1033,9 +1041,15 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                 >
                                   <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
                                   {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') && (
-                                    <span className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
+                                    <button
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setShowUpgradeModal(true);
+                                      }}
+                                      className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold hover:bg-purple-600 transition-colors cursor-pointer"
+                                    >
                                       Premium
-                                    </span>
+                                    </button>
                                   )}
                                 </Button>
                               </DialogTrigger>
@@ -1164,6 +1178,14 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           user={{ id: trainingData.user_id }}
           onClose={() => setLogWorkout(null)}
           onLogSaved={handleLogSaved}
+        />
+      )}
+
+      {showUpgradeModal && (
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          currentPlan={trainingData.subscription_plan}
         />
       )}
     </>
