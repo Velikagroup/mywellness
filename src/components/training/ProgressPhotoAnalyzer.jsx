@@ -1,9 +1,8 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, Upload, Loader2, TrendingUp, TrendingDown, Minus, CheckCircle2, Sparkles, X, Info, Zap, AlertCircle, ArrowRight, ArrowLeft } from 'lucide-react';
+import { Camera, Upload, Loader2, TrendingUp, TrendingDown, Minus, CheckCircle2, Sparkles, X, Info, Zap, AlertCircle, ArrowRight, ArrowLeft, RefreshCw } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -33,6 +32,10 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [previousPhoto, setPreviousPhoto] = useState(null);
+  const [isApplyingChanges, setIsApplyingChanges] = useState(false);
+  const [appliedChanges, setAppliedChanges] = useState(null);
+  const [canApplyChanges, setCanApplyChanges] = useState(false);
+  const [daysSinceLastAdjustment, setDaysSinceLastAdjustment] = useState(null);
 
   const targetFileRefs = useRef({});
   const bodyFileRefs = useRef({});
@@ -44,6 +47,25 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         const sortedPhotos = photos.sort((a, b) => new Date(b.date) - new Date(a.date));
         if (sortedPhotos.length > 0) {
           setPreviousPhoto(sortedPhotos[0]);
+          
+          // Controlla quando è stata l'ultima modifica ai piani
+          const lastPhotoWithAdjustments = sortedPhotos.find(p => 
+            p.ai_analysis?.plans_adjusted === true
+          );
+          
+          if (lastPhotoWithAdjustments) {
+            const daysSince = Math.floor(
+              (new Date() - new Date(lastPhotoWithAdjustments.date)) / (1000 * 60 * 60 * 24)
+            );
+            setDaysSinceLastAdjustment(daysSince);
+            setCanApplyChanges(daysSince >= 7);
+          } else {
+            // Nessuna modifica precedente, può applicare
+            setCanApplyChanges(true);
+            setDaysSinceLastAdjustment(null);
+          }
+        } else {
+          setCanApplyChanges(true);
         }
       } catch (error) {
         console.error("Error loading previous photo:", error);
@@ -122,6 +144,31 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     return !!(bodyPhotos.front && bodyPhotos.side_left && bodyPhotos.side_right && bodyPhotos.back);
   };
 
+  const checkForDuplicatePhotos = async (newPhotoUrls) => {
+    try {
+      const allPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
+      
+      // Controlla se una delle nuove foto è già stata caricata
+      for (const existingPhoto of allPhotos) {
+        const existingUrls = [
+          existingPhoto.photo_url,
+          ...(existingPhoto.ai_analysis?.target_photo_urls || []),
+          ...Object.values(existingPhoto.ai_analysis?.body_photo_urls || {})
+        ].filter(Boolean);
+        
+        for (const newUrl of newPhotoUrls) {
+          if (existingUrls.includes(newUrl)) {
+            return true; // Foto duplicata trovata
+          }
+        }
+      }
+      return false;
+    } catch (error) {
+      console.error('Error checking duplicates:', error);
+      return false;
+    }
+  };
+
   const analyzePhotos = async () => {
     if (!selectedZone) return;
     
@@ -152,6 +199,17 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
           const { file_url } = await base44.integrations.Core.UploadFile({ file: bodyFileRefs.current[photoType] });
           bodyPhotoUrls[photoType] = file_url;
         }
+      }
+
+      // Controlla foto duplicate
+      const allUploadedUrls = [...targetPhotoUrls, ...Object.values(bodyPhotoUrls)];
+      const isDuplicate = await checkForDuplicatePhotos(allUploadedUrls);
+      
+      if (isDuplicate) {
+        alert('⚠️ Hai già caricato queste foto in precedenza. Per favore scatta nuove foto per un confronto accurato.');
+        setIsAnalyzing(false);
+        setStep('body_photos');
+        return;
       }
 
       let analysisPrompt;
@@ -276,8 +334,160 @@ Remember: NO positive or negative judgments - just objective observations to hel
     setIsAnalyzing(false);
   };
 
+  const applyPlanAdjustments = async () => {
+    if (!analysisResult) return;
+    
+    setIsApplyingChanges(true);
+    const changes = { diet: [], workout: [] };
+    
+    try {
+      // 1. MODIFICA DIETA (se necessario e consentito)
+      if (analysisResult.diet_adjustment_needed && canApplyChanges) {
+        const currentCalories = user.daily_calories;
+        const currentWeight = user.current_weight;
+        const targetWeight = user.target_weight;
+        const weightDifference = currentWeight - targetWeight;
+        
+        // Aggiustamento MOLTO conservativo delle calorie (max ±100 kcal)
+        let calorieAdjustment = 0;
+        
+        if (analysisResult.comparison_result === 'regressed' || Math.abs(weightDifference) > 5) {
+          // Leggero taglio calorico se regressione o lontano dall'obiettivo
+          calorieAdjustment = -50;
+        } else if (analysisResult.comparison_result === 'improved') {
+          // Nessuna modifica se sta migliorando
+          calorieAdjustment = 0;
+        }
+        
+        if (calorieAdjustment !== 0) {
+          const newCalories = currentCalories + calorieAdjustment;
+          await base44.auth.updateMe({ daily_calories: Math.round(newCalories) });
+          changes.diet.push(`Target calorico ${calorieAdjustment > 0 ? 'aumentato' : 'ridotto'} di ${Math.abs(calorieAdjustment)} kcal (da ${currentCalories} a ${newCalories} kcal)`);
+        } else {
+          changes.diet.push('Piano nutrizionale mantenuto (progressi positivi)');
+        }
+      }
+
+      // 2. MODIFICA ALLENAMENTO (se necessario e consentito)
+      if (analysisResult.workout_adjustment_needed && canApplyChanges) {
+        const workoutPlans = await base44.entities.WorkoutPlan.filter({ user_id: user.id });
+        
+        if (workoutPlans.length > 0) {
+          // Identifica i giorni di allenamento attivi
+          const activeDays = workoutPlans.filter(p => p.workout_type !== 'rest');
+          
+          if (activeDays.length > 0) {
+            // Seleziona UN SOLO giorno da modificare (il più rilevante per la zona target)
+            const targetMuscleGroups = {
+              'pancia': ['addominali', 'core'],
+              'petto': ['pettorali'],
+              'schiena': ['dorsali', 'lombari'],
+              'braccia': ['bicipiti', 'tricipiti'],
+              'gambe': ['quadricipiti', 'polpacci', 'femorali'],
+              'glutei': ['glutei']
+            };
+            
+            const relevantMuscles = targetMuscleGroups[selectedZone.id] || [];
+            
+            // Trova il giorno con più esercizi rilevanti per la zona
+            let dayToModify = activeDays[0];
+            let maxRelevantExercises = 0;
+            
+            for (const day of activeDays) {
+              const relevantCount = day.exercises?.filter(ex => 
+                relevantMuscles.some(muscle => 
+                  ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+                )
+              ).length || 0;
+              
+              if (relevantCount > maxRelevantExercises) {
+                maxRelevantExercises = relevantCount;
+                dayToModify = day;
+              }
+            }
+            
+            // Carica esercizi disponibili dal database
+            const allExercises = await base44.entities.Exercise.list();
+            const availableExercises = allExercises.filter(ex => 
+              relevantMuscles.some(muscle => 
+                ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+              )
+            );
+            
+            if (availableExercises.length > 0 && dayToModify.exercises?.length > 0) {
+              // Seleziona SOLO 1 esercizio da modificare
+              const exerciseToReplace = dayToModify.exercises.find(ex =>
+                relevantMuscles.some(muscle => 
+                  ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+                )
+              ) || dayToModify.exercises[0];
+              
+              const adjustmentPrompt = `You are an expert personal trainer. Based on the user's progress analysis, suggest ONE alternative exercise to replace "${exerciseToReplace.name}".
+
+CRITICAL INSTRUCTIONS:
+- Generate ALL content in ITALIAN language
+- Suggest ONLY ONE exercise from this database
+- The new exercise must target similar muscle groups but provide a slight variation
+- Keep changes MINIMAL - we're making small adjustments, not overhauling the program
+
+Available exercises for ${selectedZone.label}:
+${availableExercises.slice(0, 20).map(e => `"${e.name}" (${e.equipment}, ${e.difficulty})`).join(', ')}
+
+User's equipment: ${user.equipment?.join(', ') || 'corpo libero'}
+User's experience: ${user.fitness_experience}
+
+Current exercise to replace: "${exerciseToReplace.name}" (${exerciseToReplace.sets} serie x ${exerciseToReplace.reps})
+
+Task:
+Suggest ONE single exercise replacement with Italian name, sets, reps (in Italian format), rest, and brief explanation why this change helps.`;
+
+              const replacement = await base44.integrations.Core.InvokeLLM({
+                prompt: adjustmentPrompt,
+                response_json_schema: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string" },
+                    sets: { type: "number" },
+                    reps: { type: "string" },
+                    rest: { type: "string" },
+                    description: { type: "string" },
+                    explanation: { type: "string" }
+                  },
+                  required: ["name", "sets", "reps", "rest", "explanation"]
+                }
+              });
+              
+              // Sostituisci l'esercizio nel piano
+              const updatedExercises = dayToModify.exercises.map(ex => 
+                ex.name === exerciseToReplace.name ? replacement : ex
+              );
+              
+              await base44.entities.WorkoutPlan.update(dayToModify.id, {
+                exercises: updatedExercises
+              });
+              
+              changes.workout.push(`${dayToModify.plan_name}: sostituito "${exerciseToReplace.name}" con "${replacement.name}" - ${replacement.explanation}`);
+            }
+          }
+        }
+      }
+
+      setAppliedChanges(changes);
+    } catch (error) {
+      console.error('Error applying plan adjustments:', error);
+      alert('Errore nell\'applicazione delle modifiche. L\'analisi verrà comunque salvata.');
+    }
+    setIsApplyingChanges(false);
+  };
+
   const saveAnalysis = async () => {
     setIsSaving(true);
+    
+    // Prima applica le modifiche ai piani (se possibile)
+    if ((analysisResult.workout_adjustment_needed || analysisResult.diet_adjustment_needed) && canApplyChanges) {
+      await applyPlanAdjustments();
+    }
+    
     try {
       const today = new Date().toISOString().split('T')[0];
       
@@ -297,7 +507,9 @@ Remember: NO positive or negative judgments - just objective observations to hel
           recommendations: analysisResult.recommendations,
           workout_adjustment_needed: analysisResult.workout_adjustment_needed,
           diet_adjustment_needed: analysisResult.diet_adjustment_needed,
-          motivational_message: analysisResult.motivational_message
+          motivational_message: analysisResult.motivational_message,
+          plans_adjusted: canApplyChanges && (analysisResult.workout_adjustment_needed || analysisResult.diet_adjustment_needed),
+          applied_changes: appliedChanges
         },
         notes: notes
       });
@@ -882,14 +1094,102 @@ Remember: NO positive or negative judgments - just objective observations to hel
                   </div>
                 )}
 
+                {/* Info modifiche ai piani */}
+                {!canApplyChanges && daysSinceLastAdjustment !== null && (
+                  <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
+                    <div className="flex items-start gap-2">
+                      <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-amber-800 font-semibold mb-1">
+                          Modifiche ai piani non disponibili
+                        </p>
+                        <p className="text-xs text-amber-700">
+                          Sono passati {daysSinceLastAdjustment} giorni dall'ultima modifica. 
+                          Potrai applicare nuove modifiche tra {7 - daysSinceLastAdjustment} giorni.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {canApplyChanges && (analysisResult.workout_adjustment_needed || analysisResult.diet_adjustment_needed) && (
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <div className="flex items-start gap-2">
+                      <RefreshCw className="w-5 h-5 text-green-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="text-xs text-green-800 font-semibold mb-1">
+                          L'AI applicherà modifiche parsimoniose ai tuoi piani
+                        </p>
+                        <ul className="text-xs text-green-700 space-y-0.5">
+                          {analysisResult.diet_adjustment_needed && (
+                            <li>• Leggero aggiustamento calorico (max ±50 kcal)</li>
+                          )}
+                          {analysisResult.workout_adjustment_needed && (
+                            <li>• Sostituzione di 1 solo esercizio per la zona {selectedZone.label}</li>
+                          )}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {isApplyingChanges && (
+                  <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
+                    <div className="flex items-center gap-2">
+                      <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
+                      <p className="text-sm text-blue-800 font-medium">
+                        Applicazione modifiche ai piani in corso...
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                {appliedChanges && (
+                  <div className="bg-green-50 p-4 rounded-lg border border-green-200">
+                    <h4 className="font-semibold text-green-900 mb-2 text-sm flex items-center gap-2">
+                      <CheckCircle2 className="w-4 h-4" />
+                      Modifiche Applicate
+                    </h4>
+                    {appliedChanges.diet.length > 0 && (
+                      <div className="mb-2">
+                        <p className="text-xs font-semibold text-green-800 mb-1">🍽️ Dieta:</p>
+                        <ul className="space-y-0.5">
+                          {appliedChanges.diet.map((change, idx) => (
+                            <li key={idx} className="text-xs text-green-700">• {change}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {appliedChanges.workout.length > 0 && (
+                      <div>
+                        <p className="text-xs font-semibold text-green-800 mb-1">💪 Allenamento:</p>
+                        <ul className="space-y-0.5">
+                          {appliedChanges.workout.map((change, idx) => (
+                            <li key={idx} className="text-xs text-green-700">• {change}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+
                 <Button
                   onClick={saveAnalysis}
                   className="w-full bg-purple-600 hover:bg-purple-700"
-                  disabled={isSaving}
+                  disabled={isSaving || isApplyingChanges}
                   size="sm"
                 >
-                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
-                  Salva Analisi
+                  {isSaving || isApplyingChanges ? (
+                    <>
+                      <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                      {isApplyingChanges ? 'Applicazione modifiche...' : 'Salvataggio...'}
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="w-4 h-4 mr-2" />
+                      Salva Analisi
+                    </>
+                  )}
                 </Button>
               </motion.div>
             )}
