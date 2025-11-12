@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2 } from 'lucide-react';
@@ -27,8 +26,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       features: [
         'Dashboard scientifica completa',
         'Piano nutrizionale settimanale personalizzato',
+        '🔄 4 generazioni piano nutrizionale/mese',
         'Ricette con foto AI e istruzioni',
-        '🔥 Sostituzione ingredienti AI',
+        '🔄 Sostituzione ingredienti AI',
         'Calcolo BMR e massa grassa',
         'Lista della spesa automatica',
         'Tracking peso e progressi'
@@ -48,7 +48,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       badge: '✅ PIÙ SCELTO ✅',
       features: [
         'Tutto del Piano Base',
+        '🔄 8 generazioni piano nutrizionale/mese',
         'Piano di allenamento personalizzato',
+        '🔄 4 generazioni piano allenamento/mese',
         'Workout con warm-up e cool-down',
         'Schede adattive al tuo livello',
         '🔥 Analisi AI dei pasti con foto',
@@ -69,6 +71,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       badge: '💎 PIANO ESCLUSIVO',
       features: [
         'Tutto del Piano Pro',
+        '♾️ Generazioni ILLIMITATE piani nutrizionali',
+        '♾️ Generazioni ILLIMITATE piani allenamento',
         '🔥 Modifica schede AI per imprevisti',
         '🔥 Analisi progressi con foto AI',
         '🎯 Supporto prioritario'
@@ -328,8 +332,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
 
                 <div className="flex gap-3">
                   <Button
-                    onClick={() => setShowConfirmDialog(false)}
                     variant="outline"
+                    onClick={() => setShowConfirmDialog(false)}
                     className="flex-1"
                   >
                     Annulla

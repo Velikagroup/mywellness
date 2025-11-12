@@ -130,8 +130,9 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
       features: [
         "Dashboard scientifica completa",
         "Piano nutrizionale settimanale personalizzato",
+        "🔄 4 generazioni piano nutrizionale/mese",
         "Ricette con foto AI e istruzioni",
-        "🔄 Sostituzione ingredienti AI", // Moved from Pro
+        "🔄 Sostituzione ingredienti AI", 
         "Calcolo BMR e massa grassa",
         "Lista della spesa automatica",
         "Tracking peso e progressi"
@@ -152,11 +153,13 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
       description: "Il piano più completo per risultati garantiti",
       features: [
         "Tutto del Piano Base",
+        "🔄 8 generazioni piano nutrizionale/mese",
         "Piano di allenamento personalizzato",
+        "🔄 4 generazioni piano allenamento/mese",
         "Workout con warm-up e cool-down",
         "Schede adattive al tuo livello",
         "📸 Analisi AI dei pasti con foto",
-        "⚖️ Ribilanciamento automatico calorie", // Re-ordered, "🔄 Sostituzione ingredienti AI" removed from here
+        "⚖️ Ribilanciamento automatico calorie",
         "Tracking allenamenti"
       ],
       cta: "Iniza Gratis",
@@ -175,6 +178,8 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
       description: "Per chi vuole il massimo con AI avanzata",
       features: [
         "Tutto del Piano Pro",
+        "♾️ Generazioni ILLIMITATE piani nutrizionali",
+        "♾️ Generazioni ILLIMITATE piani allenamento",
         "💪 Modifica scheda AI per imprevisti",
         "📊 Analisi progressi con foto AI",
         "🚀 Supporto prioritario"
@@ -194,6 +199,10 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
       answer: "La prova gratuita di 3 giorni ti dà accesso completo a tutte le funzionalità del piano scelto. Puoi cancellare in qualsiasi momento prima della scadenza per evitare ogni addebito. Se non cancelli, l'abbonamento si attiverà automaticamente al termine della prova."
     },
     {
+      question: "Cosa succede se raggiungo il limite di generazioni mensili?",
+      answer: "Se raggiungi il limite di generazioni del tuo piano (4/mese per Base, 8 nutrizionali + 4 allenamento per Pro), potrai comunque utilizzare i piani già generati. Per generare nuovi piani dovrai attendere il mese successivo oppure fare upgrade a un piano superiore. Il piano Premium ha generazioni illimitate!"
+    },
+    {
       question: "Posso cambiare piano in seguito?",
       answer: "Certo! Puoi fare upgrade o downgrade del tuo piano in qualsiasi momento. Le modifiche saranno effettive dal prossimo ciclo di fatturazione."
     },
@@ -203,7 +212,7 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
     },
     {
       question: "Come funziona l'analisi AI dei pasti?",
-      answer: "Fotografi il tuo pasto e la nostra AI analizza automaticamente le calorie e i macronutrienti consumati, confrontandoli con il tuo piano. Se necessario, ribilanciamo automaticamente i pasti successivi."
+      answer: "Fotografi il tuo pasto e la nostra AI analizza automaticamente le calorie e i macronutrienti consumati, confrontandoli con il tuo piano. Se necessario, ribalanciamo automaticamente i pasti successivi."
     },
     {
       question: "Posso usare l'app senza connessione internet?",
