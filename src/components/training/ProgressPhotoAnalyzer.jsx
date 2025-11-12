@@ -98,7 +98,6 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
 
     const fileHash = await getFileHash(file);
     
-    // Controlla se questo hash è già stato caricato
     const existingPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
     const existingHashes = existingPhotos
       .map(p => p.ai_analysis?.photo_hashes || [])
@@ -135,6 +134,8 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     const file = e.target.files[0];
     if (!file) return;
 
+    console.log('🔵 BODY PHOTO SELECTED:', photoType, 'File:', file.name);
+
     const fileHash = await getFileHash(file);
     
     const existingPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
@@ -143,7 +144,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
       .flat();
     
     if (existingHashes.includes(fileHash)) {
-      alert('⚠️ Hai già caricato questa foto in precedenza. Per favore scatta una nuova foto per un confronto accurato.');
+      alert('⚠️ Hai già caricato questa foto in precedenza. Per favora scatta una nuova foto per un confronto accurato.');
       e.target.value = '';
       return;
     }
@@ -152,6 +153,8 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
       bodyFileRefs.current[photoType] = {};
     }
     bodyFileRefs.current[photoType] = { file, hash: fileHash };
+    
+    console.log('✅ BODY FILE SAVED TO REF:', photoType, bodyFileRefs.current[photoType]);
     
     const reader = new FileReader();
     reader.onload = (event) => {
@@ -193,6 +196,9 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     setAppliedChanges(null);
     
     try {
+      console.log('🔵 STARTING ANALYSIS...');
+      console.log('🔵 bodyFileRefs.current:', bodyFileRefs.current);
+
       const targetPhotoUrls = [];
       const photoHashes = [];
       const zone = TARGET_ZONES.find(z => z.id === selectedZone.id);
@@ -201,29 +207,42 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.single.file });
         targetPhotoUrls.push(file_url);
         photoHashes.push(targetFileRefs.current.single.hash);
+        console.log('✅ Target photo uploaded:', file_url);
       } else if (zone.photoCount === 2) {
         if (targetFileRefs.current.left) {
           const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.left.file });
           targetPhotoUrls.push(file_url);
           photoHashes.push(targetFileRefs.current.left.hash);
+          console.log('✅ Target left photo uploaded:', file_url);
         }
         if (targetFileRefs.current.right) {
           const { file_url } = await base44.integrations.Core.UploadFile({ file: targetFileRefs.current.right.file });
           targetPhotoUrls.push(file_url);
           photoHashes.push(targetFileRefs.current.right.hash);
+          console.log('✅ Target right photo uploaded:', file_url);
         }
       }
 
+      console.log('🔵 UPLOADING BODY PHOTOS...');
       const bodyPhotoUrls = {};
       for (const photoType of ['front', 'side_left', 'side_right', 'back']) {
+        console.log(`🔵 Checking ${photoType}:`, bodyFileRefs.current[photoType]);
         if (bodyFileRefs.current[photoType]) {
+          console.log(`⬆️ Uploading ${photoType}...`);
           const { file_url } = await base44.integrations.Core.UploadFile({ file: bodyFileRefs.current[photoType].file });
           bodyPhotoUrls[photoType] = file_url;
           photoHashes.push(bodyFileRefs.current[photoType].hash);
+          console.log(`✅ ${photoType} uploaded:`, file_url);
+        } else {
+          console.warn(`⚠️ ${photoType} NOT FOUND in bodyFileRefs!`);
         }
       }
+      console.log('✅ ALL BODY PHOTOS UPLOADED:', bodyPhotoUrls);
+      console.log('📦 Photo hashes:', photoHashes);
 
       uploadedPhotoUrls.current = { targetPhotoUrls, bodyPhotoUrls, photoHashes };
+      console.log('✅ uploadedPhotoUrls.current SET:', uploadedPhotoUrls.current);
+
 
       let analysisPrompt;
 
@@ -597,10 +616,17 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
     setIsSaving(true);
     
     try {
+      console.log('💾 SAVING ANALYSIS...');
+      console.log('💾 uploadedPhotoUrls.current:', uploadedPhotoUrls.current);
+      
       const today = new Date().toISOString().split('T')[0];
       const { targetPhotoUrls, bodyPhotoUrls, photoHashes } = uploadedPhotoUrls.current || { targetPhotoUrls: [], bodyPhotoUrls: {}, photoHashes: [] };
       
-      await base44.entities.ProgressPhoto.create({
+      console.log('💾 targetPhotoUrls:', targetPhotoUrls);
+      console.log('💾 bodyPhotoUrls:', bodyPhotoUrls);
+      console.log('💾 Number of body photos:', Object.keys(bodyPhotoUrls).length);
+
+      const dataToSave = {
         user_id: user.id,
         photo_url: targetPhotoUrls[0] || null,
         date: today,
@@ -623,7 +649,13 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
           proposed_changes: proposedChanges
         },
         notes: notes
-      });
+      };
+
+      console.log('💾 FULL DATA TO SAVE:', JSON.stringify(dataToSave, null, 2));
+
+      await base44.entities.ProgressPhoto.create(dataToSave);
+      
+      console.log('✅ SAVED TO DATABASE!');
 
       if (onAnalysisComplete) {
         onAnalysisComplete(analysisResult);
@@ -631,7 +663,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
       
       onClose();
     } catch (error) {
-      console.error("Error saving progress photos:", error);
+      console.error("❌ Error saving progress photos:", error);
       alert("Errore nel salvataggio. Riprova.");
     }
     setIsSaving(false);
