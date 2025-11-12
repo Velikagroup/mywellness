@@ -477,13 +477,15 @@ export default function Dashboard() {
         )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-            <div className="lg:col-span-2 space-y-6 sm:space-y-8 progress-chart-section">
-              <AdvancedProgressChart 
-                user={user} 
-                weightHistory={weightHistory} 
-                onWeightLogged={loadUserData}
-                isMobile={isMobile}
-              />
+            <div className="lg:col-span-2 space-y-6 sm:space-y-8 onboarding-dashboard-overview">
+              <div className="progress-chart-section">
+                <AdvancedProgressChart 
+                  user={user} 
+                  weightHistory={weightHistory} 
+                  onWeightLogged={loadUserData}
+                  isMobile={isMobile}
+                />
+              </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 dashboard-stats-section">
                 <NutritionOverview 

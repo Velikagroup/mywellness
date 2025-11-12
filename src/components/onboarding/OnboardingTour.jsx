@@ -55,8 +55,8 @@ export default function OnboardingTour({ user, onComplete }) {
     {
       id: 'track_progress',
       title: 'Traccia i Progressi',
-      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate e visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati.',
-      target: '.progress-chart-section'
+      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate, visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati, e accedi al piano nutrizionale e alle feature Pro.',
+      target: '.onboarding-dashboard-overview'
     },
     {
       id: 'nutrition_start',
@@ -550,3 +550,4 @@ export default function OnboardingTour({ user, onComplete }) {
     </>
   );
 }
+
