@@ -247,51 +247,101 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
       uploadedPhotoUrls.current = { targetPhotoUrls, bodyPhotoUrls, photoHashes };
       console.log('✅ uploadedPhotoUrls.current SET:', uploadedPhotoUrls.current);
 
-      // 🔥 PREPARA FOTO PRECEDENTE PER IL CONFRONTO
+      // 🔥 ANALISI IN DUE FASI PER MASSIMA ACCURATEZZA
       const previousPhotoUrls = [];
       let daysSincePrevious = null;
+      let previousPhotoDescription = null;
       
       if (previousPhoto && previousPhoto.ai_analysis?.target_photo_urls) {
         previousPhotoUrls.push(...previousPhoto.ai_analysis.target_photo_urls);
         daysSincePrevious = Math.floor((new Date() - new Date(previousPhoto.date)) / (1000 * 60 * 60 * 24));
+        previousPhotoDescription = previousPhoto.ai_analysis?.photo_description || null;
         console.log('📸 Foto precedente trovata:', previousPhotoUrls, '- Giorni fa:', daysSincePrevious);
       }
+
+      // 🔥 FASE 1: DESCRIVI LA FOTO CORRENTE IN DETTAGLIO ESTREMO
+      const descriptionPrompt = `You are an EXPERT body composition analyst. Describe this photo of the ${selectedZone.label} area in EXTREME SCIENTIFIC DETAIL.
+
+CRITICAL: Generate ALL content in ITALIAN language.
+
+Analyze EVERY visible detail:
+- Muscle definition: Are muscle lines visible? How defined are they? (rate 1-10)
+- Fat layer: How thick is the subcutaneous fat? (estimate in mm: 0-2mm, 2-5mm, 5-10mm, 10+mm)
+- Skin texture: Is it tight, smooth, loose, dimpled?
+- Vascularity: Are veins visible? How prominent? (none, slight, moderate, high)
+- Shape/Contour: Describe the exact shape you see
+- Color: Skin tone, any redness or discoloration
+- Muscle separation: Can you see individual muscle groups?
+- Overall impression: What stands out most?
+
+User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}
+Target Area: ${selectedZone.label}
+
+Be FORENSICALLY detailed. Describe what you see like you're writing a medical report.`;
+
+      console.log('🔍 FASE 1: Descrizione foto corrente...');
+      const currentPhotoDescription = await base44.integrations.Core.InvokeLLM({
+        prompt: descriptionPrompt,
+        file_urls: targetPhotoUrls,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            muscle_definition_score: { type: "number", description: "1-10 rating" },
+            fat_layer_thickness: { type: "string", description: "Estimate in mm" },
+            skin_texture: { type: "string" },
+            vascularity_level: { type: "string", enum: ["none", "slight", "moderate", "high"] },
+            shape_description: { type: "string" },
+            detailed_description: { type: "string", description: "Full forensic description in Italian" }
+          },
+          required: ["muscle_definition_score", "fat_layer_thickness", "skin_texture", "vascularity_level", "shape_description", "detailed_description"]
+        }
+      });
+
+      console.log('✅ Descrizione foto corrente:', currentPhotoDescription);
 
       let analysisPrompt;
 
       if (zone.photoCount === 1) {
-        analysisPrompt = `You are an EXPERT fitness coach, body composition analyst, and personal trainer with 20+ years of experience analyzing body transformations. You have seen THOUSANDS of before/after photos and you can detect EVEN THE SMALLEST changes.
+        analysisPrompt = `You are an EXPERT body composition analyst with 20+ years of experience.
 
-${previousPhotoUrls.length > 0 ? `
-🔥 CRITICAL PHOTO ANALYSIS TASK 🔥
+${previousPhotoUrls.length > 0 && previousPhotoDescription ? `
+🔥 CRITICAL COMPARISON TASK 🔥
 
-I'm providing you with EXACTLY 2 PHOTOS in this order:
-1️⃣ FIRST PHOTO in the array = CURRENT PHOTO (taken TODAY) - This is the AFTER photo
-2️⃣ SECOND PHOTO in the array = PREVIOUS PHOTO (taken ${daysSincePrevious} days ago) - This is the BEFORE photo
+PREVIOUS PHOTO ANALYSIS (taken ${daysSincePrevious} days ago):
+${previousPhotoDescription.detailed_description}
+- Muscle Definition Score: ${previousPhotoDescription.muscle_definition_score}/10
+- Fat Layer: ${previousPhotoDescription.fat_layer_thickness}
+- Skin: ${previousPhotoDescription.skin_texture}
+- Vascularity: ${previousPhotoDescription.vascularity_level}
+- Shape: ${previousPhotoDescription.shape_description}
 
-YOUR TASK: Compare photo #1 (TODAY) vs photo #2 (${daysSincePrevious} DAYS AGO) and detect ALL visible changes.
+CURRENT PHOTO ANALYSIS (TODAY):
+${currentPhotoDescription.detailed_description}
+- Muscle Definition Score: ${currentPhotoDescription.muscle_definition_score}/10
+- Fat Layer: ${currentPhotoDescription.fat_layer_thickness}
+- Skin: ${currentPhotoDescription.skin_texture}
+- Vascularity: ${currentPhotoDescription.vascularity_level}
+- Shape: ${currentPhotoDescription.shape_description}
 
-WHAT TO LOOK FOR IN ${selectedZone.label.toUpperCase()}:
-🔍 Muscle Definition: Are the muscle striations more/less visible? Is there more separation between muscles?
-🔍 Fat Layer: Is there less/more subcutaneous fat? Is the skin tighter or looser?
-🔍 Vascularity: Are veins more/less visible? This indicates fat loss.
-🔍 Skin Texture: Is the skin smoother, tighter, or more loose?
-🔍 Overall Shape: Has the contour changed? More toned? More flabby?
-🔍 Muscle Size: Has muscle mass increased or decreased visibly?
-🔍 Water Retention: Is there bloating or is it more defined?
-🔍 Posture: Any changes in how the area is held/positioned?
+YOUR TASK: COMPARE these two descriptions and the photos. Find EVERY difference.
 
-EVEN IF CHANGES ARE SMALL (2-3% body composition), YOU MUST NOTICE THEM.
-The user has been working hard - if there's progress, CELEBRATE IT with details.
-If there's regression or truly no change, BE HONEST and explain possible causes.
-` : 'This is the user\'s FIRST progress photo. Provide a detailed baseline assessment.'}
+COMPARISON CHECKLIST:
+✓ Muscle Definition: ${currentPhotoDescription.muscle_definition_score} vs ${previousPhotoDescription.muscle_definition_score} - what does this mean?
+✓ Fat Layer: "${currentPhotoDescription.fat_layer_thickness}" vs "${previousPhotoDescription.fat_layer_thickness}" - is it thinner/thicker?
+✓ Skin: "${currentPhotoDescription.skin_texture}" vs "${previousPhotoDescription.skin_texture}" - tighter/looser?
+✓ Vascularity: "${currentPhotoDescription.vascularity_level}" vs "${previousPhotoDescription.vascularity_level}" - more/less veins?
+✓ Shape: Has the contour changed?
+
+Write a DETAILED comparison explaining EVERY difference you notice between the two time points.
+` : 'This is the FIRST progress photo. Use the current description as baseline.'}
 
 CRITICAL INSTRUCTIONS:
 - Generate ALL content in ITALIAN language
 - Be EXTREMELY DETAILED and BRUTALLY HONEST
-- Look at EVERY detail: muscle lines, fat deposits, skin, veins, shape
-- If you detect even 1-2% improvement in definition, SAY IT
-- Don't be generic - be SPECIFIC (e.g., "Nella zona inferiore dell'addome noto una riduzione visibile del grasso sottocutaneo di circa 2-3mm, con maggiore visibilità del muscolo retto addominale")
+- Use the numerical and descriptive data to guide your comparison
+- If muscle definition score increased, that's IMPROVEMENT - celebrate it
+- If fat layer got thinner, that's PROGRESS - explain it
+- If vascularity increased, that's fat loss - mention it
 
 User Context:
 - Gender: ${user.gender}
@@ -304,24 +354,20 @@ ${previousPhotoUrls.length > 0 ? `- Days since previous photo: ${daysSincePrevio
 User Notes: ${notes || 'Nessuna nota'}
 
 Task:
-1. ${previousPhotoUrls.length > 0 ? '🔥 COMPARE photo #1 (TODAY) with photo #2 (BEFORE) pixel by pixel' : 'Analyze this first photo in detail as a baseline'}
-2. List ALL visible characteristics in TODAY's photo
-3. ${previousPhotoUrls.length > 0 ? `Write a DETAILED "comparison_with_previous" section (MINIMUM 6-8 sentences) where you COMPARE the two photos like a forensic analyst:
-   - What specific changes do you see in muscle definition?
-   - What changes in fat layer thickness?
-   - What changes in skin texture and tightness?
-   - What changes in vascularity?
-   - What changes in overall shape/contour?
-   - If improved: celebrate with specifics (e.g., "Vedo una riduzione di X mm di grasso sottocutaneo nella zona Y")
-   - If maintained: explain why and what to adjust
-   - If regressed: explain possible causes (diet? training? water retention? stress?)
-   BE SPECIFIC. Use measurements. Use anatomical terms. Be a SCIENTIST.` : 'Establish a detailed baseline for future comparisons'}
-4. Determine if this is: improved (ANY visible progress, even small), maintained (truly no visible change), regressed (visible decline), or first_photo
-5. Provide 3-5 specific, actionable recommendations
-6. Suggest if workout or diet adjustments are needed
-7. Write an encouraging but HONEST motivational message
-
-${previousPhotoUrls.length > 0 ? '🎯 REMEMBER: Even 1-2% body composition change IS VISIBLE. Don\'t say "no change" unless you truly see ZERO difference. Be the expert eye the user needs.' : ''}`;
+1. List visible characteristics in current photo
+2. ${previousPhotoUrls.length > 0 ? `Write "comparison_with_previous" (MINIMUM 6-8 sentences):
+   - Compare muscle definition scores (${currentPhotoDescription.muscle_definition_score} TODAY vs ${previousPhotoDescription?.muscle_definition_score || 'N/A'} BEFORE)
+   - Compare fat layer thickness
+   - Compare skin texture
+   - Compare vascularity
+   - Compare overall shape
+   - State if it's IMPROVED, MAINTAINED, or REGRESSED
+   - Explain WHY you see these changes
+   - Be SPECIFIC with details from the descriptions` : 'Establish baseline'}
+3. Determine result: improved/maintained/regressed/first_photo
+4. Provide 3-5 recommendations
+5. Suggest adjustments needed
+6. Write honest motivational message`;
 
       } else {
         analysisPrompt = `You are an EXPERT fitness coach, body composition analyst, and personal trainer with 20+ years of experience analyzing body transformations. You can detect EVEN THE SMALLEST changes.
@@ -719,6 +765,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
           target_photo_urls: targetPhotoUrls,
           body_photo_urls: bodyPhotoUrls,
           photo_hashes: photoHashes,
+          photo_description: currentPhotoDescription,
           comparison_result: analysisResult.comparison_result,
           visible_characteristics: analysisResult.visible_characteristics,
           visible_differences: analysisResult.visible_differences,
