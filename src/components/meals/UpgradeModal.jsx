@@ -51,6 +51,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
         'Workout con warm-up e cool-down',
         'Schede adattive al tuo livello',
         '🔥 Analisi AI dei pasti con foto',
+        '🔥 Sostituzione ingredienti AI', // Moved here from Premium
         'Ribilanciamento automatico calorie',
         'Tracking allenamento'
       ]
@@ -68,7 +69,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       badge: '💎 PIANO ESCLUSIVO',
       features: [
         'Tutto del Piano Pro',
-        '🔥 Sostituzione ingredienti AI',
         '🔥 Modifica schede AI per imprevisti',
         '🔥 Analisi progressi con foto AI',
         '🎯 Supporto prioritario'

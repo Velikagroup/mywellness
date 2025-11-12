@@ -155,6 +155,7 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
         "Workout con warm-up e cool-down",
         "Schede adattive al tuo livello",
         "📸 Analisi AI dei pasti con foto",
+        "🔄 Sostituzione ingredienti AI",
         "⚖️ Ribilanciamento automatico calorie",
         "Tracking allenamenti"
       ],
@@ -174,7 +175,6 @@ export default function PricingPage() { // Renamed component from Pricing to Pri
       description: "Per chi vuole il massimo con AI avanzata",
       features: [
         "Tutto del Piano Pro",
-        "🔄 Sostituzione ingredienti AI",
         "💪 Modifica scheda AI per imprevisti",
         "📊 Analisi progressi con foto AI",
         "🚀 Supporto prioritario"

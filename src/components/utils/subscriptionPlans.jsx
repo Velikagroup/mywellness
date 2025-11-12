@@ -35,7 +35,7 @@ export const PLAN_FEATURES = {
     meal_photo_analysis: true,
     auto_rebalance: true,
     workout_tracking: true,
-    ingredient_substitution: false,
+    ingredient_substitution: true,
     workout_modification: false,
     progress_photo_analysis: false,
     priority_support: false
