@@ -112,8 +112,47 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
       // Upload foto
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
-      // Analisi AI dell'etichetta
-      const analysisPrompt = `You are a professional nutritionist analyzing a food product label.
+      // STEP 1: Validazione foto - deve contenere tabella nutrizionale o confezione
+      const validationPrompt = `You are an AI validator for nutritional label scanning.
+
+Analyze this image and determine if it's suitable for nutritional analysis.
+
+ACCEPT ONLY:
+✅ Photos showing a clear, readable nutritional facts table/label
+✅ Photos of packaged products with nutritional information visible
+✅ Nutritional labels that are in focus and legible
+
+REJECT:
+❌ Loose/unpackaged food (meat, vegetables, fruits without packaging)
+❌ Plates of cooked food
+❌ Blurry photos where text is not readable
+❌ Photos without any nutritional information visible
+
+Return:
+- "valid": true/false
+- "reason": brief explanation in Italian why it was accepted/rejected`;
+
+      const validation = await base44.integrations.Core.InvokeLLM({
+        prompt: validationPrompt,
+        file_urls: [file_url],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            valid: { type: "boolean" },
+            reason: { type: "string" }
+          },
+          required: ["valid", "reason"]
+        }
+      });
+
+      if (!validation.valid) {
+        alert(`❌ Foto non valida:\n\n${validation.reason}\n\n💡 Scatta una foto della tabella nutrizionale o della confezione del prodotto.`);
+        setIsScanning(false);
+        return;
+      }
+
+      // STEP 2: Analisi nutrizionale con criteri aggiustati
+      const analysisPrompt = `You are a professional nutritionist analyzing a food product label for FITNESS and BODYBUILDING purposes.
 
 Analyze this product label photo and provide:
 1. Product name (in Italian)
@@ -127,14 +166,32 @@ Analyze this product label photo and provide:
 4. Health classification: "male" (0-3), "medio" (4-6), "bene" (7-10)
 5. Brief explanation in Italian why this score
 
-Consider:
-- Added sugars (negative)
-- Saturated fats (negative)
-- Sodium content (negative)
-- Fiber (positive)
-- Protein quality (positive)
-- Processing level (negative for ultra-processed)
-- Additives and preservatives (negative)
+IMPORTANT SCORING CRITERIA (FITNESS-ORIENTED):
+✅ POSITIVE factors (heavily weighted):
+- High protein content (20g+ per 100g = excellent)
+- Quality protein sources (meat, fish, eggs, dairy, legumes)
+- Moderate healthy fats (omega-3, monounsaturated)
+- Good protein to calorie ratio
+- Presence of fiber
+
+⚠️ MODERATE factors (less penalizing):
+- Saturated fats: NOT automatically bad if from quality sources (meat, eggs, dairy)
+- Simple processing: ground meat, minimally processed = GOOD (not penalize)
+- Moderate carbs if from whole grains
+
+❌ NEGATIVE factors:
+- Added sugars (highly negative)
+- Trans fats (highly negative)
+- Excessive sodium (>1000mg per 100g)
+- Ultra-processed with many additives/preservatives
+- Very high carbs with low protein
+- Industrial processing with artificial ingredients
+
+DISTINGUISH:
+- Ground beef = minimally processed = GOOD for fitness
+- Industrial burger with additives/preservatives = bad
+- Natural saturated fats (meat, eggs) = acceptable
+- Trans fats/hydrogenated oils = very bad
 
 Return ONLY valid JSON, no markdown.`;
 
