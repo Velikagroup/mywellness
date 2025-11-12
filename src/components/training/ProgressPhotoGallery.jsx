@@ -122,7 +122,6 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
           </div>
         )}
 
-        {/* Detail View Modal */}
         {selectedPhoto && (
           <Dialog open={!!selectedPhoto} onOpenChange={() => setSelectedPhoto(null)}>
             <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
@@ -133,7 +132,6 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
               </DialogHeader>
 
               <div className="space-y-6">
-                {/* Foto Zona Target */}
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     🎯 Zona Analizzata: {selectedPhoto.ai_analysis?.target_zone || 'N/A'}
@@ -152,7 +150,6 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                   </div>
                 </div>
 
-                {/* Foto Corpo Intero (4 angolazioni) */}
                 {selectedPhoto.ai_analysis?.body_photo_urls && Object.keys(selectedPhoto.ai_analysis.body_photo_urls).length > 0 && (
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -184,7 +181,25 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
                 {selectedPhoto.ai_analysis && (
                   <div className="space-y-4">
-                    {/* Overall Assessment */}
+                    {/* 🔥 CONFRONTO PRIMA VS DOPO - SEZIONE PROMINENTE */}
+                    {selectedPhoto.ai_analysis.comparison_with_previous && selectedPhoto.ai_analysis.comparison_result !== 'first_photo' && (
+                      <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl p-5 border-2 border-indigo-300 shadow-lg">
+                        <div className="flex items-center gap-2 mb-3">
+                          <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                            <TrendingUp className="w-5 h-5 text-white" />
+                          </div>
+                          <h4 className="font-bold text-indigo-900 text-base">
+                            📊 Confronto Prima vs Dopo {selectedPhoto.ai_analysis.days_since_previous && `(${selectedPhoto.ai_analysis.days_since_previous} giorni)`}
+                          </h4>
+                        </div>
+                        <div className="bg-white/60 p-4 rounded-lg">
+                          <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
+                            {selectedPhoto.ai_analysis.comparison_with_previous}
+                          </p>
+                        </div>
+                      </div>
+                    )}
+
                     <div className={`rounded-xl p-4 border-2 ${getComparisonColor(selectedPhoto.ai_analysis.comparison_result)}`}>
                       <div className="flex items-center gap-2 mb-2">
                         {getComparisonIcon(selectedPhoto.ai_analysis.comparison_result)}
@@ -195,56 +210,45 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                       </p>
                     </div>
 
-                    {/* Visible Characteristics */}
                     {selectedPhoto.ai_analysis.visible_characteristics?.length > 0 && (
                       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                        <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
-                          Caratteristiche Osservate
-                        </h4>
+                        <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">Caratteristiche Osservate</h4>
                         <ul className="space-y-1">
                           {selectedPhoto.ai_analysis.visible_characteristics.map((char, idx) => (
                             <li key={idx} className="text-sm text-blue-800 flex items-start gap-2">
-                              <span className="text-blue-600">✓</span>
-                              {char}
+                              <span className="text-blue-600">✓</span>{char}
                             </li>
                           ))}
                         </ul>
                       </div>
                     )}
 
-                    {/* Visible Differences (for dual zones) */}
                     {selectedPhoto.ai_analysis.visible_differences?.length > 0 && (
                       <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                        <h4 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">
-                          Differenze Osservate (Sx vs Dx)
-                        </h4>
+                        <h4 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">Differenze Osservate (Sx vs Dx)</h4>
                         <ul className="space-y-1">
                           {selectedPhoto.ai_analysis.visible_differences.map((diff, idx) => (
                             <li key={idx} className="text-sm text-yellow-800 flex items-start gap-2">
-                              <span className="text-yellow-600">↔️</span>
-                              {diff}
+                              <span className="text-yellow-600">↔️</span>{diff}
                             </li>
                           ))}
                         </ul>
                       </div>
                     )}
 
-                    {/* Recommendations */}
                     {selectedPhoto.ai_analysis.recommendations?.length > 0 && (
                       <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
                         <h4 className="font-semibold text-purple-900 mb-2">💡 Raccomandazioni AI</h4>
                         <ul className="space-y-1">
                           {selectedPhoto.ai_analysis.recommendations.map((rec, idx) => (
                             <li key={idx} className="text-sm text-purple-800 flex items-start gap-2">
-                              <span className="text-purple-600">→</span>
-                              {rec}
+                              <span className="text-purple-600">→</span>{rec}
                             </li>
                           ))}
                         </ul>
                       </div>
                     )}
 
-                    {/* Applied Changes */}
                     {selectedPhoto.ai_analysis.applied_changes && (
                       <div className="bg-green-50 rounded-lg p-4 border border-green-200">
                         <h4 className="font-semibold text-green-900 mb-2">✅ Modifiche Applicate ai Piani</h4>
@@ -271,7 +275,6 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                       </div>
                     )}
 
-                    {/* Motivational Message */}
                     {selectedPhoto.ai_analysis.motivational_message && (
                       <div className="bg-gradient-to-r from-purple-50 to-pink-50 rounded-lg p-4 border border-purple-200">
                         <p className="text-purple-900 font-medium text-center italic">

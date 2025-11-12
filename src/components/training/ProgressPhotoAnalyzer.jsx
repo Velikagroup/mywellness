@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -52,7 +51,6 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
         if (sortedPhotos.length > 0) {
           setPreviousPhoto(sortedPhotos[0]);
           
-          // Trova l'ULTIMA foto con modifiche applicate
           const lastPhotoWithAdjustments = sortedPhotos.find(p => 
             p.ai_analysis?.plans_adjusted === true
           );
@@ -242,25 +240,43 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
           console.warn(`⚠️ ${photoType} NOT FOUND in bodyFileRefs!`);
         }
       }
+
       console.log('✅ ALL BODY PHOTOS UPLOADED:', bodyPhotoUrls);
       console.log('📦 Photo hashes:', photoHashes);
 
       uploadedPhotoUrls.current = { targetPhotoUrls, bodyPhotoUrls, photoHashes };
       console.log('✅ uploadedPhotoUrls.current SET:', uploadedPhotoUrls.current);
 
+      // 🔥 PREPARA FOTO PRECEDENTE PER IL CONFRONTO
+      const previousPhotoUrls = [];
+      let daysSincePrevious = null;
+      
+      if (previousPhoto && previousPhoto.ai_analysis?.target_photo_urls) {
+        previousPhotoUrls.push(...previousPhoto.ai_analysis.target_photo_urls);
+        daysSincePrevious = Math.floor((new Date() - new Date(previousPhoto.date)) / (1000 * 60 * 60 * 24));
+        console.log('📸 Foto precedente trovata:', previousPhotoUrls, '- Giorni fa:', daysSincePrevious);
+      }
 
       let analysisPrompt;
 
       if (zone.photoCount === 1) {
-        analysisPrompt = `You are an expert fitness coach and body composition analyst. Analyze this close-up photo of the user's ${selectedZone.label} area.
+        analysisPrompt = `You are an expert fitness coach, body composition analyst, and personal trainer with 20+ years of experience. You are brutally honest but constructive.
+
+${previousPhotoUrls.length > 0 ? `
+CRITICAL: I'm providing you with TWO sets of photos:
+1. PREVIOUS PHOTO (taken ${daysSincePrevious} days ago) - This is the user's BEFORE photo
+2. CURRENT PHOTO (taken today) - This is the user's AFTER photo
+
+You MUST compare these two photos and give a DETAILED, HONEST comparison.
+` : 'This is the user\'s FIRST progress photo. Provide a detailed baseline assessment.'}
 
 CRITICAL INSTRUCTIONS:
 - Generate ALL content in ITALIAN language
-- Be EXTREMELY DETAILED and scientific in your analysis
-- Focus ONLY on the specific body area shown: ${selectedZone.label}
-- Comment only on what you can CLEARLY see in the photo
-- DO NOT estimate body fat percentage
-- DO NOT make assumptions about body parts not visible
+- Be EXTREMELY DETAILED, SCIENTIFIC, and BRUTALLY HONEST
+- Focus on the ${selectedZone.label} area
+- If you see improvements, CELEBRATE them with specific observations
+- If you see regression or no change, BE HONEST and explain WHY with specific observations
+- Provide ACTIONABLE feedback based on what you observe
 
 User Context:
 - Gender: ${user.gender}
@@ -268,32 +284,38 @@ User Context:
 - Target Weight: ${user.target_weight}kg
 - Fitness Goal: ${user.fitness_goal}
 - Selected Target Area: ${selectedZone.label}
+${previousPhotoUrls.length > 0 ? `- Days since previous photo: ${daysSincePrevious}` : ''}
 
 User Notes: ${notes || 'Nessuna nota'}
 
-IMPORTANT REMINDERS:
-⚠️ Mantenere angolo fotografico e illuminazione simili tra le foto per confronti accurati
-⚠️ Questa foto è privata e vista solo dalla tecnologia AI
-
 Task:
-1. Analyze the ${selectedZone.label} area in detail
-2. List visible characteristics (muscle definition, skin texture, symmetry, etc.)
-3. Provide 3-4 specific, actionable recommendations to improve this area
-4. Suggest if workout or diet adjustments are needed ONLY if you see clear visual signs that require changes
-5. Write an encouraging, motivational message in Italian
+1. ${previousPhotoUrls.length > 0 ? 'COMPARE the PREVIOUS photo with the CURRENT photo in extreme detail' : 'Analyze this first photo in detail as a baseline'}
+2. List visible characteristics in the current photo
+3. ${previousPhotoUrls.length > 0 ? 'Write a detailed "comparison_with_previous" section where you HONESTLY explain what has changed, improved, or regressed. Be specific: mention muscle definition, fat reduction/increase, skin texture, symmetry, posture. If nothing changed, say it. If it got worse, explain why it might have happened.' : 'Establish a baseline for future comparisons'}
+4. Determine if this is: improved (visible progress), maintained (no visible change), regressed (visible decline), or first_photo
+5. Provide 3-5 specific, actionable recommendations
+6. Suggest if workout or diet adjustments are needed based on visual evidence
+7. Write an encouraging but honest motivational message
 
-Remember: Focus ONLY on the specific area shown in the photo.`;
+${previousPhotoUrls.length > 0 ? 'BE BRUTALLY HONEST in your comparison. Users need REAL feedback to improve, not false praise.' : ''}`;
 
       } else {
-        analysisPrompt = `You are an expert fitness coach and body composition analyst. Compare these two photos of the user's ${selectedZone.label} (LEFT and RIGHT).
+        analysisPrompt = `You are an expert fitness coach, body composition analyst, and personal trainer with 20+ years of experience. You are brutally honest but constructive.
+
+${previousPhotoUrls.length > 0 ? `
+CRITICAL: I'm providing you with TWO sets of photos (LEFT and RIGHT for each):
+1. PREVIOUS PHOTOS (taken ${daysSincePrevious} days ago) - User's BEFORE photos
+2. CURRENT PHOTOS (taken today) - User's AFTER photos
+
+You MUST compare these photos and give a DETAILED, HONEST comparison.
+` : 'This is the user\'s FIRST progress photo. Compare LEFT vs RIGHT and provide baseline.'}
 
 CRITICAL INSTRUCTIONS:
 - Generate ALL content in ITALIAN language
-- Compare the two sides objectively WITHOUT giving positive or negative judgments
-- Simply NOTIFY the visible differences between left and right
-- Be EXTREMELY DETAILED and scientific
-- DO NOT estimate body fat percentage
-- DO NOT make assumptions about body parts not visible
+- Compare the two sides objectively but ALSO compare with previous photos if available
+- Be EXTREMELY DETAILED and BRUTALLY HONEST
+- If you see improvements, CELEBRATE them with specifics
+- If you see regression or no change, BE HONEST and explain WHY
 
 User Context:
 - Gender: ${user.gender}
@@ -301,25 +323,28 @@ User Context:
 - Target Weight: ${user.target_weight}kg
 - Fitness Goal: ${user.fitness_goal}
 - Selected Target Area: ${selectedZone.label}
+${previousPhotoUrls.length > 0 ? `- Days since previous photo: ${daysSincePrevious}` : ''}
 
 User Notes: ${notes || 'Nessuna nota'}
 
-IMPORTANT REMINDERS:
-⚠️ Mantenere angolo fotografico e illuminazione simili tra le foto per confronti accurati
-⚠️ Queste foto sono private e vista solo dalla tecnologia AI
-
 Task:
-1. Compare the two sides (left vs right) in detail
-2. List observable differences WITHOUT judging them
-3. Help the user notice asymmetries
-4. Provide 3-4 specific recommendations to balance or improve both sides
-5. Suggest if workout adjustments are needed for symmetry ONLY if you see clear asymmetries
-6. Write an encouraging message in Italian`;
+1. Compare left vs right side in detail
+2. List observable differences between sides
+3. ${previousPhotoUrls.length > 0 ? 'Write a detailed "comparison_with_previous" section comparing BOTH sides with the previous photos. Be honest about progress or regression.' : 'Establish a baseline for future comparisons'}
+4. Determine overall progress: improved, maintained, regressed, or first_photo
+5. Provide 3-5 specific recommendations
+6. Suggest if workout adjustments are needed
+7. Write an honest motivational message
+
+${previousPhotoUrls.length > 0 ? 'BE BRUTALLY HONEST. Real feedback = real results.' : ''}`;
       }
+
+      const allPhotoUrls = [...targetPhotoUrls, ...previousPhotoUrls];
+      console.log('📸 Sending to AI:', allPhotoUrls.length, 'photos');
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
-        file_urls: targetPhotoUrls,
+        file_urls: allPhotoUrls,
         response_json_schema: {
           type: "object",
           properties: {
@@ -330,43 +355,47 @@ Task:
             visible_characteristics: {
               type: "array",
               items: { type: "string" },
-              description: "Detailed observations about the target area(s)"
+              description: "Detailed observations about current photo"
             },
             visible_differences: {
               type: "array",
               items: { type: "string" },
               description: "For dual zones: observable differences between left and right"
             },
+            comparison_with_previous: {
+              type: "string",
+              description: "DETAILED, HONEST comparison with previous photo. Explain what changed (better or worse) and WHY. Be specific about muscle definition, fat, skin texture. If nothing changed, say it. If regressed, explain possible causes. Minimum 4-5 sentences. IN ITALIAN."
+            },
             overall_assessment: { 
               type: "string",
-              description: "Detailed assessment of the target area(s)"
+              description: "Detailed assessment of current state"
             },
             recommendations: { 
               type: "array", 
               items: { type: "string" },
-              description: "3-4 specific, actionable recommendations in Italian"
+              description: "3-5 specific, actionable recommendations in Italian"
             },
             workout_adjustment_needed: { type: "boolean" },
             diet_adjustment_needed: { type: "boolean" },
-            motivational_message: { type: "string" }
+            motivational_message: { type: "string", description: "Honest and encouraging message in Italian" }
           },
-          required: ["comparison_result", "visible_characteristics", "visible_differences", "overall_assessment", "recommendations", "workout_adjustment_needed", "diet_adjustment_needed", "motivational_message"]
+          required: ["comparison_result", "visible_characteristics", "visible_differences", "comparison_with_previous", "overall_assessment", "recommendations", "workout_adjustment_needed", "diet_adjustment_needed", "motivational_message"]
         }
       });
 
       setAnalysisResult({
         ...analysis,
-        target_zone: selectedZone.id
+        target_zone: selectedZone.id,
+        days_since_previous: daysSincePrevious
       });
 
-      // ✅ GENERA PROPOSTE SOLO SE PUÒ APPLICARE MODIFICHE (7+ giorni dall'ultima modifica)
       if (canApplyChanges && (analysis.workout_adjustment_needed || analysis.diet_adjustment_needed)) {
         console.log('✅ Generazione proposte modifiche (può applicare modifiche)');
         await generateProposedChanges(analysis);
       } else if (!canApplyChanges && daysSinceLastAdjustment !== null) {
         console.log('🔒 NON genero proposte: ultime modifiche applicate', daysSinceLastAdjustment, 'giorni fa (minimo 7 giorni richiesti)');
       } else {
-        console.log('ℹ️ AI non ha suggerito modifiche o non è il momento di applicarle.');
+        console.log('ℹ️ AI non ha suggerito modifiche');
       }
 
     } catch (error) {
@@ -382,7 +411,6 @@ Task:
     const proposals = { diet: [], workout: [] };
     
     try {
-      // PROPOSTA MODIFICA DIETA - Solo se necessario
       if (analysis.diet_adjustment_needed) {
         const currentCalories = user.daily_calories;
         const currentWeight = user.current_weight;
@@ -431,10 +459,8 @@ Task:
         }
       }
 
-      // PROPOSTA MODIFICA ALLENAMENTO - Solo se necessario
       if (analysis.workout_adjustment_needed) {
         const workoutPlans = await base44.entities.WorkoutPlan.filter({ user_id: user.id });
-        
         const activeDays = workoutPlans.filter(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
         
         if (activeDays.length > 0) {
@@ -448,7 +474,6 @@ Task:
           };
           
           const relevantMuscles = targetMuscleGroups[selectedZone.id] || [];
-          
           let dayToModify = null;
           let maxRelevantExercises = 0;
           let exerciseToReplace = null;
@@ -469,7 +494,6 @@ Task:
           
           if (dayToModify && exerciseToReplace) {
             const allExercises = await base44.entities.Exercise.list();
-            
             const availableExercises = allExercises.filter(ex => 
               relevantMuscles.some(muscle => 
                 ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
@@ -531,11 +555,6 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                             },
                             reason: `Sostituito "${exerciseToReplace.name}" con "${fallbackReplacement.name}" per variare lo stimolo.`
                         });
-                    } else {
-                        proposals.workout.push({
-                            type: 'no_change',
-                            reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun esercizio alternativo idoneo trovato).`
-                        });
                     }
                 } else {
                     proposals.workout.push({
@@ -547,37 +566,15 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         reason: replacement.explanation
                     });
                 }
-              } else {
-                  console.warn("LLM returned incomplete replacement data:", replacement);
-                  proposals.workout.push({
-                      type: 'no_change',
-                      reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (LLM response incompleta).`
-                  });
               }
-            } else {
-                proposals.workout.push({
-                    type: 'no_change',
-                    reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun esercizio alternativo idoneo trovato).`
-                });
             }
-          } else {
-              proposals.workout.push({
-                  type: 'no_change',
-                  reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun giorno o esercizio rilevante trovato).`
-              });
           }
-        } else {
-            proposals.workout.push({
-                type: 'no_change',
-                reason: `Nessuna modifica all'allenamento per la zona ${selectedZone.label} suggerita (nessun piano di allenamento attivo trovato).`
-            });
         }
       }
 
       setProposedChanges(proposals);
     } catch (error) {
       console.error('Error generating proposals:', error);
-      alert('Errore nella generazione delle proposte di modifica. Riprova.');
     }
     setIsGeneratingProposals(false);
   };
@@ -589,13 +586,10 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
     const changes = { diet: [], workout: [] };
     
     try {
-      // 1. APPLICA MODIFICHE DIETA
       for (const proposal of proposedChanges.diet) {
         if (proposal.type === 'calorie_adjustment' && proposal.adjustment !== 0) {
-          // Aggiorna target calorico utente
           await base44.auth.updateMe({ daily_calories: proposal.proposed });
           
-          // 🔥 SCALA PROPORZIONALMENTE TUTTI I PASTI
           const scalingFactor = proposal.proposed / proposal.current;
           console.log('📊 Scaling factor for meals:', scalingFactor);
           
@@ -624,7 +618,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
               total_protein: Math.round(newTotals.protein * 10) / 10,
               total_carbs: Math.round(newTotals.carbs * 10) / 10,
               total_fat: Math.round(newTotals.fat * 10) / 10,
-              image_url: null // Reset immagine perché le porzioni sono cambiate
+              image_url: null
             });
           }
           
@@ -634,7 +628,6 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
         }
       }
       
-      // 2. APPLICA MODIFICHE WORKOUT
       for (const proposal of proposedChanges.workout) {
         if (proposal.type === 'exercise_replacement') {
           const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
@@ -692,6 +685,8 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
           comparison_result: analysisResult.comparison_result,
           visible_characteristics: analysisResult.visible_characteristics,
           visible_differences: analysisResult.visible_differences,
+          comparison_with_previous: analysisResult.comparison_with_previous,
+          days_since_previous: analysisResult.days_since_previous,
           overall_assessment: analysisResult.overall_assessment,
           recommendations: analysisResult.recommendations,
           workout_adjustment_needed: analysisResult.workout_adjustment_needed,
@@ -957,7 +952,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
               <motion.div key="analyzing" initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="text-center py-8">
                 <Loader2 className="w-12 h-12 animate-spin text-purple-600 mx-auto mb-4" />
                 <p className="text-gray-900 font-semibold text-base mb-2">Analisi AI in corso...</p>
-                <p className="text-xs text-gray-600">Sto analizzando la zona {selectedZone?.label}</p>
+                <p className="text-xs text-gray-600">Confronto con foto precedente...</p>
               </motion.div>
             )}
 
@@ -977,14 +972,33 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   );
                 })()}
 
+                {/* 🔥 CONFRONTO CON FOTO PRECEDENTE - SEZIONE PRINCIPALE */}
+                {analysisResult.comparison_with_previous && analysisResult.comparison_result !== 'first_photo' && (
+                  <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-5 rounded-xl border-2 border-indigo-300 shadow-lg">
+                    <div className="flex items-center gap-2 mb-3">
+                      <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-white" />
+                      </div>
+                      <h4 className="font-bold text-indigo-900 text-base">
+                        📊 Confronto Prima vs Dopo {analysisResult.days_since_previous && `(${analysisResult.days_since_previous} giorni)`}
+                      </h4>
+                    </div>
+                    <div className="bg-white/60 p-4 rounded-lg">
+                      <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
+                        {analysisResult.comparison_with_previous}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Valutazione AI</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Valutazione AI Stato Attuale</h4>
                   <p className="text-sm text-gray-700 leading-relaxed">{analysisResult.overall_assessment}</p>
                 </div>
 
                 {analysisResult.visible_characteristics?.length > 0 && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-blue-900 mb-2 text-sm">Caratteristiche</h4>
+                    <h4 className="font-semibold text-blue-900 mb-2 text-sm">Caratteristiche Visibili Oggi</h4>
                     <ul className="space-y-1">
                       {analysisResult.visible_characteristics.map((char, idx) => (
                         <li key={idx} className="text-xs text-blue-800 flex gap-2"><span>•</span><span>{char}</span></li>
@@ -1006,7 +1020,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                 {analysisResult.recommendations?.length > 0 && (
                   <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                    <h4 className="font-semibold text-purple-900 mb-2 text-sm">Raccomandazioni</h4>
+                    <h4 className="font-semibold text-purple-900 mb-2 text-sm">💡 Raccomandazioni per Migliorare</h4>
                     <ul className="space-y-1">
                       {analysisResult.recommendations.map((rec, idx) => (
                         <li key={idx} className="text-xs text-purple-800 flex gap-2"><span>→</span><span>{rec}</span></li>
