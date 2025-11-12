@@ -1107,94 +1107,19 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                 <p className="text-sm text-gray-500">Conferma o modifica le tue preferenze. L'AI creerà un piano completo.</p>
               </CardHeader>
               <CardContent>
-                <div className="space-y-6">
-                  <div className="p-4 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg border-2 border-[var(--brand-primary)]/30">
-                    <Label className="text-sm font-semibold text-gray-800 mb-3 block">🍽️ Quanti pasti al giorno?</Label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-2">
-                      {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() => setMealsPerDay(num)}
-                          className={`p-3 rounded-xl border-2 transition-all text-center font-bold ${
-                            mealsPerDay === num
-                              ? 'border-[var(--brand-primary)] bg-white shadow-lg scale-105'
-                              : 'border-gray-200 hover:border-[var(--brand-primary)]/50 hover:bg-white'
-                          }`}
-                        >
-                          <div className="text-2xl">{num}</div>
-                        </button>
-                      ))}
-                    </div>
-                    <p className="text-xs text-gray-600 mt-3 text-center">
-                      💡 Target giornaliero: <strong>{nutritionData?.daily_calories} kcal</strong> su {mealsPerDay} {mealsPerDay === 1 ? 'pasto' : 'pasti'}
-                    </p>
-                  </div>
+...
+              </CardContent>
+            </Card>
+          )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/70 rounded-lg border border-gray-200/50">
-                    <div>
-                      <Label htmlFor="diet-type-select" className="font-semibold text-gray-800">Tipo Dieta</Label>
-                      <Select value={generationPrefs?.diet_type || ''} onValueChange={(value) => handlePrefsChange('diet_type', value)}>
-                        <SelectTrigger id="diet-type-select">
-                          <SelectValue placeholder="Seleziona dieta..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {dietTypes.map(diet => (
-                            <SelectItem key={diet.id} value={diet.id}>{diet.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-center space-x-4 rounded-md border p-4 h-full">
-                      <Label htmlFor="intermittent-fasting-switch" className="font-semibold text-gray-800">Digiuno Intermittente</Label>
-                      <Switch
-                        id="intermittent-fasting-switch"
-                        checked={generationPrefs?.intermittent_fasting || false}
-                        onCheckedChange={(value) => handlePrefsChange('intermittent_fasting', value)}
-                        className="data-[state=checked]:bg-[var(--brand-primary)]"
-                      />
-                    </div>
-                  </div>
-
-                  {generationPrefs?.intermittent_fasting && (
-                    <div className="space-y-4 p-4 bg-[var(--brand-primary-light)] rounded-lg border border-[var(--brand-primary)]/30">
-                      <h4 className="font-semibold text-[var(--brand-primary-dark-text)]">⏰ Configurazione Digiuno Intermittente</h4>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-700 mb-2 block">Quale pasto vuoi saltare?</Label>
-                        <div className="grid grid-cols-3 gap-3">
-                          {[
-                            { id: 'breakfast', label: 'Colazione', icon: '🌅' },
-                            { id: 'lunch', label: 'Pranzo', icon: '☀️' },
-                            { id: 'dinner', label: 'Cena', icon: '🌙' }
-                          ].map(meal => (
-                            <button
-                              key={meal.id}
-                              onClick={() => handlePrefsChange('if_skip_meal', meal.id)}
-                              className={`p-3 rounded-lg border-2 transition-all text-center ${
-                                generationPrefs.if_skip_meal === meal.id
-                                  ? 'border-[var(--brand-primary)] bg-white shadow-sm'
-                                  : 'border-gray-200 hover:border-[var(--brand-primary)]/50'
-                              }`}
-                            >
-                              <div className="text-2xl mb-1">{meal.icon}</div>
-                              <div className="text-xs font-medium">{meal.label}</div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-3 pt-4">
-                    <Button
-                      onClick={startGenerationFlow}
-                      className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
-                      disabled={generationPrefs?.intermittent_fasting && (!generationPrefs?.if_skip_meal || !generationPrefs?.if_meal_structure)}
-                    >
-                      Continua
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowGenerator(false)}>Annulla</Button>
-                  </div>
-                </div>
+          {showCheatMealStep && (
+            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+              <CardContent className="p-6">
+                <CheatMealStep
+                  weightLossSpeed={user?.weight_loss_speed || 'moderate'}
+                  onComplete={handleCheatMealComplete}
+                  onSkip={handleCheatMealSkip}
+                />
               </CardContent>
             </Card>
           )}
@@ -1345,18 +1270,6 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                 </CardContent>
               </Card>
             )
-          )}
-
-          {showCheatMealStep && (
-            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
-              <CardContent className="p-6">
-                <CheatMealStep
-                  weightLossSpeed={user?.weight_loss_speed || 'moderate'}
-                  onComplete={handleCheatMealComplete}
-                  onSkip={handleCheatMealSkip}
-                />
-              </CardContent>
-            </Card>
           )}
         </div>
       </div>
