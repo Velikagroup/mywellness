@@ -1057,6 +1057,29 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         📊 Confronto Prima vs Dopo {analysisResult.days_since_previous && `(${analysisResult.days_since_previous} giorni)`}
                       </h4>
                     </div>
+                    
+                    {/* Foto affiancate PRIMA vs DOPO */}
+                    {previousPhoto?.ai_analysis?.target_photo_urls && uploadedPhotoUrls.current?.targetPhotoUrls && (
+                      <div className="grid grid-cols-2 gap-3 mb-4">
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-red-700 text-center">🔴 PRIMA ({analysisResult.days_since_previous} giorni fa)</p>
+                          <img 
+                            src={previousPhoto.ai_analysis.target_photo_urls[0]} 
+                            alt="Foto precedente" 
+                            className="w-full h-48 object-cover rounded-lg border-2 border-red-300"
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <p className="text-xs font-bold text-green-700 text-center">🟢 DOPO (OGGI)</p>
+                          <img 
+                            src={uploadedPhotoUrls.current.targetPhotoUrls[0]} 
+                            alt="Foto attuale" 
+                            className="w-full h-48 object-cover rounded-lg border-2 border-green-300"
+                          />
+                        </div>
+                      </div>
+                    )}
+
                     <div className="bg-white/60 p-4 rounded-lg">
                       <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-line">
                         {analysisResult.comparison_with_previous}
