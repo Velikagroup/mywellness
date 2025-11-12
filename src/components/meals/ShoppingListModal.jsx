@@ -397,11 +397,9 @@ Return ONLY valid JSON, no markdown.`;
             </button>
           </div>
 
-          <div className="overflow-y-auto px-6 py-4" style={{ maxHeight: 'calc(85vh - 64px)' }}>
-
+          <div className="overflow-y-auto px-6 py-4" style={{ maxHeight: 'calc(85vh - 64px)', WebkitOverflowScrolling: 'touch' }}>
             {!scanResult ? (
               <div className="space-y-6">
-              <>
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <Upload className="w-12 h-12 text-gray-400 mx-auto mb-4" />
                   <p className="text-gray-600 mb-4">Carica una foto dell'etichetta nutrizionale</p>
@@ -468,8 +466,8 @@ Return ONLY valid JSON, no markdown.`;
                 </p>
               </div>
             ) : (
-              <div className="space-y-4">
-                  <img
+              <div className="space-y-4 pb-32">
+                <img
                     src={scanResult.photo_url}
                     alt="Product"
                     className="w-full h-48 object-cover rounded-lg border"
@@ -531,13 +529,18 @@ Return ONLY valid JSON, no markdown.`;
                     💡 Salvando questo prodotto, i valori nutrizionali delle tue ricette saranno aggiornati automaticamente!
                   </p>
                 </div>
+              </div>
+            )}
 
-                <div className="flex flex-col gap-2">
+            {/* Bottoni fissi in basso */}
+            {scanResult && (
+              <div className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-lg p-4 z-20">
+                <div className="max-w-xl mx-auto flex flex-col gap-2">
                   <Button
                     onClick={handleSaveScannedProduct}
-                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] py-6 text-base font-semibold"
                   >
-                    <Check className="w-4 h-4 mr-2" />
+                    <Check className="w-5 h-5 mr-2" />
                     Salva e Aggiorna Ricette
                   </Button>
                   <div className="grid grid-cols-2 gap-2">
@@ -557,11 +560,12 @@ Return ONLY valid JSON, no markdown.`;
                         setSelectedIngredient(null);
                       }}
                     >
+                      <X className="w-4 h-4 mr-1" />
                       Chiudi
                     </Button>
                   </div>
                 </div>
-              </>
+              </div>
             )}
           </div>
         </DialogContent>
