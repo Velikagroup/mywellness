@@ -260,23 +260,38 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
       let analysisPrompt;
 
       if (zone.photoCount === 1) {
-        analysisPrompt = `You are an expert fitness coach, body composition analyst, and personal trainer with 20+ years of experience. You are brutally honest but constructive.
+        analysisPrompt = `You are an EXPERT fitness coach, body composition analyst, and personal trainer with 20+ years of experience analyzing body transformations. You have seen THOUSANDS of before/after photos and you can detect EVEN THE SMALLEST changes.
 
 ${previousPhotoUrls.length > 0 ? `
-CRITICAL: I'm providing you with TWO sets of photos:
-1. PREVIOUS PHOTO (taken ${daysSincePrevious} days ago) - This is the user's BEFORE photo
-2. CURRENT PHOTO (taken today) - This is the user's AFTER photo
+🔥 CRITICAL PHOTO ANALYSIS TASK 🔥
 
-You MUST compare these two photos and give a DETAILED, HONEST comparison.
+I'm providing you with EXACTLY 2 PHOTOS in this order:
+1️⃣ FIRST PHOTO in the array = CURRENT PHOTO (taken TODAY) - This is the AFTER photo
+2️⃣ SECOND PHOTO in the array = PREVIOUS PHOTO (taken ${daysSincePrevious} days ago) - This is the BEFORE photo
+
+YOUR TASK: Compare photo #1 (TODAY) vs photo #2 (${daysSincePrevious} DAYS AGO) and detect ALL visible changes.
+
+WHAT TO LOOK FOR IN ${selectedZone.label.toUpperCase()}:
+🔍 Muscle Definition: Are the muscle striations more/less visible? Is there more separation between muscles?
+🔍 Fat Layer: Is there less/more subcutaneous fat? Is the skin tighter or looser?
+🔍 Vascularity: Are veins more/less visible? This indicates fat loss.
+🔍 Skin Texture: Is the skin smoother, tighter, or more loose?
+🔍 Overall Shape: Has the contour changed? More toned? More flabby?
+🔍 Muscle Size: Has muscle mass increased or decreased visibly?
+🔍 Water Retention: Is there bloating or is it more defined?
+🔍 Posture: Any changes in how the area is held/positioned?
+
+EVEN IF CHANGES ARE SMALL (2-3% body composition), YOU MUST NOTICE THEM.
+The user has been working hard - if there's progress, CELEBRATE IT with details.
+If there's regression or truly no change, BE HONEST and explain possible causes.
 ` : 'This is the user\'s FIRST progress photo. Provide a detailed baseline assessment.'}
 
 CRITICAL INSTRUCTIONS:
 - Generate ALL content in ITALIAN language
-- Be EXTREMELY DETAILED, SCIENTIFIC, and BRUTALLY HONEST
-- Focus on the ${selectedZone.label} area
-- If you see improvements, CELEBRATE them with specific observations
-- If you see regression or no change, BE HONEST and explain WHY with specific observations
-- Provide ACTIONABLE feedback based on what you observe
+- Be EXTREMELY DETAILED and BRUTALLY HONEST
+- Look at EVERY detail: muscle lines, fat deposits, skin, veins, shape
+- If you detect even 1-2% improvement in definition, SAY IT
+- Don't be generic - be SPECIFIC (e.g., "Nella zona inferiore dell'addome noto una riduzione visibile del grasso sottocutaneo di circa 2-3mm, con maggiore visibilità del muscolo retto addominale")
 
 User Context:
 - Gender: ${user.gender}
@@ -289,33 +304,54 @@ ${previousPhotoUrls.length > 0 ? `- Days since previous photo: ${daysSincePrevio
 User Notes: ${notes || 'Nessuna nota'}
 
 Task:
-1. ${previousPhotoUrls.length > 0 ? 'COMPARE the PREVIOUS photo with the CURRENT photo in extreme detail' : 'Analyze this first photo in detail as a baseline'}
-2. List visible characteristics in the current photo
-3. ${previousPhotoUrls.length > 0 ? 'Write a detailed "comparison_with_previous" section where you HONESTLY explain what has changed, improved, or regressed. Be specific: mention muscle definition, fat reduction/increase, skin texture, symmetry, posture. If nothing changed, say it. If it got worse, explain why it might have happened.' : 'Establish a baseline for future comparisons'}
-4. Determine if this is: improved (visible progress), maintained (no visible change), regressed (visible decline), or first_photo
+1. ${previousPhotoUrls.length > 0 ? '🔥 COMPARE photo #1 (TODAY) with photo #2 (BEFORE) pixel by pixel' : 'Analyze this first photo in detail as a baseline'}
+2. List ALL visible characteristics in TODAY's photo
+3. ${previousPhotoUrls.length > 0 ? `Write a DETAILED "comparison_with_previous" section (MINIMUM 6-8 sentences) where you COMPARE the two photos like a forensic analyst:
+   - What specific changes do you see in muscle definition?
+   - What changes in fat layer thickness?
+   - What changes in skin texture and tightness?
+   - What changes in vascularity?
+   - What changes in overall shape/contour?
+   - If improved: celebrate with specifics (e.g., "Vedo una riduzione di X mm di grasso sottocutaneo nella zona Y")
+   - If maintained: explain why and what to adjust
+   - If regressed: explain possible causes (diet? training? water retention? stress?)
+   BE SPECIFIC. Use measurements. Use anatomical terms. Be a SCIENTIST.` : 'Establish a detailed baseline for future comparisons'}
+4. Determine if this is: improved (ANY visible progress, even small), maintained (truly no visible change), regressed (visible decline), or first_photo
 5. Provide 3-5 specific, actionable recommendations
-6. Suggest if workout or diet adjustments are needed based on visual evidence
-7. Write an encouraging but honest motivational message
+6. Suggest if workout or diet adjustments are needed
+7. Write an encouraging but HONEST motivational message
 
-${previousPhotoUrls.length > 0 ? 'BE BRUTALLY HONEST in your comparison. Users need REAL feedback to improve, not false praise.' : ''}`;
+${previousPhotoUrls.length > 0 ? '🎯 REMEMBER: Even 1-2% body composition change IS VISIBLE. Don\'t say "no change" unless you truly see ZERO difference. Be the expert eye the user needs.' : ''}`;
 
       } else {
-        analysisPrompt = `You are an expert fitness coach, body composition analyst, and personal trainer with 20+ years of experience. You are brutally honest but constructive.
+        analysisPrompt = `You are an EXPERT fitness coach, body composition analyst, and personal trainer with 20+ years of experience analyzing body transformations. You can detect EVEN THE SMALLEST changes.
 
 ${previousPhotoUrls.length > 0 ? `
-CRITICAL: I'm providing you with TWO sets of photos (LEFT and RIGHT for each):
-1. PREVIOUS PHOTOS (taken ${daysSincePrevious} days ago) - User's BEFORE photos
-2. CURRENT PHOTOS (taken today) - User's AFTER photos
+🔥 CRITICAL PHOTO ANALYSIS TASK 🔥
 
-You MUST compare these photos and give a DETAILED, HONEST comparison.
+I'm providing you with 4 PHOTOS in this order:
+Photos #1 and #2 = CURRENT PHOTOS (LEFT and RIGHT, taken TODAY) - AFTER photos
+Photos #3 and #4 = PREVIOUS PHOTOS (LEFT and RIGHT, taken ${daysSincePrevious} days ago) - BEFORE photos
+
+YOUR TASK: Compare TODAY's photos vs ${daysSincePrevious} DAYS AGO photos and detect ALL visible changes.
+
+WHAT TO LOOK FOR IN ${selectedZone.label.toUpperCase()}:
+🔍 Muscle Definition: More/less striations? Better separation?
+🔍 Fat Layer: Less/more subcutaneous fat?
+🔍 Vascularity: More/less visible veins?
+🔍 Skin Texture: Tighter or looser?
+🔍 Shape: Changed contour?
+🔍 Symmetry: Better/worse balance between sides?
+🔍 Size: Muscle growth or atrophy?
+
+EVEN IF CHANGES ARE SMALL (2-3%), YOU MUST NOTICE THEM.
 ` : 'This is the user\'s FIRST progress photo. Compare LEFT vs RIGHT and provide baseline.'}
 
 CRITICAL INSTRUCTIONS:
 - Generate ALL content in ITALIAN language
-- Compare the two sides objectively but ALSO compare with previous photos if available
 - Be EXTREMELY DETAILED and BRUTALLY HONEST
-- If you see improvements, CELEBRATE them with specifics
-- If you see regression or no change, BE HONEST and explain WHY
+- Compare sides AND compare with previous photos
+- Be SPECIFIC with measurements and observations
 
 User Context:
 - Gender: ${user.gender}
@@ -328,19 +364,20 @@ ${previousPhotoUrls.length > 0 ? `- Days since previous photo: ${daysSincePrevio
 User Notes: ${notes || 'Nessuna nota'}
 
 Task:
-1. Compare left vs right side in detail
-2. List observable differences between sides
-3. ${previousPhotoUrls.length > 0 ? 'Write a detailed "comparison_with_previous" section comparing BOTH sides with the previous photos. Be honest about progress or regression.' : 'Establish a baseline for future comparisons'}
-4. Determine overall progress: improved, maintained, regressed, or first_photo
+1. Compare left vs right in TODAY's photos
+2. List differences between left and right
+3. ${previousPhotoUrls.length > 0 ? 'Write a DETAILED "comparison_with_previous" section (MINIMUM 6-8 sentences) comparing TODAY vs BEFORE for BOTH sides. Be forensically detailed about muscle definition, fat reduction, skin texture, vascularity, shape changes.' : 'Establish baseline'}
+4. Determine progress: improved (any visible change), maintained, regressed, or first_photo
 5. Provide 3-5 specific recommendations
-6. Suggest if workout adjustments are needed
-7. Write an honest motivational message
+6. Suggest adjustments
+7. Write honest motivational message
 
-${previousPhotoUrls.length > 0 ? 'BE BRUTALLY HONEST. Real feedback = real results.' : ''}`;
+${previousPhotoUrls.length > 0 ? '🎯 REMEMBER: Even small changes (1-2%) ARE VISIBLE to an expert eye. Be that expert.' : ''}`;
       }
 
+      // 🔥 INVIO FOTO IN ORDINE CHIARO: CURRENT FIRST, THEN PREVIOUS
       const allPhotoUrls = [...targetPhotoUrls, ...previousPhotoUrls];
-      console.log('📸 Sending to AI:', allPhotoUrls.length, 'photos');
+      console.log('📸 Sending to AI in order: CURRENT photos:', targetPhotoUrls.length, ', PREVIOUS photos:', previousPhotoUrls.length);
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
