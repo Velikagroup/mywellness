@@ -230,24 +230,47 @@ Return ONLY valid JSON, no markdown.`;
     if (!scanResult || !selectedIngredient) return;
 
     try {
-      // 1. Aggiorna o crea l'ingrediente nel database
-      const ingredientData = {
-        name_it: selectedIngredient.name,
-        name_en: selectedIngredient.name,
-        category: selectedIngredient.category || 'altro',
-        calories_per_100g: scanResult.calories_per_100g,
-        protein_per_100g: scanResult.protein_per_100g,
-        carbs_per_100g: scanResult.carbs_per_100g,
-        fat_per_100g: scanResult.fat_per_100g,
-        fiber_per_100g: scanResult.fiber_per_100g || 0,
-        verified: true,
-        data_sources: ['user_scanned'],
-        notes: `Scansionato: ${scanResult.product_name} - Health Score: ${scanResult.health_score}/10`
-      };
-
-      await base44.functions.invoke('validateAndSaveIngredient', {
-        ingredients: [ingredientData]
+      // 1. Cerca o crea l'ingrediente nel database
+      const normalizedName = selectedIngredient.name.toLowerCase().trim();
+      const existingIngredients = await base44.entities.Ingredient.filter({
+        name_it: normalizedName
       });
+
+      let ingredientId;
+      
+      if (existingIngredients.length > 0) {
+        // Aggiorna ingrediente esistente
+        ingredientId = existingIngredients[0].id;
+        await base44.entities.Ingredient.update(ingredientId, {
+          calories_per_100g: scanResult.calories_per_100g,
+          protein_per_100g: scanResult.protein_per_100g,
+          carbs_per_100g: scanResult.carbs_per_100g,
+          fat_per_100g: scanResult.fat_per_100g,
+          fiber_per_100g: scanResult.fiber_per_100g || 0,
+          verified: true,
+          data_sources: ['user_scanned'],
+          notes: `Scansionato: ${scanResult.product_name} - Health Score: ${scanResult.health_score}/10`,
+          usage_count: (existingIngredients[0].usage_count || 0) + 1
+        });
+      } else {
+        // Crea nuovo ingrediente
+        const newIngredient = await base44.entities.Ingredient.create({
+          name_it: selectedIngredient.name,
+          name_en: selectedIngredient.name,
+          category: selectedIngredient.category || 'altro',
+          calories_per_100g: scanResult.calories_per_100g,
+          protein_per_100g: scanResult.protein_per_100g,
+          carbs_per_100g: scanResult.carbs_per_100g,
+          fat_per_100g: scanResult.fat_per_100g,
+          fiber_per_100g: scanResult.fiber_per_100g || 0,
+          verified: true,
+          data_sources: ['user_scanned'],
+          notes: `Scansionato: ${scanResult.product_name} - Health Score: ${scanResult.health_score}/10`,
+          usage_count: 1,
+          suitable_for_diets: []
+        });
+        ingredientId = newIngredient.id;
+      }
 
       // 2. Aggiorna i piani alimentari che usano questo ingrediente
       const mealPlans = await base44.entities.MealPlan.filter({ user_id: user.id });
