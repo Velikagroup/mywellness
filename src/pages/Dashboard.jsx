@@ -17,6 +17,7 @@ import WeightLogger from "../components/dashboard/WeightLogger";
 import MealDetailModal from "../components/meals/MealDetailModal";
 import PhotoMealAnalyzer from "../components/meals/PhotoMealAnalyzer";
 import ProgressPhotoAnalyzer from "../components/training/ProgressPhotoAnalyzer";
+import ProgressPhotoGallery from "../components/training/ProgressPhotoGallery";
 import UpgradeModal from "../components/meals/UpgradeModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
@@ -35,6 +36,8 @@ export default function Dashboard() {
   const [isRebalancing, setIsRebalancing] = useState(false);
   const [mealLogs, setMealLogs] = useState([]);
   const [showProgressPhoto, setShowProgressPhoto] = React.useState(false);
+  const [showPhotoGallery, setShowPhotoGallery] = React.useState(false);
+  const [progressPhotos, setProgressPhotos] = React.useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [showEditBMR, setShowEditBMR] = useState(false);
@@ -259,7 +262,7 @@ export default function Dashboard() {
     setPhotoAnalyzeMeal(meal);
   };
 
-  const handleProgressAnalysisComplete = (analysisResult) => {
+  const handleProgressAnalysisComplete = async (analysisResult) => {
     let message = `Analisi completata! Progresso: ${analysisResult.overall_progress}\n\n`;
     
     if (analysisResult.workout_adjustment_needed) {
@@ -271,6 +274,30 @@ export default function Dashboard() {
     
     alert(message);
     setShowProgressPhoto(false);
+    
+    // Ricarica le foto dopo l'analisi
+    await loadProgressPhotos();
+  };
+
+  const loadProgressPhotos = async () => {
+    if (!user?.id) return;
+    try {
+      const photos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
+      setProgressPhotos(photos);
+    } catch (error) {
+      console.error('Error loading progress photos:', error);
+    }
+  };
+
+  const handleDeletePhoto = async (photoId) => {
+    try {
+      await base44.entities.ProgressPhoto.delete(photoId);
+      await loadProgressPhotos();
+      alert('✅ Foto eliminata con successo');
+    } catch (error) {
+      console.error('Error deleting photo:', error);
+      alert('❌ Errore durante l\'eliminazione della foto');
+    }
   };
 
   const handleOpenEditBMR = () => {
@@ -505,6 +532,10 @@ export default function Dashboard() {
                       }
                       setShowProgressPhoto(true);
                     }}
+                    onViewGalleryClick={async () => {
+                      await loadProgressPhotos();
+                      setShowPhotoGallery(true);
+                    }}
                     userPlan={user?.subscription_plan}
                   />
                 ) : (
@@ -617,6 +648,15 @@ export default function Dashboard() {
           isOpen={showUpgradeModal}
           onClose={() => setShowUpgradeModal(false)}
           currentPlan={user?.subscription_plan}
+        />
+      )}
+      
+      {showPhotoGallery && (
+        <ProgressPhotoGallery
+          isOpen={showPhotoGallery}
+          onClose={() => setShowPhotoGallery(false)}
+          photos={progressPhotos}
+          onDeletePhoto={handleDeletePhoto}
         />
       )}
 
