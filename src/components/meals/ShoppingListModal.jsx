@@ -5,6 +5,7 @@ import { Check, X, ShoppingCart, Trash2, Camera, Upload, Loader2, Crown, AlertCi
 import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
+import UpgradeModal from './UpgradeModal';
 
 const CATEGORY_LABELS = {
   frutta_verdura: { label: 'Frutta & Verdura', emoji: '🥬', bg: 'bg-green-50' },
@@ -25,7 +26,7 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
   const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
-  const [showUpgradePrompt, setShowUpgradePrompt] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   const startOfWeek = (() => {
     const now = new Date();
@@ -93,7 +94,7 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
 
   const handleScanClick = (ingredient) => {
     if (!hasFeatureAccess(user?.subscription_plan, 'progress_photo_analysis')) {
-      setShowUpgradePrompt(true);
+      setShowUpgradeModal(true);
       return;
     }
     setSelectedIngredient(ingredient);
@@ -513,59 +514,14 @@ Return ONLY valid JSON, no markdown.`;
         </DialogContent>
       </Dialog>
 
-      {/* Upgrade Prompt Modal */}
-      <Dialog open={showUpgradePrompt} onOpenChange={setShowUpgradePrompt}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-xl">
-              <Crown className="w-6 h-6 text-purple-600" />
-              Funzionalità Premium
-            </DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-6 border-2 border-purple-200">
-              <div className="text-center mb-4">
-                <Camera className="w-16 h-16 text-purple-600 mx-auto mb-3" />
-                <h3 className="text-lg font-bold text-gray-900 mb-2">
-                  Scansione Etichette con AI
-                </h3>
-                <p className="text-gray-600 text-sm">
-                  Scansiona le etichette dei prodotti e ottieni:
-                </p>
-              </div>
-              <ul className="space-y-2 text-sm text-gray-700">
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-600" />
-                  Health Score 0-10 con analisi AI
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-600" />
-                  Valori nutrizionali precisi dal prodotto reale
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-600" />
-                  Aggiornamento automatico delle ricette
-                </li>
-                <li className="flex items-center gap-2">
-                  <Check className="w-4 h-4 text-green-600" />
-                  Database personalizzato con i tuoi prodotti
-                </li>
-              </ul>
-            </div>
-            <Button
-              onClick={() => {
-                setShowUpgradePrompt(false);
-                // Qui potresti aprire il modal di upgrade
-                window.location.href = '/pricing';
-              }}
-              className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white py-3"
-            >
-              <Crown className="w-4 h-4 mr-2" />
-              Upgrade a Premium
-            </Button>
-          </div>
-        </DialogContent>
-      </Dialog>
+      {/* Upgrade Modal */}
+      {showUpgradeModal && (
+        <UpgradeModal 
+          isOpen={showUpgradeModal} 
+          onClose={() => setShowUpgradeModal(false)} 
+          currentPlan={user?.subscription_plan || 'base'} 
+        />
+      )}
     </>
   );
 }
