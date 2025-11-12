@@ -370,16 +370,30 @@ Return ONLY valid JSON, no markdown.`;
       </Dialog>
 
       {/* Scanner Modal */}
-      <Dialog open={showScanner && !showUpgradeModal} onOpenChange={() => {
-        setShowScanner(false);
-        setScanResult(null);
-        setSelectedIngredient(null);
+      <Dialog open={showScanner && !showUpgradeModal} onOpenChange={(open) => {
+        if (!open) {
+          setShowScanner(false);
+          setScanResult(null);
+          setSelectedIngredient(null);
+        }
       }}>
-        <DialogContent className="max-w-xl">
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
-              Scansiona Etichetta - {selectedIngredient?.name}
+            <DialogTitle className="flex items-center justify-between gap-2">
+              <div className="flex items-center gap-2">
+                <Camera className="w-5 h-5 text-[var(--brand-primary)]" />
+                Scansiona Etichetta - {selectedIngredient?.name}
+              </div>
+              <button
+                onClick={() => {
+                  setShowScanner(false);
+                  setScanResult(null);
+                  setSelectedIngredient(null);
+                }}
+                className="text-gray-400 hover:text-gray-600 transition-colors"
+              >
+                <X className="w-5 h-5" />
+              </button>
             </DialogTitle>
           </DialogHeader>
 
@@ -517,23 +531,34 @@ Return ONLY valid JSON, no markdown.`;
                   </p>
                 </div>
 
-                <div className="flex gap-3">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setScanResult(null);
-                    }}
-                    className="flex-1"
-                  >
-                    Scansiona Altro
-                  </Button>
+                <div className="flex flex-col gap-2">
                   <Button
                     onClick={handleSaveScannedProduct}
-                    className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
                   >
                     <Check className="w-4 h-4 mr-2" />
                     Salva e Aggiorna Ricette
                   </Button>
+                  <div className="grid grid-cols-2 gap-2">
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setScanResult(null);
+                      }}
+                    >
+                      Scansiona Altro
+                    </Button>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowScanner(false);
+                        setScanResult(null);
+                        setSelectedIngredient(null);
+                      }}
+                    >
+                      Chiudi
+                    </Button>
+                  </div>
                 </div>
               </>
             )}
