@@ -1,7 +1,6 @@
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2 } from 'lucide-react';
+import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2, TrendingUp, TrendingDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
@@ -10,6 +9,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedPlanToUpgrade, setSelectedPlanToUpgrade] = useState(null);
   const [isUpgrading, setIsUpgrading] = useState(false);
+  const [pricingInfo, setPricingInfo] = useState(null);
+  const [isCalculating, setIsCalculating] = useState(false);
 
   if (!isOpen) return null;
 
@@ -82,9 +83,28 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
     }
   ];
 
-  const handleSelectPlan = (plan) => {
+  const handleSelectPlan = async (plan) => {
     setSelectedPlanToUpgrade(plan);
+    setIsCalculating(true);
     setShowConfirmDialog(true);
+    
+    // Calcola il prezzo prorated
+    try {
+      const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
+        newPlan: plan.id,
+        newBillingPeriod: billingCycle,
+        calculateOnly: true
+      });
+
+      const data = response.data || response;
+      
+      if (data.success && data.calculate) {
+        setPricingInfo(data);
+      }
+    } catch (error) {
+      console.error('Error calculating pricing:', error);
+    }
+    setIsCalculating(false);
   };
 
   const handleConfirmUpgrade = async () => {
@@ -94,13 +114,18 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
     try {
       const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
         newPlan: selectedPlanToUpgrade.id,
-        newBillingPeriod: billingCycle
+        newBillingPeriod: billingCycle,
+        calculateOnly: false
       });
 
       const data = response.data || response;
 
       if (data.success) {
-        alert(`✅ Piano aggiornato a ${selectedPlanToUpgrade.name}!`);
+        if (data.isDowngrade) {
+          alert(`✅ ${data.message}\nEffettivo dal: ${data.effectiveDate}`);
+        } else {
+          alert(`✅ ${data.message}\nImporto addebitato: €${data.amountCharged?.toFixed(2)}`);
+        }
         setShowConfirmDialog(false);
         onClose();
         window.location.reload();
@@ -109,7 +134,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       }
     } catch (error) {
       console.error('Error upgrading:', error);
-      alert('❌ Errore durante l\'upgrade. Riprova.');
+      alert('❌ Errore durante l\'operazione. Riprova.');
     }
     setIsUpgrading(false);
   };
@@ -269,7 +294,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                               : 'bg-gray-900 hover:bg-gray-800 text-white'
                           }`}
                         >
-                          Scegli {plan.name}
+                          Passa a {plan.name}
                         </Button>
                       )}
                     </div>
@@ -290,8 +315,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent className="max-w-md z-[200]">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">
-              Conferma Upgrade Immediato
+            <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              {pricingInfo?.isDowngrade ? (
+                <><TrendingDown className="w-5 h-5 text-orange-600" /> Conferma Downgrade</>
+              ) : (
+                <><TrendingUp className="w-5 h-5 text-green-600" /> Conferma Upgrade Immediato</>
+              )}
             </DialogTitle>
           </DialogHeader>
           <div className="space-y-6 py-4">
@@ -309,49 +338,109 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                       </p>
                     </div>
                   </div>
+
+                  {isCalculating ? (
+                    <div className="flex items-center justify-center py-4">
+                      <Loader2 className="w-6 h-6 text-[var(--brand-primary)] animate-spin" />
+                      <span className="ml-2 text-sm text-gray-600">Calcolo in corso...</span>
+                    </div>
+                  ) : pricingInfo && (
+                    <div className="space-y-3 pt-3 border-t border-[var(--brand-primary)]/20">
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Piano attuale:</span>
+                        <span className="font-semibold text-gray-900 capitalize">
+                          {pricingInfo.currentPlan} ({pricingInfo.currentBillingPeriod === 'yearly' ? 'Annuale' : 'Mensile'})
+                        </span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-gray-600">Prezzo piano completo:</span>
+                        <span className="font-semibold text-gray-900">€{pricingInfo.newPlanPrice.toFixed(2)}</span>
+                      </div>
+                      {!pricingInfo.isDowngrade && (
+                        <>
+                          <div className="flex justify-between text-sm">
+                            <span className="text-gray-600">Credito residuo ({pricingInfo.percentageRemaining}%):</span>
+                            <span className="font-semibold text-green-600">-€{pricingInfo.creditFromCurrentPlan.toFixed(2)}</span>
+                          </div>
+                          <div className="h-px bg-gray-300"></div>
+                          <div className="flex justify-between">
+                            <span className="font-bold text-gray-900">Da pagare ora:</span>
+                            <span className="font-black text-2xl text-[var(--brand-primary)]">
+                              €{pricingInfo.amountToPay.toFixed(2)}
+                            </span>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </div>
 
-                <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
-                  <div className="flex items-start gap-3">
-                    <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-                    <div className="text-sm text-blue-900">
-                      <p className="font-semibold mb-2">⚡ Upgrade Immediato:</p>
-                      <ul className="space-y-1 text-blue-800">
-                        <li>• Il piano verrà aggiornato immediatamente</li>
-                        <li>• La carta verrà addebitata SUBITO per il nuovo piano</li>
-                        <li>• Avrai accesso immediato a tutte le nuove funzionalità</li>
-                        <li>• Puoi sempre cancellare in qualsiasi momento</li>
-                      </ul>
+                {pricingInfo?.isDowngrade ? (
+                  <div className="bg-orange-50 border border-orange-200 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-orange-900">
+                        <p className="font-semibold mb-2">📅 Downgrade Programmato:</p>
+                        <ul className="space-y-1 text-orange-800">
+                          <li>• Nessun addebito immediato</li>
+                          <li>• Continuerai a usare il piano attuale fino alla fine del periodo</li>
+                          <li>• Il nuovo piano sarà attivo dal prossimo rinnovo</li>
+                          <li>• Non riceverai rimborsi per il periodo corrente</li>
+                        </ul>
+                      </div>
                     </div>
                   </div>
-                </div>
+                ) : (
+                  <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
+                      <div className="text-sm text-blue-900">
+                        <p className="font-semibold mb-2">⚡ Upgrade Immediato:</p>
+                        <ul className="space-y-1 text-blue-800">
+                          <li>• Il piano verrà aggiornato immediatamente</li>
+                          <li>• La carta verrà addebitata SUBITO per la differenza</li>
+                          <li>• Avrai accesso immediato a tutte le nuove funzionalità</li>
+                          <li>• Il credito del piano attuale viene scalato automaticamente</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <p className="text-xs text-amber-800 font-medium">
-                    💳 La tua carta salvata verrà addebitata immediatamente per l'upgrade.
+                    💳 {pricingInfo?.isDowngrade 
+                      ? 'Nessun addebito ora. Il cambio sarà effettivo al prossimo rinnovo.' 
+                      : `La tua carta salvata verrà addebitata di €${pricingInfo?.amountToPay?.toFixed(2) || '0.00'} immediatamente.`
+                    }
                   </p>
                 </div>
 
                 <div className="flex gap-3">
                   <Button
                     variant="outline"
-                    onClick={() => setShowConfirmDialog(false)}
+                    onClick={() => {
+                      setShowConfirmDialog(false);
+                      setPricingInfo(null);
+                    }}
                     className="flex-1"
                   >
                     Annulla
                   </Button>
                   <Button
                     onClick={handleConfirmUpgrade}
-                    disabled={isUpgrading}
+                    disabled={isUpgrading || isCalculating}
                     className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
                   >
                     {isUpgrading ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Aggiornamento...
+                        Elaborazione...
                       </>
+                    ) : pricingInfo?.isDowngrade ? (
+                      'Conferma Downgrade'
                     ) : (
-                      'Conferma e Addebita Ora'
+                      `Conferma e Addebita €${pricingInfo?.amountToPay?.toFixed(2) || '0.00'}`
                     )}
                   </Button>
                 </div>
