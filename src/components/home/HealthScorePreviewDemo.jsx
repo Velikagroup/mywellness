@@ -6,13 +6,14 @@ import { Camera, Sparkles, TrendingDown, AlertTriangle, CheckCircle, XCircle } f
 /**
  * Componente DEMO per Homepage - Health Score
  * Mostra l'analisi AI di un'etichetta nutrizionale con scoring
+ * SCALA 0-10 (come Nutri-Score europeo)
  */
 export default function HealthScorePreviewDemo() {
   // Analisi dell'etichetta nutrizionale dalla foto
   const nutritionAnalysis = {
     productName: "Olio di Cocco",
     servingSize: "1 cucchiaio (15 mL)",
-    healthScore: 42, // Score su 100
+    healthScore: 4.2, // Score su 10 (come Nutri-Score)
     scoreLevel: "Medio-Basso",
     scoreColor: "text-orange-600",
     scoreBg: "bg-orange-50",
@@ -36,16 +37,17 @@ export default function HealthScorePreviewDemo() {
     recommendation: "Usa con moderazione. L'olio di cocco è ricco di grassi saturi che possono aumentare il colesterolo LDL. Considera alternative più salutari come olio d'oliva o olio di avocado per uso quotidiano."
   };
 
-  // Calcolo circonferenza per il cerchio
+  // Calcolo circonferenza per il cerchio (scala 0-10)
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
-  const strokeDashoffset = circumference - (nutritionAnalysis.healthScore / 100) * circumference;
+  const progressPercentage = (nutritionAnalysis.healthScore / 10) * 100;
+  const strokeDashoffset = circumference - (progressPercentage / 100) * circumference;
 
-  // Determina colore basato sullo score
+  // Determina colore basato sullo score (0-10)
   const getScoreColor = (score) => {
-    if (score >= 70) return "#10b981"; // verde
-    if (score >= 40) return "#f59e0b"; // arancione
-    return "#ef4444"; // rosso
+    if (score >= 7) return "#10b981"; // verde (7-10)
+    if (score >= 4) return "#f59e0b"; // arancione (4-6.9)
+    return "#ef4444"; // rosso (0-3.9)
   };
 
   const scoreColor = getScoreColor(nutritionAnalysis.healthScore);
@@ -119,9 +121,9 @@ export default function HealthScorePreviewDemo() {
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
                 <span className={`text-3xl font-black ${nutritionAnalysis.scoreColor}`}>
-                  {nutritionAnalysis.healthScore}
+                  {nutritionAnalysis.healthScore.toFixed(1)}
                 </span>
-                <span className="text-[10px] text-gray-500 font-semibold">/100</span>
+                <span className="text-[10px] text-gray-500 font-semibold">/10</span>
               </div>
             </div>
           </div>
