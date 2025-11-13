@@ -484,8 +484,7 @@ export default function Dashboard() {
             </div>
             <Button 
               onClick={handleRecalibrate}
-              variant="outline" 
-              className="bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl w-full lg:w-auto"
+              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-6 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl w-full lg:w-auto"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Ricalibra
@@ -503,8 +502,7 @@ export default function Dashboard() {
             </div>
             <Button 
               onClick={handleRecalibrate}
-              variant="outline" 
-              className="w-full bg-white/60 backdrop-blur-md hover:bg-white/70 border-gray-200/40 transition-all px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
+              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Ricalibra
