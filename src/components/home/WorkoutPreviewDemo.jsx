@@ -1,7 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Dumbbell, Clock, Flame, Camera, Image as ImageIcon, Sparkles } from 'lucide-react';
+import { Dumbbell, Clock, Flame, Camera, Image, Sparkles } from 'lucide-react';
 
 /**
  * Componente DEMO per Homepage
@@ -34,15 +33,46 @@ export default function WorkoutPreviewDemo() {
   };
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg hover:shadow-xl transition-all duration-300">
-      <CardHeader className="pb-4">
-        <CardTitle className="flex items-center gap-2 text-gray-900">
+    <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl">
+      <style>{`
+        .liquid-glass-button {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(38, 132, 127, 0.15) 0%,
+            rgba(20, 184, 166, 0.1) 50%,
+            rgba(38, 132, 127, 0.15) 100%
+          );
+          border: 1px solid rgba(38, 132, 127, 0.3);
+          box-shadow: 
+            0 4px 16px 0 rgba(38, 132, 127, 0.12),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .liquid-glass-button-ai {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(147, 51, 234, 0.15) 0%,
+            rgba(99, 102, 241, 0.1) 50%,
+            rgba(147, 51, 234, 0.15) 100%
+          );
+          border: 2px solid rgba(147, 51, 234, 0.3);
+          box-shadow: 
+            0 8px 24px 0 rgba(147, 51, 234, 0.2),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+      `}</style>
+      
+      <CardHeader className="pb-3">
+        <CardTitle className="text-base sm:text-lg flex items-center gap-2">
           <Dumbbell className="w-5 h-5 text-[var(--brand-primary)]" />
           💪 Allenamento di Oggi
         </CardTitle>
       </CardHeader>
+      
       <CardContent className="space-y-4">
-        {/* Workout Title */}
+        {/* Workout Info */}
         <div>
           <h3 className="text-xl font-bold text-gray-900 mb-3">
             {dayLabels[demoWorkout.day_of_week]}: {demoWorkout.plan_name}
@@ -62,58 +92,62 @@ export default function WorkoutPreviewDemo() {
         </div>
 
         {/* Exercises Preview */}
-        <div className="bg-gradient-to-br from-gray-50 to-gray-100/50 rounded-xl p-4 border border-gray-200/50">
-          <div className="flex items-center gap-2 mb-3">
-            <span className="text-2xl">💪</span>
-            <span className="font-semibold text-gray-900">{demoWorkout.exercises.length} esercizi</span>
-          </div>
-          <div className="space-y-2">
+        <div className="bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg p-3 border border-[var(--brand-primary)]/20">
+          <p className="text-sm text-gray-700 font-medium mb-2">
+            💪 {demoWorkout.exercises.length} esercizi
+          </p>
+          <div className="flex flex-wrap gap-1.5">
             {demoWorkout.exercises.slice(0, 3).map((exercise, idx) => (
-              <div 
+              <span
                 key={idx}
-                className="bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 text-sm text-gray-700 font-medium border border-gray-200/30"
+                className="text-xs bg-white/70 px-2 py-1 rounded-full text-gray-700 font-medium border border-gray-200"
               >
                 {exercise.name}
-                {idx === 2 && demoWorkout.exercises.length > 3 && (
-                  <span className="ml-2 text-gray-400">+{demoWorkout.exercises.length - 3}</span>
-                )}
-              </div>
+              </span>
             ))}
+            {demoWorkout.exercises.length > 3 && (
+              <span className="text-xs bg-white/70 px-2 py-1 rounded-full text-gray-600 border border-gray-200">
+                +{demoWorkout.exercises.length - 3}
+              </span>
+            )}
           </div>
         </div>
 
-        {/* Action Buttons */}
-        <div className="flex gap-3">
-          <Button
-            disabled
-            className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-xl py-5 cursor-not-allowed opacity-70"
-          >
-            <Dumbbell className="w-4 h-4 mr-2" />
-            Vai alla Scheda
-          </Button>
-          <Button
-            disabled
-            variant="outline"
-            className="px-5 py-5 border-gray-300 hover:bg-gray-50 rounded-xl cursor-not-allowed opacity-70"
-          >
-            <ImageIcon className="w-4 h-4" />
-          </Button>
-        </div>
+        <div className="space-y-3">
+          {/* Pulsanti Vai alla Scheda e Galleria - Con Liquid Glass */}
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              disabled
+              className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl cursor-not-allowed opacity-80"
+            >
+              <div className="flex items-center justify-center gap-1.5">
+                <Dumbbell className="w-4 h-4" />
+                <span>Vai alla Scheda</span>
+              </div>
+            </button>
+            <button
+              disabled
+              className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl cursor-not-allowed opacity-80"
+            >
+              <div className="flex items-center justify-center gap-1.5">
+                <Image className="w-4 h-4" />
+                <span>Galleria</span>
+              </div>
+            </button>
+          </div>
 
-        {/* AI Progress Analysis Button */}
-        <Button
-          disabled
-          className="w-full py-6 rounded-xl text-base font-semibold cursor-not-allowed opacity-70"
-          style={{
-            background: 'linear-gradient(135deg, rgba(167, 139, 250, 0.15) 0%, rgba(196, 181, 253, 0.15) 100%)',
-            border: '2px solid rgba(167, 139, 250, 0.3)',
-            color: '#7c3aed'
-          }}
-        >
-          <Camera className="w-5 h-5 mr-2" />
-          Analisi Progressi con AI
-          <Sparkles className="w-5 h-5 ml-2" />
-        </Button>
+          {/* AI Progress Analysis Button - Con Liquid Glass */}
+          <button
+            disabled
+            className="w-full liquid-glass-button-ai text-purple-700 font-bold text-base py-5 rounded-xl cursor-not-allowed opacity-80"
+          >
+            <div className="flex items-center justify-center gap-2">
+              <Camera className="w-5 h-5" />
+              <span>Analisi Progressi con AI</span>
+              <Sparkles className="w-5 h-5" />
+            </div>
+          </button>
+        </div>
 
         {/* Demo Notice */}
         <div className="text-center">
