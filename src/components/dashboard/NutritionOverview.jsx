@@ -50,6 +50,34 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
 
   return (
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+      <style>{`
+        .liquid-glass-button-nutrition {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(38, 132, 127, 0.15) 0%,
+            rgba(20, 184, 166, 0.1) 50%,
+            rgba(38, 132, 127, 0.15) 100%
+          );
+          border: 1px solid rgba(38, 132, 127, 0.3);
+          box-shadow: 
+            0 4px 16px 0 rgba(38, 132, 127, 0.12),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .liquid-glass-button-nutrition:hover {
+          background: linear-gradient(135deg, 
+            rgba(38, 132, 127, 0.25) 0%,
+            rgba(20, 184, 166, 0.2) 50%,
+            rgba(38, 132, 127, 0.25) 100%
+          );
+          border: 1px solid rgba(38, 132, 127, 0.4);
+          box-shadow: 
+            0 6px 20px 0 rgba(38, 132, 127, 0.18),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.7),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+      `}</style>
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
@@ -59,9 +87,12 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
             Protocollo Nutrizionale
           </CardTitle>
           <Link to={createPageUrl("Meals")}>
-            <Button variant="ghost" size="icon" className="text-gray-500 hover:bg-gray-200/50 hover:text-gray-900">
-              <ArrowRight className="w-5 h-5" />
-            </Button>
+            <button className="liquid-glass-button-nutrition text-[#26847F] font-semibold text-sm py-2 px-4 rounded-xl transition-all hover:scale-[1.02]">
+              <div className="flex items-center justify-center gap-1.5">
+                <Utensils className="w-4 h-4" />
+                <span>Vai al Piano</span>
+              </div>
+            </button>
           </Link>
         </div>
       </CardHeader>
