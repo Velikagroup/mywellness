@@ -115,10 +115,8 @@ export default function Layout({ children }) {
     return true;
   });
 
-  // Helper per controllare se l'utente ha accesso management
   const hasManagementAccess = user && (user.role === 'admin' || user.custom_role === 'customer_support');
 
-  // Menu items per Customer Support (nuovo ruolo custom)
   const customerSupportMenuItems = user && user.custom_role === 'customer_support' ? [
     { name: 'Clienti', icon: Users, path: 'AdminClients' },
     { name: 'Ticket', icon: HelpCircle, path: 'AdminSupportTickets' },
@@ -129,7 +127,6 @@ export default function Layout({ children }) {
     { name: 'Marketing', icon: Target, path: 'AdminMarketing' }
   ] : [];
 
-  // Menu items per Admin (accesso completo)
   const adminMenuItems = user && user.role === 'admin' ? [
     { name: 'Clienti', icon: Users, path: 'AdminClients' },
     { name: 'Ticket', icon: HelpCircle, path: 'AdminSupportTickets' },
@@ -143,7 +140,6 @@ export default function Layout({ children }) {
     { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
   ] : [];
 
-  // Combina menu items in base al ruolo
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
                                user?.custom_role === 'customer_support' ? customerSupportMenuItems : [];
 
@@ -261,8 +257,8 @@ export default function Layout({ children }) {
                 to={createPageUrl(item.path)}
                 className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] ${
                   location.pathname === createPageUrl(item.path)
-                    ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                    : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                    ? 'text-[#26847F] bg-[#e9f6f5]'
+                    : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
                 }`}
               >
                 <item.icon className="w-5 h-5" />
@@ -281,8 +277,8 @@ export default function Layout({ children }) {
                       onClick={() => handleMenuItemClick(item.path)}
                       className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${
                         location.pathname === createPageUrl(item.path)
-                          ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                          : 'text-gray-600 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                          ? 'text-[#26847F] bg-[#e9f6f5]'
+                          : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
                       }`}
                     >
                       <item.icon className="w-5 h-5" />
@@ -302,8 +298,8 @@ export default function Layout({ children }) {
                     item.path === 'Meals' ? 'onboarding-nutrition-nav-link' : ''
                   } ${
                     location.pathname === createPageUrl(item.path)
-                      ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                      : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                      ? 'text-[#26847F] bg-[#e9f6f5]'
+                      : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
                   }`}
                 >
                   <item.icon className="w-5 h-5" />
@@ -316,8 +312,8 @@ export default function Layout({ children }) {
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
                     mobileMenuOpen
-                      ? 'text-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                      : 'text-gray-400 hover:text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]'
+                      ? 'text-[#26847F] bg-[#e9f6f5]'
+                      : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
                   }`}
                 >
                   {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
