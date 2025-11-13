@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
     console.log('📧 sendTrialWelcomeEmail - Start');
@@ -12,7 +12,7 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing userId' }, { status: 400 });
         }
 
-        // Recupera i dati utente usando il metodo corretto
+        // Recupera i dati utente
         const users = await base44.asServiceRole.entities.User.filter({ id: userId });
         const user = users && users.length > 0 ? users[0] : null;
         
@@ -22,10 +22,27 @@ Deno.serve(async (req) => {
 
         console.log(`📬 Sending trial welcome email to ${user.email}`);
 
-        const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-        const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+        // Carica il template dal database
+        const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
+            template_id: 'standard_subscription_welcome',
+            is_active: true 
+        });
+        
+        if (templates.length === 0) {
+            console.error('❌ Template not found: standard_subscription_welcome');
+            return Response.json({ error: 'Email template not found' }, { status: 404 });
+        }
 
-        const emailBody = `
+        const template = templates[0];
+        const appUrl = 'https://app.projectmywellness.com';
+
+        // Sostituisci le variabili nel template
+        const greeting = template.greeting.replace('{user_name}', user.full_name || 'Utente');
+        const mainContent = template.main_content.replace('{app_url}', appUrl);
+        const ctaUrl = template.call_to_action_url.replace('{app_url}', appUrl);
+
+        // Genera HTML email usando il template
+        const emailHtml = `
 <!DOCTYPE html>
 <html>
 <head>
@@ -48,122 +65,32 @@ Deno.serve(async (req) => {
                     <tr>
                         <td style="background: white; padding: 40px 30px 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">🎉 Benvenuto in MyWellness!</h1>
-                            <p style="color: #6b7280; margin: 0; font-size: 16px;">La tua prova gratuita di 3 giorni inizia ora</p>
+                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">${template.subject}</h1>
                         </td>
                     </tr>
                     <tr>
                         <td class="content" style="padding: 40px 30px;">
                             <div style="margin-bottom: 30px;">
-                                <h2 style="margin: 0 0 10px 0; color: #26847F; font-size: 20px;">👋 Ciao ${user.full_name || 'Utente'}!</h2>
-                                <p style="margin: 0; color: #1a5753; line-height: 1.6;">
-                                    Grazie per aver scelto MyWellness! Sei a un passo dal trasformare il tuo corpo e la tua vita con l'intelligenza artificiale.
+                                <h2 style="margin: 0 0 10px 0; color: #26847F; font-size: 20px;">${greeting}</h2>
+                                <p style="margin: 0; color: #1a5753; line-height: 1.8; white-space: pre-line;">
+                                    ${mainContent}
                                 </p>
                             </div>
 
-                            <div style="background: #fffbeb; border: 1px solid #fed7aa; border-radius: 8px; padding: 15px; text-align: center; margin: 20px 0 30px 0;">
-                                <p style="margin: 0 0 8px 0; color: #78350f; font-size: 14px;">⏰ Il tuo periodo di prova termina tra:</p>
-                                <strong style="color: #d97706; font-size: 24px; display: block; margin-bottom: 5px;">3 GIORNI</strong>
-                                <p style="margin: 8px 0 0 0; color: #78350f; font-size: 13px;">Dopo la prova: ${user.subscription_plan === 'premium' ? '€39' : user.subscription_plan === 'pro' ? '€29' : '€19'}/mese (puoi cancellare quando vuoi)</p>
-                            </div>
-
-                            <h2 style="color: #111827; margin: 30px 0 20px 0;">🚀 Cosa ti aspetta:</h2>
-                            
-                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                <tr>
-                                    <td valign="top" style="font-size: 24px; padding-right: 15px; background: #ecfdf5; padding: 10px; border-radius: 8px; width: 60px;">🍽️</td>
-                                    <td valign="top">
-                                        <h3 style="margin: 0 0 5px 0; color: #111827; font-size: 18px;">Piano Nutrizionale AI Personalizzato</h3>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">Ricette create su misura per te con foto e macro precisi</p>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                <tr>
-                                    <td valign="top" style="font-size: 24px; padding-right: 15px; background: #ecfdf5; padding: 10px; border-radius: 8px; width: 60px;">💪</td>
-                                    <td valign="top">
-                                        <h3 style="margin: 0 0 5px 0; color: #111827; font-size: 18px;">Allenamenti Scientifici</h3>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">Programmi adattivi basati sul tuo livello e obiettivi</p>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                <tr>
-                                    <td valign="top" style="font-size: 24px; padding-right: 15px; background: #ecfdf5; padding: 10px; border-radius: 8px; width: 60px;">📸</td>
-                                    <td valign="top">
-                                        <h3 style="margin: 0 0 5px 0; color: #111827; font-size: 18px;">Analisi Foto con AI</h3>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">Scatta foto ai pasti e l'AI calcola le calorie automaticamente</p>
-                                    </td>
-                                </tr>
-                            </table>
-
-                            <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                <tr>
-                                    <td valign="top" style="font-size: 24px; padding-right: 15px; background: #ecfdf5; padding: 10px; border-radius: 8px; width: 60px;">📊</td>
-                                    <td valign="top">
-                                        <h3 style="margin: 0 0 5px 0; color: #111827; font-size: 18px;">Tracciamento Progressi</h3>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px; line-height: 1.6;">Dashboard dettagliata con grafici e proiezioni scientifiche</p>
-                                    </td>
-                                </tr>
-                            </table>
-
                             <div style="text-align: center; margin: 30px 0 10px 0;">
-                                <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                    🎯 Vai alla Dashboard
+                                <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                    ${template.call_to_action_text}
                                 </a>
                             </div>
 
                             <div style="margin-top: 30px;">
-                                <h3 style="margin: 0 0 15px 0; color: #111827;">📝 I tuoi prossimi passi:</h3>
-                                
-                                <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                    <tr>
-                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">1</td>
-                                        <td valign="top" style="padding-left: 15px;">
-                                            <strong style="color: #111827;">Genera il tuo Piano</strong>
-                                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">L'AI creerà un piano nutrizionale e di allenamento personalizzato</p>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                    <tr>
-                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">2</td>
-                                        <td valign="top" style="padding-left: 15px;">
-                                            <strong style="color: #111827;">Inizia Subito</strong>
-                                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">Segui il piano e traccia i tuoi progressi ogni giorno</p>
-                                        </td>
-                                    </tr>
-                                </table>
-
-                                <table cellpadding="0" cellspacing="0" border="0" width="100%" style="margin-bottom: 20px;">
-                                    <tr>
-                                        <td valign="top" style="background: #d1fae5; color: #065f46; border-radius: 50%; width: 28px; height: 28px; text-align: center; vertical-align: middle; font-weight: bold; font-size: 14px; line-height: 28px;">3</td>
-                                        <td valign="top" style="padding-left: 15px;">
-                                            <strong style="color: #111827;">Analizza i Risultati</strong>
-                                            <p style="margin: 5px 0 0 0; color: #6b7280; font-size: 14px;">Usa le foto AI per vedere i tuoi progressi</p>
-                                        </td>
-                                    </tr>
-                                </table>
-                            </div>
-
-                            <div style="background: #fef2f2; border: 2px solid #ef4444; border-radius: 8px; padding: 15px; margin: 20px 0;">
-                                <p style="margin: 0; color: #991b1b; font-size: 14px; line-height: 1.6;">
-                                    <strong>💡 Consiglio Pro:</strong> I primi 3 giorni sono cruciali! Dedica 10 minuti oggi per generare il tuo piano. Gli utenti che iniziano subito hanno <span style="color: #d97706; font-weight: 700;">3x più probabilità</span> di raggiungere i loro obiettivi.
+                                <p style="color: #6b7280; line-height: 1.6; margin: 0;">
+                                    ${template.footer_text}
                                 </p>
                             </div>
 
-                            <h3 style="color: #111827; margin: 30px 0 15px 0;">❓ Hai bisogno di aiuto?</h3>
-                            <p style="color: #6b7280; line-height: 1.6; margin: 0;">
-                                Il nostro team è qui per te! Rispondi a questa email o scrivici a 
-                                <a href="mailto:velika.03@outlook.it" style="color: #26847F; text-decoration: none; font-weight: 600;">velika.03@outlook.it</a>
-                            </p>
-
                             <div style="background: #f9fafb; padding: 20px; text-align: center; color: #6b7280; font-size: 14px; border-top: 1px solid #e5e7eb; margin-top: 30px;">
                                 <p style="margin: 0 0 10px 0;"><strong style="color: #111827;">MyWellness</strong></p>
-                                <p style="margin: 0 0 10px 0;">Il tuo percorso verso il benessere inizia oggi 🌟</p>
                                 <p style="margin: 0; font-size: 12px;">
                                     <a href="${appUrl}/Privacy" style="color: #26847F; text-decoration: none;">Privacy Policy</a> &middot; 
                                     <a href="${appUrl}/Terms" style="color: #26847F; text-decoration: none;">Termini di Servizio</a>
@@ -189,14 +116,49 @@ Deno.serve(async (req) => {
 </html>
         `;
 
-        await base44.asServiceRole.integrations.Core.SendEmail({
-            to: user.email,
-            from_name: `MyWellness <${fromEmail}>`,
-            subject: '🎉 Benvenuto in MyWellness - I tuoi 3 giorni di prova iniziano ora!',
-            body: emailBody
+        // Usa SendGrid per inviare l'email
+        const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
+        
+        if (!sendGridApiKey) {
+            console.error('❌ SENDGRID_API_KEY not configured');
+            return Response.json({ error: 'Email service not configured' }, { status: 500 });
+        }
+
+        const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${sendGridApiKey}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                personalizations: [{
+                    to: [{ email: user.email, name: user.full_name }]
+                }],
+                from: {
+                    email: template.from_email,
+                    name: 'MyWellness'
+                },
+                reply_to: {
+                    email: template.reply_to_email
+                },
+                subject: template.subject,
+                content: [{
+                    type: 'text/html',
+                    value: emailHtml
+                }]
+            })
         });
 
-        console.log('✅ Trial welcome email sent successfully');
+        if (!sendGridResponse.ok) {
+            const errorText = await sendGridResponse.text();
+            console.error('❌ SendGrid error:', errorText);
+            return Response.json({ 
+                error: 'Failed to send email',
+                details: errorText 
+            }, { status: 500 });
+        }
+
+        console.log('✅ Trial welcome email sent successfully via SendGrid');
 
         return Response.json({ 
             success: true,

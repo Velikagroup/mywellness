@@ -100,90 +100,94 @@ Deno.serve(async (req) => {
                     
                     console.log('✅ User upgraded to lifetime free access');
                     
-                    // Invia email di benvenuto (in background)
+                    // Invia email lifetime usando SendGrid e template
                     (async () => {
                         try {
-                            const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+                            const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
                             const appUrl = 'https://app.projectmywellness.com';
                             
-                            const htmlBody = `
-                            <!DOCTYPE html>
-                            <html>
-                            <head>
-                                <meta charset="UTF-8">
-                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                            </head>
-                            <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                                <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                                    <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 40px 30px; text-align: center;">
-                                        <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800;">🎁 Accesso Lifetime GRATUITO Attivato!</h1>
-                                    </div>
-                                    
-                                    <div style="padding: 40px 30px;">
-                                        <p style="font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 20px;">
-                                            Ciao <strong>${user.full_name || 'benvenuto'}</strong>! 👋
-                                        </p>
-                                        
-                                        <p style="font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 25px;">
-                                            Hai attivato un <strong>accesso GRATUITO A VITA</strong> al piano <strong style="text-transform: uppercase;">${lifetimePlan}</strong>! 🎉
-                                        </p>
-                                        
-                                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid #f59e0b;">
-                                            <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px;">✨ Nessun Pagamento, Mai</h3>
-                                            <p style="color: #78350f; margin: 0; font-size: 15px; line-height: 1.6;">
-                                                Il tuo accesso al piano <strong>${lifetimePlan.toUpperCase()}</strong> è <strong>completamente gratuito per sempre</strong>. Non ci saranno addebiti, nessun trial, nessun rinnovo. Goditi tutte le funzionalità premium!
-                                            </p>
-                                        </div>
-                                        
-                                        <div style="margin-bottom: 30px;">
-                                            <h3 style="color: #333; margin-bottom: 15px; font-size: 20px;">🎯 Inizia Subito:</h3>
-                                            <ul style="list-style: none; padding: 0; margin: 0;">
-                                                <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
-                                                    <strong style="color: #26847F;">1.</strong> Accedi alla tua dashboard personalizzata
-                                                </li>
-                                                <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
-                                                    <strong style="color: #26847F;">2.</strong> Genera il tuo piano nutrizionale
-                                                </li>
-                                                <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
-                                                    <strong style="color: #26847F;">3.</strong> Crea il tuo piano di allenamento
-                                                </li>
-                                                <li style="padding: 12px 0; font-size: 15px; color: #555;">
-                                                    <strong style="color: #26847F;">4.</strong> Traccia i tuoi progressi senza limiti
-                                                </li>
-                                            </ul>
-                                        </div>
-                                        
-                                        <div style="text-align: center; margin: 35px 0;">
-                                            <a href="${appUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 20px rgba(38,132,127,0.3);">
-                                                Vai alla Dashboard →
-                                            </a>
-                                        </div>
-                                        
-                                        <div style="background: #f9fafb; padding: 20px; border-radius: 10px; margin-top: 30px;">
-                                            <p style="color: #666; font-size: 13px; margin: 0; text-align: center; line-height: 1.6;">
-                                                Hai domande? Siamo qui per aiutarti! Contattaci a <a href="mailto:${fromEmail}" style="color: #26847F; text-decoration: none;">${fromEmail}</a>
-                                            </p>
-                                        </div>
-                                    </div>
-                                    
-                                    <div style="background: #f9fafb; padding: 25px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
-                                        <p style="color: #999; font-size: 12px; margin: 0 0 5px 0;">© 2025 MyWellness by VELIKA GROUP LLC. All Rights Reserved.</p>
-                                    </div>
-                                </div>
-                            </body>
-                            </html>
-                            `;
-                            
-                            await base44.asServiceRole.integrations.Core.SendEmail({
-                                from_name: 'MyWellness',
-                                to: user.email,
-                                subject: '🎁 Il Tuo Accesso Lifetime GRATUITO è Attivo!',
-                                body: htmlBody
+                            if (!sendGridApiKey) {
+                                console.error('❌ SENDGRID_API_KEY not configured');
+                                return;
+                            }
+
+                            const emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+            .content { padding: 30px 20px !important; }
+        }
+    </style>
+</head>
+<body>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 40px 30px; text-align: center;">
+                            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800;">🎁 Accesso Lifetime GRATUITO!</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content" style="padding: 40px 30px;">
+                            <p style="font-size: 18px; color: #333; margin-bottom: 20px;">Ciao ${user.full_name || 'Utente'}! 👋</p>
+                            <p style="color: #555; line-height: 1.8; margin-bottom: 25px;">
+                                Hai attivato un <strong>accesso GRATUITO A VITA</strong> al piano <strong style="text-transform: uppercase;">${lifetimePlan}</strong>! 🎉
+                            </p>
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid #f59e0b;">
+                                <h3 style="color: #92400e; margin: 0 0 15px 0;">✨ Nessun Pagamento, Mai</h3>
+                                <p style="color: #78350f; margin: 0; line-height: 1.6;">
+                                    Il tuo accesso è <strong>completamente gratuito per sempre</strong>. Nessun addebito, nessun trial, nessun rinnovo!
+                                </p>
+                            </div>
+                            <div style="text-align: center; margin: 35px 0;">
+                                <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 700; font-size: 16px;">
+                                    Vai alla Dashboard →
+                                </a>
+                            </div>
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%" style="max-width: 600px; margin-top: 20px;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999;">
+                            <p style="margin: 5px 0; font-size: 12px;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+
+                            const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+                                method: 'POST',
+                                headers: {
+                                    'Authorization': `Bearer ${sendGridApiKey}`,
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    personalizations: [{ to: [{ email: user.email, name: user.full_name }] }],
+                                    from: { email: 'info@projectmywellness.com', name: 'MyWellness' },
+                                    reply_to: { email: 'info@projectmywellness.com' },
+                                    subject: '🎁 Il Tuo Accesso Lifetime GRATUITO è Attivo!',
+                                    content: [{ type: 'text/html', value: emailHtml }]
+                                })
                             });
-                            
-                            console.log('✅ Lifetime welcome email sent');
+
+                            if (response.ok) {
+                                console.log('✅ Lifetime email sent via SendGrid');
+                            }
                         } catch (emailError) {
-                            console.error('⚠️ Email error (non-critical):', emailError.message);
+                            console.error('⚠️ Email error:', emailError);
                         }
                     })();
                     
@@ -197,7 +201,7 @@ Deno.serve(async (req) => {
             }
         }
 
-        // NORMALE FLUSSO STRIPE (se non è lifetime_free)
+        // NORMALE FLUSSO STRIPE
         if (!cardData && !paymentMethodId) {
             console.error('❌ Missing payment information');
             return Response.json({ success: false, error: 'Missing payment information' }, { status: 400 });
@@ -396,93 +400,115 @@ Deno.serve(async (req) => {
             }
         }
 
-        // 📧 INVIA EMAIL DI BENVENUTO (in background)
+        // 📧 INVIA EMAIL DI BENVENUTO usando SendGrid e template
         (async () => {
             try {
-                console.log('📧 Sending welcome email...');
+                console.log('📧 Sending welcome email via SendGrid...');
                 
-                const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+                const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
                 const appUrl = 'https://app.projectmywellness.com';
                 
-                const htmlBody = `
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <meta charset="UTF-8">
-                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-                </head>
-                <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
-                    <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
-                        <div style="background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); padding: 40px 30px; text-align: center;">
-                            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800;">🎉 Benvenuto in MyWellness!</h1>
-                        </div>
-                        
-                        <div style="padding: 40px 30px;">
-                            <p style="font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 20px;">
-                                Ciao <strong>${user.full_name || 'benvenuto'}</strong>! 👋
-                            </p>
-                            
-                            <p style="font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 25px;">
-                                Grazie per aver scelto <strong>MyWellness</strong>! Il tuo percorso verso il benessere inizia ora. 🚀
-                            </p>
-                            
-                            <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ec 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid #26847F;">
-                                <h3 style="color: #26847F; margin: 0 0 15px 0; font-size: 18px;">✨ Prova Gratuita Attivata</h3>
-                                <p style="color: #1a5753; margin: 0; font-size: 15px; line-height: 1.6;">
-                                    Hai <strong>3 giorni gratis</strong> per esplorare tutte le funzionalità premium. Nessun addebito ora!
-                                </p>
-                            </div>
-                            
-                            <div style="margin-bottom: 30px;">
-                                <h3 style="color: #333; margin-bottom: 15px; font-size: 20px;">🎯 Cosa Fare Adesso:</h3>
-                                <ul style="list-style: none; padding: 0; margin: 0;">
-                                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
-                                        <strong style="color: #26847F;">1.</strong> Accedi alla tua dashboard personalizzata
-                                    </li>
-                                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
-                                        <strong style="color: #26847F;">2.</strong> Genera il tuo piano nutrizionale settimanale
-                                    </li>
-                                    <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
-                                        <strong style="color: #26847F;">3.</strong> Inizia il tuo piano di allenamento personalizzato
-                                    </li>
-                                    <li style="padding: 12px 0; font-size: 15px; color: #555;">
-                                        <strong style="color: #26847F;">4.</strong> Traccia i tuoi progressi giornalieri
-                                    </li>
-                                </ul>
-                            </div>
-                            
-                            <div style="text-align: center; margin: 35px 0;">
-                                <a href="${appUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 20px rgba(38,132,127,0.3); transition: all 0.3s;">
-                                    Vai alla Dashboard →
-                                </a>
-                            </div>
-                            
-                            <div style="background: #f9fafb; padding: 20px; border-radius: 10px; margin-top: 30px;">
-                                <p style="color: #666; font-size: 13px; margin: 0; text-align: center; line-height: 1.6;">
-                                    Hai domande? Siamo qui per aiutarti! Rispondi a questa email o contattaci a <a href="mailto:${fromEmail}" style="color: #26847F; text-decoration: none;">${fromEmail}</a>
-                                </p>
-                            </div>
-                        </div>
-                        
-                        <div style="background: #f9fafb; padding: 25px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
-                            <p style="color: #999; font-size: 12px; margin: 0 0 5px 0;">© 2025 MyWellness by VELIKA GROUP LLC. All Rights Reserved.</p>
-                            <p style="color: #999; font-size: 11px; margin: 0;">30 N Gould St, Sheridan, WY 82801, United States</p>
-                        </div>
-                    </div>
-                </body>
-                </html>
-                `;
-                
-                await base44.asServiceRole.integrations.Core.SendEmail({
-                    from_name: 'MyWellness',
-                    to: user.email,
-                    subject: '🎉 Benvenuto in MyWellness - La Tua Prova Gratuita È Attiva!',
-                    body: htmlBody
+                if (!sendGridApiKey) {
+                    console.error('❌ SENDGRID_API_KEY not configured');
+                    return;
+                }
+
+                // Carica template dal database
+                const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
+                    template_id: 'standard_subscription_welcome',
+                    is_active: true 
                 });
                 
-                console.log('✅ Welcome email sent');
+                let emailHtml;
+                let subject;
+                
+                if (templates.length > 0) {
+                    const template = templates[0];
+                    const greeting = template.greeting.replace('{user_name}', user.full_name || 'Utente');
+                    const mainContent = template.main_content.replace('{app_url}', appUrl);
+                    const ctaUrl = template.call_to_action_url.replace('{app_url}', appUrl);
+                    subject = template.subject;
+
+                    emailHtml = `
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+            .content { padding: 30px 20px !important; }
+        }
+    </style>
+</head>
+<body>
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td style="background: white; padding: 40px 30px 24px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">${subject}</h1>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content" style="padding: 40px 30px;">
+                            <h2 style="margin: 0 0 10px 0; color: #26847F; font-size: 20px;">${greeting}</h2>
+                            <p style="color: #1a5753; line-height: 1.8; white-space: pre-line;">${mainContent}</p>
+                            <div style="text-align: center; margin: 30px 0;">
+                                <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold;">
+                                    ${template.call_to_action_text}
+                                </a>
+                            </div>
+                            <p style="color: #6b7280; margin-top: 30px;">${template.footer_text}</p>
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%" style="max-width: 600px; margin-top: 20px;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999;">
+                            <p style="margin: 5px 0; font-size: 12px;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St, Sheridan, WY 82801, United States</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+                } else {
+                    // Fallback se template non trovato
+                    subject = '🎉 Benvenuto in MyWellness!';
+                    emailHtml = `<p>Benvenuto ${user.full_name}!</p>`;
+                }
+
+                const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${sendGridApiKey}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        personalizations: [{ to: [{ email: user.email, name: user.full_name }] }],
+                        from: { email: 'info@projectmywellness.com', name: 'MyWellness' },
+                        reply_to: { email: 'info@projectmywellness.com' },
+                        subject: subject,
+                        content: [{ type: 'text/html', value: emailHtml }]
+                    })
+                });
+
+                if (response.ok) {
+                    console.log('✅ Welcome email sent via SendGrid');
+                } else {
+                    const errorText = await response.text();
+                    console.error('❌ SendGrid error:', errorText);
+                }
             } catch (emailError) {
-                console.error('⚠️ Email error (non-critical):', emailError.message);
+                console.error('⚠️ Email error (non-critical):', emailError);
             }
         })();
 
