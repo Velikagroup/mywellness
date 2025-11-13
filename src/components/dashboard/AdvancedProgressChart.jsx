@@ -133,7 +133,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     { name: 'Rimanente', value: kcalRemaining > 0 ? kcalRemaining : 0 },
   ];
 
-  const COLORS = ['var(--brand-primary)', '#e5e7eb'];
+  const COLORS = ['#26847F', '#e5e7eb'];
 
   return (
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
@@ -234,8 +234,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
             <div className="bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
               <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-[var(--brand-primary)]/10 rounded-full flex items-center justify-center shadow-sm">
-                  <Scale className="w-5 h-5 text-[var(--brand-primary)]" />
+                <div className="w-10 h-10 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
+                  <Scale className="w-5 h-5 text-[#26847F]" />
                 </div>
                 <h3 className="text-base font-bold text-gray-900">Registra Peso</h3>
               </div>
@@ -257,7 +257,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 <Button
                   onClick={handleSaveWeight}
                   disabled={!weight || isSaving}
-                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   <Save className="w-4 h-4 mr-2" />
                   {isSaving ? 'Salvataggio...' : 'Salva Peso'}

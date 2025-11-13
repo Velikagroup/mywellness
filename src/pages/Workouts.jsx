@@ -866,8 +866,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
             
             <CardContent className="space-y-5 px-6 pb-6">
               <div className="space-y-2">
-                <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[var(--brand-primary)]" />
-                <p className="text-sm text-[var(--brand-primary)] font-semibold text-center min-h-[20px]">
+                <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[#26847F]" />
+                <p className="text-sm text-[#26847F] font-semibold text-center min-h-[20px]">
                   {generationStatus}
                 </p>
               </div>
@@ -908,7 +908,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md w-full bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl text-center p-8">
-          <BrainCircuit className="w-12 h-12 text-[var(--brand-primary)] mx-auto mb-4 animate-bounce" />
+          <BrainCircuit className="w-12 h-12 text-[#26847F] mx-auto mb-4 animate-bounce" />
           <CardTitle className="text-xl font-bold text-gray-900">Caricamento...</CardTitle>
           <p className="text-gray-600 mt-2">Attendere mentre recuperiamo i tuoi dati.</p>
         </Card>
@@ -922,7 +922,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
         <div className="max-w-2xl w-full">
           <Button
             onClick={() => setShowUpgradeModal(true)}
-            className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+            className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
           >
             <Crown className="w-5 h-5 mr-2" />
             Upgrade per Accedere al Piano Allenamento
@@ -978,7 +978,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               <div className="water-glass-effect rounded-full shadow-lg">
                 <Button 
                   onClick={nextStep} 
-                  className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-6 py-3 font-semibold rounded-full"
+                  className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-semibold rounded-full"
                 >
                   Avanti 
                   <ArrowRight className="w-4 h-4 ml-2" />
@@ -988,7 +988,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               <div className="water-glass-effect rounded-full shadow-lg">
                 <Button 
                   onClick={startGeneration} 
-                  className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-6 py-3 font-semibold rounded-full"
+                  className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-semibold rounded-full"
                   disabled={generationLimitReached && remainingGenerations === 0}
                 >
                   Genera Piano 
@@ -1028,7 +1028,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
-              <div className="bg-[var(--brand-primary-light)] p-4 rounded-lg border border-[var(--brand-primary)]/30">
+              <div className="bg-[#26847F]/10 p-4 rounded-lg border border-[#26847F]/30">
                 <p className="text-sm text-gray-700">
                   {cheatData.totalDelta > 0 
                     ? `💪 L'AI può intensificare il tuo workout di oggi per bruciare queste calorie extra e mantenerti in linea con i tuoi obiettivi. Vuoi adattare il workout?`
@@ -1047,7 +1047,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               </Button>
               <Button
                 onClick={compensateWithWorkout}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                className="bg-[#26847F] hover:bg-[#1f6b66]"
                 disabled={isCompensating}
               >
                 {isCompensating ? "Elaborazione..." : "Adatta Workout"}
@@ -1071,8 +1071,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               {remainingGenerations !== null && remainingGenerations !== -1 && remainingGenerations !== 0 && (
                 <div className="flex items-center gap-2 mt-2">
                   <div className="flex items-center gap-1 text-sm">
-                    <BrainCircuit className="w-4 h-4 text-[var(--brand-primary)]" />
-                    <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[var(--brand-primary)]'}`}>
+                    <BrainCircuit className="w-4 h-4 text-[#26847F]" />
+                    <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[#26847F]'}`}>
                       {remainingGenerations} generazioni rimaste questo mese
                     </span>
                   </div>
@@ -1087,7 +1087,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                   setShowAssessment(true);
                 }
               }}
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-2 shadow-lg hover:shadow-xl transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto relative"
+              className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-2 shadow-lg hover:shadow-xl transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto relative"
               disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_plan') && remainingGenerations === 0}
             >
               <BrainCircuit className="w-5 h-5" /> 
@@ -1140,7 +1140,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200/80">
                   {days.map((day) => (
-                    <button key={day.id} onClick={() => setSelectedDay(day.id)} className={`px-4 py-2 text-sm font-medium rounded-t-md transition-colors border-b-2 ${selectedDay === day.id ? 'text-[var(--brand-primary)] border-[var(--brand-primary)] bg-[var(--brand-primary-light)]/50' : 'text-gray-500 border-transparent hover:text-[var(--brand-primary)] hover:border-teal-300'}`}>{day.label.substring(0,3)}</button>
+                    <button key={day.id} onClick={() => setSelectedDay(day.id)} className={`px-4 py-2 text-sm font-medium rounded-t-md transition-colors border-b-2 ${selectedDay === day.id ? 'text-[#26847F] border-[#26847F] bg-[#26847F]/10' : 'text-gray-500 border-transparent hover:text-[#26847F] hover:border-teal-300'}`}>{day.label.substring(0,3)}</button>
                   ))}
                 </div>
                 <div className="min-h-[300px]">
@@ -1210,7 +1210,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                     )}
                                     <DialogFooter>
                                       {!adjustmentResult ? (
-                                        <Button onClick={handleDailyAdjustment} disabled={isAdjusting || !adjustmentProblem}>
+                                        <Button 
+                                          onClick={handleDailyAdjustment} 
+                                          disabled={isAdjusting || !adjustmentProblem}
+                                          className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                                        >
                                           {isAdjusting ? "L'AI sta pensando..." : "Richiedi Modifica"}
                                         </Button>
                                       ) : (
@@ -1224,7 +1228,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                               <Button
                                 onClick={() => handleLogWorkout(workoutForSelectedDay)}
                                 size="sm"
-                                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] whitespace-nowrap"
+                                className="bg-[#26847F] hover:bg-[#1f6b66] text-white whitespace-nowrap"
                               >
                                 <CheckCircle2 className="w-4 h-4 mr-2" />
                                 Registra Allenamento
@@ -1285,7 +1289,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   )}
                                   <DialogFooter>
                                     {!adjustmentResult ? (
-                                      <Button onClick={handleDailyAdjustment} disabled={isAdjusting || !adjustmentProblem}>
+                                      <Button 
+                                        onClick={handleDailyAdjustment} 
+                                        disabled={isAdjusting || !adjustmentProblem}
+                                        className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                                      >
                                         {isAdjusting ? "L'AI sta pensando..." : "Richiedi Modifica"}
                                       </Button>
                                     ) : (
@@ -1298,7 +1306,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                             
                             <Button
                               onClick={() => handleLogWorkout(workoutForSelectedDay)}
-                              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                              className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
                             >
                               <CheckCircle2 className="w-4 h-4 mr-2" />
                               Registra Allenamento

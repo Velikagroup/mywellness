@@ -109,7 +109,7 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
 
   const renderStepIcon = (status) => {
     if (status === 'completed') return <CheckCircle className="inline w-4 h-4 mr-2 text-green-500" />;
-    if (status === 'in-progress') return <Loader2 className="inline w-4 h-4 mr-2 text-[var(--brand-primary)] animate-spin" />;
+    if (status === 'in-progress') return <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />;
     return <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />;
   };
 
@@ -147,8 +147,8 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
           
           <CardContent className="space-y-5 px-6 pb-6">
             <div className="space-y-2">
-              <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[var(--brand-primary)]" />
-              <p className="text-sm text-[var(--brand-primary)] font-semibold text-center min-h-[20px]">
+              <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[#26847F]" />
+              <p className="text-sm text-[#26847F] font-semibold text-center min-h-[20px]">
                 {generationStatus}
               </p>
             </div>
@@ -989,7 +989,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
     return (
       <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
         <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--brand-primary)]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#26847F]"></div>
           <p className="text-gray-600 font-medium">Inizializzazione protocolli...</p>
         </div>
       </div>
@@ -1048,8 +1048,8 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
               {remainingGenerations !== null && remainingGenerations !== -1 && (
                 <div className="flex items-center gap-2 mt-2">
                   <div className="flex items-center gap-1 text-sm">
-                    <BrainCircuit className="w-4 h-4 text-[var(--brand-primary)]" />
-                    <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[var(--brand-primary)]'}`}>
+                    <BrainCircuit className="w-4 h-4 text-[#26847F]" />
+                    <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[#26847F]'}`}>
                       {remainingGenerations} generazioni rimaste questo mese
                     </span>
                   </div>
@@ -1059,7 +1059,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
             <div className="flex gap-2 w-full lg:w-auto">
               <Button
                 onClick={() => setShowShoppingList(true)}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white border-2 border-[var(--brand-primary)] flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
               >
                 <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="hidden sm:inline">Lista Spesa</span>
@@ -1067,7 +1067,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
               </Button>
               <Button
                 onClick={() => handleShowGenerator(user)}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-3 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial relative"
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-3 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial relative"
                 disabled={generationLimitReached && remainingGenerations === 0}
               >
                 <BrainCircuit className="w-4 h-4 md:w-5 md:h-5" />
@@ -1104,7 +1104,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                   <div className="flex-shrink-0">
                     <Button
                       onClick={() => setShowUpgradeModal(true)}
-                      className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                      className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
                       ⬆️ Upgrade Piano
                     </Button>
@@ -1122,7 +1122,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
               </CardHeader>
               <CardContent>
                 <div className="space-y-6">
-                  <div className="p-4 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg border-2 border-[var(--brand-primary)]/30">
+                  <div className="p-4 bg-gradient-to-br from-[#E0F2F1] to-blue-50 rounded-lg border-2 border-[#26847F]/30">
                     <Label className="text-sm font-semibold text-gray-800 mb-3 block">🍽️ Quanti pasti al giorno?</Label>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-2">
                       {[1, 2, 3, 4, 5, 6, 7].map((num) => (
@@ -1131,8 +1131,8 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                           onClick={() => setMealsPerDay(num)}
                           className={`p-3 rounded-xl border-2 transition-all text-center font-bold ${
                             mealsPerDay === num
-                              ? 'border-[var(--brand-primary)] bg-white shadow-lg scale-105'
-                              : 'border-gray-200 hover:border-[var(--brand-primary)]/50 hover:bg-white'
+                              ? 'border-[#26847F] bg-white shadow-lg scale-105'
+                              : 'border-gray-200 hover:border-[#26847F]/50 hover:bg-white'
                           }`}
                         >
                           <div className="text-2xl">{num}</div>
@@ -1164,14 +1164,14 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                         id="intermittent-fasting-switch"
                         checked={generationPrefs?.intermittent_fasting || false}
                         onCheckedChange={(value) => handlePrefsChange('intermittent_fasting', value)}
-                        className="data-[state=checked]:bg-[var(--brand-primary)]"
+                        className="data-[state=checked]:bg-[#26847F]"
                       />
                     </div>
                   </div>
 
                   {generationPrefs?.intermittent_fasting && (
-                    <div className="space-y-4 p-4 bg-[var(--brand-primary-light)] rounded-lg border border-[var(--brand-primary)]/30">
-                      <h4 className="font-semibold text-[var(--brand-primary-dark-text)]">⏰ Configurazione Digiuno Intermittente</h4>
+                    <div className="space-y-4 p-4 bg-[#E0F2F1] rounded-lg border border-[#26847F]/30">
+                      <h4 className="font-semibold text-[#1a5e5a]">⏰ Configurazione Digiuno Intermittente</h4>
                       <div>
                         <Label className="text-sm font-medium text-gray-700 mb-2 block">Quale pasto vuoi saltare?</Label>
                         <div className="grid grid-cols-3 gap-3">
@@ -1185,8 +1185,8 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                               onClick={() => handlePrefsChange('if_skip_meal', meal.id)}
                               className={`p-3 rounded-lg border-2 transition-all text-center ${
                                 generationPrefs.if_skip_meal === meal.id
-                                  ? 'border-[var(--brand-primary)] bg-white shadow-sm'
-                                  : 'border-gray-200 hover:border-[var(--brand-primary)]/50'
+                                  ? 'border-[#26847F] bg-white shadow-sm'
+                                  : 'border-gray-200 hover:border-[#26847F]/50'
                               }`}
                             >
                               <div className="text-2xl mb-1">{meal.icon}</div>
@@ -1201,7 +1201,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                   <div className="flex gap-3 pt-4">
                     <Button
                       onClick={startGenerationFlow}
-                      className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                      className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                       disabled={generationPrefs?.intermittent_fasting && (!generationPrefs?.if_skip_meal || !generationPrefs?.if_meal_structure)}
                     >
                       Continua
@@ -1241,8 +1241,8 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                         onClick={() => setSelectedDay(day.key)}
                         className={`flex items-center gap-1 px-4 py-2 text-sm font-medium rounded-t-md transition-colors border-b-2 ${
                           isSelected
-                            ? 'text-[var(--brand-primary)] border-[var(--brand-primary)] bg-[var(--brand-primary-light)]/50'
-                            : 'text-gray-500 border-transparent hover:text-[var(--brand-primary)] hover:border-teal-300'
+                            ? 'text-[#26847F] border-[#26847F] bg-[#E0F2F1]/50'
+                            : 'text-gray-500 border-transparent hover:text-[#26847F] hover:border-teal-300'
                         }`}
                       >
                         <span>{day.label.substring(0, 3)}</span>
@@ -1262,7 +1262,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                           onClick={() => addDayToShoppingList(selectedDay)}
                           size="sm"
                           variant="outline"
-                          className="border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]"
+                          className="border-[#26847F] text-[#26847F] hover:bg-[#E0F2F1]"
                           disabled={addedDays.includes(selectedDay)}
                         >
                           {addedDays.includes(selectedDay) ? (
@@ -1273,11 +1273,11 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                         </Button>
                       </div>
 
-                      <div className="bg-gradient-to-r from-[var(--brand-primary-light)] to-blue-50 rounded-xl p-4 border-2 border-[var(--brand-primary)]/30 mb-6">
+                      <div className="bg-gradient-to-r from-[#E0F2F1] to-blue-50 rounded-xl p-4 border-2 border-[#26847F]/30 mb-6">
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                           <div className="text-center">
                             <p className="text-xs text-gray-600 font-medium mb-1">Calorie Totali</p>
-                            <p className="text-2xl font-bold text-[var(--brand-primary)]">{Math.round(dailyTotals.calories)}</p>
+                            <p className="text-2xl font-bold text-[#26847F]">{Math.round(dailyTotals.calories)}</p>
                             <p className="text-xs text-gray-500">kcal</p>
                           </div>
                           <div className="text-center">
@@ -1297,7 +1297,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                           </div>
                         </div>
                         {nutritionData?.daily_calories && (
-                          <div className="mt-3 pt-3 border-t border-[var(--brand-primary)]/20">
+                          <div className="mt-3 pt-3 border-t border-[#26847F]/20">
                             <div className="flex items-center justify-between text-xs">
                               <span className="text-gray-600">Target giornaliero: {nutritionData.daily_calories} kcal</span>
                               <span className={`font-semibold ${Math.abs(dailyTotals.calories - nutritionData.daily_calories) <= 50 ? 'text-green-600' : 'text-amber-600'}`}>
@@ -1348,11 +1348,11 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                               size="icon"
                               onClick={() => regenerateSingleMeal(meal)}
                               disabled={regeneratingMealId === meal.id}
-                              className="absolute top-1/2 -translate-y-1/2 right-3 md:right-4 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-2 rounded-full text-gray-500 hover:text-[var(--brand-primary)] hover:bg-gray-200/50"
+                              className="absolute top-1/2 -translate-y-1/2 right-3 md:right-4 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-2 rounded-full text-gray-500 hover:text-[#26847F] hover:bg-gray-200/50"
                               title="Rigenera questo pasto"
                             >
                               {regeneratingMealId === meal.id ? (
-                                <RotateCcw className="w-4 h-4 animate-spin text-[var(--brand-primary)]" />
+                                <RotateCcw className="w-4 h-4 animate-spin text-[#26847F]" />
                               ) : (
                                 <RotateCcw className="w-4 h-4" />
                               )}

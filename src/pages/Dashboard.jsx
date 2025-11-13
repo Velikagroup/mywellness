@@ -229,7 +229,8 @@ export default function Dashboard() {
                         fat: { type: "number" }
                       }
                     }
-                  },
+                  }
+,
                   instructions: { type: "array", items: { type: "string" } },
                   total_calories: { type: "number" },
                   total_protein: { type: "number" },
@@ -456,7 +457,7 @@ export default function Dashboard() {
         backgroundAttachment: 'fixed'
       }}>
         <div className="flex flex-col items-center gap-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--brand-primary)]"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#26847F]"></div>
           <p className="text-gray-600 font-medium">
             {isRebalancing ? "Ribilanciamento pasti in corso..." : "Caricamento Dati di Sistema..."}
           </p>
@@ -484,7 +485,7 @@ export default function Dashboard() {
             </div>
             <Button 
               onClick={handleRecalibrate}
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-6 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl w-full lg:w-auto"
+              className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-6 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl w-full lg:w-auto"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Ricalibra
@@ -502,7 +503,7 @@ export default function Dashboard() {
             </div>
             <Button 
               onClick={handleRecalibrate}
-              className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
+              className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 text-base font-semibold rounded-xl shadow-lg hover:shadow-xl"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
               Ricalibra
@@ -568,7 +569,7 @@ export default function Dashboard() {
               />
               <button
                 onClick={handleOpenEditCalories}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[var(--brand-primary)] hover:bg-gray-100 rounded-lg transition-all"
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
                 title="Modifica Target Calorico"
               >
                 <Edit3 className="w-4 h-4" />
@@ -583,7 +584,7 @@ export default function Dashboard() {
               />
               <button
                 onClick={handleOpenEditBMR}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[var(--brand-primary)] hover:bg-gray-100 rounded-lg transition-all"
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
                 title="Modifica BMR"
               >
                 <Edit3 className="w-4 h-4" />
@@ -599,7 +600,7 @@ export default function Dashboard() {
               />
               <button
                 onClick={handleOpenEditBodyFat}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[var(--brand-primary)] hover:bg-gray-100 rounded-lg transition-all"
+                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
                 title="Modifica Massa Grassa"
               >
                 <Edit3 className="w-4 h-4" />
@@ -696,7 +697,7 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveBMR}
                 disabled={isSavingBMR}
-                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 {isSavingBMR ? 'Salvataggio...' : 'Salva'}
               </Button>
@@ -742,7 +743,7 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveBodyFat}
                 disabled={isSavingBodyFat}
-                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 {isSavingBodyFat ? 'Salvataggio...' : 'Salva'}
               </Button>
@@ -787,7 +788,7 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveCalories}
                 disabled={isSavingCalories}
-                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 {isSavingCalories ? 'Salvataggio...' : 'Salva'}
               </Button>

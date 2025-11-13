@@ -340,7 +340,7 @@ export default function Settings() {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--brand-primary)]"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#26847F]"></div>
       </div>
     );
   }
@@ -414,7 +414,7 @@ export default function Settings() {
                 <Button
                   onClick={handleSavePersonalInfo}
                   disabled={isSaving}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                  className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   {isSaving ? 'Salvataggio...' : 'Salva Modifiche'}
                 </Button>
@@ -500,7 +500,7 @@ export default function Settings() {
                 <CardTitle>Il Tuo Piano</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[var(--brand-primary-light)] to-teal-50 rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#E0F2F0] to-teal-50 rounded-xl">
                   <div>
                     <p className="text-sm text-gray-600">Piano Attuale</p>
                     <p className="text-2xl font-bold text-gray-900">{planLabels[user?.subscription_plan] || 'N/D'}</p>
@@ -508,7 +508,7 @@ export default function Settings() {
                       Stato: <span className="font-semibold">{statusLabels[user?.subscription_status] || 'N/D'}</span>
                     </p>
                   </div>
-                  <Crown className="w-12 h-12 text-[var(--brand-primary)]" />
+                  <Crown className="w-12 h-12 text-[#26847F]" />
                 </div>
 
                 {user?.subscription_status === 'active' && user?.subscription_period_end && (
@@ -520,7 +520,7 @@ export default function Settings() {
                 <div className="flex gap-3">
                   <Button
                     onClick={handleUpgradePlan}
-                    className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                    className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                   >
                     {user?.subscription_plan === 'premium' ? 'Cambia Piano' : 'Upgrade Piano'}
                   </Button>
@@ -590,7 +590,7 @@ export default function Settings() {
                     value={billingInfo.taxId}
                     onChange={(e) => setBillingInfo({...billingInfo, taxId: e.target.value})}
                     className="bg-white"
-                  />
+                    />
                 </div>
 
                 {billingInfo.billingType === 'company' && (
@@ -600,7 +600,7 @@ export default function Settings() {
                       value={billingInfo.pecSdi}
                       onChange={(e) => setBillingInfo({...billingInfo, pecSdi: e.target.value})}
                       className="bg-white"
-                    />
+                      />
                   </div>
                 )}
 
@@ -635,7 +635,7 @@ export default function Settings() {
                 <Button
                   onClick={handleSaveBillingInfo}
                   disabled={isSaving}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                  className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   {isSaving ? 'Salvataggio...' : 'Salva Dati Fatturazione'}
                 </Button>
@@ -660,7 +660,7 @@ export default function Settings() {
                           </p>
                         </div>
                         <div className="flex items-center gap-3">
-                          <p className="text-lg font-bold text-[var(--brand-primary)]">€{t.amount.toFixed(2)}</p>
+                          <p className="text-lg font-bold text-[#26847F]">€{t.amount.toFixed(2)}</p>
                           <Button
                             onClick={() => handleDownloadInvoice(t.id)}
                             size="sm"
@@ -728,7 +728,7 @@ export default function Settings() {
                 <Button
                   onClick={handleSaveNotifications}
                   disabled={isSaving}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                  className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   {isSaving ? 'Salvataggio...' : 'Salva Preferenze'}
                 </Button>
@@ -796,7 +796,7 @@ export default function Settings() {
                 <Button
                   onClick={handleSubmitTicket}
                   disabled={isSaving}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] w-full"
+                  className="bg-[#26847F] hover:bg-[#1f6b66] text-white w-full"
                 >
                   {isSaving ? 'Invio...' : 'Invia Ticket'}
                 </Button>
@@ -923,7 +923,7 @@ export default function Settings() {
                   onClick={() => setCancellationReason(option.value)}
                   className={`w-full p-4 rounded-xl border-2 transition-all text-left ${
                     cancellationReason === option.value
-                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
+                      ? 'border-[#26847F] bg-[#E0F2F0]'
                       : 'border-gray-200 bg-white hover:border-gray-300'
                   }`}
                 >
