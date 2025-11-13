@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -27,6 +28,8 @@ import { motion, useScroll, useTransform } from "framer-motion";
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
 import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
+import QuizPreviewDemo from "../components/home/QuizPreviewDemo";
+import DashboardPreviewDemo from "../components/home/DashboardPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -615,11 +618,8 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="step-image-container shadow-2xl border-2 border-gray-100">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/88695af88_QuizIMG.jpg"
-                  alt="Quiz Assessment MyWellness"
-                  className="step-image w-full h-auto" />
+              <div className="max-w-md mx-auto">
+                <QuizPreviewDemo />
               </div>
             </motion.div>
           </motion.div>
@@ -657,11 +657,8 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="step-image-container shadow-2xl border-2 border-gray-100 max-w-5xl mx-auto">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/32fccd473_Dashboard.jpg"
-                  alt="Dashboard MyWellness"
-                  className="w-full h-auto rounded-xl" />
+              <div className="max-w-5xl mx-auto">
+                <DashboardPreviewDemo />
               </div>
             </motion.div>
           </motion.div>
