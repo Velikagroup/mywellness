@@ -58,6 +58,15 @@ export default function Dashboard() {
     try {
       const currentUser = await base44.auth.me();
       console.log('👤 User loaded:', currentUser.id);
+      
+      // ✅ CRITICAL: Verifica se l'utente ha una subscription attiva o in trial
+      if (!currentUser.subscription_status || 
+          (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial')) {
+        console.warn('⚠️ User has no active subscription, redirecting to TrialSetup');
+        navigate(createPageUrl('TrialSetup'), { replace: true });
+        return;
+      }
+      
       setUser(currentUser);
 
       const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();

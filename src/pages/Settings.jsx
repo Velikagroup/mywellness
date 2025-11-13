@@ -88,6 +88,15 @@ export default function Settings() {
   const loadUserData = async () => {
     try {
       const currentUser = await base44.auth.me();
+      
+      // ✅ CRITICAL: Verifica se l'utente ha una subscription attiva o in trial
+      if (!currentUser.subscription_status || 
+          (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial')) {
+        console.warn('⚠️ User has no active subscription, redirecting to TrialSetup');
+        navigate(createPageUrl('TrialSetup'), { replace: true });
+        return;
+      }
+      
       setUser(currentUser);
 
       setFullName(currentUser.full_name || '');
