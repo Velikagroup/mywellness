@@ -229,8 +229,7 @@ export default function Dashboard() {
                         fat: { type: "number" }
                       }
                     }
-                  }
-,
+                  },
                   instructions: { type: "array", items: { type: "string" } },
                   total_calories: { type: "number" },
                   total_protein: { type: "number" },
@@ -474,12 +473,12 @@ export default function Dashboard() {
           background: linear-gradient(135deg, 
             rgba(249, 250, 251, 0.75) 0%,
             rgba(243, 244, 246, 0.65) 50%,
-            rgba(249, 250, 241, 0.75) 100%
+            rgba(249, 250, 251, 0.75) 100%
           );
           border: 1px solid rgba(156, 163, 175, 0.3);
           box-shadow: 
-            0 4px 16px 0 rgba(31, 38, 135, 0.08),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+            0 8px 32px 0 rgba(31, 38, 135, 0.08),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
 
@@ -487,12 +486,12 @@ export default function Dashboard() {
           background: linear-gradient(135deg, 
             rgba(249, 250, 251, 0.85) 0%,
             rgba(243, 244, 246, 0.75) 50%,
-            rgba(249, 250, 241, 0.85) 100%
+            rgba(249, 250, 251, 0.85) 100%
           );
           border: 1px solid rgba(156, 163, 175, 0.4);
           box-shadow: 
-            0 6px 20px 0 rgba(31, 38, 135, 0.12),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.7),
+            0 8px 32px 0 rgba(31, 38, 135, 0.12),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
       `}</style>
