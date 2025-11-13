@@ -1,6 +1,7 @@
+
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Target, TrendingUp, Activity, BarChart3, Calendar, TrendingDown, Scale } from "lucide-react";
+import { Target, TrendingUp, Activity, BarChart3, Calendar, TrendingDown, Scale, Utensils, Dumbbell } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 
 /**
@@ -30,295 +31,404 @@ export default function DashboardPreviewDemo() {
   const caloriesRemaining = totalCaloriesToBurn - caloriesBurned;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
-      {/* Colonna Sinistra - 8 colonne */}
-      <div className="lg:col-span-8 space-y-4">
-        {/* Top Stats Row */}
-        <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-            <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Iniziale</p>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-3xl font-black text-gray-900">{startWeight}</span>
-                <span className="text-sm text-gray-500 font-medium">kg</span>
-              </div>
-            </CardContent>
-          </Card>
+    <div className="space-y-6">
+      <style>{`
+        .liquid-glass-button-demo {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(38, 132, 127, 0.15) 0%,
+            rgba(20, 184, 166, 0.1) 50%,
+            rgba(38, 132, 127, 0.15) 100%
+          );
+          border: 1px solid rgba(38, 132, 127, 0.3);
+          box-shadow: 
+            0 4px 16px 0 rgba(38, 132, 127, 0.12),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+      `}</style>
 
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-            <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Target</p>
-              <div className="flex items-baseline gap-1.5">
-                <span className="text-3xl font-black text-gray-900">{targetWeight}</span>
-                <span className="text-sm text-gray-500 font-medium">kg</span>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 shadow-sm rounded-lg">
-            <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-green-700 mb-1 uppercase tracking-wider">Variazione</p>
-              <div className="flex items-baseline gap-1.5">
-                <TrendingDown className="w-4 h-4 text-green-600" />
-                <span className="text-3xl font-black text-green-700">{variation.toFixed(1)}</span>
-                <span className="text-sm text-green-600 font-medium">kg</span>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Charts Row */}
-        <div className="grid grid-cols-2 gap-4">
-          {/* Weight Chart */}
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-            <CardHeader className="pb-2 pt-4 px-4">
-              <CardTitle className="text-xs font-semibold text-gray-900 flex items-center gap-1.5">
-                <Scale className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-                Traiettoria Massa Corporea
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-4 pb-4">
-              <div className="h-32 w-full">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={weightData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-                    <XAxis 
-                      dataKey="date" 
-                      tick={{ fontSize: 9, fill: '#6b7280' }}
-                      stroke="#d1d5db"
-                      tickLine={false}
-                    />
-                    <YAxis 
-                      domain={[71, 85]}
-                      tick={{ fontSize: 9, fill: '#6b7280' }}
-                      stroke="#d1d5db"
-                      tickLine={false}
-                    />
-                    <Tooltip 
-                      contentStyle={{
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '6px',
-                        fontSize: '10px',
-                        padding: '4px 8px'
-                      }}
-                    />
-                    <ReferenceLine 
-                      y={73} 
-                      stroke="#10b981" 
-                      strokeDasharray="4 4" 
-                      label={{ value: 'Target', fontSize: 8, fill: '#10b981', position: 'right' }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="weight" 
-                      stroke="#26847F" 
-                      strokeWidth={2.5}
-                      dot={{ fill: '#26847F', r: 3 }}
-                      name="Peso attuale"
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-              <div className="mt-2 flex items-center justify-between text-[9px]">
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-2.5 rounded-full bg-[var(--brand-primary)]"></div>
-                  <span className="text-gray-600 font-medium">Peso attuale</span>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+        {/* Colonna Sinistra - 8 colonne */}
+        <div className="lg:col-span-8 space-y-4">
+          {/* Top Stats Row */}
+          <div className="grid grid-cols-3 gap-4">
+            <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+              <CardContent className="p-4">
+                <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Iniziale</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl font-black text-gray-900">{startWeight}</span>
+                  <span className="text-sm text-gray-500 font-medium">kg</span>
                 </div>
-                <div className="flex items-center gap-1.5">
-                  <div className="w-2.5 h-0.5 bg-green-500"></div>
-                  <span className="text-gray-600 font-medium">Target</span>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+              </CardContent>
+            </Card>
 
-          {/* Calorie Breakdown */}
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-            <CardHeader className="pb-2 pt-4 px-4">
-              <CardTitle className="text-xs font-semibold text-gray-900">
-                Scomposizione Calorica Obiettivo
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="px-4 pb-4">
-              <div className="flex items-center justify-center mb-3 relative">
-                {/* Circular Progress */}
-                <svg className="w-24 h-24" viewBox="0 0 120 120">
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="45"
-                    fill="none"
-                    stroke="#e5e7eb"
-                    strokeWidth="8"
-                  />
-                  <circle
-                    cx="60"
-                    cy="60"
-                    r="45"
-                    fill="none"
-                    stroke="#26847F"
-                    strokeWidth="8"
-                    strokeDasharray={`${progress * 2.827} ${282.7 - progress * 2.827}`}
-                    strokeLinecap="round"
-                    transform="rotate(-90 60 60)"
-                  />
-                  <text x="60" y="55" textAnchor="middle" className="text-2xl font-black" fill="#1f2937">
-                    {progress}%
-                  </text>
-                  <text x="60" y="70" textAnchor="middle" className="text-[9px]" fill="#6b7280">
-                    completato
-                  </text>
-                </svg>
-              </div>
-              
-              <div className="space-y-1.5">
-                <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-[var(--brand-primary-light)]">
+            <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+              <CardContent className="p-4">
+                <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Target</p>
+                <div className="flex items-baseline gap-1.5">
+                  <span className="text-3xl font-black text-gray-900">{targetWeight}</span>
+                  <span className="text-sm text-gray-500 font-medium">kg</span>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 shadow-sm rounded-lg">
+              <CardContent className="p-4">
+                <p className="text-[10px] font-medium text-green-700 mb-1 uppercase tracking-wider">Variazione</p>
+                <div className="flex items-baseline gap-1.5">
+                  <TrendingDown className="w-4 h-4 text-green-600" />
+                  <span className="text-3xl font-black text-green-700">{variation.toFixed(1)}</span>
+                  <span className="text-sm text-green-600 font-medium">kg</span>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Charts Row */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Weight Chart */}
+            <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-xs font-semibold text-gray-900 flex items-center gap-1.5">
+                  <Scale className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
+                  Traiettoria Massa Corporea
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4">
+                <div className="h-32 w-full">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <LineChart data={weightData} margin={{ top: 5, right: 5, left: -25, bottom: 0 }}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis 
+                        dataKey="date" 
+                        tick={{ fontSize: 9, fill: '#6b7280' }}
+                        stroke="#d1d5db"
+                        tickLine={false}
+                      />
+                      <YAxis 
+                        domain={[71, 85]}
+                        tick={{ fontSize: 9, fill: '#6b7280' }}
+                        stroke="#d1d5db"
+                        tickLine={false}
+                      />
+                      <Tooltip 
+                        contentStyle={{
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '6px',
+                          fontSize: '10px',
+                          padding: '4px 8px'
+                        }}
+                      />
+                      <ReferenceLine 
+                        y={73} 
+                        stroke="#10b981" 
+                        strokeDasharray="4 4" 
+                        label={{ value: 'Target', fontSize: 8, fill: '#10b981', position: 'right' }}
+                      />
+                      <Line 
+                        type="monotone" 
+                        dataKey="weight" 
+                        stroke="#26847F" 
+                        strokeWidth={2.5}
+                        dot={{ fill: '#26847F', r: 3 }}
+                        name="Peso attuale"
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+                <div className="mt-2 flex items-center justify-between text-[9px]">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-[var(--brand-primary)]"></div>
-                    <span className="text-[11px] font-semibold text-gray-700">Completato</span>
+                    <span className="text-gray-600 font-medium">Peso attuale</span>
                   </div>
-                  <span className="text-[11px] font-bold text-gray-900">{caloriesBurned.toLocaleString('it-IT')} kcal</span>
+                  <div className="flex items-center gap-1.5">
+                    <div className="w-2.5 h-0.5 bg-green-500"></div>
+                    <span className="text-gray-600 font-medium">Target</span>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Calorie Breakdown */}
+            <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+              <CardHeader className="pb-2 pt-4 px-4">
+                <CardTitle className="text-xs font-semibold text-gray-900">
+                  Scomposizione Calorica Obiettivo
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="px-4 pb-4">
+                <div className="flex items-center justify-center mb-3 relative">
+                  {/* Circular Progress */}
+                  <svg className="w-24 h-24" viewBox="0 0 120 120">
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="45"
+                      fill="none"
+                      stroke="#e5e7eb"
+                      strokeWidth="8"
+                    />
+                    <circle
+                      cx="60"
+                      cy="60"
+                      r="45"
+                      fill="none"
+                      stroke="#26847F"
+                      strokeWidth="8"
+                      strokeDasharray={`${progress * 2.827} ${282.7 - progress * 2.827}`}
+                      strokeLinecap="round"
+                      transform="rotate(-90 60 60)"
+                    />
+                    <text x="60" y="55" textAnchor="middle" className="text-2xl font-black" fill="#1f2937">
+                      {progress}%
+                    </text>
+                    <text x="60" y="70" textAnchor="middle" className="text-[9px]" fill="#6b7280">
+                      completato
+                    </text>
+                  </svg>
                 </div>
                 
-                <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-50">
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
-                    <span className="text-[11px] font-semibold text-gray-700">Rimanente</span>
+                <div className="space-y-1.5">
+                  <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-[var(--brand-primary-light)]">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-[var(--brand-primary)]"></div>
+                      <span className="text-[11px] font-semibold text-gray-700">Completato</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-gray-900">{caloriesBurned.toLocaleString('it-IT')} kcal</span>
                   </div>
-                  <span className="text-[11px] font-bold text-gray-900">{caloriesRemaining.toLocaleString('it-IT')} kcal</span>
+                  
+                  <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-50">
+                    <div className="flex items-center gap-1.5">
+                      <div className="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
+                      <span className="text-[11px] font-semibold text-gray-700">Rimanente</span>
+                    </div>
+                    <span className="text-[11px] font-bold text-gray-900">{caloriesRemaining.toLocaleString('it-IT')} kcal</span>
+                  </div>
                 </div>
+                
+                <div className="mt-3 pt-2 border-t border-gray-200">
+                  <p className="text-[9px] text-gray-500 text-center flex items-center justify-center gap-1">
+                    <Activity className="w-2.5 h-2.5" />
+                    Calcolo basato su 7700 kcal = 1kg di variazione
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Nutrition & Training Row */}
+          <div className="grid grid-cols-2 gap-4">
+            {/* Nutrition Box */}
+            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
+                    <Utensils className="w-6 h-6 text-orange-600" />
+                  </div>
+                  Protocollo Nutrizionale
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 pt-0">
+                <div className="bg-gradient-to-r from-[#e9f6f5] to-blue-50 rounded-xl p-3 border-2 border-[#26847F]/30 mb-4">
+                  <div className="grid grid-cols-4 gap-2">
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600 font-medium mb-0.5">Kcal</p>
+                      <p className="text-lg font-bold text-[#26847F]">1935</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600 font-medium mb-0.5">Prot.</p>
+                      <p className="text-lg font-bold text-red-600">142g</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600 font-medium mb-0.5">Carb.</p>
+                      <p className="text-lg font-bold text-blue-600">168g</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-xs text-gray-600 font-medium mb-0.5">Grassi</p>
+                      <p className="text-lg font-bold text-yellow-600">72g</p>
+                    </div>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="bg-gray-50/80 rounded-lg p-3 border border-gray-200/60">
+                    <p className="font-semibold text-gray-800 text-sm">Colazione</p>
+                    <p className="text-xs text-gray-600">Avocado Toast con Uova</p>
+                  </div>
+                  <div className="bg-gray-50/80 rounded-lg p-3 border border-gray-200/60">
+                    <p className="font-semibold text-gray-800 text-sm">Pranzo</p>
+                    <p className="text-xs text-gray-600">Insalata di Pollo e Quinoa</p>
+                  </div>
+                </div>
+                <button disabled className="w-full liquid-glass-button-demo text-[#26847F] font-semibold text-sm py-2 px-4 rounded-xl cursor-not-allowed opacity-80">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <Utensils className="w-4 h-4" />
+                    <span>Vai al Piano</span>
+                  </div>
+                </button>
+              </CardContent>
+            </Card>
+
+            {/* Training Box */}
+            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+                  <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center shadow-sm">
+                    <Dumbbell className="w-6 h-6 text-green-600" />
+                  </div>
+                  Allenamento di Oggi
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 pt-0">
+                <div className="bg-gradient-to-r from-[#e9f6f5] to-blue-50 rounded-xl p-4 border-2 border-[#26847F]/30 mb-4">
+                  <h3 className="font-bold text-gray-900 mb-1">Full Body Strength</h3>
+                  <div className="flex items-center gap-4 text-sm text-gray-600">
+                    <span>45 min</span>
+                    <span>•</span>
+                    <span>380 kcal</span>
+                  </div>
+                </div>
+                <div className="space-y-2 mb-4">
+                  <div className="bg-gray-50/80 rounded-lg p-3 border border-gray-200/60">
+                    <p className="font-semibold text-gray-800 text-sm">Squat</p>
+                    <p className="text-xs text-gray-600">4 serie × 12 reps</p>
+                  </div>
+                  <div className="bg-gray-50/80 rounded-lg p-3 border border-gray-200/60">
+                    <p className="font-semibold text-gray-800 text-sm">Panca Piana</p>
+                    <p className="text-xs text-gray-600">4 serie × 10 reps</p>
+                  </div>
+                </div>
+                <button disabled className="w-full liquid-glass-button-demo text-[#26847F] font-semibold text-sm py-2 px-4 rounded-xl cursor-not-allowed opacity-80">
+                  <div className="flex items-center justify-center gap-1.5">
+                    <Dumbbell className="w-4 h-4" />
+                    <span>Vai al Piano</span>
+                  </div>
+                </button>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Weight Logger */}
+          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+            <CardContent className="p-4">
+              <div className="flex items-center gap-1.5 mb-3">
+                <Scale className="w-4 h-4 text-[var(--brand-primary)]" />
+                <h3 className="text-xs font-semibold text-gray-900">Registra Peso</h3>
               </div>
-              
-              <div className="mt-3 pt-2 border-t border-gray-200">
-                <p className="text-[9px] text-gray-500 text-center flex items-center justify-center gap-1">
-                  <Activity className="w-2.5 h-2.5" />
-                  Calcolo basato su 7700 kcal = 1kg di variazione
-                </p>
+              <div className="flex gap-2">
+                <div className="flex-1 relative">
+                  <input
+                    type="number"
+                    step="0.1"
+                    placeholder="70.5"
+                    disabled
+                    className="w-full h-10 px-3 pr-10 text-base font-semibold rounded-lg border border-gray-200 bg-white/70 cursor-not-allowed opacity-80"
+                  />
+                  <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">kg</span>
+                </div>
+                <button
+                  disabled
+                  className="px-5 h-10 bg-[var(--brand-primary)] text-white text-sm font-semibold rounded-lg cursor-not-allowed opacity-80"
+                >
+                  Salva Peso
+                </button>
               </div>
             </CardContent>
           </Card>
         </div>
 
-        {/* Weight Logger */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-          <CardContent className="p-4">
-            <div className="flex items-center gap-1.5 mb-3">
-              <Scale className="w-4 h-4 text-[var(--brand-primary)]" />
-              <h3 className="text-xs font-semibold text-gray-900">Registra Peso</h3>
-            </div>
-            <div className="flex gap-2">
-              <div className="flex-1 relative">
-                <input
-                  type="number"
-                  step="0.1"
-                  placeholder="70.5"
-                  disabled
-                  className="w-full h-10 px-3 pr-10 text-base font-semibold rounded-lg border border-gray-200 bg-white/70 cursor-not-allowed opacity-80"
-                />
-                <span className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 text-sm font-medium">kg</span>
+        {/* Colonna Destra - 4 colonne */}
+        <div className="lg:col-span-4 space-y-3">
+          {/* Target Calorico */}
+          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-2">
+                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Target Calorico</p>
+                <span className="text-[9px] text-green-600 font-semibold">↗ +2.3%</span>
               </div>
-              <button
-                disabled
-                className="px-5 h-10 bg-[var(--brand-primary)] text-white text-sm font-semibold rounded-lg cursor-not-allowed opacity-80"
-              >
-                Salva Peso
-              </button>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+              <div className="flex items-center gap-2">
+                <Activity className="w-4 h-4 text-[var(--brand-primary)]" />
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-gray-900">1935</span>
+                  <span className="text-xs text-gray-500 font-medium">kcal</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-      {/* Colonna Destra - 4 colonne */}
-      <div className="lg:col-span-4 space-y-3">
-        {/* Target Calorico */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Target Calorico</p>
-              <span className="text-[9px] text-green-600 font-semibold">↗ +2.3%</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Activity className="w-4 h-4 text-[var(--brand-primary)]" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-gray-900">1935</span>
-                <span className="text-xs text-gray-500 font-medium">kcal</span>
+          {/* Metabolismo Basale */}
+          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-2">
+                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Metabolismo Basale (BMR)</p>
+                <span className="text-[9px] text-green-600 font-semibold">↗ +1.8%</span>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex items-center gap-2">
+                <TrendingUp className="w-4 h-4 text-blue-600" />
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-gray-900">1876</span>
+                  <span className="text-xs text-gray-500 font-medium">kcal</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Metabolismo Basale */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Metabolismo Basale (BMR)</p>
-              <span className="text-[9px] text-green-600 font-semibold">↗ +1.8%</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4 text-blue-600" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-gray-900">1876</span>
-                <span className="text-xs text-gray-500 font-medium">kcal</span>
+          {/* Massa Grassa */}
+          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-2">
+                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Massa Grassa</p>
+                <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex items-center gap-2">
+                <BarChart3 className="w-4 h-4 text-purple-600" />
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-gray-900">18.3</span>
+                  <span className="text-xs text-gray-500 font-medium">%</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Massa Grassa */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Massa Grassa</p>
-              <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <BarChart3 className="w-4 h-4 text-purple-600" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-gray-900">18.3</span>
-                <span className="text-xs text-gray-500 font-medium">%</span>
+          {/* Avanzamento Obiettivo */}
+          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-2">
+                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Avanzamento Obiettivo</p>
+                <span className="text-[9px] text-green-600 font-semibold">↗ +15.2%</span>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="flex items-center gap-2">
+                <Target className="w-4 h-4 text-green-600" />
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-gray-900">{progress}</span>
+                  <span className="text-xs text-gray-500 font-medium">%</span>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
 
-        {/* Avanzamento Obiettivo */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Avanzamento Obiettivo</p>
-              <span className="text-[9px] text-green-600 font-semibold">↗ +15.2%</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-green-600" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-gray-900">{progress}</span>
-                <span className="text-xs text-gray-500 font-medium">%</span>
+          {/* Giorni di Allenamento */}
+          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+            <CardContent className="p-4">
+              <div className="flex items-start justify-between mb-2">
+                <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Giorni di Allenamento</p>
+                <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
               </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Giorni di Allenamento */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Giorni di Allenamento</p>
-              <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-[var(--brand-primary)]" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-gray-900">5</span>
-                <span className="text-[11px] text-gray-500 font-medium">giorni/sett</span>
+              <div className="flex items-center gap-2">
+                <Calendar className="w-4 h-4 text-[var(--brand-primary)]" />
+                <div className="flex items-baseline gap-1">
+                  <span className="text-3xl font-black text-gray-900">5</span>
+                  <span className="text-[11px] text-gray-500 font-medium">giorni/sett</span>
+                </div>
               </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
 
       {/* Demo Notice - Full Width */}
-      <div className="lg:col-span-12 text-center">
+      <div className="text-center">
         <p className="text-[10px] text-gray-400 italic">
           Anteprima interfaccia • Funzionalità disponibili dopo il signup
         </p>
