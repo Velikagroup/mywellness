@@ -14,8 +14,8 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
       <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl h-full">
         <CardHeader className="pb-3">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#26847F]/10 rounded-full flex items-center justify-center">
-              <Dumbbell className="w-5 h-5 text-[#26847F]" />
+            <div className="w-12 h-12 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
+              <Dumbbell className="w-6 h-6 text-[#26847F]" />
             </div>
             Allenamento di Oggi
           </CardTitle>
@@ -98,8 +98,8 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
       `}</style>
       <CardHeader className="pb-3">
         <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#26847F]/10 rounded-full flex items-center justify-center">
-            <Dumbbell className="w-5 h-5 text-[#26847F]" />
+          <div className="w-12 h-12 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
+            <Dumbbell className="w-6 h-6 text-[#26847F]" />
           </div>
           Allenamento di Oggi
         </CardTitle>
