@@ -48,7 +48,7 @@ export default function Home() {
     const checkQuizStatus = async () => {
       try {
         const currentUser = await base44.auth.me();
-        
+
         // Se l'utente è loggato ma NON ha completato il quiz → vai al Quiz
         if (currentUser && !currentUser.quiz_completed) {
           console.log('🔄 User logged in but quiz not completed, redirecting to Quiz...');
@@ -766,7 +766,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 5: Workout su Misura - IMMAGINE AGGIORNATA */}
+          {/* Step 5: Workout su Misura */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-24"
             initial={{ opacity: 0, y: 60 }}
@@ -790,7 +790,7 @@ export default function Home() {
               <p className="text-gray-600 mb-6 text-lg leading-relaxed">Schede settimanali personalizzate con warm-up e cool-down, analisi AI dei progressi e modifiche immediate della scheda in caso di dolori o impedimenti.</p>
               <div className="flex flex-wrap gap-3">
                 <span className="px-4 py-2 bg-violet-50 text-violet-700 rounded-full text-sm font-medium">🎯 Progressione Adattiva</span>
-                <span className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium">📸 Analisi Postura</span>
+                <span className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium">📸 Analisi Progressi AI</span>
               </div>
             </motion.div>
             <motion.div
@@ -801,7 +801,7 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="step-image-container shadow-2xl border-2 border-gray-100">
                 <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/a2a21ad22_PianodiAllenamento-2.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/50ec4bb63_PianodiAllenamento.png"
                   alt="Piano Allenamento MyWellness"
                   className="step-image w-full h-auto" />
               </div>
@@ -895,6 +895,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>
-  );
+    </div>);
+
 }
