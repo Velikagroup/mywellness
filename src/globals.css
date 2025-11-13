@@ -1,0 +1,112 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   ANIMATED GRADIENT BACKGROUND - GLOBAL
+   ============================================ */
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 0%, 100% 0%, 0% 100%, 80% 60%, 30% 40%, 100% 90%, 50% 10%, 20% 30%;
+  }
+  33% {
+    background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%, 40% 50%, 90% 10%;
+  }
+  66% {
+    background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%, 60% 70%, 10% 40%;
+  }
+  100% {
+    background-position: 0% 0%, 100% 0%, 0% 100%, 80% 60%, 30% 40%, 100% 90%, 50% 10%, 20% 30%;
+  }
+}
+
+.animated-gradient-bg {
+  background: #f9fafb;
+  background-image: 
+    radial-gradient(circle at 10% 5%, #e0f2fe 0%, transparent 45%),
+    radial-gradient(circle at 85% 5%, #c2ebe6 0%, transparent 45%),
+    radial-gradient(circle at 50% 15%, #f5f9ff 0%, transparent 50%),
+    radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+    radial-gradient(circle at 70% 60%, #e9d5ff 0%, transparent 50%),
+    radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+    radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%),
+    radial-gradient(circle at 30% 25%, #dbeafe 0%, transparent 45%);
+  background-size: 
+    200% 200%, 
+    200% 200%, 
+    250% 250%, 
+    250% 250%, 
+    250% 250%, 
+    250% 250%,
+    200% 200%,
+    180% 180%;
+  animation: gradientShift 45s ease-in-out infinite;
+  background-attachment: scroll;
+  min-height: 100vh;
+}
+
+/* Mobile optimization - aggiunge più colore in alto */
+@media (max-width: 768px) {
+  .animated-gradient-bg {
+    background-image: 
+      radial-gradient(circle at 50% 0%, #dbeafe 0%, transparent 35%),
+      radial-gradient(circle at 10% 8%, #e0f2fe 0%, transparent 40%),
+      radial-gradient(circle at 85% 8%, #c2ebe6 0%, transparent 40%),
+      radial-gradient(circle at 50% 20%, #f5f9ff 0%, transparent 45%),
+      radial-gradient(circle at 20% 75%, #a8e0d7 0%, transparent 50%),
+      radial-gradient(circle at 70% 55%, #e9d5ff 0%, transparent 50%),
+      radial-gradient(circle at 50% 45%, #fce7f3 0%, transparent 55%),
+      radial-gradient(circle at 90% 80%, #e0ccff 0%, transparent 50%),
+      radial-gradient(circle at 30% 30%, #dbeafe 0%, transparent 40%);
+    background-size: 
+      150% 150%,
+      180% 180%, 
+      180% 180%, 
+      200% 200%, 
+      220% 220%, 
+      220% 220%, 
+      200% 200%,
+      180% 180%,
+      170% 170%;
+    background-position: 
+      center top,
+      left top,
+      right top,
+      center 15%,
+      left bottom,
+      right center,
+      center center,
+      right bottom,
+      left 30%;
+  }
+}
+
+/* Tablet optimization */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .animated-gradient-bg {
+    background-size: 
+      180% 180%, 
+      180% 180%, 
+      220% 220%, 
+      220% 220%, 
+      220% 220%, 
+      220% 220%,
+      180% 180%,
+      170% 170%;
+  }
+}
+
+/* Assicura che il gradiente copra sempre l'intero viewport */
+body, #root {
+  min-height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+
+/* Prevenzione bug iOS */
+@supports (-webkit-touch-callout: none) {
+  .animated-gradient-bg {
+    min-height: -webkit-fill-available;
+  }
+}
