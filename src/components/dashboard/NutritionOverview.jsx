@@ -79,22 +79,12 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
         }
       `}</style>
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
-              <Utensils className="w-6 h-6 text-orange-600" />
-            </div>
-            Protocollo Nutrizionale
-          </CardTitle>
-          <Link to={createPageUrl("Meals")}>
-            <button className="liquid-glass-button-nutrition text-[#26847F] font-semibold text-sm py-2 px-4 rounded-xl transition-all hover:scale-[1.02]">
-              <div className="flex items-center justify-center gap-1.5">
-                <Utensils className="w-4 h-4" />
-                <span>Vai al Piano</span>
-              </div>
-            </button>
-          </Link>
-        </div>
+        <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+          <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
+            <Utensils className="w-6 h-6 text-orange-600" />
+          </div>
+          Protocollo Nutrizionale
+        </CardTitle>
       </CardHeader>
 
       <CardContent className="p-6 pt-0">
@@ -121,7 +111,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
           </div>
         )}
 
-        <div className="space-y-4">
+        <div className="space-y-4 mb-4">
           {sortedMeals.length > 0 ? sortedMeals.map((meal) => {
             const mealLog = getMealLog(meal.id);
             const isLogged = !!mealLog;
@@ -184,6 +174,15 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
              </div>
           )}
         </div>
+
+        <Link to={createPageUrl("Meals")}>
+          <button className="w-full liquid-glass-button-nutrition text-[#26847F] font-semibold text-sm py-2 px-4 rounded-xl transition-all hover:scale-[1.02]">
+            <div className="flex items-center justify-center gap-1.5">
+              <Utensils className="w-4 h-4" />
+              <span>Vai al Piano</span>
+            </div>
+          </button>
+        </Link>
       </CardContent>
     </Card>
   );
