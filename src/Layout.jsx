@@ -115,6 +115,18 @@ export default function Layout({ children }) {
     return true;
   });
 
+  // Menu items per Customer Support
+  const customerSupportMenuItems = user && user.role === 'customer_support' ? [
+    { name: 'Clienti', icon: Users, path: 'AdminClients' },
+    { name: 'Ticket', icon: HelpCircle, path: 'AdminSupportTickets' },
+    { name: 'Feedback', icon: MessageCircle, path: 'AdminFeedback' },
+    { name: 'Coupon', icon: Tag, path: 'AdminCoupons' },
+    { name: 'Blog', icon: FileText, path: 'AdminBlog' },
+    { name: 'Email', icon: Mail, path: 'AdminEmails' },
+    { name: 'Marketing', icon: Target, path: 'AdminMarketing' }
+  ] : [];
+
+  // Menu items per Admin (accesso completo)
   const adminMenuItems = user && user.role === 'admin' ? [
     { name: 'Clienti', icon: Users, path: 'AdminClients' },
     { name: 'Ticket', icon: HelpCircle, path: 'AdminSupportTickets' },
@@ -128,15 +140,17 @@ export default function Layout({ children }) {
     { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
   ] : [];
 
-  const allNavItems = [...mainNavItems, ...adminMenuItems];
+  // Combina menu items in base al ruolo
+  const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
+                               user?.role === 'customer_support' ? customerSupportMenuItems : [];
+
+  const allNavItems = [...mainNavItems, ...managementMenuItems];
 
   const getMenuMaxWidth = () => {
     const itemCount = allNavItems.length;
-    // Ogni icona occupa circa 90px (70px min-width + padding)
     const baseWidth = itemCount * 90;
-    // Aggiungi padding laterale
     const totalWidth = baseWidth + 40;
-    return Math.min(totalWidth, 1280); // Max 1280px
+    return Math.min(totalWidth, 1280);
   };
 
   const handleMenuItemClick = (path) => {
@@ -148,15 +162,6 @@ export default function Layout({ children }) {
     <div className="min-h-screen animated-gradient-bg">
       <style>{`
         ${fontStyles[fontOption].import}
-        
-        :root {
-          --brand-primary: #26847F;
-          --brand-primary-hover: #1f6b66;
-          --brand-primary-light: #e9f6f5;
-          --brand-primary-dark-text: #1a5753;
-          --brand-primary-light-mixed-color-text: #a8e0d7;
-          --brand-secondary-light-mixed-color-text: #e0ccff;
-        }
         
         * {
           font-family: ${fontStyles[fontOption].family};
@@ -264,10 +269,10 @@ export default function Layout({ children }) {
           </div>
 
           <div className="sm:hidden">
-            {mobileMenuOpen && adminMenuItems.length > 0 && (
+            {mobileMenuOpen && managementMenuItems.length > 0 && (
               <div className="mobile-menu-expanded pb-4 mb-2 border-b border-gray-200">
                 <div className="grid grid-cols-4 gap-2 p-2">
-                  {adminMenuItems.map((item) => (
+                  {managementMenuItems.map((item) => (
                     <button
                       key={item.name}
                       onClick={() => handleMenuItemClick(item.path)}
@@ -303,7 +308,7 @@ export default function Layout({ children }) {
                 </Link>
               ))}
               
-              {adminMenuItems.length > 0 && (
+              {managementMenuItems.length > 0 && (
                 <button
                   onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
                   className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
