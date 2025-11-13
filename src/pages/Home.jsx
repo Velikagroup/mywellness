@@ -28,6 +28,8 @@ import {
 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
+import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
+import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -720,11 +722,8 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="step-image-container shadow-2xl border-2 border-gray-100">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/b8e55cea0_PianoNutrizionale.png"
-                  alt="Piano Alimentare MyWellness"
-                  className="step-image w-full h-auto" />
+              <div className="max-w-md mx-auto">
+                <MealPlanPreviewDemo />
               </div>
             </motion.div>
           </motion.div>
@@ -741,11 +740,8 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="step-image-container shadow-2xl border-2 border-gray-100">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/d7872c72e_AIContaCalorica.jpg"
-                  alt="Tracking Foto Pasti MyWellness"
-                  className="step-image w-full h-auto" />
+              <div className="max-w-md mx-auto">
+                <PhotoAnalyzerPreviewDemo />
               </div>
             </motion.div>
             <motion.div
@@ -779,7 +775,7 @@ export default function Home() {
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
+              transition={{ duration: 0.7, delay: 0.2 }>
               <div className="flex items-center gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">💪 Fitness AI</span>
