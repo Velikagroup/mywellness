@@ -66,20 +66,10 @@ export default function ExerciseCard({ exercise }) {
               </ul>
             </div>
 
-            {/* Immagine muscoli coinvolti */}
+            {/* Muscoli coinvolti - SENZA IMMAGINE */}
             <div className="bg-purple-50/50 rounded-lg p-3 border border-purple-200/40">
-              <h4 className="font-semibold text-sm text-purple-900 mb-2">Muscoli Coinvolti</h4>
-              <div className="flex items-center justify-center bg-white rounded-lg p-2 mb-2">
-                <img 
-                  src={exercise.muscle_image_url || 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/body_muscles_generic.png'} 
-                  alt={`Muscoli coinvolti - ${exercise.name}`}
-                  className="max-h-48 w-auto object-contain"
-                  onError={(e) => {
-                    e.target.src = 'https://via.placeholder.com/200x300/E9F6F5/26847F?text=Muscoli';
-                  }}
-                />
-              </div>
-              <div className="flex flex-wrap gap-1">
+              <h4 className="font-semibold text-sm text-purple-900 mb-3">💪 Muscoli Coinvolti</h4>
+              <div className="flex flex-wrap gap-1.5">
                 {exercise.target_muscles?.map((muscle, idx) => (
                   <Badge key={idx} className="text-xs bg-purple-100 text-purple-800 border-purple-300 capitalize">
                     {muscle}
