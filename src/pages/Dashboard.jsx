@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { InvokeLLM } from "@/integrations/Core";
@@ -471,26 +472,26 @@ export default function Dashboard() {
         .liquid-glass-button {
           backdrop-filter: blur(12px) saturate(180%);
           background: linear-gradient(135deg, 
-            rgba(38, 132, 127, 0.15) 0%,
-            rgba(20, 184, 166, 0.1) 50%,
-            rgba(38, 132, 127, 0.15) 100%
+            rgba(249, 250, 251, 0.75) 0%,
+            rgba(243, 244, 246, 0.65) 50%,
+            rgba(249, 250, 241, 0.75) 100%
           );
-          border: 1px solid rgba(38, 132, 127, 0.3);
+          border: 1px solid rgba(156, 163, 175, 0.3);
           box-shadow: 
-            0 4px 16px 0 rgba(38, 132, 127, 0.12),
+            0 4px 16px 0 rgba(31, 38, 135, 0.08),
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
 
         .liquid-glass-button:hover {
           background: linear-gradient(135deg, 
-            rgba(38, 132, 127, 0.25) 0%,
-            rgba(20, 184, 166, 0.2) 50%,
-            rgba(38, 132, 127, 0.25) 100%
+            rgba(249, 250, 251, 0.85) 0%,
+            rgba(243, 244, 246, 0.75) 50%,
+            rgba(249, 250, 241, 0.85) 100%
           );
-          border: 1px solid rgba(38, 132, 127, 0.4);
+          border: 1px solid rgba(156, 163, 175, 0.4);
           box-shadow: 
-            0 6px 20px 0 rgba(38, 132, 127, 0.18),
+            0 6px 20px 0 rgba(31, 38, 135, 0.12),
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.7),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
@@ -513,7 +514,7 @@ export default function Dashboard() {
             </div>
             <button
               onClick={handleRecalibrate}
-              className="liquid-glass-button text-[#26847F] font-semibold text-base px-6 py-6 rounded-xl transition-all hover:scale-[1.02] w-full lg:w-auto"
+              className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] w-full lg:w-auto"
             >
               <div className="flex items-center justify-center gap-2">
                 <RefreshCw className="w-4 h-4" />
@@ -533,7 +534,7 @@ export default function Dashboard() {
             </div>
             <button
               onClick={handleRecalibrate}
-              className="w-full liquid-glass-button text-[#26847F] font-semibold text-base px-6 py-3 rounded-xl transition-all hover:scale-[1.02]"
+              className="w-full liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
             >
               <div className="flex items-center justify-center gap-2">
                 <RefreshCw className="w-4 h-4" />
