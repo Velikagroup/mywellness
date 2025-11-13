@@ -766,7 +766,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 5: Workout su Misura */}
+          {/* Step 5: Workout su Misura - IMMAGINE AGGIORNATA */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-24"
             initial={{ opacity: 0, y: 60 }}
@@ -801,7 +801,7 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="step-image-container shadow-2xl border-2 border-gray-100">
                 <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/50ec4bb63_PianodiAllenamento.png"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/a2a21ad22_PianodiAllenamento-2.png"
                   alt="Piano Allenamento MyWellness"
                   className="step-image w-full h-auto" />
               </div>
