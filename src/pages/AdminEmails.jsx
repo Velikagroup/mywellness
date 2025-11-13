@@ -204,100 +204,9 @@ export default function AdminEmails() {
     }
 
     try {
-      const template = previewEmail.template;
-      const fromEmail = template.from_email || 'info@projectmywellness.com';
-      const replyToEmail = template.reply_to_email || 'no-reply@projectmywellness.com';
-      
-      const variables = {
-        user_name: user.full_name || 'Mario Rossi',
-        user_email: user.email,
-        app_url: window.location.origin
-      };
-
-      const replaceVars = (text, vars) => {
-        let result = text;
-        Object.keys(vars).forEach(key => {
-          const regex = new RegExp(`\\{${key}\\}`, 'g');
-          result = result.replace(regex, vars[key]);
-        });
-        return result;
-      };
-
-      const replacedGreeting = replaceVars(template.greeting, variables);
-      const replacedMainContent = replaceVars(template.main_content, variables);
-      const replacedSubject = replaceVars(template.subject, variables);
-      const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
-
-      const ctaHtml = template.call_to_action_text && template.call_to_action_url ? 
-        `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-            <tr>
-                <td align="center">
-                    <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                        ${template.call_to_action_text}
-                    </a>
-                </td>
-            </tr>
-        </table>` : '';
-
-      const htmlBody = `<!DOCTYPE html>
-<html>
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-.logo-cell { padding: 60px 30px 24px 30px; }
-.content-cell { padding: 40px 30px; }
-@media only screen and (min-width: 600px) {
-.logo-cell { padding: 60px 60px 24px 60px !important; }
-.content-cell { padding: 60px 60px 40px 60px !important; }
-}
-@media only screen and (max-width: 600px) {
-.container { width: 100% !important; border-radius: 0 !important; }
-.outer-wrapper { padding: 0 !important; }
-}
-</style>
-</head>
-<body style="margin: 0; padding: 0;">
-<table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
-<tr>
-<td align="center">
-<table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
-<tr>
-<td class="logo-cell">
-<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
-</td>
-</tr>
-<tr>
-<td class="content-cell">
-<p style="color: #111827; font-size: 16px;">${replacedGreeting}</p>
-<div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
-${ctaHtml}
-</td>
-</tr>
-</table>
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
-<tr>
-<td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
-<p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
-<p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-</td>
-</tr>
-</table>
-</td>
-</tr>
-</table>
-</body>
-</html>`;
-
       await base44.functions.invoke('sendTestEmailDirect', {
         to: user.email,
-        from_email: fromEmail,
-        from_name: 'MyWellness',
-        reply_to: replyToEmail,
-        subject: `[TEST] ${replacedSubject}`,
-        html: htmlBody
+        templateId: previewEmail.template.template_id
       });
 
       alert(`✅ Email di test inviata con successo a ${user.email}!`);
@@ -366,7 +275,7 @@ ${ctaHtml}
   const toggleLanguage = (lang) => {
     setBroadcastData(prev => {
       const currentLangs = prev.filters.languages || [];
-      const newLangs = currentLangs.includes(lang)
+      const newLangs = currentLugs.includes(lang)
         ? currentLangs.filter(l => l !== lang)
         : [...currentLangs, lang];
       
