@@ -3,6 +3,18 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 Deno.serve(async (req) => {
     console.log('📧 sendTestEmailDirect - Start');
     
+    const logEntry = {
+        user_id: null,
+        user_email: null,
+        template_id: null,
+        subject: null,
+        status: 'pending',
+        provider: 'sendgrid',
+        from_email: 'info@projectmywellness.com',
+        language: 'it',
+        metadata: { test_email: true }
+    };
+    
     try {
         const base44 = createClientFromRequest(req);
         
@@ -18,6 +30,9 @@ Deno.serve(async (req) => {
         if (!to || !templateId) {
             return Response.json({ error: 'Missing required fields: to, templateId' }, { status: 400 });
         }
+
+        logEntry.user_email = to;
+        logEntry.template_id = templateId;
 
         const sendgridApiKey = Deno.env.get('SENDGRID_API_KEY');
         if (!sendgridApiKey) {
@@ -60,6 +75,10 @@ Deno.serve(async (req) => {
             ctaUrl = ctaUrl.replace(`{${key}}`, value);
             footerText = footerText.replace(`{${key}}`, value);
         });
+
+        // Aggiungi [TEST] al subject
+        subject = `[TEST] ${subject}`;
+        logEntry.subject = subject;
 
         // STESSO IDENTICO HTML TEMPLATE DI sendEmailUnified
         const emailHtml = `
@@ -147,11 +166,28 @@ Deno.serve(async (req) => {
         if (!sendgridResponse.ok) {
             const errorText = await sendgridResponse.text();
             console.error('❌ SendGrid API error:', errorText);
+            
+            // Salva log FAILED
+            logEntry.status = 'failed';
+            logEntry.error_message = errorText;
+            await base44.asServiceRole.entities.EmailLog.create(logEntry);
+            
             return Response.json({ 
                 error: 'SendGrid API error',
                 details: errorText 
             }, { status: sendgridResponse.status });
         }
+
+        // Estrai message ID da SendGrid
+        const messageId = sendgridResponse.headers.get('x-message-id');
+
+        // Salva log SUCCESS
+        logEntry.status = 'sent';
+        logEntry.sent_at = new Date().toISOString();
+        logEntry.sendgrid_message_id = messageId;
+        logEntry.from_email = template.from_email || 'info@projectmywellness.com';
+
+        await base44.asServiceRole.entities.EmailLog.create(logEntry);
 
         console.log('✅ Test email sent successfully via SendGrid API');
 
@@ -162,6 +198,18 @@ Deno.serve(async (req) => {
 
     } catch (error) {
         console.error('❌ Error sending test email:', error);
+        
+        // Salva log FAILED
+        logEntry.status = 'failed';
+        logEntry.error_message = error.message;
+
+        try {
+            const base44 = createClientFromRequest(req);
+            await base44.asServiceRole.entities.EmailLog.create(logEntry);
+        } catch (logError) {
+            console.error('❌ Failed to save error log:', logError);
+        }
+        
         return Response.json({ 
             error: error.message 
         }, { status: 500 });
