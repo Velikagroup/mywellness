@@ -1,11 +1,9 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User } from '@/entities/User'; // This import is now redundant but kept for safety if other parts of the app still use it, though the changes imply base44 is the new auth client. For this exercise, I'll update the function calls. If User entity is no longer used, it could be removed.
-import { base44 } from "@/api/base44Client"; // New import
+import { base44 } from "@/api/base44Client";
 import {
   Sparkles,
   Target,
@@ -23,9 +21,8 @@ import {
   Clock,
   RefreshCw,
   BrainCircuit,
-  Users // Added Users icon import
-} from
-'lucide-react';
+  Users
+} from 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
@@ -39,26 +36,22 @@ export default function Home() {
   const heroQuizButtonRef = useRef(null);
 
   const [liveStats, setLiveStats] = useState({ users: 0, totalKg: 0 });
-  const [isLoading, setIsLoading] = useState(false); // New state for loading indicator
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Scroll to top on mount
   useEffect(() => {
     window.scrollTo(0, 0);
   }, []);
 
-  // ✅ CONTROLLO QUIZ COMPLETATO - Se l'utente è loggato MA non ha completato il quiz, mandalo al Quiz
   useEffect(() => {
     const checkQuizStatus = async () => {
       try {
         const currentUser = await base44.auth.me();
 
-        // Se l'utente è loggato ma NON ha completato il quiz → vai al Quiz
         if (currentUser && !currentUser.quiz_completed) {
           console.log('🔄 User logged in but quiz not completed, redirecting to Quiz...');
           navigate(createPageUrl('Quiz'), { replace: true });
         }
       } catch (error) {
-        // 401 è normale se l'utente non è loggato
         if (error?.response?.status !== 401 && !error?.message?.includes('401')) {
           console.error("Error checking quiz status:", error);
         }
@@ -69,10 +62,9 @@ export default function Home() {
   }, [navigate]);
 
   useEffect(() => {
-    // Data aggiornata a oggi per partire da ~45136 utenti
     const referenceDate = new Date('2025-11-06T00:00:00Z').getTime();
-    const baseKg = 203112; // 45136 * 4.5
-    const incrementIntervalSeconds = 10; // Increment every 10 seconds
+    const baseKg = 203112;
+    const incrementIntervalSeconds = 10;
 
     const calculateLiveStats = () => {
       const now = Date.now();
@@ -94,7 +86,7 @@ export default function Home() {
     };
 
     calculateLiveStats();
-    const interval = setInterval(calculateLiveStats, 10000); // Update every 10 seconds
+    const interval = setInterval(calculateLiveStats, 10000);
 
     return () => clearInterval(interval);
   }, []);
@@ -105,7 +97,6 @@ export default function Home() {
         const buttonRect = heroQuizButtonRef.current.getBoundingClientRect();
         setShowNavQuizButton(buttonRect.top < 0);
 
-        // Show mobile floating button when scrolled past hero section (mobile only)
         const isMobile = window.innerWidth < 768;
         setShowMobileFloatingButton(isMobile && buttonRect.top < -200);
       }
@@ -194,7 +185,6 @@ export default function Home() {
   }];
 
   const handleWatchDemo = () => {
-    // Sempre alla landing, anche se loggato
     navigate(createPageUrl('Landing'));
   };
 
@@ -204,28 +194,22 @@ export default function Home() {
       const currentUser = await base44.auth.me();
 
       if (currentUser && currentUser.quiz_completed) {
-        // Se loggato e quiz completato, vai alla dashboard
         navigate(createPageUrl('Dashboard'));
       } else if (currentUser) {
-        // Se loggato ma quiz non completato, vai al quiz
         navigate(createPageUrl('Quiz'));
       } else {
-        // Non loggato, vai direttamente al quiz (non serve login)
         navigate(createPageUrl('Quiz'));
       }
     } catch (error) {
-      // 401 è normale quando l'utente non è loggato
       if (error?.response?.status !== 401 && !error?.message?.includes('401')) {
         console.error("Error during get started flow:", error);
       }
-      // Non loggato, vai direttamente al quiz
       navigate(createPageUrl('Quiz'));
     }
     setIsLoading(false);
   };
 
   const handleLogin = async () => {
-    // Login diretto, dopo login va al Quiz come default
     const quizUrl = window.location.origin + createPageUrl('Quiz');
     await base44.auth.redirectToLogin(quizUrl);
   };
@@ -391,7 +375,6 @@ export default function Home() {
           border: 1px solid rgba(38, 132, 127, 0.2);
         }
 
-        /* Mobile H1 readability improvements */
         @media (max-width: 768px) {
           .animated-gradient-bg {
             animation: gradientShift 30s linear infinite;
@@ -428,8 +411,8 @@ export default function Home() {
             
             {showNavQuizButton &&
             <Button
-              onClick={handleGetStarted} // Changed to handleGetStarted
-              disabled={isLoading} // Added disabled state
+              onClick={handleGetStarted}
+              disabled={isLoading}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-2 px-4 text-sm font-medium rounded-full quiz-button-slide whitespace-nowrap flex-shrink-0">
                 Quiz Gratuito
               </Button>
@@ -479,8 +462,8 @@ export default function Home() {
                 Log-in
               </button>
               <Button
-                onClick={handleGetStarted} // Changed to handleGetStarted
-                disabled={isLoading} // Added disabled state
+                onClick={handleGetStarted}
+                disabled={isLoading}
                 className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2">
                 Quiz Gratuito
               </Button>
@@ -489,12 +472,11 @@ export default function Home() {
         </div>
       </nav>
 
-      {/* Mobile Floating Quiz Button */}
       {showMobileFloatingButton &&
       <div className="md:hidden fixed bottom-6 left-0 right-0 z-50 px-4 mobile-floating-fade">
           <Button
-          onClick={handleGetStarted} // Changed to handleGetStarted
-          disabled={isLoading} // Added disabled state
+          onClick={handleGetStarted}
+          disabled={isLoading}
           className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-full px-6 py-6 text-base font-semibold shadow-2xl">
             Quiz Gratuito
           </Button>
@@ -561,7 +543,6 @@ export default function Home() {
             </Button>
           </div>
           
-          {/* Nuova sezione con numero utenti e avatar sovrapposti */}
           <div className="mt-16 pt-8">
             <div className="flex flex-col items-center justify-center gap-4">
               <div className="flex items-center -space-x-3">
@@ -595,7 +576,6 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}>
-
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">Come Funziona</h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
                 Un percorso guidato dall'intelligenza artificiale in 5 step
@@ -603,7 +583,6 @@ export default function Home() {
             </motion.div>
           </div>
 
-          {/* Step 1: Quiz Personalizzato */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -645,7 +624,6 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 2: Dashboard Scientifica */}
           <motion.div
             className="mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -688,7 +666,6 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 3: Pasti Personalizzati */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -728,7 +705,6 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 4: Conto calorico AI */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -755,7 +731,9 @@ export default function Home() {
                 </div>
               </div>
               <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Conto Calorico AI</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.</p>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.
+              </p>
               <div className="flex flex-wrap gap-3">
                 <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">🔍 Riconoscimento Cibo</span>
                 <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">⚖️ Ribilanciamento Automatico</span>
@@ -763,7 +741,6 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 5: Workout su Misura */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-24"
             initial={{ opacity: 0, y: 60 }}
@@ -775,7 +752,7 @@ export default function Home() {
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }>
+              transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">💪 Fitness AI</span>
@@ -784,7 +761,9 @@ export default function Home() {
               <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
                 Workout su Misura
               </h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">Schede settimanali personalizzate con warm-up e cool-down, analisi AI dei progressi e modifiche immediate della scheda in caso di dolori o impedimenti.</p>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                Schede settimanali personalizzate con warm-up e cool-down, analisi AI dei progressi e modifiche immediate della scheda in caso di dolori o impedimenti.
+              </p>
               <div className="flex flex-wrap gap-3">
                 <span className="px-4 py-2 bg-violet-50 text-violet-700 rounded-full text-sm font-medium">🎯 Progressione Adattiva</span>
                 <span className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium">📸 Analisi Progressi AI</span>
@@ -889,6 +868,6 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>);
-
+    </div>
+  );
 }
