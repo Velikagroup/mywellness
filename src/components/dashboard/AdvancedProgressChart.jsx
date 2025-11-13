@@ -1,4 +1,3 @@
-
 import React, { useState, useMemo } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
 import { TrendingDown, TrendingUp, Scale, Save, RefreshCw } from "lucide-react";
@@ -147,11 +146,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </div>
           </div>
 
-          <div className="p-5 bg-gradient-to-br from-[var(--brand-primary-light)]/70 to-emerald-50/30 rounded-xl border-2 border-[var(--brand-primary)]/30 backdrop-blur-sm shadow-lg">
-            <p className="text-xs font-semibold text-[var(--brand-primary-dark-text)] uppercase tracking-wide mb-2">Peso Target</p>
+          <div className="p-5 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-xl border-2 border-[#26847F]/30 backdrop-blur-sm shadow-lg">
+            <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">Peso Target</p>
             <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold text-[var(--brand-primary)]">{targetWeight.toFixed(1)}</p>
-              <span className="text-sm font-medium text-[var(--brand-primary-dark-text)]">kg</span>
+              <p className="text-3xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
+              <span className="text-sm font-medium text-[#1a5753]">kg</span>
             </div>
           </div>
 
@@ -185,7 +184,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-base font-bold text-gray-900">Traiettoria Massa Corporea</h3>
                 <div className="flex items-center gap-2 text-xs">
-                  <div className="w-3 h-3 bg-[var(--brand-primary)] rounded-full"></div>
+                  <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
                   <span className="text-gray-600 font-medium">Peso attuale</span>
                 </div>
               </div>
@@ -204,17 +203,17 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       }} 
                       formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
                       labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
-                      cursor={{ stroke: 'var(--brand-primary)', strokeWidth: 2, strokeDasharray: '5 5' }} 
+                      cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
                     />
                     <ReferenceLine 
                       y={targetWeight} 
-                      stroke="var(--brand-primary)" 
+                      stroke="#26847F" 
                       strokeDasharray="4 4" 
                       strokeWidth={2}
                       label={{ 
                         value: 'Target', 
                         position: 'insideTopRight', 
-                        fill: 'var(--brand-primary)', 
+                        fill: '#26847F', 
                         fontSize: 13,
                         fontWeight: 'bold'
                       }}
@@ -222,10 +221,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <Line 
                       type="monotone" 
                       dataKey="weight" 
-                      stroke="var(--brand-primary)" 
+                      stroke="#26847F" 
                       strokeWidth={3} 
-                      dot={{ r: 4, fill: 'var(--brand-primary)', strokeWidth: 2, stroke: '#fff' }} 
+                      dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
                       activeDot={{ r: 6, strokeWidth: 2 }} 
+                      connectNulls={true}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -295,7 +295,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute text-center">
-                <p className="text-3xl font-bold text-[var(--brand-primary)]">{progressPercentage.toFixed(0)}%</p>
+                <p className="text-3xl font-bold text-[#26847F]">{progressPercentage.toFixed(0)}%</p>
                 <p className="text-xs text-gray-500 font-medium mt-1">completato</p>
               </div>
             </div>
