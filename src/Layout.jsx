@@ -258,7 +258,7 @@ export default function Layout({ children }) {
                 className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] ${
                   location.pathname === createPageUrl(item.path)
                     ? 'text-[#26847F] bg-[#e9f6f5]'
-                    : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
+                    : 'text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]'
                 }`}
               >
                 <item.icon className="w-5 h-5" />
@@ -278,7 +278,7 @@ export default function Layout({ children }) {
                       className={`flex flex-col items-center gap-1 p-3 rounded-lg transition-colors ${
                         location.pathname === createPageUrl(item.path)
                           ? 'text-[#26847F] bg-[#e9f6f5]'
-                          : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
+                          : 'text-gray-600 hover:text-[#26847F] hover:bg-[#e9f6f5]'
                       }`}
                     >
                       <item.icon className="w-5 h-5" />
@@ -299,7 +299,7 @@ export default function Layout({ children }) {
                   } ${
                     location.pathname === createPageUrl(item.path)
                       ? 'text-[#26847F] bg-[#e9f6f5]'
-                      : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
+                      : 'text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]'
                   }`}
                 >
                   <item.icon className="w-5 h-5" />
@@ -313,7 +313,7 @@ export default function Layout({ children }) {
                   className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
                     mobileMenuOpen
                       ? 'text-[#26847F] bg-[#e9f6f5]'
-                      : 'text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]'
+                      : 'text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]'
                   }`}
                 >
                   {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
