@@ -115,8 +115,11 @@ export default function Layout({ children }) {
     return true;
   });
 
-  // Menu items per Customer Support
-  const customerSupportMenuItems = user && user.role === 'customer_support' ? [
+  // Helper per controllare se l'utente ha accesso management
+  const hasManagementAccess = user && (user.role === 'admin' || user.custom_role === 'customer_support');
+
+  // Menu items per Customer Support (nuovo ruolo custom)
+  const customerSupportMenuItems = user && user.custom_role === 'customer_support' ? [
     { name: 'Clienti', icon: Users, path: 'AdminClients' },
     { name: 'Ticket', icon: HelpCircle, path: 'AdminSupportTickets' },
     { name: 'Feedback', icon: MessageCircle, path: 'AdminFeedback' },
@@ -142,7 +145,7 @@ export default function Layout({ children }) {
 
   // Combina menu items in base al ruolo
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
-                               user?.role === 'customer_support' ? customerSupportMenuItems : [];
+                               user?.custom_role === 'customer_support' ? customerSupportMenuItems : [];
 
   const allNavItems = [...mainNavItems, ...managementMenuItems];
 
