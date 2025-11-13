@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link } from "react-router-dom";
@@ -53,17 +52,12 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
       <CardHeader className="pb-4">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
+          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
               <Utensils className="w-6 h-6 text-orange-600" />
             </div>
-            <div>
-              <CardTitle className="text-lg font-bold text-gray-900">Protocollo Nutrizionale</CardTitle>
-              <p className="text-sm text-gray-500">
-                Panoramica di oggi
-              </p>
-            </div>
-          </div>
+            Protocollo Nutrizionale
+          </CardTitle>
           <Link to={createPageUrl("Meals")}>
             <Button variant="ghost" size="icon" className="text-gray-500 hover:bg-gray-200/50 hover:text-gray-900">
               <ArrowRight className="w-5 h-5" />
@@ -74,11 +68,11 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
 
       <CardContent className="p-6 pt-0">
         {sortedMeals.length > 0 && (
-          <div className="bg-gradient-to-r from-[var(--brand-primary-light)] to-blue-50 rounded-xl p-3 border-2 border-[var(--brand-primary)]/30 mb-4">
+          <div className="bg-gradient-to-r from-[#e9f6f5] to-blue-50 rounded-xl p-3 border-2 border-[#26847F]/30 mb-4">
             <div className="grid grid-cols-4 gap-2">
               <div className="text-center">
                 <p className="text-xs text-gray-600 font-medium mb-0.5">Kcal</p>
-                <p className="text-lg font-bold text-[var(--brand-primary)]">{Math.round(dailyTotals.calories)}</p>
+                <p className="text-lg font-bold text-[#26847F]">{Math.round(dailyTotals.calories)}</p>
               </div>
               <div className="text-center">
                 <p className="text-xs text-gray-600 font-medium mb-0.5">Prot.</p>
@@ -135,7 +129,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                         onClick={() => onPhotoAnalyze(meal)}
                         variant="ghost"
                         size="icon"
-                        className="text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] flex-shrink-0"
+                        className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
                         title="Analizza pasto con foto"
                       >
                         <Camera className="w-5 h-5" />
