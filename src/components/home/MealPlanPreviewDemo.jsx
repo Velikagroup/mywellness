@@ -135,10 +135,13 @@ export default function MealPlanPreviewDemo() {
                     </p>
                     <p className="text-xs text-gray-500">kcal</p>
                   </div>
-                  <div className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0 opacity-70" title="Analizza pasto con foto">
+                  <button 
+                    disabled
+                    className="text-xs text-[var(--brand-primary)] flex items-center gap-1 flex-shrink-0 cursor-not-allowed opacity-80 hover:opacity-100 transition-opacity"
+                    title="Analizza pasto con foto"
+                  >
                     <Camera className="w-4 h-4" />
-                    <span>Pro</span>
-                  </div>
+                  </button>
                 </div>
               </div>
             </div>

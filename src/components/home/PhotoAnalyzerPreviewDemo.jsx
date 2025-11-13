@@ -9,7 +9,7 @@ import { Camera, Upload, Sparkles, Zap, Info } from "lucide-react";
  */
 export default function PhotoAnalyzerPreviewDemo() {
   return (
-    <Card className="bg-white/90 backdrop-blur-sm border-2 border-[var(--brand-primary)]/20 shadow-2xl rounded-2xl overflow-hidden">
+    <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
       <style>{`
         .liquid-glass-upload {
           backdrop-filter: blur(12px) saturate(180%);

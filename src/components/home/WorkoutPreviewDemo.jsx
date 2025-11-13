@@ -33,7 +33,7 @@ export default function WorkoutPreviewDemo() {
   };
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl">
+    <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
       <style>{`
         .liquid-glass-button {
           backdrop-filter: blur(12px) saturate(180%);
