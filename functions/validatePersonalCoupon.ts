@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
     console.log('🔍 validatePersonalCoupon - Start');
@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
 
         // Trova il coupon
         const coupons = await base44.asServiceRole.entities.Coupon.filter({
-            code: couponCode
+            code: couponCode.toUpperCase()
         });
 
         if (coupons.length === 0) {
@@ -48,7 +48,34 @@ Deno.serve(async (req) => {
             }
         }
 
-        // Se è un coupon personalizzato (contiene _), verifica che appartenga all'utente
+        // 🎁 VERIFICA LIFETIME_FREE COUPON
+        if (coupon.discount_type === 'lifetime_free') {
+            // Verifica che sia assegnato a questo utente
+            if (coupon.assigned_to_email && coupon.assigned_to_email.toLowerCase() !== userEmail.toLowerCase()) {
+                return Response.json({
+                    valid: false,
+                    error: 'Questo coupon non è assegnato a te'
+                }, { status: 200 });
+            }
+
+            // Verifica se già usato
+            if (coupon.used_by) {
+                return Response.json({
+                    valid: false,
+                    error: 'Questo coupon è già stato utilizzato'
+                }, { status: 200 });
+            }
+
+            return Response.json({
+                valid: true,
+                discount_type: 'lifetime_free',
+                discount_value: 0,
+                assigned_plan: coupon.assigned_plan,
+                message: `🎉 Accesso GRATUITO LIFETIME al piano ${coupon.assigned_plan?.toUpperCase() || 'PREMIUM'}!`
+            }, { status: 200 });
+        }
+
+        // Se è un coupon personalizzato normale (contiene _), verifica che appartenga all'utente
         if (couponCode.includes('_')) {
             const users = await base44.asServiceRole.entities.User.filter({
                 email: userEmail

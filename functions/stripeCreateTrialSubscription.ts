@@ -1,5 +1,4 @@
-
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 import Stripe from 'npm:stripe@14.10.0';
 
 Deno.serve(async (req) => {
@@ -46,6 +45,159 @@ Deno.serve(async (req) => {
 
         console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode });
 
+        // 🎫 VERIFICA SE IL COUPON È LIFETIME_FREE
+        let isLifetimeFree = false;
+        let lifetimePlan = null;
+        
+        if (appliedCouponCode) {
+            const coupons = await base44.asServiceRole.entities.Coupon.filter({ 
+                code: appliedCouponCode.toUpperCase() 
+            });
+            
+            if (coupons && coupons.length > 0) {
+                const coupon = coupons[0];
+                
+                if (coupon.discount_type === 'lifetime_free') {
+                    console.log('🎉 LIFETIME FREE COUPON DETECTED!');
+                    
+                    // Verifica che il coupon sia assegnato a questo utente
+                    if (coupon.assigned_to_email && coupon.assigned_to_email.toLowerCase() !== user.email.toLowerCase()) {
+                        return Response.json({
+                            success: false,
+                            error: 'Questo coupon non è assegnato a te.'
+                        }, { status: 403 });
+                    }
+                    
+                    if (coupon.used_by && coupon.used_by !== user.id) {
+                        return Response.json({
+                            success: false,
+                            error: 'Questo coupon è già stato utilizzato.'
+                        }, { status: 403 });
+                    }
+                    
+                    isLifetimeFree = true;
+                    lifetimePlan = coupon.assigned_plan || 'premium';
+                    
+                    console.log(`✅ Lifetime free access granted: ${lifetimePlan} plan`);
+                    
+                    // Aggiorna l'utente con accesso lifetime gratuito
+                    await base44.asServiceRole.entities.User.update(user.id, {
+                        subscription_status: 'active',
+                        subscription_plan: lifetimePlan,
+                        stripe_subscription_id: null,
+                        stripe_customer_id: null,
+                        is_lifetime_free: true,
+                        lifetime_coupon_code: appliedCouponCode,
+                        traffic_source: trafficSource || 'direct',
+                        quiz_completed: true
+                    });
+                    
+                    // Marca il coupon come usato
+                    await base44.asServiceRole.entities.Coupon.update(coupon.id, {
+                        used_by: user.id,
+                        used_at: new Date().toISOString()
+                    });
+                    
+                    console.log('✅ User upgraded to lifetime free access');
+                    
+                    // Invia email di benvenuto (in background)
+                    (async () => {
+                        try {
+                            const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+                            const appUrl = 'https://app.projectmywellness.com';
+                            
+                            const htmlBody = `
+                            <!DOCTYPE html>
+                            <html>
+                            <head>
+                                <meta charset="UTF-8">
+                                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                            </head>
+                            <body style="margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);">
+                                <div style="max-width: 600px; margin: 40px auto; background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 20px 60px rgba(0,0,0,0.3);">
+                                    <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 40px 30px; text-align: center;">
+                                        <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800;">🎁 Accesso Lifetime GRATUITO Attivato!</h1>
+                                    </div>
+                                    
+                                    <div style="padding: 40px 30px;">
+                                        <p style="font-size: 18px; color: #333; line-height: 1.6; margin-bottom: 20px;">
+                                            Ciao <strong>${user.full_name || 'benvenuto'}</strong>! 👋
+                                        </p>
+                                        
+                                        <p style="font-size: 16px; color: #555; line-height: 1.8; margin-bottom: 25px;">
+                                            Hai attivato un <strong>accesso GRATUITO A VITA</strong> al piano <strong style="text-transform: uppercase;">${lifetimePlan}</strong>! 🎉
+                                        </p>
+                                        
+                                        <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid #f59e0b;">
+                                            <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px;">✨ Nessun Pagamento, Mai</h3>
+                                            <p style="color: #78350f; margin: 0; font-size: 15px; line-height: 1.6;">
+                                                Il tuo accesso al piano <strong>${lifetimePlan.toUpperCase()}</strong> è <strong>completamente gratuito per sempre</strong>. Non ci saranno addebiti, nessun trial, nessun rinnovo. Goditi tutte le funzionalità premium!
+                                            </p>
+                                        </div>
+                                        
+                                        <div style="margin-bottom: 30px;">
+                                            <h3 style="color: #333; margin-bottom: 15px; font-size: 20px;">🎯 Inizia Subito:</h3>
+                                            <ul style="list-style: none; padding: 0; margin: 0;">
+                                                <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                                                    <strong style="color: #26847F;">1.</strong> Accedi alla tua dashboard personalizzata
+                                                </li>
+                                                <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                                                    <strong style="color: #26847F;">2.</strong> Genera il tuo piano nutrizionale
+                                                </li>
+                                                <li style="padding: 12px 0; border-bottom: 1px solid #eee; font-size: 15px; color: #555;">
+                                                    <strong style="color: #26847F;">3.</strong> Crea il tuo piano di allenamento
+                                                </li>
+                                                <li style="padding: 12px 0; font-size: 15px; color: #555;">
+                                                    <strong style="color: #26847F;">4.</strong> Traccia i tuoi progressi senza limiti
+                                                </li>
+                                            </ul>
+                                        </div>
+                                        
+                                        <div style="text-align: center; margin: 35px 0;">
+                                            <a href="${appUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 700; font-size: 16px; box-shadow: 0 8px 20px rgba(38,132,127,0.3);">
+                                                Vai alla Dashboard →
+                                            </a>
+                                        </div>
+                                        
+                                        <div style="background: #f9fafb; padding: 20px; border-radius: 10px; margin-top: 30px;">
+                                            <p style="color: #666; font-size: 13px; margin: 0; text-align: center; line-height: 1.6;">
+                                                Hai domande? Siamo qui per aiutarti! Contattaci a <a href="mailto:${fromEmail}" style="color: #26847F; text-decoration: none;">${fromEmail}</a>
+                                            </p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div style="background: #f9fafb; padding: 25px 30px; text-align: center; border-top: 1px solid #e5e7eb;">
+                                        <p style="color: #999; font-size: 12px; margin: 0 0 5px 0;">© 2025 MyWellness by VELIKA GROUP LLC. All Rights Reserved.</p>
+                                    </div>
+                                </div>
+                            </body>
+                            </html>
+                            `;
+                            
+                            await base44.asServiceRole.integrations.Core.SendEmail({
+                                from_name: 'MyWellness',
+                                to: user.email,
+                                subject: '🎁 Il Tuo Accesso Lifetime GRATUITO è Attivo!',
+                                body: htmlBody
+                            });
+                            
+                            console.log('✅ Lifetime welcome email sent');
+                        } catch (emailError) {
+                            console.error('⚠️ Email error (non-critical):', emailError.message);
+                        }
+                    })();
+                    
+                    return Response.json({
+                        success: true,
+                        isLifetimeFree: true,
+                        plan: lifetimePlan,
+                        message: 'Accesso lifetime gratuito attivato!'
+                    });
+                }
+            }
+        }
+
+        // NORMALE FLUSSO STRIPE (se non è lifetime_free)
         if (!cardData && !paymentMethodId) {
             console.error('❌ Missing payment information');
             return Response.json({ success: false, error: 'Missing payment information' }, { status: 400 });
@@ -234,8 +386,7 @@ Deno.serve(async (req) => {
                 if (coupons && coupons.length > 0) {
                     const coupon = coupons[0];
                     await base44.asServiceRole.entities.Coupon.update(coupon.id, {
-                        is_used: true,
-                        used_by: user.email,
+                        used_by: user.id,
                         used_at: new Date().toISOString()
                     });
                     console.log(`✅ Coupon marked as used`);
@@ -245,7 +396,7 @@ Deno.serve(async (req) => {
             }
         }
 
-        // 📧 INVIA EMAIL DI BENVENUTO (in background, non blocca la risposta)
+        // 📧 INVIA EMAIL DI BENVENUTO (in background)
         (async () => {
             try {
                 console.log('📧 Sending welcome email...');
