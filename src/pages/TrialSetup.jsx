@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -33,7 +32,6 @@ const countryCodeToFlag = (code) => {
 };
 
 const TRIAL_DAYS = 3;
-const ORDER_BUMP_PRICE = 19.99;
 
 export default function TrialSetup() {
   const navigate = useNavigate();
@@ -70,7 +68,6 @@ export default function TrialSetup() {
   const [appliedCoupon, setAppliedCoupon] = useState(null);
   const [isApplyingCoupon, setIsApplyingCoupon] = useState(false);
   const [discountError, setDiscountError] = useState('');
-  const [orderBumpSelected, setOrderBumpSelected] = useState(false);
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
@@ -436,23 +433,10 @@ export default function TrialSetup() {
     setIsSaving(true);
 
     try {
-      let subtotal = 0;
-      if (orderBumpSelected) {
-        subtotal = ORDER_BUMP_PRICE;
-      }
-
-      let discount = 0;
-      if (appliedCoupon && appliedCoupon.discount_type === 'percentage') {
-        discount = subtotal * (appliedCoupon.discount_value / 100);
-      }
-
-      const currentTotal = Math.max(0, subtotal - discount);
-      const amount = Math.round(currentTotal * 100);
-
       paymentRequest.update({
         total: {
           label: 'MyWellness - Prova Gratuita',
-          amount: amount,
+          amount: 100,
         },
       });
 
@@ -465,7 +449,7 @@ export default function TrialSetup() {
             paymentMethodId: ev.paymentMethod.id,
             planType: selectedPlan,
             billingPeriod: selectedBillingPeriod,
-            orderBumpSelected: orderBumpSelected,
+            orderBumpSelected: false,
             appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
             trafficSource: trafficSource,
             billingInfo: {
@@ -559,7 +543,7 @@ export default function TrialSetup() {
         paymentMethodId: stripePaymentMethod.id,
         planType: selectedPlan,
         billingPeriod: selectedBillingPeriod,
-        orderBumpSelected: orderBumpSelected,
+        orderBumpSelected: false,
         appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
         trafficSource: trafficSource,
         billingInfo: {
@@ -619,18 +603,6 @@ export default function TrialSetup() {
     ));
 
   let isCtaDisabled = !isFormValid || isSaving;
-
-  let subtotal = 0;
-  if (orderBumpSelected) {
-    subtotal = ORDER_BUMP_PRICE;
-  }
-
-  let discount = 0;
-  if (appliedCoupon && appliedCoupon.discount_type === 'percentage') {
-    discount = subtotal * (appliedCoupon.discount_value / 100);
-  }
-
-  const total = Math.max(0, subtotal - discount);
 
   const planPrices = {
     base: 19,
@@ -1157,29 +1129,6 @@ export default function TrialSetup() {
                     </div>
                     {discountError && <p className="text-red-500 text-sm mt-1">{discountError}</p>}
                   </div>
-
-                  <div className="pt-0">
-                    <Label htmlFor="orderBump" className="block cursor-pointer">
-                      <div className="bg-green-50/50 border-2 border-dashed border-green-400 rounded-xl p-5 space-y-3 transition-all duration-300 hover:bg-green-100/50">
-                        <div className="flex items-center justify-between gap-4">
-                          <div className="flex-grow">
-                            <p className="text-lg font-bold text-gray-900">
-                              Si, lo voglio!
-                            </p>
-                            <p className="text-sm text-gray-600 mt-1">
-                              Aggiungi "Mastery AI Wellness": video corso completo
-                            </p>
-                          </div>
-                          <Checkbox id="orderBump" checked={orderBumpSelected} onCheckedChange={setOrderBumpSelected}
-                            className="w-8 h-8 flex-shrink-0 border-gray-400 data-[state=checked]:bg-[var(--brand-primary)]" />
-                        </div>
-                        <div className="text-right">
-                          <span className="text-gray-500 line-through text-sm mr-2">€49.99</span>
-                          <span className="text-2xl font-bold text-green-600">€{ORDER_BUMP_PRICE.toFixed(2)}</span>
-                        </div>
-                      </div>
-                    </Label>
-                  </div>
                   
                   <div className="space-y-3 pt-4">
                     <div className="flex items-start space-x-3">
@@ -1209,19 +1158,9 @@ export default function TrialSetup() {
                 </div>
 
                 <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
-                  <div className="flex justify-between text-sm sm:text-base text-gray-700">
-                    <span>Subtotale</span>
-                    <span>€{subtotal.toFixed(2)}</span>
-                  </div>
-                  {appliedCoupon && appliedCoupon.discount_type === 'percentage' && (
-                    <div className="flex justify-between text-sm sm:text-base text-green-600 font-semibold">
-                      <span>Sconto ({appliedCoupon.code})</span>
-                      <span>-€{discount.toFixed(2)}</span>
-                    </div>
-                  )}
                   <div className="flex justify-between text-sm sm:text-base text-gray-700 font-semibold pt-2 border-t border-gray-200">
                     <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
-                    <span>€{total.toFixed(2)}</span>
+                    <span>€0.00</span>
                   </div>
                   <p className="text-xs text-gray-500 text-center pt-2">
                     Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
@@ -1239,7 +1178,7 @@ export default function TrialSetup() {
                       Attivazione...
                     </div>
                   ) : (
-                    `Inizia Prova Gratuita (€${total.toFixed(2)} oggi)`
+                    `Inizia Prova Gratuita (€0.00 oggi)`
                   )}
                 </Button>
 
