@@ -1,8 +1,7 @@
-
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle } from "lucide-react";
+import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, MailOpen } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -76,7 +75,8 @@ export default function Layout({ children }) {
     createPageUrl('AdminSalesTax'),
     createPageUrl('AdminClients'),
     createPageUrl('AdminSupportTickets'),
-    createPageUrl('AdminFeedback')
+    createPageUrl('AdminFeedback'),
+    createPageUrl('AdminEmailLogs')
   ];
 
   const pathsWithoutLayout = [
@@ -122,6 +122,7 @@ export default function Layout({ children }) {
     { name: 'Coupon', icon: Tag, path: 'AdminCoupons' },
     { name: 'Blog', icon: FileText, path: 'AdminBlog' },
     { name: 'Email', icon: Mail, path: 'AdminEmails' },
+    { name: 'Email Logs', icon: MailOpen, path: 'AdminEmailLogs' },
     { name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' },
     { name: 'Marketing', icon: Target, path: 'AdminMarketing' },
     { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
