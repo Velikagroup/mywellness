@@ -73,7 +73,7 @@ export default function Workouts() {
   const [logWorkout, setLogWorkout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false); // NEW STATE
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [remainingGenerations, setRemainingGenerations] = useState(null);
   const [generationLimitReached, setGenerationLimitReached] = useState(false);
 
@@ -170,6 +170,14 @@ export default function Workouts() {
         
         if (!currentUser) {
           navigate(createPageUrl('Home'));
+          return;
+        }
+
+        // ✅ CRITICAL: Verifica se l'utente ha una subscription attiva o in trial
+        if (!currentUser.subscription_status || 
+            (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial')) {
+          console.warn('⚠️ User has no active subscription, redirecting to TrialSetup');
+          navigate(createPageUrl('TrialSetup'), { replace: true });
           return;
         }
 

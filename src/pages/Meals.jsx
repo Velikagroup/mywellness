@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -215,7 +216,19 @@ export default function MealsPage() {
 
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
-    queryFn: () => base44.auth.me(),
+    queryFn: async () => {
+      const currentUser = await base44.auth.me();
+      
+      // ✅ CRITICAL: Verifica se l'utente ha una subscription attiva o in trial
+      if (!currentUser.subscription_status || 
+          (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial')) {
+        console.warn('⚠️ User has no active subscription, redirecting to TrialSetup');
+        navigate(createPageUrl('TrialSetup'), { replace: true });
+        throw new Error('No active subscription');
+      }
+      
+      return currentUser;
+    },
     staleTime: 5 * 60 * 1000,
     retry: false,
   });
