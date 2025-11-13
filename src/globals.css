@@ -1,4 +1,3 @@
-css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -136,4 +135,17 @@ html {
 /* Prevenzione flickering su iOS */
 * {
   -webkit-tap-highlight-color: transparent;
+}
+
+/* ============================================
+   FORCE GREEN BUTTONS - CRITICAL FIX
+   ============================================ */
+
+/* Force tutti i pulsanti con bg-[var(--brand-primary)] ad avere sfondo verde */
+.bg-\[var\(--brand-primary\)\] {
+  background-color: #26847F !important;
+}
+
+.hover\:bg-\[var\(--brand-primary-hover\)\]:hover {
+  background-color: #1f6b66 !important;
 }
