@@ -94,6 +94,32 @@ export default function Workouts() {
     staleTime: Infinity,
   });
 
+  // ✅ FUNZIONE PER ARRICCHIRE GLI ESERCIZI CON DATI DAL DATABASE
+  const enrichExerciseWithDetails = useCallback((exercise) => {
+    if (!exercise || !exercise.name) return exercise;
+    
+    // Cerca l'esercizio nel database per nome
+    const dbExercise = allExercises.find(e => 
+      e.name?.toLowerCase() === exercise.name?.toLowerCase()
+    );
+    
+    if (dbExercise) {
+      // Merge: mantieni i dati del workout plan (sets, reps, rest) e aggiungi i dettagli dal DB
+      return {
+        ...exercise,
+        detailed_description: dbExercise.detailed_description,
+        form_tips: dbExercise.form_tips,
+        target_muscles: dbExercise.target_muscles,
+        muscle_image_url: dbExercise.muscle_image_url,
+        difficulty: dbExercise.difficulty || exercise.difficulty,
+        equipment: dbExercise.equipment || exercise.equipment,
+        muscle_groups: dbExercise.muscle_groups || exercise.muscle_groups
+      };
+    }
+    
+    return exercise;
+  }, [allExercises]);
+
   const createWorkoutMutation = useMutation({
     mutationFn: (data) => base44.entities.WorkoutPlan.create(data),
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['workoutPlans'] }),
@@ -1294,9 +1320,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                             <div>
                               <h5 className="font-semibold text-gray-800 mb-2">Esercizi Principali</h5>
                               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                {workoutForSelectedDay.exercises.map((ex, idx) => (
-                                  <ExerciseCard key={idx} exercise={ex} />
-                                ))}
+                                {workoutForSelectedDay.exercises.map((ex, idx) => {
+                                  // ✅ ARRICCHISCI L'ESERCIZIO CON DATI DAL DATABASE
+                                  const enrichedExercise = enrichExerciseWithDetails(ex);
+                                  return <ExerciseCard key={idx} exercise={enrichedExercise} />;
+                                })}
                               </div>
                             </div>
                           )}
