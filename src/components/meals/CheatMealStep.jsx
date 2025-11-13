@@ -112,7 +112,7 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
           </h3>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-gray-600">Selezionati:</span>
-            <span className="font-bold text-[var(--brand-primary)]">
+            <span className="font-bold text-[#26847F]">
               {selectedCheatMeals.length}/{maxCheatMeals}
             </span>
           </div>
@@ -190,7 +190,7 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
         <Button
           onClick={handleContinue}
           disabled={selectedCheatMeals.length === 0}
-          className="flex-1 h-14 text-base bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 disabled:opacity-50"
+          className="flex-1 h-14 text-base bg-[#26847F] hover:bg-[#1f6b66] text-white disabled:opacity-50"
         >
           {selectedCheatMeals.length === 0 ? 'Seleziona almeno 1' : `Continua con ${selectedCheatMeals.length}`}
         </Button>
