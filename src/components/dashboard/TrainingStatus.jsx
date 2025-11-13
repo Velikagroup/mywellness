@@ -14,7 +14,9 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
       <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl h-full">
         <CardHeader className="pb-3">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-            <Dumbbell className="w-5 h-5 text-[var(--brand-primary)]" />
+            <div className="w-8 h-8 bg-[#26847F]/10 rounded-full flex items-center justify-center">
+              <Dumbbell className="w-5 h-5 text-[#26847F]" />
+            </div>
             Allenamento di Oggi
           </CardTitle>
         </CardHeader>
@@ -26,7 +28,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             <p className="text-gray-500 font-medium mb-4">Giorno di Riposo</p>
             <Button
               onClick={() => navigate(createPageUrl("Workouts"))}
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-sm"
+              className="bg-[#26847F] hover:bg-[#1f6b66] text-white text-sm"
             >
               Vedi Programmazione
             </Button>
@@ -96,7 +98,9 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
       `}</style>
       <CardHeader className="pb-3">
         <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-          <Dumbbell className="w-5 h-5 text-[var(--brand-primary)]" />
+          <div className="w-8 h-8 bg-[#26847F]/10 rounded-full flex items-center justify-center">
+            <Dumbbell className="w-5 h-5 text-[#26847F]" />
+          </div>
           Allenamento di Oggi
         </CardTitle>
       </CardHeader>
@@ -113,7 +117,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg p-3 border border-[var(--brand-primary)]/20">
+        <div className="bg-gradient-to-br from-[#e9f6f5] to-blue-50 rounded-lg p-3 border border-[#26847F]/20">
           <p className="text-sm text-gray-700 font-medium mb-2">
             💪 {workout.exercises?.length || 0} esercizi
           </p>
@@ -140,7 +144,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             <div className="grid grid-cols-2 gap-2">
               <button
                 onClick={() => navigate(createPageUrl("Workouts"))}
-                className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
+                className="liquid-glass-button text-[#26847F] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <Dumbbell className="w-4 h-4" />
@@ -149,7 +153,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
               </button>
               <button
                 onClick={onViewGalleryClick}
-                className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
+                className="liquid-glass-button text-[#26847F] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <Image className="w-4 h-4" />
@@ -160,7 +164,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
           ) : (
             <button
               onClick={() => navigate(createPageUrl("Workouts"))}
-              className="w-full liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
+              className="w-full liquid-glass-button text-[#26847F] font-semibold text-sm py-3 rounded-xl transition-all hover:scale-[1.02]"
             >
               <div className="flex items-center justify-center gap-1.5">
                 <Dumbbell className="w-4 h-4" />
