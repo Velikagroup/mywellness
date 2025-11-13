@@ -30,6 +30,7 @@ import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
 import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
 import QuizPreviewDemo from "../components/home/QuizPreviewDemo";
 import DashboardPreviewDemo from "../components/home/DashboardPreviewDemo";
+import HealthScorePreviewDemo from "../components/home/HealthScorePreviewDemo"; // New import
 
 export default function Home() {
   const navigate = useNavigate();
@@ -581,11 +582,12 @@ export default function Home() {
               transition={{ duration: 0.6 }}>
               <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">Come Funziona</h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Un percorso guidato dall'intelligenza artificiale in 5 step
+                Un percorso guidato dall'intelligenza artificiale in 6 step
               </p>
             </motion.div>
           </div>
 
+          {/* Step 1: Quiz */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -624,6 +626,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
+          {/* Step 2: Dashboard */}
           <motion.div
             className="mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -663,6 +666,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
+          {/* Step 3: Pasti */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -702,6 +706,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
+          {/* Step 4: Conto Calorico */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -738,8 +743,9 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
+          {/* Step 5: Workout */}
           <motion.div
-            className="grid md:grid-cols-2 gap-12 items-center mb-24"
+            className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -774,6 +780,44 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="max-w-md mx-auto">
                 <WorkoutPreviewDemo />
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Step 6: Health Score */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-12 items-center mb-24"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}>
+              <div className="max-w-md mx-auto">
+                <HealthScorePreviewDemo />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🔬 Analisi Nutrizionale</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Health Score Immediato</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                Scatta una foto all'etichetta nutrizionale: l'AI analizza i valori, calcola un Health Score da 0 a 100 e ti suggerisce alternative più salutari.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🏆 Score 0-100</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📱 Scan Istantaneo</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Alternative Salutari</span>
               </div>
             </motion.div>
           </motion.div>

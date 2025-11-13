@@ -54,14 +54,14 @@ export default function MealPlanPreviewDemo() {
   return (
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
       <CardHeader className="pb-4">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
+        <div className="flex items-center justify-between gap-2">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm flex-shrink-0">
               <Utensils className="w-6 h-6 text-orange-600" />
             </div>
-            <div>
-              <CardTitle className="text-lg font-bold text-gray-900">Protocollo Nutrizionale</CardTitle>
-              <p className="text-sm text-gray-500">
+            <div className="min-w-0">
+              <CardTitle className="text-lg font-bold text-gray-900 truncate">Protocollo Nutrizionale</CardTitle>
+              <p className="text-sm text-gray-500 truncate">
                 Panoramica di oggi
               </p>
             </div>
@@ -70,7 +70,7 @@ export default function MealPlanPreviewDemo() {
             disabled 
             variant="ghost" 
             size="icon" 
-            className="text-gray-400 cursor-not-allowed opacity-70"
+            className="text-gray-400 cursor-not-allowed opacity-70 flex-shrink-0"
           >
             <ArrowRight className="w-5 h-5" />
           </Button>
@@ -124,13 +124,13 @@ export default function MealPlanPreviewDemo() {
                     )}
                   </div>
                   <div className="min-w-0 flex-1 text-left">
-                    <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
-                    <p className="text-sm text-gray-600 truncate">{meal.name}</p>
+                    <p className="font-semibold text-gray-800 text-sm">{getMealTypeLabel(meal.meal_type)}</p>
+                    <p className="text-xs text-gray-600 truncate">{meal.name}</p>
                   </div>
                 </button>
                 <div className="flex items-center gap-2 flex-shrink-0">
                   <div className="text-right">
-                    <p className="font-bold text-gray-800">
+                    <p className="font-bold text-gray-800 text-sm">
                       {meal.total_calories}
                     </p>
                     <p className="text-xs text-gray-500">kcal</p>
