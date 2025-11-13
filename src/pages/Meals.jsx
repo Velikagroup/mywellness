@@ -1059,7 +1059,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
             <div className="flex gap-2 w-full lg:w-auto">
               <Button
                 onClick={() => setShowShoppingList(true)}
-                className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+                className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
               >
                 <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="hidden sm:inline">Lista Spesa</span>
@@ -1095,7 +1095,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                       🚫 Limite Generazioni Raggiunto
                     </h3>
                     <p className="text-amber-800 mb-1">
-                      Hai utilizzato tutte le <strong>{getGenerationLimit(user?.subscription_plan, 'meal')} generazioni</strong> disponibili questo mese con il piano <strong className="capitalize">{user?.subscription_plan || 'Base'}</strong>.
+                      Hai utilizzato tutte le <strong>{getGenerationLimit(user?.subscription_plan, 'meal')} generazioni</strong> disponibili questo mese con il piano <strong className="capitalize">{user?.subscription_plan || 'base'}</strong>.
                     </p>
                     <p className="text-sm text-amber-700">
                       💡 Fai l'upgrade per ottenere più generazioni o generazioni illimitate!
