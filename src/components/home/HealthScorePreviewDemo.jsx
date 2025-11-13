@@ -37,9 +37,18 @@ export default function HealthScorePreviewDemo() {
   };
 
   // Calcolo circonferenza per il cerchio
-  const radius = 45;
+  const radius = 50;
   const circumference = 2 * Math.PI * radius;
   const strokeDashoffset = circumference - (nutritionAnalysis.healthScore / 100) * circumference;
+
+  // Determina colore basato sullo score
+  const getScoreColor = (score) => {
+    if (score >= 70) return "#10b981"; // verde
+    if (score >= 40) return "#f59e0b"; // arancione
+    return "#ef4444"; // rosso
+  };
+
+  const scoreColor = getScoreColor(nutritionAnalysis.healthScore);
 
   return (
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
@@ -80,33 +89,39 @@ export default function HealthScorePreviewDemo() {
               <h4 className="font-bold text-gray-900 mb-1">{nutritionAnalysis.productName}</h4>
               <p className="text-xs text-gray-500">{nutritionAnalysis.servingSize}</p>
             </div>
-            <div className="relative">
-              <svg className="w-20 h-20 transform -rotate-90">
+            <div className="relative flex items-center justify-center">
+              <svg className="w-28 h-28 transform -rotate-90" style={{ filter: 'drop-shadow(0 4px 6px rgba(0, 0, 0, 0.1))' }}>
+                {/* Cerchio di sfondo */}
                 <circle
-                  cx="40"
-                  cy="40"
+                  cx="56"
+                  cy="56"
                   r={radius}
                   stroke="#e5e7eb"
-                  strokeWidth="8"
-                  fill="none"
+                  strokeWidth="10"
+                  fill="white"
                 />
+                {/* Cerchio di progresso */}
                 <circle
-                  cx="40"
-                  cy="40"
+                  cx="56"
+                  cy="56"
                   r={radius}
-                  stroke={nutritionAnalysis.healthScore >= 70 ? "#10b981" : nutritionAnalysis.healthScore >= 40 ? "#f59e0b" : "#ef4444"}
-                  strokeWidth="8"
+                  stroke={scoreColor}
+                  strokeWidth="10"
                   fill="none"
                   strokeDasharray={circumference}
                   strokeDashoffset={strokeDashoffset}
                   strokeLinecap="round"
+                  style={{
+                    filter: `drop-shadow(0 0 8px ${scoreColor}40)`,
+                    transition: 'all 0.3s ease'
+                  }}
                 />
               </svg>
               <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className={`text-2xl font-black ${nutritionAnalysis.scoreColor}`}>
+                <span className={`text-3xl font-black ${nutritionAnalysis.scoreColor}`}>
                   {nutritionAnalysis.healthScore}
                 </span>
-                <span className="text-[9px] text-gray-500 font-semibold">/100</span>
+                <span className="text-[10px] text-gray-500 font-semibold">/100</span>
               </div>
             </div>
           </div>
