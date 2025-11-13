@@ -27,6 +27,7 @@ import {
 } from
 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
+import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -799,11 +800,8 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="step-image-container shadow-2xl border-2 border-gray-100">
-                <img
-                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/94f7871a4_PianodiAllenamento-Trasparente.png"
-                  alt="Piano Allenamento MyWellness"
-                  className="step-image w-full h-auto" />
+              <div className="max-w-md mx-auto">
+                <WorkoutPreviewDemo />
               </div>
             </motion.div>
           </motion.div>
