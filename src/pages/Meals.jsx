@@ -7,6 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
+import { hasFeatureAccess, PLANS, UpgradePrompt, getGenerationLimit } from '@/components/utils/subscriptionPlans';
 import { Progress } from "@/components/ui/progress";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
@@ -16,7 +17,6 @@ import ShoppingListModal from "../components/meals/ShoppingListModal";
 import AIFeedbackBox from '../components/meals/AIFeedbackBox';
 import UpgradeModal from '../components/meals/UpgradeModal';
 import CheatMealStep from '../components/meals/CheatMealStep';
-import { getGenerationLimit } from '@/components/utils/subscriptionPlans';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
@@ -1059,7 +1059,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
             <div className="flex gap-2 w-full lg:w-auto">
               <Button
                 onClick={() => setShowShoppingList(true)}
-                className="bg-white/40 backdrop-blur-md hover:bg-white/50 border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white border-2 border-[var(--brand-primary)] flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
               >
                 <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="hidden sm:inline">Lista Spesa</span>
