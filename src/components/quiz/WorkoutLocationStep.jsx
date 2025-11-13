@@ -15,7 +15,7 @@ export default function WorkoutLocationStep({ data, onDataChange, nextStep }) {
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-[#26847F] rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_4px_20px_rgba(38,132,127,0.3)]">
           <span className="text-2xl">📍</span>
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Dove preferisci allenarti?</h2>
@@ -29,8 +29,8 @@ export default function WorkoutLocationStep({ data, onDataChange, nextStep }) {
             onClick={() => handleSelection(location.id)}
             className={`p-6 rounded-lg border-2 transition-all hover:shadow-md text-center ${
               data.workout_location === location.id
-                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                : 'border-gray-200 hover:border-[var(--brand-primary)]'
+                ? 'border-[#26847F] bg-[#e9f6f5] shadow-[0_4px_16px_rgba(38,132,127,0.2)]'
+                : 'border-gray-200 hover:border-[#26847F]'
             }`}
           >
             <div className="text-4xl mb-4">{location.icon}</div>

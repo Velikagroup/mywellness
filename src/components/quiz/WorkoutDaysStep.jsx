@@ -39,7 +39,7 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
       if (selectedDays.length < selectedCount) {
         newSelectedDays = [...selectedDays, dayId];
       } else {
-        return; // Don't allow more than selected count
+        return;
       }
     }
     setSelectedDays(newSelectedDays);
@@ -50,10 +50,9 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
 
   return (
     <div className="space-y-8">
-      {/* Step 1: Select number of days */}
       <div>
         <div className="text-center mb-6">
-          <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
+          <div className="w-16 h-16 bg-[#26847F] rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_4px_20px_rgba(38,132,127,0.3)]">
             <span className="text-2xl">📅</span>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Quanti giorni a settimana vuoi allenarti?</h2>
@@ -67,8 +66,8 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
               onClick={() => handleCountSelection(days)}
               className={`p-6 rounded-lg border-2 transition-all hover:shadow-md text-center ${
                 selectedCount === days
-                  ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                  : 'border-gray-200 hover:border-[var(--brand-primary)]'
+                  ? 'border-[#26847F] bg-[#e9f6f5] shadow-[0_4px_16px_rgba(38,132,127,0.2)]'
+                  : 'border-gray-200 hover:border-[#26847F]'
               }`}
             >
               <div className="text-3xl font-bold text-gray-900 mb-1">{days}</div>
@@ -78,7 +77,6 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
         </div>
       </div>
 
-      {/* Step 2: Select specific days */}
       {selectedCount && (
         <div className="border-t pt-8">
           <div className="text-center mb-6">
@@ -98,14 +96,14 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
                   disabled={isDisabled}
                   className={`p-4 rounded-lg border-2 transition-all text-center ${
                     isSelected
-                      ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] shadow-md'
+                      ? 'border-[#26847F] bg-[#e9f6f5] shadow-[0_4px_16px_rgba(38,132,127,0.2)]'
                       : isDisabled
                       ? 'border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed'
-                      : 'border-gray-200 hover:border-[var(--brand-primary)] hover:shadow-sm'
+                      : 'border-gray-200 hover:border-[#26847F] hover:shadow-sm'
                   }`}
                 >
                   <div className="flex flex-col items-center gap-2">
-                    {isSelected && <CheckCircle className="w-5 h-5 text-[var(--brand-primary)]" />}
+                    {isSelected && <CheckCircle className="w-5 h-5 text-[#26847F]" />}
                     <span className="font-semibold text-sm">{day.label}</span>
                   </div>
                 </button>
@@ -113,7 +111,6 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
             })}
           </div>
 
-          {/* Status message */}
           <div className="mt-6 text-center">
             {selectedDays.length < selectedCount ? (
               <div className="flex items-center justify-center gap-2 text-amber-600">
@@ -123,19 +120,18 @@ export default function WorkoutDaysStep({ data, onDataChange, nextStep }) {
                 </p>
               </div>
             ) : (
-              <div className="flex items-center justify-center gap-2 text-green-600">
+              <div className="flex items-center justify-center gap-2 text-[#26847F]">
                 <CheckCircle className="w-5 h-5" />
                 <p className="text-sm font-medium">Perfetto! Hai selezionato tutti i giorni</p>
               </div>
             )}
           </div>
 
-          {/* Manual advance button */}
           {canProceed && (
             <div className="mt-8 text-center">
               <Button 
                 onClick={nextStep}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-8"
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-8 shadow-[0_4px_16px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_20px_rgba(38,132,127,0.4)]"
               >
                 Continua
               </Button>

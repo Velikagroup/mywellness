@@ -17,7 +17,7 @@ export default function FitnessGoalStep({ data, onDataChange, nextStep }) {
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
+        <div className="w-16 h-16 bg-[#26847F] rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_4px_20px_rgba(38,132,127,0.3)]">
           <Target className="w-8 h-8 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">Qual è il tuo obiettivo fitness principale?</h2>
@@ -31,12 +31,18 @@ export default function FitnessGoalStep({ data, onDataChange, nextStep }) {
             onClick={() => handleSelection(goal.id)}
             className={`p-6 rounded-lg border-2 transition-all hover:shadow-md text-center ${
               data.fitness_goal === goal.id
-                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                : 'border-gray-200 hover:border-[var(--brand-primary)]'
+                ? 'border-[#26847F] bg-[#e9f6f5] shadow-[0_4px_16px_rgba(38,132,127,0.2)]'
+                : 'border-gray-200 hover:border-[#26847F]'
             }`}
           >
-            <div className="w-10 h-10 text-[var(--brand-primary)] mx-auto mb-3 flex items-center justify-center">
-              {React.cloneElement(goal.icon, { className: 'w-8 h-8' })}
+            <div className={`w-10 h-10 mx-auto mb-3 flex items-center justify-center rounded-lg ${
+              data.fitness_goal === goal.id 
+                ? 'bg-[#26847F] shadow-[0_4px_12px_rgba(38,132,127,0.3)]' 
+                : 'bg-gray-100'
+            }`}>
+              {React.cloneElement(goal.icon, { 
+                className: `w-6 h-6 ${data.fitness_goal === goal.id ? 'text-white' : 'text-gray-400'}` 
+              })}
             </div>
             <p className="font-semibold text-gray-900">{goal.label}</p>
           </button>

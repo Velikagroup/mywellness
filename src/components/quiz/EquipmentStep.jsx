@@ -61,29 +61,22 @@ const EQUIPMENT_CATEGORIES = [
     id: 'personalizzato',
     label: '⚙️ Personalizzato',
     description: 'Seleziona singolarmente le attrezzature',
-    items: [] // Permetterà selezione custom sotto
+    items: []
   }
 ];
 
 const ALL_EQUIPMENT = [
-  // Corpo Libero
   { id: 'corpo_libero', label: '💪 Corpo Libero', category: 'base' },
-  
-  // Pesi Liberi
   { id: 'bilanciere', label: '🏋️ Bilanciere', category: 'pesi_liberi' },
   { id: 'manubri', label: '🏋️ Manubri', category: 'pesi_liberi' },
   { id: 'kettlebell', label: '🏋️ Kettlebell', category: 'pesi_liberi' },
   { id: 'trap_bar', label: '🏋️ Trap Bar (Esagonale)', category: 'pesi_liberi' },
-  
-  // Supporti e Strutture
   { id: 'panca', label: '🪑 Panca Piana', category: 'supporti' },
   { id: 'panca_inclinata', label: '🪑 Panca Inclinata', category: 'supporti' },
   { id: 'panca_declinata', label: '🪑 Panca Declinata', category: 'supporti' },
   { id: 'sbarra', label: '🏗️ Sbarra per Trazioni', category: 'supporti' },
   { id: 'parallele', label: '🏗️ Parallele per Dip', category: 'supporti' },
   { id: 'rack_squat', label: '🏗️ Rack per Squat', category: 'supporti' },
-  
-  // Macchine Gambe
   { id: 'leg_press', label: '🦵 Leg Press', category: 'macchine_gambe' },
   { id: 'leg_extension', label: '🦵 Leg Extension', category: 'macchine_gambe' },
   { id: 'leg_curl', label: '🦵 Leg Curl', category: 'macchine_gambe' },
@@ -91,44 +84,32 @@ const ALL_EQUIPMENT = [
   { id: 'calf_machine', label: '🦵 Calf Machine', category: 'macchine_gambe' },
   { id: 'abductor_machine', label: '🦵 Abductor Machine', category: 'macchine_gambe' },
   { id: 'adductor_machine', label: '🦵 Adductor Machine', category: 'macchine_gambe' },
-  
-  // Macchine Upper Body
   { id: 'chest_press', label: '💪 Chest Press Machine', category: 'macchine_upper' },
   { id: 'pec_deck', label: '💪 Pec Deck / Fly Machine', category: 'macchine_upper' },
   { id: 'lat_machine', label: '💪 Lat Machine', category: 'macchine_upper' },
   { id: 'shoulder_press_machine', label: '💪 Shoulder Press Machine', category: 'macchine_upper' },
   { id: 'cable_machine', label: '💪 Cable Machine / Cavi', category: 'macchine_upper' },
   { id: 'smith_machine', label: '💪 Smith Machine', category: 'macchine_upper' },
-  
-  // Core e Stabilizzazione
   { id: 'hyperextension_bench', label: '🧘 Hyperextension Bench', category: 'core' },
   { id: 'ghd_machine', label: '🧘 GHD Machine', category: 'core' },
   { id: 'ab_wheel', label: '🧘 Ab Wheel', category: 'core' },
   { id: 'medicine_ball', label: '⚽ Medicine Ball', category: 'core' },
-  
-  // Functional / CrossFit
   { id: 'battle_ropes', label: '🪢 Battle Ropes', category: 'functional' },
   { id: 'sled', label: '🛷 Sled (Slitta)', category: 'functional' },
   { id: 'box', label: '📦 Plyo Box', category: 'functional' },
   { id: 'anelli', label: '💍 Anelli Ginnastica', category: 'functional' },
   { id: 'wall_ball', label: '⚽ Wall Ball Target', category: 'functional' },
   { id: 'bumper_plates', label: '🏋️ Bumper Plates (Gomma)', category: 'functional' },
-  
-  // Cardio
   { id: 'tapis_roulant', label: '🏃 Tapis Roulant', category: 'cardio' },
   { id: 'rowing_machine', label: '🚣 Rowing Machine', category: 'cardio' },
   { id: 'assault_bike', label: '🚴 Assault Bike', category: 'cardio' },
   { id: 'cyclette', label: '🚴 Cyclette', category: 'cardio' },
   { id: 'ellittica', label: '🚴 Ellittica', category: 'cardio' },
   { id: 'corda', label: '🪢 Corda per Saltare', category: 'cardio' },
-  
-  // Accessori
   { id: 'trx', label: '🎽 TRX / Suspension Trainer', category: 'accessori' },
   { id: 'elastici', label: '🎗️ Elastici / Bande Resistenza', category: 'accessori' },
   { id: 'preacher_bench', label: '🪑 Panca Scott (Preacher)', category: 'accessori' },
   { id: 'tappetino', label: '🧘 Tappetino Yoga', category: 'accessori' },
-  
-  // Outdoor
   { id: 'area_aperta', label: '🌳 Area Aperta (Parco/Campo)', category: 'outdoor' },
   { id: 'panchina_parco', label: '🪑 Panchina Parco', category: 'outdoor' },
   { id: 'gradini', label: '🪜 Gradini / Scale', category: 'outdoor' }
@@ -146,13 +127,11 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
     setSelectedCategory(category.id);
     
     if (category.id === 'personalizzato') {
-      // Non auto-avanza per personalizzato
       onDataChange({
         equipment_category: category.id,
         equipment: customEquipment
       });
     } else {
-      // Per categorie predefinite, auto-avanza
       onDataChange({
         equipment_category: category.id,
         equipment: category.items
@@ -206,7 +185,6 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
         </p>
       </div>
 
-      {/* Categorie Rapide */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {EQUIPMENT_CATEGORIES.map((category) => (
           <button
@@ -214,14 +192,14 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
             onClick={() => handleCategorySelect(category)}
             className={`p-4 rounded-xl border-2 text-left transition-all ${
               selectedCategory === category.id
-                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] shadow-md'
-                : 'border-gray-200 hover:border-[var(--brand-primary)]/50 hover:bg-gray-50'
+                ? 'border-[#26847F] bg-[#e9f6f5] shadow-[0_4px_16px_rgba(38,132,127,0.2)]'
+                : 'border-gray-200 hover:border-[#26847F]/50 hover:bg-gray-50'
             }`}
           >
             <div className="flex items-start gap-3">
               <div className="flex-shrink-0 mt-1">
                 {selectedCategory === category.id ? (
-                  <CheckCircle className="w-6 h-6 text-[var(--brand-primary)]" />
+                  <CheckCircle className="w-6 h-6 text-[#26847F]" />
                 ) : (
                   <Circle className="w-6 h-6 text-gray-300" />
                 )}
@@ -235,7 +213,6 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
         ))}
       </div>
 
-      {/* Selezione Personalizzata */}
       {selectedCategory === 'personalizzato' && (
         <div className="space-y-4 bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
           <h4 className="font-bold text-gray-900 text-lg mb-4">
@@ -254,13 +231,13 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
                     onClick={() => handleCustomToggle(item.id)}
                     className={`p-3 rounded-lg border-2 text-left transition-all text-sm ${
                       customEquipment.includes(item.id)
-                        ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]'
-                        : 'border-gray-200 hover:border-[var(--brand-primary)]/50'
+                        ? 'border-[#26847F] bg-[#e9f6f5] shadow-[0_2px_8px_rgba(38,132,127,0.15)]'
+                        : 'border-gray-200 hover:border-[#26847F]/50'
                     }`}
                   >
                     <div className="flex items-center gap-2">
                       {customEquipment.includes(item.id) ? (
-                        <CheckCircle className="w-4 h-4 text-[var(--brand-primary)] flex-shrink-0" />
+                        <CheckCircle className="w-4 h-4 text-[#26847F] flex-shrink-0" />
                       ) : (
                         <Circle className="w-4 h-4 text-gray-300 flex-shrink-0" />
                       )}
@@ -274,25 +251,24 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
         </div>
       )}
 
-      {/* Riepilogo Selezione */}
       {selectedCategory && selectedCategory !== 'personalizzato' && (
-        <div className="bg-[var(--brand-primary-light)] p-4 rounded-xl border-2 border-[var(--brand-primary)]/30">
-          <p className="text-sm text-[var(--brand-primary-dark-text)] font-semibold">
+        <div className="bg-[#e9f6f5] p-4 rounded-xl border-2 border-[#26847F]/30">
+          <p className="text-sm text-[#1a5753] font-semibold">
             ✅ Categoria selezionata: {EQUIPMENT_CATEGORIES.find(c => c.id === selectedCategory)?.label}
           </p>
         </div>
       )}
 
       {selectedCategory === 'personalizzato' && customEquipment.length > 0 && (
-        <div className="bg-[var(--brand-primary-light)] p-4 rounded-xl border-2 border-[var(--brand-primary)]/30">
-          <p className="text-sm text-[var(--brand-primary-dark-text)] font-semibold mb-2">
+        <div className="bg-[#e9f6f5] p-4 rounded-xl border-2 border-[#26847F]/30">
+          <p className="text-sm text-[#1a5753] font-semibold mb-2">
             ✅ {customEquipment.length} attrezzature selezionate
           </p>
           <div className="flex flex-wrap gap-2">
             {customEquipment.map(eqId => {
               const equipment = ALL_EQUIPMENT.find(e => e.id === eqId);
               return equipment ? (
-                <span key={eqId} className="px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-700 border border-[var(--brand-primary)]/20">
+                <span key={eqId} className="px-3 py-1 bg-white rounded-full text-xs font-medium text-gray-700 border border-[#26847F]/20">
                   {equipment.label}
                 </span>
               ) : null;
