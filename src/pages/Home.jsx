@@ -34,6 +34,7 @@ import HealthScorePreviewDemo from "../components/home/HealthScorePreviewDemo";
 import ShoppingListPreviewDemo from "../components/home/ShoppingListPreviewDemo";
 import IngredientScannerPreviewDemo from "../components/home/IngredientScannerPreviewDemo";
 import MealTrackingPreviewDemo from "../components/home/MealTrackingPreviewDemo";
+import ProgressPhotoPreviewDemo from "../components/home/ProgressPhotoPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -939,6 +940,44 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="max-w-md mx-auto">
                 <WorkoutPreviewDemo />
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Step 10 - Progress Photo Analysis (NUOVO) */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-12 items-center mb-32"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}>
+              <div className="max-w-4xl mx-auto">
+                <ProgressPhotoPreviewDemo />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🔬 Analisi Scientifica</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Personal Trainer AI</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                Carica foto della zona target: l'AI analizza scientificamente i progressi confrontando pelle, grasso, definizione muscolare. Ti suggerisce modifiche nutrizionali e di allenamento che puoi applicare ai tuoi piani.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">📸 Confronto Prima/Dopo</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🔬 Analisi Dettagliata</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Suggerimenti Personalizzati</span>
               </div>
             </motion.div>
           </motion.div>
