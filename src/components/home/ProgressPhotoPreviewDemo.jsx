@@ -1,57 +1,59 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight } from 'lucide-react';
+import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Dumbbell } from 'lucide-react';
 
 export default function ProgressPhotoPreviewDemo() {
   const analysisData = {
     targetZone: 'Addome',
     comparison: 'improved',
-    daysSince: 21,
+    daysSince: 28,
     detailedAnalysis: {
       muscleDefinition: {
-        score: 7.2,
-        previous: 5.8,
-        description: 'La linea alba è ora visibile con illuminazione naturale. I muscoli retti addominali mostrano una separazione chiara nella parte superiore. Obliqui esterni più definiti, specialmente durante contrazione.'
+        score: 6.8,
+        previous: 4.5,
+        description: 'Miglioramento visibile della tonicità addominale. La zona centrale mostra maggiore compattezza muscolare. Gli obliqui esterni presentano una definizione moderata, specialmente nella zona laterale.'
       },
       fatLayer: {
-        thickness: 'Medio-sottile',
-        previous: 'Medio-spesso',
-        percentage: '-18%',
-        description: 'Lo strato adiposo sottocutaneo è diminuito significativamente. Misurazione plicometrica stimata: 12mm (era 15mm). Riduzione particolarmente evidente nella zona periombelicale e nei fianchi.'
+        thickness: 'Medio-ridotto',
+        previous: 'Medio-alto',
+        percentage: '-22%',
+        description: 'Riduzione significativa dello strato adiposo sottocutaneo addominale. La zona periombelicale mostra un miglioramento marcato. Circonferenza vita ridotta di circa 6-7cm. Plicometria stimata: 16mm (era 21mm).'
       },
       skinQuality: {
-        elasticity: 'Eccellente',
-        tone: 'Migliorato +25%',
-        description: 'La pelle mostra maggiore compattezza ed elasticità. Texture più uniforme, riduzione microsolchi. Idratazione cutanea ottimale, assenza di smagliature o segni di cedimento.'
+        elasticity: 'Buona',
+        tone: 'Migliorato +20%',
+        description: 'La pelle mantiene buona elasticità nonostante la riduzione volumetrica. Texture più liscia e uniforme. Assenza di cedimenti cutanei significativi. Idratazione cutanea ottimale nella zona target.'
       },
       vascularity: {
-        level: 'Moderata-Aumentata',
-        description: 'Vene superficiali più visibili nella zona addominale bassa e sui fianchi. Indica riduzione tessuto adiposo sovrastante e miglior circolazione locale.'
+        level: 'Leggera-Visibile',
+        description: 'Vene superficiali leggermente più evidenti nella zona addominale inferiore, segno di riduzione del tessuto adiposo sovrastante e miglioramento della circolazione periferica.'
       },
       posturalAlignment: {
-        status: 'Migliorato',
-        description: 'Riduzione della lordosi lombare. Core più stabile, migliore attivazione del pavimento pelvico. Bacino più allineato verticalmente.'
+        status: 'Notevolmente migliorato',
+        description: 'Marcata riduzione della lordosi lombare. Bacino più neutro e allineato verticalmente. Core più attivo e stabile. Miglior controllo del pavimento pelvico visibile dalla postura generale.'
       },
       asymmetries: {
-        detected: 'Minime',
-        description: 'Leggera prevalenza muscolare obliqui destri (comune). Nessuna asimmetria patologica. Simmetria generale migliorata del 15% rispetto a prima.'
+        detected: 'Minime fisiologiche',
+        description: 'Nessuna asimmetria significativa rilevata. Simmetria bilaterale nella distribuzione del tessuto adiposo e muscolare. Distribuzione omogenea del dimagrimento tra lato destro e sinistro.'
       }
     },
     recommendations: {
       diet: [
-        'Aumenta proteine a 1.8g/kg peso corporeo (attualmente 1.5g/kg)',
-        'Mantieni deficit calorico attuale di 300kcal - ottimale per composizione',
-        'Aggiungi 15g BCAA pre-workout per preservare massa magra',
-        'Integra Omega-3 (2g/die) per riduzione infiammazione',
-        'Ciclo carboidrati: 150g giorni allenamento, 80g giorni riposo'
+        'Mantieni deficit calorico attuale di 350kcal - stai ottenendo risultati ottimali',
+        'Aumenta proteine a 1.6-1.8g/kg per preservare massa magra durante il dimagrimento',
+        'Introduci 2 ricariche carboidrati/settimana (200g) per mantenere metabolismo attivo',
+        'Integra Omega-3 (2-3g/die) per ridurre infiammazione e migliorare composizione corporea',
+        'Mantieni idratazione elevata: 35-40ml/kg peso corporeo',
+        'Considera ciclizzazione calorica: -20% giorni riposo, +10% giorni allenamento'
       ],
       workout: [
-        'Intensifica lavoro core: 4x settimana invece di 3x',
-        'Aggiungi esercizi anti-rotazionali (Pallof press, Bird dog)',
-        'Incrementa HIIT: 3 sessioni settimanali 20min',
-        'Plank progressivo: 3x90sec con varianti instabili',
-        'Focus eccentrico su addominali: 4 sec discesa controllata',
-        'Aggiungi 2 sessioni mobilità anca per allineamento pelvico'
+        'Aumenta frequenza allenamento core a 4-5 sessioni settimanali',
+        'Introduci esercizi composti: deadlift, squat per massimizzare consumo calorico',
+        'Aggiungi 3 sessioni HIIT/settimana da 20-25 minuti per accelerare lipolisi addominale',
+        'Intensifica lavoro obliqui: side plank, russian twist, woodchop con resistenze',
+        'Implementa esercizi anti-rotazionali per stabilità core (Pallof press)',
+        'Mantieni 2 sessioni mobilità/settimana per allineamento posturale ottimale',
+        'Progressive overload: aumenta intensità del 5-10% ogni 2 settimane'
       ]
     }
   };
@@ -85,7 +87,7 @@ export default function ProgressPhotoPreviewDemo() {
                 <p className="text-sm text-gray-600 mt-1">Zona Target: {analysisData.targetZone} • {analysisData.daysSince} giorni</p>
               </div>
               <div className="px-4 py-2 bg-green-100 rounded-full">
-                <span className="text-sm font-bold text-green-700">✓ Migliorato</span>
+                <span className="text-sm font-bold text-green-700">✓ Progressi Eccellenti</span>
               </div>
             </div>
             
@@ -93,17 +95,17 @@ export default function ProgressPhotoPreviewDemo() {
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=500&fit=crop&q=80"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
                   alt="Before"
                   className="w-full h-56 object-cover rounded-xl"
                 />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                  Prima - 21 giorni fa
+                  Prima - {analysisData.daysSince} giorni fa
                 </div>
               </div>
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=500&fit=crop&q=80"
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
                   alt="After"
                   className="w-full h-56 object-cover rounded-xl"
                 />
@@ -228,28 +230,41 @@ export default function ProgressPhotoPreviewDemo() {
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-4 border border-teal-200">
-                <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                  <CheckCircle2 className="w-5 h-5 text-teal-600" />
-                  Applica le Modifiche Proposte?
-                </p>
-                <p className="text-xs text-gray-600 mb-3 leading-relaxed">
-                  L'AI aggiornerà automaticamente i tuoi piani nutrizionali e di allenamento per ottimizzare i risultati in base all'analisi dei progressi.
-                </p>
-                <div className="flex gap-2">
+              {/* Action Buttons - Separated */}
+              <div className="space-y-3">
+                {/* Diet Button */}
+                <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-3 border border-teal-200">
+                  <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <Utensils className="w-4 h-4 text-teal-600" />
+                    Applica Modifiche Nutrizionali?
+                  </p>
+                  <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                    L'AI aggiornerà il tuo piano alimentare con le nuove raccomandazioni.
+                  </p>
                   <button
                     disabled
-                    className="flex-1 bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+                    className="w-full bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    Applica Modifiche
+                    Applica Piano Nutrizionale
                   </button>
+                </div>
+
+                {/* Workout Button */}
+                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-3 border border-purple-200">
+                  <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <Dumbbell className="w-4 h-4 text-purple-600" />
+                    Applica Modifiche Allenamento?
+                  </p>
+                  <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                    L'AI aggiornerà il tuo piano di allenamento con le nuove raccomandazioni.
+                  </p>
                   <button
                     disabled
-                    className="px-4 bg-white border-2 border-gray-300 text-gray-700 font-semibold py-2.5 rounded-xl opacity-60 cursor-not-allowed text-sm"
+                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
                   >
-                    Ignora
+                    <CheckCircle2 className="w-4 h-4" />
+                    Applica Piano Allenamento
                   </button>
                 </div>
               </div>
