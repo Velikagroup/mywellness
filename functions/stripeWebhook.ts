@@ -20,12 +20,14 @@ Deno.serve(async (req) => {
 
     try {
         const body = await req.text();
+        console.log('📦 Request body length:', body.length);
         
         // ✅ Initialize Base44 SDK with service role BEFORE using the request body
         const base44 = new Base44({
             appId: Deno.env.get('BASE44_APP_ID'),
             serviceRole: true
         });
+        console.log('✅ Base44 SDK initialized');
 
         // Validate Stripe signature
         event = await stripe.webhooks.constructEventAsync(
@@ -33,30 +35,45 @@ Deno.serve(async (req) => {
             sig,
             webhookSecret
         );
-
-        console.log(`📨 Event type: ${event.type}`);
+        console.log(`📨 Event validated: ${event.type} - ID: ${event.id}`);
 
         // Handle different event types
         switch (event.type) {
             case 'checkout.session.completed': {
+                console.log('💳 Processing checkout.session.completed...');
                 const session = event.data.object;
-                console.log('💳 Checkout completed:', session.id);
+                console.log('Session ID:', session.id);
+                console.log('Customer ID:', session.customer);
+                console.log('Payment Intent ID:', session.payment_intent);
 
                 const customerId = session.customer;
                 const paymentIntentId = session.payment_intent;
 
+                console.log('🔍 Searching for user with stripe_customer_id:', customerId);
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+                console.log('👥 Users found:', users.length);
 
                 if (users.length > 0) {
                     const user = users[0];
+                    console.log('✅ User found:', user.id, user.email);
+                    
                     const metadata = session.metadata || {};
+                    console.log('📋 Session metadata:', JSON.stringify(metadata));
 
                     const isLandingOffer = metadata.type === 'landing_offer';
                     const plan = metadata.plan_type || 'premium';
                     const amount = session.amount_total / 100;
                     const trafficSource = metadata.traffic_source || user.traffic_source || 'direct';
 
+                    console.log('💰 Transaction details:', {
+                        isLandingOffer,
+                        plan,
+                        amount,
+                        trafficSource
+                    });
+
                     // Create transaction record
+                    console.log('💾 Creating transaction...');
                     const transaction = await base44.asServiceRole.entities.Transaction.create({
                         user_id: user.id,
                         stripe_payment_intent_id: paymentIntentId,
@@ -76,44 +93,54 @@ Deno.serve(async (req) => {
                         }
                     });
 
-                    console.log(`✅ Transaction created: ${transaction.id}`);
+                    console.log(`✅ Transaction created successfully: ${transaction.id}`);
 
                     // Generate and save invoice PDF
                     try {
+                        console.log('📄 Generating invoice PDF...');
                         const invoiceResponse = await base44.asServiceRole.functions.invoke('generateInvoicePDF', {
                             transactionId: transaction.id
                         });
 
                         if (invoiceResponse?.data?.invoice_url) {
+                            console.log('✅ Invoice generated:', invoiceResponse.data.invoice_url);
                             await base44.asServiceRole.entities.Transaction.update(transaction.id, {
                                 metadata: {
                                     ...transaction.metadata,
                                     invoice_url: invoiceResponse.data.invoice_url
                                 }
                             });
-                            console.log(`✅ Invoice PDF generated: ${invoiceResponse.data.invoice_url}`);
+                            console.log('✅ Invoice URL saved to transaction');
+                        } else {
+                            console.warn('⚠️ No invoice URL returned');
                         }
                     } catch (invoiceError) {
                         console.error('⚠️ Invoice generation failed:', invoiceError.message);
+                        console.error('Stack:', invoiceError.stack);
                     }
 
                     console.log(`✅ Transaction recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
+                } else {
+                    console.warn('⚠️ No user found with stripe_customer_id:', customerId);
                 }
                 break;
             }
 
             case 'invoice.payment_succeeded': {
+                console.log('💰 Processing invoice.payment_succeeded...');
                 const invoice = event.data.object;
-                console.log('💰 Payment succeeded:', invoice.id);
+                console.log('Invoice ID:', invoice.id);
 
                 const customerId = invoice.customer;
                 const subscriptionId = invoice.subscription;
                 const amount = invoice.amount_paid / 100;
 
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+                console.log('👥 Users found:', users.length);
 
                 if (users.length > 0) {
                     const user = users[0];
+                    console.log('✅ User found:', user.id);
                     const trafficSource = invoice.metadata?.traffic_source || user.traffic_source || 'direct';
 
                     // Update user payment info
@@ -306,10 +333,14 @@ Deno.serve(async (req) => {
                 console.log(`⚠️ Unhandled event type: ${event.type}`);
         }
 
+        console.log('✅ Webhook processed successfully');
         return Response.json({ received: true });
 
     } catch (error) {
         console.error('❌ Webhook error:', error);
+        console.error('Error name:', error.name);
+        console.error('Error message:', error.message);
+        console.error('Error stack:', error.stack);
         return Response.json({
             error: error.message
         }, { status: 400 });
