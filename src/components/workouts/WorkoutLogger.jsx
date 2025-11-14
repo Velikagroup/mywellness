@@ -206,7 +206,7 @@ export default function WorkoutLogger({ workout, user, onClose, onLogSaved }) {
           <Button onClick={onClose} variant="outline">Annulla</Button>
           <Button
             onClick={handleSave}
-            className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+            className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
             disabled={isSaving}
           >
             <Save className="w-4 h-4 mr-2" />

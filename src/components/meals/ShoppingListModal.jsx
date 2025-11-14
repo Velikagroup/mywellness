@@ -499,7 +499,7 @@ Return ONLY valid JSON, no markdown.`;
                       <Button
                         asChild
                         disabled={isScanning}
-                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
                       >
                         <span>
                           {isScanning ? (
@@ -531,7 +531,7 @@ Return ONLY valid JSON, no markdown.`;
                         asChild
                         variant="outline"
                         disabled={isScanning}
-                        className="w-full border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]"
+                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white border-[var(--brand-primary)]"
                       >
                         <span>
                           <Upload className="w-4 h-4 mr-2" />
@@ -613,7 +613,7 @@ Return ONLY valid JSON, no markdown.`;
               <div className="flex flex-col gap-2">
                 <Button
                   onClick={handleSaveScannedProduct}
-                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] py-6 text-base font-semibold"
+                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-6 text-base font-semibold"
                 >
                   <Check className="w-5 h-5 mr-2" />
                   Salva e Aggiorna Ricette
