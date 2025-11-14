@@ -29,24 +29,25 @@ export default function MealPlanPreviewDemo() {
   const mondayMeals = [
     {
       name: 'Colazione',
-      title: 'Filetto di Manzo con Burro e Sale',
-      calories: 317,
-      image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&h=400&fit=crop',
+      title: 'Yogurt Greco con Miele e Noci',
+      calories: 342,
+      image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop',
       ingredients: [
-        { name: 'Filetto di manzo', quantity: 150, unit: 'g', calories: 277, protein: 35, carbs: 0, fat: 15 },
-        { name: 'Burro', quantity: 10, unit: 'g', calories: 75, protein: 0.1, carbs: 0, fat: 8.5 },
-        { name: 'Sale', quantity: 1, unit: 'pizzico', calories: 0, protein: 0, carbs: 0, fat: 0 }
+        { name: 'Yogurt greco', quantity: 200, unit: 'g', calories: 130, protein: 20, carbs: 8, fat: 4 },
+        { name: 'Miele', quantity: 20, unit: 'g', calories: 64, protein: 0.1, carbs: 17, fat: 0 },
+        { name: 'Noci', quantity: 30, unit: 'g', calories: 196, protein: 4.5, carbs: 4, fat: 19 },
+        { name: 'Mirtilli freschi', quantity: 50, unit: 'g', calories: 29, protein: 0.4, carbs: 7, fat: 0.2 }
       ],
       instructions: [
-        'Porta il filetto a temperatura ambiente',
-        'Sciogli il burro in padella',
-        'Cuoci il filetto 3 min per lato',
-        'Aggiungi sale a piacere'
+        'Versa lo yogurt greco in una ciotola',
+        'Aggiungi il miele sopra lo yogurt',
+        'Trita grossolanamente le noci',
+        'Guarnisci con noci e mirtilli freschi'
       ],
-      total_protein: 35,
-      total_carbs: 0,
-      total_fat: 24,
-      prep_time: 15,
+      total_protein: 25,
+      total_carbs: 36,
+      total_fat: 23,
+      prep_time: 5,
       difficulty: 'facile'
     },
     {
@@ -221,22 +222,22 @@ export default function MealPlanPreviewDemo() {
           <div className="grid grid-cols-4 gap-2 mb-3">
             <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-xs text-gray-500 mb-0.5">Calorie Totali</div>
-              <div className="text-lg font-black text-gray-900">1586</div>
+              <div className="text-lg font-black text-gray-900">1611</div>
               <div className="text-xs text-gray-400">kcal</div>
             </div>
             <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-xs text-gray-500 mb-0.5">Proteine</div>
-              <div className="text-lg font-black text-red-600">124.5</div>
+              <div className="text-lg font-black text-red-600">147</div>
               <div className="text-xs text-gray-400">g</div>
             </div>
             <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-xs text-gray-500 mb-0.5">Carboidrati</div>
-              <div className="text-lg font-black text-blue-600">1.2</div>
+              <div className="text-lg font-black text-blue-600">53</div>
               <div className="text-xs text-gray-400">g</div>
             </div>
             <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-xs text-gray-500 mb-0.5">Grassi</div>
-              <div className="text-lg font-black text-amber-600">122.8</div>
+              <div className="text-lg font-black text-amber-600">91</div>
               <div className="text-xs text-gray-400">g</div>
             </div>
           </div>
@@ -244,7 +245,7 @@ export default function MealPlanPreviewDemo() {
           {/* Target giornaliero */}
           <div className="text-xs text-gray-600 text-center">
             <span className="font-medium">Target giornaliero: 1696 kcal</span>
-            <span className="ml-2 text-gray-400">(9 kcal)</span>
+            <span className="ml-2 text-gray-400">(-85 kcal)</span>
           </div>
         </div>
 
