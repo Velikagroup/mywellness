@@ -3,8 +3,6 @@ import { Card } from '@/components/ui/card';
 import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight } from 'lucide-react';
 
 export default function ProgressPhotoPreviewDemo() {
-  const [showAnalysis, setShowAnalysis] = useState(true); // Start with analysis shown
-
   const analysisData = {
     targetZone: 'Addome',
     comparison: 'improved',
@@ -75,19 +73,9 @@ export default function ProgressPhotoPreviewDemo() {
         .slide-up {
           animation: slide-up 0.4s ease-out forwards;
         }
-
-        @keyframes pulse-glow {
-          0%, 100% { box-shadow: 0 0 20px rgba(168, 85, 247, 0.4); }
-          50% { box-shadow: 0 0 40px rgba(168, 85, 247, 0.6); }
-        }
-        
-        .pulse-glow {
-          animation: pulse-glow 2s ease-in-out infinite;
-        }
       `}</style>
 
-      <Card className="w-full max-w-4xl mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
-        {/* Analysis Results - Always shown for demo */}
+      <Card className="w-full max-w-6xl mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
         <div className="slide-up">
           {/* Header */}
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 px-6 py-5 border-b border-gray-100">
@@ -105,162 +93,165 @@ export default function ProgressPhotoPreviewDemo() {
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1594737626072-90dc274bc2bd?w=300&h=400&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1594737626072-90dc274bc2bd?w=400&h=500&fit=crop&q=80"
                   alt="Before"
-                  className="w-full h-48 object-cover rounded-xl"
+                  className="w-full h-56 object-cover rounded-xl"
                 />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                  Prima
+                  Prima - 21 giorni fa
                 </div>
               </div>
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=300&h=400&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=500&fit=crop&q=80"
                   alt="After"
-                  className="w-full h-48 object-cover rounded-xl"
+                  className="w-full h-56 object-cover rounded-xl"
                 />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                  Dopo
+                  Dopo - Oggi
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="p-6 space-y-6 max-h-[650px] overflow-y-auto">
-            {/* Detailed Scientific Analysis */}
-            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-200">
-              <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <div className="w-7 h-7 bg-blue-500 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                Analisi Scientifica Dettagliata
-              </h3>
-              
-              <div className="space-y-4">
-                {/* Muscle Definition */}
-                <div className="bg-white/90 rounded-lg p-4 border border-blue-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-bold text-gray-900">Definizione Muscolare</h4>
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.muscleDefinition.previous} →</span>
-                      <span className="text-lg font-black text-blue-600">{analysisData.detailedAnalysis.muscleDefinition.score}/10</span>
-                    </div>
+          {/* Two Column Layout */}
+          <div className="grid md:grid-cols-2 gap-6 p-6">
+            {/* LEFT COLUMN - Scientific Analysis */}
+            <div className="space-y-4">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
+                <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white" />
                   </div>
-                  <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.muscleDefinition.description}</p>
-                </div>
+                  Analisi Scientifica Dettagliata
+                </h3>
+                
+                <div className="space-y-3">
+                  {/* Muscle Definition */}
+                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-xs font-bold text-gray-900">Definizione Muscolare</h4>
+                      <div className="flex items-center gap-1">
+                        <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.muscleDefinition.previous} →</span>
+                        <span className="text-base font-black text-blue-600">{analysisData.detailedAnalysis.muscleDefinition.score}/10</span>
+                      </div>
+                    </div>
+                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.muscleDefinition.description}</p>
+                  </div>
 
-                {/* Fat Layer */}
-                <div className="bg-white/90 rounded-lg p-4 border border-blue-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-bold text-gray-900">Strato Adiposo Sottocutaneo</h4>
-                    <div className="flex items-center gap-2">
-                      <span className="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
+                  {/* Fat Layer */}
+                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-xs font-bold text-gray-900">Strato Adiposo</h4>
+                      <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-bold">
                         {analysisData.detailedAnalysis.fatLayer.percentage}
                       </span>
                     </div>
+                    <p className="text-xs text-gray-600 mb-1">{analysisData.detailedAnalysis.fatLayer.previous} → {analysisData.detailedAnalysis.fatLayer.thickness}</p>
+                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.fatLayer.description}</p>
                   </div>
-                  <p className="text-xs text-gray-600 mb-1">{analysisData.detailedAnalysis.fatLayer.previous} → {analysisData.detailedAnalysis.fatLayer.thickness}</p>
-                  <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.fatLayer.description}</p>
-                </div>
 
-                {/* Skin Quality */}
-                <div className="bg-white/90 rounded-lg p-4 border border-blue-100">
-                  <div className="flex items-center justify-between mb-2">
-                    <h4 className="text-sm font-bold text-gray-900">Qualità della Pelle</h4>
-                    <span className="px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
-                      {analysisData.detailedAnalysis.skinQuality.tone}
-                    </span>
+                  {/* Skin Quality */}
+                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-xs font-bold text-gray-900">Qualità Pelle</h4>
+                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
+                        {analysisData.detailedAnalysis.skinQuality.tone}
+                      </span>
+                    </div>
+                    <p className="text-xs text-gray-600 mb-1">Elasticità: {analysisData.detailedAnalysis.skinQuality.elasticity}</p>
+                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.skinQuality.description}</p>
                   </div>
-                  <p className="text-xs text-gray-600 mb-1">Elasticità: {analysisData.detailedAnalysis.skinQuality.elasticity}</p>
-                  <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.skinQuality.description}</p>
-                </div>
 
-                {/* Vascularity */}
-                <div className="bg-white/90 rounded-lg p-4 border border-blue-100">
-                  <h4 className="text-sm font-bold text-gray-900 mb-1">Vascolarizzazione</h4>
-                  <p className="text-xs text-gray-600 mb-1">{analysisData.detailedAnalysis.vascularity.level}</p>
-                  <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.vascularity.description}</p>
-                </div>
+                  {/* Vascularity */}
+                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
+                    <h4 className="text-xs font-bold text-gray-900 mb-1">Vascolarizzazione</h4>
+                    <p className="text-xs text-gray-600 mb-1">{analysisData.detailedAnalysis.vascularity.level}</p>
+                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.vascularity.description}</p>
+                  </div>
 
-                {/* Postural Alignment */}
-                <div className="bg-white/90 rounded-lg p-4 border border-blue-100">
-                  <h4 className="text-sm font-bold text-gray-900 mb-1">Allineamento Posturale</h4>
-                  <p className="text-xs text-gray-600 mb-1">Status: {analysisData.detailedAnalysis.posturalAlignment.status}</p>
-                  <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.posturalAlignment.description}</p>
-                </div>
+                  {/* Postural Alignment */}
+                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
+                    <h4 className="text-xs font-bold text-gray-900 mb-1">Allineamento Posturale</h4>
+                    <p className="text-xs text-gray-600 mb-1">Status: {analysisData.detailedAnalysis.posturalAlignment.status}</p>
+                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.posturalAlignment.description}</p>
+                  </div>
 
-                {/* Asymmetries */}
-                <div className="bg-white/90 rounded-lg p-4 border border-blue-100">
-                  <h4 className="text-sm font-bold text-gray-900 mb-1">Simmetria e Asimmetrie</h4>
-                  <p className="text-xs text-gray-600 mb-1">Rilevate: {analysisData.detailedAnalysis.asymmetries.detected}</p>
-                  <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.asymmetries.description}</p>
+                  {/* Asymmetries */}
+                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
+                    <h4 className="text-xs font-bold text-gray-900 mb-1">Simmetria</h4>
+                    <p className="text-xs text-gray-600 mb-1">Rilevate: {analysisData.detailedAnalysis.asymmetries.detected}</p>
+                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.asymmetries.description}</p>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* AI Recommendations */}
-            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-5 border border-amber-200">
-              <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                <div className="w-7 h-7 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
-                  <Sparkles className="w-4 h-4 text-white" />
-                </div>
-                Raccomandazioni Personal Trainer AI
-              </h3>
+            {/* RIGHT COLUMN - Recommendations */}
+            <div className="space-y-4">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
+                <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                  <div className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
+                    <Sparkles className="w-4 h-4 text-white" />
+                  </div>
+                  Raccomandazioni Personal Trainer AI
+                </h3>
 
-              {/* Diet Recommendations */}
-              <div className="mb-4">
-                <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  🍽️ Modifiche Piano Nutrizionale
-                </h4>
-                <div className="space-y-2">
-                  {analysisData.recommendations.diet.map((rec, idx) => (
-                    <div key={idx} className="bg-white/90 rounded-lg p-3 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
-                      <span className="text-amber-500 font-bold mt-0.5">{idx + 1}.</span>
-                      <span className="leading-relaxed">{rec}</span>
-                    </div>
-                  ))}
+                {/* Diet Recommendations */}
+                <div className="mb-4">
+                  <h4 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                    🍽️ Modifiche Piano Nutrizionale
+                  </h4>
+                  <div className="space-y-2">
+                    {analysisData.recommendations.diet.map((rec, idx) => (
+                      <div key={idx} className="bg-white/90 rounded-lg p-2 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
+                        <span className="text-amber-500 font-bold mt-0.5 flex-shrink-0">{idx + 1}.</span>
+                        <span className="leading-relaxed">{rec}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Workout Recommendations */}
+                <div>
+                  <h4 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                    💪 Modifiche Piano di Allenamento
+                  </h4>
+                  <div className="space-y-2">
+                    {analysisData.recommendations.workout.map((rec, idx) => (
+                      <div key={idx} className="bg-white/90 rounded-lg p-2 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
+                        <span className="text-amber-500 font-bold mt-0.5 flex-shrink-0">{idx + 1}.</span>
+                        <span className="leading-relaxed">{rec}</span>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
 
-              {/* Workout Recommendations */}
-              <div>
-                <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  💪 Modifiche Piano di Allenamento
-                </h4>
-                <div className="space-y-2">
-                  {analysisData.recommendations.workout.map((rec, idx) => (
-                    <div key={idx} className="bg-white/90 rounded-lg p-3 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
-                      <span className="text-amber-500 font-bold mt-0.5">{idx + 1}.</span>
-                      <span className="leading-relaxed">{rec}</span>
-                    </div>
-                  ))}
+              {/* Action Buttons */}
+              <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-4 border border-teal-200">
+                <p className="text-sm font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <CheckCircle2 className="w-5 h-5 text-teal-600" />
+                  Applica le Modifiche Proposte?
+                </p>
+                <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                  L'AI aggiornerà automaticamente i tuoi piani nutrizionali e di allenamento per ottimizzare i risultati in base all'analisi dei progressi.
+                </p>
+                <div className="flex gap-2">
+                  <button
+                    disabled
+                    className="flex-1 bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+                  >
+                    <CheckCircle2 className="w-4 h-4" />
+                    Applica Modifiche
+                  </button>
+                  <button
+                    disabled
+                    className="px-4 bg-white border-2 border-gray-300 text-gray-700 font-semibold py-2.5 rounded-xl opacity-60 cursor-not-allowed text-sm"
+                  >
+                    Ignora
+                  </button>
                 </div>
-              </div>
-            </div>
-
-            {/* Action Buttons */}
-            <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-4 border border-teal-200">
-              <p className="text-sm font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                <CheckCircle2 className="w-5 h-5 text-teal-600" />
-                Applica le Modifiche Proposte?
-              </p>
-              <p className="text-xs text-gray-600 mb-4 leading-relaxed">
-                L'AI aggiornerà automaticamente i tuoi piani nutrizionali e di allenamento per ottimizzare i risultati in base all'analisi dei progressi.
-              </p>
-              <div className="flex gap-3">
-                <button
-                  disabled
-                  className="flex-1 bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-3 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2"
-                >
-                  <CheckCircle2 className="w-5 h-5" />
-                  Applica Modifiche ai Piani
-                </button>
-                <button
-                  disabled
-                  className="px-6 bg-white border-2 border-gray-300 text-gray-700 font-semibold py-3 rounded-xl opacity-60 cursor-not-allowed"
-                >
-                  Ignora
-                </button>
               </div>
             </div>
           </div>
