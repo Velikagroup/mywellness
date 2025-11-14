@@ -40,7 +40,7 @@ Deno.serve(async (req) => {
         // Get origin from request
         const origin = req.headers.get('origin') || 'https://mywellness24x7.base44.app';
 
-        // Create checkout session for €0.01 (1 cent)
+        // Create checkout session for €0.50 (50 cents)
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
             payment_method_types: ['card'],
@@ -53,7 +53,7 @@ Deno.serve(async (req) => {
                             name: '🧪 Test Webhook - Verifica Fattura',
                             description: 'Pagamento di test per verificare webhook e generazione fatture automatiche',
                         },
-                        unit_amount: 1, // 1 cent = €0.01
+                        unit_amount: 50, // 50 cents = €0.50
                     },
                     quantity: 1,
                 },
@@ -74,7 +74,7 @@ Deno.serve(async (req) => {
             success: true,
             checkout_url: session.url,
             session_id: session.id,
-            amount: '€0.01'
+            amount: '€0.50'
         });
 
     } catch (error) {
