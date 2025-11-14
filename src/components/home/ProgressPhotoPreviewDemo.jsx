@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Dumbbell } from 'lucide-react';
+import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Dumbbell, Save } from 'lucide-react';
 
 export default function ProgressPhotoPreviewDemo() {
   const analysisData = {
@@ -39,21 +39,14 @@ export default function ProgressPhotoPreviewDemo() {
     },
     recommendations: {
       diet: [
-        'Mantieni deficit calorico attuale di 350kcal - stai ottenendo risultati ottimali',
-        'Aumenta proteine a 1.6-1.8g/kg per preservare massa magra durante il dimagrimento',
-        'Introduci 2 ricariche carboidrati/settimana (200g) per mantenere metabolismo attivo',
-        'Integra Omega-3 (2-3g/die) per ridurre infiammazione e migliorare composizione corporea',
-        'Mantieni idratazione elevata: 35-40ml/kg peso corporeo',
-        'Considera ciclizzazione calorica: -20% giorni riposo, +10% giorni allenamento'
+        'Mantieni deficit calorico 350kcal - risultati ottimali',
+        'Aumenta proteine a 1.6-1.8g/kg per preservare massa magra',
+        'Integra Omega-3 (2-3g/die) per ridurre infiammazione'
       ],
       workout: [
-        'Aumenta frequenza allenamento core a 4-5 sessioni settimanali',
-        'Introduci esercizi composti: deadlift, squat per massimizzare consumo calorico',
-        'Aggiungi 3 sessioni HIIT/settimana da 20-25 minuti per accelerare lipolisi addominale',
-        'Intensifica lavoro obliqui: side plank, russian twist, woodchop con resistenze',
-        'Implementa esercizi anti-rotazionali per stabilità core (Pallof press)',
-        'Mantieni 2 sessioni mobilità/settimana per allineamento posturale ottimale',
-        'Progressive overload: aumenta intensità del 5-10% ogni 2 settimane'
+        'Aumenta frequenza core a 4-5 sessioni/settimana',
+        'Aggiungi 3 sessioni HIIT/settimana da 20-25 minuti',
+        'Intensifica lavoro obliqui: side plank, russian twist'
       ]
     }
   };
@@ -200,11 +193,11 @@ export default function ProgressPhotoPreviewDemo() {
                 </h3>
 
                 {/* Diet Recommendations */}
-                <div className="mb-4">
+                <div className="mb-3">
                   <h4 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
-                    🍽️ Modifiche Piano Nutrizionale
+                    🍽️ Modifiche Nutrizionali
                   </h4>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {analysisData.recommendations.diet.map((rec, idx) => (
                       <div key={idx} className="bg-white/90 rounded-lg p-2 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
                         <span className="text-amber-500 font-bold mt-0.5 flex-shrink-0">{idx + 1}.</span>
@@ -217,9 +210,9 @@ export default function ProgressPhotoPreviewDemo() {
                 {/* Workout Recommendations */}
                 <div>
                   <h4 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
-                    💪 Modifiche Piano di Allenamento
+                    💪 Modifiche Allenamento
                   </h4>
-                  <div className="space-y-2">
+                  <div className="space-y-1.5">
                     {analysisData.recommendations.workout.map((rec, idx) => (
                       <div key={idx} className="bg-white/90 rounded-lg p-2 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
                         <span className="text-amber-500 font-bold mt-0.5 flex-shrink-0">{idx + 1}.</span>
@@ -230,16 +223,31 @@ export default function ProgressPhotoPreviewDemo() {
                 </div>
               </div>
 
+              {/* Save Analysis Button */}
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 border border-blue-200">
+                <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <Save className="w-4 h-4 text-blue-600" />
+                  Salva Analisi Completa
+                </p>
+                <p className="text-xs text-gray-600 mb-2 leading-relaxed">
+                  L'analisi fotografica verrà salvata nella tua cronologia progressi.
+                </p>
+                <button
+                  disabled
+                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
+                >
+                  <Save className="w-4 h-4" />
+                  Salva Analisi
+                </button>
+              </div>
+
               {/* Action Buttons - Separated */}
-              <div className="space-y-3">
+              <div className="space-y-2">
                 {/* Diet Button */}
                 <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-3 border border-teal-200">
                   <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
                     <Utensils className="w-4 h-4 text-teal-600" />
                     Applica Modifiche Nutrizionali?
-                  </p>
-                  <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                    L'AI aggiornerà il tuo piano alimentare con le nuove raccomandazioni.
                   </p>
                   <button
                     disabled
@@ -255,9 +263,6 @@ export default function ProgressPhotoPreviewDemo() {
                   <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
                     <Dumbbell className="w-4 h-4 text-purple-600" />
                     Applica Modifiche Allenamento?
-                  </p>
-                  <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                    L'AI aggiornerà il tuo piano di allenamento con le nuove raccomandazioni.
                   </p>
                   <button
                     disabled
