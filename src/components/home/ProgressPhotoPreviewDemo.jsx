@@ -93,7 +93,7 @@ export default function ProgressPhotoPreviewDemo() {
             <div className="grid grid-cols-2 gap-3">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1594737626072-90dc274bc2bd?w=400&h=500&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1584464491033-06628f3a6b7b?w=400&h=500&fit=crop&q=80"
                   alt="Before"
                   className="w-full h-56 object-cover rounded-xl"
                 />
@@ -103,7 +103,7 @@ export default function ProgressPhotoPreviewDemo() {
               </div>
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019614242-c5c5dee9f50b?w=400&h=500&fit=crop&q=80"
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=500&fit=crop&q=80"
                   alt="After"
                   className="w-full h-56 object-cover rounded-xl"
                 />
