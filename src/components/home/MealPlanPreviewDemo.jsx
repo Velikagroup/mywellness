@@ -182,22 +182,22 @@ export default function MealPlanPreviewDemo() {
 
       <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-br from-gray-50 to-white px-4 sm:px-6 py-5 border-b border-gray-100">
-          <div className="flex items-center justify-between mb-4 min-w-0">
-            <h2 className="text-lg sm:text-xl font-bold text-gray-900 truncate">Programmazione Settimanale</h2>
-            <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 bg-white rounded-full border border-gray-200 shadow-sm flex-shrink-0">
-              <span className="text-xs font-semibold text-gray-700">MyWellness</span>
-              <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
+        <div className="bg-gradient-to-br from-gray-50 to-white px-4 sm:px-6 py-5 border-b border-gray-100 overflow-hidden">
+          <div className="flex items-center justify-between mb-4 gap-2">
+            <h2 className="text-base sm:text-xl font-bold text-gray-900 truncate flex-shrink min-w-0">Programmazione Settimanale</h2>
+            <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 bg-white rounded-full border border-gray-200 shadow-sm flex-shrink-0">
+              <span className="text-[10px] sm:text-xs font-semibold text-gray-700 whitespace-nowrap">MyWellness</span>
+              <div className="w-2 h-2 bg-teal-500 rounded-full flex-shrink-0"></div>
             </div>
           </div>
 
           {/* Days selector */}
-          <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
+          <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide pb-1">
             {daysOfWeek.map((day) => (
               <button
                 key={day.id}
                 onClick={() => setSelectedDay(day.id)}
-                className={`flex-shrink-0 py-2 px-2 sm:px-3 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex-shrink-0 py-2 px-2.5 sm:px-3 rounded-lg text-xs font-semibold transition-all ${
                   selectedDay === day.id
                     ? 'bg-teal-500 text-white shadow-md'
                     : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
@@ -210,70 +210,66 @@ export default function MealPlanPreviewDemo() {
         </div>
 
         {/* Protocol Card */}
-        <div className="px-4 sm:px-6 py-4 bg-gradient-to-br from-teal-50/50 to-blue-50/30">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
+        <div className="px-3 sm:px-6 py-4 bg-gradient-to-br from-teal-50/50 to-blue-50/30 overflow-hidden">
+          <div className="flex flex-col gap-2 mb-3">
             <h3 className="text-sm sm:text-base font-bold text-gray-900">Protocollo di Lunedì</h3>
-            <button className="px-2 sm:px-3 py-1 text-xs font-semibold text-teal-700 bg-white rounded-full border border-teal-200 hover:bg-teal-50 transition-colors whitespace-nowrap">
-              + Aggiungi una terza forma
+            <button className="px-2 sm:px-3 py-1.5 text-[10px] sm:text-xs font-semibold text-teal-700 bg-white rounded-full border border-teal-200 hover:bg-teal-50 transition-colors w-full sm:w-auto">
+              + Aggiungi forma
             </button>
           </div>
 
           {/* Macros Grid */}
-          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-3">
-            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
-              <div className="text-xs text-gray-500 mb-0.5 truncate">Calorie</div>
-              <div className="text-base sm:text-lg font-black text-gray-900">1611</div>
-              <div className="text-xs text-gray-400">kcal</div>
+          <div className="grid grid-cols-4 gap-1 sm:gap-2 mb-3">
+            <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
+              <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Kcal</div>
+              <div className="text-sm sm:text-lg font-black text-gray-900">1611</div>
             </div>
-            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
-              <div className="text-xs text-gray-500 mb-0.5 truncate">Proteine</div>
-              <div className="text-base sm:text-lg font-black text-red-600">147</div>
-              <div className="text-xs text-gray-400">g</div>
+            <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
+              <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Prot.</div>
+              <div className="text-sm sm:text-lg font-black text-red-600">147</div>
             </div>
-            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
-              <div className="text-xs text-gray-500 mb-0.5 truncate">Carbo.</div>
-              <div className="text-base sm:text-lg font-black text-blue-600">53</div>
-              <div className="text-xs text-gray-400">g</div>
+            <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
+              <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Carb.</div>
+              <div className="text-sm sm:text-lg font-black text-blue-600">53</div>
             </div>
-            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
-              <div className="text-xs text-gray-500 mb-0.5 truncate">Grassi</div>
-              <div className="text-base sm:text-lg font-black text-amber-600">91</div>
-              <div className="text-xs text-gray-400">g</div>
+            <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
+              <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Gras.</div>
+              <div className="text-sm sm:text-lg font-black text-amber-600">91</div>
             </div>
           </div>
 
           {/* Target giornaliero */}
-          <div className="text-xs text-gray-600 text-center">
+          <div className="text-[10px] sm:text-xs text-gray-600 text-center">
             <span className="font-medium">Target: 1696 kcal</span>
-            <span className="ml-2 text-gray-400">(-85 kcal)</span>
+            <span className="ml-1 sm:ml-2 text-gray-400">(-85)</span>
           </div>
         </div>
 
         {/* Meals List */}
-        <div className="px-4 py-4 space-y-2 max-h-[400px] overflow-y-auto relative">
+        <div className="px-3 sm:px-4 py-4 space-y-2 max-h-[400px] overflow-y-auto relative">
           {mondayMeals.map((meal, index) => (
             <div
               key={index}
               onClick={() => setSelectedMeal(meal)}
-              className="relative flex items-center gap-3 bg-white rounded-xl p-3 border border-gray-100 hover:border-teal-300 hover:bg-teal-50/50 transition-all cursor-pointer shadow-sm hover:shadow-md min-w-0"
+              className="relative flex items-center gap-2 sm:gap-3 bg-white rounded-xl p-2 sm:p-3 border border-gray-100 hover:border-teal-300 hover:bg-teal-50/50 transition-all cursor-pointer shadow-sm hover:shadow-md"
             >
               {/* Click Indicator on first meal image - centered */}
               {index === 0 && (
-                <div className="absolute left-[34px] top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+                <div className="absolute left-[30px] sm:left-[34px] top-1/2 -translate-y-1/2 z-10 pointer-events-none">
                   {/* Animated Circle Ring */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-20 h-20 border-4 border-teal-500 rounded-full click-indicator-ring"></div>
+                    <div className="w-16 sm:w-20 h-16 sm:h-20 border-4 border-teal-500 rounded-full click-indicator-ring"></div>
                   </div>
                   
                   {/* Static Circle Background */}
                   <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 bg-teal-500/20 rounded-full"></div>
+                    <div className="w-12 sm:w-16 h-12 sm:h-16 bg-teal-500/20 rounded-full"></div>
                   </div>
                   
                   {/* Icons */}
-                  <div className="relative flex items-center justify-center gap-1">
-                    <MousePointerClick className="w-8 h-8 text-teal-600 drop-shadow-lg" />
-                    <ChevronRight className="w-7 h-7 text-teal-600 arrow-bounce drop-shadow-lg" />
+                  <div className="relative flex items-center justify-center gap-0.5 sm:gap-1">
+                    <MousePointerClick className="w-6 sm:w-8 h-6 sm:h-8 text-teal-600 drop-shadow-lg" />
+                    <ChevronRight className="w-5 sm:w-7 h-5 sm:h-7 text-teal-600 arrow-bounce drop-shadow-lg" />
                   </div>
                 </div>
               )}
@@ -281,34 +277,34 @@ export default function MealPlanPreviewDemo() {
               <img
                 src={meal.image}
                 alt={meal.title}
-                className="w-14 h-14 rounded-full object-cover border-2 border-gray-100 relative z-0 flex-shrink-0"
+                className="w-12 sm:w-14 h-12 sm:h-14 rounded-full object-cover border-2 border-gray-100 relative z-0 flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
-                <div className="text-xs text-gray-500 font-medium mb-0.5">{meal.name}</div>
-                <div className="text-sm font-semibold text-gray-900 truncate">{meal.title}</div>
+                <div className="text-[10px] sm:text-xs text-gray-500 font-medium mb-0.5">{meal.name}</div>
+                <div className="text-xs sm:text-sm font-semibold text-gray-900 truncate">{meal.title}</div>
               </div>
               <div className="text-right flex-shrink-0">
-                <div className="text-sm font-bold text-gray-900">{meal.calories}</div>
-                <div className="text-xs text-gray-400">kcal</div>
+                <div className="text-xs sm:text-sm font-bold text-gray-900">{meal.calories}</div>
+                <div className="text-[10px] sm:text-xs text-gray-400">kcal</div>
               </div>
             </div>
           ))}
         </div>
 
         {/* Bottom Navigation (Demo) */}
-        <div className="px-4 sm:px-6 py-4 bg-gray-50/50 border-t border-gray-100">
+        <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50/50 border-t border-gray-100">
           <div className="flex items-center justify-around">
             <button className="flex flex-col items-center gap-1 text-gray-400">
-              <div className="w-5 h-5 bg-gray-200 rounded"></div>
-              <span className="text-xs">Dashboard</span>
+              <div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-200 rounded"></div>
+              <span className="text-[10px] sm:text-xs">Dashboard</span>
             </button>
             <button className="flex flex-col items-center gap-1 text-teal-600">
-              <div className="w-5 h-5 bg-teal-500 rounded"></div>
-              <span className="text-xs font-semibold">Nutrizione</span>
+              <div className="w-4 sm:w-5 h-4 sm:h-5 bg-teal-500 rounded"></div>
+              <span className="text-[10px] sm:text-xs font-semibold">Nutrizione</span>
             </button>
             <button className="flex flex-col items-center gap-1 text-gray-400">
-              <div className="w-5 h-5 bg-gray-200 rounded"></div>
-              <span className="text-xs">Impostazioni</span>
+              <div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-200 rounded"></div>
+              <span className="text-[10px] sm:text-xs">Impostazioni</span>
             </button>
           </div>
         </div>
