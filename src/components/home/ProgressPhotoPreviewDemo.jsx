@@ -199,27 +199,9 @@ export default function ProgressPhotoPreviewDemo() {
                 </div>
               </div>
 
-              {/* Save Analysis Button */}
-              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 border border-blue-200">
-                <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                  <Save className="w-4 h-4 text-blue-600" />
-                  Salva Analisi Completa
-                </p>
-                <p className="text-xs text-gray-600 mb-2 leading-relaxed">
-                  L'analisi fotografica verrà salvata nella tua cronologia progressi.
-                </p>
-                <button
-                  disabled
-                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
-                >
-                  <Save className="w-4 h-4" />
-                  Salva Analisi
-                </button>
-              </div>
-
-              {/* Action Buttons - Separated */}
+              {/* Action Buttons - Reordered */}
               <div className="space-y-2">
-                {/* Diet Button */}
+                {/* Diet Button - FIRST */}
                 <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-3 border border-teal-200">
                   <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
                     <Utensils className="w-4 h-4 text-teal-600" />
@@ -234,7 +216,7 @@ export default function ProgressPhotoPreviewDemo() {
                   </button>
                 </div>
 
-                {/* Workout Button */}
+                {/* Workout Button - SECOND */}
                 <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-3 border border-purple-200">
                   <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
                     <Dumbbell className="w-4 h-4 text-purple-600" />
@@ -246,6 +228,21 @@ export default function ProgressPhotoPreviewDemo() {
                   >
                     <CheckCircle2 className="w-4 h-4" />
                     Applica Piano Allenamento
+                  </button>
+                </div>
+
+                {/* Save Analysis Button - LAST */}
+                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 border border-blue-200">
+                  <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                    <Save className="w-4 h-4 text-blue-600" />
+                    Salva Analisi nella Cronologia
+                  </p>
+                  <button
+                    disabled
+                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
+                  >
+                    <Save className="w-4 h-4" />
+                    Salva Analisi
                   </button>
                 </div>
               </div>
