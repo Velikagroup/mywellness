@@ -31,6 +31,7 @@ import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDem
 import QuizPreviewDemo from "../components/home/QuizPreviewDemo";
 import DashboardPreviewDemo from "../components/home/DashboardPreviewDemo";
 import HealthScorePreviewDemo from "../components/home/HealthScorePreviewDemo";
+import ShoppingListPreviewDemo from "../components/home/ShoppingListPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -706,7 +707,85 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 4 - Photo Analyzer */}
+          {/* Step 4 - Shopping List (NUOVO) */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-12 items-center mb-32"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}>
+              <div className="max-w-md mx-auto">
+                <ShoppingListPreviewDemo />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🛒 Spesa Smart</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Lista della Spesa AI</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                L'AI genera automaticamente la lista della spesa settimanale, organizzata per categorie di acquisto e ottimizzata per i tuoi pasti.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">📊 Auto-generata</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🗂️ Categorie Smart</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">✅ Tracking Acquisti</span>
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Step 5 - Health Score (SPOSTATO) */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-12 items-center mb-32"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            <motion.div
+              className="order-2 md:order-1"
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🏷️ Scansione Etichette</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Health Score AI</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                Scansiona etichette nutrizionali: l'AI assegna uno score 0-10 e ti dice se quel prodotto è sano per i tuoi obiettivi.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🔬 Analisi Scientifica</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📊 Score 0-10</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Raccomandazioni AI</span>
+              </div>
+            </motion.div>
+            <motion.div
+              className="order-1 md:order-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}>
+              <div className="max-w-md mx-auto">
+                <HealthScorePreviewDemo />
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Step 6 - Photo Analyzer */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -743,9 +822,9 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 5 - Workout */}
+          {/* Step 7 - Workout */}
           <motion.div
-            className="grid md:grid-cols-2 gap-12 items-center mb-32"
+            className="grid md:grid-cols-2 gap-12 items-center mb-24"
             initial={{ opacity: 0, y: 60 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true, margin: "-100px" }}
@@ -780,44 +859,6 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="max-w-md mx-auto">
                 <WorkoutPreviewDemo />
-              </div>
-            </motion.div>
-          </motion.div>
-
-          {/* Step 6 - Health Score (NUOVO) */}
-          <motion.div
-            className="grid md:grid-cols-2 gap-12 items-center mb-24"
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7, ease: "easeOut" }}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="max-w-md mx-auto">
-                <HealthScorePreviewDemo />
-              </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🏷️ Scansione Etichette</span>
-                </div>
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Health Score AI</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                Scansiona etichette nutrizionali: l'AI assegna uno score 0-10 e ti dice se quel prodotto è sano per i tuoi obiettivi.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🔬 Analisi Scientifica</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📊 Score 0-10</span>
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Raccomandazioni AI</span>
               </div>
             </motion.div>
           </motion.div>
