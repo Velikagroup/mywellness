@@ -120,76 +120,76 @@ export default function Home() {
 
   const testimonials = [
   {
-    name: "Francesca Marino",
-    role: "Studentessa",
+    name: "Maria Santos",
+    role: "Studentessa Universitaria",
     photo: "https://i.pravatar.cc/400?img=29",
-    text: "Budget studentesco limitato ma MyWellness mi ha creato pasti economici e nutrienti. Ho tonificato tutto il corpo spendendo poco! Gli allenamenti a casa senza attrezzi sono perfetti per me."
+    text: "Con il budget da studentessa non potevo permettermi un nutrizionista. MyWellness mi ha creato un piano alimentare economico e completo. Ho perso 8kg in 4 mesi spendendo pochissimo al supermercato. L'AI mi suggerisce sempre alternative più economiche quando un ingrediente costa troppo."
   },
   {
-    name: "Roberto Greco",
-    role: "Medico",
+    name: "Giovanni Ferrero",
+    role: "Cardiologo",
     photo: "https://i.pravatar.cc/400?img=60",
-    text: "I calcoli sono precisi. Lo consiglio ai miei pazienti!"
+    text: "Dal punto di vista medico, i calcoli metabolici sono accurati e scientificamente fondati. Consiglio l'app ai miei pazienti che devono perdere peso in modo controllato."
   },
   {
-    name: "Valentina Conti",
-    role: "Influencer Fitness",
+    name: "Gabriela Rodriguez",
+    role: "Content Creator Fitness",
     photo: "https://i.pravatar.cc/400?img=49",
-    text: "Ho provato tutto nel mondo fitness. MyWellness è l'unica app che si adatta veramente a me. L'AI fotografica è il futuro del tracking! I miei follower mi chiedono continuamente quale app uso per i miei progressi incredibili."
+    text: "Lavoro nel fitness da 8 anni e ho provato ogni tipo di app e dieta. MyWellness è diversa: l'analisi fotografica con AI è incredibilmente precisa. Mi mostra progressi che nemmeno io notavo. Il piano nutrizionale si adatta automaticamente in base alle foto che carico. È come avere un personal trainer che ti segue 24/7."
   },
   {
-    name: "Sofia Rossi",
+    name: "Yuki Tanaka",
     role: "Marketing Manager",
     photo: "https://i.pravatar.cc/400?img=47",
-    text: "L'analisi fotografica con AI è geniale! Mi tiene sempre motivata vedendo i progressi reali. Il supporto dell'intelligenza artificiale fa davvero la differenza. Non avrei mai pensato di poter raggiungere questi risultati così velocemente."
+    text: "Lavoro 12 ore al giorno e non avevo mai tempo per allenarmi o cucinare sano. L'AI di MyWellness ha capito subito le mie esigenze: pasti pronti in 15 minuti e workout da 30 minuti. Ho perso 11kg in 5 mesi senza stress. La funzione che fotografa il piatto e calcola le calorie è geniale quando mangio fuori."
   },
   {
-    name: "Luca Bianchi",
-    role: "Developer",
+    name: "Thomas Weber",
+    role: "Software Engineer",
     photo: "https://i.pravatar.cc/400?img=33",
-    text: "Finalmente un'app che capisce le mie esigenze. La dieta vegetariana personalizzata è perfetta."
+    text: "Sono un tipo analitico e l'approccio scientifico di MyWellness mi ha conquistato. Dashboard con BMR, massa grassa, proiezioni peso... tutto calcolato con precisione. Il piano vegetariano è perfetto e la lista della spesa automatica mi fa risparmiare ore."
   },
   {
-    name: "Giulia Ferrari",
-    role: "Insegnante",
+    name: "Anna Bianchi",
+    role: "Insegnante Scuola Primaria",
     photo: "https://i.pravatar.cc/400?img=25",
-    text: "Dopo la gravidanza non riuscivo a tornare in forma. MyWellness mi ha aiutata a perdere 15kg in 4 mesi senza rinunce. Sono felicissima! L'AI ha capito perfettamente le mie esigenze di neomamma e mi ha creato un piano compatibile con i ritmi del bambino."
+    text: "Dopo la gravidanza pesavo 78kg e non riuscivo a tornare in forma. Ho scoperto MyWellness e in 6 mesi sono tornata a 58kg. L'app ha capito che avevo poco tempo con il neonato: workout brevi a casa senza attrezzi e ricette veloci. L'analisi fotografica mi ha motivata quando non vedevo progressi sulla bilancia."
   },
   {
-    name: "Alessandro Moretti",
-    role: "Architetto",
+    name: "Ahmed Hassan",
+    role: "Imprenditore Edile",
     photo: "https://i.pravatar.cc/400?img=68",
-    text: "A 42 anni pensavo fosse impossibile. Ho guadagnato 8kg di muscoli in 6 mesi!"
+    text: "A 45 anni pensavo fosse troppo tardi per rimettermi in forma. MyWellness mi ha dimostrato il contrario: ho guadagnato 9kg di massa muscolare in 7 mesi. Il piano di allenamento si adatta quando ho dolori articolari, cosa fondamentale alla mia età."
   },
   {
-    name: "Chiara Lombardi",
-    role: "Avvocato",
+    name: "Elena Kowalski",
+    role: "Avvocato Tributarista",
     photo: "https://i.pravatar.cc/400?img=38",
-    text: "Con i ritmi di lavoro frenetici non avevo tempo. MyWellness mi ha organizzato tutto: pasti veloci e allenamenti da 30 minuti. Perfetto! Finalmente riesco a conciliare carriera e benessere fisico."
+    text: "Ritmi lavorativi folli, cene con clienti, viaggi continui. MyWellness è l'unica app che è riuscita ad adattarsi al mio stile di vita caotico. Scatto foto dei pasti al ristorante e l'AI ricalcola tutto automaticamente. Ho perso 13kg mantenendo la mia vita sociale."
   },
   {
-    name: "Davide Russo",
-    role: "Personal Trainer",
+    name: "Marcus Johnson",
+    role: "Personal Trainer Certificato",
     photo: "https://i.pravatar.cc/400?img=52",
-    text: "L'AI genera piani migliori di quanto facessi manualmente. Incredibile!"
+    text: "Lavoro come PT da 12 anni. L'intelligenza artificiale di MyWellness genera schede di allenamento migliori di quelle che creavo manualmente. La periodizzazione è scientifica e la progressione ottimale. Ho iniziato a usarla anche per i miei clienti."
   },
   {
-    name: "Elena Gallo",
+    name: "Francesca Moretti",
     role: "Farmacista",
     photo: "https://i.pravatar.cc/400?img=44",
-    text: "Ho problemi di tiroide e pensavo fosse impossibile dimagrire. L'AI ha calibrato tutto perfettamente considerando il mio metabolismo rallentato. -10kg in 5 mesi, mi sento rinata! Ora consiglio MyWellness a tutti i miei pazienti."
+    text: "Soffro di ipotiroidismo e perdere peso per me è sempre stato un incubo. Ho provato 20 diete diverse senza risultati. MyWellness ha calibrato il piano sul mio metabolismo rallentato: -12kg in 6 mesi senza soffrire la fame. Ora la consiglio a tutti i pazienti con problemi metabolici."
   },
   {
-    name: "Matteo Costa",
-    role: "Chef",
+    name: "Diego Ramirez",
+    role: "Chef de Cuisine",
     photo: "https://i.pravatar.cc/400?img=59",
-    text: "Le ricette sono bilanciate, gustose e creative. Finalmente unisco passione e salute!"
+    text: "Lavoro con il cibo tutto il giorno e questo rendeva impossibile seguire una dieta. MyWellness ha creato ricette che uniscono la mia passione culinaria con obiettivi nutrizionali precisi. Le ricette sono creative, bilanciate e deliziose. Ho perso 15kg senza rinunciare al piacere del cibo."
   },
   {
-    name: "Marco Colombo",
-    role: "Imprenditore",
+    name: "Luca Colombo",
+    role: "CEO Startup Tech",
     photo: "https://i.pravatar.cc/400?img=12",
-    text: "Ho perso 12kg in 3 mesi. Le ricette sono deliziose e gli allenamenti perfetti!"
+    text: "Non avevo tempo nemmeno per respirare, figuriamoci per allenarmi. MyWellness ha rivoluzionato il mio approccio: 30 minuti di workout 4 volte a settimana, pasti veloci e nutrienti. Ho perso 14kg in 4 mesi e i miei livelli di energia sono triplicati. È un investimento nella mia produttività."
   }];
 
   const handleWatchDemo = () => {
@@ -748,7 +748,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 5 - Ingredient Scanner (NUOVO) */}
+          {/* Step 5 - Ingredient Scanner */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -826,7 +826,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-        {/* Step 7 - Meal Tracking (NUOVO) */}
+        {/* Step 7 - Meal Tracking */}
         <motion.div
           className="grid md:grid-cols-2 gap-12 items-center mb-32"
           initial={{ opacity: 0, y: 60 }}
@@ -866,7 +866,7 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
-        {/* Step 8 - Photo Analyzer (già esistente, ora rinumerato) */}
+        {/* Step 8 - Photo Analyzer */}
         <motion.div
           className="grid md:grid-cols-2 gap-12 items-center mb-32"
           initial={{ opacity: 0, y: 60 }}
@@ -944,7 +944,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 10 - Progress Photo Analysis (NUOVO) */}
+          {/* Step 10 - Progress Photo Analysis */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
