@@ -182,22 +182,22 @@ export default function MealPlanPreviewDemo() {
 
       <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
         {/* Header */}
-        <div className="bg-gradient-to-br from-gray-50 to-white px-6 py-5 border-b border-gray-100">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-xl font-bold text-gray-900">Programmazione Settimanale</h2>
-            <div className="flex items-center gap-2 px-3 py-1.5 bg-white rounded-full border border-gray-200 shadow-sm">
+        <div className="bg-gradient-to-br from-gray-50 to-white px-4 sm:px-6 py-5 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-4 min-w-0">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-900 truncate">Programmazione Settimanale</h2>
+            <div className="flex items-center gap-2 px-2 sm:px-3 py-1.5 bg-white rounded-full border border-gray-200 shadow-sm flex-shrink-0">
               <span className="text-xs font-semibold text-gray-700">MyWellness</span>
               <div className="w-2 h-2 bg-teal-500 rounded-full"></div>
             </div>
           </div>
 
           {/* Days selector */}
-          <div className="flex gap-2">
+          <div className="flex gap-1.5 sm:gap-2 overflow-x-auto pb-2 -mx-4 px-4 sm:mx-0 sm:px-0">
             {daysOfWeek.map((day) => (
               <button
                 key={day.id}
                 onClick={() => setSelectedDay(day.id)}
-                className={`flex-1 py-2 px-1 rounded-lg text-xs font-semibold transition-all ${
+                className={`flex-shrink-0 py-2 px-2 sm:px-3 rounded-lg text-xs font-semibold transition-all ${
                   selectedDay === day.id
                     ? 'bg-teal-500 text-white shadow-md'
                     : 'bg-white text-gray-600 hover:bg-gray-50 border border-gray-200'
@@ -210,41 +210,41 @@ export default function MealPlanPreviewDemo() {
         </div>
 
         {/* Protocol Card */}
-        <div className="px-6 py-4 bg-gradient-to-br from-teal-50/50 to-blue-50/30">
-          <div className="flex items-center justify-between mb-3">
-            <h3 className="text-base font-bold text-gray-900">Protocollo di Lunedì</h3>
-            <button className="px-3 py-1 text-xs font-semibold text-teal-700 bg-white rounded-full border border-teal-200 hover:bg-teal-50 transition-colors">
+        <div className="px-4 sm:px-6 py-4 bg-gradient-to-br from-teal-50/50 to-blue-50/30">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-3 gap-2">
+            <h3 className="text-sm sm:text-base font-bold text-gray-900">Protocollo di Lunedì</h3>
+            <button className="px-2 sm:px-3 py-1 text-xs font-semibold text-teal-700 bg-white rounded-full border border-teal-200 hover:bg-teal-50 transition-colors whitespace-nowrap">
               + Aggiungi una terza forma
             </button>
           </div>
 
           {/* Macros Grid */}
-          <div className="grid grid-cols-4 gap-2 mb-3">
-            <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
-              <div className="text-xs text-gray-500 mb-0.5">Calorie Totali</div>
-              <div className="text-lg font-black text-gray-900">1611</div>
+          <div className="grid grid-cols-4 gap-1.5 sm:gap-2 mb-3">
+            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
+              <div className="text-xs text-gray-500 mb-0.5 truncate">Calorie</div>
+              <div className="text-base sm:text-lg font-black text-gray-900">1611</div>
               <div className="text-xs text-gray-400">kcal</div>
             </div>
-            <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
-              <div className="text-xs text-gray-500 mb-0.5">Proteine</div>
-              <div className="text-lg font-black text-red-600">147</div>
+            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
+              <div className="text-xs text-gray-500 mb-0.5 truncate">Proteine</div>
+              <div className="text-base sm:text-lg font-black text-red-600">147</div>
               <div className="text-xs text-gray-400">g</div>
             </div>
-            <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
-              <div className="text-xs text-gray-500 mb-0.5">Carboidrati</div>
-              <div className="text-lg font-black text-blue-600">53</div>
+            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
+              <div className="text-xs text-gray-500 mb-0.5 truncate">Carbo.</div>
+              <div className="text-base sm:text-lg font-black text-blue-600">53</div>
               <div className="text-xs text-gray-400">g</div>
             </div>
-            <div className="bg-white rounded-xl px-3 py-2 text-center border border-gray-100 shadow-sm">
-              <div className="text-xs text-gray-500 mb-0.5">Grassi</div>
-              <div className="text-lg font-black text-amber-600">91</div>
+            <div className="bg-white rounded-xl px-2 sm:px-3 py-2 text-center border border-gray-100 shadow-sm min-w-0">
+              <div className="text-xs text-gray-500 mb-0.5 truncate">Grassi</div>
+              <div className="text-base sm:text-lg font-black text-amber-600">91</div>
               <div className="text-xs text-gray-400">g</div>
             </div>
           </div>
 
           {/* Target giornaliero */}
           <div className="text-xs text-gray-600 text-center">
-            <span className="font-medium">Target giornaliero: 1696 kcal</span>
+            <span className="font-medium">Target: 1696 kcal</span>
             <span className="ml-2 text-gray-400">(-85 kcal)</span>
           </div>
         </div>
@@ -255,7 +255,7 @@ export default function MealPlanPreviewDemo() {
             <div
               key={index}
               onClick={() => setSelectedMeal(meal)}
-              className="relative flex items-center gap-3 bg-white rounded-xl p-3 border border-gray-100 hover:border-teal-300 hover:bg-teal-50/50 transition-all cursor-pointer shadow-sm hover:shadow-md"
+              className="relative flex items-center gap-3 bg-white rounded-xl p-3 border border-gray-100 hover:border-teal-300 hover:bg-teal-50/50 transition-all cursor-pointer shadow-sm hover:shadow-md min-w-0"
             >
               {/* Click Indicator on first meal image - centered */}
               {index === 0 && (
@@ -281,13 +281,13 @@ export default function MealPlanPreviewDemo() {
               <img
                 src={meal.image}
                 alt={meal.title}
-                className="w-14 h-14 rounded-full object-cover border-2 border-gray-100 relative z-0"
+                className="w-14 h-14 rounded-full object-cover border-2 border-gray-100 relative z-0 flex-shrink-0"
               />
               <div className="flex-1 min-w-0">
                 <div className="text-xs text-gray-500 font-medium mb-0.5">{meal.name}</div>
                 <div className="text-sm font-semibold text-gray-900 truncate">{meal.title}</div>
               </div>
-              <div className="text-right">
+              <div className="text-right flex-shrink-0">
                 <div className="text-sm font-bold text-gray-900">{meal.calories}</div>
                 <div className="text-xs text-gray-400">kcal</div>
               </div>
@@ -296,7 +296,7 @@ export default function MealPlanPreviewDemo() {
         </div>
 
         {/* Bottom Navigation (Demo) */}
-        <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
+        <div className="px-4 sm:px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <div className="flex items-center justify-around">
             <button className="flex flex-col items-center gap-1 text-gray-400">
               <div className="w-5 h-5 bg-gray-200 rounded"></div>
