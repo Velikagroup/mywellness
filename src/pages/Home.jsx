@@ -33,6 +33,7 @@ import DashboardPreviewDemo from "../components/home/DashboardPreviewDemo";
 import HealthScorePreviewDemo from "../components/home/HealthScorePreviewDemo";
 import ShoppingListPreviewDemo from "../components/home/ShoppingListPreviewDemo";
 import IngredientScannerPreviewDemo from "../components/home/IngredientScannerPreviewDemo";
+import MealTrackingPreviewDemo from "../components/home/MealTrackingPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -824,44 +825,84 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 7 - Photo Analyzer */}
+        {/* Step 7 - Meal Tracking (NUOVO) */}
+        <motion.div
+          className="grid md:grid-cols-2 gap-12 items-center mb-32"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}>
           <motion.div
-            className="grid md:grid-cols-2 gap-12 items-center mb-32"
-            initial={{ opacity: 0, y: 60 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true, margin: "-100px" }}
-            transition={{ duration: 0.7, ease: "easeOut" }}>
-            <motion.div
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="max-w-md mx-auto">
-                <PhotoAnalyzerPreviewDemo />
+            className="order-2 md:order-1"
+            initial={{ opacity: 0, x: -40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="step-badge px-4 py-2 rounded-full">
+                <span className="text-sm font-semibold text-[var(--brand-primary)]">✓ Tracking Smart</span>
               </div>
-            </motion.div>
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">📷 Computer Vision</span>
-                </div>
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Conto Calorico AI</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">🔍 Riconoscimento Cibo</span>
-                <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">⚖️ Ribilanciamento Automatico</span>
-              </div>
-            </motion.div>
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Segna i Pasti</h3>
+            <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+              Spunta semplicemente i pasti che mangi per un tracking base. Vuoi essere più preciso? Scatta una foto per quantità esatte e macro perfettamente allineati.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">✓ Spunta Base</span>
+              <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📸 Foto Opzionale</span>
+              <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">🎯 Precisione Massima</span>
+            </div>
           </motion.div>
+          <motion.div
+            className="order-1 md:order-2"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.3 }}>
+            <div className="max-w-md mx-auto">
+              <MealTrackingPreviewDemo />
+            </div>
+          </motion.div>
+        </motion.div>
 
-          {/* Step 8 - Workout */}
+        {/* Step 8 - Photo Analyzer (già esistente, ora rinumerato) */}
+        <motion.div
+          className="grid md:grid-cols-2 gap-12 items-center mb-32"
+          initial={{ opacity: 0, y: 60 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, margin: "-100px" }}
+          transition={{ duration: 0.7, ease: "easeOut" }}>
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.3 }}>
+            <div className="max-w-md mx-auto">
+              <PhotoAnalyzerPreviewDemo />
+            </div>
+          </motion.div>
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}>
+            <div className="flex items-center gap-4 mb-6">
+              <div className="step-badge px-4 py-2 rounded-full">
+                <span className="text-sm font-semibold text-[var(--brand-primary)]">📷 Computer Vision</span>
+              </div>
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Conto Calorico AI</h3>
+            <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+              Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.
+            </p>
+            <div className="flex flex-wrap gap-3">
+              <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">🔍 Riconoscimento Cibo</span>
+              <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">⚖️ Ribilanciamento Automatico</span>
+            </div>
+          </motion.div>
+        </motion.div>
+
+          {/* Step 9 - Workout */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-24"
             initial={{ opacity: 0, y: 60 }}
