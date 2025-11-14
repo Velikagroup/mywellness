@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { Base44 } from 'npm:@base44/sdk@0.8.4';
 import Stripe from 'npm:stripe';
 
 const stripe = new Stripe(Deno.env.get('STRIPE_SECRET_KEY'), {
@@ -20,7 +20,12 @@ Deno.serve(async (req) => {
 
     try {
         const body = await req.text();
-        const base44 = createClientFromRequest(req);
+        
+        // ✅ Initialize Base44 SDK with service role BEFORE using the request body
+        const base44 = new Base44({
+            appId: Deno.env.get('BASE44_APP_ID'),
+            serviceRole: true
+        });
 
         // Validate Stripe signature
         event = await stripe.webhooks.constructEventAsync(
@@ -71,6 +76,27 @@ Deno.serve(async (req) => {
                         }
                     });
 
+                    console.log(`✅ Transaction created: ${transaction.id}`);
+
+                    // Generate and save invoice PDF
+                    try {
+                        const invoiceResponse = await base44.asServiceRole.functions.invoke('generateInvoicePDF', {
+                            transactionId: transaction.id
+                        });
+
+                        if (invoiceResponse?.data?.invoice_url) {
+                            await base44.asServiceRole.entities.Transaction.update(transaction.id, {
+                                metadata: {
+                                    ...transaction.metadata,
+                                    invoice_url: invoiceResponse.data.invoice_url
+                                }
+                            });
+                            console.log(`✅ Invoice PDF generated: ${invoiceResponse.data.invoice_url}`);
+                        }
+                    } catch (invoiceError) {
+                        console.error('⚠️ Invoice generation failed:', invoiceError.message);
+                    }
+
                     console.log(`✅ Transaction recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
                 }
                 break;
@@ -118,6 +144,27 @@ Deno.serve(async (req) => {
                             invoice_number: invoice.number
                         }
                     });
+
+                    console.log(`✅ Transaction created: ${transaction.id}`);
+
+                    // Generate and save invoice PDF
+                    try {
+                        const invoiceResponse = await base44.asServiceRole.functions.invoke('generateInvoicePDF', {
+                            transactionId: transaction.id
+                        });
+
+                        if (invoiceResponse?.data?.invoice_url) {
+                            await base44.asServiceRole.entities.Transaction.update(transaction.id, {
+                                metadata: {
+                                    ...transaction.metadata,
+                                    invoice_url: invoiceResponse.data.invoice_url
+                                }
+                            });
+                            console.log(`✅ Invoice PDF generated: ${invoiceResponse.data.invoice_url}`);
+                        }
+                    } catch (invoiceError) {
+                        console.error('⚠️ Invoice generation failed:', invoiceError.message);
+                    }
 
                     console.log(`✅ Payment recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
                 }
@@ -174,7 +221,7 @@ Deno.serve(async (req) => {
                 if (users.length > 0) {
                     const user = users[0];
 
-                    const updateData: Record<string, any> = {
+                    const updateData = {
                         stripe_subscription_id: subscription.id,
                         subscription_status: subscription.status === 'active' ? 'active' :
                                            subscription.status === 'trialing' ? 'trial' :
@@ -185,7 +232,7 @@ Deno.serve(async (req) => {
                     // Determine plan from price
                     if (subscription.items?.data?.[0]?.price) {
                         const priceId = subscription.items.data[0].price.id;
-                        const PRICE_MAP: Record<string, string> = {
+                        const PRICE_MAP = {
                             'price_1SNDMW2OXBs6ZYwlp5UgCO8Y': 'base',
                             'price_1SNDMW2OXBs6ZYwlUfiZP4Su': 'base',
                             'price_1SNDMX2OXBs6ZYwlx6jXOgFf': 'pro',
