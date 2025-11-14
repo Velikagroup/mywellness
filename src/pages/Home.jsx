@@ -32,6 +32,7 @@ import QuizPreviewDemo from "../components/home/QuizPreviewDemo";
 import DashboardPreviewDemo from "../components/home/DashboardPreviewDemo";
 import HealthScorePreviewDemo from "../components/home/HealthScorePreviewDemo";
 import ShoppingListPreviewDemo from "../components/home/ShoppingListPreviewDemo";
+import IngredientScannerPreviewDemo from "../components/home/IngredientScannerPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -707,7 +708,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 4 - Shopping List (NUOVO) */}
+          {/* Step 4 - Shopping List */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -745,7 +746,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 5 - Health Score (SPOSTATO) */}
+          {/* Step 5 - Ingredient Scanner (NUOVO) */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -755,6 +756,54 @@ export default function Home() {
             <motion.div
               className="order-2 md:order-1"
               initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">📱 Scansione Smart</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Scanner Ingredienti</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+                Scansiona barcode o etichette nutrizionali degli alimenti che hai in frigorifero. L'AI inserisce automaticamente i valori REALI nel tuo piano, non supposizioni generiche.
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">📊 Database 500k+ alimenti</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🎯 Valori Precisi</span>
+                <span className="px-4 py-2 bg-pink-50 text-pink-700 rounded-full text-sm font-medium">⚡ Inserimento Automatico</span>
+              </div>
+            </motion.div>
+            <motion.div
+              className="order-1 md:order-2"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}>
+              <div className="max-w-md mx-auto">
+                <IngredientScannerPreviewDemo />
+              </div>
+            </motion.div>
+          </motion.div>
+
+          {/* Step 6 - Health Score */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-12 items-center mb-32"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            <motion.div
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}>
+              <div className="max-w-md mx-auto">
+                <HealthScorePreviewDemo />
+              </div>
+            </motion.div>
+            <motion.div
+              initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 }}>
@@ -773,19 +822,9 @@ export default function Home() {
                 <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Raccomandazioni AI</span>
               </div>
             </motion.div>
-            <motion.div
-              className="order-1 md:order-2"
-              initial={{ opacity: 0, scale: 0.9 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="max-w-md mx-auto">
-                <HealthScorePreviewDemo />
-              </div>
-            </motion.div>
           </motion.div>
 
-          {/* Step 6 - Photo Analyzer */}
+          {/* Step 7 - Photo Analyzer */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-32"
             initial={{ opacity: 0, y: 60 }}
@@ -822,7 +861,7 @@ export default function Home() {
             </motion.div>
           </motion.div>
 
-          {/* Step 7 - Workout */}
+          {/* Step 8 - Workout */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-24"
             initial={{ opacity: 0, y: 60 }}
