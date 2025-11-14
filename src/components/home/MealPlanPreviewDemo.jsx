@@ -159,17 +159,19 @@ export default function MealPlanPreviewDemo() {
           50% { transform: translateX(8px); }
         }
         
-        @keyframes pulse-glow {
-          0%, 100% { 
-            box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7);
+        @keyframes pulse-ring {
+          0% { 
+            transform: scale(0.8);
+            opacity: 1;
           }
-          50% { 
-            box-shadow: 0 0 0 10px rgba(20, 184, 166, 0);
+          100% { 
+            transform: scale(1.4);
+            opacity: 0;
           }
         }
         
-        .click-indicator {
-          animation: pulse-glow 2s ease-in-out infinite;
+        .click-indicator-ring {
+          animation: pulse-ring 1.5s ease-out infinite;
         }
         
         .arrow-bounce {
@@ -248,22 +250,37 @@ export default function MealPlanPreviewDemo() {
 
         {/* Meals List */}
         <div className="px-4 py-4 space-y-2 max-h-[400px] overflow-y-auto relative">
-          {/* Click Indicator on first meal */}
-          <div className="absolute -right-2 top-6 z-10 flex items-center gap-1">
-            <MousePointerClick className="w-6 h-6 text-teal-500 click-indicator" />
-            <ChevronRight className="w-5 h-5 text-teal-500 arrow-bounce" />
-          </div>
-
           {mondayMeals.map((meal, index) => (
             <div
               key={index}
               onClick={() => setSelectedMeal(meal)}
               className="relative flex items-center gap-3 bg-white rounded-xl p-3 border border-gray-100 hover:border-teal-300 hover:bg-teal-50/50 transition-all cursor-pointer shadow-sm hover:shadow-md"
             >
+              {/* Click Indicator on first meal image - centered */}
+              {index === 0 && (
+                <div className="absolute left-[34px] top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+                  {/* Animated Circle Ring */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-20 h-20 border-4 border-teal-500 rounded-full click-indicator-ring"></div>
+                  </div>
+                  
+                  {/* Static Circle Background */}
+                  <div className="absolute inset-0 flex items-center justify-center">
+                    <div className="w-16 h-16 bg-teal-500/20 rounded-full"></div>
+                  </div>
+                  
+                  {/* Icons */}
+                  <div className="relative flex items-center justify-center gap-1">
+                    <MousePointerClick className="w-8 h-8 text-teal-600 drop-shadow-lg" />
+                    <ChevronRight className="w-7 h-7 text-teal-600 arrow-bounce drop-shadow-lg" />
+                  </div>
+                </div>
+              )}
+
               <img
                 src={meal.image}
                 alt={meal.title}
-                className="w-14 h-14 rounded-full object-cover border-2 border-gray-100"
+                className="w-14 h-14 rounded-full object-cover border-2 border-gray-100 relative z-0"
               />
               <div className="flex-1 min-w-0">
                 <div className="text-xs text-gray-500 font-medium mb-0.5">{meal.name}</div>
