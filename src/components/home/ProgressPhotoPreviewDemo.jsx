@@ -10,31 +10,21 @@ export default function ProgressPhotoPreviewDemo() {
     detailedAnalysis: {
       muscleDefinition: {
         score: 6.8,
-        previous: 4.5,
-        description: 'Miglioramento visibile della tonicità addominale. La zona centrale mostra maggiore compattezza muscolare. Gli obliqui esterni presentano una definizione moderata, specialmente nella zona laterale.'
+        previous: 4.5
       },
       fatLayer: {
         thickness: 'Medio-ridotto',
         previous: 'Medio-alto',
         percentage: '-22%',
-        description: 'Riduzione significativa dello strato adiposo sottocutaneo addominale. La zona periombelicale mostra un miglioramento marcato. Circonferenza vita ridotta di circa 6-7cm. Plicometria stimata: 16mm (era 21mm).'
+        description: 'Circonferenza vita ridotta di 6-7cm. Plicometria: 16mm (era 21mm).'
       },
       skinQuality: {
         elasticity: 'Buona',
-        tone: 'Migliorato +20%',
-        description: 'La pelle mantiene buona elasticità nonostante la riduzione volumetrica. Texture più liscia e uniforme. Assenza di cedimenti cutanei significativi. Idratazione cutanea ottimale nella zona target.'
-      },
-      vascularity: {
-        level: 'Leggera-Visibile',
-        description: 'Vene superficiali leggermente più evidenti nella zona addominale inferiore, segno di riduzione del tessuto adiposo sovrastante e miglioramento della circolazione periferica.'
+        tone: 'Migliorato +20%'
       },
       posturalAlignment: {
         status: 'Notevolmente migliorato',
-        description: 'Marcata riduzione della lordosi lombare. Bacino più neutro e allineato verticalmente. Core più attivo e stabile. Miglior controllo del pavimento pelvico visibile dalla postura generale.'
-      },
-      asymmetries: {
-        detected: 'Minime fisiologiche',
-        description: 'Nessuna asimmetria significativa rilevata. Simmetria bilaterale nella distribuzione del tessuto adiposo e muscolare. Distribuzione omogenea del dimagrimento tra lato destro e sinistro.'
+        description: 'Riduzione lordosi lombare. Core più stabile e attivo.'
       }
     },
     recommendations: {
@@ -121,17 +111,16 @@ export default function ProgressPhotoPreviewDemo() {
                   Analisi Scientifica Dettagliata
                 </h3>
                 
-                <div className="space-y-3">
+                <div className="space-y-2.5">
                   {/* Muscle Definition */}
                   <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center justify-between">
                       <h4 className="text-xs font-bold text-gray-900">Definizione Muscolare</h4>
                       <div className="flex items-center gap-1">
                         <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.muscleDefinition.previous} →</span>
                         <span className="text-base font-black text-blue-600">{analysisData.detailedAnalysis.muscleDefinition.score}/10</span>
                       </div>
                     </div>
-                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.muscleDefinition.description}</p>
                   </div>
 
                   {/* Fat Layer */}
@@ -142,41 +131,28 @@ export default function ProgressPhotoPreviewDemo() {
                         {analysisData.detailedAnalysis.fatLayer.percentage}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-600 mb-1">{analysisData.detailedAnalysis.fatLayer.previous} → {analysisData.detailedAnalysis.fatLayer.thickness}</p>
-                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.fatLayer.description}</p>
+                    <p className="text-xs text-gray-600">{analysisData.detailedAnalysis.fatLayer.previous} → {analysisData.detailedAnalysis.fatLayer.thickness}</p>
+                    <p className="text-xs text-gray-700 mt-1">{analysisData.detailedAnalysis.fatLayer.description}</p>
                   </div>
 
                   {/* Skin Quality */}
                   <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <div className="flex items-center justify-between mb-1">
+                    <div className="flex items-center justify-between">
                       <h4 className="text-xs font-bold text-gray-900">Qualità Pelle</h4>
                       <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
                         {analysisData.detailedAnalysis.skinQuality.tone}
                       </span>
                     </div>
-                    <p className="text-xs text-gray-600 mb-1">Elasticità: {analysisData.detailedAnalysis.skinQuality.elasticity}</p>
-                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.skinQuality.description}</p>
-                  </div>
-
-                  {/* Vascularity */}
-                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <h4 className="text-xs font-bold text-gray-900 mb-1">Vascolarizzazione</h4>
-                    <p className="text-xs text-gray-600 mb-1">{analysisData.detailedAnalysis.vascularity.level}</p>
-                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.vascularity.description}</p>
+                    <p className="text-xs text-gray-600 mt-1">Elasticità: {analysisData.detailedAnalysis.skinQuality.elasticity}</p>
                   </div>
 
                   {/* Postural Alignment */}
                   <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <h4 className="text-xs font-bold text-gray-900 mb-1">Allineamento Posturale</h4>
-                    <p className="text-xs text-gray-600 mb-1">Status: {analysisData.detailedAnalysis.posturalAlignment.status}</p>
-                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.posturalAlignment.description}</p>
-                  </div>
-
-                  {/* Asymmetries */}
-                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <h4 className="text-xs font-bold text-gray-900 mb-1">Simmetria</h4>
-                    <p className="text-xs text-gray-600 mb-1">Rilevate: {analysisData.detailedAnalysis.asymmetries.detected}</p>
-                    <p className="text-xs text-gray-700 leading-relaxed">{analysisData.detailedAnalysis.asymmetries.description}</p>
+                    <div className="flex items-center justify-between mb-1">
+                      <h4 className="text-xs font-bold text-gray-900">Postura</h4>
+                      <span className="text-xs text-green-600 font-semibold">{analysisData.detailedAnalysis.posturalAlignment.status}</span>
+                    </div>
+                    <p className="text-xs text-gray-700">{analysisData.detailedAnalysis.posturalAlignment.description}</p>
                   </div>
                 </div>
               </div>
