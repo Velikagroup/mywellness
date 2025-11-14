@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ChefHat, Clock, BarChart2, Sprout, ChevronRight, MousePointerClick } from 'lucide-react';
+import { ChefHat, Clock, BarChart2, Sprout, MousePointerClick } from 'lucide-react';
 
 const MacroCircle = ({ label, value, unit, color }) => (
   <div className="flex flex-col items-center">
@@ -154,11 +154,6 @@ export default function MealPlanPreviewDemo() {
   return (
     <>
       <style>{`
-        @keyframes bounce-arrow {
-          0%, 100% { transform: translateX(0); }
-          50% { transform: translateX(8px); }
-        }
-        
         @keyframes pulse-ring {
           0% { 
             transform: scale(0.8);
@@ -172,10 +167,6 @@ export default function MealPlanPreviewDemo() {
         
         .click-indicator-ring {
           animation: pulse-ring 1.5s ease-out infinite;
-        }
-        
-        .arrow-bounce {
-          animation: bounce-arrow 1.5s ease-in-out infinite;
         }
       `}</style>
 
@@ -269,10 +260,9 @@ export default function MealPlanPreviewDemo() {
                     <div className="w-16 h-16 bg-teal-500/20 rounded-full"></div>
                   </div>
                   
-                  {/* Icons */}
-                  <div className="relative flex items-center justify-center gap-1">
+                  {/* Icon */}
+                  <div className="relative flex items-center justify-center">
                     <MousePointerClick className="w-8 h-8 text-teal-600 drop-shadow-lg" />
-                    <ChevronRight className="w-7 h-7 text-teal-600 arrow-bounce drop-shadow-lg" />
                   </div>
                 </div>
               )}
