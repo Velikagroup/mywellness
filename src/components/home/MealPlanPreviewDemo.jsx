@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { ChefHat, Clock, BarChart2, Sprout, ChevronRight } from 'lucide-react';
+import { ChefHat, Clock, BarChart2, Sprout, ChevronRight, MousePointerClick } from 'lucide-react';
 
 const MacroCircle = ({ label, value, unit, color }) => (
   <div className="flex flex-col items-center">
@@ -153,6 +153,30 @@ export default function MealPlanPreviewDemo() {
 
   return (
     <>
+      <style>{`
+        @keyframes bounce-arrow {
+          0%, 100% { transform: translateX(0); }
+          50% { transform: translateX(8px); }
+        }
+        
+        @keyframes pulse-glow {
+          0%, 100% { 
+            box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.7);
+          }
+          50% { 
+            box-shadow: 0 0 0 10px rgba(20, 184, 166, 0);
+          }
+        }
+        
+        .click-indicator {
+          animation: pulse-glow 2s ease-in-out infinite;
+        }
+        
+        .arrow-bounce {
+          animation: bounce-arrow 1.5s ease-in-out infinite;
+        }
+      `}</style>
+
       <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-br from-gray-50 to-white px-6 py-5 border-b border-gray-100">
@@ -223,12 +247,18 @@ export default function MealPlanPreviewDemo() {
         </div>
 
         {/* Meals List */}
-        <div className="px-4 py-4 space-y-2 max-h-[400px] overflow-y-auto">
+        <div className="px-4 py-4 space-y-2 max-h-[400px] overflow-y-auto relative">
+          {/* Click Indicator on first meal */}
+          <div className="absolute -right-2 top-6 z-10 flex items-center gap-1">
+            <MousePointerClick className="w-6 h-6 text-teal-500 click-indicator" />
+            <ChevronRight className="w-5 h-5 text-teal-500 arrow-bounce" />
+          </div>
+
           {mondayMeals.map((meal, index) => (
             <div
               key={index}
               onClick={() => setSelectedMeal(meal)}
-              className="relative flex items-center gap-3 bg-white rounded-xl p-3 border border-gray-100 hover:border-teal-200 hover:bg-teal-50/30 transition-all cursor-pointer shadow-sm group"
+              className="relative flex items-center gap-3 bg-white rounded-xl p-3 border border-gray-100 hover:border-teal-300 hover:bg-teal-50/50 transition-all cursor-pointer shadow-sm hover:shadow-md"
             >
               <img
                 src={meal.image}
@@ -242,11 +272,6 @@ export default function MealPlanPreviewDemo() {
               <div className="text-right">
                 <div className="text-sm font-bold text-gray-900">{meal.calories}</div>
                 <div className="text-xs text-gray-400">kcal</div>
-              </div>
-              
-              {/* Animated Arrow Indicator */}
-              <div className="absolute right-2 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity">
-                <ChevronRight className="w-5 h-5 text-teal-500 animate-pulse" />
               </div>
             </div>
           ))}
@@ -271,7 +296,7 @@ export default function MealPlanPreviewDemo() {
         </div>
 
         {/* DEMO Badge */}
-        <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg">
+        <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg z-20">
           DEMO
         </div>
       </Card>
