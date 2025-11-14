@@ -1,5 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
-import Stripe from 'npm:stripe@14.10.0';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
     console.log('📄 generateInvoicePDF - Start');
@@ -34,12 +33,25 @@ Deno.serve(async (req) => {
 
         const transaction = transactions[0];
 
-        // Recupera dati utente
+        // ✅ Verifica che l'utente possa accedere solo alle sue transazioni
+        if (transaction.user_id !== user.id) {
+            return Response.json({ 
+                success: false, 
+                error: 'Unauthorized access to transaction' 
+            }, { status: 403 });
+        }
+
+        // Recupera dati utente con service role
         const transactionUser = await base44.asServiceRole.entities.User.filter({ id: transaction.user_id });
         const userData = transactionUser[0];
 
-        const invoiceNumber = `INV-${new Date(transaction.payment_date).getFullYear()}-${String(transaction.id).padStart(6, '0')}`;
+        const invoiceNumber = `INV-${new Date(transaction.payment_date).getFullYear()}-${String(transaction.id).slice(0, 8).toUpperCase()}`;
         const invoiceDate = new Date(transaction.payment_date).toLocaleDateString('it-IT');
+
+        // ✅ Calcola IVA se applicabile (IT = 22%)
+        const taxRate = userData.billing_country === 'IT' ? 0.22 : 0;
+        const netAmount = transaction.amount / (1 + taxRate);
+        const taxAmount = transaction.amount - netAmount;
 
         // Genera HTML fattura
         const invoiceHTML = `
@@ -48,95 +60,234 @@ Deno.serve(async (req) => {
 <head>
     <meta charset="UTF-8">
     <style>
-        body { font-family: Arial, sans-serif; padding: 40px; }
-        .header { border-bottom: 3px solid #26847F; padding-bottom: 20px; margin-bottom: 30px; }
-        .company { font-weight: bold; font-size: 24px; color: #26847F; }
-        .invoice-details { margin: 30px 0; }
-        .invoice-details table { width: 100%; }
-        .invoice-details td { padding: 8px 0; }
-        .items { margin: 30px 0; }
-        .items table { width: 100%; border-collapse: collapse; }
-        .items th { background: #f5f5f5; padding: 12px; text-align: left; border-bottom: 2px solid #26847F; }
-        .items td { padding: 12px; border-bottom: 1px solid #ddd; }
-        .total { text-align: right; font-size: 18px; font-weight: bold; margin-top: 20px; }
-        .footer { margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; font-size: 12px; color: #666; }
+        body { 
+            font-family: 'Helvetica', Arial, sans-serif; 
+            padding: 40px; 
+            max-width: 800px;
+            margin: 0 auto;
+            color: #333;
+        }
+        .header { 
+            border-bottom: 3px solid #26847F; 
+            padding-bottom: 20px; 
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+        }
+        .company { 
+            font-weight: bold; 
+            font-size: 24px; 
+            color: #26847F;
+            margin-bottom: 10px;
+        }
+        .company-details {
+            font-size: 12px;
+            line-height: 1.6;
+            color: #666;
+        }
+        .invoice-title {
+            text-align: right;
+        }
+        .invoice-title h1 {
+            margin: 0;
+            font-size: 28px;
+            color: #26847F;
+        }
+        .invoice-title .invoice-number {
+            font-size: 14px;
+            color: #666;
+            margin-top: 5px;
+        }
+        .parties {
+            display: flex;
+            justify-content: space-between;
+            margin: 30px 0;
+            gap: 40px;
+        }
+        .party {
+            flex: 1;
+            padding: 20px;
+            background: #f9f9f9;
+            border-radius: 8px;
+        }
+        .party h3 {
+            margin: 0 0 15px 0;
+            font-size: 14px;
+            color: #26847F;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .party p {
+            margin: 5px 0;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+        .items { 
+            margin: 30px 0; 
+        }
+        .items table { 
+            width: 100%; 
+            border-collapse: collapse;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .items th { 
+            background: #26847F;
+            color: white;
+            padding: 15px 12px; 
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }
+        .items td { 
+            padding: 15px 12px; 
+            border-bottom: 1px solid #eee;
+            font-size: 13px;
+        }
+        .items tr:last-child td {
+            border-bottom: none;
+        }
+        .items tr:hover {
+            background: #fafafa;
+        }
+        .summary {
+            margin-top: 30px;
+            text-align: right;
+        }
+        .summary table {
+            margin-left: auto;
+            min-width: 300px;
+        }
+        .summary td {
+            padding: 8px 15px;
+            font-size: 14px;
+        }
+        .summary .label {
+            text-align: right;
+            color: #666;
+        }
+        .summary .value {
+            text-align: right;
+            font-weight: 600;
+        }
+        .summary .total-row {
+            border-top: 2px solid #26847F;
+            font-size: 18px;
+            color: #26847F;
+        }
+        .footer { 
+            margin-top: 50px; 
+            padding-top: 20px; 
+            border-top: 2px solid #eee; 
+            font-size: 11px; 
+            color: #999;
+            line-height: 1.6;
+        }
+        .footer p {
+            margin: 5px 0;
+        }
+        .paid-stamp {
+            display: inline-block;
+            padding: 8px 20px;
+            background: #10b981;
+            color: white;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 12px;
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
     <div class="header">
-        <div class="company">VELIKA GROUP LLC</div>
-        <div>30 N Gould St 32651, Sheridan, WY 82801, United States</div>
-        <div>EIN: 36-5141800</div>
-        <div>Email: velika.03@outlook.it</div>
+        <div>
+            <div class="company">VELIKA GROUP LLC</div>
+            <div class="company-details">
+                30 N Gould St 32651<br>
+                Sheridan, WY 82801<br>
+                United States<br>
+                EIN: 36-5141800<br>
+                Email: velika.03@outlook.it
+            </div>
+        </div>
+        <div class="invoice-title">
+            <h1>FATTURA</h1>
+            <div class="invoice-number">${invoiceNumber}</div>
+            <div class="invoice-number">Data: ${invoiceDate}</div>
+        </div>
     </div>
 
-    <h1>FATTURA N° ${invoiceNumber}</h1>
-    <p>Data: ${invoiceDate}</p>
-
-    <div class="invoice-details">
-        <h3>Intestatario:</h3>
-        <table>
-            <tr>
-                <td><strong>Nome:</strong></td>
-                <td>${userData.billing_name || userData.full_name || 'N/D'}</td>
-            </tr>
-            <tr>
-                <td><strong>Email:</strong></td>
-                <td>${userData.email}</td>
-            </tr>
-            ${userData.billing_type === 'company' ? `
-            <tr>
-                <td><strong>Azienda:</strong></td>
-                <td>${userData.company_name || 'N/D'}</td>
-            </tr>
-            ` : ''}
-            <tr>
-                <td><strong>${userData.billing_type === 'company' ? 'P.IVA' : 'Codice Fiscale'}:</strong></td>
-                <td>${userData.tax_id || 'N/D'}</td>
-            </tr>
-            ${userData.billing_type === 'company' && userData.pec_sdi ? `
-            <tr>
-                <td><strong>PEC/SDI:</strong></td>
-                <td>${userData.pec_sdi}</td>
-            </tr>
-            ` : ''}
-            <tr>
-                <td><strong>Indirizzo:</strong></td>
-                <td>${userData.billing_address || 'N/D'}, ${userData.billing_city || ''} ${userData.billing_zip || ''}, ${userData.billing_country || ''}</td>
-            </tr>
-        </table>
+    <div class="parties">
+        <div class="party">
+            <h3>Da:</h3>
+            <p><strong>VELIKA GROUP LLC</strong></p>
+            <p>30 N Gould St 32651</p>
+            <p>Sheridan, WY 82801, USA</p>
+            <p>EIN: 36-5141800</p>
+        </div>
+        <div class="party">
+            <h3>A:</h3>
+            <p><strong>${userData.full_name || userData.email}</strong></p>
+            ${userData.billing_type === 'company' ? `<p>${userData.company_name || 'N/D'}</p>` : ''}
+            <p>${userData.billing_address || 'N/D'}</p>
+            <p>${userData.billing_city || ''} ${userData.billing_zip || ''}</p>
+            <p>${userData.billing_country || ''}</p>
+            <p><strong>${userData.billing_type === 'company' ? 'P.IVA' : 'CF'}:</strong> ${userData.tax_id || 'N/D'}</p>
+            ${userData.billing_type === 'company' && userData.pec_sdi ? `<p><strong>PEC/SDI:</strong> ${userData.pec_sdi}</p>` : ''}
+            <p><strong>Email:</strong> ${userData.email}</p>
+        </div>
     </div>
 
     <div class="items">
-        <h3>Dettagli:</h3>
         <table>
             <thead>
                 <tr>
                     <th>Descrizione</th>
                     <th>Piano</th>
                     <th>Periodo</th>
-                    <th style="text-align: right;">Importo</th>
+                    <th style="text-align: right; width: 120px;">Importo</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <td>${transaction.description || 'Abbonamento MyWellness'}</td>
-                    <td>${transaction.plan || 'N/D'}</td>
-                    <td>${transaction.billing_period || 'N/D'}</td>
-                    <td style="text-align: right;">€${transaction.amount.toFixed(2)}</td>
+                    <td style="text-transform: capitalize;">${transaction.plan || 'N/D'}</td>
+                    <td style="text-transform: capitalize;">${transaction.billing_period || 'N/D'}</td>
+                    <td style="text-align: right;">€${netAmount.toFixed(2)}</td>
                 </tr>
             </tbody>
         </table>
     </div>
 
-    <div class="total">
-        <p>TOTALE: €${transaction.amount.toFixed(2)}</p>
+    <div class="summary">
+        <table>
+            <tr>
+                <td class="label">Subtotale:</td>
+                <td class="value">€${netAmount.toFixed(2)}</td>
+            </tr>
+            ${taxAmount > 0 ? `
+            <tr>
+                <td class="label">IVA (22%):</td>
+                <td class="value">€${taxAmount.toFixed(2)}</td>
+            </tr>
+            ` : ''}
+            <tr class="total-row">
+                <td class="label"><strong>TOTALE:</strong></td>
+                <td class="value"><strong>€${transaction.amount.toFixed(2)}</strong></td>
+            </tr>
+        </table>
+        <div class="paid-stamp">✓ PAGATO</div>
     </div>
 
     <div class="footer">
-        <p>Pagamento effettuato tramite Stripe - Transazione ID: ${transaction.stripe_payment_intent_id || transaction.id}</p>
-        <p>Metodo di pagamento: ${transaction.metadata?.payment_method || 'Carta di credito'}</p>
-        <p>Questa è una fattura elettronica generata automaticamente.</p>
+        <p><strong>Dettagli Pagamento:</strong></p>
+        <p>Metodo: ${transaction.metadata?.payment_method || 'Carta di Credito/Debito'}</p>
+        <p>Processato tramite: Stripe Inc.</p>
+        <p>ID Transazione: ${transaction.stripe_payment_intent_id || transaction.id}</p>
+        <p>Data Pagamento: ${new Date(transaction.payment_date).toLocaleString('it-IT')}</p>
+        <p style="margin-top: 15px;">Questa è una fattura elettronica generata automaticamente. Per qualsiasi domanda, contattare velika.03@outlook.it</p>
     </div>
 </body>
 </html>
