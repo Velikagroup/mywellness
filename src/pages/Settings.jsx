@@ -78,8 +78,6 @@ export default function Settings() {
   const [cancellationDetails, setCancellationDetails] = useState('');
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
-  // Removed selectedNewPlan state as per outline
-  // const [selectedNewPlan, setSelectedNewPlan] = useState('');
 
   useEffect(() => {
     loadUserData();
@@ -120,10 +118,12 @@ export default function Settings() {
         workout_reminders: currentUser.email_notifications?.workout_reminders ?? true
       });
 
-      const userTransactions = await base44.entities.Transaction.filter({ user_id: currentUser.id }, ['-payment_date']);
+      // ✅ FIX: Corretto l'ordinamento - rimuovi array, passa stringa
+      const userTransactions = await base44.entities.Transaction.filter({ user_id: currentUser.id }, '-payment_date');
+      console.log('📊 Transactions loaded:', userTransactions.length);
       setTransactions(userTransactions);
 
-      const userTickets = await base44.entities.SupportTicket.filter({ user_id: currentUser.id }, ['-created_date']);
+      const userTickets = await base44.entities.SupportTicket.filter({ user_id: currentUser.id }, '-created_date');
       setSupportTickets(userTickets);
 
     } catch (error) {
@@ -238,7 +238,6 @@ export default function Settings() {
     setIsSaving(false);
   };
 
-  // Modified handleUpgradePlan as per outline
   const handleUpgradePlan = () => {
     setShowUpgradeDialog(true);
   };
@@ -266,7 +265,6 @@ export default function Settings() {
 
     setIsSaving(true);
     try {
-      // Salva feedback cancellazione
       const accountAge = Math.floor((new Date() - new Date(user.created_date)) / (1000 * 60 * 60 * 24));
 
       await base44.entities.CancellationFeedback.create({
@@ -279,7 +277,6 @@ export default function Settings() {
         days_used: accountAge
       });
 
-      // Cancella abbonamento
       const response = await base44.functions.invoke('cancelMySubscription');
       const data = response.data || response;
 
@@ -858,8 +855,6 @@ export default function Settings() {
           isOpen={showUpgradeDialog}
           onClose={() => setShowUpgradeDialog(false)}
           currentPlan={user?.subscription_plan || 'base'}
-          // These props are added to ensure the UpgradeModal can perform its function
-          // and update the parent component's state and data correctly.
           isSaving={isSaving}
           setIsSaving={setIsSaving}
           onUpgradeSuccess={async () => {
@@ -869,7 +864,6 @@ export default function Settings() {
           }}
           onUpgradeError={(errorMsg) => {
             alert('❌ Errore: ' + errorMsg);
-            // Optionally close the dialog on error or let the modal handle it
           }}
         />
       )}
