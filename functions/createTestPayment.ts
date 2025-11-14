@@ -37,7 +37,10 @@ Deno.serve(async (req) => {
             console.log('✅ Customer created:', customerId);
         }
 
-        // Create checkout session for €0.01
+        // Get origin from request
+        const origin = req.headers.get('origin') || 'https://mywellness24x7.base44.app';
+
+        // Create checkout session for €0.01 (1 cent)
         const session = await stripe.checkout.sessions.create({
             customer: customerId,
             payment_method_types: ['card'],
@@ -47,35 +50,38 @@ Deno.serve(async (req) => {
                     price_data: {
                         currency: 'eur',
                         product_data: {
-                            name: '🧪 Test Payment - Webhook Verification',
-                            description: 'Pagamento di test per verificare webhook e fatture',
+                            name: '🧪 Test Webhook - Verifica Fattura',
+                            description: 'Pagamento di test per verificare webhook e generazione fatture automatiche',
                         },
-                        unit_amount: 1, // €0.01 in cents
+                        unit_amount: 1, // 1 cent = €0.01
                     },
                     quantity: 1,
                 },
             ],
-            success_url: `${req.headers.get('origin')}/dashboard?payment=success`,
-            cancel_url: `${req.headers.get('origin')}/dashboard?payment=cancelled`,
+            success_url: `${origin}/dashboard?payment=success`,
+            cancel_url: `${origin}/dashboard?payment=cancelled`,
             metadata: {
                 user_id: user.id,
+                plan_type: 'test',
                 type: 'test_payment',
                 traffic_source: user.traffic_source || 'direct'
             }
         });
 
-        console.log('✅ Test payment session created:', session.id);
+        console.log('✅ Test payment checkout created:', session.url);
 
         return Response.json({
             success: true,
             checkout_url: session.url,
-            session_id: session.id
+            session_id: session.id,
+            amount: '€0.01'
         });
 
     } catch (error) {
         console.error('❌ Test payment error:', error);
         return Response.json({
-            error: error.message
+            error: error.message,
+            details: error.toString()
         }, { status: 500 });
     }
 });
