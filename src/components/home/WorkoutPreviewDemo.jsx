@@ -1,161 +1,201 @@
-import React from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Clock, Flame, Camera, Image, Sparkles } from 'lucide-react';
+import React, { useState } from 'react';
+import { Card } from '@/components/ui/card';
+import { ChevronDown, Dumbbell, Clock, RotateCcw } from 'lucide-react';
 
-/**
- * Componente DEMO per Homepage
- * Replica esattamente l'UI di TrainingStatus ma con dati placeholder fissi
- * Non ha funzionalità reali, solo visual preview
- */
 export default function WorkoutPreviewDemo() {
-  // Dati placeholder fissi
-  const demoWorkout = {
-    plan_name: "Allenamento della Parte Superiore",
-    day_of_week: "thursday",
-    total_duration: 65,
-    calories_burned: 500,
-    exercises: [
-      { name: "Panca Piana con Bilanciere" },
-      { name: "Shoulder Press con Manubri" },
-      { name: "Rematore con Manubrio" },
-      { name: "Alzate Laterali" }
-    ]
-  };
+  const [expandedExercise, setExpandedExercise] = useState(null);
 
-  const dayLabels = {
-    monday: 'Lunedì',
-    tuesday: 'Martedì',
-    wednesday: 'Mercoledì',
-    thursday: 'Giovedì',
-    friday: 'Venerdì',
-    saturday: 'Sabato',
-    sunday: 'Domenica'
-  };
+  const warmup = [
+    { name: 'Corsa sul Posto', duration: '5 minuti' },
+    { name: 'Rotazioni delle Braccia', duration: '2 minuti' }
+  ];
+
+  const exercises = [
+    {
+      id: 1,
+      name: 'Flessioni a Terra',
+      sets: '4 set',
+      reps: '10-12 rip',
+      rest: '90 secondi',
+      muscles: ['Pettorali', 'Tricipiti', 'Core'],
+      description: 'Posizionati a terra con le mani alla larghezza delle spalle. Mantieni il corpo dritto e abbassati fino a sfiorare il pavimento.',
+      tips: ['Mantieni addominali contratti', 'Non flettere la schiena', 'Scendi lentamente']
+    },
+    {
+      id: 2,
+      name: 'Squat a Corpo Libero',
+      sets: '4 set',
+      reps: '12 ripetizioni',
+      rest: '90 secondi',
+      muscles: ['Gambe', 'Glutei', 'Core'],
+      description: 'Piedi alla larghezza delle spalle, scendi come se ti sedessi su una sedia mantenendo il peso sui talloni.',
+      tips: ['Ginocchia in linea con le punte dei piedi', 'Schiena dritta', 'Scendi fino a 90°']
+    },
+    {
+      id: 3,
+      name: 'Crunch Addominali',
+      sets: '3 set',
+      reps: '15 ripetizioni',
+      rest: '60 secondi',
+      muscles: ['Addominali'],
+      description: 'Sdraiato sulla schiena con ginocchia piegate, solleva le spalle dal pavimento contraendo gli addominali.',
+      tips: ['Non tirare il collo', 'Contrai nella fase di salita', 'Movimento controllato']
+    }
+  ];
+
+  const cooldown = [
+    { name: 'Stretching Totale', duration: '5 minuti' }
+  ];
 
   return (
-    <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+    <>
       <style>{`
-        .liquid-glass-button {
-          backdrop-filter: blur(12px) saturate(180%);
-          background: linear-gradient(135deg, 
-            rgba(38, 132, 127, 0.15) 0%,
-            rgba(20, 184, 166, 0.1) 50%,
-            rgba(38, 132, 127, 0.15) 100%
-          );
-          border: 1px solid rgba(38, 132, 127, 0.3);
-          box-shadow: 
-            0 4px 16px 0 rgba(38, 132, 127, 0.12),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        @keyframes expand {
+          from { max-height: 0; opacity: 0; }
+          to { max-height: 500px; opacity: 1; }
         }
-
-        .liquid-glass-button-ai {
-          backdrop-filter: blur(12px) saturate(180%);
-          background: linear-gradient(135deg, 
-            rgba(147, 51, 234, 0.15) 0%,
-            rgba(99, 102, 241, 0.1) 50%,
-            rgba(147, 51, 234, 0.15) 100%
-          );
-          border: 2px solid rgba(147, 51, 234, 0.3);
-          box-shadow: 
-            0 8px 24px 0 rgba(147, 51, 234, 0.2),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.6),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        
+        .expand-animation {
+          animation: expand 0.3s ease-out forwards;
         }
       `}</style>
-      
-      <CardHeader className="pb-3">
-        <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-          <Dumbbell className="w-5 h-5 text-[var(--brand-primary)]" />
-          💪 Allenamento di Oggi
-        </CardTitle>
-      </CardHeader>
-      
-      <CardContent className="space-y-4">
-        {/* Workout Info */}
-        <div>
-          <h3 className="text-xl font-bold text-gray-900 mb-3">
-            {dayLabels[demoWorkout.day_of_week]}: {demoWorkout.plan_name}
-          </h3>
+
+      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-6 py-5 border-b border-gray-100">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">Piano di Allenamento</h2>
+              <p className="text-sm text-gray-600 mt-1">Forza e Resistenza</p>
+              <p className="text-xs text-gray-500 mt-0.5">Lunedì • 75 min • 500 kcal</p>
+            </div>
+          </div>
           
-          {/* Stats */}
-          <div className="flex gap-4 mb-4">
-            <div className="flex items-center gap-2 text-gray-600">
-              <Clock className="w-4 h-4" />
-              <span className="text-sm font-medium">{demoWorkout.total_duration} min</span>
-            </div>
-            <div className="flex items-center gap-2 text-gray-600">
-              <Flame className="w-4 h-4 text-orange-500" />
-              <span className="text-sm font-medium">{demoWorkout.calories_burned} kcal</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Exercises Preview */}
-        <div className="bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-lg p-3 border border-[var(--brand-primary)]/20">
-          <p className="text-sm text-gray-700 font-medium mb-2">
-            💪 {demoWorkout.exercises.length} esercizi
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {demoWorkout.exercises.slice(0, 3).map((exercise, idx) => (
-              <span
-                key={idx}
-                className="text-xs bg-white/70 px-2 py-1 rounded-full text-gray-700 font-medium border border-gray-200"
-              >
-                {exercise.name}
-              </span>
-            ))}
-            {demoWorkout.exercises.length > 3 && (
-              <span className="text-xs bg-white/70 px-2 py-1 rounded-full text-gray-600 border border-gray-200">
-                +{demoWorkout.exercises.length - 3}
-              </span>
-            )}
-          </div>
-        </div>
-
-        <div className="space-y-3">
-          {/* Pulsanti Vai alla Scheda e Galleria - Con Liquid Glass */}
-          <div className="grid grid-cols-2 gap-2">
+          {/* Action Buttons */}
+          <div className="flex gap-2">
             <button
               disabled
-              className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl cursor-not-allowed opacity-80"
+              className="flex-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-900 font-bold py-2.5 rounded-xl opacity-90 cursor-not-allowed flex items-center justify-center gap-2"
             >
-              <div className="flex items-center justify-center gap-1.5">
-                <Dumbbell className="w-4 h-4" />
-                <span>Vai alla Scheda</span>
-              </div>
+              <RotateCcw className="w-4 h-4" />
+              Modifica Sessione
             </button>
             <button
               disabled
-              className="liquid-glass-button text-[var(--brand-primary)] font-semibold text-sm py-3 rounded-xl cursor-not-allowed opacity-80"
+              className="flex-1 bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed"
             >
-              <div className="flex items-center justify-center gap-1.5">
-                <Image className="w-4 h-4" />
-                <span>Galleria</span>
-              </div>
+              Registra Allenamento
             </button>
           </div>
-
-          {/* AI Progress Analysis Button - Con Liquid Glass */}
-          <button
-            disabled
-            className="w-full liquid-glass-button-ai text-purple-700 font-bold text-base py-5 rounded-xl cursor-not-allowed opacity-80"
-          >
-            <div className="flex items-center justify-center gap-2">
-              <Camera className="w-5 h-5" />
-              <span>Analisi Progressi con AI</span>
-              <Sparkles className="w-5 h-5" />
-            </div>
-          </button>
         </div>
 
-        {/* Demo Notice */}
-        <div className="text-center">
-          <p className="text-xs text-gray-400 italic">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+        {/* Content */}
+        <div className="px-4 py-4 space-y-4 max-h-[500px] overflow-y-auto">
+          {/* Warmup */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-900 mb-2 px-2">Riscaldamento</h3>
+            <div className="space-y-2">
+              {warmup.map((exercise, idx) => (
+                <div key={idx} className="bg-blue-50 rounded-lg px-3 py-2 border border-blue-200">
+                  <p className="text-sm font-semibold text-blue-900">{exercise.name} <span className="text-blue-600">({exercise.duration})</span></p>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Main Exercises */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-900 mb-2 px-2">Esercizi Principali</h3>
+            <div className="space-y-2">
+              {exercises.map((exercise) => (
+                <div key={exercise.id} className="bg-white rounded-xl border border-gray-200 overflow-hidden">
+                  <button
+                    onClick={() => setExpandedExercise(expandedExercise === exercise.id ? null : exercise.id)}
+                    className="w-full px-3 py-3 flex items-center justify-between hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-1 text-left">
+                      <p className="font-semibold text-gray-900 text-sm">{exercise.name}</p>
+                      <div className="flex items-center gap-3 mt-1 text-xs text-gray-600">
+                        <span className="flex items-center gap-1">
+                          <Dumbbell className="w-3 h-3" />
+                          {exercise.sets} × {exercise.reps}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Clock className="w-3 h-3" />
+                          Riposo: {exercise.rest}
+                        </span>
+                      </div>
+                    </div>
+                    <ChevronDown 
+                      className={`w-5 h-5 text-gray-400 transition-transform ${
+                        expandedExercise === exercise.id ? 'rotate-180' : ''
+                      }`}
+                    />
+                  </button>
+
+                  {expandedExercise === exercise.id && (
+                    <div className="px-3 pb-3 border-t border-gray-100 expand-animation">
+                      <div className="pt-3 space-y-3">
+                        {/* Muscle Tags */}
+                        <div className="flex flex-wrap gap-1">
+                          {exercise.muscles.map((muscle, idx) => (
+                            <span key={idx} className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
+                              {muscle}
+                            </span>
+                          ))}
+                        </div>
+
+                        {/* Description */}
+                        <div>
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Descrizione</p>
+                          <p className="text-xs text-gray-600 leading-relaxed">{exercise.description}</p>
+                        </div>
+
+                        {/* Tips */}
+                        <div>
+                          <p className="text-xs font-semibold text-gray-700 mb-1">Consigli</p>
+                          <ul className="space-y-1">
+                            {exercise.tips.map((tip, idx) => (
+                              <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
+                                <span className="text-teal-500 mt-0.5">•</span>
+                                <span>{tip}</span>
+                              </li>
+                            ))}
+                          </ul>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Cooldown */}
+          <div>
+            <h3 className="text-sm font-bold text-gray-900 mb-2 px-2">Defaticamento</h3>
+            <div className="space-y-2">
+              {cooldown.map((exercise, idx) => (
+                <div key={idx} className="bg-green-50 rounded-lg px-3 py-2 border border-green-200">
+                  <p className="text-sm font-semibold text-green-900">{exercise.name} <span className="text-green-600">({exercise.duration})</span></p>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
+          <p className="text-xs text-gray-600 text-center">
+            💡 Clicca su un esercizio per vedere dettagli e consigli
           </p>
         </div>
-      </CardContent>
-    </Card>
+
+        {/* DEMO Badge */}
+        <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg z-20">
+          DEMO
+        </div>
+      </Card>
+    </>
   );
 }
