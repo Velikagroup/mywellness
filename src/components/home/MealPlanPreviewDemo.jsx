@@ -158,6 +158,15 @@ export default function MealPlanPreviewDemo() {
         .arrow-bounce {
           animation: bounce-arrow 1.5s ease-in-out infinite;
         }
+
+        @media (max-width: 768px) {
+          [data-meal-popup] {
+            width: 80% !important;
+            max-width: 80% !important;
+            height: 80vh !important;
+            max-height: 80vh !important;
+          }
+        }
       `}</style>
 
       <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
@@ -298,7 +307,7 @@ export default function MealPlanPreviewDemo() {
       {/* Meal Detail Modal */}
       {selectedMeal && (
         <Dialog open={!!selectedMeal} onOpenChange={() => setSelectedMeal(null)}>
-          <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col">
+          <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col" data-meal-popup>
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-gray-900">{selectedMeal.title}</DialogTitle>
             </DialogHeader>
