@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ShoppingCart, Check } from 'lucide-react';
@@ -67,6 +68,7 @@ export default function ShoppingListPreviewDemo() {
       `}</style>
 
       <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
+        {/* Header */}
         <div className="bg-gradient-to-br from-green-50 to-teal-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-3">
@@ -80,6 +82,7 @@ export default function ShoppingListPreviewDemo() {
             </div>
           </div>
 
+          {/* Progress */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="font-semibold text-gray-700">Completamento</span>
@@ -94,9 +97,11 @@ export default function ShoppingListPreviewDemo() {
           </div>
         </div>
 
+        {/* Categories List */}
         <div className="px-4 py-4 space-y-4 max-h-[450px] overflow-y-auto">
           {categories.map((category, catIndex) => (
             <div key={catIndex} className="bg-white rounded-xl border border-gray-100 overflow-hidden shadow-sm">
+              {/* Category Header */}
               <div className="bg-gradient-to-r from-gray-50 to-white px-4 py-3 border-b border-gray-100">
                 <div className="flex items-center gap-2">
                   <span className="text-2xl">{category.icon}</span>
@@ -107,6 +112,7 @@ export default function ShoppingListPreviewDemo() {
                 </div>
               </div>
 
+              {/* Items */}
               <div className="p-2 space-y-1">
                 {category.items.map((item, itemIndex) => (
                   <div
@@ -149,6 +155,7 @@ export default function ShoppingListPreviewDemo() {
           ))}
         </div>
 
+        {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
             Anteprima interfaccia • Funzionalità disponibili dopo il signup

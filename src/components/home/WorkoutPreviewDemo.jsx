@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ChevronDown, Dumbbell, Clock, RotateCcw } from 'lucide-react';
@@ -61,6 +62,7 @@ export default function WorkoutPreviewDemo() {
       `}</style>
 
       <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
+        {/* Header */}
         <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div>
@@ -70,6 +72,7 @@ export default function WorkoutPreviewDemo() {
             </div>
           </div>
           
+          {/* Action Buttons */}
           <div className="flex gap-2">
             <button
               disabled
@@ -87,7 +90,9 @@ export default function WorkoutPreviewDemo() {
           </div>
         </div>
 
+        {/* Content */}
         <div className="px-4 py-4 space-y-4 max-h-[500px] overflow-y-auto">
+          {/* Warmup */}
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-2 px-2">Riscaldamento</h3>
             <div className="space-y-2">
@@ -99,6 +104,7 @@ export default function WorkoutPreviewDemo() {
             </div>
           </div>
 
+          {/* Main Exercises */}
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-2 px-2">Esercizi Principali</h3>
             <div className="space-y-2">
@@ -131,6 +137,7 @@ export default function WorkoutPreviewDemo() {
                   {expandedExercise === exercise.id && (
                     <div className="px-3 pb-3 border-t border-gray-100 expand-animation">
                       <div className="pt-3 space-y-3">
+                        {/* Muscle Tags */}
                         <div className="flex flex-wrap gap-1">
                           {exercise.muscles.map((muscle, idx) => (
                             <span key={idx} className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full text-xs font-medium">
@@ -139,11 +146,13 @@ export default function WorkoutPreviewDemo() {
                           ))}
                         </div>
 
+                        {/* Description */}
                         <div>
                           <p className="text-xs font-semibold text-gray-700 mb-1">Descrizione</p>
                           <p className="text-xs text-gray-600 leading-relaxed">{exercise.description}</p>
                         </div>
 
+                        {/* Tips */}
                         <div>
                           <p className="text-xs font-semibold text-gray-700 mb-1">Consigli</p>
                           <ul className="space-y-1">
@@ -163,6 +172,7 @@ export default function WorkoutPreviewDemo() {
             </div>
           </div>
 
+          {/* Cooldown */}
           <div>
             <h3 className="text-sm font-bold text-gray-900 mb-2 px-2">Defaticamento</h3>
             <div className="space-y-2">
@@ -175,6 +185,7 @@ export default function WorkoutPreviewDemo() {
           </div>
         </div>
 
+        {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
             Anteprima interfaccia • Funzionalità disponibili dopo il signup

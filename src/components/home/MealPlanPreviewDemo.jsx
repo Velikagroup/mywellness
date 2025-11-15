@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -176,6 +177,7 @@ export default function MealPlanPreviewDemo() {
             <h2 className="text-base sm:text-xl font-bold text-gray-900 truncate flex-shrink min-w-0">Programmazione Settimanale</h2>
           </div>
 
+          {/* Days selector */}
           <div className="flex gap-1 sm:gap-2 overflow-x-auto scrollbar-hide pb-1">
             {daysOfWeek.map((day) => (
               <button
@@ -193,11 +195,13 @@ export default function MealPlanPreviewDemo() {
           </div>
         </div>
 
+        {/* Protocol Card */}
         <div className="px-3 sm:px-6 py-4 bg-gradient-to-br from-teal-50/50 to-blue-50/30 overflow-hidden">
           <div className="mb-3">
             <h3 className="text-sm sm:text-base font-bold text-gray-900">Protocollo di Lunedì</h3>
           </div>
 
+          {/* Macros Grid */}
           <div className="grid grid-cols-4 gap-1 sm:gap-2 mb-3">
             <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Kcal</div>
@@ -217,12 +221,14 @@ export default function MealPlanPreviewDemo() {
             </div>
           </div>
 
+          {/* Target giornaliero */}
           <div className="text-[10px] sm:text-xs text-gray-600 text-center">
             <span className="font-medium">Target: 1696 kcal</span>
             <span className="ml-1 sm:ml-2 text-gray-400">(-243)</span>
           </div>
         </div>
 
+        {/* Meals List */}
         <div className="px-3 sm:px-4 py-4 space-y-2 max-h-[400px] overflow-y-auto relative">
           {mondayMeals.map((meal, index) => (
             <div
@@ -230,16 +236,20 @@ export default function MealPlanPreviewDemo() {
               onClick={() => setSelectedMeal(meal)}
               className="relative flex items-center gap-2 sm:gap-3 bg-white rounded-xl p-2 sm:p-3 border border-gray-100 hover:border-teal-300 hover:bg-teal-50/50 transition-all cursor-pointer shadow-sm hover:shadow-md"
             >
+              {/* Click Indicator on first meal image - centered */}
               {index === 0 && (
                 <div className="absolute left-[30px] sm:left-[34px] top-1/2 -translate-y-1/2 z-10 pointer-events-none">
+                  {/* Animated Circle Ring */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-16 sm:w-20 h-16 sm:h-20 border-4 border-teal-500 rounded-full click-indicator-ring"></div>
                   </div>
                   
+                  {/* Static Circle Background */}
                   <div className="absolute inset-0 flex items-center justify-center">
                     <div className="w-12 sm:w-16 h-12 sm:h-16 bg-teal-500/20 rounded-full"></div>
                   </div>
                   
+                  {/* Icons */}
                   <div className="relative flex items-center justify-center gap-0.5 sm:gap-1">
                     <MousePointerClick className="w-6 sm:w-8 h-6 sm:h-8 text-teal-600 drop-shadow-lg" />
                     <ChevronRight className="w-5 sm:w-7 h-5 sm:h-7 text-teal-600 arrow-bounce drop-shadow-lg" />
@@ -264,6 +274,7 @@ export default function MealPlanPreviewDemo() {
           ))}
         </div>
 
+        {/* Bottom Navigation (Demo) */}
         <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
             Anteprima interfaccia • Funzionalità disponibili dopo il signup
@@ -271,6 +282,7 @@ export default function MealPlanPreviewDemo() {
         </div>
       </Card>
 
+      {/* Meal Detail Modal */}
       {selectedMeal && (
         <Dialog open={!!selectedMeal} onOpenChange={() => setSelectedMeal(null)}>
           <DialogContent className="max-w-4xl max-h-[90vh] flex flex-col" data-meal-popup>
