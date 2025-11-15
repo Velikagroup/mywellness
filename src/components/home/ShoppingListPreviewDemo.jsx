@@ -66,7 +66,7 @@ export default function ShoppingListPreviewDemo() {
         }
       `}</style>
 
-      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
+      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
         {/* Header */}
         <div className="bg-gradient-to-br from-green-50 to-teal-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">

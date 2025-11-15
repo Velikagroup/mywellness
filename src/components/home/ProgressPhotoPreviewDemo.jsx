@@ -60,7 +60,7 @@ export default function ProgressPhotoPreviewDemo() {
         }
       `}</style>
 
-      <Card className="w-full max-w-6xl mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
+      <Card className="w-full max-w-6xl mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
         <div className="slide-up">
           {/* Header */}
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 px-6 py-5 border-b border-gray-100">

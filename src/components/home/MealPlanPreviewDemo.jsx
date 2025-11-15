@@ -169,15 +169,11 @@ export default function MealPlanPreviewDemo() {
         }
       `}</style>
 
-      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
+      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
         {/* Header */}
         <div className="bg-gradient-to-br from-gray-50 to-white px-4 sm:px-6 py-5 border-b border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between mb-4 gap-2">
             <h2 className="text-base sm:text-xl font-bold text-gray-900 truncate flex-shrink min-w-0">Programmazione Settimanale</h2>
-            <div className="flex items-center gap-1.5 sm:gap-2 px-2 sm:px-3 py-1.5 bg-white rounded-full border border-gray-200 shadow-sm flex-shrink-0">
-              <span className="text-[10px] sm:text-xs font-semibold text-gray-700 whitespace-nowrap">MyWellness</span>
-              <div className="w-2 h-2 bg-teal-500 rounded-full flex-shrink-0"></div>
-            </div>
           </div>
 
           {/* Days selector */}
