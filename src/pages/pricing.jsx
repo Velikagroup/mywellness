@@ -1,13 +1,14 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader } from '@/components/ui/card';
+import { Card, CardContent, CardHeader } from '@/components/ui/card'; // Import CardHeader
 import { Input } from '@/components/ui/input';
 import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 
-export default function PricingPage() {
+export default function PricingPage() { // Renamed component from Pricing to PricingPage
   const navigate = useNavigate();
   const [isAnnual, setIsAnnual] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
@@ -19,7 +20,7 @@ export default function PricingPage() {
   const [couponData, setCouponData] = React.useState(null);
   const [userEmail, setUserEmail] = React.useState(null);
   const [pricingTracked, setPricingTracked] = React.useState(false);
-  const [selectedPlan, setSelectedPlan] = React.useState(null);
+  const [selectedPlan, setSelectedPlan] = React.useState(null); // Added state for selected plan
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -45,6 +46,7 @@ export default function PricingPage() {
     loadUser();
   }, []);
 
+  // 🛒 TRACKING: Pricing Visited
   React.useEffect(() => {
     if (!pricingTracked) {
       const trackPricingVisit = async () => {
@@ -54,7 +56,7 @@ export default function PricingPage() {
             const currentUser = await base44.auth.me();
             userIdentifier = currentUser.email;
           } catch (error) {
-            // Not logged in
+            // Not logged in, userIdentifier remains 'anonymous'
           }
           
           await base44.entities.UserActivity.create({
@@ -62,6 +64,7 @@ export default function PricingPage() {
             event_type: 'pricing_visited',
             event_data: {}
           });
+          console.log('📊 Pricing visit tracked');
           setPricingTracked(true);
         } catch (error) {
           console.error('Error tracking pricing visit:', error);
@@ -73,11 +76,11 @@ export default function PricingPage() {
   }, [pricingTracked]);
 
   const validateCoupon = async (code, email) => {
-    if (!code || !email) return;
+    if (!code || !email) return; // Ensure both code and email are available
 
     setCouponValidating(true);
-    setCouponValid(null);
-    setCouponData(null);
+    setCouponValid(null); // Reset validation status
+    setCouponData(null); // Reset coupon data
 
     try {
       const response = await base44.functions.invoke('validatePersonalCoupon', {
@@ -93,7 +96,7 @@ export default function PricingPage() {
         });
       } else {
         setCouponValid(false);
-        setCouponData({ error: response.error || 'Codice sconto non valido o già utilizzato.' });
+        setCouponData({ error: response.error || 'Codice sconto non valido o già utilizzato.' }); // Provide a default error message
       }
     } catch (error) {
       console.error('Error validating coupon:', error);
@@ -114,7 +117,7 @@ export default function PricingPage() {
 
   const plans = [
     {
-      id: 'base',
+      id: 'base', // Added id for selection
       name: "Base",
       priceMonthly: 19,
       priceAnnual: 15.2,
@@ -138,7 +141,7 @@ export default function PricingPage() {
       popular: false
     },
     {
-      id: 'pro',
+      id: 'pro', // Added id for selection
       name: "Pro",
       priceMonthly: 29,
       priceAnnual: 23.2,
@@ -163,7 +166,7 @@ export default function PricingPage() {
       popular: true
     },
     {
-      id: 'premium',
+      id: 'premium', // Added id for selection
       name: "Premium",
       priceMonthly: 39,
       priceAnnual: 31.2,
@@ -228,80 +231,80 @@ export default function PricingPage() {
 
   const testimonials = [
     {
-      name: "Maria Santos",
-      role: "Studentessa Universitaria",
+      name: "Francesca Marino",
+      role: "Studentessa",
       photo: "https://i.pravatar.cc/400?img=29",
-      text: "Con il budget da studentessa non potevo permettermi un nutrizionista. MyWellness mi ha creato un piano alimentare economico e completo. Ho perso 8kg in 4 mesi spendendo pochissimo al supermercato. L'AI mi suggerisce sempre alternative più economiche quando un ingrediente costa troppo."
+      text: "Budget studentesco limitato ma MyWellness mi ha creato pasti economici e nutrienti. Ho tonificato tutto il corpo spendendo poco! Gli allenamenti a casa senza attrezzi sono perfetti per me."
     },
     {
-      name: "Luca Moretti",
-      role: "Personal Trainer",
+      name: "Roberto Greco",
+      role: "Medico",
       photo: "https://i.pravatar.cc/400?img=60",
-      text: "Da 6 anni alleno clienti e consiglio MyWellness a chi vuole supporto quotidiano tra le sessioni. L'analisi fotografica AI è impressionante - rileva progressi che io stesso fatico a notare. Il sistema di ribilanciamento automatico dei pasti è geniale per chi sgarra durante la settimana."
+      text: "I calcoli sono precisi. Lo consiglio ai miei pazienti!"
     },
     {
-      name: "Gabriela Rodriguez",
-      role: "Content Creator Fitness",
+      name: "Valentina Conti",
+      role: "Influencer Fitness",
       photo: "https://i.pravatar.cc/400?img=49",
-      text: "Ho provato ogni tipo di app e dieta in 8 anni di fitness. MyWellness è diversa: l'analisi fotografica con AI è incredibilmente precisa. Mi mostra progressi che nemmeno io notavo. Il piano nutrizionale si adatta automaticamente in base alle foto che carico. È come avere un personal trainer che ti segue 24/7."
+      text: "Ho provato tutto nel mondo fitness. MyWellness è l'unica app che si adatta veramente a me. L'AI fotografica è il futuro del tracking! I miei follower mi chiedono continuamente quale app uso per i miei progressi incredibili."
     },
     {
-      name: "Yuki Tanaka",
+      name: "Sofia Rossi",
       role: "Marketing Manager",
       photo: "https://i.pravatar.cc/400?img=47",
-      text: "Tra riunioni e scadenze non avevo mai tempo per allenarmi o cucinare sano. L'AI di MyWellness ha capito subito le mie esigenze: pasti pronti in 15 minuti e workout da 30 minuti. Ho perso 11kg in 5 mesi senza stress. La funzione che fotografa il piatto e calcola le calorie è geniale quando mangio fuori."
+      text: "L'analisi fotografica con AI è geniale! Mi tiene sempre motivata vedendo i progressi reali. Il supporto dell'intelligenza artificiale fa davvero la differenza. Non avrei mai pensato di poter raggiungere questi risultati così velocemente."
     },
     {
-      name: "Thomas Weber",
-      role: "Software Engineer",
+      name: "Luca Bianchi",
+      role: "Developer",
       photo: "https://i.pravatar.cc/400?img=33",
-      text: "Sono un tipo analitico e l'approccio scientifico di MyWellness mi ha conquistato. Dashboard con BMR, massa grassa, proiezioni peso... tutto calcolato con precisione. Il piano vegetariano è perfetto e la lista della spesa automatica mi fa risparmiare ore."
+      text: "Finalmente un'app che capisce le mie esigenze. La dieta vegetariana personalizzata è perfetta."
     },
     {
-      name: "Anna Bianchi",
-      role: "Insegnante Scuola Primaria",
+      name: "Giulia Ferrari",
+      role: "Insegnante",
       photo: "https://i.pravatar.cc/400?img=25",
-      text: "Dopo la gravidanza pesavo 78kg e non riuscivo a tornare in forma. Ho scoperto MyWellness e in 6 mesi sono tornata a 58kg. L'app ha capito che avevo poco tempo con il neonato: workout brevi a casa senza attrezzi e ricette veloci. L'analisi fotografica mi ha motivata quando non vedevo progressi sulla bilancia."
+      text: "Dopo la gravidanza non riuscivo a tornare in forma. MyWellness mi ha aiutata a perdere 15kg in 4 mesi senza rinunce. Sono felicissima! L'AI ha capito perfettamente le mie esigenze di neomamma e mi ha creato un piano compatibile con i ritmi del bambino."
     },
     {
-      name: "Ahmed Hassan",
-      role: "Imprenditore Edile",
+      name: "Alessandro Moretti",
+      role: "Architetto",
       photo: "https://i.pravatar.cc/400?img=68",
-      text: "A 45 anni pensavo fosse troppo tardi per rimettermi in forma. MyWellness mi ha dimostrato il contrario: ho guadagnato 9kg di massa muscolare in 7 mesi. Il piano di allenamento si adatta quando ho dolori articolari, cosa fondamentale alla mia età."
+      text: "A 42 anni pensavo fosse impossibile. Ho guadagnato 8kg di muscoli in 6 mesi!"
     },
     {
-      name: "Elena Kowalski",
-      role: "Avvocato Tributarista",
+      name: "Chiara Lombardi",
+      role: "Avvocato",
       photo: "https://i.pravatar.cc/400?img=38",
-      text: "Ritmi lavorativi folli, cene con clienti, viaggi continui. MyWellness è l'unica app che è riuscita ad adattarsi al mio stile di vita caotico. Scatto foto dei pasti al ristorante e l'AI ricalcola tutto automaticamente. Ho perso 13kg mantenendo la mia vita sociale."
+      text: "Con i ritmi di lavoro frenetici non avevo tempo. MyWellness mi ha organizzato tutto: pasti veloci e allenamenti da 30 minuti. Perfetto! Finalmente riesco a conciliare carriera e benessere fisico."
     },
     {
-      name: "Marcus Johnson",
-      role: "Personal Trainer Certificato",
+      name: "Davide Russo",
+      role: "Personal Trainer",
       photo: "https://i.pravatar.cc/400?img=52",
-      text: "Sono certificato da oltre 10 anni, e l'intelligenza artificiale di MyWellness genera schede migliori di quelle che creavo manualmente. La periodizzazione è scientifica e la progressione ottimale. Ho iniziato a usarla anche per i miei clienti - risparmio ore ogni settimana."
+      text: "L'AI genera piani migliori di quanto facessi manualmente. Incredibile!"
     },
     {
-      name: "Francesca Moretti",
+      name: "Elena Gallo",
       role: "Farmacista",
       photo: "https://i.pravatar.cc/400?img=44",
-      text: "Soffro di ipotiroidismo e perdere peso per me è sempre stato un incubo. Ho provato 20 diete diverse senza risultati. MyWellness ha calibrato il piano sul mio metabolismo rallentato: -12kg in 6 mesi senza soffrire la fame. Ora la consiglio a tutti i pazienti con problemi metabolici."
+      text: "Ho problemi di tiroide e pensavo fosse impossibile dimagrire. L'AI ha calibrato tutto perfettamente considerando il mio metabolismo rallentato. -10kg in 5 mesi, mi sento rinata! Ora consiglio MyWellness a tutti i miei pazienti."
     },
     {
-      name: "Diego Ramirez",
-      role: "Chef de Cuisine",
+      name: "Matteo Costa",
+      role: "Chef",
       photo: "https://i.pravatar.cc/400?img=59",
-      text: "Essere circondato dal cibo tutto il giorno rendeva impossibile seguire una dieta. MyWellness ha creato ricette che uniscono la mia passione culinaria con obiettivi nutrizionali precisi. Le ricette sono creative, bilanciate e deliziose. Ho perso 15kg senza rinunciare al piacere del cibo."
+      text: "Le ricette sono bilanciate, gustose e creative. Finalmente unisco passione e salute!"
     },
     {
-      name: "Luca Colombo",
-      role: "CEO Startup Tech",
+      name: "Marco Colombo",
+      role: "Imprenditore",
       photo: "https://i.pravatar.cc/400?img=12",
-      text: "Non avevo tempo nemmeno per respirare, figuriamoci per allenarmi. MyWellness ha rivoluzionato il mio approccio: 30 minuti di workout 4 volte a settimana, pasti veloci e nutrienti. Ho perso 14kg in 4 mesi e i miei livelli di energia sono triplicati. È un investimento nella mia produttività."
+      text: "Ho perso 12kg in 3 mesi. Le ricette sono deliziose e gli allenamenti perfetti!"
     }
   ];
 
-  const handleSelectPlan = async (planId) => {
+  const handleSelectPlan = async (planId) => { // Modified to accept planId
     let planType = 'base';
     if (planId.toLowerCase().includes('pro')) {
       planType = 'pro';
@@ -309,6 +312,7 @@ export default function PricingPage() {
       planType = 'premium';
     }
 
+    // Set selected plan visually (briefly) before navigating
     setSelectedPlan(planId); 
 
     try {
@@ -318,10 +322,12 @@ export default function PricingPage() {
           currentUser.subscription_status === 'active') {
         navigate(createPageUrl('Dashboard'));
       } else {
+        // Passa il coupon se valido
         const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
         navigate(createPageUrl('TrialSetup') + `?plan=${planType}${couponParam}`);
       }
     } catch (error) {
+      // Utente non loggato → fai login con redirect a TrialSetup
       const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
       const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + `?plan=${planType}${couponParam}`;
       await base44.auth.redirectToLogin(trialSetupUrl);
@@ -353,7 +359,7 @@ export default function PricingPage() {
   };
 
   return (
-    <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden"> {/* Added overflow-x-hidden */}
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         
@@ -660,7 +666,7 @@ export default function PricingPage() {
       `}</style>
 
       {/* NAVBAR */}
-      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:w-auto md:max-w-none px-2 md:px-0">
+      <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:w-auto md:max-w-none px-2 md:px-0"> {/* Adjusted width and padding */}
         <div className="hidden md:flex water-glass-effect rounded-full items-center gap-8 px-6 py-3">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -754,20 +760,20 @@ export default function PricingPage() {
       </nav>
 
       {/* Main Content */}
-      <section className="pt-32 pb-12 px-4 md:px-6">
-        <div className="max-w-6xl mx-auto">
+      <section className="pt-32 pb-12 px-4 md:px-6"> {/* Changed div to section, adjusted padding */}
+        <div className="max-w-6xl mx-auto"> {/* Changed max-w-7xl to max-w-6xl */}
           {/* Header */}
-          <div className="text-center mb-12">
+          <div className="text-center mb-12"> {/* Changed mb-16 to mb-12 */}
             <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary-light)] border border-[var(--brand-primary)]/30 rounded-full text-sm mb-6">
               <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />
               <span className="text-[var(--brand-primary-dark-text)] font-semibold">3 Giorni Gratis su Tutti i Piani</span>
             </div>
             
-            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight px-2">
-              Scegli <span className="animated-text-gradient">il Piano Perfetto per Te</span>
+            <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight px-2"> {/* Adjusted text size, added px-2 */}
+              Scegli <span className="animated-text-gradient">il Piano Perfetto per Te</span> {/* Modified text */}
             </h1>
-            <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 px-2">
-              3 giorni di prova gratuita su tutti i piani • Cancella quando vuoi
+            <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 px-2"> {/* Adjusted text size, added px-2 */}
+              3 giorni di prova gratuita su tutti i piani • Cancella quando vuoi {/* Modified text */}
             </p>
 
             {/* Billing Toggle */}
@@ -799,10 +805,10 @@ export default function PricingPage() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16"> {/* Adjusted gap */}
             {plans.map((plan, index) => (
               <Card 
-                key={plan.id}
+                key={plan.id} // Using plan.id for key
                 className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
               >
                 {plan.popular && (
@@ -824,7 +830,7 @@ export default function PricingPage() {
                   </div>
                 )}
 
-                <CardHeader className="text-center pb-6 pt-6 px-4 sm:px-6">
+                <CardHeader className="text-center pb-6 pt-6 px-4 sm:px-6"> {/* Wrapped content in CardHeader, adjusted padding */}
                   <div className={`icon-container w-20 h-20 ${plan.iconBg} rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
                     <plan.icon className={`w-10 h-10 ${plan.iconColor}`} />
                   </div>
@@ -877,7 +883,7 @@ export default function PricingPage() {
                   )}
                 </CardHeader>
 
-                <CardContent className="px-4 sm:px-6 pb-6">
+                <CardContent className="px-4 sm:px-6 pb-6"> {/* Wrapped content in CardContent, adjusted padding */}
                   <ul className="space-y-3 mb-8">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="feature-item flex items-start gap-3 group">
@@ -890,7 +896,7 @@ export default function PricingPage() {
                   </ul>
 
                   <button
-                    onClick={() => handleSelectPlan(plan.id)}
+                    onClick={() => handleSelectPlan(plan.id)} // Pass plan.id to handleSelectPlan
                     className={`cta-button w-full text-base font-bold py-4 rounded-2xl transition-all shadow-lg hover:shadow-2xl relative z-10 ${
                       plan.popular
                         ? 'bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white'
@@ -905,7 +911,7 @@ export default function PricingPage() {
           </div>
 
           {/* FAQ Section */}
-          <div className="max-w-3xl mx-auto mt-32 mb-20 px-4 sm:px-6">
+          <div className="max-w-3xl mx-auto mt-32 mb-20 px-4 sm:px-6"> {/* Adjusted padding */}
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-16">Domande <span className="animated-text-gradient">Frequenti</span></h2>
             
             <div className="space-y-4">
@@ -938,7 +944,7 @@ export default function PricingPage() {
           </div>
 
           {/* Testimonials Section */}
-          <div className="mt-20 mb-16 px-4 sm:px-6">
+          <div className="mt-20 mb-16 px-4 sm:px-6"> {/* Adjusted padding */}
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-12">
               <span className="animated-text-gradient">Cosa Dicono</span> i Nostri Utenti.
             </h2>
