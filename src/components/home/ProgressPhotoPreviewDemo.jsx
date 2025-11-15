@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
-import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Dumbbell, Save } from 'lucide-react';
+import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Dumbbell, Save, TrendingDown } from 'lucide-react';
 
 export default function ProgressPhotoPreviewDemo() {
   const analysisData = {
@@ -11,21 +10,24 @@ export default function ProgressPhotoPreviewDemo() {
     detailedAnalysis: {
       muscleDefinition: {
         score: 6.8,
-        previous: 4.5
+        previous: 4.5,
+        change: '+51%'
       },
-      fatLayer: {
-        thickness: 'Medio-ridotto',
-        previous: 'Medio-alto',
-        percentage: '-22%',
-        description: 'Circonferenza vita ridotta di 6-7cm. Plicometria: 16mm (era 21mm).'
+      fatReduction: {
+        score: 7.2,
+        previous: 4.8,
+        change: '-22%',
+        waistReduction: '6cm'
       },
-      skinQuality: {
-        elasticity: 'Buona',
-        tone: 'Migliorato +20%'
+      skinTone: {
+        score: 7.5,
+        previous: 6.2,
+        change: '+21%'
       },
-      posturalAlignment: {
-        status: 'Notevolmente migliorato',
-        description: 'Riduzione lordosi lombare. Core più stabile e attivo.'
+      posture: {
+        score: 8.1,
+        previous: 6.5,
+        change: '+25%'
       }
     },
     recommendations: {
@@ -102,58 +104,116 @@ export default function ProgressPhotoPreviewDemo() {
 
           {/* Two Column Layout */}
           <div className="grid md:grid-cols-2 gap-6 p-6">
-            {/* LEFT COLUMN - Scientific Analysis */}
+            {/* LEFT COLUMN - Visual Scores */}
             <div className="space-y-4">
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
-                <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
+                <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
                   <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                     <Sparkles className="w-4 h-4 text-white" />
                   </div>
-                  Analisi Scientifica Dettagliata
+                  Analisi Scientifica
                 </h3>
                 
-                <div className="space-y-2.5">
-                  {/* Muscle Definition */}
-                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-gray-900">Definizione Muscolare</h4>
-                      <div className="flex items-center gap-1">
-                        <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.muscleDefinition.previous} →</span>
-                        <span className="text-base font-black text-blue-600">{analysisData.detailedAnalysis.muscleDefinition.score}/10</span>
+                <div className="grid grid-cols-2 gap-3">
+                  {/* Muscle Definition Score */}
+                  <div className="bg-white/90 rounded-xl p-4 border border-blue-100 text-center">
+                    <p className="text-xs text-gray-600 mb-2">Definizione Muscolare</p>
+                    <div className="relative inline-flex items-center justify-center mb-2">
+                      <svg className="w-20 h-20 transform -rotate-90">
+                        <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
+                        <circle 
+                          cx="40" cy="40" r="32" fill="none" 
+                          stroke="#3b82f6" strokeWidth="6"
+                          strokeDasharray={`${(analysisData.detailedAnalysis.muscleDefinition.score / 10) * 201} ${201 - (analysisData.detailedAnalysis.muscleDefinition.score / 10) * 201}`}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-black text-blue-600">{analysisData.detailedAnalysis.muscleDefinition.score}</span>
+                        <span className="text-xs text-gray-500">/10</span>
                       </div>
                     </div>
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.muscleDefinition.previous}</span>
+                      <TrendingUp className="w-3 h-3 text-green-600" />
+                      <span className="text-xs font-bold text-green-600">{analysisData.detailedAnalysis.muscleDefinition.change}</span>
+                    </div>
                   </div>
 
-                  {/* Fat Layer */}
-                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="text-xs font-bold text-gray-900">Strato Adiposo</h4>
-                      <span className="px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-xs font-bold">
-                        {analysisData.detailedAnalysis.fatLayer.percentage}
-                      </span>
+                  {/* Fat Reduction Score */}
+                  <div className="bg-white/90 rounded-xl p-4 border border-green-100 text-center">
+                    <p className="text-xs text-gray-600 mb-2">Riduzione Grasso</p>
+                    <div className="relative inline-flex items-center justify-center mb-2">
+                      <svg className="w-20 h-20 transform -rotate-90">
+                        <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
+                        <circle 
+                          cx="40" cy="40" r="32" fill="none" 
+                          stroke="#10b981" strokeWidth="6"
+                          strokeDasharray={`${(analysisData.detailedAnalysis.fatReduction.score / 10) * 201} ${201 - (analysisData.detailedAnalysis.fatReduction.score / 10) * 201}`}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-black text-green-600">{analysisData.detailedAnalysis.fatReduction.score}</span>
+                        <span className="text-xs text-gray-500">/10</span>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-600">{analysisData.detailedAnalysis.fatLayer.previous} → {analysisData.detailedAnalysis.fatLayer.thickness}</p>
-                    <p className="text-xs text-gray-700 mt-1">{analysisData.detailedAnalysis.fatLayer.description}</p>
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.fatReduction.previous}</span>
+                      <TrendingDown className="w-3 h-3 text-green-600" />
+                      <span className="text-xs font-bold text-green-600">{analysisData.detailedAnalysis.fatReduction.change}</span>
+                    </div>
+                    <p className="text-xs text-green-700 font-semibold mt-1">-{analysisData.detailedAnalysis.fatReduction.waistReduction} vita</p>
                   </div>
 
-                  {/* Skin Quality */}
-                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <div className="flex items-center justify-between">
-                      <h4 className="text-xs font-bold text-gray-900">Qualità Pelle</h4>
-                      <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-bold">
-                        {analysisData.detailedAnalysis.skinQuality.tone}
-                      </span>
+                  {/* Skin Tone Score */}
+                  <div className="bg-white/90 rounded-xl p-4 border border-purple-100 text-center">
+                    <p className="text-xs text-gray-600 mb-2">Tono Cutaneo</p>
+                    <div className="relative inline-flex items-center justify-center mb-2">
+                      <svg className="w-20 h-20 transform -rotate-90">
+                        <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
+                        <circle 
+                          cx="40" cy="40" r="32" fill="none" 
+                          stroke="#a855f7" strokeWidth="6"
+                          strokeDasharray={`${(analysisData.detailedAnalysis.skinTone.score / 10) * 201} ${201 - (analysisData.detailedAnalysis.skinTone.score / 10) * 201}`}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-black text-purple-600">{analysisData.detailedAnalysis.skinTone.score}</span>
+                        <span className="text-xs text-gray-500">/10</span>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-600 mt-1">Elasticità: {analysisData.detailedAnalysis.skinQuality.elasticity}</p>
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.skinTone.previous}</span>
+                      <TrendingUp className="w-3 h-3 text-green-600" />
+                      <span className="text-xs font-bold text-green-600">{analysisData.detailedAnalysis.skinTone.change}</span>
+                    </div>
                   </div>
 
-                  {/* Postural Alignment */}
-                  <div className="bg-white/90 rounded-lg p-3 border border-blue-100">
-                    <div className="flex items-center justify-between mb-1">
-                      <h4 className="text-xs font-bold text-gray-900">Postura</h4>
-                      <span className="text-xs text-green-600 font-semibold">{analysisData.detailedAnalysis.posturalAlignment.status}</span>
+                  {/* Posture Score */}
+                  <div className="bg-white/90 rounded-xl p-4 border border-teal-100 text-center">
+                    <p className="text-xs text-gray-600 mb-2">Postura</p>
+                    <div className="relative inline-flex items-center justify-center mb-2">
+                      <svg className="w-20 h-20 transform -rotate-90">
+                        <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
+                        <circle 
+                          cx="40" cy="40" r="32" fill="none" 
+                          stroke="#14b8a6" strokeWidth="6"
+                          strokeDasharray={`${(analysisData.detailedAnalysis.posture.score / 10) * 201} ${201 - (analysisData.detailedAnalysis.posture.score / 10) * 201}`}
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex flex-col items-center justify-center">
+                        <span className="text-2xl font-black text-teal-600">{analysisData.detailedAnalysis.posture.score}</span>
+                        <span className="text-xs text-gray-500">/10</span>
+                      </div>
                     </div>
-                    <p className="text-xs text-gray-700">{analysisData.detailedAnalysis.posturalAlignment.description}</p>
+                    <div className="flex items-center justify-center gap-1">
+                      <span className="text-xs text-gray-500">{analysisData.detailedAnalysis.posture.previous}</span>
+                      <TrendingUp className="w-3 h-3 text-green-600" />
+                      <span className="text-xs font-bold text-green-600">{analysisData.detailedAnalysis.posture.change}</span>
+                    </div>
                   </div>
                 </div>
               </div>
