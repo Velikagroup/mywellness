@@ -129,26 +129,6 @@ export default function MealPlanPreviewDemo() {
       total_fat: 21,
       prep_time: 25,
       difficulty: 'media'
-    },
-    {
-      name: 'Spuntino Serale',
-      title: 'Uova Rosolante di Burro con Fagiolini di Manzo',
-      calories: 158,
-      image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&h=400&fit=crop',
-      ingredients: [
-        { name: 'Uova', quantity: 2, unit: 'unità', calories: 140, protein: 12, carbs: 1, fat: 10 },
-        { name: 'Fagiolini', quantity: 80, unit: 'g', calories: 18, protein: 1, carbs: 3, fat: 0.1 }
-      ],
-      instructions: [
-        'Cuoci i fagiolini al vapore',
-        'Prepara uova strapazzate',
-        'Mescola insieme'
-      ],
-      total_protein: 13,
-      total_carbs: 4,
-      total_fat: 10,
-      prep_time: 12,
-      difficulty: 'facile'
     }
   ];
 
@@ -222,26 +202,26 @@ export default function MealPlanPreviewDemo() {
           <div className="grid grid-cols-4 gap-1 sm:gap-2 mb-3">
             <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Kcal</div>
-              <div className="text-sm sm:text-lg font-black text-gray-900">1611</div>
+              <div className="text-sm sm:text-lg font-black text-gray-900">1453</div>
             </div>
             <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Prot.</div>
-              <div className="text-sm sm:text-lg font-black text-red-600">147</div>
+              <div className="text-sm sm:text-lg font-black text-red-600">134</div>
             </div>
             <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Carb.</div>
-              <div className="text-sm sm:text-lg font-black text-blue-600">53</div>
+              <div className="text-sm sm:text-lg font-black text-blue-600">49</div>
             </div>
             <div className="bg-white rounded-lg sm:rounded-xl px-1.5 sm:px-3 py-2 text-center border border-gray-100 shadow-sm">
               <div className="text-[10px] sm:text-xs text-gray-500 mb-0.5 truncate">Gras.</div>
-              <div className="text-sm sm:text-lg font-black text-amber-600">91</div>
+              <div className="text-sm sm:text-lg font-black text-amber-600">81</div>
             </div>
           </div>
 
           {/* Target giornaliero */}
           <div className="text-[10px] sm:text-xs text-gray-600 text-center">
             <span className="font-medium">Target: 1696 kcal</span>
-            <span className="ml-1 sm:ml-2 text-gray-400">(-85)</span>
+            <span className="ml-1 sm:ml-2 text-gray-400">(-243)</span>
           </div>
         </div>
 
