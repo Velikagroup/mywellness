@@ -129,19 +129,19 @@ export default function Home() {
       name: "Luca Moretti",
       role: "Personal Trainer",
       photo: "https://i.pravatar.cc/400?img=60",
-      text: "Lavoro come PT da 6 anni e consiglio MyWellness ai miei clienti che vogliono un supporto quotidiano tra le nostre sessioni. L'analisi fotografica AI è impressionante - rileva progressi che io stesso fatico a notare. Il sistema di ribilanciamento automatico dei pasti è geniale."
+      text: "Da 6 anni alleno clienti e consiglio MyWellness a chi vuole supporto quotidiano tra le sessioni. L'analisi fotografica AI è impressionante - rileva progressi che io stesso fatico a notare. Il sistema di ribilanciamento automatico dei pasti è geniale per chi sgarra durante la settimana."
     },
     {
       name: "Gabriela Rodriguez",
       role: "Content Creator Fitness",
       photo: "https://i.pravatar.cc/400?img=49",
-      text: "Lavoro nel fitness da 8 anni e ho provato ogni tipo di app e dieta. MyWellness è diversa: l'analisi fotografica con AI è incredibilmente precisa. Mi mostra progressi che nemmeno io notavo. Il piano nutrizionale si adatta automaticamente in base alle foto che carico. È come avere un personal trainer che ti segue 24/7."
+      text: "Ho provato ogni tipo di app e dieta in 8 anni di fitness. MyWellness è diversa: l'analisi fotografica con AI è incredibilmente precisa. Mi mostra progressi che nemmeno io notavo. Il piano nutrizionale si adatta automaticamente in base alle foto che carico. È come avere un personal trainer che ti segue 24/7."
     },
     {
       name: "Yuki Tanaka",
       role: "Marketing Manager",
       photo: "https://i.pravatar.cc/400?img=47",
-      text: "Lavoro 12 ore al giorno e non avevo mai tempo per allenarmi o cucinare sano. L'AI di MyWellness ha capito subito le mie esigenze: pasti pronti in 15 minuti e workout da 30 minuti. Ho perso 11kg in 5 mesi senza stress. La funzione che fotografa il piatto e calcola le calorie è geniale quando mangio fuori."
+      text: "12 ore al giorno in ufficio, non avevo mai tempo per allenarmi o cucinare sano. L'AI di MyWellness ha capito subito le mie esigenze: pasti pronti in 15 minuti e workout da 30 minuti. Ho perso 11kg in 5 mesi senza stress. La funzione che fotografa il piatto e calcola le calorie è geniale quando mangio fuori."
     },
     {
       name: "Thomas Weber",
@@ -171,7 +171,7 @@ export default function Home() {
       name: "Marcus Johnson",
       role: "Personal Trainer Certificato",
       photo: "https://i.pravatar.cc/400?img=52",
-      text: "Lavoro come PT da 12 anni. L'intelligenza artificiale di MyWellness genera schede di allenamento migliori di quelle che creavo manualmente. La periodizzazione è scientifica e la progressione ottimale. Ho iniziato a usarla anche per i miei clienti."
+      text: "12 anni di esperienza nel fitness, e l'intelligenza artificiale di MyWellness genera schede migliori di quelle che creavo manualmente. La periodizzazione è scientifica e la progressione ottimale. Ho iniziato a usarla anche per i miei clienti - risparmio ore ogni settimana."
     },
     {
       name: "Francesca Moretti",
@@ -183,7 +183,7 @@ export default function Home() {
       name: "Diego Ramirez",
       role: "Chef de Cuisine",
       photo: "https://i.pravatar.cc/400?img=59",
-      text: "Lavoro con il cibo tutto il giorno e questo rendeva impossibile seguire una dieta. MyWellness ha creato ricette che uniscono la mia passione culinaria con obiettivi nutrizionali precisi. Le ricette sono creative, bilanciate e deliziose. Ho perso 15kg senza rinunciare al piacere del cibo."
+      text: "Essere circondato dal cibo tutto il giorno rendeva impossibile seguire una dieta. MyWellness ha creato ricette che uniscono la mia passione culinaria con obiettivi nutrizionali precisi. Le ricette sono creative, bilanciate e deliziose. Ho perso 15kg senza rinunciare al piacere del cibo."
     },
     {
       name: "Luca Colombo",
