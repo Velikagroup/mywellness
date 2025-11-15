@@ -200,11 +200,8 @@ export default function MealPlanPreviewDemo() {
 
         {/* Protocol Card */}
         <div className="px-3 sm:px-6 py-4 bg-gradient-to-br from-teal-50/50 to-blue-50/30 overflow-hidden">
-          <div className="flex flex-col gap-2 mb-3">
+          <div className="mb-3">
             <h3 className="text-sm sm:text-base font-bold text-gray-900">Protocollo di Lunedì</h3>
-            <button className="px-2 sm:px-3 py-1.5 text-[10px] sm:text-xs font-semibold text-teal-700 bg-white rounded-full border border-teal-200 hover:bg-teal-50 transition-colors w-full sm:w-auto">
-              + Aggiungi forma
-            </button>
           </div>
 
           {/* Macros Grid */}

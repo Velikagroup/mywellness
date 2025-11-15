@@ -188,11 +188,6 @@ export default function IngredientScannerPreviewDemo() {
             <span className="text-gray-500">Non supposizioni generiche</span>
           </div>
         </div>
-
-        {/* DEMO Badge */}
-        <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg z-20">
-          DEMO
-        </div>
       </Card>
     </>
   );
