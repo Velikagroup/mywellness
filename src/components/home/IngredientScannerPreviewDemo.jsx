@@ -56,7 +56,6 @@ export default function IngredientScannerPreviewDemo() {
       `}</style>
 
       <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
-        {/* Header */}
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-3">
@@ -77,18 +76,14 @@ export default function IngredientScannerPreviewDemo() {
           </div>
         </div>
 
-        {/* Scanner Content - Fixed Height */}
         <div className="scanner-content-wrapper">
-          {/* Scanner Area */}
           {scanStep === 0 && (
             <div className="px-6 py-8 flex-1 flex items-center justify-center">
               <div className="relative w-full aspect-square bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl border-2 border-dashed border-gray-300 flex items-center justify-center overflow-hidden">
-                {/* Scan Line Effect */}
                 <div className="absolute inset-0">
                   <div className="absolute left-0 right-0 h-1 bg-gradient-to-r from-transparent via-indigo-500 to-transparent scan-line opacity-50"></div>
                 </div>
                 
-                {/* Scanner Corners */}
                 <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-indigo-500"></div>
                 <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-indigo-500"></div>
                 <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-indigo-500"></div>
@@ -103,7 +98,6 @@ export default function IngredientScannerPreviewDemo() {
             </div>
           )}
 
-          {/* Scanning State */}
           {scanStep === 1 && (
             <div className="px-6 py-8 flex-1 flex items-center justify-center">
               <div className="relative w-full aspect-square bg-gray-900 rounded-2xl overflow-hidden">
@@ -127,7 +121,6 @@ export default function IngredientScannerPreviewDemo() {
             </div>
           )}
 
-          {/* Result State */}
           {scanStep >= 2 && (
             <div className="px-6 py-6 flex-1 overflow-y-auto">
               <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-2xl p-4 border border-green-200 mb-4">
@@ -188,7 +181,6 @@ export default function IngredientScannerPreviewDemo() {
           )}
         </div>
 
-        {/* Info Footer */}
         <div className="px-6 py-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
             Anteprima interfaccia • Funzionalità disponibili dopo il signup
