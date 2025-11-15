@@ -887,7 +887,7 @@ export default function Home() {
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }>
+            transition={{ duration: 0.7, delay: 0.2 }}>
             <div className="flex items-center gap-4 mb-6">
               <div className="step-badge px-4 py-2 rounded-full">
                 <span className="text-sm font-semibold text-[var(--brand-primary)]">📷 Computer Vision</span>
