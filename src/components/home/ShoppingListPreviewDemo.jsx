@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ShoppingCart, Check } from 'lucide-react';
@@ -156,10 +157,9 @@ export default function ShoppingListPreviewDemo() {
 
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
-          <div className="flex items-center justify-between text-xs text-gray-600">
-            <span>💡 Aggiornata automaticamente ogni settimana</span>
-            <span className="font-semibold text-teal-600">MyWellness AI</span>
-          </div>
+          <p className="text-xs text-gray-400 italic text-center">
+            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+          </p>
         </div>
       </Card>
     </>

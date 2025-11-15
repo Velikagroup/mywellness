@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -275,20 +276,9 @@ export default function MealPlanPreviewDemo() {
 
         {/* Bottom Navigation (Demo) */}
         <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50/50 border-t border-gray-100">
-          <div className="flex items-center justify-around">
-            <button className="flex flex-col items-center gap-1 text-gray-400">
-              <div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-200 rounded"></div>
-              <span className="text-[10px] sm:text-xs">Dashboard</span>
-            </button>
-            <button className="flex flex-col items-center gap-1 text-teal-600">
-              <div className="w-4 sm:w-5 h-4 sm:h-5 bg-teal-500 rounded"></div>
-              <span className="text-[10px] sm:text-xs font-semibold">Nutrizione</span>
-            </button>
-            <button className="flex flex-col items-center gap-1 text-gray-400">
-              <div className="w-4 sm:w-5 h-4 sm:h-5 bg-gray-200 rounded"></div>
-              <span className="text-[10px] sm:text-xs">Impostazioni</span>
-            </button>
-          </div>
+          <p className="text-xs text-gray-400 italic text-center">
+            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+          </p>
         </div>
       </Card>
 

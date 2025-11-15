@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ChevronDown, Dumbbell, Clock, RotateCcw } from 'lucide-react';
@@ -186,8 +187,8 @@ export default function WorkoutPreviewDemo() {
 
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
-          <p className="text-xs text-gray-600 text-center">
-            💡 Clicca su un esercizio per vedere dettagli e consigli
+          <p className="text-xs text-gray-400 italic text-center">
+            Anteprima interfaccia • Funzionalità disponibili dopo il signup
           </p>
         </div>
       </Card>

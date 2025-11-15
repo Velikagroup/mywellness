@@ -1,3 +1,4 @@
+
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Dumbbell, Save } from 'lucide-react';
@@ -247,6 +248,13 @@ export default function ProgressPhotoPreviewDemo() {
                 </div>
               </div>
             </div>
+          </div>
+
+          {/* Footer */}
+          <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
+            <p className="text-xs text-gray-400 italic text-center">
+              Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            </p>
           </div>
         </div>
       </Card>
