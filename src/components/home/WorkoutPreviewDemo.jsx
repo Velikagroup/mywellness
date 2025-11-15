@@ -187,7 +187,7 @@ export default function WorkoutPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-600 text-center">
-            💡 Clicca su un esercizio per vedere dettagli e consigli
+            Anteprima interfaccia • Funzionalità disponibili dopo il signup
           </p>
         </div>
       </Card>

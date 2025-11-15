@@ -248,6 +248,13 @@ export default function ProgressPhotoPreviewDemo() {
               </div>
             </div>
           </div>
+
+          {/* Footer */}
+          <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
+            <p className="text-xs text-gray-600 text-center">
+              Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            </p>
+          </div>
         </div>
       </Card>
     </>
