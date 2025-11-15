@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Check, Camera, CheckCircle2 } from 'lucide-react';
 
 export default function MealTrackingPreviewDemo() {
-  const [meals, setMeals] = useState([
+  const [meals] = useState([
     { id: 1, name: 'Colazione', time: '08:00', checked: true, hasPhoto: true },
     { id: 2, name: 'Spuntino Mattina', time: '11:00', checked: true, hasPhoto: false },
     { id: 3, name: 'Pranzo', time: '13:30', checked: false, hasPhoto: false },
