@@ -141,7 +141,7 @@ export default function Home() {
       name: "Yuki Tanaka",
       role: "Marketing Manager",
       photo: "https://i.pravatar.cc/400?img=47",
-      text: "12 ore al giorno in ufficio, non avevo mai tempo per allenarmi o cucinare sano. L'AI di MyWellness ha capito subito le mie esigenze: pasti pronti in 15 minuti e workout da 30 minuti. Ho perso 11kg in 5 mesi senza stress. La funzione che fotografa il piatto e calcola le calorie è geniale quando mangio fuori."
+      text: "Tra riunioni e scadenze non avevo mai tempo per allenarmi o cucinare sano. L'AI di MyWellness ha capito subito le mie esigenze: pasti pronti in 15 minuti e workout da 30 minuti. Ho perso 11kg in 5 mesi senza stress. La funzione che fotografa il piatto e calcola le calorie è geniale quando mangio fuori."
     },
     {
       name: "Thomas Weber",
@@ -171,7 +171,7 @@ export default function Home() {
       name: "Marcus Johnson",
       role: "Personal Trainer Certificato",
       photo: "https://i.pravatar.cc/400?img=52",
-      text: "12 anni di esperienza nel fitness, e l'intelligenza artificiale di MyWellness genera schede migliori di quelle che creavo manualmente. La periodizzazione è scientifica e la progressione ottimale. Ho iniziato a usarla anche per i miei clienti - risparmio ore ogni settimana."
+      text: "Sono certificato da oltre 10 anni, e l'intelligenza artificiale di MyWellness genera schede migliori di quelle che creavo manualmente. La periodizzazione è scientifica e la progressione ottimale. Ho iniziato a usarla anche per i miei clienti - risparmio ore ogni settimana."
     },
     {
       name: "Francesca Moretti",
@@ -887,7 +887,7 @@ export default function Home() {
             initial={{ opacity: 0, x: 40 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}>
+            transition={{ duration: 0.7, delay: 0.2 }>
             <div className="flex items-center gap-4 mb-6">
               <div className="step-badge px-4 py-2 rounded-full">
                 <span className="text-sm font-semibold text-[var(--brand-primary)]">📷 Computer Vision</span>
