@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { Check, Camera, CheckCircle2 } from 'lucide-react';
 
 export default function MealTrackingPreviewDemo() {
-  const [meals] = useState([
+  const [meals, setMeals] = useState([
     { id: 1, name: 'Colazione', time: '08:00', checked: true, hasPhoto: true },
     { id: 2, name: 'Spuntino Mattina', time: '11:00', checked: true, hasPhoto: false },
     { id: 3, name: 'Pranzo', time: '13:30', checked: false, hasPhoto: false },
@@ -24,7 +24,7 @@ export default function MealTrackingPreviewDemo() {
         }
       `}</style>
 
-      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
+      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
         {/* Header */}
         <div className="bg-gradient-to-br from-teal-50 to-green-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
@@ -123,9 +123,16 @@ export default function MealTrackingPreviewDemo() {
 
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
-          <p className="text-xs text-gray-600 text-center">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
-          </p>
+          <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
+            <span>✓ Spunta base</span>
+            <span className="text-gray-400">•</span>
+            <span>📸 Foto opzionale per precisione</span>
+          </div>
+        </div>
+
+        {/* DEMO Badge */}
+        <div className="absolute top-4 right-4 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-xs font-bold rounded-full shadow-lg z-20">
+          DEMO
         </div>
       </Card>
     </>

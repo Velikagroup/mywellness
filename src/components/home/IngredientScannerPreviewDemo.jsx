@@ -178,11 +178,15 @@ export default function IngredientScannerPreviewDemo() {
           </div>
         )}
 
-        {/* Footer */}
-        <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
-          <p className="text-xs text-gray-600 text-center">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
-          </p>
+        {/* Info Footer */}
+        <div className="px-6 py-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-gray-100">
+          <div className="flex items-center justify-between text-xs">
+            <div className="flex items-center gap-2">
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+              <span className="font-semibold text-gray-700">Valori dal tuo frigorifero</span>
+            </div>
+            <span className="text-gray-500">Non supposizioni generiche</span>
+          </div>
         </div>
       </Card>
     </>
