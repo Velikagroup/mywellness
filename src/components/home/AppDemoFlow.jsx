@@ -69,7 +69,7 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[600px]' : 'max-w-[280px]'}`}>
+    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[580px]' : 'max-w-[280px]'}`}>
       <style>{`
         @keyframes pulse-glow {
           0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
@@ -87,29 +87,16 @@ export default function AppDemoFlow() {
       </div>
 
       {/* Main demo container with device frame */}
-      <div className="relative">
-        {/* Device frame overlay */}
-        <img 
-          src={isDesktop 
-            ? "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/663f4143c_Ipadtrasparent.png"
-            : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/deeb4c0ac_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
-          }
-          alt="Device Frame"
-          className="absolute inset-0 w-full h-full z-10 pointer-events-none"
-          style={{ 
-            aspectRatio: isDesktop ? '4/3' : '9/16',
-            maxHeight: isDesktop ? '500px' : '420px'
-          }}
-        />
-
-        {/* Content container */}
+      <div className="relative" style={{ aspectRatio: isDesktop ? '4/3' : '9/16', maxHeight: isDesktop ? '435px' : '420px' }}>
+        {/* Content container - posizionato DENTRO la cornice */}
         <div 
-          className="relative bg-white overflow-hidden shadow-xl"
+          className="absolute bg-white overflow-hidden shadow-xl"
           style={{ 
-            aspectRatio: isDesktop ? '4/3' : '9/16',
-            maxHeight: isDesktop ? '500px' : '420px',
-            borderRadius: isDesktop ? '40px' : '45px',
-            margin: isDesktop ? '32px' : '12px'
+            top: isDesktop ? '4.5%' : '3%',
+            left: isDesktop ? '6.5%' : '4.5%',
+            right: isDesktop ? '6.5%' : '4.5%',
+            bottom: isDesktop ? '5%' : '3%',
+            borderRadius: isDesktop ? '18px' : '36px'
           }}
         >
           <AnimatePresence mode="wait">
@@ -945,6 +932,16 @@ export default function AppDemoFlow() {
             )}
           </AnimatePresence>
         </div>
+
+        {/* Device frame overlay - SOPRA il contenuto */}
+        <img 
+          src={isDesktop 
+            ? "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/663f4143c_Ipadtrasparent.png"
+            : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/deeb4c0ac_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
+          }
+          alt="Device Frame"
+          className="absolute inset-0 w-full h-full pointer-events-none"
+        />
       </div>
     </div>
   );
