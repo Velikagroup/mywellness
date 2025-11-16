@@ -605,16 +605,16 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">📋 Assessment Iniziale</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Quiz Personalizzato</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Quiz Personalizzato</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
                 Rispondi a domande mirate su peso, altezza, obiettivi e preferenze. L'AI crea il tuo profilo metabolico completo.
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">⚡ 3 minuti</span>
                 <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🎯 100% Personalizzato</span>
               </div>
@@ -684,16 +684,16 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">🍽️ Nutrizione AI</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Pasti Personalizzati</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Pasti Personalizzati</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
                 Piano settimanale completo: ricette con foto AI, ingredienti esatti, macro nutrizionali e lista della spesa automatica.
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">🤖 Ricette AI</span>
                 <span className="px-4 py-2 bg-pink-50 text-pink-700 rounded-full text-sm font-medium">🛒 Lista Spesa</span>
                 <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">📸 Foto Realistiche</span>
@@ -720,33 +720,33 @@ export default function Home() {
             transition={{ duration: 0.7, ease: "easeOut" }}>
             <motion.div
               className="order-1 md:order-2"
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🛒 Spesa Smart</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Lista della Spesa AI</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
+                L'AI genera automaticamente la lista della spesa settimanale, organizzata per categorie di acquisto e ottimizzata per i tuoi pasti.
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">📊 Auto-generata</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🗂️ Categorie Smart</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">✅ Tracking Acquisti</span>
+              </div>
+            </motion.div>
+            <motion.div
+              className="order-2 md:order-1"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="max-w-md mx-auto">
                 <ShoppingListPreviewDemo />
-              </div>
-            </motion.div>
-            <motion.div
-              className="order-2 md:order-2"
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🛒 Spesa Smart</span>
-                </div>
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Lista della Spesa AI</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                L'AI genera automaticamente la lista della spesa settimanale, organizzata per categorie di acquisto e ottimizzata per i tuoi pasti.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">📊 Auto-generata</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🗂️ Categorie Smart</span>
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">✅ Tracking Acquisti</span>
               </div>
             </motion.div>
           </motion.div>
@@ -764,16 +764,16 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">📱 Scansione Smart</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Scanner Ingredienti</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Scanner Ingredienti</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
                 Scansiona barcode o etichette nutrizionali degli alimenti che hai in frigorifero. L'AI inserisce automaticamente i valori REALI nel tuo piano, non supposizioni generiche.
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">📊 Database 500k+ alimenti</span>
                 <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🎯 Valori Precisi</span>
                 <span className="px-4 py-2 bg-pink-50 text-pink-700 rounded-full text-sm font-medium">⚡ Inserimento Automatico</span>
@@ -800,33 +800,33 @@ export default function Home() {
             transition={{ duration: 0.7, ease: "easeOut" }}>
             <motion.div
               className="order-1 md:order-2"
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🏷️ Scansione Etichette</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Health Score AI</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
+                Scansiona etichette nutrizionali: l'AI assegna uno score 0-10 e ti dice se quel prodotto è sano per i tuoi obiettivi.
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🔬 Analisi Scientifica</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📊 Score 0-10</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Raccomandazioni AI</span>
+              </div>
+            </motion.div>
+            <motion.div
+              className="order-2 md:order-1"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="max-w-md mx-auto">
                 <HealthScorePreviewDemo />
-              </div>
-            </motion.div>
-            <motion.div
-              className="order-2 md:order-2"
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🏷️ Scansione Etichette</span>
-                </div>
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Health Score AI</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                Scansiona etichette nutrizionali: l'AI assegna uno score 0-10 e ti dice se quel prodotto è sano per i tuoi obiettivi.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🔬 Analisi Scientifica</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📊 Score 0-10</span>
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Raccomandazioni AI</span>
               </div>
             </motion.div>
           </motion.div>
@@ -844,16 +844,16 @@ export default function Home() {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.2 }}>
-            <div className="flex items-center gap-4 mb-6">
+            <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
               <div className="step-badge px-4 py-2 rounded-full">
                 <span className="text-sm font-semibold text-[var(--brand-primary)]">✓ Tracking Smart</span>
               </div>
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Segna i Pasti</h3>
-            <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Segna i Pasti</h3>
+            <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
               Spunta semplicemente i pasti che mangi per un tracking base. Vuoi essere più preciso? Scatta una foto per quantità esatte e macro perfettamente allineati.
             </p>
-            <div className="flex flex-wrap gap-3">
+            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
               <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">✓ Spunta Base</span>
               <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📸 Foto Opzionale</span>
               <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">🎯 Precisione Massima</span>
@@ -880,32 +880,32 @@ export default function Home() {
           transition={{ duration: 0.7, ease: "easeOut" }}>
           <motion.div
             className="order-1 md:order-2"
+            initial={{ opacity: 0, x: 40 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay: 0.2 }}>
+            <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+              <div className="step-badge px-4 py-2 rounded-full">
+                <span className="text-sm font-semibold text-[var(--brand-primary)]">📷 Computer Vision</span>
+              </div>
+            </div>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Conto Calorico AI</h3>
+            <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
+              Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.
+            </p>
+            <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+              <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">🔍 Riconoscimento Cibo</span>
+              <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">⚖️ Ribilanciamento Automatico</span>
+            </div>
+          </motion.div>
+          <motion.div
+            className="order-2 md:order-1"
             initial={{ opacity: 0, scale: 0.9 }}
             whileInView={{ opacity: 1, scale: 1 }}
             viewport={{ once: true }}
             transition={{ duration: 0.7, delay: 0.3 }}>
             <div className="max-w-md mx-auto">
               <PhotoAnalyzerPreviewDemo />
-            </div>
-          </motion.div>
-          <motion.div
-            className="order-2 md:order-2"
-            initial={{ opacity: 0, x: 40 }}
-            whileInView={{ opacity: 1, x: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.7, delay: 0.2 }}>
-            <div className="flex items-center gap-4 mb-6">
-              <div className="step-badge px-4 py-2 rounded-full">
-                <span className="text-sm font-semibold text-[var(--brand-primary)]">📷 Computer Vision</span>
-              </div>
-            </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Conto Calorico AI</h3>
-            <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-              Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.
-            </p>
-            <div className="flex flex-wrap gap-3">
-              <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">🔍 Riconoscimento Cibo</span>
-              <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">⚖️ Ribilanciamento Automatico</span>
             </div>
           </motion.div>
         </motion.div>
@@ -923,18 +923,18 @@ export default function Home() {
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
                   <span className="text-sm font-semibold text-[var(--brand-primary)]">💪 Fitness AI</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">
                 Workout su Misura
               </h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
                 Schede settimanali personalizzate con warm-up e cool-down, analisi AI dei progressi e modifiche immediate della scheda in caso di dolori o impedimenti.
               </p>
-              <div className="flex flex-wrap gap-3">
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-4 py-2 bg-violet-50 text-violet-700 rounded-full text-sm font-medium">🎯 Progressione Adattiva</span>
                 <span className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium">📸 Analisi Progressi AI</span>
               </div>
@@ -960,33 +960,33 @@ export default function Home() {
             transition={{ duration: 0.7, ease: "easeOut" }}>
             <motion.div
               className="order-1 md:order-2"
+              initial={{ opacity: 0, x: 40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🔬 Analisi Scientifica</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Personal Trainer AI</h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
+                Carica foto della zona target: l'AI analizza scientificamente i progressi confrontando pelle, grasso, definizione muscolare. Ti suggerisce modifiche nutrizionali e di allenamento che puoi applicare ai tuoi piani.
+              </p>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">📸 Confronto Prima/Dopo</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🔬 Analisi Dettagliata</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Suggerimenti Personalizzati</span>
+              </div>
+            </motion.div>
+            <motion.div
+              className="order-2 md:order-1"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
               <div className="max-w-4xl mx-auto">
                 <ProgressPhotoPreviewDemo />
-              </div>
-            </motion.div>
-            <motion.div
-              className="order-2 md:order-2"
-              initial={{ opacity: 0, x: 40 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.7, delay: 0.2 }}>
-              <div className="flex items-center gap-4 mb-6">
-                <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🔬 Analisi Scientifica</span>
-                </div>
-              </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Personal Trainer AI</h3>
-              <p className="text-gray-600 mb-6 text-lg leading-relaxed">
-                Carica foto della zona target: l'AI analizza scientificamente i progressi confrontando pelle, grasso, definizione muscolare. Ti suggerisce modifiche nutrizionali e di allenamento che puoi applicare ai tuoi piani.
-              </p>
-              <div className="flex flex-wrap gap-3">
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">📸 Confronto Prima/Dopo</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🔬 Analisi Dettagliata</span>
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Suggerimenti Personalizzati</span>
               </div>
             </motion.div>
           </motion.div>
