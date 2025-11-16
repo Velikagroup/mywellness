@@ -101,7 +101,8 @@ export default function AppDemoFlow() {
             width: isDesktop ? '610px' : '91%',
             height: isDesktop ? '92.5%' : '94%',
             transform: 'translateX(-50%)',
-            borderRadius: isDesktop ? '22px' : '36px'
+            borderRadius: isDesktop ? '22px' : '36px',
+            zIndex: 1 // Added zIndex
           }}
         >
           <AnimatePresence mode="wait">
@@ -943,7 +944,7 @@ export default function AppDemoFlow() {
           <svg 
             viewBox="0 0 820 615" 
             className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{ left: '-3px' }}
+            style={{ left: '-3px', zIndex: 2 }} // Added zIndex
           >
             <defs>
               <linearGradient id="frameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
@@ -962,9 +963,13 @@ export default function AppDemoFlow() {
                   <feMergeNode in="SourceGraphic"/>
                 </feMerge>
               </filter>
+              <mask id="screenMask"> {/* NEW mask definition */}
+                <rect x="0" y="0" width="820" height="615" fill="white"/>
+                <rect x="29" y="18" width="762" height="579" rx="18" ry="18" fill="black"/>
+              </mask>
             </defs>
             
-            {/* Outer frame */}
+            {/* Outer frame with cutout */}
             <rect 
               x="2" y="2" 
               width="816" height="611" 
@@ -973,14 +978,7 @@ export default function AppDemoFlow() {
               stroke="#0a0a0a"
               strokeWidth="1"
               filter="url(#frameShadow)"
-            />
-            
-            {/* Screen cutout - ORA TRASPARENTE */}
-            <rect 
-              x="29" y="18" 
-              width="762" height="579" 
-              rx="18" ry="18"
-              fill="transparent"
+              mask="url(#screenMask)" // Applied the mask
             />
             
             {/* Camera */}
