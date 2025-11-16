@@ -98,7 +98,7 @@ export default function AppDemoFlow() {
           style={{ 
             top: isDesktop ? '3.5%' : '3%',
             left: '50%',
-            width: isDesktop ? '95%' : '91%',
+            width: isDesktop ? '610px' : '91%',
             height: isDesktop ? '92.5%' : '94%',
             transform: 'translateX(-50%)',
             borderRadius: isDesktop ? '22px' : '36px'
