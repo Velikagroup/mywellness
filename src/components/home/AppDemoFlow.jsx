@@ -938,7 +938,7 @@ export default function AppDemoFlow() {
           </AnimatePresence>
         </div>
 
-        {/* Device frame overlay - 5px a sinistra su desktop */}
+        {/* Device frame overlay - centrato su desktop */}
         <img 
           src={isDesktop 
             ? "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/663f4143c_Ipadtrasparent.png"
@@ -946,7 +946,7 @@ export default function AppDemoFlow() {
           }
           alt="Device Frame"
           className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ left: isDesktop ? '5px' : '0' }}
+          style={{ left: isDesktop ? '0' : '0' }}
         />
       </div>
     </div>
