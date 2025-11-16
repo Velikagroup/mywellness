@@ -5,11 +5,29 @@ import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Targe
 
 const ANIMATION_DURATION = 90000; // 90 secondi totali (1:30 min)
 
+// Precarica immagini
+const preloadImages = () => {
+  const images = [
+    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png',
+    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png'
+  ];
+  
+  images.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+};
+
 export default function AppDemoFlow() {
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
   const [dashboardScroll, setDashboardScroll] = useState(0);
+
+  // Precarica immagini all'inizio
+  useEffect(() => {
+    preloadImages();
+  }, []);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -1066,7 +1084,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 25: Analisi Corpo - CON IMMAGINI REALI PRIMA/DOPO */}
+              {/* Step 25: Analisi Corpo - CON IMMAGINI PRECARICATE */}
               {step === 25 && (
                 <motion.div
                   key="body-analysis"
@@ -1083,6 +1101,8 @@ export default function AppDemoFlow() {
                         src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
                         alt="Before"
                         className="w-full aspect-square object-cover rounded-lg"
+                        loading="eager"
+                        fetchpriority="high"
                       />
                     </div>
                     <div className="bg-white rounded-lg p-1.5 overflow-hidden">
@@ -1091,6 +1111,8 @@ export default function AppDemoFlow() {
                         src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
                         alt="After"
                         className="w-full aspect-square object-cover rounded-lg"
+                        loading="eager"
+                        fetchpriority="high"
                       />
                     </div>
                   </div>
