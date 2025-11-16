@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -88,14 +89,15 @@ export default function AppDemoFlow() {
 
       {/* Main demo container with device frame */}
       <div className="relative" style={{ aspectRatio: isDesktop ? '4/3' : '9/16', maxHeight: isDesktop ? '490px' : '420px' }}>
-        {/* Content container - posizionato DENTRO la cornice */}
+        {/* Content container - centrato con transform */}
         <div 
           className="absolute bg-white overflow-hidden shadow-xl"
           style={{ 
             top: isDesktop ? '3.5%' : '3%',
-            left: isDesktop ? '2.5%' : '4.5%',
-            right: isDesktop ? '2.5%' : '4.5%',
-            bottom: isDesktop ? '4%' : '3%',
+            left: '50%',
+            width: isDesktop ? '95%' : '91%',
+            height: isDesktop ? '92.5%' : '94%',
+            transform: 'translateX(-50%)',
             borderRadius: isDesktop ? '22px' : '36px'
           }}
         >
