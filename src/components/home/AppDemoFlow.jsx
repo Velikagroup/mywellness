@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -69,8 +70,8 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center w-full">
-      <div className={`relative ${isDesktop ? 'max-w-[650px]' : 'max-w-[450px]'} w-full`}>
+    <div className="flex items-center justify-center w-full px-4">
+      <div className={`relative ${isDesktop ? 'max-w-[650px]' : 'max-w-[450px]'} w-full mx-auto`}>
         <style>{`
           @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
