@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
 
-const ANIMATION_DURATION = 45000; // 45 secondi totali
+const ANIMATION_DURATION = 60000; // 60 secondi totali
 
 export default function AppDemoFlow() {
   const [step, setStep] = useState(0);
@@ -25,37 +25,40 @@ export default function AppDemoFlow() {
     
     const progressInterval = setInterval(() => {
       const elapsed = Date.now() - startTime;
-      const newProgress = Math.min((elapsed / ANIMATION_DURATION) * 100, 100);
-      setProgress(newProgress);
+      const linearProgress = Math.min(elapsed / ANIMATION_DURATION, 1);
+      
+      // Easing function: fast at start, slow at end (easeOut cubic)
+      const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
+      setProgress(easedProgress * 100);
 
-      // Trigger step changes based on time (distributed over 45 seconds)
-      if (elapsed < 2500) setStep(0);
-      else if (elapsed < 4500) setStep(1);
-      else if (elapsed < 6000) setStep(2);
-      else if (elapsed < 8500) setStep(3);
-      else if (elapsed < 10500) setStep(4);
-      else if (elapsed < 12500) setStep(5);
-      else if (elapsed < 14500) setStep(6);
-      else if (elapsed < 16500) setStep(7);
-      else if (elapsed < 18500) setStep(8);
-      else if (elapsed < 20500) setStep(9);
-      else if (elapsed < 22500) setStep(10);
-      else if (elapsed < 24500) setStep(11);
-      else if (elapsed < 26500) setStep(12);
-      else if (elapsed < 28500) setStep(13);
-      else if (elapsed < 30500) setStep(14);
-      else if (elapsed < 32000) setStep(15);
-      else if (elapsed < 33500) setStep(16);
-      else if (elapsed < 35000) setStep(17);
-      else if (elapsed < 36500) setStep(18);
-      else if (elapsed < 38000) setStep(19);
-      else if (elapsed < 39500) setStep(20);
-      else if (elapsed < 41000) setStep(21);
-      else if (elapsed < 42000) setStep(22);
-      else if (elapsed < 43000) setStep(23);
-      else if (elapsed < 44000) setStep(24);
-      else if (elapsed < 44500) setStep(25);
-      else if (elapsed < 45000) setStep(26);
+      // Trigger step changes based on time (distributed over 60 seconds)
+      if (elapsed < 3000) setStep(0);
+      else if (elapsed < 6000) setStep(1);
+      else if (elapsed < 8000) setStep(2);
+      else if (elapsed < 11000) setStep(3);
+      else if (elapsed < 14000) setStep(4);
+      else if (elapsed < 17000) setStep(5);
+      else if (elapsed < 20000) setStep(6);
+      else if (elapsed < 23000) setStep(7);
+      else if (elapsed < 26000) setStep(8);
+      else if (elapsed < 28000) setStep(9);
+      else if (elapsed < 30000) setStep(10);
+      else if (elapsed < 32000) setStep(11);
+      else if (elapsed < 34000) setStep(12);
+      else if (elapsed < 36000) setStep(13);
+      else if (elapsed < 38000) setStep(14);
+      else if (elapsed < 40000) setStep(15);
+      else if (elapsed < 42000) setStep(16);
+      else if (elapsed < 44000) setStep(17);
+      else if (elapsed < 46000) setStep(18);
+      else if (elapsed < 48000) setStep(19);
+      else if (elapsed < 50000) setStep(20);
+      else if (elapsed < 52000) setStep(21);
+      else if (elapsed < 54000) setStep(22);
+      else if (elapsed < 56000) setStep(23);
+      else if (elapsed < 57500) setStep(24);
+      else if (elapsed < 59000) setStep(25);
+      else if (elapsed < 60000) setStep(26);
       
       if (elapsed >= ANIMATION_DURATION) {
         clearInterval(progressInterval);
@@ -79,15 +82,6 @@ export default function AppDemoFlow() {
           }
         `}</style>
 
-        {/* Progress bar */}
-        <div className="mb-2 h-1 bg-gray-200 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500"
-            style={{ width: `${progress}%` }}
-            transition={{ duration: 0.1 }}
-          />
-        </div>
-
         {/* Main demo container with device frame */}
         <div className="relative" style={{ 
           aspectRatio: isDesktop ? '4/3' : '9/19.5', 
@@ -107,6 +101,15 @@ export default function AppDemoFlow() {
               zIndex: 1
             }}
           >
+            {/* Progress bar inside device */}
+            <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200 z-50">
+              <motion.div
+                className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500"
+                style={{ width: `${progress}%` }}
+                transition={{ duration: 0.1 }}
+              />
+            </div>
+
             <AnimatePresence mode="wait">
               {/* Step 0-1: Quiz Steps */}
               {(step === 0 || step === 1) && (
