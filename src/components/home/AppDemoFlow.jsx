@@ -103,7 +103,7 @@ export default function AppDemoFlow() {
               width: isDesktop ? '610px' : '95.94%',
               height: isDesktop ? 'calc(92.5% + 10px)' : '98.12%',
               transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
-              borderRadius: isDesktop ? '22px' : '44px',
+              borderRadius: isDesktop ? '18px' : '44px',
               zIndex: 1
             }}
           >
