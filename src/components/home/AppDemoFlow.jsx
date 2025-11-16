@@ -1,7 +1,6 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
+import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler } from 'lucide-react';
 
 const ANIMATION_DURATION = 90000; // 90 secondi totali (1:30 min)
 
@@ -103,25 +102,143 @@ export default function AppDemoFlow() {
             </div>
 
             <AnimatePresence mode="wait">
-              {/* Step 0-1: Quiz Steps */}
-              {(step === 0 || step === 1) && (
+              {/* Step 0: Selezione Genere (Intro del quiz reale) */}
+              {step === 0 && (
                 <motion.div
-                  key="quiz"
+                  key="gender-selection"
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <Sparkles className="w-6 h-6 text-white" />
+                    </div>
+                    <h2 className="text-lg font-bold text-gray-900 mb-1">Seleziona il tuo sesso:</h2>
+                    <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto mt-4">
+                      <motion.div
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        className="p-4 rounded-lg border-2 border-gray-200 bg-white"
+                      >
+                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+                          <span className="text-2xl">👨</span>
+                        </div>
+                        <h3 className="font-bold text-sm text-gray-900">Uomo</h3>
+                      </motion.div>
+                      <motion.div
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.1 }}
+                        className="p-4 rounded-lg border-2 border-[var(--brand-primary)] bg-[var(--brand-primary-light)]"
+                      >
+                        <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center mx-auto mb-2">
+                          <span className="text-2xl">👩</span>
+                        </div>
+                        <h3 className="font-bold text-sm text-gray-900">Donna</h3>
+                      </motion.div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 1: Data di Nascita */}
+              {step === 1 && (
+                <motion.div
+                  key="birthdate"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-3">
+                      <Calendar className="w-6 h-6 text-white" />
+                    </div>
+                    <h2 className="text-base font-bold text-gray-900 mb-2">Qual è la tua data di nascita?</h2>
+                    <p className="text-xs text-gray-600 mb-4">Ci aiuta a calcolare il tuo metabolismo</p>
+                    
+                    <div className="max-w-xs mx-auto">
+                      <div className="h-12 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-[var(--brand-primary-light)]">
+                        <span className="text-lg font-bold text-gray-900">15/03/1990</span>
+                      </div>
+                      <p className="text-xs text-gray-500 mt-2">Hai 34 anni</p>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 2: Altezza */}
+              {step === 2 && (
+                <motion.div
+                  key="height"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                >
+                  <div className="text-center">
+                    <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3">
+                      <Ruler className="w-6 h-6 text-white" />
+                    </div>
+                    <h2 className="text-base font-bold text-gray-900 mb-2">Qual è la tua altezza?</h2>
+                    <p className="text-xs text-gray-600 mb-4">Necessaria per calcolare BMI</p>
+                    
+                    <div className="max-w-xs mx-auto">
+                      <div className="relative">
+                        <div className="h-12 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-white">
+                          <span className="text-2xl font-bold text-gray-900">175</span>
+                          <span className="absolute right-4 text-gray-500 font-medium">cm</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 3: Peso Attuale */}
+              {step === 3 && (
+                <motion.div
+                  key="current-weight"
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  <div className="text-center mb-4">
-                    <div className="w-12 h-0.5 bg-gray-300 rounded-full mx-auto mb-4" />
+                  <div className="text-center">
                     <div className="inline-block px-3 py-1 bg-purple-100 rounded-full mb-2">
-                      <span className="text-xs font-semibold text-purple-700">Step {step + 1}/3</span>
+                      <span className="text-xs font-semibold text-purple-700">Peso Attuale</span>
                     </div>
-                    <h3 className="text-lg font-bold mb-1">{step === 0 ? 'Peso Attuale?' : 'Peso Obiettivo?'}</h3>
+                    <h3 className="text-lg font-bold mb-4">Quanto pesi attualmente?</h3>
                   </div>
-                  <div className="bg-white rounded-xl p-4 shadow-lg">
+                  <div className="bg-white rounded-xl p-6 shadow-lg max-w-xs mx-auto">
                     <div className="text-center mb-3">
-                      <div className="text-4xl font-black text-gray-900">{step === 0 ? '80' : '73'}</div>
+                      <div className="text-5xl font-black text-gray-900">80</div>
+                      <div className="text-gray-500 text-sm mt-1">kg</div>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {/* Step 4: Peso Obiettivo */}
+              {step === 4 && (
+                <motion.div
+                  key="target-weight"
+                  initial={{ opacity: 0, x: 50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: -50 }}
+                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                >
+                  <div className="text-center">
+                    <div className="inline-block px-3 py-1 bg-green-100 rounded-full mb-2">
+                      <span className="text-xs font-semibold text-green-700">Peso Obiettivo</span>
+                    </div>
+                    <h3 className="text-lg font-bold mb-4">Qual è il tuo peso obiettivo?</h3>
+                  </div>
+                  <div className="bg-white rounded-xl p-6 shadow-lg max-w-xs mx-auto">
+                    <div className="text-center mb-3">
+                      <div className="text-5xl font-black text-[var(--brand-primary)]">73</div>
                       <div className="text-gray-500 text-sm mt-1">kg</div>
                     </div>
                     <div className="flex items-center justify-center">
@@ -137,8 +254,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 2: Loading */}
-              {step === 2 && (
+              {/* Step 5: Loading */}
+              {step === 5 && (
                 <motion.div
                   key="loading"
                   initial={{ opacity: 0 }}
@@ -155,8 +272,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 3: Dashboard */}
-              {step === 3 && (
+              {/* Step 6: Dashboard */}
+              {step === 6 && (
                 <motion.div
                   key="dashboard"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -186,36 +303,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 4: Zoom Stats */}
-              {step === 4 && (
-                <motion.div
-                  key="zoom-stats"
-                  initial={{ scale: 0.5, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 1.5, opacity: 0 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                >
-                  <div className="bg-white rounded-xl p-4 shadow-2xl w-full">
-                    <div className="text-center space-y-2">
-                      <div>
-                        <div className="text-xs text-gray-500">Target Calorico</div>
-                        <div className="text-3xl font-black text-gray-900">2000 <span className="text-base">kcal</span></div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-gray-500">BMR</div>
-                        <div className="text-2xl font-bold text-[var(--brand-primary)]">1650 <span className="text-sm">kcal</span></div>
-                      </div>
-                      <div>
-                        <div className="text-xs text-gray-500">Massa Grassa</div>
-                        <div className="text-2xl font-bold text-orange-600">24.5 <span className="text-sm">%</span></div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 5: Genera Piano */}
-              {step === 5 && (
+              {/* Step 7: Genera Piano */}
+              {step === 7 && (
                 <motion.div
                   key="genera-piano"
                   initial={{ opacity: 0 }}
@@ -236,8 +325,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 6: Scelta Dieta */}
-              {step === 6 && (
+              {/* Step 8: Scelta Dieta */}
+              {step === 8 && (
                 <motion.div
                   key="dieta"
                   initial={{ opacity: 0, y: 50 }}
@@ -263,8 +352,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 7: Piano Creato */}
-              {step === 7 && (
+              {/* Step 9: Piano Creato */}
+              {step === 9 && (
                 <motion.div
                   key="piano-creato"
                   initial={{ opacity: 0 }}
@@ -301,8 +390,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 8: Pop-up Colazione */}
-              {step === 8 && (
+              {/* Step 10: Pop-up Colazione */}
+              {step === 10 && (
                 <motion.div
                   key="popup-colazione"
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -334,8 +423,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 9: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ */}
-              {step === 9 && (
+              {/* Step 11: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ */}
+              {step === 11 && (
                 <motion.div
                   key="scansiona"
                   initial={{ opacity: 0 }}
@@ -368,8 +457,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 10: Aggiungi Ingrediente */}
-              {step === 10 && (
+              {/* Step 12: Aggiungi Ingrediente */}
+              {step === 12 && (
                 <motion.div
                   key="aggiungi"
                   initial={{ opacity: 0, y: 50 }}
@@ -400,8 +489,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 11: Piano Aggiornato */}
-              {step === 11 && (
+              {/* Step 13: Piano Aggiornato */}
+              {step === 13 && (
                 <motion.div
                   key="piano-updated"
                   initial={{ opacity: 0 }}
@@ -458,8 +547,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 12: Lista Spesa */}
-              {step === 12 && (
+              {/* Step 14: Lista Spesa */}
+              {step === 14 && (
                 <motion.div
                   key="lista-spesa"
                   initial={{ x: 50, opacity: 0 }}
@@ -491,8 +580,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 13: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE */}
-              {step === 13 && (
+              {/* Step 15: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE */}
+              {step === 15 && (
                 <motion.div
                   key="scan-label"
                   initial={{ opacity: 0 }}
@@ -561,8 +650,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 14: Health Score */}
-              {step === 14 && (
+              {/* Step 16: Health Score */}
+              {step === 16 && (
                 <motion.div
                   key="health-score"
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -598,8 +687,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 15: Colazione Fatto */}
-              {step === 15 && (
+              {/* Step 17: Colazione Fatto */}
+              {step === 17 && (
                 <motion.div
                   key="colazione-fatto"
                   initial={{ opacity: 0 }}
@@ -633,8 +722,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 16: Scansiona Pranzo - FIXED: sfondo verde anche sopra isola */}
-              {step === 16 && (
+              {/* Step 18: Scansiona Pranzo - sfondo verde pieno */}
+              {step === 18 && (
                 <motion.div
                   key="scan-pranzo"
                   initial={{ opacity: 0 }}
@@ -645,7 +734,7 @@ export default function AppDemoFlow() {
                   <motion.div
                     initial={{ scale: 1.2, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className={`w-full h-full relative flex items-center justify-center ${!isDesktop ? 'pt-20' : ''}`}
+                    className="w-full h-full relative flex items-center justify-center"
                   >
                     <div className="text-white text-center">
                       <Camera className="w-12 h-12 mx-auto mb-3" />
@@ -656,8 +745,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 17: Ribilanciamento */}
-              {step === 17 && (
+              {/* Step 19: Ribilanciamento */}
+              {step === 19 && (
                 <motion.div
                   key="rebalance"
                   initial={{ y: 50, opacity: 0 }}
@@ -687,8 +776,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 18: Workout Quiz */}
-              {step === 18 && (
+              {/* Step 20: Workout Quiz */}
+              {step === 20 && (
                 <motion.div
                   key="workout-quiz"
                   initial={{ x: 50, opacity: 0 }}
@@ -716,8 +805,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 19: Piano Workout */}
-              {step === 19 && (
+              {/* Step 21: Piano Workout */}
+              {step === 21 && (
                 <motion.div
                   key="workout-plan"
                   initial={{ opacity: 0 }}
@@ -751,8 +840,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 20: Dettagli Esercizio */}
-              {step === 20 && (
+              {/* Step 22: Dettagli Esercizio */}
+              {step === 22 && (
                 <motion.div
                   key="exercise-detail"
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -781,8 +870,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 21: Modifica Workout */}
-              {step === 21 && (
+              {/* Step 23: Modifica Workout */}
+              {step === 23 && (
                 <motion.div
                   key="modifica-workout"
                   initial={{ y: 50, opacity: 0 }}
@@ -812,8 +901,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 22: Nuovo Esercizio */}
-              {step === 22 && (
+              {/* Step 24: Nuovo Esercizio */}
+              {step === 24 && (
                 <motion.div
                   key="new-exercise"
                   initial={{ x: 50, opacity: 0 }}
@@ -839,8 +928,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 23: Analisi Corpo */}
-              {step === 23 && (
+              {/* Step 25: Analisi Corpo */}
+              {step === 25 && (
                 <motion.div
                   key="body-analysis"
                   initial={{ opacity: 0 }}
@@ -871,94 +960,6 @@ export default function AppDemoFlow() {
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-600">Tono Pelle</span>
                       <span className="font-bold text-green-600">+15%</span>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 24: Accetta Modifiche */}
-              {step === 24 && (
-                <motion.div
-                  key="accept-changes"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 flex flex-col ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                >
-                  <h3 className="text-sm font-bold mb-3">Raccomandazioni AI</h3>
-                  <div className="flex-1 space-y-2">
-                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                      <div className="font-semibold text-blue-900 text-xs mb-1">💊 Consigli Nutrizionali</div>
-                      <p className="text-xs text-blue-700">Aumenta proteine del 15%</p>
-                    </div>
-                    <div className="bg-purple-50 border border-purple-200 rounded-lg p-3">
-                      <div className="font-semibold text-purple-900 text-xs mb-1">🏋️ Modifiche Allenamento</div>
-                      <p className="text-xs text-purple-700">Focus su core e stabilizzazione</p>
-                    </div>
-                  </div>
-                  <div className="space-y-1.5 mt-3">
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white py-2.5 rounded-lg font-semibold text-xs"
-                    >
-                      Accetta Consigli Nutrizionali
-                    </motion.button>
-                    <motion.button
-                      whileHover={{ scale: 1.02 }}
-                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-2.5 rounded-lg font-semibold text-xs"
-                    >
-                      Accetta Modifiche Allenamento
-                    </motion.button>
-                    <button className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white py-3 rounded-lg font-bold text-xs">
-                      Salva Analisi
-                    </button>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 25: Dashboard Finale */}
-              {step === 25 && (
-                <motion.div
-                  key="dashboard-final"
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                >
-                  <h3 className="text-base font-bold mb-3">I Tuoi Progressi</h3>
-                  <div className="bg-white rounded-xl p-4 shadow-lg">
-                    <svg className="w-full h-32" viewBox="0 0 300 150">
-                      <motion.path
-                        d="M 10,100 Q 75,90 150,60 T 290,20"
-                        fill="none"
-                        stroke="url(#gradient)"
-                        strokeWidth="3"
-                        initial={{ pathLength: 0 }}
-                        animate={{ pathLength: 1 }}
-                        transition={{ duration: 2, ease: "easeInOut" }}
-                      />
-                      <defs>
-                        <linearGradient id="gradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                          <stop offset="0%" stopColor="#26847F" />
-                          <stop offset="100%" stopColor="#14b8a6" />
-                        </linearGradient>
-                      </defs>
-                      <text x="10" y="120" fontSize="12" fill="#6b7280">Inizio</text>
-                      <text x="260" y="40" fontSize="12" fill="#26847F" fontWeight="bold">Oggi</text>
-                    </svg>
-                    <div className="grid grid-cols-3 gap-2 mt-3">
-                      <div className="text-center">
-                        <div className="text-lg font-black">80kg</div>
-                        <div className="text-xs text-gray-500">Iniziale</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-black text-[var(--brand-primary)]">75kg</div>
-                        <div className="text-xs text-gray-500">Attuale</div>
-                      </div>
-                      <div className="text-center">
-                        <div className="text-lg font-black text-green-600">73kg</div>
-                        <div className="text-xs text-gray-500">Target</div>
-                      </div>
                     </div>
                   </div>
                 </motion.div>
