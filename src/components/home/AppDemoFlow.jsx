@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -92,11 +93,11 @@ export default function AppDemoFlow() {
         <div 
           className="absolute bg-white overflow-hidden shadow-xl"
           style={{ 
-            top: isDesktop ? '4.2%' : '3%',
-            left: isDesktop ? '6.2%' : '4.5%',
-            right: isDesktop ? '6.2%' : '4.5%',
-            bottom: isDesktop ? '4.8%' : '3%',
-            borderRadius: isDesktop ? '20px' : '36px'
+            top: isDesktop ? '3.5%' : '3%',
+            left: isDesktop ? '5%' : '4.5%',
+            right: isDesktop ? '5%' : '4.5%',
+            bottom: isDesktop ? '4%' : '3%',
+            borderRadius: isDesktop ? '22px' : '36px'
           }}
         >
           <AnimatePresence mode="wait">
