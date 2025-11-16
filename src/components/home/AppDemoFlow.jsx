@@ -91,7 +91,7 @@ export default function AppDemoFlow() {
       <div className="relative" style={{ 
         aspectRatio: isDesktop ? '4/3' : '9/16', 
         maxHeight: isDesktop ? '490px' : '420px',
-        marginLeft: isDesktop ? '10px' : '0'
+        left: isDesktop ? '10px' : '0'
       }}>
         {/* Content container - centrato con transform */}
         <div 
