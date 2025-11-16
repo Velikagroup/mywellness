@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -334,28 +333,37 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 9: Scansiona Ingrediente */}
+              {/* Step 9: Scansiona Ingrediente - CON ALIMENTO DIETRO */}
               {step === 9 && (
                 <motion.div
                   key="scansiona"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-gray-900 flex flex-col items-center justify-center"
+                  className="absolute inset-0 flex flex-col items-center justify-center p-4"
+                  style={{
+                    background: 'linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%)'
+                  }}
                 >
+                  {/* Immagine alimento dietro */}
+                  <div className="absolute inset-0 flex items-center justify-center opacity-40">
+                    <div className="text-9xl">🥚</div>
+                  </div>
+                  
+                  {/* Scanner overlay */}
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
-                    className="relative w-32 h-32 border-4 border-white rounded-xl"
+                    className="relative w-40 h-40 border-4 border-[var(--brand-primary)] rounded-xl z-10"
                   >
-                    <Camera className="w-8 h-8 text-white absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                    <Camera className="w-10 h-10 text-[var(--brand-primary)] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
                     <motion.div
-                      animate={{ y: [0, 128] }}
+                      animate={{ y: [0, 160] }}
                       transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                       className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--brand-primary)] shadow-[0_0_15px_rgba(38,132,127,0.8)]"
                     />
                   </motion.div>
-                  <p className="text-white mt-4 text-sm font-semibold">Scansione uova...</p>
+                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione uova...</p>
                 </motion.div>
               )}
 
@@ -482,23 +490,61 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 13: Scansiona Etichetta */}
+              {/* Step 13: Scansiona Etichetta - CON TABELLA NUTRIZIONALE DIETRO */}
               {step === 13 && (
                 <motion.div
                   key="scan-label"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-gray-900 flex flex-col items-center justify-center p-4"
+                  className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-white"
                 >
-                  <div className="relative w-48 h-28 bg-white/10 backdrop-blur-sm rounded-lg border-2 border-white/50">
+                  {/* Tabella nutrizionale dietro */}
+                  <div className="absolute inset-0 flex items-center justify-center p-6 opacity-30">
+                    <div className="bg-white border-2 border-black rounded-lg p-3 w-full max-w-xs">
+                      <h4 className="font-black text-xs mb-2 border-b border-black pb-1">VALORI NUTRIZIONALI</h4>
+                      <div className="space-y-1 text-xs">
+                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
+                          <span className="font-semibold">Energia</span>
+                          <span>450 kJ / 107 kcal</span>
+                        </div>
+                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
+                          <span className="font-semibold">Grassi</span>
+                          <span>2.5g</span>
+                        </div>
+                        <div className="flex justify-between pl-2 text-gray-600 border-b border-gray-200 pb-0.5">
+                          <span>di cui saturi</span>
+                          <span>0.8g</span>
+                        </div>
+                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
+                          <span className="font-semibold">Carboidrati</span>
+                          <span>15g</span>
+                        </div>
+                        <div className="flex justify-between pl-2 text-gray-600 border-b border-gray-200 pb-0.5">
+                          <span>di cui zuccheri</span>
+                          <span>8g</span>
+                        </div>
+                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
+                          <span className="font-semibold">Proteine</span>
+                          <span>5.2g</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span className="font-semibold">Sale</span>
+                          <span>0.3g</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Scanner overlay */}
+                  <div className="relative w-56 h-32 bg-white/10 backdrop-blur-sm rounded-lg border-4 border-[var(--brand-primary)] z-10">
                     <motion.div
-                      animate={{ y: [0, 112] }}
+                      animate={{ y: [0, 128] }}
                       transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                       className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--brand-primary)] shadow-[0_0_12px_rgba(38,132,127,1)]"
                     />
                   </div>
-                  <p className="text-white mt-3 text-sm font-semibold">Scansione etichetta...</p>
+                  <p className="text-gray-900 mt-4 text-sm font-semibold z-10">Scansione etichetta...</p>
                 </motion.div>
               )}
 
