@@ -1066,24 +1066,32 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 25: Analisi Corpo */}
+              {/* Step 25: Analisi Corpo - CON IMMAGINI REALI PRIMA/DOPO */}
               {step === 25 && (
                 <motion.div
                   key="body-analysis"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20 pb-4' : 'p-4'} ${isDesktop ? '' : 'px-3'}`}
                 >
-                  <h3 className="text-sm font-bold mb-3">Analisi Progressi</h3>
+                  <h3 className="text-sm font-bold mb-2 text-center">Analisi Progressi</h3>
                   <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="bg-white rounded-lg p-1.5">
-                      <div className="text-xs text-gray-500 mb-1">Prima</div>
-                      <div className="aspect-square bg-gradient-to-br from-gray-300 to-gray-400 rounded-lg" />
+                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
+                      <div className="text-[9px] text-gray-500 mb-1 text-center">Prima</div>
+                      <img 
+                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
+                        alt="Before"
+                        className="w-full aspect-square object-cover rounded-lg"
+                      />
                     </div>
-                    <div className="bg-white rounded-lg p-1.5">
-                      <div className="text-xs text-gray-500 mb-1">Dopo</div>
-                      <div className="aspect-square bg-gradient-to-br from-green-300 to-emerald-400 rounded-lg" />
+                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
+                      <div className="text-[9px] text-gray-500 mb-1 text-center">Dopo</div>
+                      <img 
+                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
+                        alt="After"
+                        className="w-full aspect-square object-cover rounded-lg"
+                      />
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-3 space-y-1.5">
