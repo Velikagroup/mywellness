@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -92,7 +91,7 @@ export default function AppDemoFlow() {
         aspectRatio: isDesktop ? '4/3' : '9/16', 
         maxHeight: isDesktop ? '490px' : '420px'
       }}>
-        {/* Content container - centrato rispetto alla pagina */}
+        {/* Content container */}
         <div 
           className="absolute bg-white overflow-hidden shadow-xl"
           style={{ 
