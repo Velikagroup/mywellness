@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -597,7 +598,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Remaining steps 15-26 with same pattern - using pt-20 for mobile */}
               {/* Step 15: Colazione Fatto */}
               {step === 15 && (
                 <motion.div
@@ -633,26 +633,24 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 16: Scansiona Pranzo */}
+              {/* Step 16: Scansiona Pranzo - FIXED: sfondo verde anche sopra isola */}
               {step === 16 && (
                 <motion.div
                   key="scan-pranzo"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-900 ${!isDesktop ? 'pt-20' : ''}`}
+                  className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600"
                 >
                   <motion.div
                     initial={{ scale: 1.2, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
-                    className="w-full h-full relative bg-gradient-to-br from-green-400 to-emerald-600"
+                    className={`w-full h-full relative flex items-center justify-center ${!isDesktop ? 'pt-20' : ''}`}
                   >
-                    <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-white text-center">
-                        <Camera className="w-12 h-12 mx-auto mb-3" />
-                        <p className="text-base font-bold">Analisi AI in corso...</p>
-                        <p className="text-xs mt-1">Insalata Caesar rilevata</p>
-                      </div>
+                    <div className="text-white text-center">
+                      <Camera className="w-12 h-12 mx-auto mb-3" />
+                      <p className="text-base font-bold">Analisi AI in corso...</p>
+                      <p className="text-xs mt-1">Insalata Caesar rilevata</p>
                     </div>
                   </motion.div>
                 </motion.div>
@@ -995,7 +993,7 @@ export default function AppDemoFlow() {
             </AnimatePresence>
           </div>
 
-          {/* Device frame overlay - keep existing code */}
+          {/* Device frame overlay */}
           {isDesktop ? (
             <svg 
               viewBox="0 0 820 615" 
