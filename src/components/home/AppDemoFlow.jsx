@@ -70,7 +70,7 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[650px]' : 'max-w-[280px]'}`}>
+    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[650px]' : 'max-w-[280px]'}`} style={{ paddingLeft: isDesktop ? '10px' : '0' }}>
       <style>{`
         @keyframes pulse-glow {
           0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
