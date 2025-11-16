@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -95,14 +94,14 @@ export default function AppDemoFlow() {
         }}>
           {/* Content container */}
           <div 
-            className="absolute bg-white overflow-hidden shadow-xl"
+            className="absolute bg-white overflow-hidden"
             style={{ 
               top: isDesktop ? 'calc(3.5% - 3px)' : '0.94%',
               left: '50%',
               width: isDesktop ? '610px' : '95.94%',
               height: isDesktop ? 'calc(92.5% + 10px)' : '98.12%',
               transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
-              borderRadius: isDesktop ? '22px' : '46px', // Changed from 52px to 46px
+              borderRadius: isDesktop ? '22px' : '44px',
               zIndex: 1
             }}
           >
