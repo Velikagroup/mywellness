@@ -35,7 +35,7 @@ import ShoppingListPreviewDemo from "../components/home/ShoppingListPreviewDemo"
 import IngredientScannerPreviewDemo from "../components/home/IngredientScannerPreviewDemo";
 import MealTrackingPreviewDemo from "../components/home/MealTrackingPreviewDemo";
 import ProgressPhotoPreviewDemo from "../components/home/ProgressPhotoPreviewDemo";
-import AppFlowAnimation from "../components/home/AppFlowAnimation";
+import AppDemoFlow from "../components/home/AppDemoFlow";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -518,7 +518,7 @@ export default function Home() {
           </div>
           
           <div className="mb-8 md:mb-12">
-            <AppFlowAnimation />
+            <AppDemoFlow />
           </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
