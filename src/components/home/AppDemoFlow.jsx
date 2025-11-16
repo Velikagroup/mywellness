@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
@@ -778,7 +779,7 @@ export default function AppDemoFlow() {
                 </div>
                 <div className="bg-gray-50 rounded-lg p-3">
                   <div className="text-xs font-semibold mb-1">Esecuzione:</div>
-                  <p className="text-xs text-gray-600">Piega il busto in avanti, mantieni la schiena dritta, porta il bilanciere verso l'ombelico...</p>
+                  <p className="text-xs text-gray-600">Piega il busto in avanti, mantieni la schiena dritta, porta il bilanciere verso l'ombilico...</p>
                 </div>
               </motion.div>
             )}
@@ -974,12 +975,12 @@ export default function AppDemoFlow() {
               filter="url(#frameShadow)"
             />
             
-            {/* Screen cutout */}
+            {/* Screen cutout - ORA TRASPARENTE */}
             <rect 
               x="29" y="18" 
               width="762" height="579" 
               rx="18" ry="18"
-              fill="#000000"
+              fill="transparent"
             />
             
             {/* Camera */}
