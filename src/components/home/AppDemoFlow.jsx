@@ -938,16 +938,70 @@ export default function AppDemoFlow() {
           </AnimatePresence>
         </div>
 
-        {/* Device frame overlay - spostato a sinistra di 3px su desktop */}
-        <img 
-          src={isDesktop 
-            ? "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/663f4143c_Ipadtrasparent.png"
-            : "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/deeb4c0ac_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
-          }
-          alt="Device Frame"
-          className="absolute inset-0 w-full h-full pointer-events-none"
-          style={{ left: isDesktop ? '-3px' : '0' }}
-        />
+        {/* Device frame overlay - CSS/SVG iPad frame */}
+        {isDesktop ? (
+          <svg 
+            viewBox="0 0 820 615" 
+            className="absolute inset-0 w-full h-full pointer-events-none"
+            style={{ left: '-3px' }}
+          >
+            <defs>
+              <linearGradient id="frameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#e8e8e8" />
+                <stop offset="50%" stopColor="#f5f5f5" />
+                <stop offset="100%" stopColor="#e0e0e0" />
+              </linearGradient>
+              <filter id="frameShadow">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                <feOffset dx="0" dy="2" result="offsetblur"/>
+                <feComponentTransfer>
+                  <feFuncA type="linear" slope="0.3"/>
+                </feComponentTransfer>
+                <feMerge>
+                  <feMergeNode/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+            </defs>
+            
+            {/* Outer frame */}
+            <rect 
+              x="2" y="2" 
+              width="816" height="611" 
+              rx="32" ry="32"
+              fill="url(#frameGradient)"
+              stroke="#d0d0d0"
+              strokeWidth="1"
+              filter="url(#frameShadow)"
+            />
+            
+            {/* Screen cutout */}
+            <rect 
+              x="29" y="18" 
+              width="762" height="579" 
+              rx="18" ry="18"
+              fill="black"
+            />
+            
+            {/* Camera */}
+            <circle cx="410" cy="9" r="3" fill="#2a2a2a" opacity="0.8"/>
+            
+            {/* Inner bezel highlight */}
+            <rect 
+              x="29" y="18" 
+              width="762" height="2" 
+              rx="1" ry="1"
+              fill="white"
+              opacity="0.3"
+            />
+          </svg>
+        ) : (
+          <img 
+            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/deeb4c0ac_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
+            alt="Device Frame"
+            className="absolute inset-0 w-full h-full pointer-events-none"
+          />
+        )}
       </div>
     </div>
   );
