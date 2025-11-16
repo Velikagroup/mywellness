@@ -87,11 +87,10 @@ export default function AppDemoFlow() {
         />
       </div>
 
-      {/* Main demo container with device frame - spostato di 10px a destra su desktop */}
+      {/* Main demo container with device frame */}
       <div className="relative" style={{ 
         aspectRatio: isDesktop ? '4/3' : '9/16', 
-        maxHeight: isDesktop ? '490px' : '420px',
-        left: isDesktop ? '10px' : '0'
+        maxHeight: isDesktop ? '490px' : '420px'
       }}>
         {/* Content container - centrato con transform */}
         <div 
@@ -939,7 +938,7 @@ export default function AppDemoFlow() {
           </AnimatePresence>
         </div>
 
-        {/* Device frame overlay - SOPRA il contenuto */}
+        {/* Device frame overlay - SPOSTATO di 10px a destra su desktop */}
         <img 
           src={isDesktop 
             ? "https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/663f4143c_Ipadtrasparent.png"
@@ -947,6 +946,7 @@ export default function AppDemoFlow() {
           }
           alt="Device Frame"
           className="absolute inset-0 w-full h-full pointer-events-none"
+          style={{ left: isDesktop ? '10px' : '0' }}
         />
       </div>
     </div>
