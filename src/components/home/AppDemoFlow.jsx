@@ -24,8 +24,8 @@ export default function AppDemoFlow() {
     const startTime = Date.now();
     
     const progressInterval = setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const linearProgress = Math.min(elapsed / ANIMATION_DURATION, 1);
+      const elapsed = (Date.now() - startTime) % ANIMATION_DURATION;
+      const linearProgress = elapsed / ANIMATION_DURATION;
       
       // Easing function: fast at start, slow at end (easeOut cubic)
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
@@ -58,15 +58,7 @@ export default function AppDemoFlow() {
       else if (elapsed < 56000) setStep(23);
       else if (elapsed < 57500) setStep(24);
       else if (elapsed < 59000) setStep(25);
-      else if (elapsed < 60000) setStep(26);
-      
-      if (elapsed >= ANIMATION_DURATION) {
-        clearInterval(progressInterval);
-        setTimeout(() => {
-          setStep(0);
-          setProgress(0);
-        }, 500);
-      }
+      else setStep(26);
     }, 50);
 
     return () => clearInterval(progressInterval);
