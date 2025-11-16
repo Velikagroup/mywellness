@@ -96,13 +96,13 @@ export default function AppDemoFlow() {
         <div 
           className="absolute bg-white overflow-hidden shadow-xl"
           style={{ 
-            top: isDesktop ? '3.5%' : '3%',
+            top: isDesktop ? 'calc(3.5% - 3px)' : '3%',
             left: '50%',
             width: isDesktop ? '610px' : '91%',
             height: isDesktop ? 'calc(92.5% + 10px)' : '94%',
-            transform: isDesktop ? 'translateX(calc(-50% - 2px))' : 'translateX(-50%)',
+            transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
             borderRadius: isDesktop ? '22px' : '36px',
-            zIndex: 1 // Added zIndex
+            zIndex: 1
           }}
         >
           <AnimatePresence mode="wait">
@@ -944,7 +944,7 @@ export default function AppDemoFlow() {
           <svg 
             viewBox="0 0 820 615" 
             className="absolute inset-0 w-full h-full pointer-events-none"
-            style={{ left: '-3px', zIndex: 2 }} // Added zIndex
+            style={{ left: '-3px', zIndex: 2 }}
           >
             <defs>
               <linearGradient id="frameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
