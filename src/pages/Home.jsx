@@ -35,6 +35,7 @@ import ShoppingListPreviewDemo from "../components/home/ShoppingListPreviewDemo"
 import IngredientScannerPreviewDemo from "../components/home/IngredientScannerPreviewDemo";
 import MealTrackingPreviewDemo from "../components/home/MealTrackingPreviewDemo";
 import ProgressPhotoPreviewDemo from "../components/home/ProgressPhotoPreviewDemo";
+import AppFlowAnimation from "../components/home/AppFlowAnimation";
 
 export default function Home() {
   const navigate = useNavigate();
@@ -516,14 +517,8 @@ export default function Home() {
             </div>
           </div>
           
-          <div className="mb-8 md:mb-12 relative max-w-[220px] md:max-w-xs mx-auto">
-            <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)]/20 to-purple-500/20 blur-3xl"></div>
-            <div className="relative">
-              <img
-                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c10949cf7_IMGH1.png"
-                alt="MyWellness App - Dashboard Progressi"
-                className="w-full h-auto drop-shadow-2xl" />
-            </div>
+          <div className="mb-8 md:mb-12">
+            <AppFlowAnimation />
           </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
