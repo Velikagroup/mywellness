@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
 
-const ANIMATION_DURATION = 60000; // 60 secondi totali
+const ANIMATION_DURATION = 90000; // 90 secondi totali (1:30 min)
 
 export default function AppDemoFlow() {
   const [step, setStep] = useState(0);
@@ -30,33 +30,33 @@ export default function AppDemoFlow() {
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
-      // Trigger step changes based on time (distributed over 60 seconds)
-      if (elapsed < 3000) setStep(0);
-      else if (elapsed < 6000) setStep(1);
-      else if (elapsed < 8000) setStep(2);
-      else if (elapsed < 11000) setStep(3);
-      else if (elapsed < 14000) setStep(4);
-      else if (elapsed < 17000) setStep(5);
-      else if (elapsed < 20000) setStep(6);
-      else if (elapsed < 23000) setStep(7);
-      else if (elapsed < 26000) setStep(8);
-      else if (elapsed < 28000) setStep(9);
-      else if (elapsed < 30000) setStep(10);
-      else if (elapsed < 32000) setStep(11);
-      else if (elapsed < 34000) setStep(12);
-      else if (elapsed < 36000) setStep(13);
-      else if (elapsed < 38000) setStep(14);
-      else if (elapsed < 40000) setStep(15);
-      else if (elapsed < 42000) setStep(16);
-      else if (elapsed < 44000) setStep(17);
-      else if (elapsed < 46000) setStep(18);
-      else if (elapsed < 48000) setStep(19);
-      else if (elapsed < 50000) setStep(20);
-      else if (elapsed < 52000) setStep(21);
-      else if (elapsed < 54000) setStep(22);
-      else if (elapsed < 56000) setStep(23);
-      else if (elapsed < 57500) setStep(24);
-      else if (elapsed < 59000) setStep(25);
+      // Trigger step changes based on time (distributed over 90 seconds)
+      if (elapsed < 4000) setStep(0);
+      else if (elapsed < 8000) setStep(1);
+      else if (elapsed < 11000) setStep(2);
+      else if (elapsed < 15000) setStep(3);
+      else if (elapsed < 19000) setStep(4);
+      else if (elapsed < 23000) setStep(5);
+      else if (elapsed < 27000) setStep(6);
+      else if (elapsed < 31000) setStep(7);
+      else if (elapsed < 35000) setStep(8);
+      else if (elapsed < 38000) setStep(9);
+      else if (elapsed < 41000) setStep(10);
+      else if (elapsed < 44000) setStep(11);
+      else if (elapsed < 47000) setStep(12);
+      else if (elapsed < 50000) setStep(13);
+      else if (elapsed < 53000) setStep(14);
+      else if (elapsed < 56000) setStep(15);
+      else if (elapsed < 59000) setStep(16);
+      else if (elapsed < 62000) setStep(17);
+      else if (elapsed < 65000) setStep(18);
+      else if (elapsed < 68000) setStep(19);
+      else if (elapsed < 71000) setStep(20);
+      else if (elapsed < 74000) setStep(21);
+      else if (elapsed < 77000) setStep(22);
+      else if (elapsed < 80000) setStep(23);
+      else if (elapsed < 83000) setStep(24);
+      else if (elapsed < 86000) setStep(25);
       else setStep(26);
     }, 50);
 
@@ -109,7 +109,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="text-center mb-4">
                     <div className="w-12 h-0.5 bg-gray-300 rounded-full mx-auto mb-4" />
@@ -143,7 +143,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50 ${!isDesktop ? 'pt-12' : ''}`}
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50 ${!isDesktop ? 'pt-20' : ''}`}
                 >
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -161,7 +161,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 overflow-hidden ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 overflow-hidden ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <div className="mb-3">
                     <h2 className="text-base font-bold text-gray-900">Dashboard</h2>
@@ -192,7 +192,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 1.5, opacity: 0 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-xl p-4 shadow-2xl w-full">
                     <div className="text-center space-y-2">
@@ -220,7 +220,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 flex flex-col justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-gray-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <motion.button
                     initial={{ scale: 0.9 }}
@@ -242,7 +242,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-white overflow-auto ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-white overflow-auto ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-2">Scegli Dieta</h3>
                   <div className="space-y-1.5">
@@ -269,7 +269,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <div className="mb-3 flex justify-between items-center">
                     <h3 className="text-base font-bold">Piano Settimanale</h3>
@@ -307,7 +307,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
-                  className={`absolute inset-0 bg-black/50 flex items-center justify-center ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-black/50 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <div className="bg-white rounded-xl p-4 w-full">
                     <h3 className="text-base font-bold mb-3">Pancakes Proteici</h3>
@@ -321,7 +321,7 @@ export default function AppDemoFlow() {
                         transition={{ duration: 1, repeat: Infinity }}
                         className="flex justify-between items-center p-2 bg-blue-50 rounded-lg border-2"
                       >
-                        <span className="text-xs font-semibold text-[var(--brand-primary)]">Uova</span>
+                        <span className="text-xs font-semibold text-[var(--brand-primary)]">Avocado</span>
                         <button className="text-xs bg-[var(--brand-primary)] text-white px-2 py-1 rounded-full">Sostituisci</button>
                       </motion.div>
                       <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
@@ -333,21 +333,21 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 9: Scansiona Ingrediente - CON ALIMENTO DIETRO */}
+              {/* Step 9: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ */}
               {step === 9 && (
                 <motion.div
                   key="scansiona"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 flex flex-col items-center justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                   style={{
                     background: 'linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%)'
                   }}
                 >
-                  {/* Immagine alimento dietro */}
+                  {/* Immagine avocado dietro */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                    <div className="text-9xl">🥚</div>
+                    <div className="text-9xl">🥑</div>
                   </div>
                   
                   {/* Scanner overlay */}
@@ -363,7 +363,7 @@ export default function AppDemoFlow() {
                       className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--brand-primary)] shadow-[0_0_15px_rgba(38,132,127,0.8)]"
                     />
                   </motion.div>
-                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione uova...</p>
+                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione avocado...</p>
                 </motion.div>
               )}
 
@@ -374,18 +374,18 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 mb-3 border border-green-200">
-                    <h4 className="font-bold text-sm mb-2">Uova - Grande (2x)</h4>
+                    <h4 className="font-bold text-sm mb-2">Avocado - Maturo (1x)</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="bg-white rounded-lg p-2">
                         <div className="text-gray-500 text-xs">Calorie</div>
-                        <div className="font-bold">140 kcal</div>
+                        <div className="font-bold">160 kcal</div>
                       </div>
                       <div className="bg-white rounded-lg p-2">
-                        <div className="text-gray-500 text-xs">Proteine</div>
-                        <div className="font-bold">12g</div>
+                        <div className="text-gray-500 text-xs">Grassi</div>
+                        <div className="font-bold">15g</div>
                       </div>
                     </div>
                   </div>
@@ -406,7 +406,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <motion.div
                     animate={{ borderColor: ['#10b981', '#26847F', '#10b981'] }}
@@ -422,7 +422,7 @@ export default function AppDemoFlow() {
                           animate={{ opacity: 1 }}
                           className="font-bold text-green-700"
                         >
-                          470
+                          490
                         </motion.div>
                       </div>
                       <div className="bg-blue-50 rounded p-1.5">
@@ -432,7 +432,7 @@ export default function AppDemoFlow() {
                           animate={{ opacity: 1 }}
                           className="font-bold text-blue-700"
                         >
-                          25g
+                          22g
                         </motion.div>
                       </div>
                       <div className="bg-orange-50 rounded p-1.5">
@@ -442,7 +442,7 @@ export default function AppDemoFlow() {
                           animate={{ opacity: 1 }}
                           className="font-bold text-orange-700"
                         >
-                          12g
+                          18g
                         </motion.div>
                       </div>
                     </div>
@@ -464,11 +464,11 @@ export default function AppDemoFlow() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
                   <div className="space-y-1.5">
-                    {['Farina d\'avena - 200g', 'Uova - 12x', 'Miele - 250g', 'Pomodori - 1kg'].map((item, i) => (
+                    {['Farina d\'avena - 200g', 'Avocado - 3x', 'Miele - 250g', 'Pomodori - 1kg'].map((item, i) => (
                       <motion.div
                         key={item}
                         initial={{ x: -20, opacity: 0 }}
@@ -490,47 +490,59 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 13: Scansiona Etichetta - CON TABELLA NUTRIZIONALE DIETRO */}
+              {/* Step 13: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE */}
               {step === 13 && (
                 <motion.div
                   key="scan-label"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  {/* Tabella nutrizionale dietro */}
-                  <div className="absolute inset-0 flex items-center justify-center p-6 opacity-30">
-                    <div className="bg-white border-2 border-black rounded-lg p-3 w-full max-w-xs">
-                      <h4 className="font-black text-xs mb-2 border-b border-black pb-1">VALORI NUTRIZIONALI</h4>
-                      <div className="space-y-1 text-xs">
-                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
-                          <span className="font-semibold">Energia</span>
-                          <span>450 kJ / 107 kcal</span>
+                  {/* Foto realistica tabella nutrizionale dietro */}
+                  <div className="absolute inset-0 flex items-center justify-center p-4 opacity-40">
+                    <div className="bg-white rounded-lg shadow-lg p-3 w-full max-w-xs transform rotate-2" style={{
+                      background: 'linear-gradient(145deg, #ffffff 0%, #f3f3f3 100%)',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.15), inset 0 1px 0 rgba(255,255,255,0.8)'
+                    }}>
+                      <div className="bg-white border border-gray-300 rounded p-2">
+                        <div className="text-[8px] font-black mb-1.5 border-b-2 border-black pb-0.5">INFORMAZIONI NUTRIZIONALI</div>
+                        <div className="space-y-0.5 text-[7px]">
+                          <div className="flex justify-between border-b border-gray-400 py-0.5">
+                            <span className="font-bold">Energia</span>
+                            <span className="font-semibold">428 kJ / 102 kcal</span>
+                          </div>
+                          <div className="flex justify-between border-b border-gray-300 py-0.5">
+                            <span className="font-bold">Grassi</span>
+                            <span>2.1g</span>
+                          </div>
+                          <div className="flex justify-between pl-2 text-gray-600 border-b border-gray-200 py-0.5">
+                            <span className="text-[6px]">di cui acidi grassi saturi</span>
+                            <span>0.6g</span>
+                          </div>
+                          <div className="flex justify-between border-b border-gray-300 py-0.5">
+                            <span className="font-bold">Carboidrati</span>
+                            <span>14g</span>
+                          </div>
+                          <div className="flex justify-between pl-2 text-gray-600 border-b border-gray-200 py-0.5">
+                            <span className="text-[6px]">di cui zuccheri</span>
+                            <span>7.8g</span>
+                          </div>
+                          <div className="flex justify-between border-b border-gray-300 py-0.5">
+                            <span className="font-bold">Fibre</span>
+                            <span>1.2g</span>
+                          </div>
+                          <div className="flex justify-between border-b border-gray-300 py-0.5">
+                            <span className="font-bold">Proteine</span>
+                            <span>4.8g</span>
+                          </div>
+                          <div className="flex justify-between py-0.5">
+                            <span className="font-bold">Sale</span>
+                            <span>0.28g</span>
+                          </div>
                         </div>
-                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
-                          <span className="font-semibold">Grassi</span>
-                          <span>2.5g</span>
-                        </div>
-                        <div className="flex justify-between pl-2 text-gray-600 border-b border-gray-200 pb-0.5">
-                          <span>di cui saturi</span>
-                          <span>0.8g</span>
-                        </div>
-                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
-                          <span className="font-semibold">Carboidrati</span>
-                          <span>15g</span>
-                        </div>
-                        <div className="flex justify-between pl-2 text-gray-600 border-b border-gray-200 pb-0.5">
-                          <span>di cui zuccheri</span>
-                          <span>8g</span>
-                        </div>
-                        <div className="flex justify-between border-b border-gray-300 pb-0.5">
-                          <span className="font-semibold">Proteine</span>
-                          <span>5.2g</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span className="font-semibold">Sale</span>
-                          <span>0.3g</span>
+                        <div className="mt-1 pt-1 border-t border-gray-300 text-[6px] text-gray-500">
+                          <p>*Valori medi per 100g di prodotto</p>
                         </div>
                       </div>
                     </div>
@@ -555,7 +567,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-2xl p-6 shadow-2xl text-center">
                     <div className="relative inline-block mb-3">
@@ -585,7 +597,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Remaining steps 15-26 with same pattern - adding pt-12 to non-desktop */}
+              {/* Remaining steps 15-26 with same pattern - using pt-20 for mobile */}
               {/* Step 15: Colazione Fatto */}
               {step === 15 && (
                 <motion.div
@@ -593,7 +605,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-3">Pasti di Oggi</h3>
                   <motion.div
@@ -611,7 +623,7 @@ export default function AppDemoFlow() {
                       </motion.div>
                       <div className="flex-1">
                         <div className="font-bold text-xs">Colazione</div>
-                        <div className="text-xs text-gray-500">Pancakes Proteici • 470 kcal</div>
+                        <div className="text-xs text-gray-500">Pancakes Proteici • 490 kcal</div>
                       </div>
                     </div>
                   </motion.div>
@@ -628,7 +640,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-900 ${!isDesktop ? 'pt-12' : ''}`}
+                  className={`absolute inset-0 bg-gray-900 ${!isDesktop ? 'pt-20' : ''}`}
                 >
                   <motion.div
                     initial={{ scale: 1.2, opacity: 0 }}
@@ -653,7 +665,7 @@ export default function AppDemoFlow() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-black/70 flex items-center justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-black/70 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-xl p-4 max-w-sm">
                     <div className="text-center mb-3">
@@ -684,7 +696,7 @@ export default function AppDemoFlow() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-3 py-1 bg-purple-100 rounded-full mb-2">
@@ -713,7 +725,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Allenamento Lunedì</h3>
                   <motion.div
@@ -748,7 +760,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.9, opacity: 0 }}
-                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Shoulder Press</h3>
                   <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-3 mb-3">
@@ -778,7 +790,7 @@ export default function AppDemoFlow() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-black/80 flex items-center justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-black/80 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-xl p-4 w-full">
                     <h4 className="font-bold text-sm mb-3">Problemi con l'esercizio?</h4>
@@ -809,7 +821,7 @@ export default function AppDemoFlow() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Rematore con Bilanciere</h3>
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-3 mb-3">
@@ -836,7 +848,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-3">Analisi Progressi</h3>
                   <div className="grid grid-cols-2 gap-2 mb-3">
@@ -873,7 +885,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 flex flex-col ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 flex flex-col ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-3">Raccomandazioni AI</h3>
                   <div className="flex-1 space-y-2">
@@ -913,7 +925,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-base font-bold mb-3">I Tuoi Progressi</h3>
                   <div className="bg-white rounded-xl p-4 shadow-lg">
@@ -960,7 +972,7 @@ export default function AppDemoFlow() {
                   key="goal-reached"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
@@ -983,7 +995,7 @@ export default function AppDemoFlow() {
             </AnimatePresence>
           </div>
 
-          {/* Device frame overlay */}
+          {/* Device frame overlay - keep existing code */}
           {isDesktop ? (
             <svg 
               viewBox="0 0 820 615" 
@@ -1013,7 +1025,6 @@ export default function AppDemoFlow() {
                 </mask>
               </defs>
               
-              {/* Outer frame with cutout */}
               <rect 
                 x="2" y="2" 
                 width="816" height="611" 
@@ -1025,10 +1036,8 @@ export default function AppDemoFlow() {
                 mask="url(#screenMask)"
               />
               
-              {/* Camera */}
               <circle cx="410" cy="9" r="3" fill="#0a0a0a" opacity="0.9"/>
               
-              {/* Inner bezel highlight */}
               <rect 
                 x="29" y="18" 
                 width="762" height="2" 
@@ -1044,7 +1053,6 @@ export default function AppDemoFlow() {
               style={{ zIndex: 2 }}
             >
               <defs>
-                {/* Shadow filter */}
                 <filter id="phoneShadow" x="-50%" y="-50%" width="200%" height="200%">
                   <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
                   <feOffset dx="0" dy="2" result="offsetblur"/>
@@ -1058,7 +1066,6 @@ export default function AppDemoFlow() {
                 </filter>
               </defs>
               
-              {/* Main phone frame - black border with rounded corners */}
               <rect 
                 x="5" y="5" 
                 width="383" height="842" 
@@ -1069,7 +1076,6 @@ export default function AppDemoFlow() {
                 filter="url(#phoneShadow)"
               />
               
-              {/* Inner screen cutout border */}
               <rect 
                 x="8" y="8" 
                 width="377" height="836" 
@@ -1079,7 +1085,6 @@ export default function AppDemoFlow() {
                 strokeWidth="1"
               />
               
-              {/* Dynamic Island */}
               <rect 
                 x="136" y="26" 
                 width="121" height="37" 
@@ -1087,17 +1092,11 @@ export default function AppDemoFlow() {
                 fill="#000000"
               />
               
-              {/* Side buttons */}
-              {/* Left side - Silent switch */}
               <rect x="0" y="175" width="4" height="35" rx="2" fill="#000000"/>
-              {/* Left side - Volume up */}
               <rect x="0" y="235" width="4" height="58" rx="2" fill="#000000"/>
-              {/* Left side - Volume down */}
               <rect x="0" y="310" width="4" height="58" rx="2" fill="#000000"/>
-              {/* Right side - Power button */}
               <rect x="389" y="240" width="4" height="88" rx="2" fill="#000000"/>
               
-              {/* Bottom connector/indicator */}
               <rect x="185" y="842" width="23" height="5" rx="2.5" fill="#000000"/>
             </svg>
           )}
