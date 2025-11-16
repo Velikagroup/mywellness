@@ -938,7 +938,7 @@ export default function AppDemoFlow() {
           </AnimatePresence>
         </div>
 
-        {/* Device frame overlay - CSS/SVG iPad frame */}
+        {/* Device frame overlay - CSS/SVG iPad frame NERO */}
         {isDesktop ? (
           <svg 
             viewBox="0 0 820 615" 
@@ -947,15 +947,15 @@ export default function AppDemoFlow() {
           >
             <defs>
               <linearGradient id="frameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                <stop offset="0%" stopColor="#e8e8e8" />
-                <stop offset="50%" stopColor="#f5f5f5" />
-                <stop offset="100%" stopColor="#e0e0e0" />
+                <stop offset="0%" stopColor="#1a1a1a" />
+                <stop offset="50%" stopColor="#2a2a2a" />
+                <stop offset="100%" stopColor="#1a1a1a" />
               </linearGradient>
               <filter id="frameShadow">
-                <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-                <feOffset dx="0" dy="2" result="offsetblur"/>
+                <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
+                <feOffset dx="0" dy="3" result="offsetblur"/>
                 <feComponentTransfer>
-                  <feFuncA type="linear" slope="0.3"/>
+                  <feFuncA type="linear" slope="0.5"/>
                 </feComponentTransfer>
                 <feMerge>
                   <feMergeNode/>
@@ -970,7 +970,7 @@ export default function AppDemoFlow() {
               width="816" height="611" 
               rx="32" ry="32"
               fill="url(#frameGradient)"
-              stroke="#d0d0d0"
+              stroke="#0a0a0a"
               strokeWidth="1"
               filter="url(#frameShadow)"
             />
@@ -980,11 +980,11 @@ export default function AppDemoFlow() {
               x="29" y="18" 
               width="762" height="579" 
               rx="18" ry="18"
-              fill="black"
+              fill="#000000"
             />
             
             {/* Camera */}
-            <circle cx="410" cy="9" r="3" fill="#2a2a2a" opacity="0.8"/>
+            <circle cx="410" cy="9" r="3" fill="#0a0a0a" opacity="0.9"/>
             
             {/* Inner bezel highlight */}
             <rect 
@@ -992,7 +992,7 @@ export default function AppDemoFlow() {
               width="762" height="2" 
               rx="1" ry="1"
               fill="white"
-              opacity="0.3"
+              opacity="0.1"
             />
           </svg>
         ) : (
