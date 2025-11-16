@@ -99,7 +99,7 @@ export default function AppDemoFlow() {
             top: isDesktop ? '3.5%' : '3%',
             left: '50%',
             width: isDesktop ? '610px' : '91%',
-            height: isDesktop ? 'calc(92.5% + 5px)' : '94%',
+            height: isDesktop ? 'calc(92.5% + 10px)' : '94%',
             transform: isDesktop ? 'translateX(calc(-50% - 2px))' : 'translateX(-50%)',
             borderRadius: isDesktop ? '22px' : '36px',
             zIndex: 1 // Added zIndex
