@@ -70,7 +70,7 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[650px]' : 'max-w-[280px]'}`}>
+    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[650px]' : 'max-w-[400px]'}`}>
       <style>{`
         @keyframes pulse-glow {
           0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
@@ -89,19 +89,19 @@ export default function AppDemoFlow() {
 
       {/* Main demo container with device frame */}
       <div className="relative" style={{ 
-        aspectRatio: isDesktop ? '4/3' : '9/16', 
-        maxHeight: isDesktop ? '490px' : '420px'
+        aspectRatio: isDesktop ? '4/3' : '9/19.5', 
+        maxHeight: isDesktop ? '490px' : '650px'
       }}>
         {/* Content container */}
         <div 
           className="absolute bg-white overflow-hidden shadow-xl"
           style={{ 
-            top: isDesktop ? 'calc(3.5% - 3px)' : '3%',
+            top: isDesktop ? 'calc(3.5% - 3px)' : '2.8%',
             left: '50%',
-            width: isDesktop ? '610px' : '91%',
-            height: isDesktop ? 'calc(92.5% + 10px)' : '94%',
+            width: isDesktop ? '610px' : '92.5%',
+            height: isDesktop ? 'calc(92.5% + 10px)' : '94.8%',
             transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
-            borderRadius: isDesktop ? '22px' : '36px',
+            borderRadius: isDesktop ? '22px' : '46px',
             zIndex: 1
           }}
         >
@@ -939,7 +939,7 @@ export default function AppDemoFlow() {
           </AnimatePresence>
         </div>
 
-        {/* Device frame overlay - CSS/SVG iPad frame NERO */}
+        {/* Device frame overlay */}
         {isDesktop ? (
           <svg 
             viewBox="0 0 820 615" 
@@ -994,11 +994,78 @@ export default function AppDemoFlow() {
             />
           </svg>
         ) : (
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/deeb4c0ac_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
-            alt="Device Frame"
+          <svg 
+            viewBox="0 0 430 880" 
             className="absolute inset-0 w-full h-full pointer-events-none"
-          />
+            style={{ zIndex: 2 }}
+          >
+            <defs>
+              <linearGradient id="iphoneFrameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                <stop offset="0%" stopColor="#0a0a0a" />
+                <stop offset="50%" stopColor="#1a1a1a" />
+                <stop offset="100%" stopColor="#0a0a0a" />
+              </linearGradient>
+              <filter id="iphoneFrameShadow">
+                <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
+                <feOffset dx="0" dy="2" result="offsetblur"/>
+                <feComponentTransfer>
+                  <feFuncA type="linear" slope="0.4"/>
+                </feComponentTransfer>
+                <feMerge>
+                  <feMergeNode/>
+                  <feMergeNode in="SourceGraphic"/>
+                </feMerge>
+              </filter>
+              <mask id="iphoneScreenMask">
+                <rect x="0" y="0" width="430" height="880" fill="white"/>
+                <rect x="16" y="25" width="398" height="834" rx="42" ry="42" fill="black"/>
+              </mask>
+            </defs>
+            
+            {/* Main frame body */}
+            <rect 
+              x="2" y="2" 
+              width="426" height="876" 
+              rx="55" ry="55"
+              fill="url(#iphoneFrameGradient)"
+              stroke="#000000"
+              strokeWidth="2"
+              filter="url(#iphoneFrameShadow)"
+              mask="url(#iphoneScreenMask)"
+            />
+            
+            {/* Dynamic Island */}
+            <rect 
+              x="150" y="20" 
+              width="130" height="32" 
+              rx="16" ry="16"
+              fill="#000000"
+            />
+            
+            {/* Side buttons */}
+            {/* Left silent switch */}
+            <rect x="0" y="180" width="3" height="50" rx="1.5" fill="#0a0a0a"/>
+            {/* Left volume up */}
+            <rect x="0" y="250" width="3" height="60" rx="1.5" fill="#0a0a0a"/>
+            {/* Left volume down */}
+            <rect x="0" y="330" width="3" height="60" rx="1.5" fill="#0a0a0a"/>
+            {/* Right power button */}
+            <rect x="427" y="250" width="3" height="80" rx="1.5" fill="#0a0a0a"/>
+            
+            {/* Bottom speaker grills */}
+            <circle cx="200" cy="865" r="2" fill="#1a1a1a"/>
+            <circle cx="215" cy="865" r="2" fill="#1a1a1a"/>
+            <circle cx="230" cy="865" r="2" fill="#1a1a1a"/>
+            
+            {/* Inner bezel highlight */}
+            <rect 
+              x="16" y="25" 
+              width="398" height="3" 
+              rx="2" ry="2"
+              fill="white"
+              opacity="0.08"
+            />
+          </svg>
         )}
       </div>
     </div>
