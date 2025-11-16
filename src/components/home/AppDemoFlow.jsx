@@ -70,8 +70,8 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className="flex items-center justify-center w-full px-4">
-      <div className={`relative ${isDesktop ? 'max-w-[650px]' : 'max-w-[450px]'} w-full mx-auto`}>
+    <div className="w-full flex justify-center">
+      <div className={`relative ${isDesktop ? 'max-w-[650px]' : 'max-w-[450px]'} w-full`}>
         <style>{`
           @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
