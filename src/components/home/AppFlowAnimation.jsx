@@ -27,31 +27,18 @@ const steps = [
 export default function AppFlowAnimation() {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPaused, setIsPaused] = useState(false);
-  const [progress, setProgress] = useState(0);
 
   useEffect(() => {
     if (isPaused) return;
 
-    // Animazione progressiva continua
-    const progressInterval = setInterval(() => {
-      setProgress(prev => {
-        if (prev >= 100) {
-          setCurrentStep((current) => (current + 1) % steps.length);
-          return 0;
-        }
-        return prev + 0.5; // Incremento molto piccolo per fluidità
-      });
-    }, 15); // Update ogni 15ms per animazione super fluida
+    const interval = setInterval(() => {
+      setCurrentStep((prev) => (prev + 1) % steps.length);
+    }, 3000); // Cambia step ogni 3 secondi
 
-    return () => clearInterval(progressInterval);
+    return () => clearInterval(interval);
   }, [isPaused]);
 
   const CurrentComponent = steps[currentStep].component;
-  const NextComponent = steps[(currentStep + 1) % steps.length].component;
-
-  // Calcola l'opacità per il crossfade
-  const currentOpacity = progress < 80 ? 1 : 1 - ((progress - 80) / 20);
-  const nextOpacity = progress < 80 ? 0 : (progress - 80) / 20;
 
   return (
     <div 
@@ -59,17 +46,12 @@ export default function AppFlowAnimation() {
       onMouseEnter={() => setIsPaused(true)}
       onMouseLeave={() => setIsPaused(false)}
     >
-      {/* Step Indicator con fade continuo */}
-      <motion.div
-        animate={{ opacity: [1, 0.8, 1] }}
-        transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-        className="mb-6 text-center"
-      >
+      {/* Step Indicator */}
+      <div className="mb-6 text-center">
         <motion.div
           key={currentStep}
-          initial={{ opacity: 0, y: -10 }}
+          initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4 }}
           className="inline-flex items-center gap-3 px-6 py-3 bg-white/90 backdrop-blur-sm rounded-full shadow-lg border border-gray-200/50"
         >
           <span className="text-2xl">{steps[currentStep].icon}</span>
@@ -78,64 +60,48 @@ export default function AppFlowAnimation() {
             <p className="text-sm font-bold text-gray-900">{steps[currentStep].label}</p>
           </div>
         </motion.div>
-      </motion.div>
+      </div>
 
-      {/* Animation Container con crossfade continuo */}
+      {/* Animation Container */}
       <div className="relative overflow-hidden rounded-2xl shadow-2xl">
-        <div className="relative w-full" style={{ aspectRatio: '9/16' }}>
-          {/* Current Step */}
+        <AnimatePresence mode="wait">
           <motion.div
-            className="absolute inset-0 w-full h-full"
-            style={{ opacity: currentOpacity }}
-            transition={{ duration: 0 }}
+            key={currentStep}
+            initial={{ opacity: 0, scale: 0.95, x: 50 }}
+            animate={{ opacity: 1, scale: 1, x: 0 }}
+            exit={{ opacity: 0, scale: 0.95, x: -50 }}
+            transition={{ duration: 0.5, ease: "easeInOut" }}
+            className="w-full"
           >
             <CurrentComponent />
           </motion.div>
-
-          {/* Next Step (per crossfade) */}
-          <motion.div
-            className="absolute inset-0 w-full h-full"
-            style={{ opacity: nextOpacity }}
-            transition={{ duration: 0 }}
-          >
-            <NextComponent />
-          </motion.div>
-
-          {/* Overlay gradient per effetto video */}
-          <div className="absolute inset-0 pointer-events-none bg-gradient-to-b from-transparent via-transparent to-black/5" />
-        </div>
+        </AnimatePresence>
       </div>
 
-      {/* Progress Bar fluida */}
-      <div className="mt-6">
-        <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
-          <motion.div
-            className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500"
-            style={{ width: `${((currentStep * 100 + progress) / steps.length)}%` }}
-            transition={{ duration: 0 }}
-          />
-        </div>
-      </div>
-
-      {/* Mini indicators */}
-      <div className="flex justify-center gap-1.5 mt-4">
+      {/* Progress Dots */}
+      <div className="flex justify-center gap-2 mt-6">
         {steps.map((_, index) => (
           <button
             key={index}
-            onClick={() => {
-              setCurrentStep(index);
-              setProgress(0);
-            }}
+            onClick={() => setCurrentStep(index)}
             className={`transition-all duration-300 rounded-full ${
               index === currentStep 
-                ? 'w-6 h-1.5 bg-[var(--brand-primary)]' 
-                : index < currentStep
-                ? 'w-1.5 h-1.5 bg-[var(--brand-primary)]/40'
-                : 'w-1.5 h-1.5 bg-gray-300'
+                ? 'w-8 h-2 bg-[var(--brand-primary)]' 
+                : 'w-2 h-2 bg-gray-300 hover:bg-gray-400'
             }`}
             aria-label={`Go to step ${index + 1}`}
           />
         ))}
+      </div>
+
+      {/* Progress Bar */}
+      <div className="mt-4 h-1 bg-gray-200 rounded-full overflow-hidden">
+        <motion.div
+          className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500"
+          initial={{ width: '0%' }}
+          animate={{ width: `${((currentStep + 1) / steps.length) * 100}%` }}
+          transition={{ duration: 0.5 }}
+        />
       </div>
     </div>
   );
