@@ -1,8 +1,9 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target } from 'lucide-react';
 
-const ANIMATION_DURATION = 30000; // 30 secondi totali
+const ANIMATION_DURATION = 45000; // 45 secondi totali
 
 export default function AppDemoFlow() {
   const [step, setStep] = useState(0);
@@ -16,34 +17,34 @@ export default function AppDemoFlow() {
       const newProgress = Math.min((elapsed / ANIMATION_DURATION) * 100, 100);
       setProgress(newProgress);
 
-      // Trigger step changes based on time
-      if (elapsed < 2000) setStep(0); // Quiz step 1
-      else if (elapsed < 3500) setStep(1); // Quiz step 2
-      else if (elapsed < 4500) setStep(2); // Loading
-      else if (elapsed < 6000) setStep(3); // Dashboard
-      else if (elapsed < 7000) setStep(4); // Zoom stats
-      else if (elapsed < 8000) setStep(5); // Genera piano
-      else if (elapsed < 9000) setStep(6); // Scelta dieta
-      else if (elapsed < 10000) setStep(7); // Piano creato
-      else if (elapsed < 11000) setStep(8); // Pop-up colazione
-      else if (elapsed < 12000) setStep(9); // Scansiona ingrediente
-      else if (elapsed < 13000) setStep(10); // Aggiungi ingrediente
-      else if (elapsed < 14000) setStep(11); // Piano aggiornato
-      else if (elapsed < 15000) setStep(12); // Lista spesa
-      else if (elapsed < 16000) setStep(13); // Scansiona etichetta
-      else if (elapsed < 17000) setStep(14); // Health score
-      else if (elapsed < 18000) setStep(15); // Colazione fatto
-      else if (elapsed < 19500) setStep(16); // Scansiona pranzo
-      else if (elapsed < 20500) setStep(17); // Ribilanciamento
-      else if (elapsed < 21500) setStep(18); // Workout quiz
-      else if (elapsed < 22500) setStep(19); // Piano workout
-      else if (elapsed < 23500) setStep(20); // Dettagli esercizio
-      else if (elapsed < 24500) setStep(21); // Modifica workout
-      else if (elapsed < 25500) setStep(22); // Nuovo esercizio
-      else if (elapsed < 26500) setStep(23); // Analisi corpo
-      else if (elapsed < 27500) setStep(24); // Accetta modifiche
-      else if (elapsed < 29000) setStep(25); // Dashboard finale
-      else if (elapsed < 30000) setStep(26); // Obiettivo raggiunto
+      // Trigger step changes based on time (distributed over 45 seconds)
+      if (elapsed < 2500) setStep(0); // Quiz step 1
+      else if (elapsed < 4500) setStep(1); // Quiz step 2
+      else if (elapsed < 6000) setStep(2); // Loading
+      else if (elapsed < 8500) setStep(3); // Dashboard
+      else if (elapsed < 10500) setStep(4); // Zoom stats
+      else if (elapsed < 12500) setStep(5); // Genera piano
+      else if (elapsed < 14500) setStep(6); // Scelta dieta
+      else if (elapsed < 16500) setStep(7); // Piano creato
+      else if (elapsed < 18500) setStep(8); // Pop-up colazione
+      else if (elapsed < 20500) setStep(9); // Scansiona ingrediente
+      else if (elapsed < 22500) setStep(10); // Aggiungi ingrediente
+      else if (elapsed < 24500) setStep(11); // Piano aggiornato
+      else if (elapsed < 26500) setStep(12); // Lista spesa
+      else if (elapsed < 28500) setStep(13); // Scansiona etichetta
+      else if (elapsed < 30500) setStep(14); // Health score
+      else if (elapsed < 32000) setStep(15); // Colazione fatto
+      else if (elapsed < 33500) setStep(16); // Scansiona pranzo
+      else if (elapsed < 35000) setStep(17); // Ribilanciamento
+      else if (elapsed < 36500) setStep(18); // Workout quiz
+      else if (elapsed < 38000) setStep(19); // Piano workout
+      else if (elapsed < 39500) setStep(20); // Dettagli esercizio
+      else if (elapsed < 41000) setStep(21); // Modifica workout
+      else if (elapsed < 42000) setStep(22); // Nuovo esercizio
+      else if (elapsed < 43000) setStep(23); // Analisi corpo
+      else if (elapsed < 44000) setStep(24); // Accetta modifiche
+      else if (elapsed < 44500) setStep(25); // Dashboard finale
+      else if (elapsed < 45000) setStep(26); // Obiettivo raggiunto
       
       if (elapsed >= ANIMATION_DURATION) {
         clearInterval(progressInterval);
