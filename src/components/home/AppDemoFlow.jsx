@@ -1,6 +1,7 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler } from 'lucide-react';
+import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3 } from 'lucide-react';
 
 const ANIMATION_DURATION = 90000; // 90 secondi totali (1:30 min)
 
@@ -8,6 +9,7 @@ export default function AppDemoFlow() {
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
+  const [dashboardScroll, setDashboardScroll] = useState(0);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -37,7 +39,11 @@ export default function AppDemoFlow() {
       else if (elapsed < 15000) setStep(3);
       else if (elapsed < 19000) setStep(4);
       else if (elapsed < 23000) setStep(5);
-      else if (elapsed < 27000) setStep(6);
+      else if (elapsed < 27000) {
+        setStep(6);
+        const scrollProgress = (elapsed - 23000) / 4000;
+        setDashboardScroll(scrollProgress);
+      }
       else if (elapsed < 31000) setStep(7);
       else if (elapsed < 35000) setStep(8);
       else if (elapsed < 38000) setStep(9);
@@ -109,34 +115,34 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-white flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
                 >
                   <div className="text-center">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                      <Sparkles className="w-6 h-6 text-white" />
+                    <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                      <Sparkles className="w-8 h-8 text-white" />
                     </div>
-                    <h2 className="text-lg font-bold text-gray-900 mb-1">Seleziona il tuo sesso:</h2>
-                    <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto mt-4">
+                    <h2 className="text-xl font-bold text-gray-900 mb-6">Seleziona il tuo sesso:</h2>
+                    <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
                       <motion.div
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
-                        className="p-4 rounded-lg border-2 border-gray-200 bg-white"
+                        className="p-6 rounded-xl border-2 border-gray-200 bg-white"
                       >
-                        <div className="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                          <span className="text-2xl">👨</span>
+                        <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                          <span className="text-3xl">👨</span>
                         </div>
-                        <h3 className="font-bold text-sm text-gray-900">Uomo</h3>
+                        <h3 className="font-bold text-base text-gray-900">Uomo</h3>
                       </motion.div>
                       <motion.div
                         initial={{ scale: 0.9 }}
                         animate={{ scale: 1 }}
                         transition={{ delay: 0.1 }}
-                        className="p-4 rounded-lg border-2 border-[var(--brand-primary)] bg-[var(--brand-primary-light)]"
+                        className="p-6 rounded-xl border-2 border-[var(--brand-primary)] bg-[var(--brand-primary-light)]"
                       >
-                        <div className="w-10 h-10 bg-pink-100 rounded-xl flex items-center justify-center mx-auto mb-2">
-                          <span className="text-2xl">👩</span>
+                        <div className="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mx-auto mb-3">
+                          <span className="text-3xl">👩</span>
                         </div>
-                        <h3 className="font-bold text-sm text-gray-900">Donna</h3>
+                        <h3 className="font-bold text-base text-gray-900">Donna</h3>
                       </motion.div>
                     </div>
                   </div>
@@ -150,20 +156,20 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-white flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
                 >
                   <div className="text-center">
-                    <div className="w-12 h-12 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-3">
-                      <Calendar className="w-6 h-6 text-white" />
+                    <div className="w-14 h-14 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
+                      <Calendar className="w-7 h-7 text-white" />
                     </div>
-                    <h2 className="text-base font-bold text-gray-900 mb-2">Qual è la tua data di nascita?</h2>
-                    <p className="text-xs text-gray-600 mb-4">Ci aiuta a calcolare il tuo metabolismo</p>
+                    <h2 className="text-lg font-bold text-gray-900 mb-2">Qual è la tua data di nascita?</h2>
+                    <p className="text-sm text-gray-600 mb-6">Ci aiuta a calcolare il tuo metabolismo</p>
                     
-                    <div className="max-w-xs mx-auto">
-                      <div className="h-12 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-[var(--brand-primary-light)]">
-                        <span className="text-lg font-bold text-gray-900">15/03/1990</span>
+                    <div className="max-w-sm mx-auto">
+                      <div className="h-14 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-[var(--brand-primary-light)]">
+                        <span className="text-xl font-bold text-gray-900">15/03/1990</span>
                       </div>
-                      <p className="text-xs text-gray-500 mt-2">Hai 34 anni</p>
+                      <p className="text-sm text-gray-500 mt-3">Hai 34 anni</p>
                     </div>
                   </div>
                 </motion.div>
@@ -176,20 +182,20 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-white flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
                 >
                   <div className="text-center">
-                    <div className="w-12 h-12 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-3">
-                      <Ruler className="w-6 h-6 text-white" />
+                    <div className="w-14 h-14 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4">
+                      <Ruler className="w-7 h-7 text-white" />
                     </div>
-                    <h2 className="text-base font-bold text-gray-900 mb-2">Qual è la tua altezza?</h2>
-                    <p className="text-xs text-gray-600 mb-4">Necessaria per calcolare BMI</p>
+                    <h2 className="text-lg font-bold text-gray-900 mb-2">Qual è la tua altezza?</h2>
+                    <p className="text-sm text-gray-600 mb-6">Necessaria per calcolare BMI</p>
                     
-                    <div className="max-w-xs mx-auto">
+                    <div className="max-w-sm mx-auto">
                       <div className="relative">
-                        <div className="h-12 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-white">
-                          <span className="text-2xl font-bold text-gray-900">175</span>
-                          <span className="absolute right-4 text-gray-500 font-medium">cm</span>
+                        <div className="h-14 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-white">
+                          <span className="text-3xl font-bold text-gray-900">175</span>
+                          <span className="absolute right-6 text-gray-500 font-medium">cm</span>
                         </div>
                       </div>
                     </div>
@@ -204,18 +210,18 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
                 >
-                  <div className="text-center">
-                    <div className="inline-block px-3 py-1 bg-purple-100 rounded-full mb-2">
-                      <span className="text-xs font-semibold text-purple-700">Peso Attuale</span>
+                  <div className="text-center mb-6">
+                    <div className="inline-block px-4 py-1.5 bg-purple-100 rounded-full mb-3">
+                      <span className="text-sm font-semibold text-purple-700">Peso Attuale</span>
                     </div>
-                    <h3 className="text-lg font-bold mb-4">Quanto pesi attualmente?</h3>
+                    <h3 className="text-xl font-bold mb-6">Quanto pesi attualmente?</h3>
                   </div>
-                  <div className="bg-white rounded-xl p-6 shadow-lg max-w-xs mx-auto">
-                    <div className="text-center mb-3">
-                      <div className="text-5xl font-black text-gray-900">80</div>
-                      <div className="text-gray-500 text-sm mt-1">kg</div>
+                  <div className="bg-white rounded-2xl p-8 shadow-xl max-w-sm mx-auto">
+                    <div className="text-center">
+                      <div className="text-6xl font-black text-gray-900 mb-2">80</div>
+                      <div className="text-gray-500 text-base">kg</div>
                     </div>
                   </div>
                 </motion.div>
@@ -228,27 +234,18 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
                 >
-                  <div className="text-center">
-                    <div className="inline-block px-3 py-1 bg-green-100 rounded-full mb-2">
-                      <span className="text-xs font-semibold text-green-700">Peso Obiettivo</span>
+                  <div className="text-center mb-6">
+                    <div className="inline-block px-4 py-1.5 bg-green-100 rounded-full mb-3">
+                      <span className="text-sm font-semibold text-green-700">Peso Obiettivo</span>
                     </div>
-                    <h3 className="text-lg font-bold mb-4">Qual è il tuo peso obiettivo?</h3>
+                    <h3 className="text-xl font-bold mb-6">Qual è il tuo peso obiettivo?</h3>
                   </div>
-                  <div className="bg-white rounded-xl p-6 shadow-lg max-w-xs mx-auto">
-                    <div className="text-center mb-3">
-                      <div className="text-5xl font-black text-[var(--brand-primary)]">73</div>
-                      <div className="text-gray-500 text-sm mt-1">kg</div>
-                    </div>
-                    <div className="flex items-center justify-center">
-                      <motion.div
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        className="w-10 h-10 bg-[var(--brand-primary)] rounded-full flex items-center justify-center"
-                      >
-                        <ArrowRight className="w-5 h-5 text-white" />
-                      </motion.div>
+                  <div className="bg-white rounded-2xl p-8 shadow-xl max-w-sm mx-auto">
+                    <div className="text-center">
+                      <div className="text-6xl font-black text-[var(--brand-primary)] mb-2">73</div>
+                      <div className="text-gray-500 text-base">kg</div>
                     </div>
                   </div>
                 </motion.div>
@@ -261,45 +258,86 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50 ${!isDesktop ? 'pt-20' : ''}`}
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50 ${!isDesktop ? 'pt-16' : ''}`}
                 >
                   <motion.div
                     animate={{ rotate: 360 }}
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
-                    className="w-14 h-14 border-4 border-[var(--brand-primary)] border-t-transparent rounded-full mb-3"
+                    className="w-16 h-16 border-4 border-[var(--brand-primary)] border-t-transparent rounded-full mb-4"
                   />
-                  <p className="text-sm font-semibold text-gray-700">Analisi in corso...</p>
+                  <p className="text-base font-semibold text-gray-700">Analisi in corso...</p>
                 </motion.div>
               )}
 
-              {/* Step 6: Dashboard */}
+              {/* Step 6: Dashboard con scroll - REPLICA DASHBOARD REALE */}
               {step === 6 && (
                 <motion.div
                   key="dashboard"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 overflow-hidden ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 overflow-hidden ${!isDesktop ? 'pt-16' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  <div className="mb-3">
-                    <h2 className="text-base font-bold text-gray-900">Dashboard</h2>
-                  </div>
-                  <div className="space-y-2">
-                    <div className="bg-white rounded-lg p-3 shadow-sm">
-                      <div className="flex justify-between items-center mb-1">
-                        <span className="text-xs text-gray-600">Peso Iniziale</span>
-                        <span className="text-lg font-bold">80.0 kg</span>
+                  <motion.div
+                    animate={{ y: -dashboardScroll * 200 }} // Adjust 200 based on desired scroll height
+                    transition={{ duration: 0.5 }}
+                    className="space-y-4"
+                  >
+                    {/* Header */}
+                    <div className="text-center mb-4">
+                      <h2 className="text-xl font-bold text-gray-900">Dashboard</h2>
+                    </div>
+                    
+                    {/* Peso Iniziale e Target */}
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                      <div className="flex justify-between items-center mb-3">
+                        <span className="text-sm text-gray-600">Peso Iniziale</span>
+                        <span className="text-xl font-bold text-gray-900">80.0 kg</span>
                       </div>
                       <div className="flex justify-between items-center">
-                        <span className="text-xs text-gray-600">Peso Target</span>
-                        <span className="text-lg font-bold text-[var(--brand-primary)]">73.0 kg</span>
+                        <span className="text-sm text-gray-600">Peso Target</span>
+                        <span className="text-xl font-bold text-[var(--brand-primary)]">73.0 kg</span>
                       </div>
                     </div>
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-3 shadow-sm border border-green-200">
-                      <div className="text-xs text-gray-600 mb-0.5">Target Calorico</div>
-                      <div className="text-2xl font-black text-gray-900">2000 <span className="text-sm">kcal</span></div>
+
+                    {/* Target Calorico - BOX VERDE EVIDENZIATO */}
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 shadow-sm border-2 border-green-200">
+                      <div className="text-sm text-gray-600 mb-1 text-center">Target Calorico</div>
+                      <div className="text-center">
+                        <span className="text-4xl font-black text-gray-900">2000</span>
+                        <span className="text-lg font-semibold text-gray-700 ml-2">kcal</span>
+                      </div>
                     </div>
-                  </div>
+
+                    {/* Card Tecnici che appaiono con scroll */}
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: dashboardScroll > 0.3 ? 1 : 0, y: dashboardScroll > 0.3 ? 0 : 20 }}
+                      className="bg-white rounded-xl p-4 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <TrendingDown className="w-5 h-5 text-[var(--brand-primary)]" />
+                          <span className="text-sm font-semibold text-gray-800">Metabolismo Basale (BMR)</span>
+                        </div>
+                      </div>
+                      <div className="text-3xl font-black text-gray-900">1500 <span className="text-base font-normal text-gray-500">kcal</span></div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: dashboardScroll > 0.6 ? 1 : 0, y: dashboardScroll > 0.6 ? 0 : 20 }}
+                      className="bg-white rounded-xl p-4 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <BarChart3 className="w-5 h-5 text-[var(--brand-primary)]" />
+                          <span className="text-sm font-semibold text-gray-800">Massa Grassa</span>
+                        </div>
+                      </div>
+                      <div className="text-3xl font-black text-gray-900">28.5 <span className="text-base font-normal text-gray-500">%</span></div>
+                    </motion.div>
+                  </motion.div>
                 </motion.div>
               )}
 
@@ -965,7 +1003,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 26: Obiettivo Raggiunto */}
               {step === 26 && (
                 <motion.div
                   key="goal-reached"
