@@ -69,7 +69,7 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[580px]' : 'max-w-[280px]'}`}>
+    <div className={`relative w-full mx-auto ${isDesktop ? 'max-w-[650px]' : 'max-w-[280px]'}`}>
       <style>{`
         @keyframes pulse-glow {
           0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
@@ -87,16 +87,16 @@ export default function AppDemoFlow() {
       </div>
 
       {/* Main demo container with device frame */}
-      <div className="relative" style={{ aspectRatio: isDesktop ? '4/3' : '9/16', maxHeight: isDesktop ? '435px' : '420px' }}>
+      <div className="relative" style={{ aspectRatio: isDesktop ? '4/3' : '9/16', maxHeight: isDesktop ? '490px' : '420px' }}>
         {/* Content container - posizionato DENTRO la cornice */}
         <div 
           className="absolute bg-white overflow-hidden shadow-xl"
           style={{ 
-            top: isDesktop ? '4.5%' : '3%',
-            left: isDesktop ? '6.5%' : '4.5%',
-            right: isDesktop ? '6.5%' : '4.5%',
-            bottom: isDesktop ? '5%' : '3%',
-            borderRadius: isDesktop ? '18px' : '36px'
+            top: isDesktop ? '4.2%' : '3%',
+            left: isDesktop ? '6.2%' : '4.5%',
+            right: isDesktop ? '6.2%' : '4.5%',
+            bottom: isDesktop ? '4.8%' : '3%',
+            borderRadius: isDesktop ? '20px' : '36px'
           }}
         >
           <AnimatePresence mode="wait">
