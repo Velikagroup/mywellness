@@ -5,29 +5,16 @@ import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Targe
 
 const ANIMATION_DURATION = 90000; // 90 secondi totali (1:30 min)
 
-// Precarica immagini
-const preloadImages = () => {
-  const images = [
-    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png',
-    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png'
-  ];
-  
-  images.forEach((src) => {
-    const img = new Image();
-    img.src = src;
-  });
-};
-
 export default function AppDemoFlow() {
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
   const [dashboardScroll, setDashboardScroll] = useState(0);
 
-  // Precarica immagini all'inizio
-  useEffect(() => {
-    preloadImages();
-  }, []);
+  // No longer preloading images, using SVGs instead.
+  // useEffect(() => {
+  //   preloadImages();
+  // }, []);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -1084,7 +1071,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 25: Analisi Corpo - CON IMMAGINI PRECARICATE */}
+              {/* Step 25: Analisi Corpo - SILHOUETTE SVG PRIMA/DOPO */}
               {step === 25 && (
                 <motion.div
                   key="body-analysis"
@@ -1095,25 +1082,43 @@ export default function AppDemoFlow() {
                 >
                   <h3 className="text-sm font-bold mb-2 text-center">Analisi Progressi</h3>
                   <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
+                    {/* PRIMA - Silhouette con più massa */}
+                    <div className="bg-white rounded-lg p-1.5 overflow-hidden flex flex-col items-center">
                       <div className="text-[9px] text-gray-500 mb-1 text-center">Prima</div>
-                      <img 
-                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
-                        alt="Before"
-                        className="w-full aspect-square object-cover rounded-lg"
-                        loading="eager"
-                        fetchpriority="high"
-                      />
+                      <svg viewBox="0 0 100 150" className="w-full h-auto max-w-[100px]"> {/* Max width to keep it proportionally small */}
+                        {/* Corpo - silhouette con più volume */}
+                        <ellipse cx="50" cy="25" rx="15" ry="17" fill="#94a3b8"/> {/* Head */}
+                        <path d="M 50 42 Q 40 55, 38 90 L 35 130 L 33 145 Q 33 155, 38 148 L 42 148 L 42 138 L 38 130 L 40 100 L 50 75 L 60 100 L 62 130 L 58 138 L 58 148 L 62 148 L 67 145 Q 67 155, 62 148 L 65 130 L 62 90 Q 60 55, 50 42 Z" fill="#94a3b8"/> {/* Body */}
+                        
+                        {/* Braccia più robuste */}
+                        <path d="M 42 60 Q 35 70, 32 85 L 30 100 Q 30 105, 35 105 L 38 85 L 40 70 Z" fill="#94a3b8"/> {/* Left arm */}
+                        <path d="M 58 60 Q 65 70, 68 85 L 70 100 Q 70 105, 65 105 L 62 85 L 60 70 Z" fill="#94a3b8"/> {/* Right arm */}
+                        
+                        {/* Linee definizione minime */}
+                        <line x1="50" y1="75" x2="50" y2="120" stroke="#64748b" strokeWidth="0.5" opacity="0.3"/>
+                      </svg>
                     </div>
-                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
+
+                    {/* DOPO - Silhouette definita */}
+                    <div className="bg-white rounded-lg p-1.5 overflow-hidden flex flex-col items-center">
                       <div className="text-[9px] text-gray-500 mb-1 text-center">Dopo</div>
-                      <img 
-                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
-                        alt="After"
-                        className="w-full aspect-square object-cover rounded-lg"
-                        loading="eager"
-                        fetchpriority="high"
-                      />
+                      <svg viewBox="0 0 100 150" className="w-full h-auto max-w-[100px]">
+                        {/* Corpo - silhouette definita */}
+                        <ellipse cx="50" cy="25" rx="14" ry="16" fill="#26847F"/> {/* Head */}
+                        <path d="M 50 41 Q 42 52, 40 85 L 38 125 L 36 142 Q 36 148, 40 145 L 43 145 L 43 135 L 40 125 L 42 95 L 50 70 L 58 95 L 60 125 L 57 135 L 57 145 L 60 145 L 64 142 Q 64 148, 60 145 L 62 125 L 60 85 Q 58 52, 50 41 Z" fill="#26847F"/> {/* Body */}
+                        
+                        {/* Braccia definite */}
+                        <path d="M 42 58 Q 36 67, 34 82 L 32 97 Q 32 102, 36 102 L 38 82 L 40 67 Z" fill="#26847F"/> {/* Left arm */}
+                        <path d="M 58 58 Q 64 67, 66 82 L 68 97 Q 68 102, 64 102 L 62 82 L 60 67 Z" fill="#26847F"/> {/* Right arm */}
+                        
+                        {/* Linee definizione muscolare */}
+                        <line x1="50" y1="70" x2="50" y2="110" stroke="#1f6b66" strokeWidth="1.5" opacity="0.6"/>
+                        <line x1="47" y1="75" x2="47" y2="100" stroke="#1f6b66" strokeWidth="0.8" opacity="0.5"/>
+                        <line x1="53" y1="75" x2="53" y2="100" stroke="#1f6b66" strokeWidth="0.8" opacity="0.5"/>
+                        
+                        {/* V-shape torso */}
+                        <path d="M 45 75 L 50 70 L 55 75" stroke="#1f6b66" strokeWidth="1.5" fill="none" opacity="0.6"/>
+                      </svg>
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-3 space-y-1.5">
