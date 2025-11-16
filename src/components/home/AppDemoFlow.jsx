@@ -269,43 +269,131 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 6: Dashboard con scroll - REPLICA DASHBOARD REALE */}
+              {/* Step 6: Dashboard Scientifica con scroll */}
               {step === 6 && (
                 <motion.div
                   key="dashboard"
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 overflow-hidden ${!isDesktop ? 'pt-16' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden ${!isDesktop ? 'pt-14' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <motion.div
-                    animate={{ y: -dashboardScroll * 200 }} // Adjust 200 based on desired scroll height
+                    animate={{ y: -dashboardScroll * 280 }}
                     transition={{ duration: 0.5 }}
-                    className="space-y-4"
+                    className="space-y-3"
                   >
-                    {/* Header */}
-                    <div className="text-center mb-4">
-                      <h2 className="text-xl font-bold text-gray-900">Dashboard</h2>
-                    </div>
-                    
-                    {/* Peso Iniziale e Target */}
-                    <div className="bg-white rounded-xl p-4 shadow-sm">
-                      <div className="flex justify-between items-center mb-3">
-                        <span className="text-sm text-gray-600">Peso Iniziale</span>
-                        <span className="text-xl font-bold text-gray-900">80.0 kg</span>
+                    {/* Top Cards - Peso Iniziale, Target, Variazione */}
+                    <div className="grid grid-cols-3 gap-2">
+                      <div className="bg-white rounded-lg p-2 shadow-sm">
+                        <div className="text-[9px] text-gray-500 mb-1">PESO INIZIALE</div>
+                        <div className="text-xl font-black text-gray-900">83<span className="text-xs font-normal ml-0.5">kg</span></div>
                       </div>
-                      <div className="flex justify-between items-center">
-                        <span className="text-sm text-gray-600">Peso Target</span>
-                        <span className="text-xl font-bold text-[var(--brand-primary)]">73.0 kg</span>
+                      <div className="bg-white rounded-lg p-2 shadow-sm">
+                        <div className="text-[9px] text-gray-500 mb-1">PESO TARGET</div>
+                        <div className="text-xl font-black text-gray-900">73<span className="text-xs font-normal ml-0.5">kg</span></div>
+                      </div>
+                      <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-lg p-2 shadow-sm border border-green-200">
+                        <div className="text-[9px] text-gray-600 mb-1">VARIAZIONE</div>
+                        <div className="text-xl font-black text-green-600">-4.0<span className="text-xs font-normal ml-0.5">kg</span></div>
                       </div>
                     </div>
 
-                    {/* Target Calorico - BOX VERDE EVIDENZIATO */}
-                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-6 shadow-sm border-2 border-green-200">
-                      <div className="text-sm text-gray-600 mb-1 text-center">Target Calorico</div>
-                      <div className="text-center">
-                        <span className="text-4xl font-black text-gray-900">2000</span>
-                        <span className="text-lg font-semibold text-gray-700 ml-2">kcal</span>
+                    {/* Grafici - Traiettoria e Scomposizione */}
+                    <div className="grid grid-cols-2 gap-2">
+                      {/* Grafico Traiettoria Massa */}
+                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                        <div className="flex items-center gap-1 mb-2">
+                          <BarChart3 className="w-3 h-3 text-[var(--brand-primary)]" />
+                          <div className="text-[9px] font-bold text-gray-800">Traiettoria Massa</div>
+                        </div>
+                        <div className="relative h-20">
+                          <svg viewBox="0 0 100 60" className="w-full h-full">
+                            {/* Grid lines */}
+                            <line x1="0" y1="15" x2="100" y2="15" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
+                            <line x1="0" y1="30" x2="100" y2="30" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
+                            <line x1="0" y1="45" x2="100" y2="45" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
+                            
+                            {/* Line chart - peso attuale */}
+                            <motion.path
+                              d="M 5,25 L 20,22 L 35,20 L 50,18 L 65,17 L 80,16 L 95,15"
+                              fill="none"
+                              stroke="#26847F"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              initial={{ pathLength: 0 }}
+                              animate={{ pathLength: 1 }}
+                              transition={{ duration: 1.5, ease: "easeOut" }}
+                            />
+                            {/* Dots */}
+                            <circle cx="5" cy="25" r="2" fill="#26847F" />
+                            <circle cx="20" cy="22" r="2" fill="#26847F" />
+                            <circle cx="35" cy="20" r="2" fill="#26847F" />
+                            <circle cx="50" cy="18" r="2" fill="#26847F" />
+                            <circle cx="65" cy="17" r="2" fill="#26847F" />
+                            <circle cx="80" cy="16" r="2" fill="#26847F" />
+                            <circle cx="95" cy="15" r="2.5" fill="#26847F" />
+                            
+                            {/* Target line */}
+                            <line x1="0" y1="50" x2="100" y2="50" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3,3" />
+                          </svg>
+                        </div>
+                        <div className="flex items-center justify-between mt-1.5 text-[8px]">
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-2 rounded-full bg-[var(--brand-primary)]"></div>
+                            <span className="text-gray-600">Peso attuale</span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <div className="w-2 h-0.5 bg-gray-400"></div>
+                            <span className="text-gray-600">Target</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Grafico Circolare Scomposizione Calorica */}
+                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                        <div className="text-[9px] font-bold text-gray-800 mb-2">Scomposizione Calorica</div>
+                        <div className="flex items-center justify-center mb-2">
+                          <div className="relative">
+                            <svg className="w-20 h-20" viewBox="0 0 100 100">
+                              <circle cx="50" cy="50" r="35" fill="none" stroke="#e5e7eb" strokeWidth="12" />
+                              <motion.circle
+                                cx="50"
+                                cy="50"
+                                r="35"
+                                fill="none"
+                                stroke="#26847F"
+                                strokeWidth="12"
+                                strokeDasharray="219.9"
+                                initial={{ strokeDashoffset: 219.9 }}
+                                animate={{ strokeDashoffset: 219.9 * (1 - 0.4) }}
+                                strokeLinecap="round"
+                                transform="rotate(-90 50 50)"
+                                transition={{ duration: 1.5, ease: "easeOut" }}
+                              />
+                            </svg>
+                            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                              <span className="text-xl font-black text-[var(--brand-primary)]">40%</span>
+                              <span className="text-[7px] text-gray-500">completato</span>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="space-y-1 text-[8px]">
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
+                              <span className="text-gray-600">Completato</span>
+                            </div>
+                            <span className="font-bold">30.800 kcal</span>
+                          </div>
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center gap-1">
+                              <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                              <span className="text-gray-600">Rimanente</span>
+                            </div>
+                            <span className="font-bold">46.200 kcal</span>
+                          </div>
+                        </div>
                       </div>
                     </div>
 
@@ -313,29 +401,41 @@ export default function AppDemoFlow() {
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ opacity: dashboardScroll > 0.3 ? 1 : 0, y: dashboardScroll > 0.3 ? 0 : 20 }}
-                      className="bg-white rounded-xl p-4 shadow-sm"
+                      className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 shadow-sm border-2 border-green-200"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <TrendingDown className="w-5 h-5 text-[var(--brand-primary)]" />
-                          <span className="text-sm font-semibold text-gray-800">Metabolismo Basale (BMR)</span>
-                        </div>
+                      <div className="text-sm text-gray-600 mb-1 text-center">Target Calorico</div>
+                      <div className="text-center">
+                        <span className="text-3xl font-black text-gray-900">2000</span>
+                        <span className="text-base font-semibold text-gray-700 ml-2">kcal</span>
                       </div>
-                      <div className="text-3xl font-black text-gray-900">1500 <span className="text-base font-normal text-gray-500">kcal</span></div>
                     </motion.div>
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: dashboardScroll > 0.6 ? 1 : 0, y: dashboardScroll > 0.6 ? 0 : 20 }}
-                      className="bg-white rounded-xl p-4 shadow-sm"
+                      animate={{ opacity: dashboardScroll > 0.5 ? 1 : 0, y: dashboardScroll > 0.5 ? 0 : 20 }}
+                      className="bg-white rounded-xl p-3 shadow-sm"
                     >
                       <div className="flex items-center justify-between mb-2">
                         <div className="flex items-center gap-2">
-                          <BarChart3 className="w-5 h-5 text-[var(--brand-primary)]" />
-                          <span className="text-sm font-semibold text-gray-800">Massa Grassa</span>
+                          <TrendingDown className="w-4 h-4 text-[var(--brand-primary)]" />
+                          <span className="text-xs font-semibold text-gray-800">Metabolismo Basale (BMR)</span>
                         </div>
                       </div>
-                      <div className="text-3xl font-black text-gray-900">28.5 <span className="text-base font-normal text-gray-500">%</span></div>
+                      <div className="text-2xl font-black text-gray-900">1500 <span className="text-sm font-normal text-gray-500">kcal</span></div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ opacity: 0, y: 20 }}
+                      animate={{ opacity: dashboardScroll > 0.7 ? 1 : 0, y: dashboardScroll > 0.7 ? 0 : 20 }}
+                      className="bg-white rounded-xl p-3 shadow-sm"
+                    >
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="flex items-center gap-2">
+                          <BarChart3 className="w-4 h-4 text-[var(--brand-primary)]" />
+                          <span className="text-xs font-semibold text-gray-800">Massa Grassa</span>
+                        </div>
+                      </div>
+                      <div className="text-2xl font-black text-gray-900">28.5 <span className="text-sm font-normal text-gray-500">%</span></div>
                     </motion.div>
                   </motion.div>
                 </motion.div>
