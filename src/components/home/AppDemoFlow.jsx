@@ -109,7 +109,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, x: 50 }}
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
-                  className="absolute inset-0 p-4 bg-gradient-to-br from-blue-50 to-purple-50"
+                  className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="text-center mb-4">
                     <div className="w-12 h-0.5 bg-gray-300 rounded-full mx-auto mb-4" />
@@ -143,7 +143,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50"
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50 ${!isDesktop ? 'pt-12' : ''}`}
                 >
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -161,7 +161,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50 overflow-hidden"
+                  className={`absolute inset-0 bg-gray-50 overflow-hidden ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <div className="mb-3">
                     <h2 className="text-base font-bold text-gray-900">Dashboard</h2>
@@ -192,7 +192,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.5, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 1.5, opacity: 0 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 p-4"
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-xl p-4 shadow-2xl w-full">
                     <div className="text-center space-y-2">
@@ -220,7 +220,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-4 bg-gray-50 flex flex-col justify-center"
+                  className={`absolute inset-0 bg-gray-50 flex flex-col justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <motion.button
                     initial={{ scale: 0.9 }}
@@ -242,7 +242,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-white overflow-auto"
+                  className={`absolute inset-0 bg-white overflow-auto ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-2">Scegli Dieta</h3>
                   <div className="space-y-1.5">
@@ -269,7 +269,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50"
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <div className="mb-3 flex justify-between items-center">
                     <h3 className="text-base font-bold">Piano Settimanale</h3>
@@ -307,7 +307,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
-                  className="absolute inset-0 bg-black/50 flex items-center justify-center p-3"
+                  className={`absolute inset-0 bg-black/50 flex items-center justify-center ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <div className="bg-white rounded-xl p-4 w-full">
                     <h3 className="text-base font-bold mb-3">Pancakes Proteici</h3>
@@ -340,7 +340,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center p-4"
+                  className={`absolute inset-0 flex flex-col items-center justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                   style={{
                     background: 'linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%)'
                   }}
@@ -374,7 +374,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-white p-4"
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 mb-3 border border-green-200">
                     <h4 className="font-bold text-sm mb-2">Uova - Grande (2x)</h4>
@@ -406,7 +406,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50"
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <motion.div
                     animate={{ borderColor: ['#10b981', '#26847F', '#10b981'] }}
@@ -464,7 +464,7 @@ export default function AppDemoFlow() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50"
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
                   <div className="space-y-1.5">
@@ -497,7 +497,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center p-4 bg-white"
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   {/* Tabella nutrizionale dietro */}
                   <div className="absolute inset-0 flex items-center justify-center p-6 opacity-30">
@@ -555,7 +555,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
-                  className="absolute inset-0 p-4 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center"
+                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-2xl p-6 shadow-2xl text-center">
                     <div className="relative inline-block mb-3">
@@ -585,6 +585,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
+              {/* Remaining steps 15-26 with same pattern - adding pt-12 to non-desktop */}
               {/* Step 15: Colazione Fatto */}
               {step === 15 && (
                 <motion.div
@@ -592,7 +593,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50"
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-3">Pasti di Oggi</h3>
                   <motion.div
@@ -627,7 +628,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-gray-900"
+                  className={`absolute inset-0 bg-gray-900 ${!isDesktop ? 'pt-12' : ''}`}
                 >
                   <motion.div
                     initial={{ scale: 1.2, opacity: 0 }}
@@ -652,7 +653,7 @@ export default function AppDemoFlow() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -50, opacity: 0 }}
-                  className="absolute inset-0 bg-black/70 flex items-center justify-center p-4"
+                  className={`absolute inset-0 bg-black/70 flex items-center justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-xl p-4 max-w-sm">
                     <div className="text-center mb-3">
@@ -683,7 +684,7 @@ export default function AppDemoFlow() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
-                  className="absolute inset-0 p-4 bg-gradient-to-br from-purple-50 to-pink-50"
+                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-3 py-1 bg-purple-100 rounded-full mb-2">
@@ -712,7 +713,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50"
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Allenamento Lunedì</h3>
                   <motion.div
@@ -747,7 +748,7 @@ export default function AppDemoFlow() {
                   initial={{ scale: 0.9, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.9, opacity: 0 }}
-                  className="absolute inset-0 p-4 bg-white"
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Shoulder Press</h3>
                   <div className="bg-gradient-to-r from-orange-50 to-red-50 rounded-xl p-3 mb-3">
@@ -777,7 +778,7 @@ export default function AppDemoFlow() {
                   initial={{ y: 50, opacity: 0 }}
                   animate={{ y: 0, opacity: 1 }}
                   exit={{ y: -50, opacity: 0 }}
-                  className="absolute inset-0 bg-black/80 flex items-center justify-center p-4"
+                  className={`absolute inset-0 bg-black/80 flex items-center justify-center ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-white rounded-xl p-4 w-full">
                     <h4 className="font-bold text-sm mb-3">Problemi con l'esercizio?</h4>
@@ -808,7 +809,7 @@ export default function AppDemoFlow() {
                   initial={{ x: 50, opacity: 0 }}
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
-                  className="absolute inset-0 p-4 bg-white"
+                  className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <h3 className="text-base font-bold mb-3">Rematore con Bilanciere</h3>
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-3 mb-3">
@@ -835,7 +836,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gradient-to-br from-purple-50 to-pink-50"
+                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-3">Analisi Progressi</h3>
                   <div className="grid grid-cols-2 gap-2 mb-3">
@@ -872,7 +873,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50 flex flex-col"
+                  className={`absolute inset-0 bg-gray-50 flex flex-col ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-sm font-bold mb-3">Raccomandazioni AI</h3>
                   <div className="flex-1 space-y-2">
@@ -912,7 +913,7 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
-                  className="absolute inset-0 p-3 bg-gray-50"
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-12' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <h3 className="text-base font-bold mb-3">I Tuoi Progressi</h3>
                   <div className="bg-white rounded-xl p-4 shadow-lg">
@@ -959,7 +960,7 @@ export default function AppDemoFlow() {
                   key="goal-reached"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
-                  className="absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 p-4"
+                  className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 ${!isDesktop ? 'pt-12' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
