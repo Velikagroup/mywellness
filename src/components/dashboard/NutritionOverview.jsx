@@ -5,8 +5,12 @@ import { createPageUrl } from "@/utils";
 import { Utensils, ArrowRight, Calculator, ImageIcon, Camera, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
+import { base44 } from "@/api/base44Client";
+import { Checkbox } from "@/components/ui/checkbox";
 
 export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan }) {
+  const [savingMealId, setSavingMealId] = React.useState(null);
+
   const getMealLog = (mealId) => {
     return mealLogs.find(log => log.original_meal_id === mealId);
   };
@@ -20,6 +24,36 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
       snack2: 'Spuntino Serale'
     };
     return labels[type] || type;
+  };
+
+  const handleCheckMeal = async (meal, checked) => {
+    if (!checked) return; // Solo per marcare come consumato
+    
+    setSavingMealId(meal.id);
+    try {
+      const todayDate = new Date().toISOString().split('T')[0];
+      const user = await base44.auth.me();
+      
+      await base44.entities.MealLog.create({
+        user_id: user.id,
+        original_meal_id: meal.id,
+        date: todayDate,
+        meal_type: meal.meal_type,
+        actual_calories: meal.total_calories,
+        actual_protein: meal.total_protein,
+        actual_carbs: meal.total_carbs,
+        actual_fat: meal.total_fat,
+        planned_calories: meal.total_calories,
+        delta_calories: 0,
+        rebalanced: false
+      });
+      
+      window.location.reload();
+    } catch (error) {
+      console.error('Error logging meal:', error);
+      alert('Errore nel salvare il pasto');
+    }
+    setSavingMealId(null);
   };
 
   const uniqueMeals = meals.reduce((acc, meal) => {
@@ -124,22 +158,33 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                       </p>
                       <p className="text-xs text-gray-500">kcal</p>
                     </div>
-                    {!isLogged && hasFeatureAccess(userPlan, 'meal_photo_analysis') && (
-                      <Button
-                        onClick={() => onPhotoAnalyze(meal)}
-                        variant="ghost"
-                        size="icon"
-                        className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
-                        title="Analizza pasto con foto"
-                      >
-                        <Camera className="w-5 h-5" />
-                      </Button>
-                    )}
-                    {!isLogged && !hasFeatureAccess(userPlan, 'meal_photo_analysis') && (
-                      <div className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0" title="Analizza pasto con foto (Pro)">
-                        <Camera className="w-4 h-4" />
-                        <span>Pro</span>
-                      </div>
+                    {!isLogged && (
+                      <>
+                        <Checkbox
+                          checked={false}
+                          onCheckedChange={(checked) => handleCheckMeal(meal, checked)}
+                          disabled={savingMealId === meal.id}
+                          className="w-5 h-5 border-2 border-[#26847F] data-[state=checked]:bg-[#26847F]"
+                          title="Segna come consumato"
+                        />
+                        {hasFeatureAccess(userPlan, 'meal_photo_analysis') && (
+                          <Button
+                            onClick={() => onPhotoAnalyze(meal)}
+                            variant="ghost"
+                            size="icon"
+                            className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
+                            title="Analizza pasto con foto"
+                          >
+                            <Camera className="w-5 h-5" />
+                          </Button>
+                        )}
+                        {!hasFeatureAccess(userPlan, 'meal_photo_analysis') && (
+                          <div className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0" title="Analizza pasto con foto (Pro)">
+                            <Camera className="w-4 h-4" />
+                            <span>Pro</span>
+                          </div>
+                        )}
+                      </>
                     )}
                   </div>
                 </div>

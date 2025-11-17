@@ -43,11 +43,18 @@ export default function MealCard({ meal, onClick, showRegenerateButton = false, 
           </span>
         </div>
 
-        <div className="absolute bottom-3 right-3">
+        <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
           <div className="flex items-center gap-1 px-3 py-1 bg-[var(--brand-primary)] text-white rounded-full shadow-lg">
             <Flame className="w-4 h-4" />
             <span className="font-bold text-sm">{meal.total_calories}</span>
             <span className="text-xs">kcal</span>
+          </div>
+          <div className="flex items-center gap-1 px-2 py-0.5 bg-white/95 rounded-full shadow-md text-xs">
+            <span className="font-semibold text-red-600">{Math.round(meal.total_protein || 0)}P</span>
+            <span className="text-gray-300">•</span>
+            <span className="font-semibold text-blue-600">{Math.round(meal.total_carbs || 0)}C</span>
+            <span className="text-gray-300">•</span>
+            <span className="font-semibold text-yellow-600">{Math.round(meal.total_fat || 0)}G</span>
           </div>
         </div>
       </div>
