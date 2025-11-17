@@ -613,7 +613,7 @@ export default function AppDemoFlow() {
                       }}
                       exit={{ scale: 0.8, opacity: 0 }}
                       className="absolute inset-0 bg-black/60 flex items-center justify-center p-4"
-                      style={{ backdropFilter: 'blur(4px)' }}
+                      style={{ backdropFilter: 'blur(4px)', zIndex: 100 }}
                     >
                       <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90%] overflow-y-auto">
                         <img 
@@ -671,7 +671,8 @@ export default function AppDemoFlow() {
                                   substituteStep >= 1 ? 'bg-blue-50' : 'bg-gray-50'
                                 }`}
                                 style={{
-                                  zIndex: substituteStep >= 1 ? 10 : 1
+                                  zIndex: substituteStep >= 1 ? 1000 : 1,
+                                  position: 'relative'
                                 }}
                               >
                                 {substituteStep < 3 ? (
