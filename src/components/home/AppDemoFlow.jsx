@@ -68,36 +68,50 @@ export default function AppDemoFlow() {
         else if (dietElapsed < 5000) setDietStep(2);
         else setDietStep(3);
       }
-      else if (elapsed < 29000) {
-        setStep(6); // Piano Settimanale - 6s
+      else if (elapsed < 36000) { // Piano + popup con sostituzione - 13s totali
+        setStep(6); 
         const planElapsed = elapsed - 23000;
-        if (planElapsed < 2000) setMealPlanStep(0);
-        else setMealPlanStep(1);
+        if (planElapsed < 2000) {
+          setMealPlanStep(0);
+          setSubstituteStep(0);
+        }
+        else if (planElapsed < 3000) {
+          setMealPlanStep(1); // Mostra popup
+          setSubstituteStep(0);
+        }
+        else if (planElapsed < 6000) {
+          setMealPlanStep(1);
+          setSubstituteStep(0); // Popup normale
+        }
+        else if (planElapsed < 8000) {
+          setMealPlanStep(1);
+          setSubstituteStep(1); // Zoom pulsante sostituisci
+        }
+        else if (planElapsed < 9000) {
+          setMealPlanStep(1);
+          setSubstituteStep(2); // Click
+        }
+        else {
+          setMealPlanStep(1);
+          setSubstituteStep(3); // Sostituzione completata
+        }
       }
-      else if (elapsed < 36000) { // Popup con sostituzione ingrediente - 7s (era 6s)
-        setStep(7); 
-        const subElapsed = elapsed - 29000;
-        if (subElapsed < 2000) setSubstituteStep(0); // Mostra popup
-        else if (subElapsed < 3500) setSubstituteStep(1); // Zoom pulsante
-        else if (subElapsed < 4500) setSubstituteStep(2); // Click
-        else setSubstituteStep(3); // Sostituzione avvenuta
-      }
-      else if (elapsed < 39000) setStep(8); // Scansiona (timing adjusted +1s)
-      else if (elapsed < 42000) setStep(9); // Aggiungi (timing adjusted +1s)
-      else if (elapsed < 45000) setStep(10); // Piano aggiornato (timing adjusted +1s)
-      else if (elapsed < 48000) setStep(11); // Lista spesa (timing adjusted +1s)
-      else if (elapsed < 51000) setStep(12); // Scan label (timing adjusted +1s)
-      else if (elapsed < 54000) setStep(13); // Health score (timing adjusted +1s)
-      else if (elapsed < 57000) setStep(14); // Colazione fatto (timing adjusted +1s)
-      else if (elapsed < 60000) setStep(15); // Scan pranzo (timing adjusted +1s)
-      else if (elapsed < 63000) setStep(16); // Rebalance (timing adjusted +1s)
-      else if (elapsed < 66000) setStep(17); // Workout quiz (timing adjusted +1s)
-      else if (elapsed < 69000) setStep(18); // Workout plan (timing adjusted +1s)
-      else if (elapsed < 72000) setStep(19); // Exercise detail (timing adjusted +1s)
-      else if (elapsed < 75000) setStep(20); // Modifica workout (timing adjusted +1s)
-      else if (elapsed < 78000) setStep(21); // New exercise (timing adjusted +1s)
-      else if (elapsed < 81000) setStep(22); // Body analysis (timing adjusted +1s)
-      else setStep(23); // Goal reached (timing adjusted +1s)
+      else if (elapsed < 39000) setStep(7); // Scansiona (timing adjusted +1s, previously step 8)
+      else if (elapsed < 42000) setStep(8); // Aggiungi (timing adjusted +1s, previously step 9)
+      else if (elapsed < 45000) setStep(9); // Piano aggiornato (timing adjusted +1s, previously step 10)
+      else if (elapsed < 48000) setStep(10); // Lista spesa (timing adjusted +1s, previously step 11)
+      else if (elapsed < 51000) setStep(11); // Scan label (timing adjusted +1s, previously step 12)
+      else if (elapsed < 54000) setStep(12); // Health score (timing adjusted +1s, previously step 13)
+      else if (elapsed < 57000) setStep(13); // Colazione fatto (timing adjusted +1s, previously step 14)
+      else if (elapsed < 60000) setStep(14); // Scan pranzo (timing adjusted +1s, previously step 15)
+      else if (elapsed < 63000) setStep(15); // Rebalance (timing adjusted +1s, previously step 16)
+      else if (elapsed < 66000) setStep(16); // Workout quiz (timing adjusted +1s, previously step 17)
+      else if (elapsed < 69000) setStep(17); // Workout plan (timing adjusted +1s, previously step 18)
+      else if (elapsed < 72000) setStep(18); // Exercise detail (timing adjusted +1s, previously step 19)
+      else if (elapsed < 75000) setStep(19); // Modifica workout (timing adjusted +1s, previously step 20)
+      else if (elapsed < 78000) setStep(20); // New exercise (timing adjusted +1s, previously step 21)
+      else if (elapsed < 81000) setStep(21); // Body analysis (timing adjusted +1s, previously step 22)
+      else setStep(22); // Goal reached (timing adjusted +1s, previously step 23)
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -304,19 +318,15 @@ export default function AppDemoFlow() {
                         </div>
                         <div className="space-y-1 text-[9px]">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
-                              <span className="text-gray-600">Completato</span>
-                            </div>
-                            <span className="font-bold">30.800 kcal</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
+                            <span className="text-gray-600">Completato</span>
                           </div>
+                          <span className="font-bold">30.800 kcal</span>
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                              <span className="text-gray-600">Rimanente</span>
-                            </div>
-                            <span className="font-bold">46.200 kcal</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                            <span className="text-gray-600">Rimanente</span>
                           </div>
+                          <span className="font-bold">46.200 kcal</span>
                         </div>
                       </div>
                     </div>
@@ -378,16 +388,21 @@ export default function AppDemoFlow() {
                   className={`absolute inset-0 bg-gray-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <motion.button
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: [1, 0.95, 1] }}
-                    transition={{ duration: 0.3, times: [0, 0.5, 1] }}
+                    animate={{ 
+                      scale: [1, 0.92, 1.02, 0.98, 1],
+                      y: [0, 2, -1, 0, 0]
+                    }}
+                    transition={{ 
+                      duration: 0.5,
+                      times: [0, 0.3, 0.5, 0.7, 1],
+                      ease: "easeOut"
+                    }}
                     className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white rounded-xl py-4 shadow-2xl relative overflow-hidden"
                   >
                     <motion.div
-                      initial={{ opacity: 0 }}
-                      animate={{ opacity: [0, 1, 0] }}
-                      transition={{ duration: 0.6 }}
-                      className="absolute inset-0 bg-white/20"
+                      animate={{ opacity: [0, 0.3, 0] }}
+                      transition={{ duration: 0.5 }}
+                      className="absolute inset-0 bg-white"
                     />
                     <div className="flex items-center justify-center gap-2 relative z-10">
                       <Sparkles className="w-5 h-5" />
@@ -586,21 +601,105 @@ export default function AppDemoFlow() {
                           </div>
 
                           <div className="mb-3">
-                            <div className="text-sm font-bold text-gray-900 mb-1">Ingredienti</div>
-                            <div className="space-y-1">
-                              {['Farina d\'avena - 50g', 'Uova - 2x', 'Proteine in polvere - 30g', 'Mirtilli - 50g'].map((ing) => (
-                                <div key={ing} className="flex items-center gap-2 text-xs text-gray-700">
+                            <div className="text-sm font-bold text-gray-900 mb-2">Ingredienti</div>
+                            <div className="space-y-2">
+                              <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2">
                                   <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
-                                  {ing}
+                                  <span className="text-xs">Farina d'avena - 50g</span>
                                 </div>
-                              ))}
+                                <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
+                                  Sostituisci
+                                </button>
+                              </div>
+
+                              <motion.div
+                                animate={{ 
+                                  scale: substituteStep >= 1 ? 1.08 : 1,
+                                  borderColor: substituteStep === 2 ? ['#26847F', '#10b981', '#26847F'] : (substituteStep >= 1 ? '#26847F' : '#e5e7eb')
+                                }}
+                                transition={{ 
+                                  scale: { duration: 0.5 },
+                                  borderColor: { duration: 0.3 }
+                                }}
+                                className="flex justify-between items-center p-2 bg-blue-50 rounded-lg border-2 relative"
+                                style={{
+                                  zIndex: substituteStep >= 1 ? 10 : 1
+                                }}
+                              >
+                                {substituteStep < 3 ? (
+                                  <>
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
+                                      <span className="text-xs font-semibold text-[var(--brand-primary)]">Avocado - 1x</span>
+                                    </div>
+                                    <motion.button 
+                                      animate={substituteStep === 2 ? { scale: [1, 0.85, 1] } : {}}
+                                      transition={{ duration: 0.3 }}
+                                      className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold"
+                                    >
+                                      Sostituisci
+                                    </motion.button>
+                                  </>
+                                ) : (
+                                  <motion.div
+                                    initial={{ opacity: 0, x: -20 }}
+                                    animate={{ opacity: 1, x: 0 }}
+                                    className="flex justify-between items-center w-full"
+                                  >
+                                    <div className="flex items-center gap-2">
+                                      <div className="w-1 h-1 bg-green-600 rounded-full"></div>
+                                      <span className="text-xs font-semibold text-green-700">Banana - 1x</span>
+                                    </div>
+                                    <motion.div
+                                      initial={{ scale: 0 }}
+                                      animate={{ scale: 1 }}
+                                    >
+                                      <Check className="w-4 h-4 text-green-600" />
+                                    </motion.div>
+                                  </motion.div>
+                                )}
+                              </motion.div>
+
+                              <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
+                                  <span className="text-xs">Proteine in polvere - 30g</span>
+                                </div>
+                                <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
+                                  Sostituisci
+                                </button>
+                              </div>
+
+                              <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                                <div className="flex items-center gap-2">
+                                  <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
+                                  <span className="text-xs">Mirtilli - 50g</span>
+                                </div>
+                                <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
+                                  Sostituisci
+                                </button>
+                              </div>
                             </div>
                           </div>
 
-                          <div>
+                          {substituteStep >= 3 && (
+                            <motion.div
+                              initial={{ opacity: 0, y: 10 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              className="bg-green-50 border border-green-200 rounded-lg p-3"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Check className="w-4 h-4 text-green-600" />
+                                <span className="text-xs font-semibold text-green-700">Ingrediente sostituito con successo!</span>
+                              </div>
+                            </motion.div>
+                          )}
+
+                          <div className="mt-3">
                             <div className="text-sm font-bold text-gray-900 mb-1">Preparazione</div>
                             <div className="space-y-1">
-                              {['Scaldi il latte a fuoco medio', 'Aggiungi avena e proteine', 'Cuoci 5-7 minuti mescolando', 'Guarnisci con mirtilli'].map((step, i) => (
+                              {['Scalda il latte a fuoco medio', 'Aggiungi avena e proteine', 'Cuoci 5-7 minuti mescolando', 'Guarnisci con mirtilli'].map((step, i) => (
                                 <div key={i} className="flex items-start gap-2 text-xs text-gray-700">
                                   <span className="text-[var(--brand-primary)] font-bold flex-shrink-0">{i + 1}.</span>
                                   <span>{step}</span>
@@ -616,107 +715,6 @@ export default function AppDemoFlow() {
               )}
 
               {step === 7 && (
-                <motion.div
-                  key="popup-sostituisci"
-                  initial={{ scale: 0.8, opacity: 0 }}
-                  animate={{ scale: 1, opacity: 1 }}
-                  exit={{ scale: 0.8, opacity: 0 }}
-                  className={`absolute inset-0 bg-black/60 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ backdropFilter: 'blur(4px)' }}
-                >
-                  <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-                    <img 
-                      src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=600&h=300&fit=crop"
-                      alt="Porridge"
-                      className="w-full h-32 object-cover"
-                    />
-
-                    <div className="p-4">
-                      <h3 className="text-lg font-bold text-gray-900 mb-3">Porridge Proteico</h3>
-
-                      <div className="space-y-2 mb-4">
-                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                          <span className="text-xs font-medium">Farina d'avena - 50g</span>
-                          <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
-                            Sostituisci
-                          </button>
-                        </div>
-
-                        <motion.div
-                          animate={{ 
-                            scale: substituteStep >= 1 && substituteStep < 3 ? 1.1 : 1,
-                            borderColor: substituteStep === 2 ? ['#26847F', '#10b981', '#26847F'] : '#26847F'
-                          }}
-                          transition={{ 
-                            scale: { duration: 0.5 },
-                            borderColor: { duration: 0.3 }
-                          }}
-                          className="flex justify-between items-center p-2 bg-blue-50 rounded-lg border-2 relative"
-                          style={{
-                            zIndex: substituteStep >= 1 && substituteStep < 3 ? 10 : 1
-                          }}
-                        >
-                          {substituteStep < 3 ? (
-                            <>
-                              <span className="text-xs font-semibold text-[var(--brand-primary)]">Avocado - 1x</span>
-                              <motion.button 
-                                animate={substituteStep === 2 ? { scale: [1, 0.9, 1] } : {}}
-                                transition={{ duration: 0.2 }}
-                                className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold"
-                              >
-                                Sostituisci
-                              </motion.button>
-                            </>
-                          ) : (
-                            <motion.div
-                              initial={{ opacity: 0, x: -20 }}
-                              animate={{ opacity: 1, x: 0 }}
-                              className="flex justify-between items-center w-full"
-                            >
-                              <span className="text-xs font-semibold text-green-700">Banana - 1x</span>
-                              <motion.div
-                                initial={{ scale: 0 }}
-                                animate={{ scale: 1 }}
-                              >
-                                <Check className="w-5 h-5 text-green-600" />
-                              </motion.div>
-                            </motion.div>
-                          )}
-                        </motion.div>
-
-                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                          <span className="text-xs font-medium">Proteine in polvere - 30g</span>
-                          <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
-                            Sostituisci
-                          </button>
-                        </div>
-
-                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                          <span className="text-xs font-medium">Mirtilli - 50g</span>
-                          <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
-                            Sostituisci
-                          </button>
-                        </div>
-                      </div>
-
-                      {substituteStep >= 3 && (
-                        <motion.div
-                          initial={{ opacity: 0, y: 10 }}
-                          animate={{ opacity: 1, y: 0 }}
-                          className="bg-green-50 border border-green-200 rounded-lg p-3"
-                        >
-                          <div className="flex items-center gap-2">
-                            <Check className="w-4 h-4 text-green-600" />
-                            <span className="text-xs font-semibold text-green-700">Ingrediente sostituito con successo!</span>
-                          </div>
-                        </motion.div>
-                      )}
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {step === 8 && (
                 <motion.div
                   key="scansiona"
                   initial={{ opacity: 0 }}
@@ -747,7 +745,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 9 && (
+              {step === 8 && (
                 <motion.div
                   key="aggiungi"
                   initial={{ opacity: 0, y: 50 }}
@@ -778,7 +776,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 10 && (
+              {step === 9 && (
                 <motion.div
                   key="piano-updated"
                   initial={{ opacity: 0 }}
@@ -813,12 +811,12 @@ export default function AppDemoFlow() {
                           28g
                         </motion.div>
                       </div>
-                      <div className="bg-amber-50 rounded p-1.5">
+                      <div className="bg-orange-50 rounded p-1.5">
                         <div className="text-gray-500">Carb</div>
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="font-bold text-amber-700"
+                          className="font-bold text-orange-700"
                         >
                           35g
                         </motion.div>
@@ -835,7 +833,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 11 && (
+              {step === 10 && (
                 <motion.div
                   key="lista-spesa"
                   initial={{ x: 50, opacity: 0 }}
@@ -867,7 +865,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 12 && (
+              {step === 11 && (
                 <motion.div
                   key="scan-label"
                   initial={{ opacity: 0 }}
@@ -934,7 +932,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 13 && (
+              {step === 12 && (
                 <motion.div
                   key="health-score"
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -970,7 +968,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 14 && (
+              {step === 13 && (
                 <motion.div
                   key="colazione-fatto"
                   initial={{ opacity: 0 }}
@@ -1004,7 +1002,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 15 && (
+              {step === 14 && (
                 <motion.div
                   key="scan-pranzo"
                   initial={{ opacity: 0 }}
@@ -1026,7 +1024,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 16 && (
+              {step === 15 && (
                 <motion.div
                   key="rebalance"
                   initial={{ y: 50, opacity: 0 }}
@@ -1056,7 +1054,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 17 && (
+              {step === 16 && (
                 <motion.div
                   key="workout-quiz"
                   initial={{ x: 50, opacity: 0 }}
@@ -1084,7 +1082,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 18 && (
+              {step === 17 && (
                 <motion.div
                   key="workout-plan"
                   initial={{ opacity: 0 }}
@@ -1118,7 +1116,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 19 && (
+              {step === 18 && (
                 <motion.div
                   key="exercise-detail"
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -1147,7 +1145,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 20 && (
+              {step === 19 && (
                 <motion.div
                   key="modifica-workout"
                   initial={{ y: 50, opacity: 0 }}
@@ -1177,7 +1175,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 21 && (
+              {step === 20 && (
                 <motion.div
                   key="new-exercise"
                   initial={{ x: 50, opacity: 0 }}
@@ -1203,7 +1201,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 22 && (
+              {step === 21 && (
                 <motion.div
                   key="body-analysis"
                   initial={{ opacity: 0 }}
@@ -1251,7 +1249,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 23 && (
+              {step === 22 && (
                 <motion.div
                   key="goal-reached"
                   initial={{ scale: 0.8, opacity: 0 }}
