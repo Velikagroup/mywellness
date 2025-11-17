@@ -34,6 +34,7 @@ export default function AppDemoFlow() {
   const [workoutDaySelection, setWorkoutDaySelection] = useState(0);
   const [modifyWorkoutStep, setModifyWorkoutStep] = useState(0);
   const [typingText, setTypingText] = useState('');
+  const [photoAnalysisZoom, setPhotoAnalysisZoom] = useState(false);
   const popupRef = useRef(null);
 
   useEffect(() => {
@@ -214,12 +215,18 @@ export default function AppDemoFlow() {
         }
       }
       else if (elapsed < 89000) setStep(17); // Now new exercise
-      else if (elapsed < 92000) setStep(18); // Now body analysis (old step 20)
-      else if (elapsed < 95000) setStep(19); // Now weight chart (NEW)
-      else if (elapsed < 98000) setStep(20); // Now goal reached (old step 21)
-      else if (elapsed < 101000) setStep(21); // Final screen 1
-      else if (elapsed < 104000) setStep(22); // Final screen 2
-      else setStep(23); // Final screen 3
+      else if (elapsed < 93000) {
+        setStep(18);
+        const analysisElapsed = elapsed - 86000;
+        if (analysisElapsed < 5000) {
+          setPhotoAnalysisZoom(false);
+        } else {
+          setPhotoAnalysisZoom(true);
+        }
+      }
+      else if (elapsed < 96000) setStep(19);
+      else if (elapsed < 99000) setStep(20);
+      else setStep(21);
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -1612,45 +1619,127 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20 pb-4' : 'p-4'} ${isDesktop ? '' : 'px-3'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
-                  <h3 className="text-sm font-bold mb-2 text-center">Analisi Progressi AI</h3>
-                  <div className="grid grid-cols-2 gap-2 mb-3">
-                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
-                      <div className="text-[9px] text-gray-500 mb-1 text-center">Prima</div>
-                      <img 
-                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
-                        alt="Before"
-                        className="w-full aspect-square object-cover rounded-lg"
-                        loading="eager"
-                        fetchpriority="high"
-                      />
+                  <motion.div
+                    animate={{ 
+                      scale: photoAnalysisZoom ? 0.85 : 1,
+                      opacity: photoAnalysisZoom ? 0.3 : 1,
+                      filter: photoAnalysisZoom ? 'blur(4px)' : 'blur(0px)'
+                    }}
+                    transition={{ duration: 0.5 }}
+                    className="space-y-3"
+                  >
+                    <h3 className="text-sm font-bold text-center mb-2">Analisi Progressi AI</h3>
+                    
+                    <div className="grid grid-cols-2 gap-2">
+                      <div className="bg-white rounded-xl p-2 shadow-md border border-red-200">
+                        <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">Prima - 12 sett. fa</div>
+                        <img 
+                          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
+                          alt="Before"
+                          className="w-full aspect-square object-cover rounded-lg mb-2"
+                          loading="eager"
+                          fetchpriority="high"
+                        />
+                        <div className="space-y-1 text-[9px]">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Definizione</span>
+                            <span className="font-bold text-red-600">4.5/10</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Grasso</span>
+                            <span className="font-bold text-red-600">28.5%</span>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="bg-white rounded-xl p-2 shadow-md border-2 border-green-500">
+                        <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">Dopo - Oggi</div>
+                        <img 
+                          src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
+                          alt="After"
+                          className="w-full aspect-square object-cover rounded-lg mb-2"
+                          loading="eager"
+                          fetchpriority="high"
+                        />
+                        <div className="space-y-1 text-[9px]">
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Definizione</span>
+                            <span className="font-bold text-green-600">6.8/10</span>
+                          </div>
+                          <div className="flex justify-between">
+                            <span className="text-gray-600">Grasso</span>
+                            <span className="font-bold text-green-600">22.1%</span>
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
-                      <div className="text-[9px] text-gray-500 mb-1 text-center">Dopo</div>
-                      <img 
-                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
-                        alt="After"
-                        className="w-full aspect-square object-cover rounded-lg"
-                        loading="eager"
-                        fetchpriority="high"
-                      />
+
+                    <div className="bg-white rounded-xl p-3 shadow-md border border-gray-200">
+                      <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1">
+                        <Sparkles className="w-4 h-4 text-purple-500" />
+                        Progressi Rilevati
+                      </h4>
+                      <div className="grid grid-cols-2 gap-2">
+                        <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
+                          <div className="text-xs font-bold text-green-700">+51%</div>
+                          <div className="text-[9px] text-gray-600">Definizione</div>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
+                          <div className="text-xs font-bold text-green-700">-22%</div>
+                          <div className="text-[9px] text-gray-600">Grasso</div>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
+                          <div className="text-xs font-bold text-green-700">-6cm</div>
+                          <div className="text-[9px] text-gray-600">Girovita</div>
+                        </div>
+                        <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
+                          <div className="text-xs font-bold text-green-700">+25%</div>
+                          <div className="text-[9px] text-gray-600">Postura</div>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                  <div className="bg-white rounded-lg p-3 space-y-1.5">
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Definizione Muscolare</span>
-                      <span className="font-bold text-green-600">+18%</span>
+
+                    <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3 border border-amber-200">
+                      <h4 className="text-xs font-bold text-gray-900 mb-2">💡 Consigli Personal Trainer AI</h4>
+                      
+                      <div className="mb-2">
+                        <div className="text-[9px] font-bold text-amber-700 mb-1">🍽️ Nutrizione</div>
+                        <div className="space-y-1">
+                          <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
+                            • Mantieni deficit 350kcal - risultati ottimali
+                          </div>
+                          <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
+                            • Aumenta proteine a 1.8g/kg
+                          </div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div className="text-[9px] font-bold text-purple-700 mb-1">💪 Allenamento</div>
+                        <div className="space-y-1">
+                          <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
+                            • Aumenta frequenza core a 4-5x/settimana
+                          </div>
+                          <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
+                            • Aggiungi 3 sessioni HIIT da 20min
+                          </div>
+                        </div>
+                      </div>
                     </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Riduzione Grasso</span>
-                      <span className="font-bold text-green-600">-12%</span>
-                    </div>
-                    <div className="flex justify-between text-xs">
-                      <span className="text-gray-600">Tono Pelle</span>
-                      <span className="font-bold text-green-600">+15%</span>
-                    </div>
-                  </div>
+
+                    <motion.button
+                      animate={{ 
+                        scale: photoAnalysisZoom ? 1.3 : 1,
+                        y: photoAnalysisZoom ? -20 : 0
+                      }}
+                      transition={{ duration: 0.5 }}
+                      className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl text-xs font-bold shadow-lg relative z-10"
+                    >
+                      Accetta i Suggerimenti e Salva Analisi
+                    </motion.button>
+                  </motion.div>
                 </motion.div>
               )}
 
