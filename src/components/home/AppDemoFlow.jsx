@@ -1,9 +1,9 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3, Home as HomeIcon } from 'lucide-react';
+import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3, Home as HomeIcon, Trees } from 'lucide-react';
 
-const ANIMATION_DURATION = 105000;
+const ANIMATION_DURATION = 110000;
 
 const preloadImages = () => {
   const images = [
@@ -31,7 +31,7 @@ export default function AppDemoFlow() {
   const [addToListClicked, setAddToListClicked] = useState(false);
   const [mealCheckStep, setMealCheckStep] = useState(0);
   const [lunchScanStep, setLunchScanStep] = useState(0);
-  const [workoutScrollStep, setWorkoutScrollStep] = useState(0);
+  const [workoutDaySelection, setWorkoutDaySelection] = useState(0);
   const [modifyWorkoutStep, setModifyWorkoutStep] = useState(0);
   const [typingText, setTypingText] = useState('');
   const popupRef = useRef(null);
@@ -181,33 +181,30 @@ export default function AppDemoFlow() {
         else setLunchScanStep(2);
       }
       else if (elapsed < 69000) setStep(13); // Now rebalance success
-      else if (elapsed < 72000) setStep(14); // Now workout days
-      else if (elapsed < 75000) setStep(15); // Now workout location
-      else if (elapsed < 83000) { // Now workout plan
-        setStep(16);
-        const workoutElapsed = elapsed - 75000;
-        if (workoutElapsed < 2000) setWorkoutScrollStep(0);
-        else if (workoutElapsed < 5000) {
-          const scrollProg = (workoutElapsed - 2000) / 3000;
-          setWorkoutScrollStep(scrollProg);
-        }
-        else setWorkoutScrollStep(1);
+      else if (elapsed < 75000) { // Now workout days (new state for selection animation)
+        setStep(14);
+        const dayElapsed = elapsed - 69000;
+        if (dayElapsed < 1000) setWorkoutDaySelection(0);
+        else if (dayElapsed < 2000) setWorkoutDaySelection(1);
+        else if (dayElapsed < 3000) setWorkoutDaySelection(2);
+        else setWorkoutDaySelection(3);
       }
-      else if (elapsed < 90000) { // Now modify workout
-        setStep(17);
-        const modifyElapsed = elapsed - 83000;
-        if (modifyElapsed < 2000) {
+      else if (elapsed < 78000) setStep(15); // Now workout location
+      else if (elapsed < 86000) { // Now workout plan AND modify workout popup
+        setStep(16);
+        const modifyElapsed = elapsed - 78000;
+        if (modifyElapsed < 3000) {
           setModifyWorkoutStep(0);
           setTypingText('');
         }
-        else if (modifyElapsed < 3500) {
+        else if (modifyElapsed < 4500) {
           setModifyWorkoutStep(1);
+          const typingProg = (modifyElapsed - 3000) / 1500;
           const fullText = 'Mi fa male la spalla';
-          const typingProg = (modifyElapsed - 2000) / 1500;
           const charCount = Math.floor(typingProg * fullText.length);
           setTypingText(fullText.substring(0, charCount));
         }
-        else if (modifyElapsed < 5000) {
+        else if (modifyElapsed < 6000) {
           setModifyWorkoutStep(2);
           setTypingText('Mi fa male la spalla');
         }
@@ -216,11 +213,13 @@ export default function AppDemoFlow() {
           setTypingText('Mi fa male la spalla');
         }
       }
-      else if (elapsed < 93000) setStep(18); // Now new exercise
-      else if (elapsed < 96000) setStep(19); // Now body analysis (old step 20)
-      else if (elapsed < 99000) setStep(20); // Now goal reached (old step 21)
-      else if (elapsed < 102000) setStep(21); // Now final screen (old step 22)
-      else setStep(22);
+      else if (elapsed < 89000) setStep(17); // Now new exercise
+      else if (elapsed < 92000) setStep(18); // Now body analysis (old step 20)
+      else if (elapsed < 95000) setStep(19); // Now weight chart (NEW)
+      else if (elapsed < 98000) setStep(20); // Now goal reached (old step 21)
+      else if (elapsed < 101000) setStep(21); // Final screen 1
+      else if (elapsed < 104000) setStep(22); // Final screen 2
+      else setStep(23); // Final screen 3
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -1307,11 +1306,11 @@ export default function AppDemoFlow() {
 
                     <div className="grid grid-cols-2 gap-2 mb-3">
                       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3">
-                        <div className="text-xs font-bold text-blue-700 mb-2 text-center">Pianificato</div>
-                        <div className="space-y-1 text-[10px]">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Calorie</span>
-                            <span className="font-bold">650</span>
+                        <div className="text-xs font-bold text-blue-700 mb-3 text-center">Pianificato</div>
+                        <div className="space-y-2 text-[10px]">
+                          <div className="bg-white rounded-lg p-2">
+                            <div className="text-gray-500 text-center mb-1">Calorie</div>
+                            <div className="text-3xl font-black text-center">650</div>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">Proteine</span>
@@ -1329,11 +1328,11 @@ export default function AppDemoFlow() {
                       </div>
 
                       <div className="bg-green-50 border-2 border-green-200 rounded-xl p-3">
-                        <div className="text-xs font-bold text-green-700 mb-2 text-center">Reale AI</div>
-                        <div className="space-y-1 text-[10px]">
-                          <div className="flex justify-between">
-                            <span className="text-gray-600">Calorie</span>
-                            <span className="font-bold text-red-600">725</span>
+                        <div className="text-xs font-bold text-green-700 mb-3 text-center">Reale AI</div>
+                        <div className="space-y-2 text-[10px]">
+                          <div className="bg-white rounded-lg p-2">
+                            <div className="text-gray-500 text-center mb-1">Calorie</div>
+                            <div className="text-3xl font-black text-center text-red-600">725</div>
                           </div>
                           <div className="flex justify-between">
                             <span className="text-gray-600">Proteine</span>
@@ -1409,14 +1408,25 @@ export default function AppDemoFlow() {
                     <h3 className="text-base font-bold mb-3">Quali giorni vuoi allenarti?</h3>
                     <div className="grid grid-cols-1 gap-1.5 max-w-xs mx-auto">
                       {['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'].map((day, idx) => {
-                        const isSelected = idx === 0 || idx === 2 || idx === 4;
+                        const isSelected = (workoutDaySelection >= 1 && idx === 0) || 
+                                          (workoutDaySelection >= 2 && idx === 2) || 
+                                          (workoutDaySelection >= 3 && idx === 4);
                         return (
                           <motion.button
                             key={day}
                             initial={{ opacity: 0, x: -20 }}
-                            animate={{ opacity: 1, x: 0 }}
-                            transition={{ delay: idx * 0.1 }}
-                            className={`py-3 rounded-lg font-bold text-sm ${isSelected ? 'bg-[var(--brand-primary)] text-white' : 'bg-white text-gray-700'}`}
+                            animate={{ 
+                              opacity: 1, 
+                              x: 0,
+                              scale: (workoutDaySelection === 1 && idx === 0) || 
+                                     (workoutDaySelection === 2 && idx === 2) || 
+                                     (workoutDaySelection === 3 && idx === 4) ? [1, 1.05, 1] : 1
+                            }}
+                            transition={{ 
+                              delay: idx * 0.05,
+                              scale: { duration: 0.3 }
+                            }}
+                            className={`py-3 rounded-lg font-bold text-sm transition-all ${isSelected ? 'bg-[var(--brand-primary)] text-white' : 'bg-white text-gray-700'}`}
                           >
                             {isSelected && <Check className="w-4 h-4 inline mr-2" />}
                             {day}
@@ -1449,8 +1459,13 @@ export default function AppDemoFlow() {
                         <HomeIcon className="w-5 h-5" />
                         In Casa
                       </motion.button>
-                      <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700">
+                      <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2">
+                        <Zap className="w-5 h-5" />
                         In Palestra
+                      </button>
+                      <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2">
+                        <Trees className="w-5 h-5" />
+                        All'Aperto
                       </button>
                     </div>
                   </div>
@@ -1459,157 +1474,113 @@ export default function AppDemoFlow() {
 
               {step === 16 && (
                 <motion.div
-                  key="workout-plan"
+                  key="workout-plan-zoom"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
-                  <motion.div
-                    animate={{ y: -workoutScrollStep * 300 }}
-                    transition={{ duration: 0.5 }}
-                    className="space-y-3"
-                  >
+                  <div className="mb-3">
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-base font-bold">Allenamento Lunedì</h3>
                       <motion.button
                         animate={{ 
-                          scale: workoutScrollStep >= 1 ? [1, 1.15, 1] : 1,
-                          borderColor: workoutScrollStep >= 1 ? ['#26847F', '#10b981', '#26847F'] : '#e5e7eb'
+                          scale: modifyWorkoutStep >= 1 ? [1, 1.2, 1.1] : 1
                         }}
-                        transition={{ duration: 0.6 }}
-                        className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg text-xs font-semibold border-2"
+                        transition={{ duration: 0.8 }}
+                        className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg text-xs font-semibold shadow-lg"
                       >
                         Modifica Sessione
                       </motion.button>
                     </div>
+                  </div>
 
-                    <motion.div
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-3 border-2 border-blue-200"
-                    >
-                      <div className="text-xs font-bold text-blue-700 mb-2">🔥 Riscaldamento (5 min)</div>
-                      <div className="text-xs text-gray-700">Jumping Jacks, Arm Circles, Leg Swings</div>
-                    </motion.div>
+                  <motion.div
+                    className="space-y-2"
+                  >
+                    <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-3 border-2 border-blue-200">
+                      <div className="text-xs font-bold text-blue-700 mb-1">🔥 Riscaldamento (5 min)</div>
+                      <div className="text-xs text-gray-700">Jumping Jacks, Arm Circles</div>
+                    </div>
 
-                    <motion.div
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.1 }}
-                      className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
-                    >
+                    <div className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200">
                       <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-gradient-to-br from-orange-400 to-red-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                           1
                         </div>
                         <div className="flex-1">
                           <div className="font-bold text-sm">Push-ups</div>
-                          <div className="text-xs text-gray-600">3x12 • Petto, Tricipiti</div>
+                          <div className="text-xs text-gray-600">3x12 • Petto</div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.2 }}
-                      className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
-                    >
+                    <div className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200">
                       <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-gradient-to-br from-blue-400 to-purple-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                           2
                         </div>
                         <div className="flex-1">
-                          <div className="font-bold text-sm">Squat a Corpo Libero</div>
-                          <div className="text-xs text-gray-600">4x15 • Gambe, Glutei</div>
+                          <div className="font-bold text-sm">Squat</div>
+                          <div className="text-xs text-gray-600">4x15 • Gambe</div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.3 }}
-                      className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
-                    >
+                    <div className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200">
                       <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-teal-500 rounded-lg flex items-center justify-center text-white font-bold">
+                        <div className="w-10 h-10 bg-gradient-to-br from-green-400 to-teal-500 rounded-lg flex items-center justify-center text-white font-bold text-sm">
                           3
                         </div>
                         <div className="flex-1">
                           <div className="font-bold text-sm">Plank</div>
-                          <div className="text-xs text-gray-600">3x45s • Core, Addominali</div>
+                          <div className="text-xs text-gray-600">3x45s • Core</div>
                         </div>
                       </div>
-                    </motion.div>
+                    </div>
 
-                    <motion.div
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.4 }}
-                      className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gradient-to-br from-pink-400 to-rose-500 rounded-lg flex items-center justify-center text-white font-bold">
-                          4
-                        </div>
-                        <div className="flex-1">
-                          <div className="font-bold text-sm">Lunges Alternati</div>
-                          <div className="text-xs text-gray-600">3x10/lato • Gambe</div>
-                        </div>
-                      </div>
-                    </motion.div>
-
-                    <motion.div
-                      initial={{ scale: 0.95 }}
-                      animate={{ scale: 1 }}
-                      transition={{ delay: 0.5 }}
-                      className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-3 border-2 border-green-200"
-                    >
-                      <div className="text-xs font-bold text-green-700 mb-2">🧘 Stretching Finale (5 min)</div>
-                      <div className="text-xs text-gray-700">Quad Stretch, Hamstring Stretch, Child's Pose</div>
-                    </motion.div>
+                    <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-3 border-2 border-green-200">
+                      <div className="text-xs font-bold text-green-700 mb-1">🧘 Stretching (5 min)</div>
+                      <div className="text-xs text-gray-700">Quad Stretch, Child's Pose</div>
+                    </div>
                   </motion.div>
+
+                  {modifyWorkoutStep >= 1 && (
+                    <motion.div
+                      initial={{ y: 50, opacity: 0 }}
+                      animate={{ y: 0, opacity: 1 }}
+                      className="absolute inset-0 bg-black/80 flex items-center justify-center px-4"
+                    >
+                      <div className="bg-white rounded-xl p-4 w-full max-w-sm">
+                        <h4 className="font-bold text-sm mb-3">Problemi con l'allenamento?</h4>
+                        <div className="bg-gray-100 rounded-lg p-3 mb-3 min-h-[60px] flex items-center">
+                          <p className="text-sm text-gray-700">
+                            {typingText}
+                            {modifyWorkoutStep === 1 && <span className="animate-pulse">|</span>}
+                          </p>
+                        </div>
+                        {modifyWorkoutStep >= 2 && (
+                          <motion.div
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3"
+                          >
+                            <div className="flex items-start gap-1.5">
+                              <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
+                              <div>
+                                <div className="font-semibold text-green-800 text-xs mb-0.5">Allenamento Modificato!</div>
+                                <p className="text-xs text-green-700">Ho sostituito gli esercizi per le spalle con alternative più sicure</p>
+                              </div>
+                            </div>
+                          </motion.div>
+                        )}
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.div>
               )}
 
               {step === 17 && (
-                <motion.div
-                  key="modifica-workout"
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-black/80 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                >
-                  <div className="bg-white rounded-xl p-4 w-full max-w-sm">
-                    <h4 className="font-bold text-sm mb-3">Problemi con l'allenamento?</h4>
-                    <div className="bg-gray-100 rounded-lg p-3 mb-3 min-h-[60px] flex items-center">
-                      <p className="text-sm text-gray-700">
-                        {typingText}
-                        {modifyWorkoutStep === 1 && <span className="animate-pulse">|</span>}
-                      </p>
-                    </div>
-                    {modifyWorkoutStep >= 2 && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3"
-                      >
-                        <div className="flex items-start gap-1.5">
-                          <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
-                          <div>
-                            <div className="font-semibold text-green-800 text-xs mb-0.5">Allenamento Modificato!</div>
-                            <p className="text-xs text-green-700">Ho sostituito gli esercizi per le spalle con alternative più sicure</p>
-                          </div>
-                        </div>
-                      </motion.div>
-                    )}
-                  </div>
-                </motion.div>
-              )}
-
-              {step === 18 && (
                 <motion.div
                   key="new-exercise"
                   initial={{ x: 50, opacity: 0 }}
@@ -1635,7 +1606,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 19 && (
+              {step === 18 && (
                 <motion.div
                   key="body-analysis"
                   initial={{ opacity: 0 }}
@@ -1643,7 +1614,7 @@ export default function AppDemoFlow() {
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20 pb-4' : 'p-4'} ${isDesktop ? '' : 'px-3'}`}
                 >
-                  <h3 className="text-sm font-bold mb-2 text-center">Analisi Progressi</h3>
+                  <h3 className="text-sm font-bold mb-2 text-center">Analisi Progressi AI</h3>
                   <div className="grid grid-cols-2 gap-2 mb-3">
                     <div className="bg-white rounded-lg p-1.5 overflow-hidden">
                       <div className="text-[9px] text-gray-500 mb-1 text-center">Prima</div>
@@ -1678,6 +1649,76 @@ export default function AppDemoFlow() {
                     <div className="flex justify-between text-xs">
                       <span className="text-gray-600">Tono Pelle</span>
                       <span className="font-bold text-green-600">+15%</span>
+                    </div>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 19 && (
+                <motion.div
+                  key="weight-chart"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                >
+                  <div className="text-center mb-4">
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">Traiettoria Peso</h3>
+                    <p className="text-xs text-gray-600">12 settimane di progressi</p>
+                  </div>
+
+                  <div className="bg-white rounded-2xl p-4 shadow-xl">
+                    <div className="relative h-48 mb-4">
+                      <svg viewBox="0 0 100 80" className="w-full h-full">
+                        <line x1="10" y1="15" x2="95" y2="15" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <line x1="10" y1="30" x2="95" y2="30" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <line x1="10" y1="45" x2="95" y2="45" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
+                        <line x1="10" y1="60" x2="95" y2="60" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
+                        
+                        <motion.path
+                          d="M 10,20 L 20,25 L 30,32 L 40,38 L 50,42 L 60,48 L 70,52 L 80,56 L 90,60"
+                          fill="none"
+                          stroke="#26847F"
+                          strokeWidth="3"
+                          strokeLinecap="round"
+                          initial={{ pathLength: 0 }}
+                          animate={{ pathLength: 1 }}
+                          transition={{ duration: 2, ease: "easeOut" }}
+                        />
+                        <circle cx="10" cy="20" r="2.5" fill="#26847F" />
+                        <circle cx="20" cy="25" r="2.5" fill="#26847F" />
+                        <circle cx="30" cy="32" r="2.5" fill="#26847F" />
+                        <circle cx="40" cy="38" r="2.5" fill="#26847F" />
+                        <circle cx="50" cy="42" r="2.5" fill="#26847F" />
+                        <circle cx="60" cy="48" r="2.5" fill="#26847F" />
+                        <circle cx="70" cy="52" r="2.5" fill="#26847F" />
+                        <circle cx="80" cy="56" r="2.5" fill="#26847F" />
+                        <motion.circle 
+                          cx="90" cy="60" r="3.5" fill="#10b981"
+                          animate={{ scale: [1, 1.3, 1] }}
+                          transition={{ duration: 1, repeat: Infinity }}
+                        />
+                        
+                        <line x1="10" y1="65" x2="95" y2="65" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="3,3" />
+                        
+                        <text x="5" y="23" fontSize="5" fill="#26847F" fontWeight="bold">70kg</text>
+                        <text x="85" y="67" fontSize="5" fill="#10b981" fontWeight="bold">65kg</text>
+                      </svg>
+                    </div>
+
+                    <div className="grid grid-cols-3 gap-2 text-center">
+                      <div className="bg-blue-50 rounded-lg p-2">
+                        <div className="text-xs text-gray-600">Peso Iniziale</div>
+                        <div className="text-xl font-black text-gray-900">70kg</div>
+                      </div>
+                      <div className="bg-green-50 rounded-lg p-2">
+                        <div className="text-xs text-gray-600">Peso Attuale</div>
+                        <div className="text-xl font-black text-green-600">65kg</div>
+                      </div>
+                      <div className="bg-orange-50 rounded-lg p-2">
+                        <div className="text-xs text-gray-600">Persi</div>
+                        <div className="text-xl font-black text-orange-600">-5kg</div>
+                      </div>
                     </div>
                   </div>
                 </motion.div>
