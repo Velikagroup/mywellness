@@ -23,6 +23,7 @@ export default function AppDemoFlow() {
   const [progress, setProgress] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
   const [dashboardScroll, setDashboardScroll] = useState(0);
+  const [dietStep, setDietStep] = useState(0); // 0: question only, 1: show options, 2: scroll to selection, 3: selection highlighted
 
   useEffect(() => {
     preloadImages();
@@ -59,24 +60,31 @@ export default function AppDemoFlow() {
         setDashboardScroll(Math.max(0, Math.min(1, scrollProgress))); // Da 17s a 19s tutto visibile
       }
       else if (elapsed < 23000) setStep(4); // Genera piano
-      else if (elapsed < 27000) setStep(5); // Scelta dieta
-      else if (elapsed < 30000) setStep(6); // Piano creato
-      else if (elapsed < 33000) setStep(7); // Popup colazione
-      else if (elapsed < 36000) setStep(8); // Scansiona
-      else if (elapsed < 39000) setStep(9); // Aggiungi
-      else if (elapsed < 42000) setStep(10); // Piano aggiornato
-      else if (elapsed < 45000) setStep(11); // Lista spesa
-      else if (elapsed < 48000) setStep(12); // Scan label
-      else if (elapsed < 51000) setStep(13); // Health score
-      else if (elapsed < 54000) setStep(14); // Colazione fatto
-      else if (elapsed < 57000) setStep(15); // Scan pranzo
-      else if (elapsed < 60000) setStep(16); // Rebalance
-      else if (elapsed < 63000) setStep(17); // Workout quiz
-      else if (elapsed < 66000) setStep(18); // Workout plan
-      else if (elapsed < 69000) setStep(19); // Exercise detail
-      else if (elapsed < 72000) setStep(20); // Modifica workout
-      else if (elapsed < 75000) setStep(21); // New exercise
-      else if (elapsed < 78000) setStep(22); // Body analysis
+      else if (elapsed < 29000) { // Scelta dieta - 6 secondi totali
+        setStep(5);
+        const dietElapsed = elapsed - 23000; // Elapsed time within this step (0 to 6000ms)
+        if (dietElapsed < 1000) setDietStep(0); // 0-1s: question only
+        else if (dietElapsed < 2000) setDietStep(1); // 1-2s: show options
+        else if (dietElapsed < 5000) setDietStep(2); // 2-5s: scroll to Low Carb
+        else setDietStep(3); // 5-6s: Low Carb selected and highlighted
+      }
+      else if (elapsed < 32000) setStep(6); // Piano creato
+      else if (elapsed < 35000) setStep(7); // Popup colazione
+      else if (elapsed < 38000) setStep(8); // Scansiona
+      else if (elapsed < 41000) setStep(9); // Aggiungi
+      else if (elapsed < 44000) setStep(10); // Piano aggiornato
+      else if (elapsed < 47000) setStep(11); // Lista spesa
+      else if (elapsed < 50000) setStep(12); // Scan label
+      else if (elapsed < 53000) setStep(13); // Health score
+      else if (elapsed < 56000) setStep(14); // Colazione fatto
+      else if (elapsed < 59000) setStep(15); // Scan pranzo
+      else if (elapsed < 62000) setStep(16); // Rebalance
+      else if (elapsed < 65000) setStep(17); // Workout quiz
+      else if (elapsed < 68000) setStep(18); // Workout plan
+      else if (elapsed < 71000) setStep(19); // Exercise detail
+      else if (elapsed < 74000) setStep(20); // Modifica workout
+      else if (elapsed < 77000) setStep(21); // New exercise
+      else if (elapsed < 80000) setStep(22); // Body analysis
       else setStep(23); // Goal reached
     }, 50);
 
@@ -306,10 +314,12 @@ export default function AppDemoFlow() {
                             <span className="font-bold">30.800 kcal</span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                            <span className="text-gray-600">Rimanente</span>
+                            <div className="flex items-center gap-1">
+                              <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                              <span className="text-gray-600">Rimanente</span>
+                            </div>
+                            <span className="font-bold">46.200 kcal</span>
                           </div>
-                          <span className="font-bold">46.200 kcal</span>
                         </div>
                       </div>
                     </div>
@@ -385,30 +395,69 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 5: Scelta Dieta */}
+              {/* Step 5: Scelta Dieta - NUOVO CON ANIMAZIONE */}
               {step === 5 && (
                 <motion.div
                   key="dieta"
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-white overflow-auto ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  <h3 className="text-sm font-bold mb-2">Scegli Dieta</h3>
-                  <div className="space-y-1.5">
-                    {['Mediterranea', 'Keto', 'Vegetariana', 'Vegana', 'Low Carb', 'Paleo', 'DASH', 'Flexitariana'].map((diet, i) => (
-                      <motion.div
-                        key={diet}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: i * 0.05 }}
-                        className={`p-2.5 rounded-lg border-2 ${i === 4 ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)]' : 'border-gray-200'}`}
-                      >
-                        <span className={`font-semibold text-xs ${i === 4 ? 'text-[var(--brand-primary)]' : 'text-gray-700'}`}>{diet}</span>
-                        {i === 4 && <Check className="w-4 h-4 text-[var(--brand-primary)] inline ml-1" />}
-                      </motion.div>
-                    ))}
+                  {/* Domanda sempre visibile */}
+                  <div className="text-center mb-4">
+                    <div className="inline-block px-4 py-2 bg-purple-100 rounded-full mb-3">
+                      <span className="text-sm font-semibold text-purple-700">Preferenze Alimentari</span>
+                    </div>
+                    <h3 className="text-xl font-bold">Che tipo di dieta preferisci?</h3>
                   </div>
+
+                  {/* Finestra opzioni che appare con animazione */}
+                  {dietStep >= 1 && (
+                    <motion.div
+                      initial={{ scale: 0.9, opacity: 0, y: 20 }}
+                      animate={{ scale: 1, opacity: 1, y: 0 }}
+                      transition={{ duration: 0.4 }}
+                      className="bg-white rounded-2xl shadow-2xl max-w-sm mx-auto overflow-hidden"
+                      style={{ maxHeight: '300px' }} // Fixed height for scroll simulation
+                    >
+                      <motion.div
+                        animate={{ 
+                          y: dietStep >= 2 ? -160 : 0 // Scroll by 4 items (4 * (item height + gap)) approx 4*40 = 160
+                        }}
+                        transition={{ duration: 2, ease: "easeInOut" }}
+                        className="p-3 space-y-2"
+                      >
+                        {['Mediterranea', 'Keto', 'Vegetariana', 'Vegana', 'Low Carb', 'Paleo', 'DASH', 'Flexitariana'].map((diet, i) => (
+                          <motion.div
+                            key={diet}
+                            className={`p-3 rounded-lg border-2 transition-all ${
+                              dietStep >= 3 && i === 4 
+                                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] scale-105' 
+                                : 'border-gray-200 bg-white'
+                            }`}
+                          >
+                            <div className="flex items-center justify-between">
+                              <span className={`font-semibold text-sm ${
+                                dietStep >= 3 && i === 4 ? 'text-[var(--brand-primary)]' : 'text-gray-700'
+                              }`}>
+                                {diet}
+                              </span>
+                              {dietStep >= 3 && i === 4 && (
+                                <motion.div
+                                  initial={{ scale: 0 }}
+                                  animate={{ scale: 1 }}
+                                  transition={{ duration: 0.3 }}
+                                >
+                                  <Check className="w-5 h-5 text-[var(--brand-primary)]" />
+                                </motion.div>
+                              )}
+                            </div>
+                          </motion.div>
+                        ))}
+                      </motion.div>
+                    </motion.div>
+                  )}
                 </motion.div>
               )}
 
