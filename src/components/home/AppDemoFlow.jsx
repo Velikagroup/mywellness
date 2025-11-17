@@ -24,6 +24,7 @@ export default function AppDemoFlow() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [dashboardScroll, setDashboardScroll] = useState(0);
   const [dietStep, setDietStep] = useState(0); // 0: question only, 1: show options, 2: scroll to selection, 3: selection highlighted
+  const [mealPlanStep, setMealPlanStep] = useState(0); // 0: show plan, 1: open popup
 
   useEffect(() => {
     preloadImages();
@@ -68,24 +69,29 @@ export default function AppDemoFlow() {
         else if (dietElapsed < 5000) setDietStep(2); // 2-5s: scroll to Low Carb
         else setDietStep(3); // 5-6s: Low Carb selected and highlighted
       }
-      else if (elapsed < 32000) setStep(6); // Piano creato
-      else if (elapsed < 35000) setStep(7); // Popup colazione
-      else if (elapsed < 38000) setStep(8); // Scansiona
-      else if (elapsed < 41000) setStep(9); // Aggiungi
-      else if (elapsed < 44000) setStep(10); // Piano aggiornato
-      else if (elapsed < 47000) setStep(11); // Lista spesa
-      else if (elapsed < 50000) setStep(12); // Scan label
-      else if (elapsed < 53000) setStep(13); // Health score
-      else if (elapsed < 56000) setStep(14); // Colazione fatto
-      else if (elapsed < 59000) setStep(15); // Scan pranzo
-      else if (elapsed < 62000) setStep(16); // Rebalance
-      else if (elapsed < 65000) setStep(17); // Workout quiz
-      else if (elapsed < 68000) setStep(18); // Workout plan
-      else if (elapsed < 71000) setStep(19); // Exercise detail
-      else if (elapsed < 74000) setStep(20); // Modifica workout
-      else if (elapsed < 77000) setStep(21); // New exercise
-      else if (elapsed < 80000) setStep(22); // Body analysis
-      else setStep(23); // Goal reached
+      else if (elapsed < 35000) { // Piano Settimanale - 6 secondi totali (29s to 35s)
+        setStep(6);
+        const planElapsed = elapsed - 29000; // Elapsed time within this step (0 to 6000ms)
+        if (planElapsed < 2000) setMealPlanStep(0); // 0-2s: Mostra piano completo
+        else setMealPlanStep(1); // 2-6s: Apri popup
+      }
+      else if (elapsed < 38000) setStep(7); // Popup colazione (old step 7, now 35s to 38s)
+      else if (elapsed < 41000) setStep(8); // Scansiona (old step 8, now 38s to 41s)
+      else if (elapsed < 44000) setStep(9); // Aggiungi (old step 9, now 41s to 44s)
+      else if (elapsed < 47000) setStep(10); // Piano aggiornato (old step 10, now 44s to 47s)
+      else if (elapsed < 50000) setStep(11); // Lista spesa (old step 11, now 47s to 50s)
+      else if (elapsed < 53000) setStep(12); // Scan label (old step 12, now 50s to 53s)
+      else if (elapsed < 56000) setStep(13); // Health score (old step 13, now 53s to 56s)
+      else if (elapsed < 59000) setStep(14); // Colazione fatto (old step 14, now 56s to 59s)
+      else if (elapsed < 62000) setStep(15); // Scan pranzo (old step 15, now 59s to 62s)
+      else if (elapsed < 65000) setStep(16); // Rebalance (old step 16, now 62s to 65s)
+      else if (elapsed < 68000) setStep(17); // Workout quiz (old step 17, now 65s to 68s)
+      else if (elapsed < 71000) setStep(18); // Workout plan (old step 18, now 68s to 71s)
+      else if (elapsed < 74000) setStep(19); // Exercise detail (old step 19, now 71s to 74s)
+      else if (elapsed < 77000) setStep(20); // Modifica workout (old step 20, now 74s to 77s)
+      else if (elapsed < 80000) setStep(21); // New exercise (old step 21, now 77s to 80s)
+      else if (elapsed < 83000) setStep(22); // Body analysis (old step 22, now 80s to 83s)
+      else setStep(23); // Goal reached (old step 23, now 83s to 90s)
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -461,23 +467,40 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 6: Piano Creato */}
+              {/* Step 6: Piano Settimanale CON GIORNI E POPUP */}
               {step === 6 && (
                 <motion.div
-                  key="piano-creato"
+                  key="piano-settimanale"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
-                  <div className="mb-3 flex justify-between items-center">
-                    <h3 className="text-base font-bold">Piano Settimanale</h3>
-                    <span className="text-xs text-gray-500">Lunedì</span>
+                  {/* Header con giorni settimana */}
+                  <div className="mb-3">
+                    <h3 className="text-base font-bold mb-2">Piano Settimanale</h3>
+                    <div className="flex gap-1 overflow-x-auto pb-2">
+                      {['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map((day, i) => (
+                        <div
+                          key={day}
+                          className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${
+                            i === 0 
+                              ? 'bg-[var(--brand-primary)] text-white' 
+                              : 'bg-white text-gray-500 border border-gray-200'
+                          }`}
+                        >
+                          {day}
+                        </div>
+                      ))}
+                    </div>
                   </div>
+
+                  {/* I 3 pasti principali */}
                   <div className="space-y-2">
                     <motion.div
-                      initial={{ scale: 0.9 }}
-                      animate={{ scale: 1 }}
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.1 }}
                       className="bg-white rounded-lg p-3 shadow-md border-2 border-[var(--brand-primary)]"
                     >
                       <div className="flex items-center gap-2">
@@ -489,17 +512,114 @@ export default function AppDemoFlow() {
                         </div>
                       </div>
                     </motion.div>
-                    <div className="bg-white rounded-lg p-3 shadow-sm opacity-60">
-                      <div className="text-xs text-gray-600">Pranzo • 650 kcal</div>
-                    </div>
-                    <div className="bg-white rounded-lg p-3 shadow-sm opacity-40">
-                      <div className="text-xs text-gray-600">Cena • 700 kcal</div>
-                    </div>
+                    
+                    <motion.div
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.2 }}
+                      className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg" />
+                        <div className="flex-1">
+                          <div className="font-bold text-sm text-gray-900">Pranzo</div>
+                          <div className="text-xs text-gray-500">Insalata Caesar</div>
+                          <div className="text-xs text-gray-600 font-semibold mt-0.5">650 kcal</div>
+                        </div>
+                      </div>
+                    </motion.div>
+
+                    <motion.div
+                      initial={{ scale: 0.9, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ delay: 0.3 }}
+                      className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
+                    >
+                      <div className="flex items-center gap-2">
+                        <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg" />
+                        <div className="flex-1">
+                          <div className="font-bold text-sm text-gray-900">Cena</div>
+                          <div className="text-xs text-gray-500">Salmone al Forno</div>
+                          <div className="text-xs text-gray-600 font-semibold mt-0.5">700 kcal</div>
+                        </div>
+                      </div>
+                    </motion.div>
                   </div>
+
+                  {/* Popup dettaglio pasto */}
+                  {mealPlanStep >= 1 && (
+                    <motion.div
+                      initial={{ scale: 0.8, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      className="absolute inset-0 bg-black/60 flex items-center justify-center p-4"
+                      style={{ backdropFilter: 'blur(4px)' }}
+                    >
+                      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+                        {/* Foto ingrandita */}
+                        <div className="relative h-40 bg-gradient-to-br from-orange-400 to-red-400 overflow-hidden">
+                          <div className="absolute inset-0 flex items-center justify-center text-white text-6xl">
+                            🥞
+                          </div>
+                        </div>
+
+                        {/* Contenuto */}
+                        <div className="p-4">
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">Pancakes Proteici</h3>
+                          <p className="text-xs text-gray-500 mb-3">Colazione • Low Carb</p>
+
+                          {/* Valori nutrizionali */}
+                          <div className="grid grid-cols-4 gap-2 mb-3">
+                            <div className="bg-orange-50 rounded-lg p-2 text-center">
+                              <div className="text-xs text-gray-600">Kcal</div>
+                              <div className="text-lg font-black text-orange-700">450</div>
+                            </div>
+                            <div className="bg-blue-50 rounded-lg p-2 text-center">
+                              <div className="text-xs text-gray-600">Prot</div>
+                              <div className="text-lg font-black text-blue-700">25g</div>
+                            </div>
+                            <div className="bg-amber-50 rounded-lg p-2 text-center">
+                              <div className="text-xs text-gray-600">Carb</div>
+                              <div className="text-lg font-black text-amber-700">35g</div>
+                            </div>
+                            <div className="bg-red-50 rounded-lg p-2 text-center">
+                              <div className="text-xs text-gray-600">Grass</div>
+                              <div className="text-lg font-black text-red-700">12g</div>
+                            </div>
+                          </div>
+
+                          {/* Ingredienti */}
+                          <div className="mb-3">
+                            <div className="text-sm font-bold text-gray-900 mb-1">Ingredienti</div>
+                            <div className="space-y-1">
+                              {['Farina d\'avena - 50g', 'Uova - 2x', 'Proteine in polvere - 30g', 'Mirtilli - 50g'].map((ing) => (
+                                <div key={ing} className="flex items-center gap-2 text-xs text-gray-700">
+                                  <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
+                                  {ing}
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+
+                          {/* Preparazione */}
+                          <div>
+                            <div className="text-sm font-bold text-gray-900 mb-1">Preparazione</div>
+                            <div className="space-y-1">
+                              {['Mescola farina e proteine', 'Aggiungi uova e mescola', 'Cuoci in padella 2-3 min per lato'].map((step, i) => (
+                                <div key={i} className="flex items-start gap-2 text-xs text-gray-700">
+                                  <span className="text-[var(--brand-primary)] font-bold flex-shrink-0">{i + 1}.</span>
+                                  <span>{step}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.div>
               )}
 
-              {/* Step 7: Pop-up Colazione */}
+              {/* Step 7: Pop-up Colazione (VECCHIO - now at a different timing) */}
               {step === 7 && (
                 <motion.div
                   key="popup-colazione"
