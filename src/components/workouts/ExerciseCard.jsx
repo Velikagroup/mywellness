@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Dumbbell, Info, Zap, Eye, Check } from "lucide-react";
 import { motion } from 'framer-motion';
 
-export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, completedSets = [], onSetToggle }) {
+export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, completedSets = [], onSetToggle, isToday = true }) {
   const [showDetails, setShowDetails] = useState(false);
   
   const toggleSet = (setNumber) => {
@@ -50,34 +50,40 @@ export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, 
                   <span className="text-gray-600">• {exercise.rest}</span>
                 </div>
 
-                {/* ✅ SET BUTTONS DIRETTAMENTE NELLA CARD */}
-                <div className="flex flex-wrap gap-2">
-                  {Array.from({ length: exercise.sets || 0 }, (_, i) => i + 1).map((setNum) => {
-                    const isSetCompleted = completedSets.includes(setNum);
-                    return (
-                      <motion.button
-                        key={setNum}
-                        onClick={() => toggleSet(setNum)}
-                        animate={{
-                          scale: isSetCompleted ? [1, 1.1, 1] : 1,
-                          backgroundColor: isSetCompleted ? '#26847F' : '#ffffff',
-                          borderColor: isSetCompleted ? '#1f6b66' : '#e5e7eb'
-                        }}
-                        transition={{ duration: 0.3 }}
-                        className={`relative px-3 py-2 rounded-lg border-2 shadow-sm transition-all flex items-center gap-1 ${
-                          isSetCompleted 
-                            ? 'text-white' 
-                            : 'text-gray-700 hover:border-[#26847F] hover:bg-gray-50'
-                        }`}
-                      >
-                        <span className="text-sm font-bold">Set {setNum}</span>
-                        {isSetCompleted && (
-                          <Check className="w-3 h-3" />
-                        )}
-                      </motion.button>
-                    );
-                  })}
-                </div>
+                {/* ✅ SET BUTTONS SOLO PER OGGI */}
+                {isToday && (
+                  <div className="flex flex-wrap gap-2">
+                    {Array.from({ length: exercise.sets || 0 }, (_, i) => i + 1).map((setNum) => {
+                      const isSetCompleted = completedSets.includes(setNum);
+                      return (
+                        <motion.button
+                          key={setNum}
+                          onClick={() => toggleSet(setNum)}
+                          animate={{
+                            scale: isSetCompleted ? [1, 1.1, 1] : 1,
+                            backgroundColor: isSetCompleted ? '#26847F' : '#ffffff',
+                            borderColor: isSetCompleted ? '#1f6b66' : '#e5e7eb'
+                          }}
+                          transition={{ duration: 0.3 }}
+                          className={`relative px-3 py-2 rounded-lg border-2 shadow-sm transition-all flex items-center gap-1 ${
+                            isSetCompleted 
+                              ? 'text-white' 
+                              : 'text-gray-700 hover:border-[#26847F] hover:bg-gray-50'
+                          }`}
+                        >
+                          <span className="text-sm font-bold">Set {setNum}</span>
+                          {isSetCompleted && (
+                            <Check className="w-3 h-3" />
+                          )}
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                )}
+
+                {!isToday && (
+                  <p className="text-xs text-gray-500 italic">Visualizzazione programma - tracking disponibile solo per oggi</p>
+                )}
               </div>
             </div>
           </CardHeader>

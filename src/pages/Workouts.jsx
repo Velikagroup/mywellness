@@ -223,7 +223,7 @@ export default function Workouts() {
     loadData();
   }, [checkForCheats, navigate]);
 
-  // ✅ CARICA LOGS ALL'AVVIO
+  // ✅ CARICA LOGS PER IL GIORNO CORRENTE (oggi)
   useEffect(() => {
     const loadWorkoutLogs = async () => {
       if (!trainingData.user_id) return;
@@ -235,26 +235,27 @@ export default function Workouts() {
           date: today 
         });
         
-        console.log('📥 Loading logs for:', today);
+        console.log('📥 LOADING LOGS FOR TODAY:', today, 'Found:', logs.length);
         
-        if (logs.length > 0) {
+        if (logs.length > 0 && logs[0].exercises_log) {
           const savedSets = {};
-          logs[0].exercises_log?.forEach(exLog => {
+          logs[0].exercises_log.forEach(exLog => {
             savedSets[exLog.exercise_name] = exLog.completed_sets || [];
+            console.log('💾 Restored:', exLog.exercise_name, '→', exLog.completed_sets);
           });
-          console.log('✅ Loaded sets:', savedSets);
+          console.log('✅ SETS LOADED:', savedSets);
           setExerciseSets(savedSets);
         } else {
-          console.log('⚠️ No logs, starting fresh');
+          console.log('⚠️ No logs found, starting fresh');
           setExerciseSets({});
         }
       } catch (error) {
-        console.error('❌ Error loading:', error);
+        console.error('❌ Error loading logs:', error);
       }
     };
     
     loadWorkoutLogs();
-  }, [trainingData.user_id]);
+  }, [trainingData.user_id, workoutPlans]);
 
   // Calcola generazioni rimanenti
   useEffect(() => {
@@ -372,13 +373,19 @@ export default function Workouts() {
     });
   }, [allExercises, trainingData.equipment, trainingData.joint_pain, trainingData.fitness_experience, trainingData.fitness_goal]);
 
-  // ✅ SALVA IMMEDIATAMENTE
+  // ✅ SALVA IMMEDIATAMENTE SOLO PER OGGI
   const saveWorkoutProgress = useCallback(async (exerciseName, completedSetsArray, totalSets) => {
     if (!trainingData.user_id) return;
     
+    // ✅ SALVA SOLO SE STIAMO GUARDANDO IL GIORNO DI OGGI
+    const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    if (selectedDay !== todayOfWeek) {
+      console.log('⚠️ Not saving - viewing different day than today');
+      return;
+    }
+    
     try {
       const today = new Date().toISOString().split('T')[0];
-      const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       const workoutPlan = workoutPlans.find(p => p.day_of_week === todayOfWeek);
       
       const logs = await base44.entities.WorkoutLog.filter({ 
@@ -402,7 +409,7 @@ export default function Workouts() {
             is_completed: isCompleted
           }]
         });
-        console.log('💾 NEW LOG:', exerciseName, completedSetsArray);
+        console.log('💾 CREATED NEW LOG:', exerciseName, '→', completedSetsArray);
       } else {
         const log = logs[0];
         const exercises = [...(log.exercises_log || [])];
@@ -422,12 +429,12 @@ export default function Workouts() {
         }
         
         await base44.entities.WorkoutLog.update(log.id, { exercises_log: exercises });
-        console.log('💾 UPDATED:', exerciseName, completedSetsArray);
+        console.log('💾 UPDATED LOG:', exerciseName, '→', completedSetsArray);
       }
     } catch (error) {
       console.error('❌ Save error:', error);
     }
-  }, [trainingData.user_id, workoutPlans]);
+  }, [trainingData.user_id, workoutPlans, selectedDay]);
 
 
   const generateWorkoutPlan = async () => {
@@ -1418,7 +1425,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                 {workoutForSelectedDay.exercises.map((ex, idx) => {
                                    const enrichedExercise = enrichExerciseWithDetails(ex);
                                    const exerciseName = ex.name;
-                                   const completedSets = exerciseSets[exerciseName] || [];
+
+                                   // ✅ MOSTRA I SET SOLO SE STIAMO GUARDANDO OGGI
+                                   const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                                   const isToday = selectedDay === todayOfWeek;
+                                   const completedSets = isToday ? (exerciseSets[exerciseName] || []) : [];
                                    const isCompleted = completedSets.length === ex.sets && ex.sets > 0;
 
                                    return (
@@ -1428,16 +1439,17 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                        isCompleted={isCompleted}
                                        completedSets={completedSets}
                                        onSetToggle={(newSets) => {
-                                         console.log('🔄 Toggle:', exerciseName, newSets);
+                                         console.log('🔄 SET TOGGLE:', exerciseName, '→', newSets);
                                          setExerciseSets(prev => ({ ...prev, [exerciseName]: newSets }));
                                          saveWorkoutProgress(exerciseName, newSets, ex.sets);
                                        }}
                                        onToggleComplete={() => {
                                          const newSets = isCompleted ? [] : Array.from({ length: ex.sets }, (_, i) => i + 1);
-                                         console.log('✅ Complete toggle:', exerciseName, newSets);
+                                         console.log('✅ COMPLETE TOGGLE:', exerciseName, '→', newSets);
                                          setExerciseSets(prev => ({ ...prev, [exerciseName]: newSets }));
                                          saveWorkoutProgress(exerciseName, newSets, ex.sets);
                                        }}
+                                       isToday={isToday}
                                      />
                                    );
                                  })}
