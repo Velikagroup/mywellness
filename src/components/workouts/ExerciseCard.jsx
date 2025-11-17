@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Dumbbell, Info, Target, Zap, Eye, Check } from "lucide-react";
+import { Dumbbell, Info, Zap, Eye, Check } from "lucide-react";
 import { motion } from 'framer-motion';
 import SetTrackerModal from './SetTrackerModal';
 
@@ -105,7 +105,7 @@ export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, 
                 </span>
               )}
               
-              {(exercise.detailed_description || exercise.form_tips || exercise.target_muscles || exercise.muscle_image_url) && (
+              {(exercise.detailed_description || exercise.form_tips || exercise.target_muscles) && (
                 <Button
                   variant="ghost"
                   size="sm"
@@ -159,20 +159,6 @@ export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, 
             </DialogHeader>
 
             <div className="space-y-6 py-4">
-              {exercise.muscle_image_url && (
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Target className="w-4 h-4 text-[#26847F]" />
-                    Muscoli Coinvolti
-                  </h4>
-                  <img 
-                    src={exercise.muscle_image_url} 
-                    alt="Muscoli target" 
-                    className="w-full max-w-md mx-auto rounded-lg shadow-md"
-                  />
-                </div>
-              )}
-
               {exercise.target_muscles?.length > 0 && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">🎯 Muscoli Specifici:</h4>
