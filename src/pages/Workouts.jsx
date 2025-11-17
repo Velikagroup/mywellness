@@ -77,6 +77,8 @@ export default function Workouts() {
   const [remainingGenerations, setRemainingGenerations] = useState(null);
   const [generationLimitReached, setGenerationLimitReached] = useState(false);
 
+  const [completedExercises, setCompletedExercises] = useState({});
+
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
     queryKey: ['workoutPlans', trainingData.user_id],
@@ -795,6 +797,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     await queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
     setLogWorkout(null);
     setAdjustedWorkout(null);
+    setCompletedExercises({}); // Reset completed exercises after logging
   };
 
   // Calcola il numero di esercizi nella scheda settimanale
@@ -1348,9 +1351,23 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                               <h5 className="font-semibold text-gray-800 mb-2">Esercizi Principali</h5>
                               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {workoutForSelectedDay.exercises.map((ex, idx) => {
-                                  // ✅ ARRICCHISCI L'ESERCIZIO CON DATI DAL DATABASE
                                   const enrichedExercise = enrichExerciseWithDetails(ex);
-                                  return <ExerciseCard key={idx} exercise={enrichedExercise} />;
+                                  const exerciseKey = `${selectedDay}-${idx}`;
+                                  const isCompleted = completedExercises[exerciseKey] || false;
+                                  
+                                  return (
+                                    <ExerciseCard 
+                                      key={idx} 
+                                      exercise={enrichedExercise}
+                                      isCompleted={isCompleted}
+                                      onToggleComplete={() => {
+                                        setCompletedExercises(prev => ({
+                                          ...prev,
+                                          [exerciseKey]: !prev[exerciseKey]
+                                        }));
+                                      }}
+                                    />
+                                  );
                                 })}
                               </div>
                             </div>
