@@ -1435,10 +1435,12 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {workoutForSelectedDay.exercises.map((ex, idx) => {
                                    const enrichedExercise = enrichExerciseWithDetails(ex);
-                                   // ✅ USA NOME ESERCIZIO COME CHIAVE (stabile e persistente)
-                                   const exerciseKey = enrichedExercise.name;
+                                   // ✅ USA NOME ORIGINALE DAL PIANO (non quello del DB!)
+                                   const exerciseKey = ex.name;
                                    const isCompleted = completedExercises[exerciseKey] || false;
                                    const completedSets = exerciseSets[exerciseKey] || [];
+
+                                   console.log('🏋️ Rendering exercise:', exerciseKey, 'completedSets:', completedSets, 'isCompleted:', isCompleted);
 
                                    return (
                                      <ExerciseCard 
@@ -1447,32 +1449,28 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                        isCompleted={isCompleted}
                                        completedSets={completedSets}
                                        onSetToggle={(newSets) => {
-                                         console.log('🔄 Set toggled:', exerciseKey, 'newSets:', newSets);
+                                         console.log('🔄 onSetToggle called:', exerciseKey, 'newSets:', newSets);
 
-                                         setExerciseSets(prev => ({
-                                           ...prev,
-                                           [exerciseKey]: newSets
-                                         }));
+                                         setExerciseSets(prev => {
+                                           const updated = { ...prev, [exerciseKey]: newSets };
+                                           console.log('📝 Updated exerciseSets state:', updated);
+                                           return updated;
+                                         });
 
-                                         // ✅ Salva con nome esercizio
-                                         saveWorkoutProgress(
-                                           exerciseKey, 
-                                           newSets, 
-                                           enrichedExercise.sets,
-                                           isCompleted
-                                         );
+                                         saveWorkoutProgress(exerciseKey, newSets, ex.sets, isCompleted);
                                        }}
                                        onToggleComplete={() => {
                                          const newCompletedState = !isCompleted;
-                                         console.log('✅ Exercise toggled:', exerciseKey, newCompletedState);
+                                         console.log('✅ onToggleComplete called:', exerciseKey, newCompletedState);
 
-                                         setCompletedExercises(prev => ({
-                                           ...prev,
-                                           [exerciseKey]: newCompletedState
-                                         }));
+                                         setCompletedExercises(prev => {
+                                           const updated = { ...prev, [exerciseKey]: newCompletedState };
+                                           console.log('📝 Updated completedExercises state:', updated);
+                                           return updated;
+                                         });
 
                                          const updatedSets = newCompletedState 
-                                           ? Array.from({ length: enrichedExercise.sets || 0 }, (_, i) => i + 1)
+                                           ? Array.from({ length: ex.sets || 0 }, (_, i) => i + 1)
                                            : [];
 
                                          setExerciseSets(prev => ({
@@ -1480,12 +1478,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                            [exerciseKey]: updatedSets
                                          }));
 
-                                         saveWorkoutProgress(
-                                           exerciseKey, 
-                                           updatedSets,
-                                           enrichedExercise.sets,
-                                           newCompletedState
-                                         );
+                                         saveWorkoutProgress(exerciseKey, updatedSets, ex.sets, newCompletedState);
                                        }}
                                      />
                                    );
