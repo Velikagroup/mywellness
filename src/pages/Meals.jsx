@@ -1340,6 +1340,13 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                               {!meal.is_cheat_meal && (
                                 <div className="text-right">
                                   <p className="font-bold text-gray-800">{meal.total_calories} <span className="text-xs font-normal text-gray-500">kcal</span></p>
+                                  <p className="text-xs text-gray-600 mt-0.5">
+                                    <span className="text-red-600 font-semibold">{Math.round(meal.total_protein || 0)}P</span>
+                                    <span className="text-gray-400 mx-0.5">•</span>
+                                    <span className="text-blue-600 font-semibold">{Math.round(meal.total_carbs || 0)}C</span>
+                                    <span className="text-gray-400 mx-0.5">•</span>
+                                    <span className="text-yellow-600 font-semibold">{Math.round(meal.total_fat || 0)}G</span>
+                                  </p>
                                 </div>
                               )}
                             </button>

@@ -26,7 +26,7 @@ import Settings from './pages/Settings';
 import AdminSupportTickets from './pages/AdminSupportTickets';
 import AdminFeedback from './pages/AdminFeedback';
 import AdminEmailLogs from './pages/AdminEmailLogs';
-import Layout from './Layout.jsx';
+import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
@@ -63,5 +63,5 @@ export const PAGES = {
 export const pagesConfig = {
     mainPage: "Home",
     Pages: PAGES,
-    Layout: Layout,
+    Layout: __Layout,
 };
