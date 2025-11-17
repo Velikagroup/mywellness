@@ -77,7 +77,6 @@ export default function Workouts() {
 
   const [completedExercises, setCompletedExercises] = useState({});
   const [exerciseSets, setExerciseSets] = useState({});
-  const [workoutLogsLoaded, setWorkoutLogsLoaded] = useState(false);
 
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
@@ -219,10 +218,10 @@ export default function Workouts() {
     loadData();
   }, [checkForCheats, navigate]);
 
-  // ✅ Carica i workout logs salvati (set completati)
+  // ✅ Carica i workout logs salvati per il giorno selezionato
   useEffect(() => {
     const loadWorkoutLogs = async () => {
-      if (!trainingData.user_id || workoutLogsLoaded) return;
+      if (!trainingData.user_id) return;
       
       try {
         const today = new Date().toISOString().split('T')[0];
@@ -241,29 +240,25 @@ export default function Workouts() {
           todayLog.exercises_log?.forEach(exLog => {
             const exerciseKey = exLog.exercise_key;
             savedExerciseSets[exerciseKey] = exLog.completed_sets || [];
-            
-            // Se tutti i set sono completati, marca l'esercizio come completato
-            const totalSets = exLog.total_sets || 0;
-            if (exLog.completed_sets?.length === totalSets && totalSets > 0) { // Only mark as completed if there are sets and they are all completed
-              savedCompletedExercises[exerciseKey] = true;
-            }
+            savedCompletedExercises[exerciseKey] = exLog.is_completed || false;
           });
           
           setCompletedExercises(savedCompletedExercises);
           setExerciseSets(savedExerciseSets);
           
-          console.log('✅ Caricati workout logs salvati:', savedExerciseSets);
+          console.log('✅ Caricati workout logs:', { savedCompletedExercises, savedExerciseSets });
+        } else {
+          // Reset se non ci sono log per oggi
+          setCompletedExercises({});
+          setExerciseSets({});
         }
-        
-        setWorkoutLogsLoaded(true);
       } catch (error) {
         console.error('Error loading workout logs:', error);
-        setWorkoutLogsLoaded(true);
       }
     };
     
     loadWorkoutLogs();
-  }, [trainingData.user_id, workoutLogsLoaded]);
+  }, [trainingData.user_id, selectedDay]);
 
   // Calcola generazioni rimanenti
   useEffect(() => {
@@ -381,8 +376,8 @@ export default function Workouts() {
     });
   }, [allExercises, trainingData.equipment, trainingData.joint_pain, trainingData.fitness_experience, trainingData.fitness_goal]);
 
-  // ✅ Salva automaticamente i set completati quando cambiano
-  const saveWorkoutProgress = useCallback(async (exerciseKey, completedSetsArray, totalSets, exerciseName) => {
+  // ✅ Salva automaticamente i progressi quando cambiano
+  const saveWorkoutProgress = useCallback(async (exerciseKey, completedSetsArray, totalSets, exerciseName, isCompleted) => {
     if (!trainingData.user_id) return;
     
     try {
@@ -409,7 +404,8 @@ export default function Workouts() {
             exercise_key: exerciseKey,
             exercise_name: exerciseName,
             completed_sets: completedSetsArray,
-            total_sets: totalSets
+            total_sets: totalSets,
+            is_completed: isCompleted
           }]
         });
       } else {
@@ -421,12 +417,14 @@ export default function Workouts() {
           existingLog[exerciseLogIndex].completed_sets = completedSetsArray;
           existingLog[exerciseLogIndex].total_sets = totalSets; // Ensure total sets are updated too
           existingLog[exerciseLogIndex].exercise_name = exerciseName; // Ensure name is updated
+          existingLog[exerciseLogIndex].is_completed = isCompleted; // NEW: Update is_completed status
         } else {
           existingLog.push({
             exercise_key: exerciseKey,
             exercise_name: exerciseName,
             completed_sets: completedSetsArray,
-            total_sets: totalSets
+            total_sets: totalSets,
+            is_completed: isCompleted
           });
         }
         
@@ -435,7 +433,7 @@ export default function Workouts() {
         });
       }
       
-      console.log('💾 Progress saved:', exerciseKey, completedSetsArray);
+      console.log('💾 Salvato:', exerciseKey, { completedSetsArray, isCompleted });
     } catch (error) {
       console.error('Error saving workout progress:', error);
     }
@@ -693,7 +691,6 @@ CRITICAL REQUIREMENTS:
       }
 
       // Reset workout logs loaded to re-fetch for the new plan
-      setWorkoutLogsLoaded(false); 
       setCompletedExercises({});
       setExerciseSets({});
 
@@ -981,7 +978,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 20 ? 'text-[#26847F]' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Filtro per obiettivo: {trainingData.fitness_goal}</span>
+                    <span className="text-gray-700">Filtro per obiettivo: ${trainingData.fitness_goal}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 40 ? 'text-[#26847F]' : 'text-gray-300'}`} />
@@ -1448,30 +1445,45 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                           [exerciseKey]: newSets
                                         }));
                                         
-                                        // ✅ Salva automaticamente nel database
-                                        saveWorkoutProgress(exerciseKey, newSets, enrichedExercise.sets, enrichedExercise.name);
+                                        // Salva automaticamente
+                                        saveWorkoutProgress(
+                                          exerciseKey, 
+                                          newSets, 
+                                          enrichedExercise.sets, 
+                                          enrichedExercise.name,
+                                          completedExercises[exerciseKey] || false // Pass current completion status
+                                        );
                                       }}
                                       onToggleComplete={() => {
+                                        const newCompletedState = !completedExercises[exerciseKey];
+                                        
                                         setCompletedExercises(prev => ({
                                           ...prev,
-                                          [exerciseKey]: !prev[exerciseKey]
+                                          [exerciseKey]: newCompletedState
                                         }));
-                                        if (!completedExercises[exerciseKey]) {
-                                          setExerciseSets(prev => ({
-                                            ...prev,
-                                            [exerciseKey]: Array(enrichedExercise.sets || 0).fill(false) // Reset sets to initial (uncompleted) state
-                                          }));
-                                          
-                                          // ✅ Salva reset nel database
-                                          saveWorkoutProgress(exerciseKey, Array(enrichedExercise.sets || 0).fill(false), enrichedExercise.sets, enrichedExercise.name);
-                                        } else {
+                                        
+                                        if (newCompletedState) {
                                            // If marking as completed, fill all sets
                                            setExerciseSets(prev => ({
                                              ...prev,
                                              [exerciseKey]: Array(enrichedExercise.sets || 0).fill(true)
                                            }));
-                                           saveWorkoutProgress(exerciseKey, Array(enrichedExercise.sets || 0).fill(true), enrichedExercise.sets, enrichedExercise.name);
+                                        } else {
+                                          // If marking as not completed, reset all sets
+                                          setExerciseSets(prev => ({
+                                            ...prev,
+                                            [exerciseKey]: Array(enrichedExercise.sets || 0).fill(false)
+                                          }));
                                         }
+
+                                        // Salva lo stato di completamento
+                                        saveWorkoutProgress(
+                                          exerciseKey, 
+                                          newCompletedState ? Array(enrichedExercise.sets || 0).fill(true) : Array(enrichedExercise.sets || 0).fill(false), // Pass new set state
+                                          enrichedExercise.sets, 
+                                          enrichedExercise.name,
+                                          newCompletedState
+                                        );
                                       }}
                                     />
                                   );
