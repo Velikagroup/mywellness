@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3 } from 'lucide-react';
 
-const ANIMATION_DURATION = 100000;
+const ANIMATION_DURATION = 90000; // Adjusted based on new timing
 
 const preloadImages = () => {
   const images = [
@@ -52,26 +52,25 @@ export default function AppDemoFlow() {
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
-      // Timing aggiustato per il nuovo flusso
-      if (elapsed < 2000) setStep(0); // Peso attuale - 2s
-      else if (elapsed < 4000) setStep(1); // Peso target - 2s
-      else if (elapsed < 8000) setStep(2); // Loading - 4s
+      if (elapsed < 2000) setStep(0);
+      else if (elapsed < 4000) setStep(1);
+      else if (elapsed < 8000) setStep(2);
       else if (elapsed < 15000) {
-        setStep(3); // Dashboard - 7s
+        setStep(3);
         const scrollProgress = (elapsed - 11000) / 2000;
         setDashboardScroll(Math.max(0, Math.min(1, scrollProgress)));
       }
-      else if (elapsed < 17000) setStep(4); // Genera piano - 2s
+      else if (elapsed < 17000) setStep(4);
       else if (elapsed < 23000) {
-        setStep(5); // Scelta dieta - 6s
+        setStep(5);
         const dietElapsed = elapsed - 17000;
         if (dietElapsed < 1000) setDietStep(0);
         else if (dietElapsed < 2000) setDietStep(1);
         else if (dietElapsed < 5000) setDietStep(2);
         else setDietStep(3);
       }
-      else if (elapsed < 39000) { // Piano + popup con sostituzione - 16s totali (23000 -> 39000)
-        setStep(6); 
+      else if (elapsed < 36000) { // Ridotto da 39000 a 36000 (-3s)
+        setStep(6);
         const planElapsed = elapsed - 23000;
         if (planElapsed < 2000) {
           setMealPlanStep(0);
@@ -79,70 +78,70 @@ export default function AppDemoFlow() {
           setAddToListClicked(false);
         }
         else if (planElapsed < 3000) {
-          setMealPlanStep(1); // Mostra popup
+          setMealPlanStep(1);
           setSubstituteStep(0);
           setAddToListClicked(false);
         }
-        else if (planElapsed < 6000) {
+        else if (planElapsed < 5000) { // Ridotto da 6000 a 5000 (-1s)
           setMealPlanStep(1);
-          setSubstituteStep(0); // Popup normale senza selezioni
+          setSubstituteStep(0);
           setAddToListClicked(false);
         }
-        else if (planElapsed < 8000) {
+        else if (planElapsed < 6500) { // Ridotto da 8000 a 6500 (-1.5s)
           setMealPlanStep(1);
-          setSubstituteStep(1); // Zoom pulsante sostituisci
+          setSubstituteStep(1);
           setAddToListClicked(false);
         }
-        else if (planElapsed < 9000) {
+        else if (planElapsed < 7000) { // Ridotto da 9000 a 7000 (-2s, click veloce)
           setMealPlanStep(1);
-          setSubstituteStep(2); // Click
+          setSubstituteStep(2);
           setAddToListClicked(false);
         }
-        else if (planElapsed < 11000) { // Extended by 2s for substitution complete animation
+        else if (planElapsed < 8500) { // Ridotto da 11000 a 8500 (-2.5s)
           setMealPlanStep(1);
-          setSubstituteStep(3); // Sostituzione completata
+          setSubstituteStep(3);
           setAddToListClicked(false);
         }
-        else if (planElapsed < 12000) { // New: Close popup
+        else if (planElapsed < 9500) { // Ridotto da 12000 a 9500
           setMealPlanStep(0);
           setSubstituteStep(0);
           setAddToListClicked(false);
         }
-        else if (planElapsed < 14000) { // Click tasto lista spesa
+        else if (planElapsed < 10500) { // Ridotto da 14000 a 10500 (-3.5s, click veloce)
           setMealPlanStep(0);
           setSubstituteStep(0);
           setAddToListClicked(true);
         }
-        else { // Remaining time in step 6
+        else {
           setMealPlanStep(0);
           setSubstituteStep(0);
           setAddToListClicked(false);
         }
       }
-      else if (elapsed < 51000) { // Lista spesa con azioni - 12s totali (39000 -> 51000)
-        setStep(7); 
-        const listElapsed = elapsed - 39000;
-        if (listElapsed < 2000) setShoppingListStep(0); // Mostra lista
-        else if (listElapsed < 4000) setShoppingListStep(1); // Clicca primo alimento
-        else if (listElapsed < 6000) setShoppingListStep(2); // Clicca secondo alimento
-        else if (listElapsed < 8000) setShoppingListStep(3); // Focus banana + click scansiona
-        else setShoppingListStep(4); // Scansione in corso
+      else if (elapsed < 48000) { // Ridotto da 51000 a 48000
+        setStep(7);
+        const listElapsed = elapsed - 36000;
+        if (listElapsed < 2000) setShoppingListStep(0);
+        else if (listElapsed < 4000) setShoppingListStep(1);
+        else if (listElapsed < 6000) setShoppingListStep(2);
+        else if (listElapsed < 8000) setShoppingListStep(3);
+        else setShoppingListStep(4);
       }
-      else if (elapsed < 54000) setStep(8); // Health score banana (3s)
-      else if (elapsed < 57000) setStep(9); // Aggiungi banana (3s)
-      else if (elapsed < 60000) setStep(10); // Piano aggiornato (3s)
-      else if (elapsed < 63000) setStep(11); // Scan label (3s)
-      else if (elapsed < 66000) setStep(12); // Health score prodotto (3s)
-      else if (elapsed < 69000) setStep(13); // Colazione fatto (3s)
-      else if (elapsed < 72000) setStep(14); // Scan pranzo (3s)
-      else if (elapsed < 75000) setStep(15); // Rebalance (3s)
-      else if (elapsed < 78000) setStep(16); // Workout quiz (3s)
-      else if (elapsed < 81000) setStep(17); // Workout plan (3s)
-      else if (elapsed < 84000) setStep(18); // Exercise detail (3s)
-      else if (elapsed < 87000) setStep(19); // Modifica workout (3s)
-      else if (elapsed < 90000) setStep(20); // New exercise (3s)
-      else if (elapsed < 93000) setStep(21); // Body analysis (3s)
-      else setStep(22); // Goal reached (7s to end of ANIMATION_DURATION)
+      else if (elapsed < 51000) setStep(8);
+      else if (elapsed < 54000) setStep(9);
+      else if (elapsed < 57000) setStep(10);
+      else if (elapsed < 60000) setStep(11);
+      else if (elapsed < 63000) setStep(12);
+      else if (elapsed < 66000) setStep(13);
+      else if (elapsed < 69000) setStep(14);
+      else if (elapsed < 72000) setStep(15);
+      else if (elapsed < 75000) setStep(16);
+      else if (elapsed < 78000) setStep(17);
+      else if (elapsed < 81000) setStep(18);
+      else if (elapsed < 84000) setStep(19);
+      else if (elapsed < 87000) setStep(20);
+      else if (elapsed < 90000) setStep(21);
+      else setStep(22);
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -349,10 +348,8 @@ export default function AppDemoFlow() {
                         </div>
                         <div className="space-y-1 text-[9px]">
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
-                              <span className="text-gray-600">Completato</span>
-                            </div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
+                            <span className="text-gray-600">Completato</span>
                             <span className="font-bold">30.800 kcal</span>
                           </div>
                           <div className="flex items-center justify-between">
@@ -837,25 +834,27 @@ export default function AppDemoFlow() {
 
                   {shoppingListStep >= 4 && (
                     <motion.div
-                      initial={{ opacity: 0, scale: 0.9 }}
-                      animate={{ opacity: 1, scale: 1 }}
-                      className="absolute inset-0 bg-white flex items-center justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="absolute inset-0 bg-white flex flex-col items-center justify-center"
                     >
-                      <div className="relative">
-                        <motion.div
-                          animate={{ scale: [1, 1.05, 1] }}
-                          transition={{ duration: 1.5, repeat: Infinity }}
-                          className="text-9xl"
-                        >
-                          🍌
-                        </motion.div>
-                        <motion.div
-                          animate={{ rotate: 360 }}
-                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                          className="absolute -top-4 -right-4 w-16 h-16 border-4 border-[var(--brand-primary)] border-t-transparent rounded-full"
-                        />
+                      <div className="absolute inset-0 flex items-center justify-center opacity-30">
+                        <div className="text-9xl">🍌</div>
                       </div>
-                      <p className="absolute bottom-20 text-gray-900 text-sm font-semibold">Scansione banana...</p>
+                      
+                      <motion.div
+                        animate={{ scale: [1, 1.1, 1] }}
+                        transition={{ duration: 1, repeat: Infinity }}
+                        className="relative w-48 h-48 border-4 border-[var(--brand-primary)] rounded-2xl z-10 bg-white/50 backdrop-blur-sm"
+                      >
+                        <Camera className="w-10 h-10 text-[var(--brand-primary)] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+                        <motion.div
+                          animate={{ y: [0, 192] }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          className="absolute top-0 left-0 right-0 h-1 bg-[var(--brand-primary)] shadow-[0_0_15px_rgba(38,132,127,0.8)]"
+                        />
+                      </motion.div>
+                      <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione banana in corso...</p>
                     </motion.div>
                   )}
                 </motion.div>
