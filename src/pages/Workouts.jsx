@@ -77,6 +77,7 @@ export default function Workouts() {
 
   const [completedExercises, setCompletedExercises] = useState({});
   const [exerciseSets, setExerciseSets] = useState({});
+  const [workoutLogsLoaded, setWorkoutLogsLoaded] = useState(false);
 
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
@@ -218,6 +219,52 @@ export default function Workouts() {
     loadData();
   }, [checkForCheats, navigate]);
 
+  // ✅ Carica i workout logs salvati (set completati)
+  useEffect(() => {
+    const loadWorkoutLogs = async () => {
+      if (!trainingData.user_id || workoutLogsLoaded) return;
+      
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const logs = await base44.entities.WorkoutLog.filter({ 
+          user_id: trainingData.user_id, 
+          date: today 
+        });
+        
+        if (logs.length > 0) {
+          const todayLog = logs[0];
+          
+          // Ricostruisci completedExercises e exerciseSets dallo stato salvato
+          const savedCompletedExercises = {};
+          const savedExerciseSets = {};
+          
+          todayLog.exercises_log?.forEach(exLog => {
+            const exerciseKey = exLog.exercise_key;
+            savedExerciseSets[exerciseKey] = exLog.completed_sets || [];
+            
+            // Se tutti i set sono completati, marca l'esercizio come completato
+            const totalSets = exLog.total_sets || 0;
+            if (exLog.completed_sets?.length === totalSets && totalSets > 0) { // Only mark as completed if there are sets and they are all completed
+              savedCompletedExercises[exerciseKey] = true;
+            }
+          });
+          
+          setCompletedExercises(savedCompletedExercises);
+          setExerciseSets(savedExerciseSets);
+          
+          console.log('✅ Caricati workout logs salvati:', savedExerciseSets);
+        }
+        
+        setWorkoutLogsLoaded(true);
+      } catch (error) {
+        console.error('Error loading workout logs:', error);
+        setWorkoutLogsLoaded(true);
+      }
+    };
+    
+    loadWorkoutLogs();
+  }, [trainingData.user_id, workoutLogsLoaded]);
+
   // Calcola generazioni rimanenti
   useEffect(() => {
     const checkRemainingGenerations = async () => {
@@ -333,6 +380,67 @@ export default function Workouts() {
       return true;
     });
   }, [allExercises, trainingData.equipment, trainingData.joint_pain, trainingData.fitness_experience, trainingData.fitness_goal]);
+
+  // ✅ Salva automaticamente i set completati quando cambiano
+  const saveWorkoutProgress = useCallback(async (exerciseKey, completedSetsArray, totalSets, exerciseName) => {
+    if (!trainingData.user_id) return;
+    
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+      
+      const logs = await base44.entities.WorkoutLog.filter({ 
+        user_id: trainingData.user_id, 
+        date: today 
+      });
+      
+      const workoutPlan = workoutPlans.find(p => p.day_of_week === todayOfWeek);
+      
+      let logToUpdate = logs.length > 0 ? logs[0] : null;
+      
+      if (!logToUpdate) {
+        // Crea nuovo log
+        logToUpdate = await base44.entities.WorkoutLog.create({
+          user_id: trainingData.user_id,
+          workout_plan_id: workoutPlan?.id || 'unknown', // Link to the current workout plan
+          date: today,
+          completed: false, // This could be updated later if all exercises are done
+          exercises_log: [{
+            exercise_key: exerciseKey,
+            exercise_name: exerciseName,
+            completed_sets: completedSetsArray,
+            total_sets: totalSets
+          }]
+        });
+      } else {
+        // Aggiorna log esistente
+        const existingLog = logToUpdate.exercises_log || [];
+        const exerciseLogIndex = existingLog.findIndex(e => e.exercise_key === exerciseKey);
+        
+        if (exerciseLogIndex >= 0) {
+          existingLog[exerciseLogIndex].completed_sets = completedSetsArray;
+          existingLog[exerciseLogIndex].total_sets = totalSets; // Ensure total sets are updated too
+          existingLog[exerciseLogIndex].exercise_name = exerciseName; // Ensure name is updated
+        } else {
+          existingLog.push({
+            exercise_key: exerciseKey,
+            exercise_name: exerciseName,
+            completed_sets: completedSetsArray,
+            total_sets: totalSets
+          });
+        }
+        
+        await base44.entities.WorkoutLog.update(logToUpdate.id, {
+          exercises_log: existingLog
+        });
+      }
+      
+      console.log('💾 Progress saved:', exerciseKey, completedSetsArray);
+    } catch (error) {
+      console.error('Error saving workout progress:', error);
+    }
+  }, [trainingData.user_id, workoutPlans]);
+
 
   const generateWorkoutPlan = async () => {
     if (!trainingData.user_id) return;
@@ -583,6 +691,11 @@ CRITICAL REQUIREMENTS:
         setRemainingGenerations(remaining);
         setGenerationLimitReached(remaining === 0);
       }
+
+      // Reset workout logs loaded to re-fetch for the new plan
+      setWorkoutLogsLoaded(false); 
+      setCompletedExercises({});
+      setExerciseSets({});
 
       setTimeout(() => setIsGenerating(false), 1500);
 
@@ -1334,6 +1447,9 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                           ...prev,
                                           [exerciseKey]: newSets
                                         }));
+                                        
+                                        // ✅ Salva automaticamente nel database
+                                        saveWorkoutProgress(exerciseKey, newSets, enrichedExercise.sets, enrichedExercise.name);
                                       }}
                                       onToggleComplete={() => {
                                         setCompletedExercises(prev => ({
@@ -1345,6 +1461,16 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                             ...prev,
                                             [exerciseKey]: Array(enrichedExercise.sets || 0).fill(false) // Reset sets to initial (uncompleted) state
                                           }));
+                                          
+                                          // ✅ Salva reset nel database
+                                          saveWorkoutProgress(exerciseKey, Array(enrichedExercise.sets || 0).fill(false), enrichedExercise.sets, enrichedExercise.name);
+                                        } else {
+                                           // If marking as completed, fill all sets
+                                           setExerciseSets(prev => ({
+                                             ...prev,
+                                             [exerciseKey]: Array(enrichedExercise.sets || 0).fill(true)
+                                           }));
+                                           saveWorkoutProgress(exerciseKey, Array(enrichedExercise.sets || 0).fill(true), enrichedExercise.sets, enrichedExercise.name);
                                         }
                                       }}
                                     />
