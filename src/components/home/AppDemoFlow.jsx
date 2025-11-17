@@ -26,6 +26,7 @@ export default function AppDemoFlow() {
   const [mealPlanStep, setMealPlanStep] = useState(0);
   const [substituteStep, setSubstituteStep] = useState(0); // 0: popup normale, 1: zoom pulsante, 2: click, 3: sostituzione
   const [shoppingListStep, setShoppingListStep] = useState(0); // 0: mostra lista, 1: clicca 1, 2: clicca 2, 3: focus banana + click scansiona, 4: scansione in corso
+  const [addToListClicked, setAddToListClicked] = useState(false);
 
   useEffect(() => {
     preloadImages();
@@ -75,34 +76,47 @@ export default function AppDemoFlow() {
         if (planElapsed < 2000) {
           setMealPlanStep(0);
           setSubstituteStep(0);
+          setAddToListClicked(false);
         }
         else if (planElapsed < 3000) {
           setMealPlanStep(1); // Mostra popup
           setSubstituteStep(0);
+          setAddToListClicked(false);
         }
         else if (planElapsed < 6000) {
           setMealPlanStep(1);
-          setSubstituteStep(0); // Popup normale
+          setSubstituteStep(0); // Popup normale senza selezioni
+          setAddToListClicked(false);
         }
         else if (planElapsed < 8000) {
           setMealPlanStep(1);
           setSubstituteStep(1); // Zoom pulsante sostituisci
+          setAddToListClicked(false);
         }
         else if (planElapsed < 9000) {
           setMealPlanStep(1);
           setSubstituteStep(2); // Click
+          setAddToListClicked(false);
         }
         else if (planElapsed < 11000) { // Extended by 2s for substitution complete animation
           setMealPlanStep(1);
           setSubstituteStep(3); // Sostituzione completata
+          setAddToListClicked(false);
         }
         else if (planElapsed < 12000) { // New: Close popup
           setMealPlanStep(0);
           setSubstituteStep(0);
+          setAddToListClicked(false);
+        }
+        else if (planElapsed < 14000) { // Click tasto lista spesa
+          setMealPlanStep(0);
+          setSubstituteStep(0);
+          setAddToListClicked(true);
         }
         else { // Remaining time in step 6
           setMealPlanStep(0);
           setSubstituteStep(0);
+          setAddToListClicked(false);
         }
       }
       else if (elapsed < 51000) { // Lista spesa con azioni - 12s totali (39000 -> 51000)
@@ -342,10 +356,8 @@ export default function AppDemoFlow() {
                             <span className="font-bold">30.800 kcal</span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                              <span className="text-gray-600">Rimanente</span>
-                            </div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                            <span className="text-gray-600">Rimanente</span>
                             <span className="font-bold">46.200 kcal</span>
                           </div>
                         </div>
@@ -584,6 +596,16 @@ export default function AppDemoFlow() {
                     </motion.div>
                   </div>
 
+                  {mealPlanStep === 0 && substituteStep === 0 && (
+                    <motion.button
+                      animate={addToListClicked ? { scale: [1, 0.92, 1.02, 0.98, 1] } : {}}
+                      transition={{ duration: 0.4 }}
+                      className="w-full mt-3 bg-blue-500 text-white py-2.5 rounded-lg text-xs font-semibold shadow-md"
+                    >
+                      📋 Lista della Spesa
+                    </motion.button>
+                  )}
+
                   {mealPlanStep >= 1 && (
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
@@ -647,7 +669,9 @@ export default function AppDemoFlow() {
                                   scale: { duration: 0.5 },
                                   borderColor: { duration: 0.3 }
                                 }}
-                                className="flex justify-between items-center p-2 bg-blue-50 rounded-lg border-2 relative"
+                                className={`flex justify-between items-center p-2 rounded-lg border-2 relative ${
+                                  substituteStep >= 1 ? 'bg-blue-50' : 'bg-gray-50'
+                                }`}
                                 style={{
                                   zIndex: substituteStep >= 1 ? 10 : 1
                                 }}
@@ -656,12 +680,16 @@ export default function AppDemoFlow() {
                                   <>
                                     <div className="flex items-center gap-2">
                                       <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
-                                      <span className="text-xs font-semibold text-[var(--brand-primary)]">Avocado - 1x</span>
+                                      <span className={`text-xs ${substituteStep >= 1 ? 'font-semibold text-[var(--brand-primary)]' : ''}`}>Avocado - 1x</span>
                                     </div>
                                     <motion.button 
                                       animate={substituteStep === 2 ? { scale: [1, 0.85, 1] } : {}}
                                       transition={{ duration: 0.3 }}
-                                      className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold"
+                                      className={`text-xs px-3 py-1 rounded-full font-semibold ${
+                                        substituteStep >= 1 
+                                          ? 'bg-[var(--brand-primary)] text-white' 
+                                          : 'text-gray-400 border border-gray-300'
+                                      }`}
                                     >
                                       Sostituisci
                                     </motion.button>
@@ -712,19 +740,12 @@ export default function AppDemoFlow() {
                             <motion.div
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3"
+                              className="bg-green-50 border border-green-200 rounded-lg p-3"
                             >
-                              <div className="flex items-center gap-2 mb-2">
+                              <div className="flex items-center gap-2">
                                 <Check className="w-4 h-4 text-green-600" />
                                 <span className="text-xs font-semibold text-green-700">Ingrediente sostituito!</span>
                               </div>
-                              <motion.button
-                                animate={{ scale: [1, 1.05, 1] }}
-                                transition={{ duration: 0.4, delay: 0.5 }}
-                                className="w-full bg-blue-500 text-white py-2 rounded-lg text-xs font-semibold"
-                              >
-                                + Aggiungi alla Lista Spesa
-                              </motion.button>
                             </motion.div>
                           )}
 
@@ -799,16 +820,12 @@ export default function AppDemoFlow() {
                           {item}
                         </span>
                         
-                        {i === 2 && ( // For the "Banana" item
+                        {shoppingListStep >= 3 && i === 2 && (
                           <motion.button
-                            initial={{ scale: 0, opacity: 0 }}
-                            animate={{ 
-                                scale: shoppingListStep >= 3 ? 1 : 0, 
-                                opacity: shoppingListStep >= 3 ? 1 : 0,
-                                borderColor: shoppingListStep === 3 ? ['#26847F', '#10b981', '#26847F'] : 'transparent'
-                            }}
+                            initial={{ scale: 0 }}
+                            animate={{ scale: shoppingListStep === 4 ? [1, 0.9, 1] : 1 }}
                             transition={{ duration: 0.3 }}
-                            className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold flex items-center gap-1 border-2"
+                            className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold flex items-center gap-1"
                           >
                             <Camera className="w-3 h-3" />
                             Scansiona
@@ -822,13 +839,23 @@ export default function AppDemoFlow() {
                     <motion.div
                       initial={{ opacity: 0, scale: 0.9 }}
                       animate={{ opacity: 1, scale: 1 }}
-                      transition={{ duration: 0.5 }}
-                      className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center"
+                      className="absolute inset-0 bg-white flex items-center justify-center"
                     >
-                      <div className="text-white text-center">
-                        <Camera className="w-12 h-12 mx-auto mb-3" />
-                        <p className="text-base font-bold">Scansione banana...</p>
+                      <div className="relative">
+                        <motion.div
+                          animate={{ scale: [1, 1.05, 1] }}
+                          transition={{ duration: 1.5, repeat: Infinity }}
+                          className="text-9xl"
+                        >
+                          🍌
+                        </motion.div>
+                        <motion.div
+                          animate={{ rotate: 360 }}
+                          transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                          className="absolute -top-4 -right-4 w-16 h-16 border-4 border-[var(--brand-primary)] border-t-transparent rounded-full"
+                        />
                       </div>
+                      <p className="absolute bottom-20 text-gray-900 text-sm font-semibold">Scansione banana...</p>
                     </motion.div>
                   )}
                 </motion.div>
