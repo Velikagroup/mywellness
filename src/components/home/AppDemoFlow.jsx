@@ -1,11 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3 } from 'lucide-react';
 
-const ANIMATION_DURATION = 90000; // 90 secondi totali (1:30 min)
+const ANIMATION_DURATION = 90000;
 
-// Precarica immagini
 const preloadImages = () => {
   const images = [
     'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png',
@@ -23,8 +21,9 @@ export default function AppDemoFlow() {
   const [progress, setProgress] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
   const [dashboardScroll, setDashboardScroll] = useState(0);
-  const [dietStep, setDietStep] = useState(0); // 0: question only, 1: show options, 2: scroll to selection, 3: selection highlighted
-  const [mealPlanStep, setMealPlanStep] = useState(0); // 0: show plan, 1: open popup
+  const [dietStep, setDietStep] = useState(0);
+  const [mealPlanStep, setMealPlanStep] = useState(0);
+  const [substituteStep, setSubstituteStep] = useState(0); // 0: popup normale, 1: click sostituisci, 2: zoom avocado
 
   useEffect(() => {
     preloadImages();
@@ -47,51 +46,56 @@ export default function AppDemoFlow() {
       const elapsed = (Date.now() - startTime) % ANIMATION_DURATION;
       const linearProgress = elapsed / ANIMATION_DURATION;
       
-      // Easing function: fast at start, slow at end (easeOut cubic)
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
-      // Timing aggiustato - Dashboard 7 secondi con 2 secondi finali tutti i dati visibili
-      if (elapsed < 4000) setStep(0); // Peso attuale
-      else if (elapsed < 8000) setStep(1); // Peso target
-      else if (elapsed < 12000) setStep(2); // Loading
-      else if (elapsed < 19000) { // Dashboard - 7 secondi totali
-        setStep(3);
-        const scrollProgress = (elapsed - 15000) / 2000; // Scroll da 15s a 17s (2 secondi)
-        setDashboardScroll(Math.max(0, Math.min(1, scrollProgress))); // Da 17s a 19s tutto visibile
+      // Timing aggiustato - step 0 e 1 ridotti di 2s ciascuno
+      if (elapsed < 2000) setStep(0); // Peso attuale - 2s
+      else if (elapsed < 4000) setStep(1); // Peso target - 2s
+      else if (elapsed < 8000) setStep(2); // Loading
+      else if (elapsed < 15000) {
+        setStep(3); // Dashboard - 7 secondi
+        const scrollProgress = (elapsed - 11000) / 2000;
+        setDashboardScroll(Math.max(0, Math.min(1, scrollProgress)));
       }
-      else if (elapsed < 23000) setStep(4); // Genera piano
-      else if (elapsed < 29000) { // Scelta dieta - 6 secondi totali
-        setStep(5);
-        const dietElapsed = elapsed - 23000; // Elapsed time within this step (0 to 6000ms)
-        if (dietElapsed < 1000) setDietStep(0); // 0-1s: question only
-        else if (dietElapsed < 2000) setDietStep(1); // 1-2s: show options
-        else if (dietElapsed < 5000) setDietStep(2); // 2-5s: scroll to Low Carb
-        else setDietStep(3); // 5-6s: Low Carb selected and highlighted
+      else if (elapsed < 17000) setStep(4); // Genera piano - 2s (era 3s)
+      else if (elapsed < 23000) {
+        setStep(5); // Scelta dieta
+        const dietElapsed = elapsed - 17000;
+        if (dietElapsed < 1000) setDietStep(0);
+        else if (dietElapsed < 2000) setDietStep(1);
+        else if (dietElapsed < 5000) setDietStep(2);
+        else setDietStep(3);
       }
-      else if (elapsed < 35000) { // Piano Settimanale - 6 secondi totali (29s to 35s)
-        setStep(6);
-        const planElapsed = elapsed - 29000; // Elapsed time within this step (0 to 6000ms)
-        if (planElapsed < 2000) setMealPlanStep(0); // 0-2s: Mostra piano completo
-        else setMealPlanStep(1); // 2-6s: Apri popup
+      else if (elapsed < 29000) {
+        setStep(6); // Piano Settimanale - 6s
+        const planElapsed = elapsed - 23000;
+        if (planElapsed < 2000) setMealPlanStep(0);
+        else setMealPlanStep(1);
       }
-      else if (elapsed < 38000) setStep(7); // Popup colazione (old step 7, now 35s to 38s)
-      else if (elapsed < 41000) setStep(8); // Scansiona (old step 8, now 38s to 41s)
-      else if (elapsed < 44000) setStep(9); // Aggiungi (old step 9, now 41s to 44s)
-      else if (elapsed < 47000) setStep(10); // Piano aggiornato (old step 10, now 44s to 47s)
-      else if (elapsed < 50000) setStep(11); // Lista spesa (old step 11, now 47s to 50s)
-      else if (elapsed < 53000) setStep(12); // Scan label (old step 12, now 50s to 53s)
-      else if (elapsed < 56000) setStep(13); // Health score (old step 13, now 53s to 56s)
-      else if (elapsed < 59000) setStep(14); // Colazione fatto (old step 14, now 56s to 59s)
-      else if (elapsed < 62000) setStep(15); // Scan pranzo (old step 15, now 59s to 62s)
-      else if (elapsed < 65000) setStep(16); // Rebalance (old step 16, now 62s to 65s)
-      else if (elapsed < 68000) setStep(17); // Workout quiz (old step 17, now 65s to 68s)
-      else if (elapsed < 71000) setStep(18); // Workout plan (old step 18, now 68s to 71s)
-      else if (elapsed < 74000) setStep(19); // Exercise detail (old step 19, now 71s to 74s)
-      else if (elapsed < 77000) setStep(20); // Modifica workout (old step 20, now 74s to 77s)
-      else if (elapsed < 80000) setStep(21); // New exercise (old step 21, now 77s to 80s)
-      else if (elapsed < 83000) setStep(22); // Body analysis (old step 22, now 80s to 83s)
-      else setStep(23); // Goal reached (old step 23, now 83s to 90s)
+      else if (elapsed < 35000) {
+        setStep(7); // Popup ingredienti con sostituisci - 6s
+        const subElapsed = elapsed - 29000;
+        if (subElapsed < 2000) setSubstituteStep(0); // Mostra popup
+        else if (subElapsed < 3000) setSubstituteStep(1); // Click sostituisci
+        else setSubstituteStep(2); // Zoom avocado
+      }
+      else if (elapsed < 38000) setStep(8); // Scansiona
+      else if (elapsed < 41000) setStep(9); // Aggiungi
+      else if (elapsed < 44000) setStep(10); // Piano aggiornato
+      else if (elapsed < 47000) setStep(11); // Lista spesa
+      else if (elapsed < 50000) setStep(12); // Scan label
+      else if (elapsed < 53000) setStep(13); // Health score
+      else if (elapsed < 56000) setStep(14); // Colazione fatto
+      else if (elapsed < 59000) setStep(15); // Scan pranzo
+      else if (elapsed < 62000) setStep(16); // Rebalance
+      else if (elapsed < 65000) setStep(17); // Workout quiz
+      else if (elapsed < 68000) setStep(18); // Workout plan
+      else if (elapsed < 71000) setStep(19); // Exercise detail
+      else if (elapsed < 74000) setStep(20); // Modifica workout
+      else if (elapsed < 77000) setStep(21); // New exercise
+      else if (elapsed < 80000) setStep(22); // Body analysis
+      else setStep(23); // Goal reached
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -107,13 +111,11 @@ export default function AppDemoFlow() {
           }
         `}</style>
 
-        {/* Main demo container with device frame */}
         <div className="relative" style={{ 
           aspectRatio: isDesktop ? '4/3' : '9/19.5', 
           maxHeight: isDesktop ? '490px' : '700px',
           margin: '0 auto'
         }}>
-          {/* Content container */}
           <div 
             className="absolute bg-white overflow-hidden"
             style={{ 
@@ -126,7 +128,6 @@ export default function AppDemoFlow() {
               zIndex: 1
             }}
           >
-            {/* Progress bar inside device */}
             <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200 z-50">
               <motion.div
                 className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500"
@@ -136,7 +137,6 @@ export default function AppDemoFlow() {
             </div>
 
             <AnimatePresence mode="wait">
-              {/* Step 0: Peso Attuale - 70kg */}
               {step === 0 && (
                 <motion.div
                   key="current-weight"
@@ -160,7 +160,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 1: Peso Obiettivo - 65kg */}
               {step === 1 && (
                 <motion.div
                   key="target-weight"
@@ -184,7 +183,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 2: Loading */}
               {step === 2 && (
                 <motion.div
                   key="loading"
@@ -202,7 +200,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 3: Dashboard migliorata con scroll e pausa finale */}
               {step === 3 && (
                 <motion.div
                   key="dashboard"
@@ -216,7 +213,6 @@ export default function AppDemoFlow() {
                     transition={{ duration: 0.5 }}
                     className="space-y-4"
                   >
-                    {/* Top Cards - Pesi aggiornati */}
                     <div className="grid grid-cols-3 gap-2">
                       <div className="bg-white rounded-xl p-3 shadow-sm">
                         <div className="text-[10px] text-gray-500 mb-1">PESO INIZIALE</div>
@@ -232,9 +228,7 @@ export default function AppDemoFlow() {
                       </div>
                     </div>
 
-                    {/* Grafici */}
                     <div className="grid grid-cols-2 gap-2">
-                      {/* Grafico Traiettoria Massa */}
                       <div className="bg-white rounded-xl p-3 shadow-sm">
                         <div className="flex items-center gap-1 mb-2">
                           <BarChart3 className="w-4 h-4 text-[var(--brand-primary)]" />
@@ -242,12 +236,10 @@ export default function AppDemoFlow() {
                         </div>
                         <div className="relative h-24">
                           <svg viewBox="0 0 100 60" className="w-full h-full">
-                            {/* Grid lines */}
                             <line x1="0" y1="15" x2="100" y2="15" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
                             <line x1="0" y1="30" x2="100" y2="30" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
                             <line x1="0" y1="45" x2="100" y2="45" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
                             
-                            {/* Line chart - peso attuale */}
                             <motion.path
                               d="M 5,25 L 20,22 L 35,20 L 50,18 L 65,17 L 80,16 L 95,15"
                               fill="none"
@@ -258,7 +250,6 @@ export default function AppDemoFlow() {
                               animate={{ pathLength: 1 }}
                               transition={{ duration: 1.5, ease: "easeOut" }}
                             />
-                            {/* Dots */}
                             <circle cx="5" cy="25" r="2" fill="#26847F" />
                             <circle cx="20" cy="22" r="2" fill="#26847F" />
                             <circle cx="35" cy="20" r="2" fill="#26847F" />
@@ -267,7 +258,6 @@ export default function AppDemoFlow() {
                             <circle cx="80" cy="16" r="2" fill="#26847F" />
                             <circle cx="95" cy="15" r="2.5" fill="#26847F" />
                             
-                            {/* Target line */}
                             <line x1="0" y1="50" x2="100" y2="50" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3,3" />
                           </svg>
                         </div>
@@ -283,7 +273,6 @@ export default function AppDemoFlow() {
                         </div>
                       </div>
 
-                      {/* Grafico Circolare Scomposizione Calorica */}
                       <div className="bg-white rounded-xl p-3 shadow-sm">
                         <div className="text-[10px] font-bold text-gray-800 mb-2">Scomposizione Calorica</div>
                         <div className="flex items-center justify-center mb-2">
@@ -330,7 +319,6 @@ export default function AppDemoFlow() {
                       </div>
                     </div>
 
-                    {/* Dati tecnici che appaiono con scroll */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
                       animate={{ 
@@ -379,7 +367,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 4: Genera Piano */}
               {step === 4 && (
                 <motion.div
                   key="genera-piano"
@@ -390,10 +377,17 @@ export default function AppDemoFlow() {
                 >
                   <motion.button
                     initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white rounded-xl py-4 shadow-2xl"
+                    animate={{ scale: [1, 0.95, 1] }}
+                    transition={{ duration: 0.3, times: [0, 0.5, 1] }}
+                    className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white rounded-xl py-4 shadow-2xl relative overflow-hidden"
                   >
-                    <div className="flex items-center justify-center gap-2">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: [0, 1, 0] }}
+                      transition={{ duration: 0.6 }}
+                      className="absolute inset-0 bg-white/20"
+                    />
+                    <div className="flex items-center justify-center gap-2 relative z-10">
                       <Sparkles className="w-5 h-5" />
                       <span className="text-base font-bold">Genera Piano Nutrizionale</span>
                     </div>
@@ -401,7 +395,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 5: Scelta Dieta - NUOVO CON ANIMAZIONE */}
               {step === 5 && (
                 <motion.div
                   key="dieta"
@@ -410,7 +403,6 @@ export default function AppDemoFlow() {
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  {/* Domanda sempre visibile */}
                   <div className="text-center mb-4">
                     <div className="inline-block px-4 py-2 bg-purple-100 rounded-full mb-3">
                       <span className="text-sm font-semibold text-purple-700">Preferenze Alimentari</span>
@@ -418,23 +410,22 @@ export default function AppDemoFlow() {
                     <h3 className="text-xl font-bold">Che tipo di dieta preferisci?</h3>
                   </div>
 
-                  {/* Finestra opzioni che appare con animazione */}
                   {dietStep >= 1 && (
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0, y: 20 }}
                       animate={{ scale: 1, opacity: 1, y: 0 }}
                       transition={{ duration: 0.4 }}
                       className="bg-white rounded-2xl shadow-2xl max-w-sm mx-auto overflow-hidden"
-                      style={{ maxHeight: '300px' }} // Fixed height for scroll simulation
+                      style={{ maxHeight: '300px' }}
                     >
                       <motion.div
                         animate={{ 
-                          y: dietStep >= 2 ? -160 : 0 // Scroll by 4 items (4 * (item height + gap)) approx 4*40 = 160
+                          y: dietStep >= 2 ? -120 : 0
                         }}
                         transition={{ duration: 2, ease: "easeInOut" }}
                         className="p-3 space-y-2"
                       >
-                        {['Mediterranea', 'Keto', 'Vegetariana', 'Vegana', 'Low Carb', 'Paleo', 'DASH', 'Flexitariana'].map((diet, i) => (
+                        {['Mediterranea', 'Keto', 'Vegetariana', 'Vegana', 'Low Carb', 'Paleo'].map((diet, i) => (
                           <motion.div
                             key={diet}
                             className={`p-3 rounded-lg border-2 transition-all ${
@@ -467,16 +458,14 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 6: Piano Settimanale CON GIORNI E POPUP */}
               {step === 6 && (
                 <motion.div
-                  key="piano-settimanale"
+                  key="piano-creato"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
-                  {/* Header con giorni settimana */}
                   <div className="mb-3">
                     <h3 className="text-base font-bold mb-2">Piano Settimanale</h3>
                     <div className="flex gap-1 overflow-x-auto pb-2">
@@ -495,7 +484,6 @@ export default function AppDemoFlow() {
                     </div>
                   </div>
 
-                  {/* I 3 pasti principali */}
                   <div className="space-y-2">
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0 }}
@@ -504,7 +492,11 @@ export default function AppDemoFlow() {
                       className="bg-white rounded-lg p-3 shadow-md border-2 border-[var(--brand-primary)]"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-red-400 rounded-lg" />
+                        <img 
+                          src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=200&h=200&fit=crop"
+                          alt="Pancakes"
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
                         <div className="flex-1">
                           <div className="font-bold text-sm text-gray-900">Colazione</div>
                           <div className="text-xs text-gray-500">Pancakes Proteici</div>
@@ -520,7 +512,11 @@ export default function AppDemoFlow() {
                       className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gradient-to-br from-green-400 to-emerald-500 rounded-lg" />
+                        <img 
+                          src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop"
+                          alt="Insalata"
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
                         <div className="flex-1">
                           <div className="font-bold text-sm text-gray-900">Pranzo</div>
                           <div className="text-xs text-gray-500">Insalata Caesar</div>
@@ -536,7 +532,11 @@ export default function AppDemoFlow() {
                       className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
                     >
                       <div className="flex items-center gap-2">
-                        <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-pink-500 rounded-lg" />
+                        <img 
+                          src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&h=200&fit=crop"
+                          alt="Salmone"
+                          className="w-12 h-12 rounded-lg object-cover"
+                        />
                         <div className="flex-1">
                           <div className="font-bold text-sm text-gray-900">Cena</div>
                           <div className="text-xs text-gray-500">Salmone al Forno</div>
@@ -546,7 +546,6 @@ export default function AppDemoFlow() {
                     </motion.div>
                   </div>
 
-                  {/* Popup dettaglio pasto */}
                   {mealPlanStep >= 1 && (
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
@@ -554,20 +553,17 @@ export default function AppDemoFlow() {
                       className="absolute inset-0 bg-black/60 flex items-center justify-center p-4"
                       style={{ backdropFilter: 'blur(4px)' }}
                     >
-                      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
-                        {/* Foto ingrandita */}
-                        <div className="relative h-40 bg-gradient-to-br from-orange-400 to-red-400 overflow-hidden">
-                          <div className="absolute inset-0 flex items-center justify-center text-white text-6xl">
-                            🥞
-                          </div>
-                        </div>
+                      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90%] overflow-y-auto">
+                        <img 
+                          src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=600&h=400&fit=crop"
+                          alt="Pancakes Proteici"
+                          className="w-full h-40 object-cover"
+                        />
 
-                        {/* Contenuto */}
                         <div className="p-4">
                           <h3 className="text-lg font-bold text-gray-900 mb-1">Pancakes Proteici</h3>
                           <p className="text-xs text-gray-500 mb-3">Colazione • Low Carb</p>
 
-                          {/* Valori nutrizionali */}
                           <div className="grid grid-cols-4 gap-2 mb-3">
                             <div className="bg-orange-50 rounded-lg p-2 text-center">
                               <div className="text-xs text-gray-600">Kcal</div>
@@ -587,7 +583,6 @@ export default function AppDemoFlow() {
                             </div>
                           </div>
 
-                          {/* Ingredienti */}
                           <div className="mb-3">
                             <div className="text-sm font-bold text-gray-900 mb-1">Ingredienti</div>
                             <div className="space-y-1">
@@ -600,7 +595,6 @@ export default function AppDemoFlow() {
                             </div>
                           </div>
 
-                          {/* Preparazione */}
                           <div>
                             <div className="text-sm font-bold text-gray-900 mb-1">Preparazione</div>
                             <div className="space-y-1">
@@ -619,7 +613,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 7: Pop-up Colazione (VECCHIO - now at a different timing) */}
               {step === 7 && (
                 <motion.div
                   key="popup-colazione"
@@ -635,24 +628,69 @@ export default function AppDemoFlow() {
                         <span className="text-xs">Farina d'avena</span>
                         <span className="text-xs font-semibold">50g</span>
                       </div>
+                      
                       <motion.div
-                        animate={{ borderColor: ['#e5e7eb', '#26847F', '#e5e7eb'] }}
-                        transition={{ duration: 1, repeat: Infinity }}
+                        animate={{ 
+                          borderColor: substituteStep === 0 ? ['#e5e7eb', '#26847F', '#e5e7eb'] : '#26847F',
+                          scale: substituteStep === 1 ? [1, 0.95, 1] : 1
+                        }}
+                        transition={{ 
+                          borderColor: { duration: 1, repeat: substituteStep === 0 ? Infinity : 0 },
+                          scale: { duration: 0.3 }
+                        }}
                         className="flex justify-between items-center p-2 bg-blue-50 rounded-lg border-2"
                       >
                         <span className="text-xs font-semibold text-[var(--brand-primary)]">Avocado</span>
-                        <button className="text-xs bg-[var(--brand-primary)] text-white px-2 py-1 rounded-full">Sostituisci</button>
+                        <motion.button 
+                          animate={substituteStep === 1 ? { scale: [1, 0.9, 1] } : {}}
+                          transition={{ duration: 0.2 }}
+                          className="text-xs bg-[var(--brand-primary)] text-white px-2 py-1 rounded-full"
+                        >
+                          Sostituisci
+                        </motion.button>
                       </motion.div>
+                      
                       <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
                         <span className="text-xs">Miele</span>
                         <span className="text-xs font-semibold">10g</span>
                       </div>
                     </div>
                   </div>
+
+                  {substituteStep >= 2 && (
+                    <motion.div
+                      initial={{ scale: 0.5, opacity: 0 }}
+                      animate={{ scale: 1, opacity: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="absolute inset-0 bg-white flex items-center justify-center"
+                    >
+                      <div className="text-center">
+                        <motion.div
+                          animate={{ scale: [1, 1.1, 1] }}
+                          transition={{ duration: 1, repeat: Infinity }}
+                          className="text-9xl mb-3"
+                        >
+                          🥑
+                        </motion.div>
+                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
+                          <h4 className="font-bold text-base mb-2">Avocado</h4>
+                          <div className="grid grid-cols-2 gap-2 text-xs">
+                            <div className="bg-white rounded-lg p-2">
+                              <div className="text-gray-500">Calorie</div>
+                              <div className="font-bold">160 kcal</div>
+                            </div>
+                            <div className="bg-white rounded-lg p-2">
+                              <div className="text-gray-500">Grassi</div>
+                              <div className="font-bold">15g</div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.div>
               )}
 
-              {/* Step 8: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ */}
               {step === 8 && (
                 <motion.div
                   key="scansiona"
@@ -664,12 +702,10 @@ export default function AppDemoFlow() {
                     background: 'linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%)'
                   }}
                 >
-                  {/* Immagine avocado dietro */}
                   <div className="absolute inset-0 flex items-center justify-center opacity-40">
                     <div className="text-9xl">🥑</div>
                   </div>
                   
-                  {/* Scanner overlay */}
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
@@ -686,7 +722,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 9: Aggiungi Ingrediente */}
               {step === 9 && (
                 <motion.div
                   key="aggiungi"
@@ -718,7 +753,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 10: Piano Aggiornato */}
               {step === 10 && (
                 <motion.div
                   key="piano-updated"
@@ -776,7 +810,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 11: Lista Spesa */}
               {step === 11 && (
                 <motion.div
                   key="lista-spesa"
@@ -809,7 +842,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 12: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE */}
               {step === 12 && (
                 <motion.div
                   key="scan-label"
@@ -818,7 +850,6 @@ export default function AppDemoFlow() {
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 flex flex-col items-center justify-center bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  {/* Foto realistica tabella nutrizionale dietro */}
                   <div className="absolute inset-0 flex items-center justify-center p-4 opacity-40">
                     <div className="bg-white rounded-lg shadow-lg p-3 w-full max-w-xs transform rotate-2" style={{
                       background: 'linear-gradient(145deg, #ffffff 0%, #f3f3f3 100%)',
@@ -867,7 +898,6 @@ export default function AppDemoFlow() {
                     </div>
                   </div>
 
-                  {/* Scanner overlay */}
                   <div className="relative w-56 h-32 bg-white/10 backdrop-blur-sm rounded-lg border-4 border-[var(--brand-primary)] z-10">
                     <motion.div
                       animate={{ y: [0, 128] }}
@@ -879,7 +909,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 13: Health Score */}
               {step === 13 && (
                 <motion.div
                   key="health-score"
@@ -916,7 +945,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 14: Colazione Fatto */}
               {step === 14 && (
                 <motion.div
                   key="colazione-fatto"
@@ -951,7 +979,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 15: Scansiona Pranzo - sfondo verde pieno */}
               {step === 15 && (
                 <motion.div
                   key="scan-pranzo"
@@ -974,7 +1001,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 16: Ribilanciamento */}
               {step === 16 && (
                 <motion.div
                   key="rebalance"
@@ -1005,7 +1031,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 17: Workout Quiz */}
               {step === 17 && (
                 <motion.div
                   key="workout-quiz"
@@ -1034,7 +1059,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 18: Piano Workout */}
               {step === 18 && (
                 <motion.div
                   key="workout-plan"
@@ -1069,7 +1093,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 19: Dettagli Esercizio */}
               {step === 19 && (
                 <motion.div
                   key="exercise-detail"
@@ -1099,7 +1122,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 20: Modifica Workout */}
               {step === 20 && (
                 <motion.div
                   key="modifica-workout"
@@ -1130,7 +1152,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 21: Nuovo Esercizio */}
               {step === 21 && (
                 <motion.div
                   key="new-exercise"
@@ -1157,7 +1178,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 22: Analisi Corpo - IMMAGINI REALI PRECARICATE */}
               {step === 22 && (
                 <motion.div
                   key="body-analysis"
@@ -1206,7 +1226,6 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 23: Goal Reached */}
               {step === 23 && (
                 <motion.div
                   key="goal-reached"
@@ -1235,7 +1254,6 @@ export default function AppDemoFlow() {
             </AnimatePresence>
           </div>
 
-          {/* Device frame overlay */}
           {isDesktop ? (
             <svg 
               viewBox="0 0 820 615" 
