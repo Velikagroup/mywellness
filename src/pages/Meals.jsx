@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -1210,9 +1209,14 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                         </button>
                       ))}
                     </div>
-                    <p className="text-xs text-gray-600 mt-3 text-center">
-                      💡 Target giornaliero: <strong>{nutritionData?.daily_calories} kcal</strong> su {mealsPerDay} {mealsPerDay === 1 ? 'pasto' : 'pasti'}
-                    </p>
+                    <div className="mt-3 space-y-1">
+                      <p className="text-xs text-gray-600 text-center">
+                        💡 Target giornaliero: <strong>{nutritionData?.daily_calories} kcal</strong> su {mealsPerDay} {mealsPerDay === 1 ? 'pasto' : 'pasti'}
+                      </p>
+                      <p className="text-xs text-[#26847F] font-semibold text-center">
+                        ⏱️ Tempo stimato generazione: ~{Math.ceil(mealsPerDay * 1.2)}-{Math.ceil(mealsPerDay * 1.4)} minuti ({mealsPerDay * 7} pasti totali)
+                      </p>
+                    </div>
                   </div>
 
                   <div className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200/50">
