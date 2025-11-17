@@ -1,8 +1,9 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { Camera, Upload, Loader2, TrendingUp, TrendingDown, Minus, CheckCircle2, Sparkles, X, Info, Zap, AlertCircle, ArrowRight, ArrowLeft, RefreshCw, Check, Microscope, Brain, FlaskConical, Target } from 'lucide-react';
+import { Camera, Upload, Loader2, TrendingUp, TrendingDown, Minus, CheckCircle2, Sparkles, X, Info, Zap, AlertCircle, ArrowRight, ArrowLeft, RefreshCw, Check, Microscope, Brain, FlaskConical, Target, Utensils, Dumbbell } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -312,7 +313,7 @@ Be FORENSICALLY detailed. Describe what you see like you're writing a medical re
       // STEP 3: Recupero foto precedente
       setCurrentAnalysisStep('previous_data');
       
-      const previousPhotoUrls = [];
+      let previousPhotoUrls = [];
       let daysSincePrevious = null;
       let previousPhotoDescription = null;
       
@@ -626,76 +627,83 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
     setIsGeneratingProposals(false);
   };
 
-  const applyProposedChanges = async () => {
+  const applyProposedChanges = async (changeType = 'both') => {
     if (!proposedChanges) return;
     
     setIsApplyingChanges(true);
     const changes = { diet: [], workout: [] };
     
     try {
-      for (const proposal of proposedChanges.diet) {
-        if (proposal.type === 'calorie_adjustment' && proposal.adjustment !== 0) {
-          await base44.auth.updateMe({ daily_calories: proposal.proposed });
-          
-          const scalingFactor = proposal.proposed / proposal.current;
-          const allMealPlans = await base44.entities.MealPlan.filter({ user_id: user.id });
-          
-          for (const meal of allMealPlans) {
-            const scaledIngredients = meal.ingredients.map(ing => ({
-              ...ing,
-              quantity: Math.round(ing.quantity * scalingFactor * 10) / 10,
-              calories: Math.round(ing.calories * scalingFactor),
-              protein: Math.round(ing.protein * scalingFactor * 10) / 10,
-              carbs: Math.round(ing.carbs * scalingFactor * 10) / 10,
-              fat: Math.round(ing.fat * scalingFactor * 10) / 10
-            }));
+      if ((changeType === 'both' || changeType === 'diet') && proposedChanges.diet.length > 0) {
+        for (const proposal of proposedChanges.diet) {
+          if (proposal.type === 'calorie_adjustment' && proposal.adjustment !== 0) {
+            await base44.auth.updateMe({ daily_calories: proposal.proposed });
             
-            const newTotals = scaledIngredients.reduce((acc, ing) => ({
-              calories: acc.calories + ing.calories,
-              protein: acc.protein + ing.protein,
-              carbs: acc.carbs + ing.carbs,
-              fat: acc.fat + ing.fat
-            }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+            const scalingFactor = proposal.proposed / proposal.current;
+            const allMealPlans = await base44.entities.MealPlan.filter({ user_id: user.id });
             
-            await base44.entities.MealPlan.update(meal.id, {
-              ingredients: scaledIngredients,
-              total_calories: Math.round(newTotals.calories),
-              total_protein: Math.round(newTotals.protein * 10) / 10,
-              total_carbs: Math.round(newTotals.carbs * 10) / 10,
-              total_fat: Math.round(newTotals.fat * 10) / 10,
-              image_url: null
-            });
+            for (const meal of allMealPlans) {
+              const scaledIngredients = meal.ingredients.map(ing => ({
+                ...ing,
+                quantity: Math.round(ing.quantity * scalingFactor * 10) / 10,
+                calories: Math.round(ing.calories * scalingFactor),
+                protein: Math.round(ing.protein * scalingFactor * 10) / 10,
+                carbs: Math.round(ing.carbs * scalingFactor * 10) / 10,
+                fat: Math.round(ing.fat * scalingFactor * 10) / 10
+              }));
+              
+              const newTotals = scaledIngredients.reduce((acc, ing) => ({
+                calories: acc.calories + ing.calories,
+                protein: acc.protein + ing.protein,
+                carbs: acc.carbs + ing.carbs,
+                fat: acc.fat + ing.fat
+              }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+              
+              await base44.entities.MealPlan.update(meal.id, {
+                ingredients: scaledIngredients,
+                total_calories: Math.round(newTotals.calories),
+                total_protein: Math.round(newTotals.protein * 10) / 10,
+                total_carbs: Math.round(newTotals.carbs * 10) / 10,
+                total_fat: Math.round(newTotals.fat * 10) / 10,
+                image_url: null
+              });
+            }
+            
+            changes.diet.push(`Target calorico ${proposal.adjustment > 0 ? 'aumentato' : 'ridotto'} di ${Math.abs(proposal.adjustment)} kcal (da ${proposal.current} a ${proposal.proposed} kcal). Tutti i pasti sono stati scalati proporzionalmente. ${proposal.reason}`);
+          } else if (proposal.type === 'no_change') {
+            changes.diet.push(proposal.reason);
           }
-          
-          changes.diet.push(`Target calorico ${proposal.adjustment > 0 ? 'aumentato' : 'ridotto'} di ${Math.abs(proposal.adjustment)} kcal (da ${proposal.current} a ${proposal.proposed} kcal). Tutti i pasti sono stati scalati proporzionalmente. ${proposal.reason}`);
-        } else if (proposal.type === 'no_change') {
-          changes.diet.push(proposal.reason);
         }
       }
       
-      for (const proposal of proposedChanges.workout) {
-        if (proposal.type === 'exercise_replacement') {
-          const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
-          const dayPlan = dayPlans[0];
+      if ((changeType === 'both' || changeType === 'workout') && proposedChanges.workout.length > 0) {
+        for (const proposal of proposedChanges.workout) {
+          if (proposal.type === 'exercise_replacement') {
+            const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
+            const dayPlan = dayPlans[0];
 
-          if (dayPlan) {
-            const updatedExercises = dayPlan.exercises.map(ex => 
-              ex.name === proposal.current_exercise.name ? { ...proposal.proposed_exercise, id: ex.id } : ex
-            );
-            
-            await base44.entities.WorkoutPlan.update(proposal.day_id, {
-              exercises: updatedExercises
-            });
-            
-            changes.workout.push(`${proposal.day}: sostituito "${proposal.current_exercise.name}" con "${proposal.proposed_exercise.name}" - ${proposal.reason}`);
+            if (dayPlan) {
+              const updatedExercises = dayPlan.exercises.map(ex => 
+                ex.name === proposal.current_exercise.name ? { ...proposal.proposed_exercise, id: ex.id } : ex
+              );
+              
+              await base44.entities.WorkoutPlan.update(proposal.day_id, {
+                exercises: updatedExercises
+              });
+              
+              changes.workout.push(`${proposal.day}: sostituito "${proposal.current_exercise.name}" con "${proposal.proposed_exercise.name}" - ${proposal.reason}`);
+            }
+          } else if (proposal.type === 'no_change') {
+            changes.workout.push(proposal.reason);
           }
-        } else if (proposal.type === 'no_change') {
-          changes.workout.push(proposal.reason);
         }
       }
 
       console.log('✅ Modifiche applicate:', changes);
-      setAppliedChanges(changes);
+      setAppliedChanges(prev => ({
+        diet: [...(prev?.diet || []), ...changes.diet],
+        workout: [...(prev?.workout || []), ...changes.workout]
+      }));
     } catch (error) {
       console.error('Error applying changes:', error);
       alert('Errore nell\'applicazione delle modifiche. L\'analisi verrà comunque salvata.');
@@ -1196,13 +1204,36 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         ))}
                       </div>
                     )}
-                    <Button onClick={applyProposedChanges} className="w-full bg-green-600 hover:bg-green-700" disabled={isApplyingChanges}>
-                      {isApplyingChanges ? (
-                        <><Loader2 className="w-4 h-4 animate-spin mr-2" />Applicazione in corso...</>
-                      ) : (
-                        <><CheckCircle2 className="w-4 h-4 mr-2" />Applica Modifiche</>
+                    
+                    <div className="space-y-2">
+                      {proposedChanges.diet.length > 0 && (
+                        <Button 
+                          onClick={() => applyProposedChanges('diet')} 
+                          className="w-full bg-orange-600 hover:bg-orange-700" 
+                          disabled={isApplyingChanges}
+                        >
+                          {isApplyingChanges ? (
+                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />Applicazione...</>
+                          ) : (
+                            <><Utensils className="w-4 h-4 mr-2" />Applica Solo Modifiche Nutrizionali</>
+                          )}
+                        </Button>
                       )}
-                    </Button>
+                      
+                      {proposedChanges.workout.length > 0 && (
+                        <Button 
+                          onClick={() => applyProposedChanges('workout')} 
+                          className="w-full bg-blue-600 hover:bg-blue-700" 
+                          disabled={isApplyingChanges}
+                        >
+                          {isApplyingChanges ? (
+                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />Applicazione...</>
+                          ) : (
+                            <><Dumbbell className="w-4 h-4 mr-2" />Applica Solo Modifiche Allenamento</>
+                          )}
+                        </Button>
+                      )}
+                    </div>
                   </div>
                 )}
 
