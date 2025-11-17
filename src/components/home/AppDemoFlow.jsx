@@ -1,9 +1,9 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3 } from 'lucide-react';
 
-const ANIMATION_DURATION = 90000; // Adjusted based on new timing
+const ANIMATION_DURATION = 100000;
 
 const preloadImages = () => {
   const images = [
@@ -25,9 +25,13 @@ export default function AppDemoFlow() {
   const [dashboardScroll, setDashboardScroll] = useState(0);
   const [dietStep, setDietStep] = useState(0);
   const [mealPlanStep, setMealPlanStep] = useState(0);
-  const [substituteStep, setSubstituteStep] = useState(0); // 0: popup normale, 1: zoom pulsante, 2: click, 3: sostituzione
-  const [shoppingListStep, setShoppingListStep] = useState(0); // 0: mostra lista, 1: clicca 1, 2: clicca 2, 3: focus banana + click scansiona, 4: scansione in corso
+  const [popupScrollStep, setPopupScrollStep] = useState(0);
+  const [substituteStep, setSubstituteStep] = useState(0);
+  const [shoppingListStep, setShoppingListStep] = useState(0);
   const [addToListClicked, setAddToListClicked] = useState(false);
+  const [mealCheckStep, setMealCheckStep] = useState(0);
+  const [lunchScanStep, setLunchScanStep] = useState(0);
+  const popupRef = useRef(null);
 
   useEffect(() => {
     preloadImages();
@@ -42,6 +46,12 @@ export default function AppDemoFlow() {
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
   }, []);
+
+  useEffect(() => {
+    if (popupScrollStep > 0 && popupRef.current) {
+      popupRef.current.scrollTo({ top: 200, behavior: 'smooth' });
+    }
+  }, [popupScrollStep]);
 
   useEffect(() => {
     const startTime = Date.now();
@@ -70,78 +80,112 @@ export default function AppDemoFlow() {
         else if (dietElapsed < 5000) setDietStep(2);
         else setDietStep(3);
       }
-      else if (elapsed < 36000) { // Ridotto da 39000 a 36000 (-3s)
+      else if (elapsed < 36000) {
         setStep(6);
         const planElapsed = elapsed - 23000;
         if (planElapsed < 2000) {
           setMealPlanStep(0);
           setSubstituteStep(0);
           setAddToListClicked(false);
+          setPopupScrollStep(0);
         }
         else if (planElapsed < 3000) {
           setMealPlanStep(1);
           setSubstituteStep(0);
           setAddToListClicked(false);
+          setPopupScrollStep(0);
         }
-        else if (planElapsed < 5000) { // Ridotto da 6000 a 5000 (-1s)
+        else if (planElapsed < 4000) {
           setMealPlanStep(1);
           setSubstituteStep(0);
           setAddToListClicked(false);
+          setPopupScrollStep(1);
         }
-        else if (planElapsed < 6500) { // Ridotto da 8000 a 6500 (-1.5s)
+        else if (planElapsed < 6000) {
           setMealPlanStep(1);
           setSubstituteStep(1);
           setAddToListClicked(false);
+          setPopupScrollStep(1);
         }
-        else if (planElapsed < 7000) { // Ridotto da 9000 a 7000 (-2s, click veloce)
+        else if (planElapsed < 6500) {
           setMealPlanStep(1);
           setSubstituteStep(2);
           setAddToListClicked(false);
+          setPopupScrollStep(1);
         }
-        else if (planElapsed < 8500) { // Ridotto da 11000 a 8500 (-2.5s)
+        else if (planElapsed < 8000) {
           setMealPlanStep(1);
           setSubstituteStep(3);
           setAddToListClicked(false);
+          setPopupScrollStep(1);
         }
-        else if (planElapsed < 9500) { // Ridotto da 12000 a 9500
+        else if (planElapsed < 9000) {
           setMealPlanStep(0);
           setSubstituteStep(0);
           setAddToListClicked(false);
+          setPopupScrollStep(0);
         }
-        else if (planElapsed < 10000) { // Ridotto da 10500 a 10000 (-0.5s)
+        else if (planElapsed < 9500) {
           setMealPlanStep(0);
           setSubstituteStep(0);
           setAddToListClicked(true);
+          setPopupScrollStep(0);
         }
         else {
           setMealPlanStep(0);
           setSubstituteStep(0);
           setAddToListClicked(false);
+          setPopupScrollStep(0);
         }
       }
-      else if (elapsed < 47000) { // Ridotto da 48000 a 47000
+      else if (elapsed < 46000) {
         setStep(7);
         const listElapsed = elapsed - 36000;
-        if (listElapsed < 1500) setShoppingListStep(0); // Ridotto da 2000 a 1500
-        else if (listElapsed < 3000) setShoppingListStep(1); // Ridotto da 4000 a 3000
-        else if (listElapsed < 4500) setShoppingListStep(2); // Ridotto da 6000 a 4500
-        else if (listElapsed < 6500) setShoppingListStep(3); // Ridotto da 8000 a 6500
+        if (listElapsed < 1500) setShoppingListStep(0);
+        else if (listElapsed < 3000) setShoppingListStep(1);
+        else if (listElapsed < 4500) setShoppingListStep(2);
+        else if (listElapsed < 6500) setShoppingListStep(3);
         else setShoppingListStep(4);
       }
-      else if (elapsed < 50000) setStep(8); // was 51000
-      else if (elapsed < 53000) setStep(9); // was 54000
-      else if (elapsed < 56000) setStep(10); // was 57000
-      else if (elapsed < 59000) setStep(11); // was 60000
-      else if (elapsed < 62000) setStep(12); // was 63000
-      else if (elapsed < 65000) setStep(13); // was 66000
-      else if (elapsed < 68000) setStep(14); // was 69000
-      else if (elapsed < 71000) setStep(15); // was 72000
-      else if (elapsed < 74000) setStep(16); // was 75000
-      else if (elapsed < 77000) setStep(17); // was 78000
-      else if (elapsed < 80000) setStep(18); // was 81000
-      else if (elapsed < 83000) setStep(19); // was 84000
-      else if (elapsed < 86000) setStep(20); // was 87000
-      else if (elapsed < 89000) setStep(21); // was 90000
+      else if (elapsed < 49000) setStep(8);
+      else if (elapsed < 52000) setStep(9);
+      else if (elapsed < 58000) {
+        setStep(10);
+        const updateElapsed = elapsed - 52000;
+        if (updateElapsed < 3500) {
+          setMealCheckStep(0);
+          setLunchScanStep(0);
+        }
+        else if (updateElapsed < 4500) {
+          setMealCheckStep(1);
+          setLunchScanStep(0);
+        }
+        else if (updateElapsed < 5500) {
+          setMealCheckStep(2);
+          setLunchScanStep(0);
+        }
+        else {
+          setMealCheckStep(2);
+          setLunchScanStep(1);
+        }
+      }
+      else if (elapsed < 61000) setStep(11);
+      else if (elapsed < 64000) setStep(12);
+      else if (elapsed < 70000) {
+        setStep(13);
+        const scanElapsed = elapsed - 64000;
+        if (scanElapsed < 2000) setLunchScanStep(0);
+        else if (scanElapsed < 4000) setLunchScanStep(1);
+        else setLunchScanStep(2);
+      }
+      else if (elapsed < 73000) setStep(14);
+      else if (elapsed < 76000) setStep(15);
+      else if (elapsed < 79000) setStep(16);
+      else if (elapsed < 82000) setStep(17);
+      else if (elapsed < 85000) setStep(18);
+      else if (elapsed < 88000) setStep(19);
+      else if (elapsed < 91000) setStep(20);
+      else if (elapsed < 94000) setStep(21);
       else setStep(22);
     }, 50);
 
@@ -608,14 +652,14 @@ export default function AppDemoFlow() {
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
                       animate={{ 
-                        scale: mealPlanStep === 0 ? 0.8 : 1, // Only animate to 1 if mealPlanStep is not 0 (meaning it's active)
+                        scale: mealPlanStep === 0 ? 0.8 : 1,
                         opacity: mealPlanStep === 0 ? 0 : 1
                       }}
                       exit={{ scale: 0.8, opacity: 0 }}
                       className="absolute inset-0 bg-black/60 flex items-center justify-center p-4"
                       style={{ backdropFilter: 'blur(4px)', zIndex: 100 }}
                     >
-                      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90%] overflow-y-auto">
+                      <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90%] overflow-y-auto" ref={popupRef}>
                         <img 
                           src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=600&h=400&fit=crop"
                           alt="Porridge Proteico"
@@ -951,87 +995,162 @@ export default function AppDemoFlow() {
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-20 pb-8' : 'p-6'} ${isDesktop ? '' : 'px-6'}`}
+                  className={`absolute inset-0 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
-                  <motion.div
-                    initial={{ scale: 0.9 }}
-                    animate={{ scale: 1 }}
-                    className="bg-white rounded-2xl p-6 shadow-2xl"
-                  >
-                    <div className="flex items-center justify-center mb-4">
-                      <motion.div
-                        animate={{ rotate: [0, 10, -10, 0] }}
-                        transition={{ duration: 0.5, repeat: 2 }}
-                        className="text-4xl"
-                      >
-                        ✅
-                      </motion.div>
-                    </div>
-                    
-                    <h3 className="text-xl font-black text-center text-gray-900 mb-2">Pasto Aggiornato!</h3>
-                    <p className="text-sm text-center text-gray-600 mb-4">Porridge Proteico con Banana</p>
-                    
+                  {mealCheckStep === 0 && (
                     <motion.div
-                      animate={{ borderColor: ['#10b981', '#26847F', '#10b981'] }}
-                      transition={{ duration: 1.5, repeat: 2 }}
-                      className="border-4 rounded-xl p-4 mb-4"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="bg-gradient-to-br from-green-50 to-emerald-50 absolute inset-0 flex flex-col justify-center px-4"
                     >
-                      <div className="grid grid-cols-4 gap-3">
-                        <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-3 text-center">
-                          <div className="text-xs text-gray-600 mb-1">Calorie</div>
+                      <motion.div
+                        initial={{ scale: 0.9 }}
+                        animate={{ scale: 1 }}
+                        className="bg-white rounded-2xl p-6 shadow-2xl max-w-md mx-auto w-full"
+                      >
+                        <div className="flex items-center justify-center mb-3">
                           <motion.div
-                            initial={{ scale: 1.2, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            className="text-2xl font-black text-orange-700"
+                            animate={{ rotate: [0, 10, -10, 0] }}
+                            transition={{ duration: 0.5, repeat: 2 }}
+                            className="text-4xl"
                           >
-                            445
+                            ✅
                           </motion.div>
-                          <div className="text-xs text-gray-500 mt-0.5">kcal</div>
                         </div>
-                        <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 text-center">
-                          <div className="text-xs text-gray-600 mb-1">Proteine</div>
+                        
+                        <h3 className="text-xl font-black text-center text-gray-900 mb-2">Pasto Aggiornato!</h3>
+                        <p className="text-sm text-center text-gray-600 mb-4">Porridge Proteico con Banana</p>
+                        
+                        <motion.div
+                          animate={{ borderColor: ['#10b981', '#26847F', '#10b981'] }}
+                          transition={{ duration: 1.5, repeat: 2 }}
+                          className="border-4 rounded-xl p-4 mb-4"
+                        >
+                          <div className="grid grid-cols-4 gap-3">
+                            <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-3 text-center">
+                              <div className="text-[10px] text-gray-600 mb-1">Calorie</div>
+                              <motion.div
+                                initial={{ scale: 1.2, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                className="text-2xl font-black text-orange-700"
+                              >
+                                445
+                              </motion.div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">kcal</div>
+                            </div>
+                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 text-center">
+                              <div className="text-[10px] text-gray-600 mb-1">Proteine</div>
+                              <motion.div
+                                initial={{ scale: 1.2, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.1 }}
+                                className="text-2xl font-black text-blue-700"
+                              >
+                                28
+                              </motion.div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">g</div>
+                            </div>
+                            <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-3 text-center">
+                              <div className="text-[10px] text-gray-600 mb-1">Carbo</div>
+                              <motion.div
+                                initial={{ scale: 1.2, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.2 }}
+                                className="text-2xl font-black text-amber-700"
+                              >
+                                35
+                              </motion.div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">g</div>
+                            </div>
+                            <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-3 text-center">
+                              <div className="text-[10px] text-gray-600 mb-1">Grassi</div>
+                              <motion.div
+                                initial={{ scale: 1.2, opacity: 0 }}
+                                animate={{ scale: 1, opacity: 1 }}
+                                transition={{ delay: 0.3 }}
+                                className="text-2xl font-black text-red-700"
+                              >
+                                11
+                              </motion.div>
+                              <div className="text-[10px] text-gray-500 mt-0.5">g</div>
+                            </div>
+                          </div>
+                        </motion.div>
+                        
+                        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-3 flex items-center justify-center gap-2">
+                          <Check className="w-4 h-4 text-green-600" />
+                          <span className="text-xs font-semibold text-green-700">Sostituzione completata con successo</span>
+                        </div>
+                      </motion.div>
+                    </motion.div>
+                  )}
+
+                  {mealCheckStep >= 1 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="bg-gray-50 h-full"
+                    >
+                      <div className="mb-3">
+                        <h3 className="text-base font-bold mb-2">Pasti di Oggi</h3>
+                      </div>
+
+                      <div className="space-y-2">
+                        <motion.div
+                          animate={{ 
+                            borderColor: mealCheckStep >= 2 ? '#10b981' : '#26847F',
+                            scale: mealCheckStep === 2 ? [1, 1.05, 1] : 1
+                          }}
+                          transition={{ duration: 0.4 }}
+                          className="bg-white rounded-lg p-3 shadow-md border-2"
+                        >
+                          <div className="flex items-center gap-2">
+                            {mealCheckStep >= 2 && (
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                                className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center flex-shrink-0"
+                              >
+                                <Check className="w-4 h-4 text-white" />
+                              </motion.div>
+                            )}
+                            <div className="flex-1">
+                              <div className="font-bold text-sm">Colazione {mealCheckStep >= 2 && '✅'}</div>
+                              <div className="text-xs text-gray-500">Porridge Proteico • 445 kcal</div>
+                            </div>
+                          </div>
+                        </motion.div>
+                        
+                        {lunchScanStep >= 1 && (
                           <motion.div
-                            initial={{ scale: 1.2, opacity: 0 }}
+                            initial={{ scale: 0.95, opacity: 0 }}
                             animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.1 }}
-                            className="text-2xl font-black text-blue-700"
+                            className="bg-white rounded-lg p-3 shadow-md border-2 border-[var(--brand-primary)]"
                           >
-                            28
+                            <div className="flex items-center gap-2">
+                              <div className="flex-1">
+                                <div className="font-bold text-sm">Pranzo</div>
+                                <div className="text-xs text-gray-500">Insalata Caesar • 650 kcal</div>
+                              </div>
+                              <motion.button
+                                animate={{ scale: lunchScanStep === 1 ? [1, 0.9, 1] : 1 }}
+                                transition={{ duration: 0.3 }}
+                                className="w-9 h-9 bg-[var(--brand-primary)] rounded-full flex items-center justify-center shadow-lg"
+                              >
+                                <Camera className="w-5 h-5 text-white" />
+                              </motion.button>
+                            </div>
                           </motion.div>
-                          <div className="text-xs text-gray-500 mt-0.5">g</div>
-                        </div>
-                        <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-3 text-center">
-                          <div className="text-xs text-gray-600 mb-1">Carboidrati</div>
-                          <motion.div
-                            initial={{ scale: 1.2, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.2 }}
-                            className="text-2xl font-black text-amber-700"
-                          >
-                            35
-                          </motion.div>
-                          <div className="text-xs text-gray-500 mt-0.5">g</div>
-                        </div>
-                        <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-3 text-center">
-                          <div className="text-xs text-gray-600 mb-1">Grassi</div>
-                          <motion.div
-                            initial={{ scale: 1.2, opacity: 0 }}
-                            animate={{ scale: 1, opacity: 1 }}
-                            transition={{ delay: 0.3 }}
-                            className="text-2xl font-black text-red-700"
-                          >
-                            11
-                          </motion.div>
-                          <div className="text-xs text-gray-500 mt-0.5">g</div>
-                        </div>
+                        )}
+
+                        {lunchScanStep < 1 && (
+                          <div className="bg-white rounded-lg p-3 shadow-sm opacity-60">
+                            <div className="text-xs text-gray-600">Pranzo • 650 kcal</div>
+                          </div>
+                        )}
                       </div>
                     </motion.div>
-                    
-                    <div className="bg-green-50 border-2 border-green-200 rounded-xl p-3 flex items-center justify-center gap-2">
-                      <Check className="w-5 h-5 text-green-600" />
-                      <span className="text-sm font-semibold text-green-700">Sostituzione completata con successo</span>
-                    </div>
-                  </motion.div>
+                  )}
                 </motion.div>
               )}
 
@@ -1140,91 +1259,131 @@ export default function AppDemoFlow() {
 
               {step === 13 && (
                 <motion.div
-                  key="colazione-fatto"
+                  key="scan-pranzo-comparison"
                   initial={{ opacity: 0 }}
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
-                  <h3 className="text-sm font-bold mb-3">Pasti di Oggi</h3>
-                  <motion.div
-                    animate={{ borderColor: ['#10b981', '#26847F'] }}
-                    transition={{ duration: 0.5 }}
-                    className="bg-white rounded-lg p-3 shadow-md border-2 mb-2"
-                  >
-                    <div className="flex items-center gap-2">
+                  {lunchScanStep === 0 && (
+                    <div className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
                       <motion.div
-                        initial={{ scale: 0 }}
-                        animate={{ scale: 1 }}
-                        className="w-6 h-6 rounded-full bg-green-500 flex items-center justify-center"
+                        initial={{ scale: 1.2, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        className="text-white text-center"
                       >
-                        <Check className="w-4 h-4 text-white" />
+                        <Camera className="w-12 h-12 mx-auto mb-3" />
+                        <p className="text-base font-bold">Analisi AI in corso...</p>
+                        <p className="text-xs mt-1">Insalata Caesar rilevata</p>
                       </motion.div>
-                      <div className="flex-1">
-                        <div className="font-bold text-xs">Colazione</div>
-                        <div className="text-xs text-gray-500">Porridge Proteico • 445 kcal</div>
-                      </div>
                     </div>
-                  </motion.div>
-                  <div className="bg-white rounded-lg p-3 shadow-sm opacity-60">
-                    <div className="text-xs text-gray-600">Pranzo • 650 kcal</div>
-                  </div>
+                  )}
+
+                  {lunchScanStep >= 1 && (
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      className="bg-white h-full overflow-auto p-3"
+                    >
+                      <div className="mb-3">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Sparkles className="w-5 h-5 text-[var(--brand-primary)]" />
+                          <h3 className="text-base font-bold">Calcolo Calorico AI</h3>
+                        </div>
+                        <p className="text-xs text-gray-600">Confronto automatico pianificato vs reale</p>
+                      </div>
+
+                      <div className="grid grid-cols-2 gap-2 mb-3">
+                        <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3">
+                          <div className="text-xs font-bold text-blue-700 mb-2 text-center">Pianificato</div>
+                          <div className="space-y-1 text-[10px]">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Calorie</span>
+                              <span className="font-bold">650</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Proteine</span>
+                              <span className="font-bold">35g</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Carb</span>
+                              <span className="font-bold">45g</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Grassi</span>
+                              <span className="font-bold">32g</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="bg-green-50 border-2 border-green-200 rounded-xl p-3">
+                          <div className="text-xs font-bold text-green-700 mb-2 text-center">Reale AI</div>
+                          <div className="space-y-1 text-[10px]">
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Calorie</span>
+                              <span className="font-bold text-red-600">725</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Proteine</span>
+                              <span className="font-bold">38g</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Carb</span>
+                              <span className="font-bold">48g</span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span className="text-gray-600">Grassi</span>
+                              <span className="font-bold text-red-600">38g</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-3 mb-3">
+                        <div className="text-xs font-bold text-orange-700 mb-2">⚠️ Differenza Rilevata</div>
+                        <div className="text-xs text-gray-700">
+                          Hai consumato <span className="font-bold text-red-600">+75 kcal</span> rispetto al piano
+                        </div>
+                      </div>
+
+                      {lunchScanStep >= 2 && (
+                        <motion.button
+                          initial={{ scale: 0.9, opacity: 0 }}
+                          animate={{ scale: lunchScanStep === 2 ? [1, 1.1, 1.05, 1] : 1, opacity: 1 }}
+                          transition={{ duration: 0.6 }}
+                          className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white py-3 rounded-xl text-sm font-bold shadow-lg"
+                        >
+                          Salva e Ribilancia i Pasti Successivi
+                        </motion.button>
+                      )}
+                    </motion.div>
+                  )}
                 </motion.div>
               )}
 
               {step === 14 && (
                 <motion.div
-                  key="scan-pranzo"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600"
+                  key="rebalance-success"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  <motion.div
-                    initial={{ scale: 1.2, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    className="w-full h-full relative flex items-center justify-center"
-                  >
-                    <div className="text-white text-center">
-                      <Camera className="w-12 h-12 mx-auto mb-3" />
-                      <p className="text-base font-bold">Analisi AI in corso...</p>
-                      <p className="text-xs mt-1">Insalata Caesar rilevata</p>
-                    </div>
-                  </motion.div>
-                </motion.div>
-              )}
-
-              {step === 15 && (
-                <motion.div
-                  key="rebalance"
-                  initial={{ y: 50, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  exit={{ y: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-black/70 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                >
-                  <div className="bg-white rounded-xl p-4 max-w-sm">
-                    <div className="text-center mb-3">
-                      <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                        <Zap className="w-6 h-6 text-orange-600" />
-                      </div>
-                      <h4 className="text-sm font-bold">Hai superato di 75 kcal!</h4>
-                      <p className="text-xs text-gray-600 mt-1">Vuoi ribilanciare i pasti futuri?</p>
-                    </div>
-                    <div className="flex gap-2">
-                      <button className="flex-1 py-2 border-2 border-gray-300 rounded-lg font-semibold text-xs text-gray-700">No</button>
-                      <motion.button
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
-                        className="flex-1 py-2 bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white rounded-lg font-semibold text-xs"
-                      >
-                        Sì, Ribilancia
-                      </motion.button>
-                    </div>
+                  <div className="bg-white rounded-2xl p-6 shadow-2xl text-center max-w-sm mx-auto">
+                    <motion.div
+                      animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
+                      transition={{ duration: 0.6, repeat: 2 }}
+                      className="text-5xl mb-3"
+                    >
+                      ✅
+                    </motion.div>
+                    <h4 className="text-lg font-bold mb-2 text-green-700">Pasti Ribilanciati!</h4>
+                    <p className="text-sm text-gray-600">Cena e snack aggiornati per compensare le 75 kcal in eccesso</p>
                   </div>
                 </motion.div>
               )}
 
-              {step === 16 && (
+              {step === 15 && (
                 <motion.div
                   key="workout-quiz"
                   initial={{ x: 50, opacity: 0 }}
@@ -1252,7 +1411,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 17 && (
+              {step === 16 && (
                 <motion.div
                   key="workout-plan"
                   initial={{ opacity: 0 }}
@@ -1286,7 +1445,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 18 && (
+              {step === 17 && (
                 <motion.div
                   key="exercise-detail"
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -1315,7 +1474,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 19 && (
+              {step === 18 && (
                 <motion.div
                   key="modifica-workout"
                   initial={{ y: 50, opacity: 0 }}
@@ -1345,7 +1504,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 20 && (
+              {step === 19 && (
                 <motion.div
                   key="new-exercise"
                   initial={{ x: 50, opacity: 0 }}
@@ -1371,7 +1530,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 21 && (
+              {step === 20 && (
                 <motion.div
                   key="body-analysis"
                   initial={{ opacity: 0 }}
@@ -1419,7 +1578,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 22 && (
+              {step === 21 && (
                 <motion.div
                   key="goal-reached"
                   initial={{ scale: 0.8, opacity: 0 }}
