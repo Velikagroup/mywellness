@@ -5,16 +5,29 @@ import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Targe
 
 const ANIMATION_DURATION = 90000; // 90 secondi totali (1:30 min)
 
+// Precarica immagini
+const preloadImages = () => {
+  const images = [
+    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png',
+    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png'
+  ];
+  
+  images.forEach((src) => {
+    const img = new Image();
+    img.src = src;
+  });
+};
+
 export default function AppDemoFlow() {
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
   const [dashboardScroll, setDashboardScroll] = useState(0);
 
-  // No longer preloading images, using SVGs instead.
-  // useEffect(() => {
-  //   preloadImages();
-  // }, []);
+  // Precarica immagini all'inizio
+  useEffect(() => {
+    preloadImages();
+  }, []);
 
   useEffect(() => {
     const checkScreenSize = () => {
@@ -37,38 +50,35 @@ export default function AppDemoFlow() {
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
-      // Trigger step changes based on time (distributed over 90 seconds)
-      if (elapsed < 4000) setStep(0);
-      else if (elapsed < 8000) setStep(1);
-      else if (elapsed < 11000) setStep(2);
-      else if (elapsed < 15000) setStep(3);
-      else if (elapsed < 19000) setStep(4);
-      else if (elapsed < 23000) setStep(5);
-      else if (elapsed < 27000) {
-        setStep(6);
-        const scrollProgress = (elapsed - 23000) / 4000;
-        setDashboardScroll(scrollProgress);
+      // Timing aggiustato - rimossi primi 3 step, dashboard più lunga
+      if (elapsed < 4000) setStep(0); // Peso attuale (was step 3)
+      else if (elapsed < 8000) setStep(1); // Peso target (was step 4)
+      else if (elapsed < 12000) setStep(2); // Loading (was step 5)
+      else if (elapsed < 22000) {
+        setStep(3); // Dashboard (was step 6) - 10 secondi totali
+        const scrollProgress = (elapsed - 18000) / 4000; // Inizia scroll dopo 6 secondi (18000ms) del timing totale, dura 4s
+        setDashboardScroll(Math.max(0, scrollProgress));
       }
-      else if (elapsed < 31000) setStep(7);
-      else if (elapsed < 35000) setStep(8);
-      else if (elapsed < 38000) setStep(9);
-      else if (elapsed < 41000) setStep(10);
-      else if (elapsed < 44000) setStep(11);
-      else if (elapsed < 47000) setStep(12);
-      else if (elapsed < 50000) setStep(13);
-      else if (elapsed < 53000) setStep(14);
-      else if (elapsed < 56000) setStep(15);
-      else if (elapsed < 59000) setStep(16);
-      else if (elapsed < 62000) setStep(17);
-      else if (elapsed < 65000) setStep(18);
-      else if (elapsed < 68000) setStep(19);
-      else if (elapsed < 71000) setStep(20);
-      else if (elapsed < 74000) setStep(21);
-      else if (elapsed < 77000) setStep(22);
-      else if (elapsed < 80000) setStep(23);
-      else if (elapsed < 83000) setStep(24);
-      else if (elapsed < 86000) setStep(25);
-      else setStep(26);
+      else if (elapsed < 26000) setStep(4); // Genera piano (was step 7)
+      else if (elapsed < 30000) setStep(5); // Scelta dieta (was step 8)
+      else if (elapsed < 33000) setStep(6); // Piano creato (was step 9)
+      else if (elapsed < 36000) setStep(7); // Popup colazione (was step 10)
+      else if (elapsed < 39000) setStep(8); // Scansiona (was step 11)
+      else if (elapsed < 42000) setStep(9); // Aggiungi (was step 12)
+      else if (elapsed < 45000) setStep(10); // Piano aggiornato (was step 13)
+      else if (elapsed < 48000) setStep(11); // Lista spesa (was step 14)
+      else if (elapsed < 51000) setStep(12); // Scan label (was step 15)
+      else if (elapsed < 54000) setStep(13); // Health score (was step 16)
+      else if (elapsed < 57000) setStep(14); // Colazione fatto (was step 17)
+      else if (elapsed < 60000) setStep(15); // Scan pranzo (was step 18)
+      else if (elapsed < 63000) setStep(16); // Rebalance (was step 19)
+      else if (elapsed < 66000) setStep(17); // Workout quiz (was step 20)
+      else if (elapsed < 69000) setStep(18); // Workout plan (was step 21)
+      else if (elapsed < 72000) setStep(19); // Exercise detail (was step 22)
+      else if (elapsed < 75000) setStep(20); // Modifica workout (was step 23)
+      else if (elapsed < 78000) setStep(21); // New exercise (was step 24)
+      else if (elapsed < 81000) setStep(22); // Body analysis (was step 25)
+      else setStep(23); // Goal reached (was step 26)
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -113,103 +123,8 @@ export default function AppDemoFlow() {
             </div>
 
             <AnimatePresence mode="wait">
-              {/* Step 0: Selezione Genere (Intro del quiz reale) */}
+              {/* Step 0: Peso Attuale (was step 3) */}
               {step === 0 && (
-                <motion.div
-                  key="gender-selection"
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  className={`absolute inset-0 bg-white flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
-                >
-                  <div className="text-center">
-                    <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4">
-                      <Sparkles className="w-8 h-8 text-white" />
-                    </div>
-                    <h2 className="text-xl font-bold text-gray-900 mb-6">Seleziona il tuo sesso:</h2>
-                    <div className="grid grid-cols-2 gap-4 max-w-sm mx-auto">
-                      <motion.div
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        className="p-6 rounded-xl border-2 border-gray-200 bg-white"
-                      >
-                        <div className="w-14 h-14 bg-blue-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                          <span className="text-3xl">👨</span>
-                        </div>
-                        <h3 className="font-bold text-base text-gray-900">Uomo</h3>
-                      </motion.div>
-                      <motion.div
-                        initial={{ scale: 0.9 }}
-                        animate={{ scale: 1 }}
-                        transition={{ delay: 0.1 }}
-                        className="p-6 rounded-xl border-2 border-[var(--brand-primary)] bg-[var(--brand-primary-light)]"
-                      >
-                        <div className="w-14 h-14 bg-pink-100 rounded-xl flex items-center justify-center mx-auto mb-3">
-                          <span className="text-3xl">👩</span>
-                        </div>
-                        <h3 className="font-bold text-base text-gray-900">Donna</h3>
-                      </motion.div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 1: Data di Nascita */}
-              {step === 1 && (
-                <motion.div
-                  key="birthdate"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  className={`absolute inset-0 bg-white flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
-                >
-                  <div className="text-center">
-                    <div className="w-14 h-14 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
-                      <Calendar className="w-7 h-7 text-white" />
-                    </div>
-                    <h2 className="text-lg font-bold text-gray-900 mb-2">Qual è la tua data di nascita?</h2>
-                    <p className="text-sm text-gray-600 mb-6">Ci aiuta a calcolare il tuo metabolismo</p>
-                    
-                    <div className="max-w-sm mx-auto">
-                      <div className="h-14 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-[var(--brand-primary-light)]">
-                        <span className="text-xl font-bold text-gray-900">15/03/1990</span>
-                      </div>
-                      <p className="text-sm text-gray-500 mt-3">Hai 34 anni</p>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 2: Altezza */}
-              {step === 2 && (
-                <motion.div
-                  key="height"
-                  initial={{ opacity: 0, x: 50 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -50 }}
-                  className={`absolute inset-0 bg-white flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
-                >
-                  <div className="text-center">
-                    <div className="w-14 h-14 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-xl flex items-center justify-center mx-auto mb-4">
-                      <Ruler className="w-7 h-7 text-white" />
-                    </div>
-                    <h2 className="text-lg font-bold text-gray-900 mb-2">Qual è la tua altezza?</h2>
-                    <p className="text-sm text-gray-600 mb-6">Necessaria per calcolare BMI</p>
-                    
-                    <div className="max-w-sm mx-auto">
-                      <div className="relative">
-                        <div className="h-14 border-2 border-[var(--brand-primary)] rounded-lg flex items-center justify-center bg-white">
-                          <span className="text-3xl font-bold text-gray-900">175</span>
-                          <span className="absolute right-6 text-gray-500 font-medium">cm</span>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </motion.div>
-              )}
-
-              {/* Step 3: Peso Attuale */}
-              {step === 3 && (
                 <motion.div
                   key="current-weight"
                   initial={{ opacity: 0, x: 50 }}
@@ -232,8 +147,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 4: Peso Obiettivo */}
-              {step === 4 && (
+              {/* Step 1: Peso Obiettivo (was step 4) */}
+              {step === 1 && (
                 <motion.div
                   key="target-weight"
                   initial={{ opacity: 0, x: 50 }}
@@ -256,8 +171,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 5: Loading */}
-              {step === 5 && (
+              {/* Step 2: Loading (was step 5) */}
+              {step === 2 && (
                 <motion.div
                   key="loading"
                   initial={{ opacity: 0 }}
@@ -274,8 +189,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 6: Dashboard Scientifica con scroll */}
-              {step === 6 && (
+              {/* Step 3: Dashboard Scientifica con scroll (was step 6) */}
+              {step === 3 && (
                 <motion.div
                   key="dashboard"
                   initial={{ opacity: 0, scale: 0.95 }}
@@ -446,8 +361,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 7: Genera Piano */}
-              {step === 7 && (
+              {/* Step 4: Genera Piano (was step 7) */}
+              {step === 4 && (
                 <motion.div
                   key="genera-piano"
                   initial={{ opacity: 0 }}
@@ -468,8 +383,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 8: Scelta Dieta */}
-              {step === 8 && (
+              {/* Step 5: Scelta Dieta (was step 8) */}
+              {step === 5 && (
                 <motion.div
                   key="dieta"
                   initial={{ opacity: 0, y: 50 }}
@@ -495,8 +410,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 9: Piano Creato */}
-              {step === 9 && (
+              {/* Step 6: Piano Creato (was step 9) */}
+              {step === 6 && (
                 <motion.div
                   key="piano-creato"
                   initial={{ opacity: 0 }}
@@ -533,8 +448,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 10: Pop-up Colazione */}
-              {step === 10 && (
+              {/* Step 7: Pop-up Colazione (was step 10) */}
+              {step === 7 && (
                 <motion.div
                   key="popup-colazione"
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -566,8 +481,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 11: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ */}
-              {step === 11 && (
+              {/* Step 8: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ (was step 11) */}
+              {step === 8 && (
                 <motion.div
                   key="scansiona"
                   initial={{ opacity: 0 }}
@@ -600,8 +515,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 12: Aggiungi Ingrediente */}
-              {step === 12 && (
+              {/* Step 9: Aggiungi Ingrediente (was step 12) */}
+              {step === 9 && (
                 <motion.div
                   key="aggiungi"
                   initial={{ opacity: 0, y: 50 }}
@@ -632,8 +547,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 13: Piano Aggiornato */}
-              {step === 13 && (
+              {/* Step 10: Piano Aggiornato (was step 13) */}
+              {step === 10 && (
                 <motion.div
                   key="piano-updated"
                   initial={{ opacity: 0 }}
@@ -690,8 +605,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 14: Lista Spesa */}
-              {step === 14 && (
+              {/* Step 11: Lista Spesa (was step 14) */}
+              {step === 11 && (
                 <motion.div
                   key="lista-spesa"
                   initial={{ x: 50, opacity: 0 }}
@@ -723,8 +638,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 15: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE */}
-              {step === 15 && (
+              {/* Step 12: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE (was step 15) */}
+              {step === 12 && (
                 <motion.div
                   key="scan-label"
                   initial={{ opacity: 0 }}
@@ -793,8 +708,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 16: Health Score */}
-              {step === 16 && (
+              {/* Step 13: Health Score (was step 16) */}
+              {step === 13 && (
                 <motion.div
                   key="health-score"
                   initial={{ scale: 0.8, opacity: 0 }}
@@ -830,8 +745,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 17: Colazione Fatto */}
-              {step === 17 && (
+              {/* Step 14: Colazione Fatto (was step 17) */}
+              {step === 14 && (
                 <motion.div
                   key="colazione-fatto"
                   initial={{ opacity: 0 }}
@@ -865,8 +780,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 18: Scansiona Pranzo - sfondo verde pieno */}
-              {step === 18 && (
+              {/* Step 15: Scansiona Pranzo - sfondo verde pieno (was step 18) */}
+              {step === 15 && (
                 <motion.div
                   key="scan-pranzo"
                   initial={{ opacity: 0 }}
@@ -888,8 +803,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 19: Ribilanciamento */}
-              {step === 19 && (
+              {/* Step 16: Ribilanciamento (was step 19) */}
+              {step === 16 && (
                 <motion.div
                   key="rebalance"
                   initial={{ y: 50, opacity: 0 }}
@@ -919,8 +834,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 20: Workout Quiz */}
-              {step === 20 && (
+              {/* Step 17: Workout Quiz (was step 20) */}
+              {step === 17 && (
                 <motion.div
                   key="workout-quiz"
                   initial={{ x: 50, opacity: 0 }}
@@ -948,8 +863,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 21: Piano Workout */}
-              {step === 21 && (
+              {/* Step 18: Piano Workout (was step 21) */}
+              {step === 18 && (
                 <motion.div
                   key="workout-plan"
                   initial={{ opacity: 0 }}
@@ -983,8 +898,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 22: Dettagli Esercizio */}
-              {step === 22 && (
+              {/* Step 19: Dettagli Esercizio (was step 22) */}
+              {step === 19 && (
                 <motion.div
                   key="exercise-detail"
                   initial={{ scale: 0.9, opacity: 0 }}
@@ -1013,8 +928,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 23: Modifica Workout */}
-              {step === 23 && (
+              {/* Step 20: Modifica Workout (was step 23) */}
+              {step === 20 && (
                 <motion.div
                   key="modifica-workout"
                   initial={{ y: 50, opacity: 0 }}
@@ -1044,8 +959,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 24: Nuovo Esercizio */}
-              {step === 24 && (
+              {/* Step 21: Nuovo Esercizio (was step 24) */}
+              {step === 21 && (
                 <motion.div
                   key="new-exercise"
                   initial={{ x: 50, opacity: 0 }}
@@ -1071,8 +986,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 25: Analisi Corpo - SILHOUETTE SVG PRIMA/DOPO */}
-              {step === 25 && (
+              {/* Step 22: Analisi Corpo - IMMAGINI REALI PRECARICATE (was step 25) */}
+              {step === 22 && (
                 <motion.div
                   key="body-analysis"
                   initial={{ opacity: 0 }}
@@ -1082,43 +997,25 @@ export default function AppDemoFlow() {
                 >
                   <h3 className="text-sm font-bold mb-2 text-center">Analisi Progressi</h3>
                   <div className="grid grid-cols-2 gap-2 mb-3">
-                    {/* PRIMA - Silhouette con più massa */}
-                    <div className="bg-white rounded-lg p-1.5 overflow-hidden flex flex-col items-center">
+                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
                       <div className="text-[9px] text-gray-500 mb-1 text-center">Prima</div>
-                      <svg viewBox="0 0 100 150" className="w-full h-auto max-w-[100px]"> {/* Max width to keep it proportionally small */}
-                        {/* Corpo - silhouette con più volume */}
-                        <ellipse cx="50" cy="25" rx="15" ry="17" fill="#94a3b8"/> {/* Head */}
-                        <path d="M 50 42 Q 40 55, 38 90 L 35 130 L 33 145 Q 33 155, 38 148 L 42 148 L 42 138 L 38 130 L 40 100 L 50 75 L 60 100 L 62 130 L 58 138 L 58 148 L 62 148 L 67 145 Q 67 155, 62 148 L 65 130 L 62 90 Q 60 55, 50 42 Z" fill="#94a3b8"/> {/* Body */}
-                        
-                        {/* Braccia più robuste */}
-                        <path d="M 42 60 Q 35 70, 32 85 L 30 100 Q 30 105, 35 105 L 38 85 L 40 70 Z" fill="#94a3b8"/> {/* Left arm */}
-                        <path d="M 58 60 Q 65 70, 68 85 L 70 100 Q 70 105, 65 105 L 62 85 L 60 70 Z" fill="#94a3b8"/> {/* Right arm */}
-                        
-                        {/* Linee definizione minime */}
-                        <line x1="50" y1="75" x2="50" y2="120" stroke="#64748b" strokeWidth="0.5" opacity="0.3"/>
-                      </svg>
+                      <img 
+                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
+                        alt="Before"
+                        className="w-full aspect-square object-cover rounded-lg"
+                        loading="eager"
+                        fetchpriority="high"
+                      />
                     </div>
-
-                    {/* DOPO - Silhouette definita */}
-                    <div className="bg-white rounded-lg p-1.5 overflow-hidden flex flex-col items-center">
+                    <div className="bg-white rounded-lg p-1.5 overflow-hidden">
                       <div className="text-[9px] text-gray-500 mb-1 text-center">Dopo</div>
-                      <svg viewBox="0 0 100 150" className="w-full h-auto max-w-[100px]">
-                        {/* Corpo - silhouette definita */}
-                        <ellipse cx="50" cy="25" rx="14" ry="16" fill="#26847F"/> {/* Head */}
-                        <path d="M 50 41 Q 42 52, 40 85 L 38 125 L 36 142 Q 36 148, 40 145 L 43 145 L 43 135 L 40 125 L 42 95 L 50 70 L 58 95 L 60 125 L 57 135 L 57 145 L 60 145 L 64 142 Q 64 148, 60 145 L 62 125 L 60 85 Q 58 52, 50 41 Z" fill="#26847F"/> {/* Body */}
-                        
-                        {/* Braccia definite */}
-                        <path d="M 42 58 Q 36 67, 34 82 L 32 97 Q 32 102, 36 102 L 38 82 L 40 67 Z" fill="#26847F"/> {/* Left arm */}
-                        <path d="M 58 58 Q 64 67, 66 82 L 68 97 Q 68 102, 64 102 L 62 82 L 60 67 Z" fill="#26847F"/> {/* Right arm */}
-                        
-                        {/* Linee definizione muscolare */}
-                        <line x1="50" y1="70" x2="50" y2="110" stroke="#1f6b66" strokeWidth="1.5" opacity="0.6"/>
-                        <line x1="47" y1="75" x2="47" y2="100" stroke="#1f6b66" strokeWidth="0.8" opacity="0.5"/>
-                        <line x1="53" y1="75" x2="53" y2="100" stroke="#1f6b66" strokeWidth="0.8" opacity="0.5"/>
-                        
-                        {/* V-shape torso */}
-                        <path d="M 45 75 L 50 70 L 55 75" stroke="#1f6b66" strokeWidth="1.5" fill="none" opacity="0.6"/>
-                      </svg>
+                      <img 
+                        src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
+                        alt="After"
+                        className="w-full aspect-square object-cover rounded-lg"
+                        loading="eager"
+                        fetchpriority="high"
+                      />
                     </div>
                   </div>
                   <div className="bg-white rounded-lg p-3 space-y-1.5">
@@ -1138,7 +1035,8 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 26 && (
+              {/* Step 23: Goal Reached (was step 26) */}
+              {step === 23 && (
                 <motion.div
                   key="goal-reached"
                   initial={{ scale: 0.8, opacity: 0 }}
