@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3 } from 'lucide-react';
 
-const ANIMATION_DURATION = 100000;
+const ANIMATION_DURATION = 95000;
 
 const preloadImages = () => {
   const images = [
@@ -80,7 +80,7 @@ export default function AppDemoFlow() {
         else if (dietElapsed < 5000) setDietStep(2);
         else setDietStep(3);
       }
-      else if (elapsed < 36000) {
+      else if (elapsed < 34000) {
         setStep(6);
         const planElapsed = elapsed - 23000;
         if (planElapsed < 2000) {
@@ -138,20 +138,20 @@ export default function AppDemoFlow() {
           setPopupScrollStep(0);
         }
       }
-      else if (elapsed < 46000) {
+      else if (elapsed < 44000) {
         setStep(7);
-        const listElapsed = elapsed - 36000;
+        const listElapsed = elapsed - 34000;
         if (listElapsed < 1500) setShoppingListStep(0);
         else if (listElapsed < 3000) setShoppingListStep(1);
         else if (listElapsed < 4500) setShoppingListStep(2);
         else if (listElapsed < 6500) setShoppingListStep(3);
         else setShoppingListStep(4);
       }
-      else if (elapsed < 49000) setStep(8);
-      else if (elapsed < 52000) setStep(9);
-      else if (elapsed < 58000) {
+      else if (elapsed < 47000) setStep(8);
+      else if (elapsed < 50000) setStep(9);
+      else if (elapsed < 56000) {
         setStep(10);
-        const updateElapsed = elapsed - 52000;
+        const updateElapsed = elapsed - 50000;
         if (updateElapsed < 3500) {
           setMealCheckStep(0);
           setLunchScanStep(0);
@@ -169,23 +169,23 @@ export default function AppDemoFlow() {
           setLunchScanStep(1);
         }
       }
-      else if (elapsed < 61000) setStep(11);
-      else if (elapsed < 64000) setStep(12);
-      else if (elapsed < 70000) {
-        setStep(13);
-        const scanElapsed = elapsed - 64000;
+      else if (elapsed < 59000) setStep(11);
+      else if (elapsed < 65000) {
+        setStep(12);
+        const scanElapsed = elapsed - 59000;
         if (scanElapsed < 2000) setLunchScanStep(0);
         else if (scanElapsed < 4000) setLunchScanStep(1);
         else setLunchScanStep(2);
       }
-      else if (elapsed < 73000) setStep(14);
-      else if (elapsed < 76000) setStep(15);
-      else if (elapsed < 79000) setStep(16);
-      else if (elapsed < 82000) setStep(17);
-      else if (elapsed < 85000) setStep(18);
-      else if (elapsed < 88000) setStep(19);
-      else if (elapsed < 91000) setStep(20);
-      else if (elapsed < 94000) setStep(21);
+      else if (elapsed < 68000) setStep(13);
+      else if (elapsed < 71000) setStep(14);
+      else if (elapsed < 74000) setStep(15);
+      else if (elapsed < 77000) setStep(16);
+      else if (elapsed < 80000) setStep(17);
+      else if (elapsed < 83000) setStep(18);
+      else if (elapsed < 86000) setStep(19);
+      else if (elapsed < 89000) setStep(20);
+      else if (elapsed < 92000) setStep(21);
       else setStep(22);
     }, 50);
 
