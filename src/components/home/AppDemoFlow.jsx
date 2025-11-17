@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3, Home as HomeIcon, Trees } from 'lucide-react';
 
-const ANIMATION_DURATION = 110000;
+const ANIMATION_DURATION = 115000;
 
 const preloadImages = () => {
   const images = [
@@ -32,6 +32,7 @@ export default function AppDemoFlow() {
   const [mealCheckStep, setMealCheckStep] = useState(0);
   const [lunchScanStep, setLunchScanStep] = useState(0);
   const [workoutDaySelection, setWorkoutDaySelection] = useState(0);
+  const [workoutLocationSelected, setWorkoutLocationSelected] = useState(false);
   const [modifyWorkoutStep, setModifyWorkoutStep] = useState(0);
   const [typingText, setTypingText] = useState('');
   const [photoAnalysisZoom, setPhotoAnalysisZoom] = useState(false);
@@ -190,10 +191,15 @@ export default function AppDemoFlow() {
         else if (dayElapsed < 3000) setWorkoutDaySelection(2);
         else setWorkoutDaySelection(3);
       }
-      else if (elapsed < 78000) setStep(15); // Now workout location
-      else if (elapsed < 86000) { // Now workout plan AND modify workout popup
+      else if (elapsed < 79000) { // Now workout location
+        setStep(15);
+        const locationElapsed = elapsed - 75000;
+        if (locationElapsed < 2000) setWorkoutLocationSelected(false);
+        else setWorkoutLocationSelected(true);
+      }
+      else if (elapsed < 87000) { // Now workout plan AND modify workout popup
         setStep(16);
-        const modifyElapsed = elapsed - 78000;
+        const modifyElapsed = elapsed - 79000;
         if (modifyElapsed < 3000) {
           setModifyWorkoutStep(0);
           setTypingText('');
@@ -214,18 +220,18 @@ export default function AppDemoFlow() {
           setTypingText('Mi fa male la spalla');
         }
       }
-      else if (elapsed < 89000) setStep(17); // Now new exercise
-      else if (elapsed < 93000) {
+      else if (elapsed < 90000) setStep(17); // Now new exercise
+      else if (elapsed < 99000) {
         setStep(18);
-        const analysisElapsed = elapsed - 86000;
-        if (analysisElapsed < 5000) {
+        const analysisElapsed = elapsed - 90000;
+        if (analysisElapsed < 6000) {
           setPhotoAnalysisZoom(false);
         } else {
           setPhotoAnalysisZoom(true);
         }
       }
-      else if (elapsed < 96000) setStep(19);
-      else if (elapsed < 99000) setStep(20);
+      else if (elapsed < 102000) setStep(19);
+      else if (elapsed < 105000) setStep(20);
       else setStep(21);
     }, 50);
 
@@ -1460,17 +1466,22 @@ export default function AppDemoFlow() {
                     <h3 className="text-base font-bold mb-3">Dove vuoi allenarti?</h3>
                     <div className="space-y-2 max-w-xs mx-auto">
                       <motion.button
-                        whileHover={{ scale: 1.02 }}
-                        className="w-full py-4 rounded-xl font-bold text-base bg-[var(--brand-primary)] text-white flex items-center justify-center gap-2"
+                        animate={{ 
+                          backgroundColor: workoutLocationSelected ? '#26847F' : '#ffffff',
+                          color: workoutLocationSelected ? '#ffffff' : '#374151',
+                          scale: workoutLocationSelected ? [1, 1.05, 1] : 1
+                        }}
+                        transition={{ duration: 0.3 }}
+                        className="w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-md"
                       >
                         <HomeIcon className="w-5 h-5" />
                         In Casa
                       </motion.button>
-                      <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2">
+                      <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2 shadow-md">
                         <Zap className="w-5 h-5" />
                         In Palestra
                       </button>
-                      <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2">
+                      <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2 shadow-md">
                         <Trees className="w-5 h-5" />
                         All'Aperto
                       </button>
