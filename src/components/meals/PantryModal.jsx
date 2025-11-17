@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -191,6 +192,7 @@ Sii preciso nell'identificazione del prodotto.`;
     try {
       if (editingId) {
         await base44.entities.UserIngredient.update(editingId, formData);
+        alert(`✅ Ingrediente "${formData.name}" aggiornato!\n\n💡 Dalla prossima generazione del piano alimentare, se necessario, userò questo ingrediente con i valori nutrizionali che hai specificato.`);
       } else {
         await base44.entities.UserIngredient.create({
           user_id: user.id,
@@ -200,6 +202,7 @@ Sii preciso nell'identificazione del prodotto.`;
           carbs_per_100g: parseFloat(formData.carbs_per_100g || 0),
           fat_per_100g: parseFloat(formData.fat_per_100g || 0)
         });
+        alert(`✅ Ingrediente "${formData.name}" aggiunto alla dispensa!\n\n💡 Dalla prossima generazione del piano alimentare completo, se il piano necessita di questo ingrediente, lo prenderò dalla tua dispensa utilizzando questi valori nutrizionali precisi.`);
       }
       
       setFormData({ name: '', calories_per_100g: '', protein_per_100g: '', carbs_per_100g: '', fat_per_100g: '', unit: 'g', category: 'altro', notes: '' });
