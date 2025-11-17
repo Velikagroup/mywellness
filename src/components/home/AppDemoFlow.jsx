@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3 } from 'lucide-react';
@@ -23,7 +24,7 @@ export default function AppDemoFlow() {
   const [dashboardScroll, setDashboardScroll] = useState(0);
   const [dietStep, setDietStep] = useState(0);
   const [mealPlanStep, setMealPlanStep] = useState(0);
-  const [substituteStep, setSubstituteStep] = useState(0); // 0: popup normale, 1: click sostituisci, 2: zoom avocado
+  const [substituteStep, setSubstituteStep] = useState(0); // 0: popup normale, 1: zoom pulsante, 2: click, 3: sostituzione
 
   useEffect(() => {
     preloadImages();
@@ -73,29 +74,30 @@ export default function AppDemoFlow() {
         if (planElapsed < 2000) setMealPlanStep(0);
         else setMealPlanStep(1);
       }
-      else if (elapsed < 35000) {
-        setStep(7); // Popup ingredienti con sostituisci - 6s
+      else if (elapsed < 36000) { // Popup con sostituzione ingrediente - 7s (era 6s)
+        setStep(7); 
         const subElapsed = elapsed - 29000;
         if (subElapsed < 2000) setSubstituteStep(0); // Mostra popup
-        else if (subElapsed < 3000) setSubstituteStep(1); // Click sostituisci
-        else setSubstituteStep(2); // Zoom avocado
+        else if (subElapsed < 3500) setSubstituteStep(1); // Zoom pulsante
+        else if (subElapsed < 4500) setSubstituteStep(2); // Click
+        else setSubstituteStep(3); // Sostituzione avvenuta
       }
-      else if (elapsed < 38000) setStep(8); // Scansiona
-      else if (elapsed < 41000) setStep(9); // Aggiungi
-      else if (elapsed < 44000) setStep(10); // Piano aggiornato
-      else if (elapsed < 47000) setStep(11); // Lista spesa
-      else if (elapsed < 50000) setStep(12); // Scan label
-      else if (elapsed < 53000) setStep(13); // Health score
-      else if (elapsed < 56000) setStep(14); // Colazione fatto
-      else if (elapsed < 59000) setStep(15); // Scan pranzo
-      else if (elapsed < 62000) setStep(16); // Rebalance
-      else if (elapsed < 65000) setStep(17); // Workout quiz
-      else if (elapsed < 68000) setStep(18); // Workout plan
-      else if (elapsed < 71000) setStep(19); // Exercise detail
-      else if (elapsed < 74000) setStep(20); // Modifica workout
-      else if (elapsed < 77000) setStep(21); // New exercise
-      else if (elapsed < 80000) setStep(22); // Body analysis
-      else setStep(23); // Goal reached
+      else if (elapsed < 39000) setStep(8); // Scansiona (timing adjusted +1s)
+      else if (elapsed < 42000) setStep(9); // Aggiungi (timing adjusted +1s)
+      else if (elapsed < 45000) setStep(10); // Piano aggiornato (timing adjusted +1s)
+      else if (elapsed < 48000) setStep(11); // Lista spesa (timing adjusted +1s)
+      else if (elapsed < 51000) setStep(12); // Scan label (timing adjusted +1s)
+      else if (elapsed < 54000) setStep(13); // Health score (timing adjusted +1s)
+      else if (elapsed < 57000) setStep(14); // Colazione fatto (timing adjusted +1s)
+      else if (elapsed < 60000) setStep(15); // Scan pranzo (timing adjusted +1s)
+      else if (elapsed < 63000) setStep(16); // Rebalance (timing adjusted +1s)
+      else if (elapsed < 66000) setStep(17); // Workout quiz (timing adjusted +1s)
+      else if (elapsed < 69000) setStep(18); // Workout plan (timing adjusted +1s)
+      else if (elapsed < 72000) setStep(19); // Exercise detail (timing adjusted +1s)
+      else if (elapsed < 75000) setStep(20); // Modifica workout (timing adjusted +1s)
+      else if (elapsed < 78000) setStep(21); // New exercise (timing adjusted +1s)
+      else if (elapsed < 81000) setStep(22); // Body analysis (timing adjusted +1s)
+      else setStep(23); // Goal reached (timing adjusted +1s)
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -493,14 +495,14 @@ export default function AppDemoFlow() {
                     >
                       <div className="flex items-center gap-2">
                         <img 
-                          src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=200&h=200&fit=crop"
-                          alt="Pancakes"
+                          src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=200&h=200&fit=crop"
+                          alt="Porridge"
                           className="w-12 h-12 rounded-lg object-cover"
                         />
                         <div className="flex-1">
                           <div className="font-bold text-sm text-gray-900">Colazione</div>
-                          <div className="text-xs text-gray-500">Pancakes Proteici</div>
-                          <div className="text-xs text-[var(--brand-primary)] font-semibold mt-0.5">450 kcal</div>
+                          <div className="text-xs text-gray-500">Porridge Proteico</div>
+                          <div className="text-xs text-[var(--brand-primary)] font-semibold mt-0.5">420 kcal</div>
                         </div>
                       </div>
                     </motion.div>
@@ -555,31 +557,31 @@ export default function AppDemoFlow() {
                     >
                       <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90%] overflow-y-auto">
                         <img 
-                          src="https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=600&h=400&fit=crop"
-                          alt="Pancakes Proteici"
+                          src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=600&h=400&fit=crop"
+                          alt="Porridge Proteico"
                           className="w-full h-40 object-cover"
                         />
 
                         <div className="p-4">
-                          <h3 className="text-lg font-bold text-gray-900 mb-1">Pancakes Proteici</h3>
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">Porridge Proteico</h3>
                           <p className="text-xs text-gray-500 mb-3">Colazione • Low Carb</p>
 
                           <div className="grid grid-cols-4 gap-2 mb-3">
                             <div className="bg-orange-50 rounded-lg p-2 text-center">
                               <div className="text-xs text-gray-600">Kcal</div>
-                              <div className="text-lg font-black text-orange-700">450</div>
+                              <div className="text-lg font-black text-orange-700">420</div>
                             </div>
                             <div className="bg-blue-50 rounded-lg p-2 text-center">
                               <div className="text-xs text-gray-600">Prot</div>
-                              <div className="text-lg font-black text-blue-700">25g</div>
+                              <div className="text-lg font-black text-blue-700">28g</div>
                             </div>
                             <div className="bg-amber-50 rounded-lg p-2 text-center">
                               <div className="text-xs text-gray-600">Carb</div>
-                              <div className="text-lg font-black text-amber-700">35g</div>
+                              <div className="text-lg font-black text-amber-700">32g</div>
                             </div>
                             <div className="bg-red-50 rounded-lg p-2 text-center">
                               <div className="text-xs text-gray-600">Grass</div>
-                              <div className="text-lg font-black text-red-700">12g</div>
+                              <div className="text-lg font-black text-red-700">10g</div>
                             </div>
                           </div>
 
@@ -598,7 +600,7 @@ export default function AppDemoFlow() {
                           <div>
                             <div className="text-sm font-bold text-gray-900 mb-1">Preparazione</div>
                             <div className="space-y-1">
-                              {['Mescola farina e proteine', 'Aggiungi uova e mescola', 'Cuoci in padella 2-3 min per lato'].map((step, i) => (
+                              {['Scaldi il latte a fuoco medio', 'Aggiungi avena e proteine', 'Cuoci 5-7 minuti mescolando', 'Guarnisci con mirtilli'].map((step, i) => (
                                 <div key={i} className="flex items-start gap-2 text-xs text-gray-700">
                                   <span className="text-[var(--brand-primary)] font-bold flex-shrink-0">{i + 1}.</span>
                                   <span>{step}</span>
@@ -615,79 +617,102 @@ export default function AppDemoFlow() {
 
               {step === 7 && (
                 <motion.div
-                  key="popup-colazione"
+                  key="popup-sostituisci"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
-                  className={`absolute inset-0 bg-black/50 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  className={`absolute inset-0 bg-black/60 flex items-center justify-center ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ backdropFilter: 'blur(4px)' }}
                 >
-                  <div className="bg-white rounded-xl p-4 w-full">
-                    <h3 className="text-base font-bold mb-3">Pancakes Proteici</h3>
-                    <div className="space-y-2">
-                      <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                        <span className="text-xs">Farina d'avena</span>
-                        <span className="text-xs font-semibold">50g</span>
-                      </div>
-                      
-                      <motion.div
-                        animate={{ 
-                          borderColor: substituteStep === 0 ? ['#e5e7eb', '#26847F', '#e5e7eb'] : '#26847F',
-                          scale: substituteStep === 1 ? [1, 0.95, 1] : 1
-                        }}
-                        transition={{ 
-                          borderColor: { duration: 1, repeat: substituteStep === 0 ? Infinity : 0 },
-                          scale: { duration: 0.3 }
-                        }}
-                        className="flex justify-between items-center p-2 bg-blue-50 rounded-lg border-2"
-                      >
-                        <span className="text-xs font-semibold text-[var(--brand-primary)]">Avocado</span>
-                        <motion.button 
-                          animate={substituteStep === 1 ? { scale: [1, 0.9, 1] } : {}}
-                          transition={{ duration: 0.2 }}
-                          className="text-xs bg-[var(--brand-primary)] text-white px-2 py-1 rounded-full"
-                        >
-                          Sostituisci
-                        </motion.button>
-                      </motion.div>
-                      
-                      <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
-                        <span className="text-xs">Miele</span>
-                        <span className="text-xs font-semibold">10g</span>
-                      </div>
-                    </div>
-                  </div>
+                  <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl">
+                    <img 
+                      src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=600&h=300&fit=crop"
+                      alt="Porridge"
+                      className="w-full h-32 object-cover"
+                    />
 
-                  {substituteStep >= 2 && (
-                    <motion.div
-                      initial={{ scale: 0.5, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
-                      transition={{ duration: 0.5 }}
-                      className="absolute inset-0 bg-white flex items-center justify-center"
-                    >
-                      <div className="text-center">
+                    <div className="p-4">
+                      <h3 className="text-lg font-bold text-gray-900 mb-3">Porridge Proteico</h3>
+
+                      <div className="space-y-2 mb-4">
+                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                          <span className="text-xs font-medium">Farina d'avena - 50g</span>
+                          <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
+                            Sostituisci
+                          </button>
+                        </div>
+
                         <motion.div
-                          animate={{ scale: [1, 1.1, 1] }}
-                          transition={{ duration: 1, repeat: Infinity }}
-                          className="text-9xl mb-3"
+                          animate={{ 
+                            scale: substituteStep >= 1 && substituteStep < 3 ? 1.1 : 1,
+                            borderColor: substituteStep === 2 ? ['#26847F', '#10b981', '#26847F'] : '#26847F'
+                          }}
+                          transition={{ 
+                            scale: { duration: 0.5 },
+                            borderColor: { duration: 0.3 }
+                          }}
+                          className="flex justify-between items-center p-2 bg-blue-50 rounded-lg border-2 relative"
+                          style={{
+                            zIndex: substituteStep >= 1 && substituteStep < 3 ? 10 : 1
+                          }}
                         >
-                          🥑
+                          {substituteStep < 3 ? (
+                            <>
+                              <span className="text-xs font-semibold text-[var(--brand-primary)]">Avocado - 1x</span>
+                              <motion.button 
+                                animate={substituteStep === 2 ? { scale: [1, 0.9, 1] } : {}}
+                                transition={{ duration: 0.2 }}
+                                className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold"
+                              >
+                                Sostituisci
+                              </motion.button>
+                            </>
+                          ) : (
+                            <motion.div
+                              initial={{ opacity: 0, x: -20 }}
+                              animate={{ opacity: 1, x: 0 }}
+                              className="flex justify-between items-center w-full"
+                            >
+                              <span className="text-xs font-semibold text-green-700">Banana - 1x</span>
+                              <motion.div
+                                initial={{ scale: 0 }}
+                                animate={{ scale: 1 }}
+                              >
+                                <Check className="w-5 h-5 text-green-600" />
+                              </motion.div>
+                            </motion.div>
+                          )}
                         </motion.div>
-                        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 border-2 border-green-200">
-                          <h4 className="font-bold text-base mb-2">Avocado</h4>
-                          <div className="grid grid-cols-2 gap-2 text-xs">
-                            <div className="bg-white rounded-lg p-2">
-                              <div className="text-gray-500">Calorie</div>
-                              <div className="font-bold">160 kcal</div>
-                            </div>
-                            <div className="bg-white rounded-lg p-2">
-                              <div className="text-gray-500">Grassi</div>
-                              <div className="font-bold">15g</div>
-                            </div>
-                          </div>
+
+                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                          <span className="text-xs font-medium">Proteine in polvere - 30g</span>
+                          <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
+                            Sostituisci
+                          </button>
+                        </div>
+
+                        <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
+                          <span className="text-xs font-medium">Mirtilli - 50g</span>
+                          <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
+                            Sostituisci
+                          </button>
                         </div>
                       </div>
-                    </motion.div>
-                  )}
+
+                      {substituteStep >= 3 && (
+                        <motion.div
+                          initial={{ opacity: 0, y: 10 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          className="bg-green-50 border border-green-200 rounded-lg p-3"
+                        >
+                          <div className="flex items-center gap-2">
+                            <Check className="w-4 h-4 text-green-600" />
+                            <span className="text-xs font-semibold text-green-700">Ingrediente sostituito con successo!</span>
+                          </div>
+                        </motion.div>
+                      )}
+                    </div>
+                  </div>
                 </motion.div>
               )}
 
@@ -703,7 +728,7 @@ export default function AppDemoFlow() {
                   }}
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                    <div className="text-9xl">🥑</div>
+                    <div className="text-9xl">🍌</div>
                   </div>
                   
                   <motion.div
@@ -718,7 +743,7 @@ export default function AppDemoFlow() {
                       className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--brand-primary)] shadow-[0_0_15px_rgba(38,132,127,0.8)]"
                     />
                   </motion.div>
-                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione avocado...</p>
+                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione banana...</p>
                 </motion.div>
               )}
 
@@ -730,16 +755,16 @@ export default function AppDemoFlow() {
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
-                  <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 mb-3 border border-green-200">
-                    <h4 className="font-bold text-sm mb-2">Avocado - Maturo (1x)</h4>
+                  <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl p-4 mb-3 border border-yellow-200">
+                    <h4 className="font-bold text-sm mb-2">Banana - Matura (1x)</h4>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="bg-white rounded-lg p-2">
                         <div className="text-gray-500 text-xs">Calorie</div>
-                        <div className="font-bold">160 kcal</div>
+                        <div className="font-bold">105 kcal</div>
                       </div>
                       <div className="bg-white rounded-lg p-2">
-                        <div className="text-gray-500 text-xs">Grassi</div>
-                        <div className="font-bold">15g</div>
+                        <div className="text-gray-500 text-xs">Carb</div>
+                        <div className="font-bold">27g</div>
                       </div>
                     </div>
                   </div>
@@ -766,7 +791,7 @@ export default function AppDemoFlow() {
                     transition={{ duration: 1.5, repeat: 2 }}
                     className="bg-white rounded-lg p-3 shadow-md border-4"
                   >
-                    <div className="font-bold text-sm mb-2">Pancakes Proteici - Aggiornato!</div>
+                    <div className="font-bold text-sm mb-2">Porridge Proteico - Aggiornato!</div>
                     <div className="grid grid-cols-3 gap-1.5 text-xs">
                       <div className="bg-green-50 rounded p-1.5">
                         <div className="text-gray-500">Kcal</div>
@@ -775,7 +800,7 @@ export default function AppDemoFlow() {
                           animate={{ opacity: 1 }}
                           className="font-bold text-green-700"
                         >
-                          490
+                          445
                         </motion.div>
                       </div>
                       <div className="bg-blue-50 rounded p-1.5">
@@ -785,17 +810,17 @@ export default function AppDemoFlow() {
                           animate={{ opacity: 1 }}
                           className="font-bold text-blue-700"
                         >
-                          22g
+                          28g
                         </motion.div>
                       </div>
-                      <div className="bg-orange-50 rounded p-1.5">
-                        <div className="text-gray-500">Grassi</div>
+                      <div className="bg-amber-50 rounded p-1.5">
+                        <div className="text-gray-500">Carb</div>
                         <motion.div
                           initial={{ opacity: 0 }}
                           animate={{ opacity: 1 }}
-                          className="font-bold text-orange-700"
+                          className="font-bold text-amber-700"
                         >
-                          18g
+                          35g
                         </motion.div>
                       </div>
                     </div>
@@ -820,7 +845,7 @@ export default function AppDemoFlow() {
                 >
                   <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
                   <div className="space-y-1.5">
-                    {['Farina d\'avena - 200g', 'Avocado - 3x', 'Miele - 250g', 'Pomodori - 1kg'].map((item, i) => (
+                    {['Farina d\'avena - 200g', 'Banana - 7x', 'Mirtilli - 350g', 'Pomodori - 1kg'].map((item, i) => (
                       <motion.div
                         key={item}
                         initial={{ x: -20, opacity: 0 }}
@@ -969,7 +994,7 @@ export default function AppDemoFlow() {
                       </motion.div>
                       <div className="flex-1">
                         <div className="font-bold text-xs">Colazione</div>
-                        <div className="text-xs text-gray-500">Pancakes Proteici • 490 kcal</div>
+                        <div className="text-xs text-gray-500">Porridge Proteico • 445 kcal</div>
                       </div>
                     </div>
                   </motion.div>
