@@ -3,7 +3,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3, Home as HomeIcon, Trees } from 'lucide-react';
 
-const ANIMATION_DURATION = 115000;
+const ANIMATION_DURATION = 105000;
 
 const preloadImages = () => {
   const images = [
@@ -11,7 +11,7 @@ const preloadImages = () => {
     'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png',
     'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/4eccf5fb3_IMG_8711.jpg'
   ];
-  
+
   images.forEach((src) => {
     const img = new Image();
     img.src = src;
@@ -34,9 +34,12 @@ export default function AppDemoFlow() {
   const [workoutDaySelection, setWorkoutDaySelection] = useState(0);
   const [workoutLocationSelected, setWorkoutLocationSelected] = useState(false);
   const [modifyWorkoutStep, setModifyWorkoutStep] = useState(0);
+  const [modifyWorkoutButtonZoom, setModifyWorkoutButtonZoom] = useState(false);
   const [typingText, setTypingText] = useState('');
+  const [photoAnalysisScroll, setPhotoAnalysisScroll] = useState(0);
   const [photoAnalysisZoom, setPhotoAnalysisZoom] = useState(false);
   const popupRef = useRef(null);
+  const analysisRef = useRef(null);
 
   useEffect(() => {
     preloadImages();
@@ -46,7 +49,7 @@ export default function AppDemoFlow() {
     const checkScreenSize = () => {
       setIsDesktop(window.innerWidth >= 768);
     };
-    
+
     checkScreenSize();
     window.addEventListener('resize', checkScreenSize);
     return () => window.removeEventListener('resize', checkScreenSize);
@@ -59,12 +62,22 @@ export default function AppDemoFlow() {
   }, [popupScrollStep]);
 
   useEffect(() => {
+    if (photoAnalysisScroll > 0 && analysisRef.current) {
+      const maxScroll = analysisRef.current.scrollHeight - analysisRef.current.clientHeight;
+      analysisRef.current.scrollTo({
+        top: maxScroll * photoAnalysisScroll,
+        behavior: 'smooth'
+      });
+    }
+  }, [photoAnalysisScroll]);
+
+  useEffect(() => {
     const startTime = Date.now();
-    
+
     const progressInterval = setInterval(() => {
       const elapsed = (Date.now() - startTime) % ANIMATION_DURATION;
       const linearProgress = elapsed / ANIMATION_DURATION;
-      
+
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
@@ -197,42 +210,55 @@ export default function AppDemoFlow() {
         if (locationElapsed < 2000) setWorkoutLocationSelected(false);
         else setWorkoutLocationSelected(true);
       }
-      else if (elapsed < 87000) { // Now workout plan AND modify workout popup
+      else if (elapsed < 88000) { // Now workout plan AND modify workout popup
         setStep(16);
         const modifyElapsed = elapsed - 79000;
-        if (modifyElapsed < 3000) {
+        if (modifyElapsed < 2000) {
           setModifyWorkoutStep(0);
+          setModifyWorkoutButtonZoom(false);
+          setTypingText('');
+        }
+        else if (modifyElapsed < 3000) {
+          setModifyWorkoutStep(0);
+          setModifyWorkoutButtonZoom(true);
           setTypingText('');
         }
         else if (modifyElapsed < 4500) {
           setModifyWorkoutStep(1);
+          setModifyWorkoutButtonZoom(false);
           const typingProg = (modifyElapsed - 3000) / 1500;
           const fullText = 'Mi fa male la spalla';
           const charCount = Math.floor(typingProg * fullText.length);
           setTypingText(fullText.substring(0, charCount));
         }
-        else if (modifyElapsed < 6000) {
+        else if (modifyElapsed < 6500) {
           setModifyWorkoutStep(2);
+          setModifyWorkoutButtonZoom(false);
           setTypingText('Mi fa male la spalla');
         }
         else {
           setModifyWorkoutStep(3);
+          setModifyWorkoutButtonZoom(false);
           setTypingText('Mi fa male la spalla');
         }
       }
-      else if (elapsed < 90000) setStep(17); // Now new exercise
-      else if (elapsed < 99000) {
+      else if (elapsed < 91000) setStep(17); // Now new exercise
+      else if (elapsed < 100000) {
         setStep(18);
-        const analysisElapsed = elapsed - 90000;
-        if (analysisElapsed < 6000) {
+        const analysisElapsed = elapsed - 91000;
+        if (analysisElapsed < 2000) {
+          setPhotoAnalysisScroll(Math.min(1, analysisElapsed / 2000));
+          setPhotoAnalysisZoom(false);
+        } else if (analysisElapsed < 7000) {
+          setPhotoAnalysisScroll(1);
           setPhotoAnalysisZoom(false);
         } else {
+          setPhotoAnalysisScroll(1);
           setPhotoAnalysisZoom(true);
         }
       }
-      else if (elapsed < 102000) setStep(19);
-      else if (elapsed < 105000) setStep(20);
-      else setStep(21);
+      else if (elapsed < 103000) setStep(19);
+      else setStep(20);
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -248,14 +274,14 @@ export default function AppDemoFlow() {
           }
         `}</style>
 
-        <div className="relative" style={{ 
-          aspectRatio: isDesktop ? '4/3' : '9/19.5', 
+        <div className="relative" style={{
+          aspectRatio: isDesktop ? '4/3' : '9/19.5',
           maxHeight: isDesktop ? '490px' : '700px',
           margin: '0 auto'
         }}>
-          <div 
+          <div
             className="absolute bg-white overflow-hidden"
-            style={{ 
+            style={{
               top: isDesktop ? 'calc(3.5% - 3px)' : '0.94%',
               left: '50%',
               width: isDesktop ? '610px' : '95.94%',
@@ -376,7 +402,7 @@ export default function AppDemoFlow() {
                             <line x1="0" y1="15" x2="100" y2="15" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
                             <line x1="0" y1="30" x2="100" y2="30" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
                             <line x1="0" y1="45" x2="100" y2="45" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
-                            
+
                             <motion.path
                               d="M 5,25 L 20,22 L 35,20 L 50,18 L 65,17 L 80,16 L 95,15"
                               fill="none"
@@ -394,7 +420,7 @@ export default function AppDemoFlow() {
                             <circle cx="65" cy="17" r="2" fill="#26847F" />
                             <circle cx="80" cy="16" r="2" fill="#26847F" />
                             <circle cx="95" cy="15" r="2.5" fill="#26847F" />
-                            
+
                             <line x1="0" y1="50" x2="100" y2="50" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3,3" />
                           </svg>
                         </div>
@@ -454,9 +480,9 @@ export default function AppDemoFlow() {
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ 
-                        opacity: dashboardScroll > 0 ? 1 : 0, 
-                        y: dashboardScroll > 0 ? 0 : 20 
+                      animate={{
+                        opacity: dashboardScroll > 0 ? 1 : 0,
+                        y: dashboardScroll > 0 ? 0 : 20
                       }}
                       className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 shadow-md border-2 border-green-200"
                     >
@@ -469,9 +495,9 @@ export default function AppDemoFlow() {
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ 
-                        opacity: dashboardScroll > 0.4 ? 1 : 0, 
-                        y: dashboardScroll > 0.4 ? 0 : 20 
+                      animate={{
+                        opacity: dashboardScroll > 0.4 ? 1 : 0,
+                        y: dashboardScroll > 0.4 ? 0 : 20
                       }}
                       className="bg-white rounded-xl p-4 shadow-md border border-gray-200"
                     >
@@ -484,9 +510,9 @@ export default function AppDemoFlow() {
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ 
-                        opacity: dashboardScroll > 0.7 ? 1 : 0, 
-                        y: dashboardScroll > 0.7 ? 0 : 20 
+                      animate={{
+                        opacity: dashboardScroll > 0.7 ? 1 : 0,
+                        y: dashboardScroll > 0.7 ? 0 : 20
                       }}
                       className="bg-white rounded-xl p-4 shadow-md border border-gray-200"
                     >
@@ -509,11 +535,11 @@ export default function AppDemoFlow() {
                   className={`absolute inset-0 bg-gray-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <motion.button
-                    animate={{ 
+                    animate={{
                       scale: [1, 0.92, 1.02, 0.98, 1],
                       y: [0, 2, -1, 0, 0]
                     }}
-                    transition={{ 
+                    transition={{
                       duration: 0.5,
                       times: [0, 0.3, 0.5, 0.7, 1],
                       ease: "easeOut"
@@ -557,7 +583,7 @@ export default function AppDemoFlow() {
                       style={{ maxHeight: '300px' }}
                     >
                       <motion.div
-                        animate={{ 
+                        animate={{
                           y: dietStep >= 2 ? -120 : 0
                         }}
                         transition={{ duration: 2, ease: "easeInOut" }}
@@ -567,8 +593,8 @@ export default function AppDemoFlow() {
                           <motion.div
                             key={diet}
                             className={`p-3 rounded-lg border-2 transition-all ${
-                              dietStep >= 3 && i === 4 
-                                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] scale-105' 
+                              dietStep >= 3 && i === 4
+                                ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] scale-105'
                                 : 'border-gray-200 bg-white'
                             }`}
                           >
@@ -611,8 +637,8 @@ export default function AppDemoFlow() {
                         <div
                           key={day}
                           className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                            i === 0 
-                              ? 'bg-[var(--brand-primary)] text-white' 
+                            i === 0
+                              ? 'bg-[var(--brand-primary)] text-white'
                               : 'bg-white text-gray-500 border border-gray-200'
                           }`}
                         >
@@ -630,7 +656,7 @@ export default function AppDemoFlow() {
                       className="bg-white rounded-lg p-3 shadow-md border-2 border-[var(--brand-primary)]"
                     >
                       <div className="flex items-center gap-2">
-                        <img 
+                        <img
                           src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=200&h=200&fit=crop"
                           alt="Porridge"
                           className="w-12 h-12 rounded-lg object-cover"
@@ -642,7 +668,7 @@ export default function AppDemoFlow() {
                         </div>
                       </div>
                     </motion.div>
-                    
+
                     <motion.div
                       initial={{ scale: 0.9, opacity: 0 }}
                       animate={{ scale: 1, opacity: 1 }}
@@ -650,7 +676,7 @@ export default function AppDemoFlow() {
                       className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
                     >
                       <div className="flex items-center gap-2">
-                        <img 
+                        <img
                           src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop"
                           alt="Insalata"
                           className="w-12 h-12 rounded-lg object-cover"
@@ -670,7 +696,7 @@ export default function AppDemoFlow() {
                       className="bg-white rounded-lg p-3 shadow-md border-2 border-gray-200"
                     >
                       <div className="flex items-center gap-2">
-                        <img 
+                        <img
                           src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&h=200&fit=crop"
                           alt="Salmone"
                           className="w-12 h-12 rounded-lg object-cover"
@@ -697,7 +723,7 @@ export default function AppDemoFlow() {
                   {mealPlanStep >= 1 && (
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ 
+                      animate={{
                         scale: mealPlanStep === 0 ? 0.8 : 1,
                         opacity: mealPlanStep === 0 ? 0 : 1
                       }}
@@ -706,7 +732,7 @@ export default function AppDemoFlow() {
                       style={{ backdropFilter: 'blur(4px)', zIndex: 100 }}
                     >
                       <div className="bg-white rounded-2xl w-full max-w-md overflow-hidden shadow-2xl max-h-[90%] overflow-y-auto" ref={popupRef}>
-                        <img 
+                        <img
                           src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=600&h=400&fit=crop"
                           alt="Porridge Proteico"
                           className="w-full h-40 object-cover"
@@ -749,11 +775,11 @@ export default function AppDemoFlow() {
                               </div>
 
                               <motion.div
-                                animate={{ 
+                                animate={{
                                   scale: substituteStep >= 1 ? 1.08 : 1,
                                   borderColor: substituteStep === 2 ? ['#26847F', '#10b981', '#26847F'] : (substituteStep >= 1 ? '#26847F' : '#e5e7eb')
                                 }}
-                                transition={{ 
+                                transition={{
                                   scale: { duration: 0.5 },
                                   borderColor: { duration: 0.3 }
                                 }}
@@ -771,12 +797,12 @@ export default function AppDemoFlow() {
                                       <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
                                       <span className={`text-xs ${substituteStep >= 1 ? 'font-semibold text-[var(--brand-primary)]' : ''}`}>Avocado - 1x</span>
                                     </div>
-                                    <motion.button 
+                                    <motion.button
                                       animate={substituteStep === 2 ? { scale: [1, 0.85, 1] } : {}}
                                       transition={{ duration: 0.3 }}
                                       className={`text-xs px-3 py-1 rounded-full font-semibold ${
-                                        substituteStep >= 1 
-                                          ? 'bg-[var(--brand-primary)] text-white' 
+                                        substituteStep >= 1
+                                          ? 'bg-[var(--brand-primary)] text-white'
                                           : 'text-gray-400 border border-gray-300'
                                       }`}
                                     >
@@ -873,10 +899,10 @@ export default function AppDemoFlow() {
                         animate={{ x: 0, opacity: 1 }}
                         transition={{ delay: i * 0.1 }}
                         className={`flex items-center gap-2 bg-white p-3 rounded-lg shadow-sm ${
-                          (shoppingListStep === 1 && i === 0) || 
+                          (shoppingListStep === 1 && i === 0) ||
                           (shoppingListStep === 2 && (i === 0 || i === 1)) ||
-                          (shoppingListStep >= 3 && i === 2) 
-                            ? 'border-2 border-[var(--brand-primary)]' 
+                          (shoppingListStep >= 3 && i === 2)
+                            ? 'border-2 border-[var(--brand-primary)]'
                             : ''
                         }`}
                       >
@@ -884,31 +910,31 @@ export default function AppDemoFlow() {
                           animate={
                             (shoppingListStep >= 1 && i === 0) ||
                             (shoppingListStep >= 2 && i === 1)
-                              ? { scale: [1, 1.2, 1] } 
+                              ? { scale: [1, 1.2, 1] }
                               : {}
                           }
                           transition={{ duration: 0.3 }}
                           className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
                             (shoppingListStep >= 1 && i === 0) ||
                             (shoppingListStep >= 2 && i === 1)
-                              ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]' 
+                              ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]'
                               : 'border-gray-300'
                           }`}
                         >
                           {((shoppingListStep >= 1 && i === 0) ||
-                            (shoppingListStep >= 2 && i === 1)) && 
+                            (shoppingListStep >= 2 && i === 1)) &&
                             <Check className="w-3 h-3 text-white" />
                           }
                         </motion.div>
                         <span className={`flex-1 text-xs ${
                           (shoppingListStep >= 1 && i === 0) ||
                           (shoppingListStep >= 2 && i === 1)
-                            ? 'line-through text-gray-400' 
+                            ? 'line-through text-gray-400'
                             : 'text-gray-700'
                         }`}>
                           {item}
                         </span>
-                        
+
                         {shoppingListStep >= 3 && i === 2 && (
                           <motion.button
                             initial={{ scale: 0 }}
@@ -931,19 +957,19 @@ export default function AppDemoFlow() {
                       className="absolute inset-0 bg-white flex flex-col items-center justify-center"
                     >
                       <div className="absolute inset-0 flex items-center justify-center opacity-20">
-                        <img 
+                        <img
                           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/4eccf5fb3_IMG_8711.jpg"
                           alt="Bananas"
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      
+
                       <motion.div
                         animate={{ scale: [1, 1.1, 1] }}
                         transition={{ duration: 1, repeat: Infinity }}
                         className="relative w-48 h-48 border-4 border-[var(--brand-primary)] rounded-2xl z-10 bg-white/50 backdrop-blur-sm overflow-hidden"
                       >
-                        <img 
+                        <img
                           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/4eccf5fb3_IMG_8711.jpg"
                           alt="Bananas"
                           className="w-full h-full object-cover"
@@ -1065,10 +1091,10 @@ export default function AppDemoFlow() {
                             ✅
                           </motion.div>
                         </div>
-                        
+
                         <h3 className="text-xl font-black text-center text-gray-900 mb-2">Pasto Aggiornato!</h3>
                         <p className="text-sm text-center text-gray-600 mb-4">Porridge Proteico con Banana</p>
-                        
+
                         <motion.div
                           animate={{ borderColor: ['#10b981', '#26847F', '#10b981'] }}
                           transition={{ duration: 1.5, repeat: 2 }}
@@ -1124,7 +1150,7 @@ export default function AppDemoFlow() {
                             </div>
                           </div>
                         </motion.div>
-                        
+
                         <div className="bg-green-50 border-2 border-green-200 rounded-xl p-3 flex items-center justify-center gap-2">
                           <Check className="w-4 h-4 text-green-600" />
                           <span className="text-xs font-semibold text-green-700">Sostituzione completata con successo</span>
@@ -1146,8 +1172,8 @@ export default function AppDemoFlow() {
                             <div
                               key={day}
                               className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${
-                                i === 0 
-                                  ? 'bg-[var(--brand-primary)] text-white' 
+                                i === 0
+                                  ? 'bg-[var(--brand-primary)] text-white'
                                   : 'bg-white text-gray-500 border border-gray-200'
                               }`}
                             >
@@ -1159,7 +1185,7 @@ export default function AppDemoFlow() {
 
                       <div className="space-y-2">
                         <motion.div
-                          animate={{ 
+                          animate={{
                             borderColor: mealCheckStep >= 2 ? '#10b981' : '#26847F',
                             scale: mealCheckStep === 2 ? [1, 1.05, 1] : 1
                           }}
@@ -1176,7 +1202,7 @@ export default function AppDemoFlow() {
                                 <Check className="w-4 h-4 text-white" />
                               </motion.div>
                             )}
-                            <img 
+                            <img
                               src="https://images.unsplash.com/photo-1525351326368-efbb5cb6814d?w=200&h=200&fit=crop"
                               alt="Porridge"
                               className="w-12 h-12 rounded-lg object-cover"
@@ -1187,7 +1213,7 @@ export default function AppDemoFlow() {
                             </div>
                           </div>
                         </motion.div>
-                        
+
                         {lunchScanStep >= 1 && (
                           <motion.div
                             initial={{ scale: 0.95, opacity: 0 }}
@@ -1195,7 +1221,7 @@ export default function AppDemoFlow() {
                             className="bg-white rounded-lg p-3 shadow-md border-2 border-[var(--brand-primary)]"
                           >
                             <div className="flex items-center gap-2">
-                              <img 
+                              <img
                                 src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop"
                                 alt="Insalata"
                                 className="w-12 h-12 rounded-lg object-cover"
@@ -1222,7 +1248,7 @@ export default function AppDemoFlow() {
                             className="bg-white rounded-lg p-3 shadow-sm border-2 border-gray-200"
                           >
                             <div className="flex items-center gap-2">
-                              <img 
+                              <img
                                 src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=200&h=200&fit=crop"
                                 alt="Insalata"
                                 className="w-12 h-12 rounded-lg object-cover"
@@ -1242,7 +1268,7 @@ export default function AppDemoFlow() {
                           className="bg-white rounded-lg p-3 shadow-sm border-2 border-gray-200"
                         >
                           <div className="flex items-center gap-2">
-                            <img 
+                            <img
                               src="https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=200&h=200&fit=crop"
                               alt="Salmone"
                               className="w-12 h-12 rounded-lg object-cover"
@@ -1268,19 +1294,19 @@ export default function AppDemoFlow() {
                   className="absolute inset-0 bg-white flex flex-col items-center justify-center"
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-30">
-                    <img 
+                    <img
                       src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=800&h=800&fit=crop"
                       alt="Insalata Caesar"
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  
+
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 1, repeat: Infinity }}
                     className="relative w-56 h-56 border-4 border-[var(--brand-primary)] rounded-2xl z-10 bg-white/50 backdrop-blur-sm overflow-hidden"
                   >
-                    <img 
+                    <img
                       src="https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=600&h=600&fit=crop"
                       alt="Insalata Caesar"
                       className="w-full h-full object-cover"
@@ -1421,21 +1447,21 @@ export default function AppDemoFlow() {
                     <h3 className="text-base font-bold mb-3">Quali giorni vuoi allenarti?</h3>
                     <div className="grid grid-cols-1 gap-1.5 max-w-xs mx-auto">
                       {['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'].map((day, idx) => {
-                        const isSelected = (workoutDaySelection >= 1 && idx === 0) || 
-                                          (workoutDaySelection >= 2 && idx === 2) || 
+                        const isSelected = (workoutDaySelection >= 1 && idx === 0) ||
+                                          (workoutDaySelection >= 2 && idx === 2) ||
                                           (workoutDaySelection >= 3 && idx === 4);
                         return (
                           <motion.button
                             key={day}
                             initial={{ opacity: 0, x: -20 }}
-                            animate={{ 
-                              opacity: 1, 
+                            animate={{
+                              opacity: 1,
                               x: 0,
-                              scale: (workoutDaySelection === 1 && idx === 0) || 
-                                     (workoutDaySelection === 2 && idx === 2) || 
+                              scale: (workoutDaySelection === 1 && idx === 0) ||
+                                     (workoutDaySelection === 2 && idx === 2) ||
                                      (workoutDaySelection === 3 && idx === 4) ? [1, 1.05, 1] : 1
                             }}
-                            transition={{ 
+                            transition={{
                               delay: idx * 0.05,
                               scale: { duration: 0.3 }
                             }}
@@ -1466,7 +1492,7 @@ export default function AppDemoFlow() {
                     <h3 className="text-base font-bold mb-3">Dove vuoi allenarti?</h3>
                     <div className="space-y-2 max-w-xs mx-auto">
                       <motion.button
-                        animate={{ 
+                        animate={{
                           backgroundColor: workoutLocationSelected ? '#26847F' : '#ffffff',
                           color: workoutLocationSelected ? '#ffffff' : '#374151',
                           scale: workoutLocationSelected ? [1, 1.05, 1] : 1
@@ -1502,10 +1528,10 @@ export default function AppDemoFlow() {
                     <div className="flex items-center justify-between mb-3">
                       <h3 className="text-base font-bold">Allenamento Lunedì</h3>
                       <motion.button
-                        animate={{ 
-                          scale: modifyWorkoutStep >= 1 ? [1, 1.2, 1.1] : 1
+                        animate={{
+                          scale: modifyWorkoutButtonZoom ? 1.3 : (modifyWorkoutStep >= 1 ? [1, 1.2, 1.1] : 1)
                         }}
-                        transition={{ duration: 0.8 }}
+                        transition={{ duration: modifyWorkoutButtonZoom ? 0.5 : 0.8 }}
                         className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg text-xs font-semibold shadow-lg"
                       >
                         Modifica Sessione
@@ -1633,20 +1659,21 @@ export default function AppDemoFlow() {
                   className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <motion.div
-                    animate={{ 
+                    ref={analysisRef}
+                    animate={{
                       scale: photoAnalysisZoom ? 0.85 : 1,
                       opacity: photoAnalysisZoom ? 0.3 : 1,
                       filter: photoAnalysisZoom ? 'blur(4px)' : 'blur(0px)'
                     }}
                     transition={{ duration: 0.5 }}
-                    className="space-y-3"
+                    className="space-y-3 overflow-y-auto h-full"
                   >
                     <h3 className="text-sm font-bold text-center mb-2">Analisi Progressi AI</h3>
-                    
+
                     <div className="grid grid-cols-2 gap-2">
                       <div className="bg-white rounded-xl p-2 shadow-md border border-red-200">
                         <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">Prima - 12 sett. fa</div>
-                        <img 
+                        <img
                           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
                           alt="Before"
                           className="w-full aspect-square object-cover rounded-lg mb-2"
@@ -1664,10 +1691,10 @@ export default function AppDemoFlow() {
                           </div>
                         </div>
                       </div>
-                      
+
                       <div className="bg-white rounded-xl p-2 shadow-md border-2 border-green-500">
                         <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">Dopo - Oggi</div>
-                        <img 
+                        <img
                           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
                           alt="After"
                           className="w-full aspect-square object-cover rounded-lg mb-2"
@@ -1714,7 +1741,7 @@ export default function AppDemoFlow() {
 
                     <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3 border border-amber-200">
                       <h4 className="text-xs font-bold text-gray-900 mb-2">💡 Consigli Personal Trainer AI</h4>
-                      
+
                       <div className="mb-2">
                         <div className="text-[9px] font-bold text-amber-700 mb-1">🍽️ Nutrizione</div>
                         <div className="space-y-1">
@@ -1741,7 +1768,7 @@ export default function AppDemoFlow() {
                     </div>
 
                     <motion.button
-                      animate={{ 
+                      animate={{
                         scale: photoAnalysisZoom ? 1.3 : 1,
                         y: photoAnalysisZoom ? -20 : 0
                       }}
@@ -1774,7 +1801,7 @@ export default function AppDemoFlow() {
                         <line x1="10" y1="30" x2="95" y2="30" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
                         <line x1="10" y1="45" x2="95" y2="45" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
                         <line x1="10" y1="60" x2="95" y2="60" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
-                        
+
                         <motion.path
                           d="M 10,20 L 20,25 L 30,32 L 40,38 L 50,42 L 60,48 L 70,52 L 80,56 L 90,60"
                           fill="none"
@@ -1793,14 +1820,14 @@ export default function AppDemoFlow() {
                         <circle cx="60" cy="48" r="2.5" fill="#26847F" />
                         <circle cx="70" cy="52" r="2.5" fill="#26847F" />
                         <circle cx="80" cy="56" r="2.5" fill="#26847F" />
-                        <motion.circle 
+                        <motion.circle
                           cx="90" cy="60" r="3.5" fill="#10b981"
                           animate={{ scale: [1, 1.3, 1] }}
                           transition={{ duration: 1, repeat: Infinity }}
                         />
-                        
+
                         <line x1="10" y1="65" x2="95" y2="65" stroke="#ef4444" strokeWidth="1.5" strokeDasharray="3,3" />
-                        
+
                         <text x="5" y="23" fontSize="5" fill="#26847F" fontWeight="bold">70kg</text>
                         <text x="85" y="67" fontSize="5" fill="#10b981" fontWeight="bold">65kg</text>
                       </svg>
@@ -1829,6 +1856,7 @@ export default function AppDemoFlow() {
                   key="goal-reached"
                   initial={{ scale: 0.8, opacity: 0 }}
                   animate={{ scale: 1, opacity: 1 }}
+                  exit={{ opacity: 0 }}
                   className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <motion.div
@@ -1853,8 +1881,8 @@ export default function AppDemoFlow() {
           </div>
 
           {isDesktop ? (
-            <svg 
-              viewBox="0 0 820 615" 
+            <svg
+              viewBox="0 0 820 615"
               className="absolute inset-0 w-full h-full pointer-events-none"
               style={{ left: '-3px', zIndex: 2 }}
             >
@@ -1880,10 +1908,10 @@ export default function AppDemoFlow() {
                   <rect x="29" y="18" width="762" height="579" rx="18" ry="18" fill="black"/>
                 </mask>
               </defs>
-              
-              <rect 
-                x="2" y="2" 
-                width="816" height="611" 
+
+              <rect
+                x="2" y="2"
+                width="816" height="611"
                 rx="32" ry="32"
                 fill="url(#frameGradient)"
                 stroke="#0a0a0a"
@@ -1891,20 +1919,20 @@ export default function AppDemoFlow() {
                 filter="url(#frameShadow)"
                 mask="url(#screenMask)"
               />
-              
+
               <circle cx="410" cy="9" r="3" fill="#0a0a0a" opacity="0.9"/>
-              
-              <rect 
-                x="29" y="18" 
-                width="762" height="2" 
+
+              <rect
+                x="29" y="18"
+                width="762" height="2"
                 rx="1" ry="1"
                 fill="white"
                 opacity="0.1"
               />
             </svg>
           ) : (
-            <svg 
-              viewBox="0 0 393 852" 
+            <svg
+              viewBox="0 0 393 852"
               className="absolute inset-0 w-full h-full pointer-events-none"
               style={{ zIndex: 2 }}
             >
@@ -1921,38 +1949,38 @@ export default function AppDemoFlow() {
                   </feMerge>
                 </filter>
               </defs>
-              
-              <rect 
-                x="5" y="5" 
-                width="383" height="842" 
+
+              <rect
+                x="5" y="5"
+                width="383" height="842"
                 rx="55" ry="55"
                 fill="none"
                 stroke="#000000"
                 strokeWidth="4"
                 filter="url(#phoneShadow)"
               />
-              
-              <rect 
-                x="8" y="8" 
-                width="377" height="836" 
+
+              <rect
+                x="8" y="8"
+                width="377" height="836"
                 rx="52" ry="52"
                 fill="none"
                 stroke="#000000"
                 strokeWidth="1"
               />
-              
-              <rect 
-                x="136" y="26" 
-                width="121" height="37" 
+
+              <rect
+                x="136" y="26"
+                width="121" height="37"
                 rx="18.5" ry="18.5"
                 fill="#000000"
               />
-              
+
               <rect x="0" y="175" width="4" height="35" rx="2" fill="#000000"/>
               <rect x="0" y="235" width="4" height="58" rx="2" fill="#000000"/>
               <rect x="0" y="310" width="4" height="58" rx="2" fill="#000000"/>
               <rect x="389" y="240" width="4" height="88" rx="2" fill="#000000"/>
-              
+
               <rect x="185" y="842" width="23" height="5" rx="2.5" fill="#000000"/>
             </svg>
           )}
