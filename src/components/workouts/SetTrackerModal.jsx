@@ -16,11 +16,14 @@ export default function SetTrackerModal({ isOpen, onClose, exercise, onComplete 
         return prev.filter(s => s !== setNumber);
       } else {
         const newCompleted = [...prev, setNumber];
+        
+        // Chiudi immediatamente il modal
+        onClose();
+        
         // Controlla se tutti i set sono completati
         if (newCompleted.length === totalSets) {
           setTimeout(() => {
             onComplete();
-            onClose();
           }, 300);
         }
         return newCompleted;
@@ -80,17 +83,6 @@ export default function SetTrackerModal({ isOpen, onClose, exercise, onComplete 
               );
             })}
           </div>
-
-          {completedSets.length === totalSets && (
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="bg-green-50 border-2 border-green-500 rounded-xl p-4 text-center"
-            >
-              <div className="text-3xl mb-2">🎉</div>
-              <p className="font-bold text-green-700">Esercizio completato!</p>
-            </motion.div>
-          )}
         </div>
 
         <Button
