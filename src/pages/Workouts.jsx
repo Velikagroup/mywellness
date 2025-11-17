@@ -49,7 +49,13 @@ export default function Workouts() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   
-  const [selectedDay, setSelectedDay] = useState('monday');
+  // ✅ Imposta il giorno corrente come default
+  const getCurrentDay = () => {
+    const days = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
+    return days[new Date().getDay()];
+  };
+  
+  const [selectedDay, setSelectedDay] = useState(getCurrentDay());
   const [isGenerating, setIsGenerating] = useState(false);
   const [generationProgress, setGenerationProgress] = useState(0);
   const [generationStatus, setGenerationStatus] = useState('');
