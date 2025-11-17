@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle, Package } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate } => "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess, PLANS, UpgradePrompt, getGenerationLimit } from '@/components/utils/subscriptionPlans';
 import { Progress } from "@/components/ui/progress";
@@ -1127,8 +1127,7 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                 disabled={generationLimitReached && remainingGenerations === 0}
               >
                 <BrainCircuit className="w-5 h-5" />
-                <span className="hidden sm:inline">Rigenera Piano con AI</span>
-                <span className="sm:hidden">Rigenera</span>
+                <span>Rigenera Piano con AI</span>
                 {generationLimitReached && remainingGenerations === 0 && (
                   <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
                 )}
@@ -1139,16 +1138,14 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                   className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial"
                 >
                   <Package className="w-5 h-5" />
-                  <span className="hidden sm:inline">Dispensa</span>
-                  <span className="sm:hidden">Disp.</span>
+                  <span>Dispensa</span>
                 </Button>
                 <Button
                   onClick={() => setShowShoppingList(true)}
                   className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  <span className="hidden sm:inline">Lista Spesa</span>
-                  <span className="sm:hidden">Lista</span>
+                  <span>Lista Spesa</span>
                 </Button>
               </div>
             </div>
