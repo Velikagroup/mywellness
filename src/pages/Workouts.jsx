@@ -1,10 +1,9 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Settings, Database, Clock, Zap, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, CheckCircle2, AlertCircle, Crown } from "lucide-react";
+import { Dumbbell, Database, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, AlertCircle, Crown } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import ExerciseCard from "../components/workouts/ExerciseCard";
 import { createPageUrl } from "@/utils";
@@ -19,7 +18,6 @@ import EquipmentStep from "../components/quiz/EquipmentStep";
 import WorkoutDaysStep from "../components/quiz/WorkoutDaysStep";
 import SessionDurationStep from "../components/quiz/SessionDurationStep";
 import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
-import WorkoutLogger from "../components/workouts/WorkoutLogger";
 
 import { hasFeatureAccess, getGenerationLimit, PLANS } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from '../components/meals/UpgradeModal';
@@ -70,7 +68,6 @@ export default function Workouts() {
   const [isCompensating, setIsCompensating] = useState(false);
   const [cheatPromptShown, setCheatPromptShown] = useState(false);
 
-  const [logWorkout, setLogWorkout] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -524,7 +521,6 @@ CRITICAL REQUIREMENTS:
             if (!allExerciseNamesFromDB.has(exercise.name.toLowerCase())) {
               console.warn(`⚠️ Esercizio "${exercise.name}" non trovato nel database o non è tra quelli disponibili. L'AI ha allucinazioni?`);
               invalidExercisesCount++;
-              // Optionally: throw an error here to force regeneration or remove the exercise
             }
           }
         }
@@ -532,7 +528,6 @@ CRITICAL REQUIREMENTS:
 
       if (invalidExercisesCount > 0) {
         console.warn(`⚠️ L'AI ha suggerito ${invalidExercisesCount} esercizi che non erano nel database o non erano disponibili. Si consiglia di rigenerare il piano.`);
-        // Consider throwing an error or filtering out invalid exercises here.
       } else {
         console.log(`✅ Tutti gli esercizi provengono dal database!`);
       }
@@ -571,7 +566,6 @@ CRITICAL REQUIREMENTS:
         subscription_plan: trainingData.subscription_plan
       });
       
-      // Invalidate the query to refetch workout plans
       queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
       
       // Aggiorna contatore generazioni
@@ -604,7 +598,6 @@ CRITICAL REQUIREMENTS:
     setAdjustmentResult(null);
     
     try {
-      // Filtra esercizi disponibili per la sostituzione (prioritizzando quelli primari per l'obiettivo)
       const availableExercises = getAvailableExercises();
       const primaryExercises = availableExercises.filter(e => !e._is_secondary_for_goal);
       const exerciseNames = primaryExercises.map(e => `"${e.name}"`).join(', ');
@@ -672,7 +665,6 @@ Your Task:
         return;
       }
 
-      // Filtra esercizi disponibili
       const availableExercises = getAvailableExercises();
       const exerciseNames = availableExercises.map(e => `"${e.name}"`).join(', ');
 
@@ -787,17 +779,6 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
       console.error("Error updating meal logs:", error);
     }
     setShowCheatCompensation(false);
-  };
-
-  const handleLogWorkout = (workout) => {
-    setLogWorkout(workout);
-  };
-
-  const handleLogSaved = async () => {
-    await queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
-    setLogWorkout(null);
-    setAdjustedWorkout(null);
-    setCompletedExercises({}); // Reset completed exercises after logging
   };
 
   // Calcola il numero di esercizi nella scheda settimanale
@@ -1170,8 +1151,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                               </p>
                             </div>
                             
-                            {/* Pulsanti Desktop - nascosti su mobile, IN RIGA */}
-                            <div className="hidden md:flex md:flex-row gap-2">
+                            {/* Pulsante Desktop - nascosto su mobile */}
+                            <div className="hidden md:block">
                               {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') ? (
                                 <Button 
                                   variant="secondary" 
@@ -1238,20 +1219,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   </DialogContent>
                                 </Dialog>
                               )}
-                              
-                              <Button
-                                onClick={() => handleLogWorkout(workoutForSelectedDay)}
-                                size="sm"
-                                className="bg-[#26847F] hover:bg-[#1f6b66] text-white whitespace-nowrap shadow-[0_4px_16px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_20px_rgba(38,132,127,0.4)]"
-                              >
-                                <CheckCircle2 className="w-4 h-4 mr-2" />
-                                Registra Allenamento
-                              </Button>
                             </div>
                           </div>
                         </CardHeader>
                         <CardContent className="p-4 sm:p-6 space-y-6">
-                          {/* Pulsanti Mobile - nascosti su desktop */}
+                          {/* Pulsante Mobile - nascosto su desktop */}
                           <div className="flex md:hidden flex-col gap-3 pb-4 border-b border-gray-200/30">
                             {!hasFeatureAccess(trainingData.subscription_plan, 'workout_modification') ? (
                               <Button 
@@ -1317,14 +1289,6 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                 </DialogContent>
                               </Dialog>
                             )}
-                            
-                            <Button
-                              onClick={() => handleLogWorkout(workoutForSelectedDay)}
-                              className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-[0_4px_16px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_20px_rgba(38,132,127,0.4)]"
-                            >
-                              <CheckCircle2 className="w-4 h-4 mr-2" />
-                              Registra Allenamento
-                            </Button>
                           </div>
 
                           {adjustedWorkout && (
@@ -1424,15 +1388,6 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           }
         </div>
       </div>
-
-      {logWorkout && (
-        <WorkoutLogger
-          workout={logWorkout}
-          user={{ id: trainingData.user_id }}
-          onClose={() => setLogWorkout(null)}
-          onLogSaved={handleLogSaved}
-        />
-      )}
       
       {showUpgradeModal && (
         <UpgradeModal 
