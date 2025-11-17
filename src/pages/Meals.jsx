@@ -4,7 +4,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle } from "lucide-react";
+import { Utensils, Database, BrainCircuit, CheckCircle, ImageIcon, ShoppingCart, Plus, Check, RotateCcw, Loader2, Activity, AlertCircle, Package } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess, PLANS, UpgradePrompt, getGenerationLimit } from '@/components/utils/subscriptionPlans';
@@ -17,6 +17,7 @@ import ShoppingListModal from "../components/meals/ShoppingListModal";
 import AIFeedbackBox from '../components/meals/AIFeedbackBox';
 import UpgradeModal from '../components/meals/UpgradeModal';
 import CheatMealStep from '../components/meals/CheatMealStep';
+import PantryModal from '../components/meals/PantryModal';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
@@ -205,6 +206,7 @@ export default function MealsPage() {
   const [generationPrefs, setGenerationPrefs] = useState(null);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [showShoppingList, setShowShoppingList] = useState(false);
+  const [showPantry, setShowPantry] = useState(false);
   const [addedDays, setAddedDays] = useState([]);
   const [regeneratingMealId, setRegeneratingMealId] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
@@ -348,6 +350,7 @@ export default function MealsPage() {
         intermittent_fasting: currentUser.intermittent_fasting || false,
         if_skip_meal: currentUser.if_skip_meal || null,
         if_meal_structure: currentUser.if_meal_structure || null,
+        cooking_time_preference: currentUser.cooking_time_preference || 'moderate'
       });
       
       if (currentUser.intermittent_fasting && currentUser.if_meal_structure) {
@@ -506,11 +509,18 @@ export default function MealsPage() {
       console.log(`🎯 Target rigenerazione: ${targetCalories} kcal`);
 
       const dietRules = getDietRules(nutritionData.diet_type || 'mediterranean');
+      
+      const cookingTimeContext = generationPrefs?.cooking_time_preference === 'quick' 
+        ? 'Preferisci ricette VELOCI (10-20 minuti). Scegli preparazioni semplici e rapide.'
+        : generationPrefs?.cooking_time_preference === 'relaxed'
+        ? 'Puoi dedicare PIÙ TEMPO alla cucina (30+ minuti). Puoi includere ricette più elaborate.'
+        : 'Tempo moderato (20-30 minuti). Bilanciamento tra velocità e qualità.';
 
       const singleMealPrompt = `You are an expert AI nutritionist. Create ONE meal in ITALIAN. 
 Target: ${targetCalories} kcal. 
 Diet: ${nutritionData.diet_type}. 
 Allowed: ${dietRules.allowed}. 
+${cookingTimeContext}
 Use verified nutritional data. All names and units in Italian.`;
 
       const llmResponse = await base44.integrations.Core.InvokeLLM({
@@ -543,20 +553,41 @@ Use verified nutritional data. All names and units in Italian.`;
         }
       });
 
+      // ✅ MATCH con dispensa utente
+      const userIngredients = await base44.entities.UserIngredient.filter({ user_id: user.id });
+      
       let validIngredients = llmResponse.ingredients.filter(ing => 
         ing.name && ing.quantity != null && ing.unit && ing.calories != null
       );
 
-      if (validIngredients.length === 0) {
-        throw new Error('Nessun ingrediente valido generato');
-      }
-
-      validIngredients = validIngredients.map(ing => ({
-        ...ing,
-        protein: Math.round(ing.protein * 10) / 10,
-        carbs: Math.round(ing.carbs * 10) / 10,
-        fat: Math.round(ing.fat * 10) / 10
-      }));
+      // Sostituisci con ingredienti dalla dispensa se disponibili
+      validIngredients = validIngredients.map(ing => {
+        const pantryMatch = userIngredients.find(ui => 
+          ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
+          ing.name.toLowerCase().includes(ui.name.toLowerCase())
+        );
+        
+        if (pantryMatch) {
+          // Assuming ing.quantity is in grams or a unit that scales linearly for 100g metrics
+          const gramsUsed = ing.quantity;
+          return {
+            name: pantryMatch.name, // Use pantry's name for consistency
+            quantity: gramsUsed,
+            unit: pantryMatch.unit, // Use pantry's unit (or consider LLM's unit if more appropriate for recipe steps)
+            calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
+            protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
+            carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
+            fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
+          };
+        }
+        
+        return {
+          ...ing,
+          protein: Math.round(ing.protein * 10) / 10,
+          carbs: Math.round(ing.carbs * 10) / 10,
+          fat: Math.round(ing.fat * 10) / 10
+        };
+      });
 
       try {
         await base44.functions.invoke('validateAndSaveIngredient', {
@@ -679,6 +710,10 @@ Use verified nutritional data. All names and units in Italian.`;
 
       updateProgress(10, "Analisi profilo metabolico...");
 
+      // Carica ingredienti dispensa
+      const userIngredients = await base44.entities.UserIngredient.filter({ user_id: user.id });
+      console.log('📦 Ingredienti dispensa caricati:', userIngredients.length);
+
       const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
       const mealStructure = allMealTypes.slice(0, mealsPerDay);
       
@@ -731,6 +766,12 @@ Use verified nutritional data. All names and units in Italian.`;
       console.log('📊 Config:', { mealsPerDay, dailyCalories, daysToGenerate: daysToGenerate.length });
 
       const dietRules = getDietRules(generationPrefs.diet_type);
+      
+      const cookingTimeContext = generationPrefs.cooking_time_preference === 'quick' 
+        ? 'User prefers QUICK recipes (10-20 minutes). Choose simple and fast preparations.'
+        : generationPrefs.cooking_time_preference === 'relaxed'
+        ? 'User can dedicate MORE TIME to cooking (30+ minutes). Can include more elaborate recipes.'
+        : 'Moderate time (20-30 minutes). Balance between speed and quality.';
 
       updateProgress(15, "Rimozione piani precedenti...");
       for (const plan of mealPlans) {
@@ -742,6 +783,7 @@ Use verified nutritional data. All names and units in Italian.`;
         intermittent_fasting: generationPrefs.intermittent_fasting,
         if_skip_meal: generationPrefs.if_skip_meal,
         if_meal_structure: generationPrefs.if_meal_structure,
+        cooking_time_preference: generationPrefs.cooking_time_preference,
         cheat_meals_config: cheatMeals
       });
 
@@ -776,6 +818,7 @@ CRITICAL INSTRUCTIONS:
 - Include foods from user's favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, hamburger, dolci'}
 - Make it DELICIOUS and SATISFYING
 - Still provide accurate nutritional data (be realistic)
+- ${cookingTimeContext}
 - IMPORTANT: Use ITALIAN names for all ingredients, meals, and units (e.g., "g", "ml", "cucchiaio")
 
 Examples of cheat meals: 
@@ -792,7 +835,7 @@ User profile: ${nutritionData.age} anni, ${nutritionData.gender}, Goal: ${nutrit
 Task: Create a satisfying, realistic cheat meal with precise nutritional values. All content in ITALIAN.`;
           } else {
             // ✅ PROMPT NORMALE
-            mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. Use verified data.`;
+            mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. ${cookingTimeContext} Use verified data.`;
           }
 
           const llmResponse = await base44.integrations.Core.InvokeLLM({
@@ -830,12 +873,33 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
             continue;
           }
 
-          let roundedIngredients = llmResponse.ingredients.map(ing => ({
-            ...ing,
-            protein: Math.round((ing.protein || 0) * 10) / 10,
-            carbs: Math.round((ing.carbs || 0) * 10) / 10,
-            fat: Math.round((ing.fat || 0) * 10) / 10
-          }));
+          // ✅ MATCH ingredienti con dispensa
+          let roundedIngredients = llmResponse.ingredients.map(ing => {
+            const pantryMatch = userIngredients.find(ui => 
+              ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
+              ing.name.toLowerCase().includes(ui.name.toLowerCase())
+            );
+            
+            if (pantryMatch) {
+              const gramsUsed = ing.quantity;
+              return {
+                name: pantryMatch.name,
+                quantity: gramsUsed,
+                unit: pantryMatch.unit,
+                calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
+                protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
+                carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
+                fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
+              };
+            }
+            
+            return {
+              ...ing,
+              protein: Math.round((ing.protein || 0) * 10) / 10,
+              carbs: Math.round((ing.carbs || 0) * 10) / 10,
+              fat: Math.round((ing.fat || 0) * 10) / 10
+            };
+          });
 
           let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
           const diff = targetCals - calculatedCalories;
@@ -1058,6 +1122,14 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
             </div>
             <div className="flex gap-2 w-full lg:w-auto">
               <Button
+                onClick={() => setShowPantry(true)}
+                className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+              >
+                <Package className="w-4 h-4 md:w-5 md:h-5" />
+                <span className="hidden sm:inline">Dispensa</span>
+                <span className="sm:hidden">Disp.</span>
+              </Button>
+              <Button
                 onClick={() => setShowShoppingList(true)}
                 className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
               >
@@ -1142,6 +1214,31 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                     <p className="text-xs text-gray-600 mt-3 text-center">
                       💡 Target giornaliero: <strong>{nutritionData?.daily_calories} kcal</strong> su {mealsPerDay} {mealsPerDay === 1 ? 'pasto' : 'pasti'}
                     </p>
+                  </div>
+
+                  <div className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200/50">
+                    <Label className="text-sm font-semibold text-gray-800 mb-3 block">⏱️ Tempo da dedicare alla cucina</Label>
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                      {[
+                        { id: 'quick', label: 'Veloce', emoji: '⚡', desc: '10-20 min' },
+                        { id: 'moderate', label: 'Moderato', emoji: '☕', desc: '20-30 min' },
+                        { id: 'relaxed', label: 'Tranquillo', emoji: '👨‍🍳', desc: '30+ min' }
+                      ].map((option) => (
+                        <button
+                          key={option.id}
+                          onClick={() => handlePrefsChange('cooking_time_preference', option.id)}
+                          className={`p-4 rounded-xl border-2 transition-all ${
+                            generationPrefs?.cooking_time_preference === option.id
+                              ? 'border-purple-500 bg-white shadow-lg'
+                              : 'border-gray-200 hover:border-purple-300 hover:bg-white'
+                          }`}
+                        >
+                          <div className="text-3xl mb-2">{option.emoji}</div>
+                          <div className="font-bold text-sm text-gray-900">{option.label}</div>
+                          <div className="text-xs text-gray-600 mt-1">{option.desc}</div>
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/70 rounded-lg border border-gray-200/50">
@@ -1250,7 +1347,6 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                       </button>
                     );
                   })}
-                  {/* Removed the trial user specific locked days, as per instruction to always generate all 7 days */}
                 </div>
 
                 <div className="min-h-[300px]">
@@ -1403,6 +1499,9 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
       )}
       {showShoppingList && (
         <ShoppingListModal isOpen={showShoppingList} user={user} onClose={() => setShowShoppingList(false)} />
+      )}
+      {showPantry && (
+        <PantryModal isOpen={showPantry} user={user} onClose={() => setShowPantry(false)} />
       )}
       {showUpgradeModal && (
         <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} currentPlan={user?.subscription_plan || 'base'} />
