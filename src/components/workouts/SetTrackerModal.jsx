@@ -1,34 +1,29 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Check } from 'lucide-react';
 import { motion } from 'framer-motion';
 
-export default function SetTrackerModal({ isOpen, onClose, exercise, onComplete }) {
-  const [completedSets, setCompletedSets] = useState([]);
-  
+export default function SetTrackerModal({ isOpen, onClose, exercise, completedSets = [], onSetToggle, onComplete }) {
   const totalSets = exercise?.sets || 0;
   const sets = Array.from({ length: totalSets }, (_, i) => i + 1);
   
   const toggleSet = (setNumber) => {
-    setCompletedSets(prev => {
-      if (prev.includes(setNumber)) {
-        return prev.filter(s => s !== setNumber);
-      } else {
-        const newCompleted = [...prev, setNumber];
-        
-        // Chiudi immediatamente il modal
-        onClose();
-        
-        // Controlla se tutti i set sono completati
-        if (newCompleted.length === totalSets) {
-          setTimeout(() => {
-            onComplete();
-          }, 300);
-        }
-        return newCompleted;
-      }
-    });
+    const newCompleted = completedSets.includes(setNumber)
+      ? completedSets.filter(s => s !== setNumber)
+      : [...completedSets, setNumber];
+    
+    onSetToggle(newCompleted);
+    
+    // Chiudi immediatamente il modal
+    onClose();
+    
+    // Se tutti i set sono completati, notifica
+    if (newCompleted.length === totalSets) {
+      setTimeout(() => {
+        onComplete();
+      }, 300);
+    }
   };
 
   return (

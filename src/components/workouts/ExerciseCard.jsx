@@ -2,11 +2,11 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Dumbbell, Info, Target, Zap, Eye, Check, Square } from "lucide-react";
+import { Dumbbell, Info, Target, Zap, Eye, Check } from "lucide-react";
 import { motion } from 'framer-motion';
 import SetTrackerModal from './SetTrackerModal';
 
-export default function ExerciseCard({ exercise, isCompleted, onToggleComplete }) {
+export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, completedSets = [], onSetToggle }) {
   const [showDetails, setShowDetails] = useState(false);
   const [showSetTracker, setShowSetTracker] = useState(false);
 
@@ -75,6 +75,13 @@ export default function ExerciseCard({ exercise, isCompleted, onToggleComplete }
                     </span>
                     <span className="text-gray-600">• {exercise.rest}</span>
                   </div>
+                  {completedSets.length > 0 && !isCompleted && (
+                    <div className="mt-2">
+                      <span className="text-xs text-[#26847F] font-semibold">
+                        {completedSets.length}/{exercise.sets} set completati
+                      </span>
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
@@ -132,6 +139,8 @@ export default function ExerciseCard({ exercise, isCompleted, onToggleComplete }
           isOpen={showSetTracker}
           onClose={() => setShowSetTracker(false)}
           exercise={exercise}
+          completedSets={completedSets}
+          onSetToggle={onSetToggle}
           onComplete={handleComplete}
         />
       )}

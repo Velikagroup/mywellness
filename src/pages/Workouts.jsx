@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -75,6 +76,7 @@ export default function Workouts() {
   const [generationLimitReached, setGenerationLimitReached] = useState(false);
 
   const [completedExercises, setCompletedExercises] = useState({});
+  const [exerciseSets, setExerciseSets] = useState({});
 
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
@@ -230,7 +232,8 @@ export default function Workouts() {
         return;
       }
       
-      if (limit === 0) { // No access
+      if (limit === 0) // No access
+      {
         setRemainingGenerations(0);
         setGenerationLimitReached(true);
         return;
@@ -1318,17 +1321,31 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   const enrichedExercise = enrichExerciseWithDetails(ex);
                                   const exerciseKey = `${selectedDay}-${idx}`;
                                   const isCompleted = completedExercises[exerciseKey] || false;
+                                  const completedSets = exerciseSets[exerciseKey] || [];
                                   
                                   return (
                                     <ExerciseCard 
                                       key={idx} 
                                       exercise={enrichedExercise}
                                       isCompleted={isCompleted}
+                                      completedSets={completedSets}
+                                      onSetToggle={(newSets) => {
+                                        setExerciseSets(prev => ({
+                                          ...prev,
+                                          [exerciseKey]: newSets
+                                        }));
+                                      }}
                                       onToggleComplete={() => {
                                         setCompletedExercises(prev => ({
                                           ...prev,
                                           [exerciseKey]: !prev[exerciseKey]
                                         }));
+                                        if (!completedExercises[exerciseKey]) {
+                                          setExerciseSets(prev => ({
+                                            ...prev,
+                                            [exerciseKey]: Array(enrichedExercise.sets || 0).fill(false) // Reset sets to initial (uncompleted) state
+                                          }));
+                                        }
                                       }}
                                     />
                                   );
