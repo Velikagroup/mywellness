@@ -223,10 +223,10 @@ export default function Workouts() {
     loadData();
   }, [checkForCheats, navigate]);
 
-  // ✅ CARICA I WORKOUT LOGS QUANDO CAMBIA UTENTE O WORKOUT PLANS
+  // ✅ CARICA I WORKOUT LOGS ALL'AVVIO E QUANDO CAMBIANO I PIANI
   useEffect(() => {
     const loadWorkoutLogs = async () => {
-      if (!trainingData.user_id || workoutPlans.length === 0) return;
+      if (!trainingData.user_id) return;
       
       try {
         const today = new Date().toISOString().split('T')[0];
@@ -235,27 +235,31 @@ export default function Workouts() {
           date: today 
         });
         
-        console.log('📥 Caricamento logs per oggi:', today, logs);
+        console.log('📥 LOADING LOGS:', { today, foundLogs: logs.length, logs });
         
         if (logs.length > 0) {
           const todayLog = logs[0];
           const savedCompletedExercises = {};
           const savedExerciseSets = {};
           
+          console.log('📋 exercises_log from DB:', todayLog.exercises_log);
+          
           todayLog.exercises_log?.forEach(exLog => {
-            // ✅ USA NOME ESERCIZIO COME CHIAVE
-            const exerciseKey = exLog.exercise_name;
-            const sets = Array.isArray(exLog.completed_sets) ? exLog.completed_sets : [];
-            savedExerciseSets[exerciseKey] = sets;
-            savedCompletedExercises[exerciseKey] = exLog.is_completed || false;
+            const exerciseName = exLog.exercise_name;
+            const sets = exLog.completed_sets || [];
+            
+            console.log(`🏋️ Loading: ${exerciseName}, sets:`, sets, 'completed:', exLog.is_completed);
+            
+            savedExerciseSets[exerciseName] = sets;
+            savedCompletedExercises[exerciseName] = exLog.is_completed || false;
           });
+          
+          console.log('✅ FINAL STATE TO SET:', { savedCompletedExercises, savedExerciseSets });
           
           setCompletedExercises(savedCompletedExercises);
           setExerciseSets(savedExerciseSets);
-          
-          console.log('✅ Dati caricati dal DB:', { savedCompletedExercises, savedExerciseSets });
         } else {
-          console.log('ℹ️ Nessun log trovato per oggi, reset stato');
+          console.log('⚠️ No logs found, resetting state');
           setCompletedExercises({});
           setExerciseSets({});
         }
@@ -265,7 +269,7 @@ export default function Workouts() {
     };
     
     loadWorkoutLogs();
-  }, [trainingData.user_id, workoutPlans]);
+  }, [trainingData.user_id, workoutPlans, selectedDay]);
 
   // Calcola generazioni rimanenti
   useEffect(() => {
