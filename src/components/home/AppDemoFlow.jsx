@@ -24,7 +24,6 @@ export default function AppDemoFlow() {
   const [isDesktop, setIsDesktop] = useState(false);
   const [dashboardScroll, setDashboardScroll] = useState(0);
 
-  // Precarica immagini all'inizio
   useEffect(() => {
     preloadImages();
   }, []);
@@ -50,35 +49,35 @@ export default function AppDemoFlow() {
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
-      // Timing aggiustato - rimossi primi 3 step, dashboard più lunga
-      if (elapsed < 4000) setStep(0); // Peso attuale (was step 3)
-      else if (elapsed < 8000) setStep(1); // Peso target (was step 4)
-      else if (elapsed < 12000) setStep(2); // Loading (was step 5)
-      else if (elapsed < 22000) {
-        setStep(3); // Dashboard (was step 6) - 10 secondi totali
-        const scrollProgress = (elapsed - 18000) / 4000; // Inizia scroll dopo 6 secondi (18000ms) del timing totale, dura 4s
+      // Timing aggiustato - Dashboard a 5 secondi
+      if (elapsed < 4000) setStep(0); // Peso attuale
+      else if (elapsed < 8000) setStep(1); // Peso target
+      else if (elapsed < 12000) setStep(2); // Loading
+      else if (elapsed < 17000) { // Dashboard - 5 secondi totali (12000 to 17000)
+        setStep(3);
+        const scrollProgress = (elapsed - 15000) / 2000; // Inizia scroll dopo 3 secondi (15000ms), dura 2s (17000ms)
         setDashboardScroll(Math.max(0, scrollProgress));
       }
-      else if (elapsed < 26000) setStep(4); // Genera piano (was step 7)
-      else if (elapsed < 30000) setStep(5); // Scelta dieta (was step 8)
-      else if (elapsed < 33000) setStep(6); // Piano creato (was step 9)
-      else if (elapsed < 36000) setStep(7); // Popup colazione (was step 10)
-      else if (elapsed < 39000) setStep(8); // Scansiona (was step 11)
-      else if (elapsed < 42000) setStep(9); // Aggiungi (was step 12)
-      else if (elapsed < 45000) setStep(10); // Piano aggiornato (was step 13)
-      else if (elapsed < 48000) setStep(11); // Lista spesa (was step 14)
-      else if (elapsed < 51000) setStep(12); // Scan label (was step 15)
-      else if (elapsed < 54000) setStep(13); // Health score (was step 16)
-      else if (elapsed < 57000) setStep(14); // Colazione fatto (was step 17)
-      else if (elapsed < 60000) setStep(15); // Scan pranzo (was step 18)
-      else if (elapsed < 63000) setStep(16); // Rebalance (was step 19)
-      else if (elapsed < 66000) setStep(17); // Workout quiz (was step 20)
-      else if (elapsed < 69000) setStep(18); // Workout plan (was step 21)
-      else if (elapsed < 72000) setStep(19); // Exercise detail (was step 22)
-      else if (elapsed < 75000) setStep(20); // Modifica workout (was step 23)
-      else if (elapsed < 78000) setStep(21); // New exercise (was step 24)
-      else if (elapsed < 81000) setStep(22); // Body analysis (was step 25)
-      else setStep(23); // Goal reached (was step 26)
+      else if (elapsed < 21000) setStep(4); // Genera piano (17000 + 4000)
+      else if (elapsed < 25000) setStep(5); // Scelta dieta (21000 + 4000)
+      else if (elapsed < 28000) setStep(6); // Piano creato (25000 + 3000)
+      else if (elapsed < 31000) setStep(7); // Popup colazione (28000 + 3000)
+      else if (elapsed < 34000) setStep(8); // Scansiona (31000 + 3000)
+      else if (elapsed < 37000) setStep(9); // Aggiungi (34000 + 3000)
+      else if (elapsed < 40000) setStep(10); // Piano aggiornato (37000 + 3000)
+      else if (elapsed < 43000) setStep(11); // Lista spesa (40000 + 3000)
+      else if (elapsed < 46000) setStep(12); // Scan label (43000 + 3000)
+      else if (elapsed < 49000) setStep(13); // Health score (46000 + 3000)
+      else if (elapsed < 52000) setStep(14); // Colazione fatto (49000 + 3000)
+      else if (elapsed < 55000) setStep(15); // Scan pranzo (52000 + 3000)
+      else if (elapsed < 58000) setStep(16); // Rebalance (55000 + 3000)
+      else if (elapsed < 61000) setStep(17); // Workout quiz (58000 + 3000)
+      else if (elapsed < 64000) setStep(18); // Workout plan (61000 + 3000)
+      else if (elapsed < 67000) setStep(19); // Exercise detail (64000 + 3000)
+      else if (elapsed < 70000) setStep(20); // Modifica workout (67000 + 3000)
+      else if (elapsed < 73000) setStep(21); // New exercise (70000 + 3000)
+      else if (elapsed < 76000) setStep(22); // Body analysis (73000 + 3000)
+      else setStep(23); // Goal reached (76000 onwards)
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -123,7 +122,7 @@ export default function AppDemoFlow() {
             </div>
 
             <AnimatePresence mode="wait">
-              {/* Step 0: Peso Attuale (was step 3) */}
+              {/* Step 0: Peso Attuale */}
               {step === 0 && (
                 <motion.div
                   key="current-weight"
@@ -147,7 +146,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 1: Peso Obiettivo (was step 4) */}
+              {/* Step 1: Peso Obiettivo */}
               {step === 1 && (
                 <motion.div
                   key="target-weight"
@@ -171,7 +170,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 2: Loading (was step 5) */}
+              {/* Step 2: Loading */}
               {step === 2 && (
                 <motion.div
                   key="loading"
@@ -189,7 +188,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 3: Dashboard Scientifica con scroll (was step 6) */}
+              {/* Step 3: Dashboard Scientifica con scroll */}
               {step === 3 && (
                 <motion.div
                   key="dashboard"
@@ -361,7 +360,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 4: Genera Piano (was step 7) */}
+              {/* Step 4: Genera Piano */}
               {step === 4 && (
                 <motion.div
                   key="genera-piano"
@@ -383,7 +382,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 5: Scelta Dieta (was step 8) */}
+              {/* Step 5: Scelta Dieta */}
               {step === 5 && (
                 <motion.div
                   key="dieta"
@@ -410,7 +409,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 6: Piano Creato (was step 9) */}
+              {/* Step 6: Piano Creato */}
               {step === 6 && (
                 <motion.div
                   key="piano-creato"
@@ -448,7 +447,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 7: Pop-up Colazione (was step 10) */}
+              {/* Step 7: Pop-up Colazione */}
               {step === 7 && (
                 <motion.div
                   key="popup-colazione"
@@ -481,7 +480,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 8: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ (was step 11) */}
+              {/* Step 8: Scansiona Ingrediente - CON AVOCADO APERTO A METÀ */}
               {step === 8 && (
                 <motion.div
                   key="scansiona"
@@ -515,7 +514,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 9: Aggiungi Ingrediente (was step 12) */}
+              {/* Step 9: Aggiungi Ingrediente */}
               {step === 9 && (
                 <motion.div
                   key="aggiungi"
@@ -547,7 +546,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 10: Piano Aggiornato (was step 13) */}
+              {/* Step 10: Piano Aggiornato */}
               {step === 10 && (
                 <motion.div
                   key="piano-updated"
@@ -605,7 +604,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 11: Lista Spesa (was step 14) */}
+              {/* Step 11: Lista Spesa */}
               {step === 11 && (
                 <motion.div
                   key="lista-spesa"
@@ -638,7 +637,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 12: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE (was step 15) */}
+              {/* Step 12: Scansiona Etichetta - CON FOTO REALISTICA TABELLA NUTRIZIONALE */}
               {step === 12 && (
                 <motion.div
                   key="scan-label"
@@ -708,7 +707,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 13: Health Score (was step 16) */}
+              {/* Step 13: Health Score */}
               {step === 13 && (
                 <motion.div
                   key="health-score"
@@ -745,7 +744,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 14: Colazione Fatto (was step 17) */}
+              {/* Step 14: Colazione Fatto */}
               {step === 14 && (
                 <motion.div
                   key="colazione-fatto"
@@ -780,7 +779,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 15: Scansiona Pranzo - sfondo verde pieno (was step 18) */}
+              {/* Step 15: Scansiona Pranzo - sfondo verde pieno */}
               {step === 15 && (
                 <motion.div
                   key="scan-pranzo"
@@ -803,7 +802,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 16: Ribilanciamento (was step 19) */}
+              {/* Step 16: Ribilanciamento */}
               {step === 16 && (
                 <motion.div
                   key="rebalance"
@@ -834,7 +833,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 17: Workout Quiz (was step 20) */}
+              {/* Step 17: Workout Quiz */}
               {step === 17 && (
                 <motion.div
                   key="workout-quiz"
@@ -863,7 +862,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 18: Piano Workout (was step 21) */}
+              {/* Step 18: Piano Workout */}
               {step === 18 && (
                 <motion.div
                   key="workout-plan"
@@ -898,7 +897,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 19: Dettagli Esercizio (was step 22) */}
+              {/* Step 19: Dettagli Esercizio */}
               {step === 19 && (
                 <motion.div
                   key="exercise-detail"
@@ -928,7 +927,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 20: Modifica Workout (was step 23) */}
+              {/* Step 20: Modifica Workout */}
               {step === 20 && (
                 <motion.div
                   key="modifica-workout"
@@ -959,7 +958,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 21: Nuovo Esercizio (was step 24) */}
+              {/* Step 21: Nuovo Esercizio */}
               {step === 21 && (
                 <motion.div
                   key="new-exercise"
@@ -986,7 +985,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 22: Analisi Corpo - IMMAGINI REALI PRECARICATE (was step 25) */}
+              {/* Step 22: Analisi Corpo - IMMAGINI REALI PRECARICATE */}
               {step === 22 && (
                 <motion.div
                   key="body-analysis"
@@ -1035,7 +1034,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 23: Goal Reached (was step 26) */}
+              {/* Step 23: Goal Reached */}
               {step === 23 && (
                 <motion.div
                   key="goal-reached"
