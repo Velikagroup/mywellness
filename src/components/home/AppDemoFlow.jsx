@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3 } from 'lucide-react';
 
-const ANIMATION_DURATION = 90000;
+const ANIMATION_DURATION = 100000;
 
 const preloadImages = () => {
   const images = [
@@ -25,6 +25,7 @@ export default function AppDemoFlow() {
   const [dietStep, setDietStep] = useState(0);
   const [mealPlanStep, setMealPlanStep] = useState(0);
   const [substituteStep, setSubstituteStep] = useState(0); // 0: popup normale, 1: zoom pulsante, 2: click, 3: sostituzione
+  const [shoppingListStep, setShoppingListStep] = useState(0); // 0: mostra lista, 1: clicca 1, 2: clicca 2, 3: focus banana + click scansiona, 4: scansione in corso
 
   useEffect(() => {
     preloadImages();
@@ -50,25 +51,25 @@ export default function AppDemoFlow() {
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
-      // Timing aggiustato - step 0 e 1 ridotti di 2s ciascuno
+      // Timing aggiustato per il nuovo flusso
       if (elapsed < 2000) setStep(0); // Peso attuale - 2s
       else if (elapsed < 4000) setStep(1); // Peso target - 2s
-      else if (elapsed < 8000) setStep(2); // Loading
+      else if (elapsed < 8000) setStep(2); // Loading - 4s
       else if (elapsed < 15000) {
-        setStep(3); // Dashboard - 7 secondi
+        setStep(3); // Dashboard - 7s
         const scrollProgress = (elapsed - 11000) / 2000;
         setDashboardScroll(Math.max(0, Math.min(1, scrollProgress)));
       }
-      else if (elapsed < 17000) setStep(4); // Genera piano - 2s (era 3s)
+      else if (elapsed < 17000) setStep(4); // Genera piano - 2s
       else if (elapsed < 23000) {
-        setStep(5); // Scelta dieta
+        setStep(5); // Scelta dieta - 6s
         const dietElapsed = elapsed - 17000;
         if (dietElapsed < 1000) setDietStep(0);
         else if (dietElapsed < 2000) setDietStep(1);
         else if (dietElapsed < 5000) setDietStep(2);
         else setDietStep(3);
       }
-      else if (elapsed < 36000) { // Piano + popup con sostituzione - 13s totali
+      else if (elapsed < 39000) { // Piano + popup con sostituzione - 16s totali (23000 -> 39000)
         setStep(6); 
         const planElapsed = elapsed - 23000;
         if (planElapsed < 2000) {
@@ -91,27 +92,43 @@ export default function AppDemoFlow() {
           setMealPlanStep(1);
           setSubstituteStep(2); // Click
         }
-        else {
+        else if (planElapsed < 11000) { // Extended by 2s for substitution complete animation
           setMealPlanStep(1);
           setSubstituteStep(3); // Sostituzione completata
         }
+        else if (planElapsed < 12000) { // New: Close popup
+          setMealPlanStep(0);
+          setSubstituteStep(0);
+        }
+        else { // Remaining time in step 6
+          setMealPlanStep(0);
+          setSubstituteStep(0);
+        }
       }
-      else if (elapsed < 39000) setStep(7); // Scansiona (timing adjusted +1s, previously step 8)
-      else if (elapsed < 42000) setStep(8); // Aggiungi (timing adjusted +1s, previously step 9)
-      else if (elapsed < 45000) setStep(9); // Piano aggiornato (timing adjusted +1s, previously step 10)
-      else if (elapsed < 48000) setStep(10); // Lista spesa (timing adjusted +1s, previously step 11)
-      else if (elapsed < 51000) setStep(11); // Scan label (timing adjusted +1s, previously step 12)
-      else if (elapsed < 54000) setStep(12); // Health score (timing adjusted +1s, previously step 13)
-      else if (elapsed < 57000) setStep(13); // Colazione fatto (timing adjusted +1s, previously step 14)
-      else if (elapsed < 60000) setStep(14); // Scan pranzo (timing adjusted +1s, previously step 15)
-      else if (elapsed < 63000) setStep(15); // Rebalance (timing adjusted +1s, previously step 16)
-      else if (elapsed < 66000) setStep(16); // Workout quiz (timing adjusted +1s, previously step 17)
-      else if (elapsed < 69000) setStep(17); // Workout plan (timing adjusted +1s, previously step 18)
-      else if (elapsed < 72000) setStep(18); // Exercise detail (timing adjusted +1s, previously step 19)
-      else if (elapsed < 75000) setStep(19); // Modifica workout (timing adjusted +1s, previously step 20)
-      else if (elapsed < 78000) setStep(20); // New exercise (timing adjusted +1s, previously step 21)
-      else if (elapsed < 81000) setStep(21); // Body analysis (timing adjusted +1s, previously step 22)
-      else setStep(22); // Goal reached (timing adjusted +1s, previously step 23)
+      else if (elapsed < 51000) { // Lista spesa con azioni - 12s totali (39000 -> 51000)
+        setStep(7); 
+        const listElapsed = elapsed - 39000;
+        if (listElapsed < 2000) setShoppingListStep(0); // Mostra lista
+        else if (listElapsed < 4000) setShoppingListStep(1); // Clicca primo alimento
+        else if (listElapsed < 6000) setShoppingListStep(2); // Clicca secondo alimento
+        else if (listElapsed < 8000) setShoppingListStep(3); // Focus banana + click scansiona
+        else setShoppingListStep(4); // Scansione in corso
+      }
+      else if (elapsed < 54000) setStep(8); // Health score banana (3s)
+      else if (elapsed < 57000) setStep(9); // Aggiungi banana (3s)
+      else if (elapsed < 60000) setStep(10); // Piano aggiornato (3s)
+      else if (elapsed < 63000) setStep(11); // Scan label (3s)
+      else if (elapsed < 66000) setStep(12); // Health score prodotto (3s)
+      else if (elapsed < 69000) setStep(13); // Colazione fatto (3s)
+      else if (elapsed < 72000) setStep(14); // Scan pranzo (3s)
+      else if (elapsed < 75000) setStep(15); // Rebalance (3s)
+      else if (elapsed < 78000) setStep(16); // Workout quiz (3s)
+      else if (elapsed < 81000) setStep(17); // Workout plan (3s)
+      else if (elapsed < 84000) setStep(18); // Exercise detail (3s)
+      else if (elapsed < 87000) setStep(19); // Modifica workout (3s)
+      else if (elapsed < 90000) setStep(20); // New exercise (3s)
+      else if (elapsed < 93000) setStep(21); // Body analysis (3s)
+      else setStep(22); // Goal reached (7s to end of ANIMATION_DURATION)
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -318,15 +335,19 @@ export default function AppDemoFlow() {
                         </div>
                         <div className="space-y-1 text-[9px]">
                           <div className="flex items-center justify-between">
-                            <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
-                            <span className="text-gray-600">Completato</span>
+                            <div className="flex items-center gap-1">
+                              <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
+                              <span className="text-gray-600">Completato</span>
+                            </div>
+                            <span className="font-bold">30.800 kcal</span>
                           </div>
-                          <span className="font-bold">30.800 kcal</span>
                           <div className="flex items-center justify-between">
-                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                            <span className="text-gray-600">Rimanente</span>
+                            <div className="flex items-center gap-1">
+                              <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                              <span className="text-gray-600">Rimanente</span>
+                            </div>
+                            <span className="font-bold">46.200 kcal</span>
                           </div>
-                          <span className="font-bold">46.200 kcal</span>
                         </div>
                       </div>
                     </div>
@@ -566,7 +587,11 @@ export default function AppDemoFlow() {
                   {mealPlanStep >= 1 && (
                     <motion.div
                       initial={{ scale: 0.8, opacity: 0 }}
-                      animate={{ scale: 1, opacity: 1 }}
+                      animate={{ 
+                        scale: mealPlanStep === 0 ? 0.8 : 1, // Only animate to 1 if mealPlanStep is not 0 (meaning it's active)
+                        opacity: mealPlanStep === 0 ? 0 : 1
+                      }}
+                      exit={{ scale: 0.8, opacity: 0 }}
                       className="absolute inset-0 bg-black/60 flex items-center justify-center p-4"
                       style={{ backdropFilter: 'blur(4px)' }}
                     >
@@ -687,19 +712,26 @@ export default function AppDemoFlow() {
                             <motion.div
                               initial={{ opacity: 0, y: 10 }}
                               animate={{ opacity: 1, y: 0 }}
-                              className="bg-green-50 border border-green-200 rounded-lg p-3"
+                              className="bg-green-50 border border-green-200 rounded-lg p-3 mb-3"
                             >
-                              <div className="flex items-center gap-2">
+                              <div className="flex items-center gap-2 mb-2">
                                 <Check className="w-4 h-4 text-green-600" />
-                                <span className="text-xs font-semibold text-green-700">Ingrediente sostituito con successo!</span>
+                                <span className="text-xs font-semibold text-green-700">Ingrediente sostituito!</span>
                               </div>
+                              <motion.button
+                                animate={{ scale: [1, 1.05, 1] }}
+                                transition={{ duration: 0.4, delay: 0.5 }}
+                                className="w-full bg-blue-500 text-white py-2 rounded-lg text-xs font-semibold"
+                              >
+                                + Aggiungi alla Lista Spesa
+                              </motion.button>
                             </motion.div>
                           )}
 
-                          <div className="mt-3">
+                          <div>
                             <div className="text-sm font-bold text-gray-900 mb-1">Preparazione</div>
                             <div className="space-y-1">
-                              {['Scalda il latte a fuoco medio', 'Aggiungi avena e proteine', 'Cuoci 5-7 minuti mescolando', 'Guarnisci con mirtilli'].map((step, i) => (
+                              {['Scalda il latte a fuoco medio', 'Aggiungi avena e proteine', 'Cuoci 5-7 minuti mescolando', 'Guarnisci con banana e mirtilli'].map((step, i) => (
                                 <div key={i} className="flex items-start gap-2 text-xs text-gray-700">
                                   <span className="text-[var(--brand-primary)] font-bold flex-shrink-0">{i + 1}.</span>
                                   <span>{step}</span>
@@ -716,45 +748,145 @@ export default function AppDemoFlow() {
 
               {step === 7 && (
                 <motion.div
-                  key="scansiona"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className={`absolute inset-0 flex flex-col items-center justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{
-                    background: 'linear-gradient(180deg, #f3f4f6 0%, #e5e7eb 100%)'
-                  }}
+                  key="lista-spesa"
+                  initial={{ x: 50, opacity: 0 }}
+                  animate={{ x: 0, opacity: 1 }}
+                  exit={{ x: -50, opacity: 0 }}
+                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
-                  <div className="absolute inset-0 flex items-center justify-center opacity-40">
-                    <div className="text-9xl">🍌</div>
+                  <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
+                  <div className="space-y-1.5">
+                    {['Farina d\'avena - 200g', 'Mirtilli - 350g', 'Banana - 7x', 'Proteine in polvere - 200g'].map((item, i) => (
+                      <motion.div
+                        key={item}
+                        initial={{ x: -20, opacity: 0 }}
+                        animate={{ x: 0, opacity: 1 }}
+                        transition={{ delay: i * 0.1 }}
+                        className={`flex items-center gap-2 bg-white p-3 rounded-lg shadow-sm ${
+                          (shoppingListStep === 1 && i === 0) || 
+                          (shoppingListStep === 2 && (i === 0 || i === 1)) ||
+                          (shoppingListStep >= 3 && i === 2) 
+                            ? 'border-2 border-[var(--brand-primary)]' 
+                            : ''
+                        }`}
+                      >
+                        <motion.div
+                          animate={
+                            (shoppingListStep >= 1 && i === 0) ||
+                            (shoppingListStep >= 2 && i === 1)
+                              ? { scale: [1, 1.2, 1] } 
+                              : {}
+                          }
+                          transition={{ duration: 0.3 }}
+                          className={`w-5 h-5 rounded border-2 flex items-center justify-center ${
+                            (shoppingListStep >= 1 && i === 0) ||
+                            (shoppingListStep >= 2 && i === 1)
+                              ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]' 
+                              : 'border-gray-300'
+                          }`}
+                        >
+                          {((shoppingListStep >= 1 && i === 0) ||
+                            (shoppingListStep >= 2 && i === 1)) && 
+                            <Check className="w-3 h-3 text-white" />
+                          }
+                        </motion.div>
+                        <span className={`flex-1 text-xs ${
+                          (shoppingListStep >= 1 && i === 0) ||
+                          (shoppingListStep >= 2 && i === 1)
+                            ? 'line-through text-gray-400' 
+                            : 'text-gray-700'
+                        }`}>
+                          {item}
+                        </span>
+                        
+                        {i === 2 && ( // For the "Banana" item
+                          <motion.button
+                            initial={{ scale: 0, opacity: 0 }}
+                            animate={{ 
+                                scale: shoppingListStep >= 3 ? 1 : 0, 
+                                opacity: shoppingListStep >= 3 ? 1 : 0,
+                                borderColor: shoppingListStep === 3 ? ['#26847F', '#10b981', '#26847F'] : 'transparent'
+                            }}
+                            transition={{ duration: 0.3 }}
+                            className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold flex items-center gap-1 border-2"
+                          >
+                            <Camera className="w-3 h-3" />
+                            Scansiona
+                          </motion.button>
+                        )}
+                      </motion.div>
+                    ))}
                   </div>
-                  
-                  <motion.div
-                    animate={{ scale: [1, 1.1, 1] }}
-                    transition={{ duration: 1, repeat: Infinity }}
-                    className="relative w-40 h-40 border-4 border-[var(--brand-primary)] rounded-xl z-10"
-                  >
-                    <Camera className="w-10 h-10 text-[var(--brand-primary)] absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2" />
+
+                  {shoppingListStep >= 4 && (
                     <motion.div
-                      animate={{ y: [0, 160] }}
-                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                      className="absolute top-0 left-0 right-0 h-0.5 bg-[var(--brand-primary)] shadow-[0_0_15px_rgba(38,132,127,0.8)]"
-                    />
-                  </motion.div>
-                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione banana...</p>
+                      initial={{ opacity: 0, scale: 0.9 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.5 }}
+                      className="absolute inset-0 bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center"
+                    >
+                      <div className="text-white text-center">
+                        <Camera className="w-12 h-12 mx-auto mb-3" />
+                        <p className="text-base font-bold">Scansione banana...</p>
+                      </div>
+                    </motion.div>
+                  )}
                 </motion.div>
               )}
 
               {step === 8 && (
                 <motion.div
-                  key="aggiungi"
+                  key="health-score-banana"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  exit={{ scale: 0.8, opacity: 0 }}
+                  className={`absolute inset-0 bg-gradient-to-br from-yellow-50 to-amber-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                >
+                  <div className="bg-white rounded-2xl p-6 shadow-2xl text-center">
+                    <div className="text-6xl mb-3">🍌</div>
+                    <div className="relative inline-block mb-3">
+                      <svg className="w-24 h-24" viewBox="0 0 100 100">
+                        <circle cx="50" cy="50" r="40" fill="none" stroke="#e5e7eb" strokeWidth="8" />
+                        <motion.circle
+                          cx="50"
+                          cy="50"
+                          r="40"
+                          fill="none"
+                          stroke="#10b981"
+                          strokeWidth="8"
+                          strokeDasharray="251.2"
+                          initial={{ strokeDashoffset: 251.2 }}
+                          animate={{ strokeDashoffset: 251.2 * (1 - 0.85) }}
+                          strokeLinecap="round"
+                          transform="rotate(-90 50 50)"
+                        />
+                      </svg>
+                      <div className="absolute inset-0 flex items-center justify-center">
+                        <span className="text-3xl font-black text-green-600">8.5</span>
+                      </div>
+                    </div>
+                    <h4 className="text-base font-bold mb-1 text-green-700">Ottimo per te!</h4>
+                    <p className="text-xs text-gray-600">Banana matura - energia naturale</p>
+                  </div>
+                </motion.div>
+              )}
+
+              {step === 9 && (
+                <motion.div
+                  key="aggiungi-banana"
                   initial={{ opacity: 0, y: 50 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                 >
                   <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl p-4 mb-3 border border-yellow-200">
-                    <h4 className="font-bold text-sm mb-2">Banana - Matura (1x)</h4>
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="text-4xl">🍌</div>
+                      <div>
+                        <h4 className="font-bold text-sm">Banana - Matura (1x)</h4>
+                        <p className="text-xs text-gray-600">Sostituisce: Avocado</p>
+                      </div>
+                    </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="bg-white rounded-lg p-2">
                         <div className="text-gray-500 text-xs">Calorie</div>
@@ -776,7 +908,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {step === 9 && (
+              {step === 10 && (
                 <motion.div
                   key="piano-updated"
                   initial={{ opacity: 0 }}
@@ -823,45 +955,6 @@ export default function AppDemoFlow() {
                       </div>
                     </div>
                   </motion.div>
-                  <motion.button
-                    initial={{ y: 20, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    className="w-full mt-3 bg-blue-500 text-white py-2.5 rounded-lg text-xs font-semibold"
-                  >
-                    + Aggiungi alla Lista Spesa
-                  </motion.button>
-                </motion.div>
-              )}
-
-              {step === 10 && (
-                <motion.div
-                  key="lista-spesa"
-                  initial={{ x: 50, opacity: 0 }}
-                  animate={{ x: 0, opacity: 1 }}
-                  exit={{ x: -50, opacity: 0 }}
-                  className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                >
-                  <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
-                  <div className="space-y-1.5">
-                    {['Farina d\'avena - 200g', 'Banana - 7x', 'Mirtilli - 350g', 'Pomodori - 1kg'].map((item, i) => (
-                      <motion.div
-                        key={item}
-                        initial={{ x: -20, opacity: 0 }}
-                        animate={{ x: 0, opacity: 1 }}
-                        transition={{ delay: i * 0.1 }}
-                        className="flex items-center gap-2 bg-white p-3 rounded-lg shadow-sm"
-                      >
-                        <motion.div
-                          animate={i < 3 ? { scale: [1, 1.2, 1] } : {}}
-                          transition={{ duration: 0.3 }}
-                          className={`w-5 h-5 rounded border-2 flex items-center justify-center ${i < 3 ? 'border-[var(--brand-primary)] bg-[var(--brand-primary)]' : 'border-gray-300'}`}
-                        >
-                          {i < 3 && <Check className="w-3 h-3 text-white" />}
-                        </motion.div>
-                        <span className={`flex-1 text-xs ${i < 3 ? 'line-through text-gray-400' : 'text-gray-700'}`}>{item}</span>
-                      </motion.div>
-                    ))}
-                  </div>
                 </motion.div>
               )}
 
