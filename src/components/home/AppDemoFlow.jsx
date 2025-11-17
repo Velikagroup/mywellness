@@ -3,13 +3,14 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3, Home as HomeIcon, Trees } from 'lucide-react';
 
-const ANIMATION_DURATION = 105000;
+const ANIMATION_DURATION = 108000;
 
 const preloadImages = () => {
   const images = [
     'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png',
     'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png',
-    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/4eccf5fb3_IMG_8711.jpg'
+    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/4eccf5fb3_IMG_8711.jpg',
+    'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png'
   ];
 
   images.forEach((src) => {
@@ -73,11 +74,11 @@ export default function AppDemoFlow() {
 
   useEffect(() => {
     const startTime = Date.now();
-
+    
     const progressInterval = setInterval(() => {
       const elapsed = (Date.now() - startTime) % ANIMATION_DURATION;
       const linearProgress = elapsed / ANIMATION_DURATION;
-
+      
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
@@ -165,9 +166,9 @@ export default function AppDemoFlow() {
         else if (listElapsed < 6500) setShoppingListStep(3);
         else setShoppingListStep(4);
       }
-      else if (elapsed < 48000) setStep(8); // Now banana health score
-      else if (elapsed < 51000) setStep(9); // Now add banana
-      else if (elapsed < 57000) { // Now plan updated + scan lunch button
+      else if (elapsed < 48000) setStep(8);
+      else if (elapsed < 51000) setStep(9);
+      else if (elapsed < 57000) {
         setStep(10);
         const updateElapsed = elapsed - 51000;
         if (updateElapsed < 3500) {
@@ -187,16 +188,16 @@ export default function AppDemoFlow() {
           setLunchScanStep(1);
         }
       }
-      else if (elapsed < 60000) setStep(11); // Now scan lunch
-      else if (elapsed < 66000) { // Now AI calorie scan
+      else if (elapsed < 60000) setStep(11);
+      else if (elapsed < 66000) {
         setStep(12);
         const scanElapsed = elapsed - 60000;
         if (scanElapsed < 2000) setLunchScanStep(0);
         else if (scanElapsed < 4000) setLunchScanStep(1);
         else setLunchScanStep(2);
       }
-      else if (elapsed < 69000) setStep(13); // Now rebalance success
-      else if (elapsed < 75000) { // Now workout days (new state for selection animation)
+      else if (elapsed < 69000) setStep(13);
+      else if (elapsed < 75000) {
         setStep(14);
         const dayElapsed = elapsed - 69000;
         if (dayElapsed < 1000) setWorkoutDaySelection(0);
@@ -204,13 +205,13 @@ export default function AppDemoFlow() {
         else if (dayElapsed < 3000) setWorkoutDaySelection(2);
         else setWorkoutDaySelection(3);
       }
-      else if (elapsed < 79000) { // Now workout location
+      else if (elapsed < 79000) {
         setStep(15);
         const locationElapsed = elapsed - 75000;
         if (locationElapsed < 2000) setWorkoutLocationSelected(false);
         else setWorkoutLocationSelected(true);
       }
-      else if (elapsed < 88000) { // Now workout plan AND modify workout popup
+      else if (elapsed < 88000) {
         setStep(16);
         const modifyElapsed = elapsed - 79000;
         if (modifyElapsed < 2000) {
@@ -242,7 +243,7 @@ export default function AppDemoFlow() {
           setTypingText('Mi fa male la spalla');
         }
       }
-      else if (elapsed < 91000) setStep(17); // Now new exercise
+      else if (elapsed < 91000) setStep(17);
       else if (elapsed < 100000) {
         setStep(18);
         const analysisElapsed = elapsed - 91000;
@@ -258,7 +259,8 @@ export default function AppDemoFlow() {
         }
       }
       else if (elapsed < 103000) setStep(19);
-      else setStep(20);
+      else if (elapsed < 105000) setStep(20);
+      else setStep(21);
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -1875,6 +1877,25 @@ export default function AppDemoFlow() {
                   >
                     <span className="text-white text-sm font-bold">MyWellness AI ✨</span>
                   </motion.div>
+                </motion.div>
+              )}
+
+              {step === 21 && (
+                <motion.div
+                  key="logo-finale"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  className="absolute inset-0 flex items-center justify-center bg-white"
+                >
+                  <motion.img
+                    src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
+                    alt="MyWellness"
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1.05, opacity: 1 }}
+                    transition={{ duration: 2.5, ease: "easeOut" }}
+                    className="w-48 h-auto"
+                  />
                 </motion.div>
               )}
             </AnimatePresence>
