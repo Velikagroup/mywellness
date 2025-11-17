@@ -80,8 +80,8 @@ export default function Workouts() {
   const [remainingGenerations, setRemainingGenerations] = useState(null);
   const [generationLimitReached, setGenerationLimitReached] = useState(false);
 
-  const [completedExercises, setCompletedExercises] = useState({});
-  const [exerciseSets, setExerciseSets] = useState({});
+  // ✅ SEMPLIFICATO: Usa solo exerciseSets per tracciare tutto
+  const [exerciseSets, setExerciseSets] = useState({}); // { "Squat con Manubri": [1,2,3], "Panca Piana": [1,2] }
 
   // Query per workout plans
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
@@ -223,7 +223,7 @@ export default function Workouts() {
     loadData();
   }, [checkForCheats, navigate]);
 
-  // ✅ CARICA I WORKOUT LOGS ALL'AVVIO E QUANDO CAMBIANO I PIANI
+  // ✅ CARICA LOGS ALL'AVVIO
   useEffect(() => {
     const loadWorkoutLogs = async () => {
       if (!trainingData.user_id) return;
@@ -235,41 +235,26 @@ export default function Workouts() {
           date: today 
         });
         
-        console.log('📥 LOADING LOGS:', { today, foundLogs: logs.length, logs });
+        console.log('📥 Loading logs for:', today);
         
         if (logs.length > 0) {
-          const todayLog = logs[0];
-          const savedCompletedExercises = {};
-          const savedExerciseSets = {};
-          
-          console.log('📋 exercises_log from DB:', todayLog.exercises_log);
-          
-          todayLog.exercises_log?.forEach(exLog => {
-            const exerciseName = exLog.exercise_name;
-            const sets = exLog.completed_sets || [];
-            
-            console.log(`🏋️ Loading: ${exerciseName}, sets:`, sets, 'completed:', exLog.is_completed);
-            
-            savedExerciseSets[exerciseName] = sets;
-            savedCompletedExercises[exerciseName] = exLog.is_completed || false;
+          const savedSets = {};
+          logs[0].exercises_log?.forEach(exLog => {
+            savedSets[exLog.exercise_name] = exLog.completed_sets || [];
           });
-          
-          console.log('✅ FINAL STATE TO SET:', { savedCompletedExercises, savedExerciseSets });
-          
-          setCompletedExercises(savedCompletedExercises);
-          setExerciseSets(savedExerciseSets);
+          console.log('✅ Loaded sets:', savedSets);
+          setExerciseSets(savedSets);
         } else {
-          console.log('⚠️ No logs found, resetting state');
-          setCompletedExercises({});
+          console.log('⚠️ No logs, starting fresh');
           setExerciseSets({});
         }
       } catch (error) {
-        console.error('❌ Error loading workout logs:', error);
+        console.error('❌ Error loading:', error);
       }
     };
     
     loadWorkoutLogs();
-  }, [trainingData.user_id, workoutPlans, selectedDay]);
+  }, [trainingData.user_id]);
 
   // Calcola generazioni rimanenti
   useEffect(() => {
@@ -387,65 +372,60 @@ export default function Workouts() {
     });
   }, [allExercises, trainingData.equipment, trainingData.joint_pain, trainingData.fitness_experience, trainingData.fitness_goal]);
 
-  // ✅ SALVA AUTOMATICAMENTE OGNI MODIFICA NEL DATABASE
-  const saveWorkoutProgress = useCallback(async (exerciseName, completedSetsArray, totalSets, isCompleted) => {
+  // ✅ SALVA IMMEDIATAMENTE
+  const saveWorkoutProgress = useCallback(async (exerciseName, completedSetsArray, totalSets) => {
     if (!trainingData.user_id) return;
     
     try {
       const today = new Date().toISOString().split('T')[0];
       const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+      const workoutPlan = workoutPlans.find(p => p.day_of_week === todayOfWeek);
       
       const logs = await base44.entities.WorkoutLog.filter({ 
         user_id: trainingData.user_id, 
         date: today 
       });
       
-      const workoutPlan = workoutPlans.find(p => p.day_of_week === todayOfWeek);
+      const isCompleted = completedSetsArray.length === totalSets && totalSets > 0;
       
-      let logToUpdate = logs.length > 0 ? logs[0] : null;
-      
-      if (!logToUpdate) {
+      if (logs.length === 0) {
         await base44.entities.WorkoutLog.create({
           user_id: trainingData.user_id,
           workout_plan_id: workoutPlan?.id || 'unknown',
           date: today,
           completed: false,
           exercises_log: [{
-            exercise_key: exerciseName,
             exercise_name: exerciseName,
+            exercise_key: exerciseName,
             completed_sets: completedSetsArray,
             total_sets: totalSets,
             is_completed: isCompleted
           }]
         });
-        console.log('💾 Creato nuovo log per:', exerciseName, completedSetsArray);
+        console.log('💾 NEW LOG:', exerciseName, completedSetsArray);
       } else {
-        const existingLog = [...(logToUpdate.exercises_log || [])];
-        const exerciseLogIndex = existingLog.findIndex(e => e.exercise_name === exerciseName);
+        const log = logs[0];
+        const exercises = [...(log.exercises_log || [])];
+        const idx = exercises.findIndex(e => e.exercise_name === exerciseName);
         
-        if (exerciseLogIndex >= 0) {
-          existingLog[exerciseLogIndex] = {
-            ...existingLog[exerciseLogIndex],
-            completed_sets: completedSetsArray,
-            is_completed: isCompleted
-          };
+        if (idx >= 0) {
+          exercises[idx].completed_sets = completedSetsArray;
+          exercises[idx].is_completed = isCompleted;
         } else {
-          existingLog.push({
-            exercise_key: exerciseName,
+          exercises.push({
             exercise_name: exerciseName,
+            exercise_key: exerciseName,
             completed_sets: completedSetsArray,
             total_sets: totalSets,
             is_completed: isCompleted
           });
         }
         
-        await base44.entities.WorkoutLog.update(logToUpdate.id, {
-          exercises_log: existingLog
-        });
-        console.log('💾 Aggiornato log per:', exerciseName, completedSetsArray);
+        await base44.entities.WorkoutLog.update(log.id, { exercises_log: exercises });
+        console.log('💾 UPDATED:', exerciseName, completedSetsArray);
       }
     } catch (error) {
-      console.error('❌ Error saving workout progress:', error);
+      console.error('❌ Save error:', error);
     }
   }, [trainingData.user_id, workoutPlans]);
 
@@ -700,8 +680,6 @@ CRITICAL REQUIREMENTS:
         setGenerationLimitReached(remaining === 0);
       }
 
-      // Reset workout logs loaded to re-fetch for the new plan
-      setCompletedExercises({});
       setExerciseSets({});
 
       setTimeout(() => setIsGenerating(false), 1500);
@@ -1439,12 +1417,9 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {workoutForSelectedDay.exercises.map((ex, idx) => {
                                    const enrichedExercise = enrichExerciseWithDetails(ex);
-                                   // ✅ USA NOME ORIGINALE DAL PIANO (non quello del DB!)
-                                   const exerciseKey = ex.name;
-                                   const isCompleted = completedExercises[exerciseKey] || false;
-                                   const completedSets = exerciseSets[exerciseKey] || [];
-
-                                   console.log('🏋️ Rendering exercise:', exerciseKey, 'completedSets:', completedSets, 'isCompleted:', isCompleted);
+                                   const exerciseName = ex.name;
+                                   const completedSets = exerciseSets[exerciseName] || [];
+                                   const isCompleted = completedSets.length === ex.sets && ex.sets > 0;
 
                                    return (
                                      <ExerciseCard 
@@ -1453,36 +1428,15 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                        isCompleted={isCompleted}
                                        completedSets={completedSets}
                                        onSetToggle={(newSets) => {
-                                         console.log('🔄 onSetToggle called:', exerciseKey, 'newSets:', newSets);
-
-                                         setExerciseSets(prev => {
-                                           const updated = { ...prev, [exerciseKey]: newSets };
-                                           console.log('📝 Updated exerciseSets state:', updated);
-                                           return updated;
-                                         });
-
-                                         saveWorkoutProgress(exerciseKey, newSets, ex.sets, isCompleted);
+                                         console.log('🔄 Toggle:', exerciseName, newSets);
+                                         setExerciseSets(prev => ({ ...prev, [exerciseName]: newSets }));
+                                         saveWorkoutProgress(exerciseName, newSets, ex.sets);
                                        }}
                                        onToggleComplete={() => {
-                                         const newCompletedState = !isCompleted;
-                                         console.log('✅ onToggleComplete called:', exerciseKey, newCompletedState);
-
-                                         setCompletedExercises(prev => {
-                                           const updated = { ...prev, [exerciseKey]: newCompletedState };
-                                           console.log('📝 Updated completedExercises state:', updated);
-                                           return updated;
-                                         });
-
-                                         const updatedSets = newCompletedState 
-                                           ? Array.from({ length: ex.sets || 0 }, (_, i) => i + 1)
-                                           : [];
-
-                                         setExerciseSets(prev => ({
-                                           ...prev,
-                                           [exerciseKey]: updatedSets
-                                         }));
-
-                                         saveWorkoutProgress(exerciseKey, updatedSets, ex.sets, newCompletedState);
+                                         const newSets = isCompleted ? [] : Array.from({ length: ex.sets }, (_, i) => i + 1);
+                                         console.log('✅ Complete toggle:', exerciseName, newSets);
+                                         setExerciseSets(prev => ({ ...prev, [exerciseName]: newSets }));
+                                         saveWorkoutProgress(exerciseName, newSets, ex.sets);
                                        }}
                                      />
                                    );
