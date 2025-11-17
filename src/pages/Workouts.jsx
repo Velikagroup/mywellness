@@ -1468,18 +1468,18 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                       onToggleComplete={() => {
                                         const newCompletedState = !completedExercises[exerciseKey];
                                         console.log('✅ Exercise toggled:', exerciseKey, newCompletedState);
-                                         
+
                                         setCompletedExercises(prev => ({
                                           ...prev,
                                           [exerciseKey]: newCompletedState
                                         }));
-                                        
-                                        // If marking as completed, fill all sets
-                                        const updatedSets = newCompletedState 
-                                          ? Array(enrichedExercise.sets || 0).fill(true) 
-                                          : Array(enrichedExercise.sets || 0).fill(false);
 
-                                        setExerciseSets(prev => ({ // Update local state for sets
+                                        // ✅ CRITICAL: Genera array di NUMERI [1,2,3] non boolean!
+                                        const updatedSets = newCompletedState 
+                                          ? Array.from({ length: enrichedExercise.sets || 0 }, (_, i) => i + 1)
+                                          : [];
+
+                                        setExerciseSets(prev => ({
                                           ...prev,
                                           [exerciseKey]: updatedSets
                                         }));
@@ -1487,7 +1487,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                         // Salva lo stato
                                         saveWorkoutProgress(
                                           exerciseKey, 
-                                          updatedSets, // Pass the new set state
+                                          updatedSets,
                                           enrichedExercise.sets, 
                                           enrichedExercise.name,
                                           newCompletedState
