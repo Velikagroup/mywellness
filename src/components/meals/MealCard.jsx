@@ -44,7 +44,7 @@ export default function MealCard({ meal, onClick, showRegenerateButton = false, 
         </div>
 
         <div className="absolute bottom-3 right-3 flex flex-col gap-1.5">
-          <div className="flex items-center gap-1 px-3 py-1 bg-[var(--brand-primary)] text-white rounded-full shadow-lg">
+          <div className="flex items-center gap-1 px-3 py-1 bg-[#26847F] text-white rounded-full shadow-lg">
             <Flame className="w-4 h-4" />
             <span className="font-bold text-sm">{meal.total_calories}</span>
             <span className="text-xs">kcal</span>
@@ -61,7 +61,7 @@ export default function MealCard({ meal, onClick, showRegenerateButton = false, 
 
       <CardContent className="p-4">
         <div className="cursor-pointer" onClick={onClick}>
-          <h3 className="font-bold text-gray-900 mb-3 line-clamp-2 text-left group-hover:text-[var(--brand-primary)] transition-colors">
+          <h3 className="font-bold text-gray-900 mb-3 line-clamp-2 text-left group-hover:text-[#26847F] transition-colors">
             {meal.name}
           </h3>
           
@@ -84,7 +84,7 @@ export default function MealCard({ meal, onClick, showRegenerateButton = false, 
               disabled={isRegenerating}
               variant="outline"
               size="sm"
-              className="w-full border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] transition-all"
+              className="w-full border-[#26847F] text-[#26847F] hover:bg-[#e9f6f5] transition-all"
             >
               {isRegenerating ? (
                 <>
