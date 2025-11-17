@@ -1120,35 +1120,37 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
                 </div>
               )}
             </div>
-            <div className="flex gap-2 w-full lg:w-auto">
-              <Button
-                onClick={() => setShowPantry(true)}
-                className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
-              >
-                <Package className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="hidden sm:inline">Dispensa</span>
-                <span className="sm:hidden">Disp.</span>
-              </Button>
-              <Button
-                onClick={() => setShowShoppingList(true)}
-                className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-2.5 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial"
-              >
-                <ShoppingCart className="w-4 h-4 md:w-5 md:h-5" />
-                <span className="hidden sm:inline">Lista Spesa</span>
-                <span className="sm:hidden">Lista</span>
-              </Button>
+            <div className="flex flex-col lg:flex-row gap-2 w-full lg:w-auto">
               <Button
                 onClick={() => handleShowGenerator(user)}
-                className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-1 md:gap-2 shadow-lg hover:shadow-xl transition-all px-3 md:px-6 py-3 md:py-6 text-sm md:text-base font-semibold rounded-xl flex-1 lg:flex-initial relative"
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-6 py-6 text-base font-semibold rounded-xl w-full lg:w-auto relative order-1 lg:order-3"
                 disabled={generationLimitReached && remainingGenerations === 0}
               >
-                <BrainCircuit className="w-4 h-4 md:w-5 md:h-5" />
+                <BrainCircuit className="w-5 h-5" />
                 <span className="hidden sm:inline">Rigenera Piano con AI</span>
                 <span className="sm:hidden">Rigenera</span>
                 {generationLimitReached && remainingGenerations === 0 && (
                   <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
                 )}
               </Button>
+              <div className="flex gap-2 w-full lg:w-auto order-2">
+                <Button
+                  onClick={() => setShowPantry(true)}
+                  className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+                >
+                  <Package className="w-5 h-5" />
+                  <span className="hidden sm:inline">Dispensa</span>
+                  <span className="sm:hidden">Disp.</span>
+                </Button>
+                <Button
+                  onClick={() => setShowShoppingList(true)}
+                  className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial"
+                >
+                  <ShoppingCart className="w-5 h-5" />
+                  <span className="hidden sm:inline">Lista Spesa</span>
+                  <span className="sm:hidden">Lista</span>
+                </Button>
+              </div>
             </div>
           </div>
 
