@@ -291,7 +291,7 @@ export default function AppDemoFlow() {
               zIndex: 1
             }}
           >
-            <div className="absolute top-0 left-0 right-0 h-1 bg-gray-200 z-50">
+            <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-200 z-50">
               <motion.div
                 className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500"
                 style={{ width: `${progress}%` }}
@@ -520,7 +520,7 @@ export default function AppDemoFlow() {
                         <BarChart3 className="w-5 h-5 text-[var(--brand-primary)]" />
                         <span className="text-sm font-bold text-gray-800">Percentuale Massa Grassa</span>
                       </div>
-                      <div className="text-3xl font-black text-gray-900">28.5 <span className="text-base font-normal text-gray-500">%</span></div>
+                      <div className="text-3xl font-black text-gray-900">28.5 <span className="text-base font-normal text-gray-50">%</span></div>
                     </motion.div>
                   </motion.div>
                 </motion.div>
