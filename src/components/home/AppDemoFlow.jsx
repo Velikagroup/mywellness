@@ -49,35 +49,35 @@ export default function AppDemoFlow() {
       const easedProgress = 1 - Math.pow(1 - linearProgress, 3);
       setProgress(easedProgress * 100);
 
-      // Timing aggiustato - Dashboard a 5 secondi
+      // Timing aggiustato - Dashboard 7 secondi con 2 secondi finali tutti i dati visibili
       if (elapsed < 4000) setStep(0); // Peso attuale
       else if (elapsed < 8000) setStep(1); // Peso target
       else if (elapsed < 12000) setStep(2); // Loading
-      else if (elapsed < 17000) { // Dashboard - 5 secondi totali (12000 to 17000)
+      else if (elapsed < 19000) { // Dashboard - 7 secondi totali
         setStep(3);
-        const scrollProgress = (elapsed - 15000) / 2000; // Inizia scroll dopo 3 secondi (15000ms), dura 2s (17000ms)
-        setDashboardScroll(Math.max(0, scrollProgress));
+        const scrollProgress = (elapsed - 15000) / 2000; // Scroll da 15s a 17s (2 secondi)
+        setDashboardScroll(Math.max(0, Math.min(1, scrollProgress))); // Da 17s a 19s tutto visibile
       }
-      else if (elapsed < 21000) setStep(4); // Genera piano (17000 + 4000)
-      else if (elapsed < 25000) setStep(5); // Scelta dieta (21000 + 4000)
-      else if (elapsed < 28000) setStep(6); // Piano creato (25000 + 3000)
-      else if (elapsed < 31000) setStep(7); // Popup colazione (28000 + 3000)
-      else if (elapsed < 34000) setStep(8); // Scansiona (31000 + 3000)
-      else if (elapsed < 37000) setStep(9); // Aggiungi (34000 + 3000)
-      else if (elapsed < 40000) setStep(10); // Piano aggiornato (37000 + 3000)
-      else if (elapsed < 43000) setStep(11); // Lista spesa (40000 + 3000)
-      else if (elapsed < 46000) setStep(12); // Scan label (43000 + 3000)
-      else if (elapsed < 49000) setStep(13); // Health score (46000 + 3000)
-      else if (elapsed < 52000) setStep(14); // Colazione fatto (49000 + 3000)
-      else if (elapsed < 55000) setStep(15); // Scan pranzo (52000 + 3000)
-      else if (elapsed < 58000) setStep(16); // Rebalance (55000 + 3000)
-      else if (elapsed < 61000) setStep(17); // Workout quiz (58000 + 3000)
-      else if (elapsed < 64000) setStep(18); // Workout plan (61000 + 3000)
-      else if (elapsed < 67000) setStep(19); // Exercise detail (64000 + 3000)
-      else if (elapsed < 70000) setStep(20); // Modifica workout (67000 + 3000)
-      else if (elapsed < 73000) setStep(21); // New exercise (70000 + 3000)
-      else if (elapsed < 76000) setStep(22); // Body analysis (73000 + 3000)
-      else setStep(23); // Goal reached (76000 onwards)
+      else if (elapsed < 23000) setStep(4); // Genera piano
+      else if (elapsed < 27000) setStep(5); // Scelta dieta
+      else if (elapsed < 30000) setStep(6); // Piano creato
+      else if (elapsed < 33000) setStep(7); // Popup colazione
+      else if (elapsed < 36000) setStep(8); // Scansiona
+      else if (elapsed < 39000) setStep(9); // Aggiungi
+      else if (elapsed < 42000) setStep(10); // Piano aggiornato
+      else if (elapsed < 45000) setStep(11); // Lista spesa
+      else if (elapsed < 48000) setStep(12); // Scan label
+      else if (elapsed < 51000) setStep(13); // Health score
+      else if (elapsed < 54000) setStep(14); // Colazione fatto
+      else if (elapsed < 57000) setStep(15); // Scan pranzo
+      else if (elapsed < 60000) setStep(16); // Rebalance
+      else if (elapsed < 63000) setStep(17); // Workout quiz
+      else if (elapsed < 66000) setStep(18); // Workout plan
+      else if (elapsed < 69000) setStep(19); // Exercise detail
+      else if (elapsed < 72000) setStep(20); // Modifica workout
+      else if (elapsed < 75000) setStep(21); // New exercise
+      else if (elapsed < 78000) setStep(22); // Body analysis
+      else setStep(23); // Goal reached
     }, 50);
 
     return () => clearInterval(progressInterval);
@@ -122,7 +122,7 @@ export default function AppDemoFlow() {
             </div>
 
             <AnimatePresence mode="wait">
-              {/* Step 0: Peso Attuale */}
+              {/* Step 0: Peso Attuale - 70kg */}
               {step === 0 && (
                 <motion.div
                   key="current-weight"
@@ -139,14 +139,14 @@ export default function AppDemoFlow() {
                   </div>
                   <div className="bg-white rounded-2xl p-8 shadow-xl max-w-sm mx-auto">
                     <div className="text-center">
-                      <div className="text-6xl font-black text-gray-900 mb-2">80</div>
+                      <div className="text-6xl font-black text-gray-900 mb-2">70</div>
                       <div className="text-gray-500 text-base">kg</div>
                     </div>
                   </div>
                 </motion.div>
               )}
 
-              {/* Step 1: Peso Obiettivo */}
+              {/* Step 1: Peso Obiettivo - 65kg */}
               {step === 1 && (
                 <motion.div
                   key="target-weight"
@@ -163,7 +163,7 @@ export default function AppDemoFlow() {
                   </div>
                   <div className="bg-white rounded-2xl p-8 shadow-xl max-w-sm mx-auto">
                     <div className="text-center">
-                      <div className="text-6xl font-black text-[var(--brand-primary)] mb-2">73</div>
+                      <div className="text-6xl font-black text-[var(--brand-primary)] mb-2">65</div>
                       <div className="text-gray-500 text-base">kg</div>
                     </div>
                   </div>
@@ -188,7 +188,7 @@ export default function AppDemoFlow() {
                 </motion.div>
               )}
 
-              {/* Step 3: Dashboard Scientifica con scroll */}
+              {/* Step 3: Dashboard migliorata con scroll e pausa finale */}
               {step === 3 && (
                 <motion.div
                   key="dashboard"
@@ -198,35 +198,35 @@ export default function AppDemoFlow() {
                   className={`absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden ${!isDesktop ? 'pt-14' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                 >
                   <motion.div
-                    animate={{ y: -dashboardScroll * 280 }}
+                    animate={{ y: -dashboardScroll * 200 }}
                     transition={{ duration: 0.5 }}
-                    className="space-y-3"
+                    className="space-y-4"
                   >
-                    {/* Top Cards - Peso Iniziale, Target, Variazione */}
+                    {/* Top Cards - Pesi aggiornati */}
                     <div className="grid grid-cols-3 gap-2">
-                      <div className="bg-white rounded-lg p-2 shadow-sm">
-                        <div className="text-[9px] text-gray-500 mb-1">PESO INIZIALE</div>
-                        <div className="text-xl font-black text-gray-900">83<span className="text-xs font-normal ml-0.5">kg</span></div>
+                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                        <div className="text-[10px] text-gray-500 mb-1">PESO INIZIALE</div>
+                        <div className="text-2xl font-black text-gray-900">70<span className="text-sm font-normal ml-0.5">kg</span></div>
                       </div>
-                      <div className="bg-white rounded-lg p-2 shadow-sm">
-                        <div className="text-[9px] text-gray-500 mb-1">PESO TARGET</div>
-                        <div className="text-xl font-black text-gray-900">73<span className="text-xs font-normal ml-0.5">kg</span></div>
+                      <div className="bg-white rounded-xl p-3 shadow-sm">
+                        <div className="text-[10px] text-gray-500 mb-1">PESO TARGET</div>
+                        <div className="text-2xl font-black text-gray-900">65<span className="text-sm font-normal ml-0.5">kg</span></div>
                       </div>
-                      <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-lg p-2 shadow-sm border border-green-200">
-                        <div className="text-[9px] text-gray-600 mb-1">VARIAZIONE</div>
-                        <div className="text-xl font-black text-green-600">-4.0<span className="text-xs font-normal ml-0.5">kg</span></div>
+                      <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-3 shadow-sm border border-green-200">
+                        <div className="text-[10px] text-gray-600 mb-1">DA PERDERE</div>
+                        <div className="text-2xl font-black text-green-600">-5.0<span className="text-sm font-normal ml-0.5">kg</span></div>
                       </div>
                     </div>
 
-                    {/* Grafici - Traiettoria e Scomposizione */}
+                    {/* Grafici */}
                     <div className="grid grid-cols-2 gap-2">
                       {/* Grafico Traiettoria Massa */}
                       <div className="bg-white rounded-xl p-3 shadow-sm">
                         <div className="flex items-center gap-1 mb-2">
-                          <BarChart3 className="w-3 h-3 text-[var(--brand-primary)]" />
-                          <div className="text-[9px] font-bold text-gray-800">Traiettoria Massa</div>
+                          <BarChart3 className="w-4 h-4 text-[var(--brand-primary)]" />
+                          <div className="text-[10px] font-bold text-gray-800">Traiettoria Massa</div>
                         </div>
-                        <div className="relative h-20">
+                        <div className="relative h-24">
                           <svg viewBox="0 0 100 60" className="w-full h-full">
                             {/* Grid lines */}
                             <line x1="0" y1="15" x2="100" y2="15" stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2,2" />
@@ -257,7 +257,7 @@ export default function AppDemoFlow() {
                             <line x1="0" y1="50" x2="100" y2="50" stroke="#94a3b8" strokeWidth="1" strokeDasharray="3,3" />
                           </svg>
                         </div>
-                        <div className="flex items-center justify-between mt-1.5 text-[8px]">
+                        <div className="flex items-center justify-between mt-1.5 text-[9px]">
                           <div className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-[var(--brand-primary)]"></div>
                             <span className="text-gray-600">Peso attuale</span>
@@ -271,10 +271,10 @@ export default function AppDemoFlow() {
 
                       {/* Grafico Circolare Scomposizione Calorica */}
                       <div className="bg-white rounded-xl p-3 shadow-sm">
-                        <div className="text-[9px] font-bold text-gray-800 mb-2">Scomposizione Calorica</div>
+                        <div className="text-[10px] font-bold text-gray-800 mb-2">Scomposizione Calorica</div>
                         <div className="flex items-center justify-center mb-2">
                           <div className="relative">
-                            <svg className="w-20 h-20" viewBox="0 0 100 100">
+                            <svg className="w-24 h-24" viewBox="0 0 100 100">
                               <circle cx="50" cy="50" r="35" fill="none" stroke="#e5e7eb" strokeWidth="12" />
                               <motion.circle
                                 cx="50"
@@ -292,12 +292,12 @@ export default function AppDemoFlow() {
                               />
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
-                              <span className="text-xl font-black text-[var(--brand-primary)]">40%</span>
-                              <span className="text-[7px] text-gray-500">completato</span>
+                              <span className="text-2xl font-black text-[var(--brand-primary)]">40%</span>
+                              <span className="text-[8px] text-gray-500">completato</span>
                             </div>
                           </div>
                         </div>
-                        <div className="space-y-1 text-[8px]">
+                        <div className="space-y-1 text-[9px]">
                           <div className="flex items-center justify-between">
                             <div className="flex items-center gap-1">
                               <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
@@ -306,55 +306,58 @@ export default function AppDemoFlow() {
                             <span className="font-bold">30.800 kcal</span>
                           </div>
                           <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-1">
-                              <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                              <span className="text-gray-600">Rimanente</span>
-                            </div>
-                            <span className="font-bold">46.200 kcal</span>
+                            <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
+                            <span className="text-gray-600">Rimanente</span>
                           </div>
+                          <span className="font-bold">46.200 kcal</span>
                         </div>
                       </div>
                     </div>
 
-                    {/* Card Tecnici che appaiono con scroll */}
+                    {/* Dati tecnici che appaiono con scroll */}
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: dashboardScroll > 0.3 ? 1 : 0, y: dashboardScroll > 0.3 ? 0 : 20 }}
-                      className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 shadow-sm border-2 border-green-200"
+                      animate={{ 
+                        opacity: dashboardScroll > 0 ? 1 : 0, 
+                        y: dashboardScroll > 0 ? 0 : 20 
+                      }}
+                      className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 shadow-md border-2 border-green-200"
                     >
-                      <div className="text-sm text-gray-600 mb-1 text-center">Target Calorico</div>
+                      <div className="text-sm text-gray-600 mb-1 text-center font-semibold">Target Calorico Giornaliero</div>
                       <div className="text-center">
-                        <span className="text-3xl font-black text-gray-900">2000</span>
-                        <span className="text-base font-semibold text-gray-700 ml-2">kcal</span>
+                        <span className="text-4xl font-black text-gray-900">2000</span>
+                        <span className="text-lg font-semibold text-gray-700 ml-2">kcal</span>
                       </div>
                     </motion.div>
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: dashboardScroll > 0.5 ? 1 : 0, y: dashboardScroll > 0.5 ? 0 : 20 }}
-                      className="bg-white rounded-xl p-3 shadow-sm"
+                      animate={{ 
+                        opacity: dashboardScroll > 0.4 ? 1 : 0, 
+                        y: dashboardScroll > 0.4 ? 0 : 20 
+                      }}
+                      className="bg-white rounded-xl p-4 shadow-md border border-gray-200"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <TrendingDown className="w-4 h-4 text-[var(--brand-primary)]" />
-                          <span className="text-xs font-semibold text-gray-800">Metabolismo Basale (BMR)</span>
-                        </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <TrendingDown className="w-5 h-5 text-[var(--brand-primary)]" />
+                        <span className="text-sm font-bold text-gray-800">Metabolismo Basale (BMR)</span>
                       </div>
-                      <div className="text-2xl font-black text-gray-900">1500 <span className="text-sm font-normal text-gray-500">kcal</span></div>
+                      <div className="text-3xl font-black text-gray-900">1500 <span className="text-base font-normal text-gray-500">kcal/giorno</span></div>
                     </motion.div>
 
                     <motion.div
                       initial={{ opacity: 0, y: 20 }}
-                      animate={{ opacity: dashboardScroll > 0.7 ? 1 : 0, y: dashboardScroll > 0.7 ? 0 : 20 }}
-                      className="bg-white rounded-xl p-3 shadow-sm"
+                      animate={{ 
+                        opacity: dashboardScroll > 0.7 ? 1 : 0, 
+                        y: dashboardScroll > 0.7 ? 0 : 20 
+                      }}
+                      className="bg-white rounded-xl p-4 shadow-md border border-gray-200"
                     >
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="flex items-center gap-2">
-                          <BarChart3 className="w-4 h-4 text-[var(--brand-primary)]" />
-                          <span className="text-xs font-semibold text-gray-800">Massa Grassa</span>
-                        </div>
+                      <div className="flex items-center gap-2 mb-2">
+                        <BarChart3 className="w-5 h-5 text-[var(--brand-primary)]" />
+                        <span className="text-sm font-bold text-gray-800">Percentuale Massa Grassa</span>
                       </div>
-                      <div className="text-2xl font-black text-gray-900">28.5 <span className="text-sm font-normal text-gray-500">%</span></div>
+                      <div className="text-3xl font-black text-gray-900">28.5 <span className="text-base font-normal text-gray-500">%</span></div>
                     </motion.div>
                   </motion.div>
                 </motion.div>
@@ -1050,7 +1053,7 @@ export default function AppDemoFlow() {
                     🎉
                   </motion.div>
                   <h2 className="text-2xl font-black text-white text-center mb-1">Obiettivo Raggiunto!</h2>
-                  <p className="text-white text-center text-sm">73kg • -7kg in 12 settimane</p>
+                  <p className="text-white text-center text-sm">65kg • -5kg in 12 settimane</p>
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
