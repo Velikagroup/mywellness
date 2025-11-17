@@ -13,15 +13,15 @@ export default function SetTrackerModal({ isOpen, onClose, exercise, completedSe
       ? completedSets.filter(s => s !== setNumber)
       : [...completedSets, setNumber];
     
+    // ✅ SALVA IMMEDIATAMENTE
     onSetToggle(newCompleted);
     
-    // Chiudi immediatamente il modal
-    onClose();
-    
-    // Se tutti i set sono completati, notifica
+    // ✅ NON CHIUDERE IL MODAL - Lascia l'utente dentro finché non ha finito tutti i set
+    // Se tutti i set sono completati, chiudi e notifica
     if (newCompleted.length === totalSets) {
       setTimeout(() => {
         onComplete();
+        onClose();
       }, 300);
     }
   };
