@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -239,14 +238,16 @@ export default function Workouts() {
           
           todayLog.exercises_log?.forEach(exLog => {
             const exerciseKey = exLog.exercise_key;
-            savedExerciseSets[exerciseKey] = exLog.completed_sets || [];
+            // completed_sets è un array di numeri [1, 2, 3] che indica quali set sono completati
+            const sets = Array.isArray(exLog.completed_sets) ? exLog.completed_sets : [];
+            savedExerciseSets[exerciseKey] = sets;
             savedCompletedExercises[exerciseKey] = exLog.is_completed || false;
           });
           
           setCompletedExercises(savedCompletedExercises);
           setExerciseSets(savedExerciseSets);
           
-          console.log('✅ Dati caricati:', { savedCompletedExercises, savedExerciseSets });
+          console.log('✅ Dati caricati dal DB:', { savedCompletedExercises, savedExerciseSets });
         } else {
           console.log('ℹ️ Nessun log trovato per oggi, reset stato');
           setCompletedExercises({});
@@ -1441,14 +1442,15 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                       isCompleted={isCompleted}
                                       completedSets={completedSets}
                                       onSetToggle={(newSets) => {
-                                        console.log('🔄 Set toggled:', exerciseKey, newSets);
-                                         
+                                        console.log('🔄 Set toggled:', exerciseKey, 'newSets:', newSets);
+
+                                        // newSets è un array di numeri [1, 2, 3] che rappresenta i set completati
                                         setExerciseSets(prev => ({
                                           ...prev,
                                           [exerciseKey]: newSets
                                         }));
-                                        
-                                        // Salva immediatamente
+
+                                        // Salva immediatamente nel database
                                         saveWorkoutProgress(
                                           exerciseKey, 
                                           newSets, 
@@ -1554,4 +1556,3 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     </>
   );
 }
-
