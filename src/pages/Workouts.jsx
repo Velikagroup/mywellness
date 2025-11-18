@@ -261,39 +261,52 @@ export default function Workouts() {
   useEffect(() => {
     const checkRemainingGenerations = async () => {
       if (!trainingData.user_id || !trainingData.subscription_plan) return;
-      
+
       const currentMonth = new Date().toISOString().slice(0, 7);
       const limit = getGenerationLimit(trainingData.subscription_plan, 'workout');
-      
+
       if (limit === -1) { // Unlimited
         setRemainingGenerations(-1);
         setGenerationLimitReached(false);
         return;
       }
-      
+
       if (limit === 0) // No access
       {
         setRemainingGenerations(0);
         setGenerationLimitReached(true);
         return;
       }
-      
+
       try {
-        const generations = await base44.entities.PlanGeneration.filter({
-          user_id: trainingData.user_id,
-          plan_type: 'workout',
-          generation_month: currentMonth
-        });
-        
+        const [generations, extraCredits] = await Promise.all([
+          base44.entities.PlanGeneration.filter({
+            user_id: trainingData.user_id,
+            plan_type: 'workout',
+            generation_month: currentMonth
+          }),
+          base44.entities.PlanGenerationCredit.filter({
+            user_id: trainingData.user_id,
+            plan_type: 'workout'
+          })
+        ]);
+
+        // Calcola crediti extra disponibili
+        const extraCreditsAvailable = extraCredits
+          .filter(c => !c.expiration_month || c.expiration_month >= currentMonth)
+          .reduce((sum, c) => sum + c.credits_amount, 0);
+
         const used = generations.length;
-        const remaining = Math.max(0, limit - used);
+        const totalLimit = limit + extraCreditsAvailable;
+        const remaining = Math.max(0, totalLimit - used);
+
         setRemainingGenerations(remaining);
         setGenerationLimitReached(remaining === 0);
       } catch (error) {
         console.error('Error checking workout generations:', error);
       }
     };
-    
+
     checkRemainingGenerations();
   }, [trainingData.user_id, trainingData.subscription_plan]);
 

@@ -20,7 +20,10 @@ import {
   XCircle,
   Phone,
   MapPin,
-  Briefcase
+  Briefcase,
+  Gift,
+  Utensils,
+  Dumbbell
 } from 'lucide-react';
 
 export default function ClientDetailModal({ client, isOpen, onClose, onUpdate }) {
@@ -28,6 +31,11 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
   const [feedbacks, setFeedbacks] = useState([]);
   const [emailsSent, setEmailsSent] = useState(0);
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showCreditDialog, setShowCreditDialog] = useState(false);
+  const [creditType, setCreditType] = useState('meal');
+  const [creditAmount, setCreditAmount] = useState(1);
+  const [creditReason, setCreditReason] = useState('');
+  const [extraCredits, setExtraCredits] = useState({ meal: 0, workout: 0 });
 
   useEffect(() => {
     if (client && isOpen) {
@@ -37,13 +45,25 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
 
   const loadClientData = async () => {
     try {
-      const [txs, fbs] = await Promise.all([
+      const [txs, fbs, credits] = await Promise.all([
         base44.entities.Transaction.filter({ user_id: client.id }),
-        base44.entities.AIFeedback.filter({ user_id: client.id })
+        base44.entities.AIFeedback.filter({ user_id: client.id }),
+        base44.entities.PlanGenerationCredit.filter({ user_id: client.id })
       ]);
       
       setTransactions(txs);
       setFeedbacks(fbs);
+      
+      // Calcola crediti extra disponibili
+      const currentMonth = new Date().toISOString().slice(0, 7);
+      const mealCredits = credits
+        .filter(c => c.plan_type === 'meal' && (!c.expiration_month || c.expiration_month >= currentMonth))
+        .reduce((sum, c) => sum + c.credits_amount, 0);
+      const workoutCredits = credits
+        .filter(c => c.plan_type === 'workout' && (!c.expiration_month || c.expiration_month >= currentMonth))
+        .reduce((sum, c) => sum + c.credits_amount, 0);
+      
+      setExtraCredits({ meal: mealCredits, workout: workoutCredits });
       
       // Email sent: stima basata su eventi
       setEmailsSent(5); // Placeholder - puoi implementare tracking reale
@@ -123,6 +143,36 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
     setIsProcessing(false);
   };
 
+  const handleGrantCredits = async () => {
+    if (!creditReason.trim()) {
+      alert('⚠️ Inserisci un motivo per i crediti');
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const adminUser = await base44.auth.me();
+      
+      await base44.entities.PlanGenerationCredit.create({
+        user_id: client.id,
+        plan_type: creditType,
+        credits_amount: creditAmount,
+        reason: creditReason,
+        granted_by: adminUser.email,
+        expiration_month: null
+      });
+
+      alert(`✅ ${creditAmount} ${creditType === 'meal' ? 'generazioni nutrizionali' : 'generazioni allenamento'} concesse con successo!`);
+      setShowCreditDialog(false);
+      setCreditReason('');
+      await loadClientData();
+    } catch (error) {
+      console.error('Error granting credits:', error);
+      alert('❌ Errore: ' + error.message);
+    }
+    setIsProcessing(false);
+  };
+
   if (!client) return null;
 
   const totalSpent = transactions.reduce((sum, tx) => sum + (tx.amount || 0), 0);
@@ -142,7 +192,7 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
 
         <div className="space-y-6 pt-4">
           {/* Quick Actions */}
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
             <Button
               onClick={handleCancelSubscription}
               disabled={isProcessing || client.subscription_status !== 'active'}
@@ -174,6 +224,15 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
             </Button>
             
             <Button
+              onClick={() => setShowCreditDialog(true)}
+              variant="outline"
+              className="border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]"
+            >
+              <Gift className="w-4 h-4 mr-2" />
+              Dai Crediti
+            </Button>
+            
+            <Button
               onClick={() => window.open(`mailto:${client.email}`, '_blank')}
               variant="outline"
               className="border-blue-200 text-blue-600 hover:bg-blue-50"
@@ -182,6 +241,32 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
               Invia Email
             </Button>
           </div>
+
+          {/* Crediti Extra */}
+          {(extraCredits.meal > 0 || extraCredits.workout > 0) && (
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-300 rounded-xl p-4">
+              <div className="flex items-center gap-3">
+                <Gift className="w-6 h-6 text-green-600" />
+                <div className="flex-1">
+                  <p className="font-bold text-green-900">🎁 Crediti Extra Attivi</p>
+                  <div className="flex gap-4 mt-2">
+                    {extraCredits.meal > 0 && (
+                      <Badge className="bg-green-600 text-white">
+                        <Utensils className="w-3 h-3 mr-1" />
+                        +{extraCredits.meal} Piani Nutrizionali
+                      </Badge>
+                    )}
+                    {extraCredits.workout > 0 && (
+                      <Badge className="bg-blue-600 text-white">
+                        <Dumbbell className="w-3 h-3 mr-1" />
+                        +{extraCredits.workout} Piani Allenamento
+                      </Badge>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
 
           <Tabs defaultValue="overview" className="w-full">
             <TabsList className="grid w-full grid-cols-5">
@@ -584,6 +669,96 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
             </TabsContent>
           </Tabs>
         </div>
+
+        {/* Dialog Crediti */}
+        <Dialog open={showCreditDialog} onOpenChange={setShowCreditDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <Gift className="w-5 h-5 text-[var(--brand-primary)]" />
+                Concedi Crediti Generazione Extra
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">Tipo Piano</label>
+                <div className="grid grid-cols-2 gap-2">
+                  <Button
+                    onClick={() => setCreditType('meal')}
+                    variant={creditType === 'meal' ? 'default' : 'outline'}
+                    className={creditType === 'meal' ? 'bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]' : ''}
+                  >
+                    <Utensils className="w-4 h-4 mr-2" />
+                    Nutrizionale
+                  </Button>
+                  <Button
+                    onClick={() => setCreditType('workout')}
+                    variant={creditType === 'workout' ? 'default' : 'outline'}
+                    className={creditType === 'workout' ? 'bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]' : ''}
+                  >
+                    <Dumbbell className="w-4 h-4 mr-2" />
+                    Allenamento
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">Numero Generazioni</label>
+                <div className="flex items-center gap-2">
+                  <Button
+                    onClick={() => setCreditAmount(Math.max(1, creditAmount - 1))}
+                    variant="outline"
+                    size="sm"
+                  >
+                    -
+                  </Button>
+                  <span className="text-2xl font-bold text-gray-900 px-6">{creditAmount}</span>
+                  <Button
+                    onClick={() => setCreditAmount(creditAmount + 1)}
+                    variant="outline"
+                    size="sm"
+                  >
+                    +
+                  </Button>
+                </div>
+              </div>
+
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">Motivo</label>
+                <textarea
+                  value={creditReason}
+                  onChange={(e) => setCreditReason(e.target.value)}
+                  placeholder="Es: Piano generato male, compensazione per problema tecnico..."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--brand-primary)] focus:border-transparent"
+                  rows={3}
+                />
+              </div>
+
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                <p className="text-sm text-blue-800">
+                  💡 Il cliente riceverà <strong>{creditAmount}</strong> {creditType === 'meal' ? 'generazioni nutrizionali' : 'generazioni allenamento'} extra che potrà utilizzare senza limiti di tempo.
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShowCreditDialog(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Annulla
+                </Button>
+                <Button
+                  onClick={handleGrantCredits}
+                  disabled={isProcessing || !creditReason.trim()}
+                  className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                >
+                  Conferma
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
       </DialogContent>
     </Dialog>
   );
