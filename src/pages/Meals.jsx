@@ -600,19 +600,32 @@ Use verified nutritional data. All names and units in Italian.`;
       const calorieDifference = targetCalories - currentCalories;
       
       if (calorieDifference !== 0) {
-        if (calorieDifference > 5) { // Add olive oil if significantly under target
+        if (calorieDifference > 5) {
+          // ✅ Controlla se l'olio è già presente
+          const oilIndex = validIngredients.findIndex(ing => 
+            ing.name.toLowerCase().includes('olio') && ing.name.toLowerCase().includes('oliva')
+          );
+          
           const oilMl = Math.round(calorieDifference / 9);
           const oilCalories = oilMl * 9;
           
-          validIngredients.push({
-            name: "olio d'oliva extra vergine",
-            quantity: oilMl,
-            unit: "ml",
-            calories: oilCalories,
-            protein: 0.0,
-            carbs: 0.0,
-            fat: Math.round(oilMl * 10) / 10
-          });
+          if (oilIndex >= 0) {
+            // Se esiste già, aumenta la quantità
+            validIngredients[oilIndex].quantity += oilMl;
+            validIngredients[oilIndex].calories += oilCalories;
+            validIngredients[oilIndex].fat = Math.round((validIngredients[oilIndex].fat + oilMl) * 10) / 10;
+          } else {
+            // Aggiungi nuovo
+            validIngredients.push({
+              name: "olio d'oliva",
+              quantity: oilMl,
+              unit: "ml",
+              calories: oilCalories,
+              protein: 0.0,
+              carbs: 0.0,
+              fat: Math.round(oilMl * 10) / 10
+            });
+          }
           
           currentCalories += oilCalories;
         } else if (calorieDifference < -5) { // Scale down ingredients if significantly over target
@@ -891,49 +904,77 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
             const targetCals = mealCalorieDistribution[mealType];
             const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
             
-            // ✅ MATCH ingredienti con dispensa
-            let roundedIngredients = mealData.ingredients.map(ing => {
+            // ✅ MATCH ingredienti con dispensa + NORMALIZZA NOMI
+            const normalizedIngredients = new Map();
+            
+            mealData.ingredients.forEach(ing => {
+              const normalizedName = ing.name.toLowerCase().trim();
+              
               const pantryMatch = userIngredients.find(ui => 
-                ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
-                ing.name.toLowerCase().includes(ui.name.toLowerCase())
+                ui.name.toLowerCase().includes(normalizedName) || 
+                normalizedName.includes(ui.name.toLowerCase())
               );
               
-              if (pantryMatch) {
-                const gramsUsed = ing.quantity;
-                return {
-                  name: pantryMatch.name,
-                  quantity: gramsUsed,
-                  unit: pantryMatch.unit,
-                  calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
-                  protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
-                  carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
-                  fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
-                };
-              }
-              
-              return {
-                ...ing,
+              const ingredient = pantryMatch ? {
+                name: pantryMatch.name,
+                quantity: ing.quantity,
+                unit: pantryMatch.unit,
+                calories: Math.round((pantryMatch.calories_per_100g / 100) * ing.quantity),
+                protein: Math.round((pantryMatch.protein_per_100g / 100) * ing.quantity * 10) / 10,
+                carbs: Math.round((pantryMatch.carbs_per_100g / 100) * ing.quantity * 10) / 10,
+                fat: Math.round((pantryMatch.fat_per_100g / 100) * ing.quantity * 10) / 10
+              } : {
+                name: ing.name,
+                quantity: ing.quantity,
+                unit: ing.unit,
+                calories: ing.calories,
                 protein: Math.round((ing.protein || 0) * 10) / 10,
                 carbs: Math.round((ing.carbs || 0) * 10) / 10,
                 fat: Math.round((ing.fat || 0) * 10) / 10
               };
+              
+              // ✅ Unisci duplicati
+              if (normalizedIngredients.has(normalizedName)) {
+                const existing = normalizedIngredients.get(normalizedName);
+                existing.quantity += ingredient.quantity;
+                existing.calories += ingredient.calories;
+                existing.protein += ingredient.protein;
+                existing.carbs += ingredient.carbs;
+                existing.fat += ingredient.fat;
+              } else {
+                normalizedIngredients.set(normalizedName, ingredient);
+              }
             });
-
+            
+            let roundedIngredients = Array.from(normalizedIngredients.values());
             let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
             const diff = targetCals - calculatedCalories;
 
             if (diff > 5) {
+              // ✅ Controlla se olio già presente
+              const oilKey = roundedIngredients.findIndex(ing => 
+                ing.name.toLowerCase().includes('olio') && ing.name.toLowerCase().includes('oliva')
+              );
+              
               const oilMl = Math.round(diff / 9);
-              roundedIngredients.push({
-                name: "olio d'oliva",
-                quantity: oilMl,
-                unit: "ml",
-                calories: oilMl * 9,
-                protein: 0.0,
-                carbs: 0.0,
-                fat: Math.round(oilMl * 10) / 10
-              });
-              calculatedCalories += oilMl * 9;
+              const oilCalories = oilMl * 9;
+              
+              if (oilKey >= 0) {
+                roundedIngredients[oilKey].quantity += oilMl;
+                roundedIngredients[oilKey].calories += oilCalories;
+                roundedIngredients[oilKey].fat += Math.round(oilMl * 10) / 10;
+              } else {
+                roundedIngredients.push({
+                  name: "olio d'oliva",
+                  quantity: oilMl,
+                  unit: "ml",
+                  calories: oilCalories,
+                  protein: 0.0,
+                  carbs: 0.0,
+                  fat: Math.round(oilMl * 10) / 10
+                });
+              }
+              calculatedCalories += oilCalories;
             } else if (diff < -5) {
               const scaleFactor = targetCals / calculatedCalories;
               roundedIngredients = roundedIngredients.map(ing => ({
@@ -1081,48 +1122,77 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${pantryIngredientsProm
               const targetCals = mealCalorieDistribution[mealData.meal_type];
               const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealData.meal_type);
               
-              let roundedIngredients = mealData.ingredients.map(ing => {
+              // ✅ NORMALIZZA ingredienti per evitare duplicati
+              const normalizedIngredients = new Map();
+              
+              mealData.ingredients.forEach(ing => {
+                const normalizedName = ing.name.toLowerCase().trim();
+                
                 const pantryMatch = userIngredients.find(ui => 
-                  ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
-                  ing.name.toLowerCase().includes(ui.name.toLowerCase())
+                  ui.name.toLowerCase().includes(normalizedName) || 
+                  normalizedName.includes(ui.name.toLowerCase())
                 );
                 
-                if (pantryMatch) {
-                  const gramsUsed = ing.quantity;
-                  return {
-                    name: pantryMatch.name,
-                    quantity: gramsUsed,
-                    unit: pantryMatch.unit,
-                    calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
-                    protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
-                    carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
-                    fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
-                  };
-                }
-                
-                return {
-                  ...ing,
+                const ingredient = pantryMatch ? {
+                  name: pantryMatch.name,
+                  quantity: ing.quantity,
+                  unit: pantryMatch.unit,
+                  calories: Math.round((pantryMatch.calories_per_100g / 100) * ing.quantity),
+                  protein: Math.round((pantryMatch.protein_per_100g / 100) * ing.quantity * 10) / 10,
+                  carbs: Math.round((pantryMatch.carbs_per_100g / 100) * ing.quantity * 10) / 10,
+                  fat: Math.round((pantryMatch.fat_per_100g / 100) * ing.quantity * 10) / 10
+                } : {
+                  name: ing.name,
+                  quantity: ing.quantity,
+                  unit: ing.unit,
+                  calories: ing.calories,
                   protein: Math.round((ing.protein || 0) * 10) / 10,
                   carbs: Math.round((ing.carbs || 0) * 10) / 10,
                   fat: Math.round((ing.fat || 0) * 10) / 10
                 };
+                
+                // ✅ Unisci duplicati
+                if (normalizedIngredients.has(normalizedName)) {
+                  const existing = normalizedIngredients.get(normalizedName);
+                  existing.quantity += ingredient.quantity;
+                  existing.calories += ingredient.calories;
+                  existing.protein += ingredient.protein;
+                  existing.carbs += ingredient.carbs;
+                  existing.fat += ingredient.fat;
+                } else {
+                  normalizedIngredients.set(normalizedName, ingredient);
+                }
               });
               
+              let roundedIngredients = Array.from(normalizedIngredients.values());
               let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
               const diff = targetCals - calculatedCalories;
               
               if (diff > 5) {
+                // ✅ Controlla se olio già presente
+                const oilKey = roundedIngredients.findIndex(ing => 
+                  ing.name.toLowerCase().includes('olio') && ing.name.toLowerCase().includes('oliva')
+                );
+                
                 const oilMl = Math.round(diff / 9);
-                roundedIngredients.push({
-                  name: "olio d'oliva",
-                  quantity: oilMl,
-                  unit: "ml",
-                  calories: oilMl * 9,
-                  protein: 0.0,
-                  carbs: 0.0,
-                  fat: Math.round(oilMl * 10) / 10
-                });
-                calculatedCalories += oilMl * 9;
+                const oilCalories = oilMl * 9;
+                
+                if (oilKey >= 0) {
+                  roundedIngredients[oilKey].quantity += oilMl;
+                  roundedIngredients[oilKey].calories += oilCalories;
+                  roundedIngredients[oilKey].fat += Math.round(oilMl * 10) / 10;
+                } else {
+                  roundedIngredients.push({
+                    name: "olio d'oliva",
+                    quantity: oilMl,
+                    unit: "ml",
+                    calories: oilCalories,
+                    protein: 0.0,
+                    carbs: 0.0,
+                    fat: Math.round(oilMl * 10) / 10
+                  });
+                }
+                calculatedCalories += oilCalories;
               } else if (diff < -5) {
                 const scaleFactor = targetCals / calculatedCalories;
                 roundedIngredients = roundedIngredients.map(ing => ({
