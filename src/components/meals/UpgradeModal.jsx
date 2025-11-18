@@ -153,12 +153,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
           }
 
           .gradient-text {
-            background: linear-gradient(90deg, #4ade80, #16a34a, #4ade80);
+            background: linear-gradient(135deg, #26847F 0%, #14b8a6 50%, #22c55e 100%);
             background-size: 200% auto;
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            animation: shimmer 12s linear infinite;
+            animation: shimmer 8s ease-in-out infinite;
           }
 
           .liquid-glass {
@@ -174,10 +174,10 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
         <div className="relative z-[101] w-full max-w-7xl max-h-[95vh] overflow-y-auto animated-gradient-bg-modal rounded-3xl shadow-2xl">
           <button 
             onClick={onClose} 
-            className="absolute top-4 right-4 z-[102] text-gray-400 hover:text-gray-600 transition-colors bg-white rounded-full p-2 shadow-lg hover:shadow-xl"
+            className="absolute top-2 right-2 md:top-4 md:right-4 z-[102] text-gray-600 hover:text-gray-900 transition-colors bg-white rounded-full p-3 shadow-lg hover:shadow-xl"
             aria-label="Chiudi"
           >
-            <X className="w-5 h-5" />
+            <X className="w-6 h-6" />
           </button>
 
           <div className="p-8 md:p-12">
