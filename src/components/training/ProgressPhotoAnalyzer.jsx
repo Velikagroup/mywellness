@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -277,13 +276,14 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
 
 CRITICAL: Generate ALL content in ITALIAN language.
 
-Analyze EVERY visible detail:
-- Muscle definition: Are muscle lines visible? How defined are they? (rate 1-10)
-- Fat layer: How thick is the subcutaneous fat? (estimate: 0-2mm, 2-5mm, 5-10mm, 10+mm)
-- Skin texture: Is it tight, smooth, loose, dimpled?
-- Vascularity: Are veins visible? How prominent? (none, slight, moderate, high)
-- Shape/Contour: Describe the exact shape you see
-- Muscle separation: Can you see individual muscle groups?
+Analyze EVERY visible detail with NUMERICAL SCORES (0-10 scale):
+1. GRASSO SUPERFICIALE (0-10): 0=molto grasso, 10=estremamente magro. Quanto grasso sottocutaneo è visibile?
+2. DEFINIZIONE MUSCOLARE (0-10): 0=nessuna, 10=massima. Quanto sono visibili e separati i muscoli?
+3. SIMMETRIA E PROPORZIONI (0-10): 0=asimmetrico, 10=perfettamente simmetrico. Confronta lato sx e dx.
+4. QUALITÀ PELLE (0-10): 0=cellulite grave/smagliature evidenti, 10=pelle perfettamente tonica. Analizza: cellulite, smagliature, tonicità.
+5. GONFIORE/RITENZIONE (0-10): 0=molto gonfio/ritenzione evidente, 10=nessuna ritenzione. La zona appare gonfia o trattenendo liquidi?
+
+For each score, provide detailed observations in Italian.
 
 User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}
 Target Area: ${selectedZone.label}
@@ -296,14 +296,59 @@ Be FORENSICALLY detailed. Describe what you see like you're writing a medical re
         response_json_schema: {
           type: "object",
           properties: {
-            muscle_definition_score: { type: "number", description: "1-10 rating" },
-            fat_layer_thickness: { type: "string", enum: ["0-2mm", "2-5mm", "5-10mm", "10+mm"], description: "Estimate" },
-            skin_texture: { type: "string", description: "Description in Italian" },
-            vascularity_level: { type: "string", enum: ["none", "slight", "moderate", "high"] },
-            shape_description: { type: "string", description: "Shape in Italian" },
-            detailed_description: { type: "string", description: "Full forensic description in Italian" }
+            grasso_superficiale_score: { 
+              type: "number", 
+              description: "0-10: quanto grasso è visibile (0=molto, 10=niente)" 
+            },
+            grasso_superficiale_note: { 
+              type: "string", 
+              description: "Osservazioni dettagliate sul grasso visibile in italiano" 
+            },
+            definizione_muscolare_score: { 
+              type: "number", 
+              description: "0-10: quanto sono definiti i muscoli (0=niente, 10=massimo)" 
+            },
+            definizione_muscolare_note: { 
+              type: "string", 
+              description: "Osservazioni sui muscoli visibili in italiano" 
+            },
+            simmetria_proporzioni_score: { 
+              type: "number", 
+              description: "0-10: quanto è simmetrica la zona (0=asimmetrico, 10=perfetto)" 
+            },
+            simmetria_proporzioni_note: { 
+              type: "string", 
+              description: "Differenze tra lato sx e dx in italiano" 
+            },
+            qualita_pelle_score: { 
+              type: "number", 
+              description: "0-10: qualità pelle (0=cellulite/smagliature evidenti, 10=perfetta)" 
+            },
+            qualita_pelle_note: { 
+              type: "string", 
+              description: "Dettagli su cellulite, smagliature, tonicità in italiano" 
+            },
+            gonfiore_ritenzione_score: { 
+              type: "number", 
+              description: "0-10: livello ritenzione (0=molto gonfio, 10=nessun gonfiore)" 
+            },
+            gonfiore_ritenzione_note: { 
+              type: "string", 
+              description: "Osservazioni su gonfiore e ritenzione liquidi in italiano" 
+            },
+            detailed_description: { 
+              type: "string", 
+              description: "Descrizione forense completa in italiano" 
+            }
           },
-          required: ["muscle_definition_score", "fat_layer_thickness", "skin_texture", "vascularity_level", "shape_description", "detailed_description"]
+          required: [
+            "grasso_superficiale_score", "grasso_superficiale_note",
+            "definizione_muscolare_score", "definizione_muscolare_note",
+            "simmetria_proporzioni_score", "simmetria_proporzioni_note",
+            "qualita_pelle_score", "qualita_pelle_note",
+            "gonfiore_ritenzione_score", "gonfiore_ritenzione_note",
+            "detailed_description"
+          ]
         }
       });
 
@@ -334,30 +379,25 @@ Be FORENSICALLY detailed. Describe what you see like you're writing a medical re
         comparisonPrompt = `You are an EXPERT body composition analyst. COMPARE these two detailed analyses:
 
 🔴 FOTO PRECEDENTE (${daysSincePrevious} giorni fa):
-- Definizione Muscolare: ${previousPhotoDescription.muscle_definition_score}/10
-- Spessore Grasso: ${previousPhotoDescription.fat_layer_thickness}
-- Texture Pelle: ${previousPhotoDescription.skin_texture}
-- Vascolarizzazione: ${previousPhotoDescription.vascularity_level}
-- Forma: ${previousPhotoDescription.shape_description}
-- Descrizione: ${previousPhotoDescription.detailed_description}
+- Grasso Superficiale: ${previousPhotoDescription.grasso_superficiale_score || previousPhotoDescription.muscle_definition_score}/10
+- Definizione Muscolare: ${previousPhotoDescription.definizione_muscolare_score || previousPhotoDescription.muscle_definition_score}/10
+- Simmetria: ${previousPhotoDescription.simmetria_proporzioni_score || 5}/10
+- Qualità Pelle: ${previousPhotoDescription.qualita_pelle_score || 5}/10
+- Gonfiore/Ritenzione: ${previousPhotoDescription.gonfiore_ritenzione_score || 5}/10
 
 🟢 FOTO CORRENTE (OGGI):
-- Definizione Muscolare: ${currentDescription.muscle_definition_score}/10
-- Spessore Grasso: ${currentDescription.fat_layer_thickness}
-- Texture Pelle: ${currentDescription.skin_texture}
-- Vascolarizzazione: ${currentDescription.vascularity_level}
-- Forma: ${currentDescription.shape_description}
-- Descrizione: ${currentDescription.detailed_description}
+- Grasso Superficiale: ${currentDescription.grasso_superficiale_score}/10
+- Definizione Muscolare: ${currentDescription.definizione_muscolare_score}/10
+- Simmetria: ${currentDescription.simmetria_proporzioni_score}/10
+- Qualità Pelle: ${currentDescription.qualita_pelle_score}/10
+- Gonfiore/Ritenzione: ${currentDescription.gonfiore_ritenzione_score}/10
 
 CRITICAL INSTRUCTIONS (in ITALIAN):
-1. COMPARE EVERY SINGLE METRIC above
-2. Muscle definition: ${currentDescription.muscle_definition_score}/10 vs ${previousPhotoDescription.muscle_definition_score}/10 = ${currentDescription.muscle_definition_score - previousPhotoDescription.muscle_definition_score > 0 ? 'MIGLIORAMENTO' : currentDescription.muscle_definition_score - previousPhotoDescription.muscle_definition_score < 0 ? 'PEGGIORAMENTO' : 'STABILE'}
-3. Fat layer: "${currentDescription.fat_layer_thickness}" vs "${previousPhotoDescription.fat_layer_thickness}" - EXPLAIN if it got thinner or thicker
-4. Vascularity: "${currentDescription.vascularity_level}" vs "${previousPhotoDescription.vascularity_level}" - More veins = fat loss
-5. Skin: "${currentDescription.skin_texture}" vs "${previousPhotoDescription.skin_texture}" - Tighter = progress
-6. Write a MINIMUM 6-8 sentence paragraph in Italian explaining EVERY difference
-7. Be BRUTALLY HONEST - if numbers improved but you don't see it, explain why (lighting, posture, etc)
-8. If numbers show improvement, CELEBRATE IT with specifics
+1. COMPARE EVERY SINGLE METRIC above and calculate deltas
+2. For each metric, explain if it improved, stayed same, or regressed
+3. Write a MINIMUM 6-8 sentence paragraph in Italian explaining EVERY difference
+4. Be BRUTALLY HONEST - if numbers improved but you don't see it visually, explain why (lighting, posture, etc)
+5. If numbers show improvement, CELEBRATE IT with specifics
 
 User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}, Area: ${selectedZone.label}
 Days passed: ${daysSincePrevious}
@@ -367,18 +407,18 @@ User notes: ${notes || 'Nessuna nota'}`;
         comparisonPrompt = `This is the user's FIRST progress photo. Provide a baseline assessment.
 
 CURRENT PHOTO ANALYSIS:
-- Definizione Muscolare: ${currentDescription.muscle_definition_score}/10
-- Spessore Grasso: ${currentDescription.fat_layer_thickness}
-- Texture Pelle: ${currentDescription.skin_texture}
-- Vascolarizzazione: ${currentDescription.vascularity_level}
-- Descrizione: ${currentDescription.detailed_description}
+- Grasso Superficiale: ${currentDescription.grasso_superficiale_score}/10
+- Definizione Muscolare: ${currentDescription.definizione_muscolare_score}/10
+- Simmetria: ${currentDescription.simmetria_proporzioni_score}/10
+- Qualità Pelle: ${currentDescription.qualita_pelle_score}/10
+- Gonfiore/Ritenzione: ${currentDescription.gonfiore_ritenzione_score}/10
 
 User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}, Area: ${selectedZone.label}
 
 Task (in ITALIAN):
 1. Describe current state as baseline
 2. Set comparison_result to "first_photo"
-3. List visible characteristics
+3. List visible characteristics based on the 5 scores above
 4. Provide 3-5 recommendations to improve this area
 5. Suggest if adjustments needed
 6. Write encouraging message`;
@@ -1100,6 +1140,97 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   <h4 className="font-semibold text-gray-900 mb-2 text-sm">Valutazione AI Stato Attuale</h4>
                   <p className="text-sm text-gray-700 leading-relaxed">{analysisResult.overall_assessment}</p>
                 </div>
+
+                {currentPhotoDescription && (
+                  <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border-2 border-blue-300 space-y-3">
+                    <h4 className="font-bold text-blue-900 mb-3 text-base flex items-center gap-2">
+                      <Microscope className="w-5 h-5" />
+                      📊 Analisi Dettagliata Zona Target
+                    </h4>
+
+                    <div className="space-y-2">
+                      <div className="bg-white/60 p-3 rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-semibold text-gray-700">🔥 Grasso Superficiale</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500" 
+                                style={{ width: `${currentPhotoDescription.grasso_superficiale_score * 10}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-blue-700">{currentPhotoDescription.grasso_superficiale_score}/10</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{currentPhotoDescription.grasso_superficiale_note}</p>
+                      </div>
+
+                      <div className="bg-white/60 p-3 rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-semibold text-gray-700">💪 Definizione Muscolare</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500" 
+                                style={{ width: `${currentPhotoDescription.definizione_muscolare_score * 10}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-blue-700">{currentPhotoDescription.definizione_muscolare_score}/10</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{currentPhotoDescription.definizione_muscolare_note}</p>
+                      </div>
+
+                      <div className="bg-white/60 p-3 rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-semibold text-gray-700">⚖️ Simmetria e Proporzioni</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500" 
+                                style={{ width: `${currentPhotoDescription.simmetria_proporzioni_score * 10}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-blue-700">{currentPhotoDescription.simmetria_proporzioni_score}/10</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{currentPhotoDescription.simmetria_proporzioni_note}</p>
+                      </div>
+
+                      <div className="bg-white/60 p-3 rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-semibold text-gray-700">✨ Qualità Pelle</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500" 
+                                style={{ width: `${currentPhotoDescription.qualita_pelle_score * 10}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-blue-700">{currentPhotoDescription.qualita_pelle_score}/10</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{currentPhotoDescription.qualita_pelle_note}</p>
+                      </div>
+
+                      <div className="bg-white/60 p-3 rounded-lg">
+                        <div className="flex items-center justify-between mb-1">
+                          <span className="text-xs font-semibold text-gray-700">💧 Gonfiore / Ritenzione</span>
+                          <div className="flex items-center gap-2">
+                            <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
+                              <div 
+                                className="h-full bg-gradient-to-r from-red-500 via-yellow-500 to-green-500" 
+                                style={{ width: `${currentPhotoDescription.gonfiore_ritenzione_score * 10}%` }}
+                              />
+                            </div>
+                            <span className="text-sm font-bold text-blue-700">{currentPhotoDescription.gonfiore_ritenzione_score}/10</span>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600 mt-1">{currentPhotoDescription.gonfiore_ritenzione_note}</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
 
                 {analysisResult.visible_characteristics?.length > 0 && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
