@@ -796,165 +796,178 @@ Use verified nutritional data. All names and units in Italian.`;
       });
 
       const allGeneratedMeals = [];
-      const totalMealsToGenerate = daysToGenerate.length * mealStructure.length;
-      let generatedMealCount = 0;
-
-      // ✅ STEP 1: Generazione pasti SENZA immagini (VELOCE)
+      
+      // ✅ OTTIMIZZAZIONE: genera tutti i pasti di un giorno in UNA SOLA chiamata LLM
+      // Invece di 35 chiamate (5 pasti × 7 giorni), ne facciamo solo 7!
       for (let dayIndex = 0; dayIndex < daysToGenerate.length; dayIndex++) {
         const day = daysToGenerate[dayIndex];
+        const progress = 20 + Math.round((dayIndex / daysToGenerate.length) * 70);
+        updateProgress(progress, `Generazione giorno ${dayIndex + 1}/${daysToGenerate.length}: ${day}...`);
         
-        for (let mealIndex = 0; mealIndex < mealStructure.length; mealIndex++) {
-          const mealType = mealStructure[mealIndex];
-          const targetCals = mealCalorieDistribution[mealType];
-          
-          // 🍕 Controlla se questo pasto è un CHEAT MEAL
+        // Costruisci le specifiche per ogni pasto del giorno
+        const mealSpecs = mealStructure.map(mealType => {
           const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
-          
-          generatedMealCount++;
-          const progress = 20 + Math.round((generatedMealCount / totalMealsToGenerate) * 70);
-          updateProgress(progress, `${day} - ${getMealTypeLabel(mealType)} ${isCheatMeal ? '🍕' : ''} (${generatedMealCount}/${totalMealsToGenerate})`);
-
-          let mealPrompt;
-          
-          if (isCheatMeal) {
-            // 🍕 PROMPT CHEAT MEAL - pasti preferiti dell'utente, più calorici
-            mealPrompt = `You are an expert nutritionist. Create ONE CHEAT MEAL in ITALIAN for ${getMealTypeLabel(mealType)}.
+          return {
+            meal_type: mealType,
+            label: getMealTypeLabel(mealType),
+            target_calories: mealCalorieDistribution[mealType],
+            is_cheat: isCheatMeal
+          };
+        });
+        
+        const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ITALIAN for ${day}.
 
 CRITICAL INSTRUCTIONS:
-- This is a CHEAT MEAL: user can enjoy their favorite foods!
-- Target calories: APPROXIMATELY ${targetCals} kcal (can go +20% over if needed for tastier meal)
-- Include foods from user's favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, hamburger, dolci'}
-- Make it DELICIOUS and SATISFYING
-- Still provide accurate nutritional data (be realistic)
+- Create EXACTLY ${mealsPerDay} meals
+- Each meal must have accurate nutritional data
+- Use ITALIAN names for all ingredients, meals, and units
 - ${cookingTimeContext}
-- IMPORTANT: Use ITALIAN names for all ingredients, meals, and units (e.g., "g", "ml", "cucchiaio")
+- Diet: ${generationPrefs.diet_type}
+- Allowed foods: ${dietRules.allowed}
+${pantryIngredientsPrompt}
 
-Examples of cheat meals: 
-- Pizza Margherita fatta in casa
-- Hamburger con patatine dolci al forno
-- Pasta carbonara
-- Lasagne al forno
-- Sushi misto
-- Tacos con guacamole
+MEALS TO CREATE:
+${mealSpecs.map(spec => `
+${spec.label}:
+- Target: ${spec.target_calories} kcal
+${spec.is_cheat ? `- THIS IS A CHEAT MEAL: Make it delicious! User favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, hamburger'}. Can go +20% calories.` : '- Follow diet rules strictly'}
+`).join('\n')}
 
-Diet context: ${generationPrefs.diet_type} (but this is a CHEAT, so you can break the rules!)
-User profile: ${nutritionData.age} anni, ${nutritionData.gender}, Goal: ${nutritionData.current_weight}kg → ${nutritionData.target_weight}kg
+User: ${nutritionData.age} anni, ${nutritionData.gender}, ${nutritionData.current_weight}kg → ${nutritionData.target_weight}kg
 
-Task: Create a satisfying, realistic cheat meal with precise nutritional values. All content in ITALIAN.`;
-          } else {
-            // ✅ PROMPT NORMALE con ingredienti dispensa
-            mealPrompt = `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. ${cookingTimeContext} Use verified data.${pantryIngredientsPrompt}`;
-          }
+Return a JSON with "${mealsPerDay} meals" array, each with exact structure as specified in schema.`;
 
-          const llmResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: mealPrompt,
+        try {
+          const dayResponse = await base44.integrations.Core.InvokeLLM({
+            prompt: dayPrompt,
             response_json_schema: {
               type: "object",
               properties: {
-                name: { type: "string" },
-                ingredients: {
+                meals: {
                   type: "array",
+                  minItems: mealsPerDay,
+                  maxItems: mealsPerDay,
                   items: {
                     type: "object",
                     properties: {
+                      meal_type: { type: "string", enum: mealStructure },
                       name: { type: "string" },
-                      quantity: { type: "number" },
-                      unit: { type: "string" },
-                      calories: { type: "number" },
-                      protein: { type: "number" },
-                      carbs: { type: "number" },
-                      fat: { type: "number" }
+                      ingredients: {
+                        type: "array",
+                        items: {
+                          type: "object",
+                          properties: {
+                            name: { type: "string" },
+                            quantity: { type: "number" },
+                            unit: { type: "string" },
+                            calories: { type: "number" },
+                            protein: { type: "number" },
+                            carbs: { type: "number" },
+                            fat: { type: "number" }
+                          },
+                          required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
+                        }
+                      },
+                      instructions: { type: "array", items: { type: "string" } },
+                      prep_time: { type: "number" },
+                      difficulty: { type: "string" }
                     },
-                    required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
+                    required: ["meal_type", "name", "ingredients", "instructions"]
                   }
-                },
-                instructions: { type: "array", items: { type: "string" } },
-                prep_time: { type: "number" },
-                difficulty: { type: "string" }
+                }
               },
-              required: ["name", "ingredients", "instructions"]
+              required: ["meals"]
             }
           });
 
-          if (!llmResponse || !llmResponse.ingredients) {
-            console.error(`❌ Pasto invalido per ${day} ${mealType}`);
+          if (!dayResponse?.meals || dayResponse.meals.length !== mealsPerDay) {
+            console.error(`❌ Giorno ${day} ha ${dayResponse?.meals?.length || 0} pasti invece di ${mealsPerDay}`);
             continue;
           }
 
-          // ✅ MATCH ingredienti con dispensa
-          let roundedIngredients = llmResponse.ingredients.map(ing => {
-            const pantryMatch = userIngredients.find(ui => 
-              ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
-              ing.name.toLowerCase().includes(ui.name.toLowerCase())
-            );
+          // Processa ogni pasto del giorno
+          for (const mealData of dayResponse.meals) {
+            const mealType = mealData.meal_type;
+            const targetCals = mealCalorieDistribution[mealType];
+            const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
             
-            if (pantryMatch) {
-              const gramsUsed = ing.quantity;
+            // ✅ MATCH ingredienti con dispensa
+            let roundedIngredients = mealData.ingredients.map(ing => {
+              const pantryMatch = userIngredients.find(ui => 
+                ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
+                ing.name.toLowerCase().includes(ui.name.toLowerCase())
+              );
+              
+              if (pantryMatch) {
+                const gramsUsed = ing.quantity;
+                return {
+                  name: pantryMatch.name,
+                  quantity: gramsUsed,
+                  unit: pantryMatch.unit,
+                  calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
+                  protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
+                  carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
+                  fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
+                };
+              }
+              
               return {
-                name: pantryMatch.name,
-                quantity: gramsUsed,
-                unit: pantryMatch.unit,
-                calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
-                protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
-                carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
-                fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
+                ...ing,
+                protein: Math.round((ing.protein || 0) * 10) / 10,
+                carbs: Math.round((ing.carbs || 0) * 10) / 10,
+                fat: Math.round((ing.fat || 0) * 10) / 10
               };
-            }
-            
-            return {
-              ...ing,
-              protein: Math.round((ing.protein || 0) * 10) / 10,
-              carbs: Math.round((ing.carbs || 0) * 10) / 10,
-              fat: Math.round((ing.fat || 0) * 10) / 10
-            };
-          });
-
-          let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
-          const diff = targetCals - calculatedCalories;
-
-          if (diff > 5) {
-            const oilMl = Math.round(diff / 9);
-            roundedIngredients.push({
-              name: "olio d'oliva",
-              quantity: oilMl,
-              unit: "ml",
-              calories: oilMl * 9,
-              protein: 0.0,
-              carbs: 0.0,
-              fat: Math.round(oilMl * 10) / 10
             });
-            calculatedCalories += oilMl * 9;
-          } else if (diff < -5) {
+
+            let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
+            const diff = targetCals - calculatedCalories;
+
+            if (diff > 5) {
+              const oilMl = Math.round(diff / 9);
+              roundedIngredients.push({
+                name: "olio d'oliva",
+                quantity: oilMl,
+                unit: "ml",
+                calories: oilMl * 9,
+                protein: 0.0,
+                carbs: 0.0,
+                fat: Math.round(oilMl * 10) / 10
+              });
+              calculatedCalories += oilMl * 9;
+            } else if (diff < -5) {
               const scaleFactor = targetCals / calculatedCalories;
               roundedIngredients = roundedIngredients.map(ing => ({
-                  ...ing,
-                  quantity: Math.round(ing.quantity * scaleFactor * 100) / 100,
-                  calories: Math.round(ing.calories * scaleFactor),
-                  protein: Math.round(ing.protein * scaleFactor * 10) / 10,
-                  carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
-                  fat: Math.round(ing.fat * scaleFactor * 10) / 10
+                ...ing,
+                quantity: Math.round(ing.quantity * scaleFactor * 100) / 100,
+                calories: Math.round(ing.calories * scaleFactor),
+                protein: Math.round(ing.protein * scaleFactor * 10) / 10,
+                carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
+                fat: Math.round(ing.fat * scaleFactor * 10) / 10
               }));
               calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
-          }
+            }
 
-          allGeneratedMeals.push({
-            user_id: user.id,
-            day_of_week: day,
-            meal_type: mealType,
-            name: llmResponse.name,
-            ingredients: roundedIngredients,
-            instructions: llmResponse.instructions || [],
-            total_calories: calculatedCalories,
-            total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
-            total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
-            total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
-            prep_time: llmResponse.prep_time || 15,
-            difficulty: llmResponse.difficulty || 'easy',
-            image_url: null,
-            is_cheat_meal: isCheatMeal
-          });
-          
-          console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal`);
+            allGeneratedMeals.push({
+              user_id: user.id,
+              day_of_week: day,
+              meal_type: mealType,
+              name: mealData.name,
+              ingredients: roundedIngredients,
+              instructions: mealData.instructions || [],
+              total_calories: calculatedCalories,
+              total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
+              total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
+              total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
+              prep_time: mealData.prep_time || 15,
+              difficulty: mealData.difficulty || 'easy',
+              image_url: null,
+              is_cheat_meal: isCheatMeal
+            });
+            
+            console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal`);
+          }
+        } catch (dayError) {
+          console.error(`❌ Errore generazione ${day}:`, dayError);
         }
       }
 
@@ -990,140 +1003,162 @@ Task: Create a satisfying, realistic cheat meal with precise nutritional values.
       
       if (actualMeals < expectedMeals) {
         console.warn(`⚠️ ATTENZIONE: Creati solo ${actualMeals}/${expectedMeals} pasti!`);
-        updateProgress(96, `Recupero ${expectedMeals - actualMeals} pasti mancanti...`);
+        updateProgress(91, `Recupero ${expectedMeals - actualMeals} pasti mancanti...`);
         
-        // Trova quali pasti mancano
-        const missingMeals = [];
+        // Trova quali pasti mancano PER GIORNO
+        const missingByDay = {};
         for (const day of daysToGenerate) {
+          const dayMissingMeals = [];
           for (const mealType of mealStructure) {
             const exists = allGeneratedMeals.some(m => m.day_of_week === day && m.meal_type === mealType);
             if (!exists) {
-              missingMeals.push({ day, mealType });
-              console.log(`🔄 Manca: ${day} - ${mealType}`);
+              dayMissingMeals.push(mealType);
             }
+          }
+          if (dayMissingMeals.length > 0) {
+            missingByDay[day] = dayMissingMeals;
           }
         }
         
-        // Rigenera pasti mancanti
-        for (const { day, mealType } of missingMeals) {
+        // Rigenera GIORNO INTERO se manca più di 1 pasto
+        for (const [day, missingMealTypes] of Object.entries(missingByDay)) {
           try {
-            const targetCals = mealCalorieDistribution[mealType];
-            const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
+            console.log(`🔄 Rigenerazione ${day} (${missingMealTypes.length} pasti mancanti)...`);
             
-            const retryPrompt = isCheatMeal 
-              ? `You are an expert nutritionist. Create ONE CHEAT MEAL in ITALIAN for ${getMealTypeLabel(mealType)}.
-Target calories: APPROXIMATELY ${targetCals} kcal (can go +20% over if needed for tastier meal)
-Include foods from user's favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, hamburger, dolci'}
-Make it DELICIOUS and SATISFYING. ${cookingTimeContext}${pantryIngredientsPrompt}`
-              : `Create ONE meal in ITALIAN. Target: ${targetCals} kcal. Diet: ${generationPrefs.diet_type}. Allowed: ${dietRules.allowed}. ${cookingTimeContext} Use verified data.${pantryIngredientsPrompt}`;
+            const mealSpecs = missingMealTypes.map(mealType => ({
+              meal_type: mealType,
+              label: getMealTypeLabel(mealType),
+              target_calories: mealCalorieDistribution[mealType],
+              is_cheat: cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType)
+            }));
             
-            const llmResponse = await base44.integrations.Core.InvokeLLM({
-              prompt: retryPrompt,
+            const recoveryPrompt = `Create ${missingMealTypes.length} meals in ITALIAN for ${day}:
+${mealSpecs.map(spec => `${spec.label}: ${spec.target_calories} kcal${spec.is_cheat ? ' (CHEAT MEAL)' : ''}`).join('\n')}
+Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${pantryIngredientsPrompt}`;
+            
+            const recoveryResponse = await base44.integrations.Core.InvokeLLM({
+              prompt: recoveryPrompt,
               response_json_schema: {
                 type: "object",
                 properties: {
-                  name: { type: "string" },
-                  ingredients: {
+                  meals: {
                     type: "array",
+                    minItems: missingMealTypes.length,
                     items: {
                       type: "object",
                       properties: {
+                        meal_type: { type: "string", enum: missingMealTypes },
                         name: { type: "string" },
-                        quantity: { type: "number" },
-                        unit: { type: "string" },
-                        calories: { type: "number" },
-                        protein: { type: "number" },
-                        carbs: { type: "number" },
-                        fat: { type: "number" }
+                        ingredients: {
+                          type: "array",
+                          items: {
+                            type: "object",
+                            properties: {
+                              name: { type: "string" },
+                              quantity: { type: "number" },
+                              unit: { type: "string" },
+                              calories: { type: "number" },
+                              protein: { type: "number" },
+                              carbs: { type: "number" },
+                              fat: { type: "number" }
+                            },
+                            required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
+                          }
+                        },
+                        instructions: { type: "array", items: { type: "string" } },
+                        prep_time: { type: "number" },
+                        difficulty: { type: "string" }
                       },
-                      required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
+                      required: ["meal_type", "name", "ingredients", "instructions"]
                     }
-                  },
-                  instructions: { type: "array", items: { type: "string" } },
-                  prep_time: { type: "number" },
-                  difficulty: { type: "string" }
+                  }
                 },
-                required: ["name", "ingredients", "instructions"]
+                required: ["meals"]
               }
             });
             
-            let roundedIngredients = llmResponse.ingredients.map(ing => {
-              const pantryMatch = userIngredients.find(ui => 
-                ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
-                ing.name.toLowerCase().includes(ui.name.toLowerCase())
-              );
+            for (const mealData of recoveryResponse.meals) {
+              const targetCals = mealCalorieDistribution[mealData.meal_type];
+              const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealData.meal_type);
               
-              if (pantryMatch) {
-                const gramsUsed = ing.quantity;
+              let roundedIngredients = mealData.ingredients.map(ing => {
+                const pantryMatch = userIngredients.find(ui => 
+                  ui.name.toLowerCase().includes(ing.name.toLowerCase()) || 
+                  ing.name.toLowerCase().includes(ui.name.toLowerCase())
+                );
+                
+                if (pantryMatch) {
+                  const gramsUsed = ing.quantity;
+                  return {
+                    name: pantryMatch.name,
+                    quantity: gramsUsed,
+                    unit: pantryMatch.unit,
+                    calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
+                    protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
+                    carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
+                    fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
+                  };
+                }
+                
                 return {
-                  name: pantryMatch.name,
-                  quantity: gramsUsed,
-                  unit: pantryMatch.unit,
-                  calories: Math.round((pantryMatch.calories_per_100g / 100) * gramsUsed),
-                  protein: Math.round((pantryMatch.protein_per_100g / 100) * gramsUsed * 10) / 10,
-                  carbs: Math.round((pantryMatch.carbs_per_100g / 100) * gramsUsed * 10) / 10,
-                  fat: Math.round((pantryMatch.fat_per_100g / 100) * gramsUsed * 10) / 10
+                  ...ing,
+                  protein: Math.round((ing.protein || 0) * 10) / 10,
+                  carbs: Math.round((ing.carbs || 0) * 10) / 10,
+                  fat: Math.round((ing.fat || 0) * 10) / 10
                 };
+              });
+              
+              let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
+              const diff = targetCals - calculatedCalories;
+              
+              if (diff > 5) {
+                const oilMl = Math.round(diff / 9);
+                roundedIngredients.push({
+                  name: "olio d'oliva",
+                  quantity: oilMl,
+                  unit: "ml",
+                  calories: oilMl * 9,
+                  protein: 0.0,
+                  carbs: 0.0,
+                  fat: Math.round(oilMl * 10) / 10
+                });
+                calculatedCalories += oilMl * 9;
+              } else if (diff < -5) {
+                const scaleFactor = targetCals / calculatedCalories;
+                roundedIngredients = roundedIngredients.map(ing => ({
+                  ...ing,
+                  quantity: Math.round(ing.quantity * scaleFactor * 100) / 100,
+                  calories: Math.round(ing.calories * scaleFactor),
+                  protein: Math.round(ing.protein * scaleFactor * 10) / 10,
+                  carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
+                  fat: Math.round(ing.fat * scaleFactor * 10) / 10
+                }));
+                calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
               }
               
-              return {
-                ...ing,
-                protein: Math.round((ing.protein || 0) * 10) / 10,
-                carbs: Math.round((ing.carbs || 0) * 10) / 10,
-                fat: Math.round((ing.fat || 0) * 10) / 10
+              const recoveredMeal = {
+                user_id: user.id,
+                day_of_week: day,
+                meal_type: mealData.meal_type,
+                name: mealData.name,
+                ingredients: roundedIngredients,
+                instructions: mealData.instructions || [],
+                total_calories: calculatedCalories,
+                total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
+                total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
+                total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
+                prep_time: mealData.prep_time || 15,
+                difficulty: mealData.difficulty || 'easy',
+                image_url: null,
+                is_cheat_meal: isCheatMeal
               };
-            });
-            
-            let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
-            const diff = targetCals - calculatedCalories;
-            
-            if (diff > 5) {
-              const oilMl = Math.round(diff / 9);
-              roundedIngredients.push({
-                name: "olio d'oliva",
-                quantity: oilMl,
-                unit: "ml",
-                calories: oilMl * 9,
-                protein: 0.0,
-                carbs: 0.0,
-                fat: Math.round(oilMl * 10) / 10
-              });
-              calculatedCalories += oilMl * 9;
-            } else if (diff < -5) {
-              const scaleFactor = targetCals / calculatedCalories;
-              roundedIngredients = roundedIngredients.map(ing => ({
-                ...ing,
-                quantity: Math.round(ing.quantity * scaleFactor * 100) / 100,
-                calories: Math.round(ing.calories * scaleFactor),
-                protein: Math.round(ing.protein * scaleFactor * 10) / 10,
-                carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
-                fat: Math.round(ing.fat * scaleFactor * 10) / 10
-              }));
-              calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
+              
+              const createdMeal = await createMealMutation.mutateAsync(recoveredMeal);
+              createdMealIds.push({ id: createdMeal.id, meal: recoveredMeal });
+              console.log(`✅ Recuperato: ${day} ${mealData.meal_type}`);
             }
-            
-            const recoveredMeal = {
-              user_id: user.id,
-              day_of_week: day,
-              meal_type: mealType,
-              name: llmResponse.name,
-              ingredients: roundedIngredients,
-              instructions: llmResponse.instructions || [],
-              total_calories: calculatedCalories,
-              total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
-              total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
-              total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
-              prep_time: llmResponse.prep_time || 15,
-              difficulty: llmResponse.difficulty || 'easy',
-              image_url: null,
-              is_cheat_meal: isCheatMeal
-            };
-            
-            const createdMeal = await createMealMutation.mutateAsync(recoveredMeal);
-            createdMealIds.push({ id: createdMeal.id, meal: recoveredMeal });
-            console.log(`✅ Recuperato: ${day} ${mealType}`);
           } catch (retryError) {
-            console.error(`❌ Impossibile recuperare ${day} ${mealType}:`, retryError);
+            console.error(`❌ Impossibile recuperare ${day}:`, retryError);
           }
         }
       }
