@@ -520,6 +520,7 @@ Target: ${targetCalories} kcal.
 Diet: ${nutritionData.diet_type}. 
 Allowed: ${dietRules.allowed}. 
 ${cookingTimeContext}
+CRITICAL: For eggs ('uova'), use ONLY whole numbers (1, 2, 3), NEVER decimals.
 Use verified nutritional data. All names and units in Italian.`;
 
       const llmResponse = await base44.integrations.Core.InvokeLLM({
@@ -837,6 +838,7 @@ CRITICAL INSTRUCTIONS:
 - ${cookingTimeContext}
 - Diet: ${generationPrefs.diet_type}
 - Allowed foods: ${dietRules.allowed}
+- CRITICAL: For eggs ('uova'), ALWAYS use whole numbers (1, 2, 3, etc.), NEVER decimals like 1.47
 ${pantryIngredientsPrompt}
 
 MEALS TO CREATE:
