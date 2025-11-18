@@ -650,7 +650,21 @@ Use verified nutritional data. All names and units in Italian.`;
       const total_fat = Math.round(validIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
       
       const ingredientsString = validIngredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
-      const imagePrompt = `Professional food photography of ${llmResponse.name}. Ingredients: ${ingredientsString}. 45-degree angle, modern plate.`;
+      const imagePrompt = `CRITICAL: Create an accurate, realistic food photograph that shows EXACTLY what is described below.
+
+Dish: "${llmResponse.name}"
+Main ingredients (MUST be clearly visible): ${ingredientsString}
+
+STRICT RULES:
+- Show ONLY the listed ingredients in their natural, recognizable form
+- If "noci" (walnuts) → show actual walnuts/nuts in a bowl, NOT bread or toast
+- If "salmone" → show salmon fillet, NOT other fish
+- If "petto di pollo" → show chicken breast, NOT other meats
+- If "bistecca" → show beef steak, NOT chicken or pork
+- NO creative interpretations or substitutions
+- The photo must match the ingredient list EXACTLY
+- Professional food photography, white ceramic plate, natural lighting
+- 45-degree angle, appetizing presentation, realistic portions`;
       
       const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
 
@@ -1275,7 +1289,21 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${pantryIngredientsProm
             
             try {
               const ingredientsString = meal.ingredients.map(ing => `${ing.quantity}${ing.unit} ${ing.name}`).join(', ');
-              const imagePrompt = `Professional food photography of ${meal.name}. Ingredients: ${ingredientsString}. Modern plate.`;
+              const imagePrompt = `CRITICAL: Create an accurate, realistic food photograph that shows EXACTLY what is described below.
+
+Dish: "${meal.name}"
+Main ingredients (MUST be clearly visible): ${ingredientsString}
+
+STRICT RULES:
+- Show ONLY the listed ingredients in their natural, recognizable form
+- If "noci" (walnuts) → show actual walnuts/nuts in a bowl, NOT bread or toast
+- If "salmone" → show salmon fillet, NOT other fish
+- If "petto di pollo" → show chicken breast, NOT other meats
+- If "bistecca" → show beef steak, NOT chicken or pork
+- NO creative interpretations or substitutions
+- The photo must match the ingredient list EXACTLY
+- Professional food photography, white ceramic plate, natural lighting
+- 45-degree angle, appetizing presentation, realistic portions`;
               const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
               
               await updateMealMutation.mutateAsync({
