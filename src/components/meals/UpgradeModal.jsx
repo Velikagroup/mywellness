@@ -326,10 +326,10 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
           <div className="space-y-6 py-4">
             {selectedPlanToUpgrade && (
               <>
-                <div className="bg-gradient-to-br from-[var(--brand-primary-light)] to-teal-50 rounded-xl p-6 border-2 border-[var(--brand-primary)]/30">
+                <div className="bg-gradient-to-br from-[#E0F2F1] to-teal-50 rounded-xl p-6 border-2 border-[#26847F]/30">
                   <div className="flex items-center gap-3 mb-3">
-                    <div className={`w-12 h-12 rounded-xl ${selectedPlanToUpgrade.iconBg} flex items-center justify-center`}>
-                      <selectedPlanToUpgrade.icon className={`w-6 h-6 ${selectedPlanToUpgrade.iconColor}`} />
+                    <div className="w-12 h-12 rounded-xl bg-[#26847F] flex items-center justify-center">
+                      <selectedPlanToUpgrade.icon className="w-6 h-6 text-white" />
                     </div>
                     <div>
                       <p className="text-lg font-bold text-gray-900">{selectedPlanToUpgrade.name}</p>
@@ -345,7 +345,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                       <span className="ml-2 text-sm text-gray-600">Calcolo in corso...</span>
                     </div>
                   ) : pricingInfo && (
-                    <div className="space-y-3 pt-3 border-t border-[var(--brand-primary)]/20">
+                    <div className="space-y-3 pt-3 border-t border-[#26847F]/20">
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Piano attuale:</span>
                         <span className="font-semibold text-gray-900 capitalize">
@@ -365,7 +365,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                           <div className="h-px bg-gray-300"></div>
                           <div className="flex justify-between">
                             <span className="font-bold text-gray-900">Da pagare ora:</span>
-                            <span className="font-black text-2xl text-[var(--brand-primary)]">
+                            <span className="font-black text-2xl text-[#26847F]">
                               €{pricingInfo.amountToPay.toFixed(2)}
                             </span>
                           </div>
@@ -430,7 +430,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                   <Button
                     onClick={handleConfirmUpgrade}
                     disabled={isUpgrading || isCalculating}
-                    className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                    className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                   >
                     {isUpgrading ? (
                       <>
