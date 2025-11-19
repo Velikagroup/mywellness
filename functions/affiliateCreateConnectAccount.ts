@@ -9,20 +9,27 @@ Deno.serve(async (req) => {
     const user = await base44.auth.me();
 
     if (!user) {
+      console.error('❌ No user authenticated');
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    console.log('✅ User authenticated:', user.id, user.email);
+
     // Carica affiliate link
+    console.log('🔍 Fetching affiliate links for user:', user.id);
     const affiliateLinks = await base44.entities.AffiliateLink.filter({ user_id: user.id });
     
     if (affiliateLinks.length === 0) {
+      console.error('❌ No affiliate link found for user:', user.id);
       return Response.json({ error: 'No affiliate link found' }, { status: 404 });
     }
 
     const affiliateLink = affiliateLinks[0];
+    console.log('✅ Affiliate link found:', affiliateLink.id, affiliateLink.affiliate_code);
 
     // Se ha già un account, genera onboarding link
     if (affiliateLink.stripe_connect_account_id) {
+      console.log('🔄 Account esistente, generando nuovo link onboarding:', affiliateLink.stripe_connect_account_id);
       const accountLink = await stripe.accountLinks.create({
         account: affiliateLink.stripe_connect_account_id,
         refresh_url: `${req.headers.get('origin')}/settings?tab=affiliate`,
@@ -30,6 +37,7 @@ Deno.serve(async (req) => {
         type: 'account_onboarding',
       });
 
+      console.log('✅ Account link creato:', accountLink.url);
       return Response.json({ 
         success: true, 
         onboarding_url: accountLink.url 
@@ -37,6 +45,7 @@ Deno.serve(async (req) => {
     }
 
     // Crea nuovo Stripe Connect Account
+    console.log('🆕 Creazione nuovo account Stripe Connect per:', user.email);
     const account = await stripe.accounts.create({
       type: 'express',
       country: 'IT',
@@ -50,12 +59,17 @@ Deno.serve(async (req) => {
       }
     });
 
+    console.log('✅ Account Stripe Connect creato:', account.id);
+
     // Aggiorna affiliate link con account ID
     await base44.entities.AffiliateLink.update(affiliateLink.id, {
       stripe_connect_account_id: account.id
     });
 
+    console.log('✅ Affiliate link aggiornato con account ID');
+
     // Crea onboarding link
+    console.log('🔗 Generazione account link per onboarding...');
     const accountLink = await stripe.accountLinks.create({
       account: account.id,
       refresh_url: `${req.headers.get('origin')}/settings?tab=affiliate`,
@@ -63,16 +77,28 @@ Deno.serve(async (req) => {
       type: 'account_onboarding',
     });
 
+    console.log('✅ Onboarding URL generato:', accountLink.url);
     return Response.json({ 
       success: true, 
       onboarding_url: accountLink.url 
     });
 
   } catch (error) {
-    console.error('Error creating Connect account:', error);
+    console.error('❌ Error creating Connect account:', error);
+    console.error('Error name:', error.name);
+    console.error('Error message:', error.message);
+    console.error('Error stack:', error.stack);
+    
+    // Dettaglio errore specifico per Stripe
+    if (error.type) {
+      console.error('Stripe error type:', error.type);
+      console.error('Stripe error code:', error.code);
+    }
+    
     return Response.json({ 
-      error: 'Internal server error',
-      details: error.message 
+      error: error.message || 'Internal server error',
+      details: error.type || error.name,
+      code: error.code
     }, { status: 500 });
   }
 });
