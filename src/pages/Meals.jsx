@@ -796,6 +796,22 @@ STRICT RULES:
         ? 'User can dedicate MORE TIME to cooking (30+ minutes). Can include more elaborate recipes.'
         : 'Moderate time (20-30 minutes). Balance between speed and quality.';
 
+      // Mappa intolleranze per prompts
+      const intolerancesMap = {
+        lactose: 'LATTOSIO - NO latte, formaggi, yogurt, burro, panna, gelati, prodotti da forno con latte',
+        gluten: 'GLUTINE - NO frumento, pasta normale, pane normale, orzo, segale, farro, kamut, seitan',
+        nuts: 'FRUTTA SECCA - NO noci, mandorle, nocciole, pistacchi, anacardi, prodotti che li contengono',
+        eggs: 'UOVA - NO uova, maionese, pasta all\'uovo, dolci con uova, frittate',
+        soy: 'SOIA - NO tofu, tempeh, edamame, salsa di soia, latte di soia, proteine di soia',
+        fish: 'PESCE - NO pesce, frutti di mare, crostacei, molluschi, surimi',
+        peanuts: 'ARACHIDI - NO arachidi, burro di arachidi, olio di arachidi',
+        sesame: 'SESAMO - NO semi di sesamo, tahini, olio di sesamo, pane con sesamo',
+        sulfites: 'SOLFITI - NO vino, frutta secca, aceto, alcuni conservanti',
+        histamine: 'ISTAMINA - NO formaggi stagionati, salumi, pesce in scatola, pomodori, spinaci, melanzane',
+        fructose: 'FRUTTOSIO - NO miele, sciroppi, frutta ad alto fruttosio (mele, pere, mango)',
+        sorbitol: 'SORBITOLO - NO dolcificanti artificiali, prugne, mele, pere'
+      };
+
       updateProgress(15, "Rimozione piani precedenti...");
       for (const plan of mealPlans) {
         await deleteMealMutation.mutateAsync(plan.id);
@@ -831,6 +847,26 @@ STRICT RULES:
           };
         });
         
+        // Costruisci testo intolleranze
+        const intolerancesMap = {
+          lactose: 'LATTOSIO - NO latte, formaggi, yogurt, burro, panna, gelati, prodotti da forno con latte',
+          gluten: 'GLUTINE - NO frumento, pasta normale, pane normale, orzo, segale, farro, kamut, seitan',
+          nuts: 'FRUTTA SECCA - NO noci, mandorle, nocciole, pistacchi, anacardi, prodotti che li contengono',
+          eggs: 'UOVA - NO uova, maionese, pasta all\'uovo, dolci con uova, frittate',
+          soy: 'SOIA - NO tofu, tempeh, edamame, salsa di soia, latte di soia, proteine di soia',
+          fish: 'PESCE - NO pesce, frutti di mare, crostacei, molluschi, surimi',
+          peanuts: 'ARACHIDI - NO arachidi, burro di arachidi, olio di arachidi',
+          sesame: 'SESAMO - NO semi di sesamo, tahini, olio di sesamo, pane con sesamo',
+          sulfites: 'SOLFITI - NO vino, frutta secca, aceto, alcuni conservanti',
+          histamine: 'ISTAMINA - NO formaggi stagionati, salumi, pesce in scatola, pomodori, spinaci, melanzane',
+          fructose: 'FRUTTOSIO - NO miele, sciroppi, frutta ad alto fruttosio (mele, pere, mango)',
+          sorbitol: 'SORBITOLO - NO dolcificanti artificiali, prugne, mele, pere'
+        };
+        
+        const intolerancesText = generationPrefs.intolerances && generationPrefs.intolerances.length > 0
+          ? `\n\n🚫 INTOLLERANZE ALIMENTARI (ASSOLUTAMENTE DA EVITARE):\n${generationPrefs.intolerances.map(i => `- ${intolerancesMap[i] || i.toUpperCase()}`).join('\n')}\n\n⚠️ VERIFICA ATTENTAMENTE CHE NESSUN INGREDIENTE CONTENGA QUESTI ALLERGENI!`
+          : '';
+
         const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ITALIAN for ${day}.
 
 CRITICAL INSTRUCTIONS:
@@ -841,6 +877,7 @@ CRITICAL INSTRUCTIONS:
 - Diet: ${generationPrefs.diet_type}
 - Allowed foods: ${dietRules.allowed}
 - CRITICAL: For eggs ('uova'), ALWAYS use whole numbers (1, 2, 3, etc.), NEVER decimals like 1.47
+${intolerancesText}
 ${pantryIngredientsPrompt}
 
 MEALS TO CREATE:
@@ -1100,9 +1137,13 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
               is_cheat: cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType)
             }));
             
+            const recoveryIntolerancesText = generationPrefs.intolerances && generationPrefs.intolerances.length > 0
+              ? `\n\n🚫 NO: ${generationPrefs.intolerances.map(i => intolerancesMap[i] || i.toUpperCase()).join(', ')}`
+              : '';
+
             const recoveryPrompt = `Create ${missingMealTypes.length} meals in ITALIAN for ${day}:
 ${mealSpecs.map(spec => `${spec.label}: ${spec.target_calories} kcal${spec.is_cheat ? ' (CHEAT MEAL)' : ''}`).join('\n')}
-Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${pantryIngredientsPrompt}`;
+Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesText}${pantryIngredientsPrompt}`;
             
             const recoveryResponse = await base44.integrations.Core.InvokeLLM({
               prompt: recoveryPrompt,
