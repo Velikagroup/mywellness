@@ -1,11 +1,10 @@
 import React from 'react';
-import { Target, TrendingDown, Zap, Shield, Trophy } from 'lucide-react';
+import { Target, TrendingDown, Zap, Shield } from 'lucide-react';
 
 const GOALS = [
   { id: 'tone', label: 'Tonificare', icon: <Target/> },
   { id: 'lose_weight', label: 'Perdere Peso', icon: <TrendingDown/> },
   { id: 'gain_muscle', label: 'Aumentare Massa', icon: <Zap/> },
-  { id: 'performance', label: 'Prestazionale', icon: <Trophy/> },
   { id: 'mobility', label: 'Mobilità', icon: <Shield/> }
 ];
 
@@ -25,7 +24,7 @@ export default function FitnessGoalStep({ data, onDataChange, nextStep }) {
         <p className="text-gray-600">Scegli cosa vuoi ottenere</p>
       </div>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 max-w-3xl mx-auto">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">
         {GOALS.map((goal) => (
           <button
             key={goal.id}
