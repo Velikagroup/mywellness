@@ -823,7 +823,9 @@ STRICT RULES:
         if_skip_meal: generationPrefs.if_skip_meal,
         if_meal_structure: generationPrefs.if_meal_structure,
         cooking_time_preference: generationPrefs.cooking_time_preference,
-        cheat_meals_config: cheatMeals
+        cheat_meals_config: cheatMeals,
+        intolerances: generationPrefs.intolerances || [],
+        custom_intolerances: generationPrefs.custom_intolerances || ''
       });
 
       const allGeneratedMeals = [];
@@ -863,9 +865,16 @@ STRICT RULES:
           sorbitol: 'SORBITOLO - NO dolcificanti artificiali, prugne, mele, pere'
         };
         
-        const intolerancesText = generationPrefs.intolerances && generationPrefs.intolerances.length > 0
-          ? `\n\n🚫 INTOLLERANZE ALIMENTARI (ASSOLUTAMENTE DA EVITARE):\n${generationPrefs.intolerances.map(i => `- ${intolerancesMap[i] || i.toUpperCase()}`).join('\n')}\n\n⚠️ VERIFICA ATTENTAMENTE CHE NESSUN INGREDIENTE CONTENGA QUESTI ALLERGENI!`
-          : '';
+        let intolerancesText = '';
+        if (generationPrefs.intolerances && generationPrefs.intolerances.length > 0) {
+          intolerancesText = `\n\n🚫 INTOLLERANZE ALIMENTARI (ASSOLUTAMENTE DA EVITARE):\n${generationPrefs.intolerances.map(i => `- ${intolerancesMap[i] || i.toUpperCase()}`).join('\n')}`;
+        }
+        if (generationPrefs.custom_intolerances && generationPrefs.custom_intolerances.trim()) {
+          intolerancesText += `\n\n🚫 CIBI DA EVITARE (custom user preferences):\nUser wrote: "${generationPrefs.custom_intolerances}"\nInterpret this and NEVER include these foods/ingredients in ANY meal.`;
+        }
+        if (intolerancesText) {
+          intolerancesText += '\n\n⚠️ VERIFICA ATTENTAMENTE CHE NESSUN INGREDIENTE CONTENGA QUESTI ALLERGENI!';
+        }
 
         const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ITALIAN for ${day}.
 
@@ -1137,9 +1146,13 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
               is_cheat: cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType)
             }));
             
-            const recoveryIntolerancesText = generationPrefs.intolerances && generationPrefs.intolerances.length > 0
-              ? `\n\n🚫 NO: ${generationPrefs.intolerances.map(i => intolerancesMap[i] || i.toUpperCase()).join(', ')}`
-              : '';
+            let recoveryIntolerancesText = '';
+            if (generationPrefs.intolerances && generationPrefs.intolerances.length > 0) {
+              recoveryIntolerancesText = `\n\n🚫 NO: ${generationPrefs.intolerances.map(i => intolerancesMap[i] || i.toUpperCase()).join(', ')}`;
+            }
+            if (generationPrefs.custom_intolerances && generationPrefs.custom_intolerances.trim()) {
+              recoveryIntolerancesText += `\n🚫 User also said: "${generationPrefs.custom_intolerances}" - NEVER include these.`;
+            }
 
             const recoveryPrompt = `Create ${missingMealTypes.length} meals in ITALIAN for ${day}:
 ${mealSpecs.map(spec => `${spec.label}: ${spec.target_calories} kcal${spec.is_cheat ? ' (CHEAT MEAL)' : ''}`).join('\n')}

@@ -21,6 +21,9 @@ export default function IntolerancesStep({ data, onDataChange, nextStep }) {
   const [selectedIntolerances, setSelectedIntolerances] = useState(
     data?.intolerances || []
   );
+  const [customIntolerances, setCustomIntolerances] = useState(
+    data?.custom_intolerances || ''
+  );
 
   const toggleIntolerance = (intolerance) => {
     setSelectedIntolerances(prev => {
@@ -32,7 +35,10 @@ export default function IntolerancesStep({ data, onDataChange, nextStep }) {
   };
 
   const handleNext = () => {
-    onDataChange({ intolerances: selectedIntolerances });
+    onDataChange({ 
+      intolerances: selectedIntolerances,
+      custom_intolerances: customIntolerances.trim()
+    });
     nextStep();
   };
 
@@ -72,6 +78,22 @@ export default function IntolerancesStep({ data, onDataChange, nextStep }) {
             </div>
           </button>
         ))}
+      </div>
+
+      <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4">
+        <p className="text-sm font-semibold text-blue-900 mb-3">
+          ✏️ Altro (specifica cosa non vuoi mangiare)
+        </p>
+        <textarea
+          value={customIntolerances}
+          onChange={(e) => setCustomIntolerances(e.target.value)}
+          placeholder="Es: non mi piacciono i funghi, odio le melanzane, non voglio cipolla cruda..."
+          className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-[#26847F] focus:outline-none resize-none"
+          rows={3}
+        />
+        <p className="text-xs text-gray-500 mt-2">
+          💡 L'AI capirà cosa evitare e non lo includerà mai nelle ricette
+        </p>
       </div>
 
       {selectedIntolerances.length > 0 && (
