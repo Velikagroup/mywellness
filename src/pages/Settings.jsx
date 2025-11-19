@@ -386,10 +386,39 @@ export default function Settings() {
       const data = response.data || response;
       if (data.success && data.onboarding_url) {
         window.location.href = data.onboarding_url;
+      } else if (data.error && data.error.includes('signed up for Connect')) {
+        alert(`⚠️ AZIONE RICHIESTA:
+
+Stripe Connect non è attivo sul tuo account Stripe.
+
+Per abilitare i pagamenti di affiliazione:
+
+1. Vai su https://dashboard.stripe.com/settings/applications
+2. Nella sezione "Standard" o "Express" clicca su "Get Started"
+3. Completa il form di attivazione
+4. Torna qui e riprova
+
+Questo è un passaggio una tantum necessario per poter pagare gli affiliati.`);
       }
     } catch (error) {
       console.error('Error connecting Stripe:', error);
-      alert('❌ Errore nella connessione Stripe');
+      const errorMsg = error.response?.data?.error || error.message;
+      if (errorMsg && errorMsg.includes('signed up for Connect')) {
+        alert(`⚠️ AZIONE RICHIESTA:
+
+Stripe Connect non è attivo sul tuo account Stripe.
+
+Per abilitare i pagamenti di affiliazione:
+
+1. Vai su https://dashboard.stripe.com/settings/applications
+2. Nella sezione "Standard" o "Express" clicca su "Get Started"
+3. Completa il form di attivazione (richiede 5 minuti)
+4. Torna qui e riprova
+
+Questo è necessario per poter pagare gli affiliati automaticamente.`);
+      } else {
+        alert('❌ Errore: ' + errorMsg);
+      }
     }
     setIsLoadingAffiliate(false);
   };
