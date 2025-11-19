@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect, useCallback, useMemo } from "react";
 import { base44 } from "@/api/base44Client";
 import { InvokeLLM } from "@/integrations/Core";
@@ -637,6 +638,13 @@ export default function Dashboard() {
                 <Edit3 className="w-4 h-4" />
               </button>
             </div>
+            <TechnicalStatsCard
+              title="Avanzamento Obiettivo"
+              value={goalProgress}
+              unit="%"
+              icon={Target}
+              status={goalStatus}
+            />
             
             {/* ✅ Mostra "Giorni di Allenamento" SOLO se ha accesso al workout_plan */}
             {hasFeatureAccess(user?.subscription_plan, 'workout_plan') && (
