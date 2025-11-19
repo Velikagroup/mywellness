@@ -11,7 +11,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
 
   if (!workout) {
     return (
-      <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl h-full">
+      <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl h-full">
         <CardHeader className="pb-3">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
             <div className="w-12 h-12 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
@@ -39,7 +39,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
   }
 
   return (
-    <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl h-full">
+    <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl h-full">
       <style>{`
         .liquid-glass-button {
           backdrop-filter: blur(12px) saturate(180%);
