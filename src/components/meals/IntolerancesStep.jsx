@@ -95,7 +95,7 @@ export default function IntolerancesStep({ data, onDataChange, nextStep }) {
       <div className="pt-4">
         <Button
           onClick={handleNext}
-          className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white py-6 text-base font-semibold rounded-xl"
+          className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white py-6 text-base font-semibold rounded-xl"
         >
           Continua
           <ChevronRight className="w-5 h-5 ml-2" />
