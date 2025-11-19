@@ -21,27 +21,36 @@ const SPORT_QUESTIONS = {
     title: 'Powerlifting',
     questions: [
       { id: 'squat_max', type: 'number', label: 'Massimale Squat (kg)', placeholder: '120' },
+      { id: 'squat_weak_phase', type: 'select', label: 'Punto debole Squat', options: ['Uscita dalla buca (concentrica)', 'Discesa controllata (eccentrica)', 'Posizione in buca (isometrica)', 'Lockout finale', 'Stabilità generale', 'Nessun punto debole'] },
       { id: 'bench_max', type: 'number', label: 'Massimale Panca Piana (kg)', placeholder: '100' },
+      { id: 'bench_weak_phase', type: 'select', label: 'Punto debole Panca', options: ['Partenza dal petto', 'Sticking point (metà movimento)', 'Lockout finale', 'Discesa controllata', 'Stabilità scapole', 'Nessun punto debole'] },
       { id: 'deadlift_max', type: 'number', label: 'Massimale Stacco (kg)', placeholder: '150' },
-      { id: 'weak_lift', type: 'select', label: 'Alzata più debole', options: ['Squat', 'Panca', 'Stacco'] }
+      { id: 'deadlift_weak_phase', type: 'select', label: 'Punto debole Stacco', options: ['Partenza da terra', 'Passaggio ginocchia', 'Lockout finale', 'Posizione lombare', 'Presa (grip)', 'Velocità concentrica', 'Nessun punto debole'] },
+      { id: 'weak_lift', type: 'select', label: 'Alzata più debole complessiva', options: ['Squat', 'Panca', 'Stacco'] }
     ]
   },
   weightlifting: {
     title: 'Weightlifting Olimpico',
     questions: [
       { id: 'snatch_max', type: 'number', label: 'Massimale Strappo (kg)', placeholder: '80' },
+      { id: 'snatch_weak_phase', type: 'select', label: 'Punto debole Strappo', options: ['Prima tirata (da terra a ginocchia)', 'Seconda tirata (esplosione)', 'Incastro (catch)', 'Overhead squat', 'Transizione sotto il bilanciere', 'Mobilità spalle', 'Nessun punto debole'] },
       { id: 'clean_jerk_max', type: 'number', label: 'Massimale Slancio (kg)', placeholder: '100' },
+      { id: 'clean_weak_phase', type: 'select', label: 'Punto debole Girata', options: ['Prima tirata', 'Seconda tirata esplosiva', 'Incastro rack position', 'Front squat', 'Mobilità polsi', 'Velocità sotto bilanciere', 'Nessun punto debole'] },
+      { id: 'jerk_weak_phase', type: 'select', label: 'Punto debole Jerk', options: ['Dip iniziale', 'Spinta esplosiva (drive)', 'Split (affondo)', 'Stabilità overhead', 'Recupero posizione', 'Nessun punto debole'] },
       { id: 'squat_max', type: 'number', label: 'Massimale Squat (kg)', placeholder: '140' },
-      { id: 'weak_lift', type: 'select', label: 'Alzata da migliorare', options: ['Strappo', 'Slancio', 'Girata', 'Squat'] }
+      { id: 'weak_lift', type: 'select', label: 'Alzata da migliorare complessiva', options: ['Strappo', 'Slancio', 'Girata', 'Jerk', 'Squat'] }
     ]
   },
   streetlifting: {
     title: 'Streetlifting',
     questions: [
       { id: 'pullup_max', type: 'number', label: 'Massimo Pull-up consecutivi', placeholder: '15' },
+      { id: 'pullup_weak_phase', type: 'select', label: 'Punto debole Pull-up', options: ['Partenza (dead hang)', 'Fase intermedia (metà movimento)', 'Passaggio mento sopra sbarra', 'Discesa controllata (eccentrica)', 'Endurance (ultime reps)', 'Nessun punto debole'] },
       { id: 'dip_max', type: 'number', label: 'Massimo Dip consecutivi', placeholder: '20' },
+      { id: 'dip_weak_phase', type: 'select', label: 'Punto debole Dip', options: ['Discesa profonda', 'Uscita dalla buca (concentrica)', 'Lockout completo', 'Stabilità spalle', 'Endurance', 'Nessun punto debole'] },
       { id: 'muscle_up', type: 'boolean', label: 'Sai fare il Muscle-Up?' },
-      { id: 'weak_points', type: 'multiselect', label: 'Esercizi da migliorare', options: ['Pull-up', 'Dip', 'Muscle-up', 'Front Lever', 'Planche', 'Human Flag'] }
+      { id: 'muscle_up_weak_phase', type: 'select', label: 'Punto debole Muscle-up (se lo fai)', options: ['Non lo faccio ancora', 'Fase pull-up esplosiva', 'Transizione (kipping/passaggio)', 'Fase push (sopra la sbarra)', 'Coordinazione generale'] },
+      { id: 'weak_points', type: 'multiselect', label: 'Skills da migliorare', options: ['Pull-up', 'Dip', 'Muscle-up', 'Front Lever', 'Planche', 'Human Flag'] }
     ]
   },
   calisthenics: {

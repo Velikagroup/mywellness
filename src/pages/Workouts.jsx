@@ -573,9 +573,13 @@ ${trainingData.fitness_goal === 'tonificazione' ? '- Focus: 10-15 reps, moderate
 WEIGHT/INTENSITY GUIDELINES:
 ${trainingData.sport_specific_data ? `
 - If user provided MAX LIFTS (squat_max, deadlift_max, bench_max, etc.): Calculate working weights as percentages. Example: if squat_max=100kg, use 80kg for 5x5 strength work (80%), 65kg for 3x12 hypertrophy (65%), etc.
+- CRITICAL: If user specified WEAK PHASES of lifts (e.g., squat_weak_phase="Uscita dalla buca"): 
+  * Include ACCESSORY EXERCISES that target that specific phase (e.g., for weak squat lockout → add pin squats, pause squats at sticking point)
+  * In the main lift's 'description' field, provide TECHNICAL CUES in Italian focused on that weak phase (e.g., "Focus esplosivo nell'uscita dalla buca, spingi forte con i talloni")
+  * Add tempo variations to address the weak phase (e.g., slow eccentric for control, pause at weak point for strength)
 - If user provided performance times (100m, 500m row, etc.): Use these as benchmarks for interval work and progression targets.
 - For bodyweight exercises: If user gave max reps, adjust set/rep schemes accordingly (someone who does 20 pull-ups needs different programming than someone who does 5).
-- ALWAYS include weight recommendations in the 'description' field in Italian (e.g., "Usa 70-80% del tuo massimale (circa 85kg se massimale è 120kg)" or "Se fai 15 pull-up max, fai serie da 8-10 rip con 1-2 rip di riserva").
+- ALWAYS include weight recommendations AND technical execution tips in the 'description' field in Italian (e.g., "Usa 70-80% del massimale (circa 85kg). Focus sulla fase eccentrica controllata di 3 secondi, poi esplosione verso l'alto" or "Serie da 8-10 rip, mantieni sempre 2 rip di riserva. Concentrati sul controllo nella discesa").
 ` : ''}
 
 CRITICAL REQUIREMENTS:
