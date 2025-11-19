@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -23,7 +22,12 @@ import {
   Crown,
   CheckCircle,
   AlertCircle,
-  FileText
+  FileText,
+  Users,
+  Share2,
+  DollarSign,
+  Copy,
+  ExternalLink
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -79,8 +83,21 @@ export default function Settings() {
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
 
+  // Affiliazione
+  const [affiliateStats, setAffiliateStats] = useState(null);
+  const [isLoadingAffiliate, setIsLoadingAffiliate] = useState(false);
+  const [withdrawAmount, setWithdrawAmount] = useState('');
+  const [isWithdrawing, setIsWithdrawing] = useState(false);
+
   useEffect(() => {
     loadUserData();
+  }, []);
+
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('onboarding') === 'success') {
+      loadAffiliateStats();
+    }
   }, []);
 
   const loadUserData = async () => {
@@ -334,6 +351,83 @@ export default function Settings() {
     }
   };
 
+  const loadAffiliateStats = async () => {
+    setIsLoadingAffiliate(true);
+    try {
+      const response = await base44.functions.invoke('affiliateGetStats');
+      const data = response.data || response;
+      setAffiliateStats(data);
+    } catch (error) {
+      console.error('Error loading affiliate stats:', error);
+    }
+    setIsLoadingAffiliate(false);
+  };
+
+  const handleGenerateAffiliateLink = async () => {
+    setIsLoadingAffiliate(true);
+    try {
+      const response = await base44.functions.invoke('affiliateGenerateLink');
+      const data = response.data || response;
+      if (data.success) {
+        await loadAffiliateStats();
+        alert('✅ Link di affiliazione generato!');
+      }
+    } catch (error) {
+      console.error('Error generating affiliate link:', error);
+      alert('❌ Errore nella generazione del link');
+    }
+    setIsLoadingAffiliate(false);
+  };
+
+  const handleConnectStripe = async () => {
+    setIsLoadingAffiliate(true);
+    try {
+      const response = await base44.functions.invoke('affiliateCreateConnectAccount');
+      const data = response.data || response;
+      if (data.success && data.onboarding_url) {
+        window.location.href = data.onboarding_url;
+      }
+    } catch (error) {
+      console.error('Error connecting Stripe:', error);
+      alert('❌ Errore nella connessione Stripe');
+    }
+    setIsLoadingAffiliate(false);
+  };
+
+  const handleWithdraw = async () => {
+    const amount = parseFloat(withdrawAmount);
+    if (!amount || amount < 10) {
+      alert('❌ Importo minimo: €10');
+      return;
+    }
+    if (amount > affiliateStats.stats.available_balance) {
+      alert('❌ Credito insufficiente');
+      return;
+    }
+
+    setIsWithdrawing(true);
+    try {
+      const response = await base44.functions.invoke('affiliateRequestWithdrawal', { amount });
+      const data = response.data || response;
+      if (data.success) {
+        alert('✅ Prelievo effettuato! I soldi arriveranno sul tuo conto in 2-7 giorni.');
+        setWithdrawAmount('');
+        await loadAffiliateStats();
+      } else {
+        alert('❌ ' + (data.error || 'Errore nel prelievo'));
+      }
+    } catch (error) {
+      console.error('Error withdrawing:', error);
+      alert('❌ Errore nel prelievo: ' + error.message);
+    }
+    setIsWithdrawing(false);
+  };
+
+  const copyToClipboard = (text) => {
+    navigator.clipboard.writeText(text);
+    alert('✅ Copiato negli appunti!');
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -365,11 +459,12 @@ export default function Settings() {
 
         <Tabs defaultValue="account" className="w-full">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-3 lg:grid-cols-5 gap-2 bg-gray-100/80 p-1 rounded-lg">
+            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-gray-100/80 p-1 rounded-lg">
               <TabsTrigger value="account" className="text-xs sm:text-sm whitespace-nowrap">Account</TabsTrigger>
               <TabsTrigger value="subscription" className="text-xs sm:text-sm whitespace-nowrap">Abbonamento</TabsTrigger>
               <TabsTrigger value="billing" className="text-xs sm:text-sm whitespace-nowrap">Fatturazione</TabsTrigger>
               <TabsTrigger value="notifications" className="text-xs sm:text-sm whitespace-nowrap">Notifiche</TabsTrigger>
+              <TabsTrigger value="affiliate" className="text-xs sm:text-sm whitespace-nowrap">Affiliazione</TabsTrigger>
               <TabsTrigger value="help" className="text-xs sm:text-sm whitespace-nowrap">Supporto</TabsTrigger>
             </TabsList>
           </div>
@@ -731,6 +826,213 @@ export default function Settings() {
                 </Button>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          {/* AFFILIAZIONE */}
+          <TabsContent value="affiliate" className="space-y-6">
+            {!affiliateStats?.has_affiliate_link ? (
+              <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Users className="w-6 h-6 text-purple-600" />
+                    Programma Affiliazione
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-gray-700">
+                    🎉 <strong>Guadagna il 10%</strong> su ogni pagamento degli utenti che inviti!
+                  </p>
+                  <ul className="space-y-2 text-sm text-gray-700">
+                    <li>✅ <strong>10% di commissione</strong> su tutti i pagamenti dei tuoi affiliati</li>
+                    <li>✅ <strong>20% di sconto</strong> per chi si iscrive col tuo link</li>
+                    <li>✅ <strong>Prelievi automatici</strong> su conto bancario tramite Stripe</li>
+                    <li>✅ <strong>Usa i crediti</strong> per pagare la tua subscription</li>
+                  </ul>
+                  <Button
+                    onClick={handleGenerateAffiliateLink}
+                    disabled={isLoadingAffiliate}
+                    className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
+                  >
+                    {isLoadingAffiliate ? 'Generazione...' : 'Genera il Tuo Link di Affiliazione'}
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <>
+                {/* Stats Overview */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Credito Disponibile</p>
+                          <p className="text-3xl font-bold text-green-700">
+                            €{affiliateStats.stats.available_balance.toFixed(2)}
+                          </p>
+                        </div>
+                        <DollarSign className="w-10 h-10 text-green-600" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Totale Guadagnato</p>
+                          <p className="text-3xl font-bold text-blue-700">
+                            €{affiliateStats.stats.total_earned.toFixed(2)}
+                          </p>
+                        </div>
+                        <Crown className="w-10 h-10 text-blue-600" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-br from-purple-50 to-pink-50 border-purple-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Affiliati</p>
+                          <p className="text-3xl font-bold text-purple-700">
+                            {affiliateStats.stats.total_referrals}
+                          </p>
+                        </div>
+                        <Users className="w-10 h-10 text-purple-600" />
+                      </div>
+                    </CardContent>
+                  </Card>
+                </div>
+
+                {/* Link di Affiliazione */}
+                <Card className="bg-white/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle className="flex items-center gap-2">
+                      <Share2 className="w-5 h-5" />
+                      Il Tuo Link di Affiliazione
+                    </CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    <div className="flex gap-2">
+                      <Input
+                        value={affiliateStats.affiliate_url}
+                        readOnly
+                        className="bg-gray-50 font-mono text-sm"
+                      />
+                      <Button
+                        onClick={() => copyToClipboard(affiliateStats.affiliate_url)}
+                        variant="outline"
+                      >
+                        <Copy className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                      <p className="text-sm text-blue-900">
+                        <strong>Come funziona:</strong> Condividi questo link. Chi si iscrive riceve <strong>20% di sconto</strong> sul primo mese, tu guadagni <strong>10% su ogni loro pagamento</strong>!
+                      </p>
+                    </div>
+                  </CardContent>
+                </Card>
+
+                {/* Prelievi */}
+                <Card className="bg-white/80 backdrop-blur-sm">
+                  <CardHeader>
+                    <CardTitle>Preleva Crediti</CardTitle>
+                  </CardHeader>
+                  <CardContent className="space-y-4">
+                    {!affiliateStats.stats.onboarding_completed ? (
+                      <div className="space-y-4">
+                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                          <p className="text-sm text-amber-900 mb-3">
+                            ⚠️ Per prelevare i tuoi crediti, devi prima connettere il tuo account Stripe Connect.
+                          </p>
+                        </div>
+                        <Button
+                          onClick={handleConnectStripe}
+                          disabled={isLoadingAffiliate}
+                          className="w-full bg-[#635BFF] hover:bg-[#5248E6] text-white"
+                        >
+                          {isLoadingAffiliate ? 'Connessione...' : 'Connetti Stripe e Inizia a Prelevare'}
+                          <ExternalLink className="w-4 h-4 ml-2" />
+                        </Button>
+                      </div>
+                    ) : (
+                      <div className="space-y-4">
+                        <div className="flex items-center gap-2 text-green-700">
+                          <CheckCircle className="w-5 h-5" />
+                          <span className="font-semibold">Stripe Connect Attivo</span>
+                        </div>
+                        <div>
+                          <Label>Importo da Prelevare (min. €10)</Label>
+                          <div className="flex gap-2 mt-2">
+                            <Input
+                              type="number"
+                              value={withdrawAmount}
+                              onChange={(e) => setWithdrawAmount(e.target.value)}
+                              placeholder="10.00"
+                              min="10"
+                              step="0.01"
+                              className="bg-white"
+                            />
+                            <Button
+                              onClick={handleWithdraw}
+                              disabled={isWithdrawing || !withdrawAmount}
+                              className="bg-green-600 hover:bg-green-700 text-white"
+                            >
+                              {isWithdrawing ? 'Prelievo...' : 'Preleva'}
+                            </Button>
+                          </div>
+                        </div>
+                        <p className="text-xs text-gray-600">
+                          💡 I soldi arriveranno sul tuo conto bancario in 2-7 giorni lavorativi
+                        </p>
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+
+                {/* Crediti Recenti */}
+                {affiliateStats.recent_credits?.length > 0 && (
+                  <Card className="bg-white/80 backdrop-blur-sm">
+                    <CardHeader>
+                      <CardTitle>Crediti Recenti</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-3">
+                        {affiliateStats.recent_credits.map((credit) => (
+                          <div key={credit.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                            <div>
+                              <p className="font-semibold text-sm">
+                                €{credit.commission_amount.toFixed(2)} da affiliato
+                              </p>
+                              <p className="text-xs text-gray-600">
+                                {new Date(credit.payment_date).toLocaleDateString('it-IT')}
+                              </p>
+                            </div>
+                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                              credit.commission_status === 'available' ? 'bg-green-100 text-green-700' :
+                              credit.commission_status === 'withdrawn' ? 'bg-gray-100 text-gray-700' :
+                              'bg-blue-100 text-blue-700'
+                            }`}>
+                              {credit.commission_status === 'available' ? 'Disponibile' :
+                               credit.commission_status === 'withdrawn' ? 'Prelevato' : 'Usato'}
+                            </span>
+                          </div>
+                        ))}
+                      </div>
+                    </CardContent>
+                  </Card>
+                )}
+
+                <Button
+                  onClick={loadAffiliateStats}
+                  variant="outline"
+                  className="w-full"
+                >
+                  Aggiorna Statistiche
+                </Button>
+              </>
+            )}
           </TabsContent>
 
           {/* HELP */}
