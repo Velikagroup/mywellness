@@ -114,6 +114,7 @@ export default function MealPlanWizard({ user, onComplete, onCancel }) {
       <CurrentStepComponent
         data={wizardData}
         onDataChange={handleDataChange}
+        onNext={isLastStep ? handleComplete : handleNext}
         nextStep={isLastStep ? handleComplete : handleNext}
         dailyCalories={user?.daily_calories || 2000}
         dietType={wizardData.diet_type}
