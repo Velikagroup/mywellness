@@ -496,25 +496,28 @@ Return ONLY valid JSON, no markdown.`;
                       id="file-capture"
                     />
                     <label htmlFor="file-capture" className="flex-1 sm:flex-initial">
-                      <Button
-                        asChild
-                        disabled={isScanning}
-                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
-                      >
-                        <span>
-                          {isScanning ? (
-                            <>
-                              <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                              Analisi...
-                            </>
-                          ) : (
-                            <>
-                              <Camera className="w-4 h-4 mr-2" />
-                              Scatta Foto
-                            </>
-                          )}
-                        </span>
-                      </Button>
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)]/20 to-teal-500/20 rounded-lg blur-sm" />
+                        <Button
+                          asChild
+                          disabled={isScanning}
+                          className="relative w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                        >
+                          <span>
+                            {isScanning ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Analisi...
+                              </>
+                            ) : (
+                              <>
+                                <Camera className="w-4 h-4 mr-2" />
+                                Scatta Foto
+                              </>
+                            )}
+                          </span>
+                        </Button>
+                      </div>
                     </label>
 
                     {/* Carica da Galleria */}
@@ -527,17 +530,20 @@ Return ONLY valid JSON, no markdown.`;
                       id="file-upload"
                     />
                     <label htmlFor="file-upload" className="flex-1 sm:flex-initial">
-                      <Button
-                        asChild
-                        variant="outline"
-                        disabled={isScanning}
-                        className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white border-[var(--brand-primary)]"
-                      >
-                        <span>
-                          <Upload className="w-4 h-4 mr-2" />
-                          Carica
-                        </span>
-                      </Button>
+                      <div className="relative">
+                        <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)]/20 to-teal-500/20 rounded-lg blur-sm" />
+                        <Button
+                          asChild
+                          variant="outline"
+                          disabled={isScanning}
+                          className="relative w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white border-[var(--brand-primary)]"
+                        >
+                          <span>
+                            <Upload className="w-4 h-4 mr-2" />
+                            Carica
+                          </span>
+                        </Button>
+                      </div>
                     </label>
                   </div>
                 </div>
@@ -611,33 +617,44 @@ Return ONLY valid JSON, no markdown.`;
           {scanResult && (
             <div className="flex-shrink-0 bg-white border-t shadow-lg p-4">
               <div className="flex flex-col gap-2">
-                <Button
-                  onClick={handleSaveScannedProduct}
-                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-6 text-base font-semibold"
-                >
-                  <Check className="w-5 h-5 mr-2" />
-                  Salva e Aggiorna Ricette
-                </Button>
+                <div className="relative">
+                  <div className="absolute inset-0 bg-gradient-to-r from-green-500/20 to-emerald-500/20 rounded-lg blur-sm" />
+                  <Button
+                    onClick={handleSaveScannedProduct}
+                    className="relative w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-6 text-base font-semibold"
+                  >
+                    <Check className="w-5 h-5 mr-2" />
+                    Salva e Aggiorna Ricette
+                  </Button>
+                </div>
                 <div className="grid grid-cols-2 gap-2">
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setScanResult(null);
-                    }}
-                  >
-                    Scansiona Altro
-                  </Button>
-                  <Button
-                    variant="outline"
-                    onClick={() => {
-                      setShowScanner(false);
-                      setScanResult(null);
-                      setSelectedIngredient(null);
-                    }}
-                  >
-                    <X className="w-4 h-4 mr-1" />
-                    Chiudi
-                  </Button>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-400/10 to-gray-500/10 rounded-md blur-sm" />
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setScanResult(null);
+                      }}
+                      className="relative w-full"
+                    >
+                      Scansiona Altro
+                    </Button>
+                  </div>
+                  <div className="relative">
+                    <div className="absolute inset-0 bg-gradient-to-r from-gray-400/10 to-gray-500/10 rounded-md blur-sm" />
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        setShowScanner(false);
+                        setScanResult(null);
+                        setSelectedIngredient(null);
+                      }}
+                      className="relative w-full"
+                    >
+                      <X className="w-4 h-4 mr-1" />
+                      Chiudi
+                    </Button>
+                  </div>
                 </div>
               </div>
             </div>
