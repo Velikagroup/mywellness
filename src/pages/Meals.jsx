@@ -708,7 +708,10 @@ STRICT RULES:
     }
     
     console.log('🚀 Inizio generazione piano nutrizionale OTTIMIZZATO...');
+    console.log('📋 Configurazione:', generationPrefs);
     console.log('🍕 Cheat meals configurati:', cheatMeals);
+    console.log('🍽️ Pasti per giorno:', mealsPerDay);
+    
     setIsGenerating(true);
     setGenerationProgress(0);
     setGenerationStatus("Avvio protocollo AI...");
@@ -814,7 +817,8 @@ STRICT RULES:
       for (let dayIndex = 0; dayIndex < daysToGenerate.length; dayIndex++) {
         const day = daysToGenerate[dayIndex];
         const progress = 20 + Math.round((dayIndex / daysToGenerate.length) * 70);
-        updateProgress(progress, `Generazione giorno ${dayIndex + 1}/${daysToGenerate.length}: ${day}...`);
+        const dayLabel = { monday: 'Lunedì', tuesday: 'Martedì', wednesday: 'Mercoledì', thursday: 'Giovedì', friday: 'Venerdì', saturday: 'Sabato', sunday: 'Domenica' }[day];
+        updateProgress(progress, `Generazione ${dayLabel} (${dayIndex + 1}/${daysToGenerate.length})...`);
         
         // Costruisci le specifiche per ogni pasto del giorno
         const mealSpecs = mealStructure.map(mealType => {
@@ -899,22 +903,28 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
             });
             
             // Se arrivo qui, la chiamata è riuscita
+            console.log(`✅ LLM response per ${day}:`, dayResponse?.meals?.length, 'pasti');
             break;
           } catch (llmError) {
             retryCount++;
             console.error(`❌ Errore LLM per ${day} (tentativo ${retryCount}/${MAX_RETRIES}):`, llmError);
             
             if (retryCount >= MAX_RETRIES) {
+              console.error(`💥 GENERAZIONE FALLITA per ${day} dopo ${MAX_RETRIES} tentativi`);
+              alert(`Errore durante la generazione di ${day}. Riprova o contatta il supporto.`);
               throw new Error(`Impossibile generare ${day} dopo ${MAX_RETRIES} tentativi: ${llmError.message}`);
             }
             
             // Attendi prima di ritentare (backoff esponenziale)
-            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+            const waitTime = 2000 * retryCount;
+            console.log(`⏳ Attendo ${waitTime}ms prima del retry...`);
+            await new Promise(resolve => setTimeout(resolve, waitTime));
           }
         }
 
           if (!dayResponse?.meals || dayResponse.meals.length !== mealsPerDay) {
-            console.error(`❌ Giorno ${day} ha ${dayResponse?.meals?.length || 0} pasti invece di ${mealsPerDay}`);
+            console.error(`❌ SKIP: Giorno ${day} ha ${dayResponse?.meals?.length || 0} pasti invece di ${mealsPerDay}`);
+            alert(`⚠️ Impossibile generare tutti i pasti per ${day}. Continuo con gli altri giorni...`);
             continue;
           }
 

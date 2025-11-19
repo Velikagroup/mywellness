@@ -3,12 +3,12 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 const dietTypes = [
-  { id: 'mediterranean', label: 'Mediterranea', emoji: '🫒', desc: 'Equilibrata e varia' },
+  { id: 'mediterranean', label: 'Mediterranea', emoji: '🍝', desc: 'Equilibrata e varia' },
   { id: 'low_carb', label: 'Low Carb', emoji: '🥩', desc: 'Pochi carboidrati' },
   { id: 'soft_low_carb', label: 'Soft Low Carb', emoji: '🥗', desc: 'Carboidrati ridotti' },
   { id: 'paleo', label: 'Paleo', emoji: '🦴', desc: 'Come nell\'era paleolitica' },
   { id: 'keto', label: 'Chetogenica', emoji: '🥓', desc: 'Grassi alti, carbs bassi' },
-  { id: 'carnivore', label: 'Carnivora', emoji: '🥩', desc: 'Solo prodotti animali' },
+  { id: 'carnivore', label: 'Carnivora', emoji: '🍖', desc: 'Solo prodotti animali' },
   { id: 'vegetarian', label: 'Vegetariana', emoji: '🥕', desc: 'Senza carne e pesce' },
   { id: 'vegan', label: 'Vegana', emoji: '🌱', desc: '100% vegetale' }
 ];
