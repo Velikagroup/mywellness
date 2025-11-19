@@ -18,6 +18,7 @@ import EquipmentStep from "../components/quiz/EquipmentStep";
 import WorkoutDaysStep from "../components/quiz/WorkoutDaysStep";
 import SessionDurationStep from "../components/quiz/SessionDurationStep";
 import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
+import PerformanceOrientedStep from "../components/quiz/PerformanceOrientedStep";
 import WorkoutStyleStep from "../components/workouts/WorkoutStyleStep";
 
 import { hasFeatureAccess, getGenerationLimit, PLANS } from '@/components/utils/subscriptionPlans';
@@ -25,16 +26,27 @@ import UpgradeModal from '../components/meals/UpgradeModal';
 
 import { motion } from "framer-motion";
 
-const TRAINING_STEPS = [
-  { id: 'fitness_goal', title: 'Obiettivo Fitness', component: FitnessGoalStep, autoAdvance: true },
-  { id: 'workout_style', title: 'Stile Allenamento', component: WorkoutStyleStep, autoAdvance: true },
-  { id: 'fitness_experience', title: 'Esperienza', component: FitnessExperienceStep, autoAdvance: true },
-  { id: 'workout_days', title: 'Frequenza Allenamenti', component: WorkoutDaysStep },
-  { id: 'session_duration', title: 'Durata Sessione', autoAdvance: true, component: SessionDurationStep },
-  { id: 'workout_location', title: 'Luogo Allenamento', autoAdvance: true, component: WorkoutLocationStep },
-  { id: 'equipment', title: 'Attrezzatura', component: EquipmentStep },
-  { id: 'joint_pain', title: 'Dolori Articolari', component: JointPainStep }
-];
+const getAllTrainingSteps = (isPerformanceOriented) => {
+  const steps = [
+    { id: 'fitness_goal', title: 'Obiettivo Fitness', component: FitnessGoalStep, autoAdvance: true },
+    { id: 'performance_oriented', title: 'Tipo Obiettivo', component: PerformanceOrientedStep, autoAdvance: true }
+  ];
+  
+  if (isPerformanceOriented) {
+    steps.push({ id: 'workout_style', title: 'Stile Allenamento', component: WorkoutStyleStep, autoAdvance: true });
+  }
+  
+  steps.push(
+    { id: 'fitness_experience', title: 'Esperienza', component: FitnessExperienceStep, autoAdvance: true },
+    { id: 'workout_days', title: 'Frequenza Allenamenti', component: WorkoutDaysStep },
+    { id: 'session_duration', title: 'Durata Sessione', autoAdvance: true, component: SessionDurationStep },
+    { id: 'workout_location', title: 'Luogo Allenamento', autoAdvance: true, component: WorkoutLocationStep },
+    { id: 'equipment', title: 'Attrezzatura', component: EquipmentStep },
+    { id: 'joint_pain', title: 'Dolori Articolari', component: JointPainStep }
+  );
+  
+  return steps;
+};
 
 // Mappa dolori articolari -> gruppi muscolari da evitare
 const JOINT_PAIN_RESTRICTIONS = {
@@ -206,6 +218,7 @@ export default function Workouts() {
           workout_days_selected: currentUser.workout_days_selected || [],
           session_duration: currentUser.session_duration,
           fitness_goal: currentUser.fitness_goal,
+          is_performance_oriented: currentUser.is_performance_oriented ?? null,
           workout_style: currentUser.workout_style,
           age: currentUser.age,
           gender: currentUser.gender,
@@ -317,6 +330,11 @@ export default function Workouts() {
     setAdjustedWorkout(null);
     setAdjustmentResult(null);
   }, [selectedDay]);
+
+  const TRAINING_STEPS = React.useMemo(() => 
+    getAllTrainingSteps(trainingData.is_performance_oriented), 
+    [trainingData.is_performance_oriented]
+  );
 
   const handleStepData = (stepData) => setTrainingData(prev => ({ ...prev, ...stepData }));
   const nextStep = () => { if (currentStep < TRAINING_STEPS.length - 1) setCurrentStep(currentStep + 1); };
