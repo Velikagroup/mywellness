@@ -18,6 +18,7 @@ import EquipmentStep from "../components/quiz/EquipmentStep";
 import WorkoutDaysStep from "../components/quiz/WorkoutDaysStep";
 import SessionDurationStep from "../components/quiz/SessionDurationStep";
 import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
+import WorkoutStyleStep from "../components/workouts/WorkoutStyleStep";
 
 import { hasFeatureAccess, getGenerationLimit, PLANS } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from '../components/meals/UpgradeModal';
@@ -26,6 +27,7 @@ import { motion } from "framer-motion";
 
 const TRAINING_STEPS = [
   { id: 'fitness_goal', title: 'Obiettivo Fitness', component: FitnessGoalStep, autoAdvance: true },
+  { id: 'workout_style', title: 'Stile Allenamento', component: WorkoutStyleStep, autoAdvance: true },
   { id: 'fitness_experience', title: 'Esperienza', component: FitnessExperienceStep, autoAdvance: true },
   { id: 'workout_days', title: 'Frequenza Allenamenti', component: WorkoutDaysStep },
   { id: 'session_duration', title: 'Durata Sessione', autoAdvance: true, component: SessionDurationStep },
@@ -204,6 +206,7 @@ export default function Workouts() {
           workout_days_selected: currentUser.workout_days_selected || [],
           session_duration: currentUser.session_duration,
           fitness_goal: currentUser.fitness_goal,
+          workout_style: currentUser.workout_style,
           age: currentUser.age,
           gender: currentUser.gender,
           current_weight: currentUser.current_weight
@@ -516,6 +519,7 @@ CRITICAL RULES:
 2. ONLY use exercise names from this database - DO NOT invent new names
 3. PRIORITIZE "PRIMARI" exercises for user's goal: ${trainingData.fitness_goal}
 4. You can use "SECONDARI" exercises for variety, but focus on PRIMARI for the main lifts/movements.
+5. ADAPT the workout structure to match the preferred training style: ${trainingData.workout_style || 'standard'}
 
 EXERCISE DATABASE (${availableExercises.length} available):
 ${exerciseListForAI}
@@ -523,6 +527,7 @@ ${exerciseListForAI}
 User Profile & Vitals:
 - Age: ${trainingData.age}, Gender: ${trainingData.gender}, Weight: ${trainingData.current_weight}kg
 - Primary Fitness Goal: ${trainingData.fitness_goal}
+- PREFERRED TRAINING STYLE: ${trainingData.workout_style || 'not specified'} - ADAPT the workout plan to match this style's characteristics, tempo, exercise selection, and rep ranges.
 - Experience: ${trainingData.fitness_experience}
 - Workout Location: ${trainingData.workout_location}
 - Available Equipment: ${trainingData.equipment?.join(', ') || 'none'}. Use ONLY exercises that require this equipment or bodyweight.
@@ -530,6 +535,9 @@ User Profile & Vitals:
 - Desired workouts per week: ${workoutDays}
 - Specific days selected: ${selectedDays.length > 0 ? selectedDays.join(', ') : 'any ' + workoutDays + ' days'}
 - Preferred session duration: ${trainingData.session_duration}
+
+TRAINING STYLE GUIDELINES:
+${trainingData.workout_style ? `- The user wants a ${trainingData.workout_style} style workout. Adapt exercise selection, set/rep schemes, rest periods, and workout structure to match this style's principles and methodology.` : ''}
 
 GOAL-SPECIFIC GUIDELINES:
 ${trainingData.fitness_goal === 'forza_massimale' ? '- Focus: Heavy compound lifts, 3-6 reps, 3-5 sets, 3-5 min rest. Progressive overload is key.' : ''}
