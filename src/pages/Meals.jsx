@@ -866,10 +866,15 @@ User: ${nutritionData.age} anni, ${nutritionData.gender}, ${nutritionData.curren
 
 Return a JSON with "${mealsPerDay} meals" array, each with exact structure as specified in schema.`;
 
-        try {
-          const dayResponse = await base44.integrations.Core.InvokeLLM({
-            prompt: dayPrompt,
-            response_json_schema: {
+        let retryCount = 0;
+        const MAX_RETRIES = 3;
+        let dayResponse = null;
+        
+        while (retryCount < MAX_RETRIES && !dayResponse) {
+          try {
+            dayResponse = await base44.integrations.Core.InvokeLLM({
+              prompt: dayPrompt,
+              response_json_schema: {
               type: "object",
               properties: {
                 meals: {
@@ -907,7 +912,22 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
               },
               required: ["meals"]
             }
-          });
+            });
+            
+            // Se arrivo qui, la chiamata è riuscita
+            break;
+          } catch (llmError) {
+            retryCount++;
+            console.error(`❌ Errore LLM per ${day} (tentativo ${retryCount}/${MAX_RETRIES}):`, llmError);
+            
+            if (retryCount >= MAX_RETRIES) {
+              throw new Error(`Impossibile generare ${day} dopo ${MAX_RETRIES} tentativi: ${llmError.message}`);
+            }
+            
+            // Attendi prima di ritentare (backoff esponenziale)
+            await new Promise(resolve => setTimeout(resolve, 1000 * retryCount));
+          }
+        }
 
           if (!dayResponse?.meals || dayResponse.meals.length !== mealsPerDay) {
             console.error(`❌ Giorno ${day} ha ${dayResponse?.meals?.length || 0} pasti invece di ${mealsPerDay}`);
@@ -1583,6 +1603,37 @@ STRICT RULES:
                           ))}
                         </div>
                       </div>
+                      
+                      {generationPrefs.if_skip_meal && (
+                        <div>
+                          <Label className="text-sm font-medium text-gray-700 mb-2 block">Struttura pasti rimanenti</Label>
+                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                            {[
+                              { id: '2_meals', label: '2 Pasti', desc: 'Solo pranzo e cena' },
+                              { id: '3_meals', label: '3 Pasti', desc: 'Pranzo, cena + 1 snack' },
+                              { id: '3_meals_snacks', label: '3 Pasti + Snack', desc: 'Pranzo, cena + 2 snack' }
+                            ].map(structure => (
+                              <button
+                                key={structure.id}
+                                onClick={() => {
+                                  handlePrefsChange('if_meal_structure', structure.id);
+                                  if (structure.id === '2_meals') setMealsPerDay(2);
+                                  else if (structure.id === '3_meals') setMealsPerDay(3);
+                                  else setMealsPerDay(5);
+                                }}
+                                className={`p-3 rounded-lg border-2 transition-all text-left ${
+                                  generationPrefs.if_meal_structure === structure.id
+                                    ? 'border-[#26847F] bg-white shadow-sm'
+                                    : 'border-gray-200 hover:border-[#26847F]/50'
+                                }`}
+                              >
+                                <div className="font-bold text-sm text-gray-900">{structure.label}</div>
+                                <div className="text-xs text-gray-600 mt-1">{structure.desc}</div>
+                              </button>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                     </div>
                   )}
                   
