@@ -20,13 +20,14 @@ import SessionDurationStep from "../components/quiz/SessionDurationStep";
 import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
 import PerformanceOrientedStep from "../components/quiz/PerformanceOrientedStep";
 import WorkoutStyleStep from "../components/workouts/WorkoutStyleStep";
+import SportSpecificQuestionsStep from "../components/workouts/SportSpecificQuestionsStep";
 
 import { hasFeatureAccess, getGenerationLimit, PLANS } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from '../components/meals/UpgradeModal';
 
 import { motion } from "framer-motion";
 
-const getAllTrainingSteps = (isPerformanceOriented) => {
+const getAllTrainingSteps = (isPerformanceOriented, workoutStyle) => {
   const steps = [
     { id: 'fitness_goal', title: 'Obiettivo Fitness', component: FitnessGoalStep, autoAdvance: true },
     { id: 'performance_oriented', title: 'Tipo Obiettivo', component: PerformanceOrientedStep, autoAdvance: true }
@@ -34,6 +35,7 @@ const getAllTrainingSteps = (isPerformanceOriented) => {
   
   if (isPerformanceOriented) {
     steps.push({ id: 'workout_style', title: 'Stile Allenamento', component: WorkoutStyleStep, autoAdvance: true });
+    steps.push({ id: 'sport_specific', title: 'Dati Specifici', component: SportSpecificQuestionsStep });
   }
   
   steps.push(
@@ -220,6 +222,7 @@ export default function Workouts() {
           fitness_goal: currentUser.fitness_goal,
           is_performance_oriented: currentUser.is_performance_oriented ?? null,
           workout_style: currentUser.workout_style,
+          sport_specific_data: currentUser.sport_specific_data || {},
           age: currentUser.age,
           gender: currentUser.gender,
           current_weight: currentUser.current_weight
@@ -332,8 +335,8 @@ export default function Workouts() {
   }, [selectedDay]);
 
   const TRAINING_STEPS = React.useMemo(() => 
-    getAllTrainingSteps(trainingData.is_performance_oriented), 
-    [trainingData.is_performance_oriented]
+    getAllTrainingSteps(trainingData.is_performance_oriented, trainingData.workout_style), 
+    [trainingData.is_performance_oriented, trainingData.workout_style]
   );
 
   const handleStepData = (stepData) => setTrainingData(prev => ({ ...prev, ...stepData }));
@@ -546,6 +549,7 @@ User Profile & Vitals:
 - Age: ${trainingData.age}, Gender: ${trainingData.gender}, Weight: ${trainingData.current_weight}kg
 - Primary Fitness Goal: ${trainingData.fitness_goal}
 - PREFERRED TRAINING STYLE: ${trainingData.workout_style || 'not specified'} - ADAPT the workout plan to match this style's characteristics, tempo, exercise selection, and rep ranges.
+${trainingData.sport_specific_data && Object.keys(trainingData.sport_specific_data).length > 0 ? `- SPORT-SPECIFIC DATA: ${JSON.stringify(trainingData.sport_specific_data)} - USE THIS DATA TO CALIBRATE WEIGHTS, INTENSITIES, AND EXERCISE SELECTION PRECISELY` : ''}
 - Experience: ${trainingData.fitness_experience}
 - Workout Location: ${trainingData.workout_location}
 - Available Equipment: ${trainingData.equipment?.join(', ') || 'none'}. Use ONLY exercises that require this equipment or bodyweight.
@@ -566,6 +570,14 @@ ${trainingData.fitness_goal === 'esplosivita' ? '- Focus: Plyometric exercises, 
 ${trainingData.fitness_goal === 'mobilita' ? '- Focus: Dynamic stretching, mobility drills, controlled movements, incorporate yoga/pilates style exercises. Improve range of motion.' : ''}
 ${trainingData.fitness_goal === 'tonificazione' ? '- Focus: 10-15 reps, moderate weight, focus on form and muscle activation, incorporate supersets for higher intensity.' : ''}
 
+WEIGHT/INTENSITY GUIDELINES:
+${trainingData.sport_specific_data ? `
+- If user provided MAX LIFTS (squat_max, deadlift_max, bench_max, etc.): Calculate working weights as percentages. Example: if squat_max=100kg, use 80kg for 5x5 strength work (80%), 65kg for 3x12 hypertrophy (65%), etc.
+- If user provided performance times (100m, 500m row, etc.): Use these as benchmarks for interval work and progression targets.
+- For bodyweight exercises: If user gave max reps, adjust set/rep schemes accordingly (someone who does 20 pull-ups needs different programming than someone who does 5).
+- ALWAYS include weight recommendations in the 'description' field in Italian (e.g., "Usa 70-80% del tuo massimale (circa 85kg se massimale è 120kg)" or "Se fai 15 pull-up max, fai serie da 8-10 rip con 1-2 rip di riserva").
+` : ''}
+
 CRITICAL REQUIREMENTS:
 1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
 2. EVERY workout plan MUST have a "day_of_week" field with one of these exact values: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
@@ -573,11 +585,12 @@ CRITICAL REQUIREMENTS:
 4. For workout days: provide 'plan_name' (in Italian), 'workout_type', 'warm_up' array (in Italian), 'exercises' array (in Italian), 'cool_down' array (in Italian), 'total_duration', 'calories_burned', 'difficulty_level'.
 5. For rest days: provide 'plan_name' (e.g., "Recupero Attivo"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
 6. Each exercise MUST have Italian names (e.g., "Squat con Manubri", "Flessioni", "Plank", "Affondi", "Curl Bicipiti") AND MUST be present in the provided Exercise Database. DO NOT invent exercises.
-7. 'reps' field must be in Italian format (e.g., "12 ripetizioni", "10-12 rip.", "30 secondi", "fino a cedimento").
+7. 'reps' field must be in Italian format (e.g., "12 ripetizioni", "10-12 rip.", "30 secondi", "fino a cedimento"). INCLUDE WEIGHT GUIDANCE when user provided maxes.
 8. 'rest' field must be in Italian (e.g., "60 secondi", "90 sec", "2 minuti").
 9. 'difficulty_level' must be one of: "beginner", "intermediate", "advanced" (in English).
-10. Don't train the same muscle groups on consecutive workout days.
-11. Ensure variety and progressive overload where appropriate for the user's fitness level and goal.
+10. 'description' field for each exercise MUST include weight/intensity recommendations based on sport_specific_data when available (e.g., "Usa 75% del massimale - circa 90kg" or "Mantieni passo 1:50/500m").
+11. Don't train the same muscle groups on consecutive workout days.
+12. Ensure variety and progressive overload where appropriate for the user's fitness level and goal.
 `;
 
       updateProgress(40, "AI sta selezionando esercizi ottimali per te...");
