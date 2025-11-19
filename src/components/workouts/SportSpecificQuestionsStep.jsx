@@ -21,7 +21,7 @@ const SPORT_QUESTIONS = {
     title: 'Powerlifting',
     questions: [
       { id: 'squat_max', type: 'number', label: 'Massimale Squat (kg)', placeholder: '120' },
-      { id: 'squat_weak_phase', type: 'select', label: 'Punto debole Squat', options: ['Uscita dalla buca (concentrica)', 'Discesa controllata (eccentrica)', 'Posizione in buca (isometrica)', 'Lockout finale', 'Stabilità generale', 'Nessun punto debole'] },
+      { id: 'squat_weak_phase', type: 'select', label: 'Punto debole Squat', options: ['Uscita dalla buca (concentrica)', 'Discesa controllata (eccentrica)', 'Posizione in buca (isometrica)', 'Lockout finale', 'Traiettoria', 'Stabilità generale', 'Nessun punto debole'] },
       { id: 'bench_max', type: 'number', label: 'Massimale Panca Piana (kg)', placeholder: '100' },
       { id: 'bench_weak_phase', type: 'select', label: 'Punto debole Panca', options: ['Partenza dal petto', 'Sticking point (metà movimento)', 'Lockout finale', 'Discesa controllata', 'Stabilità scapole', 'Nessun punto debole'] },
       { id: 'deadlift_max', type: 'number', label: 'Massimale Stacco (kg)', placeholder: '150' },
@@ -44,10 +44,11 @@ const SPORT_QUESTIONS = {
   streetlifting: {
     title: 'Streetlifting',
     questions: [
-      { id: 'pullup_max', type: 'number', label: 'Massimo Pull-up consecutivi', placeholder: '15' },
+      { id: 'pullup_max', type: 'number', label: 'Massimale Pull-up/Chin-up (kg alzati)', placeholder: '90' },
       { id: 'pullup_weak_phase', type: 'select', label: 'Punto debole Pull-up', options: ['Partenza (dead hang)', 'Fase intermedia (metà movimento)', 'Passaggio mento sopra sbarra', 'Discesa controllata (eccentrica)', 'Endurance (ultime reps)', 'Nessun punto debole'] },
-      { id: 'dip_max', type: 'number', label: 'Massimo Dip consecutivi', placeholder: '20' },
+      { id: 'dip_max', type: 'number', label: 'Massimale Dip (kg alzati)', placeholder: '110' },
       { id: 'dip_weak_phase', type: 'select', label: 'Punto debole Dip', options: ['Discesa profonda', 'Uscita dalla buca (concentrica)', 'Lockout completo', 'Stabilità spalle', 'Endurance', 'Nessun punto debole'] },
+      { id: 'squat_max', type: 'number', label: 'Massimale Squat (kg alzati)', placeholder: '120' },
       { id: 'muscle_up', type: 'boolean', label: 'Sai fare il Muscle-Up?' },
       { id: 'muscle_up_weak_phase', type: 'select', label: 'Punto debole Muscle-up (se lo fai)', options: ['Non lo faccio ancora', 'Fase pull-up esplosiva', 'Transizione (kipping/passaggio)', 'Fase push (sopra la sbarra)', 'Coordinazione generale'] },
       { id: 'weak_points', type: 'multiselect', label: 'Skills da migliorare', options: ['Pull-up', 'Dip', 'Muscle-up', 'Front Lever', 'Planche', 'Human Flag'] }
