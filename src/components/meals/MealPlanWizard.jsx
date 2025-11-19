@@ -7,11 +7,13 @@ import MealsPerDayStep from './MealsPerDayStep';
 import IFMealTimingStep from './IFMealTimingStep';
 import IFMealsCountStep from './IFMealsCountStep';
 import CookingTimeStep from './CookingTimeStep';
+import IntolerancesStep from './IntolerancesStep';
 
 export default function MealPlanWizard({ user, onComplete, onCancel }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState({
     diet_type: user?.diet_type || 'mediterranean',
+    intolerances: [],
     intermittent_fasting: false,
     meals_per_day: 5,
     if_skip_meal: null,
@@ -55,6 +57,7 @@ export default function MealPlanWizard({ user, onComplete, onCancel }) {
   const getSteps = () => {
     const steps = [
       { component: DietTypeStep, title: 'Dieta' },
+      { component: IntolerancesStep, title: 'Intolleranze' },
       { component: IntermittentFastingStep, title: 'Digiuno' }
     ];
 
@@ -109,8 +112,9 @@ export default function MealPlanWizard({ user, onComplete, onCancel }) {
 
       {/* Current step */}
       <CurrentStepComponent
+        data={wizardData}
         onDataChange={handleDataChange}
-        onNext={isLastStep ? handleComplete : handleNext}
+        nextStep={isLastStep ? handleComplete : handleNext}
         dailyCalories={user?.daily_calories || 2000}
         dietType={wizardData.diet_type}
         skipMeal={wizardData.if_skip_meal}
