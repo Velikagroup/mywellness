@@ -95,6 +95,42 @@ Deno.serve(async (req) => {
 
                     console.log(`✅ Transaction created successfully: ${transaction.id}`);
 
+                    // 🔗 AFFILIATE: Traccia commissione se utente è affiliato
+                    if (user.referred_by_affiliate_code) {
+                        try {
+                            const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
+                                affiliate_code: user.referred_by_affiliate_code
+                            });
+
+                            if (affiliateLinks.length > 0) {
+                                const affiliateLink = affiliateLinks[0];
+                                const commissionAmount = amount * 0.10; // 10%
+
+                                // Crea credito commissione
+                                await base44.asServiceRole.entities.AffiliateCredit.create({
+                                    affiliate_user_id: affiliateLink.user_id,
+                                    referred_user_id: user.id,
+                                    transaction_id: transaction.id,
+                                    stripe_payment_intent_id: paymentIntentId,
+                                    amount_paid: amount,
+                                    commission_amount: commissionAmount,
+                                    commission_status: 'available',
+                                    payment_date: new Date().toISOString()
+                                });
+
+                                // Aggiorna totali affiliate link
+                                await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
+                                    total_earned: affiliateLink.total_earned + commissionAmount,
+                                    available_balance: affiliateLink.available_balance + commissionAmount
+                                });
+
+                                console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for ${affiliateLink.user_id}`);
+                            }
+                        } catch (affiliateError) {
+                            console.error('⚠️ Affiliate tracking error:', affiliateError);
+                        }
+                    }
+
                     // Generate and save invoice PDF
                     try {
                         console.log('📄 Generating invoice PDF...');
@@ -194,6 +230,42 @@ Deno.serve(async (req) => {
                     }
 
                     console.log(`✅ Payment recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
+
+                    // 🔗 AFFILIATE: Traccia commissione per pagamenti ricorrenti
+                    if (user.referred_by_affiliate_code) {
+                        try {
+                            const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
+                                affiliate_code: user.referred_by_affiliate_code
+                            });
+
+                            if (affiliateLinks.length > 0) {
+                                const affiliateLink = affiliateLinks[0];
+                                const commissionAmount = amount * 0.10; // 10%
+
+                                // Crea credito commissione
+                                await base44.asServiceRole.entities.AffiliateCredit.create({
+                                    affiliate_user_id: affiliateLink.user_id,
+                                    referred_user_id: user.id,
+                                    transaction_id: transaction.id,
+                                    stripe_payment_intent_id: invoice.payment_intent,
+                                    amount_paid: amount,
+                                    commission_amount: commissionAmount,
+                                    commission_status: 'available',
+                                    payment_date: new Date(invoice.created * 1000).toISOString()
+                                });
+
+                                // Aggiorna totali affiliate link
+                                await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
+                                    total_earned: affiliateLink.total_earned + commissionAmount,
+                                    available_balance: affiliateLink.available_balance + commissionAmount
+                                });
+
+                                console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for ${affiliateLink.user_id}`);
+                            }
+                        } catch (affiliateError) {
+                            console.error('⚠️ Affiliate tracking error:', affiliateError);
+                        }
+                    }
                 }
                 break;
             }
