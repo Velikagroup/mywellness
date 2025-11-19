@@ -17,6 +17,7 @@ import AIFeedbackBox from '../components/meals/AIFeedbackBox';
 import UpgradeModal from '../components/meals/UpgradeModal';
 import CheatMealStep from '../components/meals/CheatMealStep';
 import PantryModal from '../components/meals/PantryModal';
+import MealPlanWizard from '../components/meals/MealPlanWizard';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
@@ -343,24 +344,6 @@ export default function MealsPage() {
       return;
     }
     
-    if (currentUser) {
-      setGenerationPrefs({
-        diet_type: currentUser.diet_type || 'mediterranean',
-        intermittent_fasting: currentUser.intermittent_fasting || false,
-        if_skip_meal: currentUser.if_skip_meal || null,
-        if_meal_structure: currentUser.if_meal_structure || null,
-        cooking_time_preference: currentUser.cooking_time_preference || 'moderate'
-      });
-      
-      if (currentUser.intermittent_fasting && currentUser.if_meal_structure) {
-        if (currentUser.if_meal_structure === '2_meals') setMealsPerDay(2);
-        else if (currentUser.if_meal_structure === '3_meals') setMealsPerDay(3);
-        else if (currentUser.if_meal_structure === '3_meals_snacks') setMealsPerDay(5);
-        else setMealsPerDay(5);
-      } else {
-        setMealsPerDay(5);
-      }
-    }
     setShowGenerator(true);
   }, [generationLimitReached, remainingGenerations]);
   
@@ -693,8 +676,9 @@ STRICT RULES:
     }
   };
 
-  const startGenerationFlow = () => {
-    // Mostra lo step cheat meal PRIMA di generare
+  const handleWizardComplete = (wizardData) => {
+    setGenerationPrefs(wizardData);
+    setMealsPerDay(wizardData.meals_per_day);
     setShowGenerator(false);
     setShowCheatMealStep(true);
   };
@@ -1490,163 +1474,11 @@ STRICT RULES:
           )}
 
           {showGenerator && (
-            <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
-              <CardHeader>
-                <CardTitle className="text-lg text-gray-900">Genera Protocollo Nutrizionale con AI</CardTitle>
-                <p className="text-sm text-gray-500">Conferma o modifica le tue preferenze. L'AI creerà un piano completo.</p>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-6">
-                  <div className="p-4 bg-gradient-to-br from-[#E0F2F1] to-blue-50 rounded-lg border-2 border-[#26847F]/30">
-                    <Label className="text-sm font-semibold text-gray-800 mb-3 block">🍽️ Quanti pasti al giorno?</Label>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-7 gap-2">
-                      {[1, 2, 3, 4, 5, 6, 7].map((num) => (
-                        <button
-                          key={num}
-                          onClick={() => setMealsPerDay(num)}
-                          className={`p-3 rounded-xl border-2 transition-all text-center font-bold ${
-                            mealsPerDay === num
-                              ? 'border-[#26847F] bg-white shadow-lg scale-105'
-                              : 'border-gray-200 hover:border-[#26847F]/50 hover:bg-white'
-                          }`}
-                        >
-                          <div className="text-2xl">{num}</div>
-                        </button>
-                      ))}
-                    </div>
-                    <div className="mt-3 space-y-1">
-                      <p className="text-xs text-gray-600 text-center">
-                        💡 Target giornaliero: <strong>{nutritionData?.daily_calories} kcal</strong> su {mealsPerDay} {mealsPerDay === 1 ? 'pasto' : 'pasti'}
-                      </p>
-                      <p className="text-xs text-[#26847F] font-semibold text-center">
-                        ⏱️ Tempo stimato generazione: ~{Math.ceil(mealsPerDay * 1.2)}-{Math.ceil(mealsPerDay * 1.4)} minuti ({mealsPerDay * 7} pasti totali)
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="p-4 bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg border-2 border-purple-200/50">
-                    <Label className="text-sm font-semibold text-gray-800 mb-3 block">⏱️ Tempo da dedicare alla cucina</Label>
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                      {[
-                        { id: 'quick', label: 'Veloce', emoji: '⚡', desc: '10-20 min' },
-                        { id: 'moderate', label: 'Moderato', emoji: '☕', desc: '20-30 min' },
-                        { id: 'relaxed', label: 'Tranquillo', emoji: '👨‍🍳', desc: '30+ min' }
-                      ].map((option) => (
-                        <button
-                          key={option.id}
-                          onClick={() => handlePrefsChange('cooking_time_preference', option.id)}
-                          className={`p-4 rounded-xl border-2 transition-all ${
-                            generationPrefs?.cooking_time_preference === option.id
-                              ? 'border-purple-500 bg-white shadow-lg'
-                              : 'border-gray-200 hover:border-purple-300 hover:bg-white'
-                          }`}
-                        >
-                          <div className="text-3xl mb-2">{option.emoji}</div>
-                          <div className="font-bold text-sm text-gray-900">{option.label}</div>
-                          <div className="text-xs text-gray-600 mt-1">{option.desc}</div>
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4 bg-gray-50/70 rounded-lg border border-gray-200/50">
-                    <div>
-                      <Label htmlFor="diet-type-select" className="font-semibold text-gray-800">Tipo Dieta</Label>
-                      <Select value={generationPrefs?.diet_type || ''} onValueChange={(value) => handlePrefsChange('diet_type', value)}>
-                        <SelectTrigger id="diet-type-select">
-                          <SelectValue placeholder="Seleziona dieta..." />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {dietTypes.map(diet => (
-                            <SelectItem key={diet.id} value={diet.id}>{diet.label}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="flex items-center space-x-4 rounded-md border p-4 h-full">
-                      <Label htmlFor="intermittent-fasting-switch" className="font-semibold text-gray-800">Digiuno Intermittente</Label>
-                      <Switch
-                        id="intermittent-fasting-switch"
-                        checked={generationPrefs?.intermittent_fasting || false}
-                        onCheckedChange={(value) => handlePrefsChange('intermittent_fasting', value)}
-                        className="data-[state=checked]:bg-[#26847F]"
-                      />
-                    </div>
-                  </div>
-
-                  {generationPrefs?.intermittent_fasting && (
-                    <div className="space-y-4 p-4 bg-[#E0F2F1] rounded-lg border border-[#26847F]/30">
-                      <h4 className="font-semibold text-[#1a5e5a]">⏰ Configurazione Digiuno Intermittente</h4>
-                      <div>
-                        <Label className="text-sm font-medium text-gray-700 mb-2 block">Quale pasto vuoi saltare?</Label>
-                        <div className="grid grid-cols-3 gap-3">
-                          {[
-                            { id: 'breakfast', label: 'Colazione', icon: '🌅' },
-                            { id: 'lunch', label: 'Pranzo', icon: '☀️' },
-                            { id: 'dinner', label: 'Cena', icon: '🌙' }
-                          ].map(meal => (
-                            <button
-                              key={meal.id}
-                              onClick={() => handlePrefsChange('if_skip_meal', meal.id)}
-                              className={`p-3 rounded-lg border-2 transition-all text-center ${
-                                generationPrefs.if_skip_meal === meal.id
-                                  ? 'border-[#26847F] bg-white shadow-sm'
-                                  : 'border-gray-200 hover:border-[#26847F]/50'
-                              }`}
-                            >
-                              <div className="text-2xl mb-1">{meal.icon}</div>
-                              <div className="text-xs font-medium">{meal.label}</div>
-                            </button>
-                          ))}
-                        </div>
-                      </div>
-                      
-                      {generationPrefs.if_skip_meal && (
-                        <div>
-                          <Label className="text-sm font-medium text-gray-700 mb-2 block">Struttura pasti rimanenti</Label>
-                          <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                            {[
-                              { id: '2_meals', label: '2 Pasti', desc: 'Solo pranzo e cena' },
-                              { id: '3_meals', label: '3 Pasti', desc: 'Pranzo, cena + 1 snack' },
-                              { id: '3_meals_snacks', label: '3 Pasti + Snack', desc: 'Pranzo, cena + 2 snack' }
-                            ].map(structure => (
-                              <button
-                                key={structure.id}
-                                onClick={() => {
-                                  handlePrefsChange('if_meal_structure', structure.id);
-                                  if (structure.id === '2_meals') setMealsPerDay(2);
-                                  else if (structure.id === '3_meals') setMealsPerDay(3);
-                                  else setMealsPerDay(5);
-                                }}
-                                className={`p-3 rounded-lg border-2 transition-all text-left ${
-                                  generationPrefs.if_meal_structure === structure.id
-                                    ? 'border-[#26847F] bg-white shadow-sm'
-                                    : 'border-gray-200 hover:border-[#26847F]/50'
-                                }`}
-                              >
-                                <div className="font-bold text-sm text-gray-900">{structure.label}</div>
-                                <div className="text-xs text-gray-600 mt-1">{structure.desc}</div>
-                              </button>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                  
-                  <div className="flex gap-3 pt-4">
-                    <Button
-                      onClick={startGenerationFlow}
-                      className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                      disabled={generationPrefs?.intermittent_fasting && (!generationPrefs?.if_skip_meal || !generationPrefs?.if_meal_structure)}
-                    >
-                      Continua
-                    </Button>
-                    <Button variant="outline" onClick={() => setShowGenerator(false)}>Annulla</Button>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+            <MealPlanWizard
+              user={user}
+              onComplete={handleWizardComplete}
+              onCancel={() => setShowGenerator(false)}
+            />
           )}
 
           {showCheatMealStep && (
