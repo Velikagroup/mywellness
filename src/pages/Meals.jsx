@@ -1043,9 +1043,6 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
             
             console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal`);
           }
-        } catch (dayError) {
-          console.error(`❌ Errore generazione ${day}:`, dayError);
-        }
       }
 
       updateProgress(90, "Salvataggio ingredienti nel database...");
