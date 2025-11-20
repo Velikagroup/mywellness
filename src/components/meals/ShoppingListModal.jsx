@@ -29,14 +29,14 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
   const [scanResult, setScanResult] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
   const [expandedCategories, setExpandedCategories] = useState({
-    frutta_verdura: true,
-    carne_pesce: true,
-    latticini_uova: true,
-    cereali_pasta: true,
-    legumi_frutta_secca: true,
-    condimenti_spezie: true,
-    bevande: true,
-    altro: true
+    frutta_verdura: false,
+    carne_pesce: false,
+    latticini_uova: false,
+    cereali_pasta: false,
+    legumi_frutta_secca: false,
+    condimenti_spezie: false,
+    bevande: false,
+    altro: false
   });
 
   const getStartOfWeek = () => {
