@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -7,19 +7,15 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Label } from '@/components/ui/label';
-import { HelpCircle, Crown, Clock, CheckCircle, Send } from 'lucide-react';
+import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2 } from 'lucide-react';
 
 export default function AdminSupportTickets() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [tickets, setTickets] = useState([]);
-  const [selectedTicket, setSelectedTicket] = useState(null);
-  const [showResponseDialog, setShowResponseDialog] = useState(false);
-  const [adminResponse, setAdminResponse] = useState('');
-  const [isSending, setIsSending] = useState(false);
+  const [openChats, setOpenChats] = useState([]);
+  const [sendingStates, setSendingStates] = useState({});
 
   useEffect(() => {
     checkAccess();
@@ -50,22 +46,49 @@ export default function AdminSupportTickets() {
     }
   };
 
-  const handleOpenResponse = (ticket) => {
-    setSelectedTicket(ticket);
-    setAdminResponse(ticket.admin_response || '');
-    setShowResponseDialog(true);
+  const handleOpenChat = (ticket) => {
+    // Controlla se il ticket è già aperto
+    if (openChats.find(chat => chat.id === ticket.id)) {
+      return;
+    }
+    
+    // Aggiungi il ticket alle chat aperte
+    setOpenChats(prev => [...prev, {
+      ...ticket,
+      newMessage: '',
+      isMinimized: false
+    }]);
   };
 
-  const handleSendResponse = async () => {
-    if (!adminResponse.trim()) {
-      alert('❌ Scrivi una risposta');
+  const handleCloseChat = (ticketId) => {
+    setOpenChats(prev => prev.filter(chat => chat.id !== ticketId));
+  };
+
+  const handleMinimizeChat = (ticketId) => {
+    setOpenChats(prev => prev.map(chat => 
+      chat.id === ticketId ? { ...chat, isMinimized: !chat.isMinimized } : chat
+    ));
+  };
+
+  const updateChatMessage = (ticketId, newMessage) => {
+    setOpenChats(prev => prev.map(chat =>
+      chat.id === ticketId ? { ...chat, newMessage } : chat
+    ));
+  };
+
+  const handleSendResponse = async (ticketId) => {
+    const chat = openChats.find(c => c.id === ticketId);
+    if (!chat || !chat.newMessage.trim()) {
       return;
     }
 
-    setIsSending(true);
+    setSendingStates(prev => ({ ...prev, [ticketId]: true }));
     try {
-      await base44.entities.SupportTicket.update(selectedTicket.id, {
-        admin_response: adminResponse,
+      const updatedMessage = chat.message + (chat.admin_response ? '' : '') + `\n\n--- Risposta Admin ---\n${chat.newMessage}`;
+      
+      await base44.entities.SupportTicket.update(ticketId, {
+        admin_response: chat.newMessage,
+        message: updatedMessage,
         status: 'in_lavorazione'
       });
 
@@ -73,8 +96,8 @@ export default function AdminSupportTickets() {
       
       await base44.integrations.Core.SendEmail({
         from_name: `MyWellness Support <${fromEmail}>`,
-        to: selectedTicket.user_email,
-        subject: `✅ Risposta al tuo ticket: ${selectedTicket.subject}`,
+        to: chat.user_email,
+        subject: `✅ Risposta al tuo ticket: ${chat.subject}`,
         body: `
 <!DOCTYPE html>
 <html>
@@ -121,10 +144,10 @@ export default function AdminSupportTickets() {
 
               <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 25px; margin: 20px 0;">
                 <h3 style="color: #065f46; margin: 0 0 15px 0; font-size: 18px;">💬 Risposta del Team:</h3>
-                <p style="color: #047857; margin: 0; line-height: 1.8; white-space: pre-wrap;">${adminResponse}</p>
+                <p style="color: #047857; margin: 0; line-height: 1.8; white-space: pre-wrap;">${chat.newMessage}</p>
               </div>
 
-              ${selectedTicket.priority === 'premium' ? `
+              ${chat.priority === 'premium' ? `
               <div style="background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%); border: 2px solid #a855f7; border-radius: 12px; padding: 20px; text-align: center; margin: 20px 0;">
                 <p style="margin: 0; color: #7e22ce; font-size: 16px; font-weight: bold;">
                   👑 Grazie per essere un utente Premium!
@@ -170,38 +193,39 @@ export default function AdminSupportTickets() {
         `
       });
 
-      alert('✅ Risposta inviata con successo!');
-      setAdminResponse('');
-      await loadTickets();
+      // Aggiorna la chat locale
+      setOpenChats(prev => prev.map(c => 
+        c.id === ticketId 
+          ? { 
+              ...c, 
+              admin_response: chat.newMessage, 
+              message: updatedMessage,
+              status: 'in_lavorazione',
+              newMessage: '' 
+            }
+          : c
+      ));
       
-      // Aggiorna il ticket selezionato
-      setSelectedTicket({
-        ...selectedTicket,
-        admin_response: adminResponse,
-        status: 'in_lavorazione'
-      });
+      await loadTickets();
     } catch (error) {
       console.error('Error sending response:', error);
       alert('❌ Errore nell\'invio della risposta');
     }
-    setIsSending(false);
+    setSendingStates(prev => ({ ...prev, [ticketId]: false }));
   };
 
-  const handleCloseTicket = async () => {
+  const handleCloseTicketFromChat = async (ticketId) => {
     if (!confirm('Sei sicuro di voler chiudere questo ticket?')) {
       return;
     }
 
     try {
-      await base44.entities.SupportTicket.update(selectedTicket.id, {
+      await base44.entities.SupportTicket.update(ticketId, {
         status: 'risolto',
         resolved_at: new Date().toISOString()
       });
 
-      alert('✅ Ticket chiuso con successo!');
-      setShowResponseDialog(false);
-      setSelectedTicket(null);
-      setAdminResponse('');
+      handleCloseChat(ticketId);
       await loadTickets();
     } catch (error) {
       console.error('Error closing ticket:', error);
@@ -224,7 +248,7 @@ export default function AdminSupportTickets() {
 
   const TicketCard = ({ ticket }) => (
     <div
-      onClick={() => handleOpenResponse(ticket)}
+      onClick={() => handleOpenChat(ticket)}
       className="p-4 border rounded-xl bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all cursor-pointer"
     >
       <div className="flex items-start justify-between gap-3 mb-3">
@@ -387,127 +411,277 @@ export default function AdminSupportTickets() {
         </Tabs>
       </div>
 
-      <Dialog open={showResponseDialog} onOpenChange={(open) => {
-        if (!open) {
-          setShowResponseDialog(false);
-          setSelectedTicket(null);
-          setAdminResponse('');
+      {/* Chat Windows - Multiple side by side */}
+      <div className="fixed bottom-6 right-6 flex gap-3 z-50" style={{ maxWidth: 'calc(100vw - 48px)' }}>
+        {openChats.map((chat, index) => (
+          <ChatWindow
+            key={chat.id}
+            chat={chat}
+            onClose={() => handleCloseChat(chat.id)}
+            onMinimize={() => handleMinimizeChat(chat.id)}
+            onSendMessage={() => handleSendResponse(chat.id)}
+            onUpdateMessage={(msg) => updateChatMessage(chat.id, msg)}
+            onCloseTicket={() => handleCloseTicketFromChat(chat.id)}
+            isSending={sendingStates[chat.id] || false}
+            index={index}
+          />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage, onCloseTicket, isSending, index }) {
+  const messagesEndRef = useRef(null);
+
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [chat.message, chat.newMessage]);
+
+  // Parse messages
+  const messageParts = chat.message.split('\n\n---');
+  const userMessages = [];
+  const adminResponses = [];
+
+  messageParts.forEach((part, idx) => {
+    if (idx === 0) {
+      userMessages.push({ content: part, timestamp: chat.created_date });
+    } else if (part.includes('Risposta Utente')) {
+      const content = part.split('---\n')[1];
+      userMessages.push({ content, timestamp: null });
+    } else if (part.includes('Risposta Admin')) {
+      const content = part.split('---\n')[1];
+      adminResponses.push({ content, timestamp: null });
+    }
+  });
+
+  return (
+    <div 
+      className={`luxury-chat-widget ${chat.isMinimized ? 'w-80 h-16' : 'w-[450px] h-[600px]'} flex flex-col animate-slide-in`}
+      style={{ animationDelay: `${index * 0.1}s` }}
+    >
+      <style>{`
+        @keyframes slide-in {
+          from {
+            opacity: 0;
+            transform: translateY(30px) scale(0.95);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0) scale(1);
+          }
         }
-      }}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2 text-lg sm:text-xl">
-              Rispondi al Ticket
-              {selectedTicket?.priority === 'premium' && (
-                <Badge className="bg-gradient-to-r from-purple-500 to-purple-600 text-white">
-                  <Crown className="w-3 h-3 mr-1" />
-                  PREMIUM
-                </Badge>
-              )}
-            </DialogTitle>
-          </DialogHeader>
-          
-          {selectedTicket && (
-            <div className="space-y-4 py-4">
-              <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
-                <div className="flex items-start justify-between gap-3 mb-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="font-semibold text-gray-900 mb-1 text-sm sm:text-base break-words">{selectedTicket.subject}</p>
-                    <div className="flex items-center gap-2 flex-wrap mb-3">
-                      <Badge variant="outline" className="text-xs">{selectedTicket.category}</Badge>
-                      <Badge className="bg-purple-100 text-purple-700 text-xs">{selectedTicket.user_plan}</Badge>
-                    </div>
-                  </div>
-                </div>
-                
-                <div className="bg-white rounded-lg p-3 border border-gray-100">
-                  <p className="text-xs text-gray-500 mb-2">Messaggio Utente:</p>
-                  <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{selectedTicket.message}</p>
-                </div>
+        
+        .animate-slide-in {
+          animation: slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+        
+        .luxury-chat-widget {
+          backdrop-filter: blur(24px) saturate(200%);
+          background: linear-gradient(135deg, 
+            rgba(255, 255, 255, 0.98) 0%,
+            rgba(252, 252, 254, 0.95) 25%,
+            rgba(250, 250, 253, 0.92) 50%,
+            rgba(252, 252, 254, 0.95) 75%,
+            rgba(255, 255, 255, 0.98) 100%
+          );
+          border: 1px solid rgba(255, 255, 255, 0.9);
+          border-radius: 24px;
+          overflow: hidden;
+          box-shadow: 
+            0 20px 60px -15px rgba(38, 132, 127, 0.25),
+            0 10px 40px -10px rgba(38, 132, 127, 0.15),
+            0 0 0 1px rgba(255, 255, 255, 0.5) inset,
+            0 2px 4px 0 rgba(255, 255, 255, 0.8) inset;
+        }
+        
+        .message-bubble {
+          transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .message-bubble:hover {
+          transform: translateY(-2px);
+          box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.15);
+        }
+        
+        .user-message {
+          background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 50%, #E3F2FD 100%);
+          border: 1px solid rgba(100, 181, 246, 0.3);
+          color: #0D47A1;
+          box-shadow: 
+            0 8px 24px -8px rgba(33, 150, 243, 0.3),
+            0 4px 12px -4px rgba(33, 150, 243, 0.2),
+            inset 0 1px 0 rgba(255, 255, 255, 0.5);
+        }
+        
+        .admin-message {
+          background: linear-gradient(135deg, #26847F 0%, #1a9e96 50%, #26847F 100%);
+          box-shadow: 
+            0 8px 24px -8px rgba(38, 132, 127, 0.4),
+            0 4px 12px -4px rgba(38, 132, 127, 0.3),
+            inset 0 1px 0 rgba(255, 255, 255, 0.2);
+        }
+        
+        .ai-message {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg,
+            rgba(255, 255, 255, 0.95) 0%,
+            rgba(252, 252, 254, 0.9) 50%,
+            rgba(255, 255, 255, 0.95) 100%
+          );
+          border: 1px solid rgba(200, 200, 220, 0.3);
+          box-shadow: 
+            0 8px 20px -6px rgba(0, 0, 0, 0.08),
+            0 4px 12px -4px rgba(0, 0, 0, 0.06),
+            inset 0 1px 0 rgba(255, 255, 255, 0.9);
+        }
+        
+        .chat-input {
+          backdrop-filter: blur(12px);
+          background: rgba(255, 255, 255, 0.85);
+          border: 1px solid rgba(200, 200, 220, 0.3);
+          box-shadow: 
+            0 2px 8px rgba(0, 0, 0, 0.04),
+            inset 0 1px 2px rgba(255, 255, 255, 0.9);
+          transition: all 0.3s ease;
+        }
+        
+        .chat-input:focus {
+          background: rgba(255, 255, 255, 0.95);
+          border-color: rgba(38, 132, 127, 0.4);
+          box-shadow: 
+            0 4px 16px rgba(38, 132, 127, 0.15),
+            inset 0 1px 2px rgba(255, 255, 255, 0.9);
+        }
+      `}</style>
 
-                {selectedTicket.ai_response && (
-                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border-2 border-blue-200">
-                    <div className="flex items-center gap-2 mb-2">
-                      <span className="text-xl">🤖</span>
-                      <p className="text-xs font-bold text-blue-900">Risposta Automatica AI</p>
-                      {selectedTicket.ai_resolved && (
-                        <Badge className="bg-green-600 text-white text-xs ml-auto">✅ Accettata</Badge>
-                      )}
-                    </div>
-                    <p className="text-xs sm:text-sm text-blue-800 leading-relaxed whitespace-pre-wrap">{selectedTicket.ai_response}</p>
-                  </div>
-                )}
-
-                <div className="flex items-center gap-2 text-xs text-gray-500 mt-3">
-                  <span>{selectedTicket.user_email}</span>
-                  <span>•</span>
-                  <span>{new Date(selectedTicket.created_date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+      {/* Navbar */}
+      <div className="relative p-4 border-b border-white/40 bg-gradient-to-r from-white/60 via-white/50 to-white/60 backdrop-blur-xl">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#26847F]/5 via-transparent to-teal-500/5 opacity-50"></div>
+        <div className="relative flex items-center justify-between">
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="relative w-10 h-10 bg-gradient-to-br from-[#26847F] via-teal-500 to-[#26847F] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#26847F]/30">
+              <div className="absolute inset-0 bg-white/20 rounded-2xl animate-pulse"></div>
+              <span className="relative text-white text-lg">💬</span>
+            </div>
+            {!chat.isMinimized && (
+              <div className="flex-1 min-w-0">
+                <p className="font-bold text-sm text-gray-900 truncate mb-0.5">{chat.subject}</p>
+                <div className="flex items-center gap-2">
+                  <span className="text-xs font-medium text-gray-600">{chat.user_email}</span>
+                  <Badge className={`text-xs px-2 py-0 font-semibold shadow-sm ${
+                    chat.status === 'aperto' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0' :
+                    chat.status === 'in_lavorazione' ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white border-0' :
+                    'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0'
+                  }`}>
+                    {chat.status}
+                  </Badge>
                 </div>
               </div>
+            )}
+          </div>
+          <div className="flex items-center gap-1.5 flex-shrink-0">
+            <Button
+              onClick={onMinimize}
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-xl text-gray-600 hover:text-[#26847F] hover:bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-md"
+            >
+              {chat.isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
+            </Button>
+            <Button
+              onClick={onClose}
+              variant="ghost"
+              size="icon"
+              className="h-9 w-9 rounded-xl text-gray-600 hover:text-red-600 hover:bg-white/80 backdrop-blur-sm transition-all duration-300 hover:shadow-md"
+            >
+              <X className="w-4 h-4" />
+            </Button>
+          </div>
+        </div>
+      </div>
 
-              <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">
-                  La Tua Risposta
-                  {selectedTicket.priority === 'premium' && (
-                    <span className="ml-2 text-purple-600 text-xs">👑 Risposta prioritaria</span>
-                  )}
-                </Label>
-                <Textarea
-                  value={adminResponse}
-                  onChange={(e) => setAdminResponse(e.target.value)}
-                  placeholder="Scrivi una risposta dettagliata e professionale..."
-                  className="h-40 sm:h-48 bg-white text-sm sm:text-base resize-none"
-                  autoFocus
-                />
-                <p className="text-xs text-gray-500 mt-2">
-                  💡 Questa risposta verrà inviata via email all'utente
-                </p>
+      {/* Messages */}
+      {!chat.isMinimized && (
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent via-white/5 to-transparent">
+          {/* User messages and admin responses in order */}
+          {userMessages.map((msg, idx) => (
+            <div key={`user-${idx}`} className="flex justify-end">
+              <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tr-md px-5 py-3.5">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{msg.content}</p>
               </div>
+            </div>
+          ))}
 
-              <div className="flex flex-col sm:flex-row gap-3 pt-2">
-                <Button
-                  onClick={() => {
-                    setShowResponseDialog(false);
-                    setSelectedTicket(null);
-                    setAdminResponse('');
-                  }}
-                  variant="outline"
-                  className="flex-1 h-11 text-sm sm:text-base"
-                >
-                  Annulla
-                </Button>
-                <Button
-                  onClick={handleSendResponse}
-                  disabled={isSending || !adminResponse.trim()}
-                  className="flex-1 h-11 bg-[#26847F] hover:bg-[#1f6b66] text-white text-sm sm:text-base"
-                >
-                  {isSending ? (
-                    <div className="flex items-center gap-2">
-                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                      Invio...
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-2">
-                      <Send className="w-4 h-4" />
-                      Invia Risposta
-                    </div>
-                  )}
-                </Button>
-                {selectedTicket?.status !== 'risolto' && selectedTicket?.status !== 'chiuso' && (
-                  <Button
-                    onClick={handleCloseTicket}
-                    variant="outline"
-                    className="flex-1 h-11 border-green-300 text-green-600 hover:bg-green-50 text-sm sm:text-base"
-                  >
-                    <CheckCircle className="w-4 h-4 mr-2" />
-                    Chiudi Ticket
-                  </Button>
-                )}
+          {chat.ai_response && (
+            <div className="flex justify-start">
+              <div className="message-bubble ai-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
+                <div className="flex items-center gap-2.5 mb-3">
+                  <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                    <span className="text-white text-base">🤖</span>
+                  </div>
+                  <div>
+                    <p className="text-xs font-bold text-gray-900">AI</p>
+                  </div>
+                </div>
+                <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{chat.ai_response}</p>
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
+
+          {adminResponses.map((msg, idx) => (
+            <div key={`admin-${idx}`} className="flex justify-start">
+              <div className="message-bubble admin-message max-w-[85%] text-white rounded-3xl rounded-tl-md px-5 py-3.5">
+                <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{msg.content}</p>
+              </div>
+            </div>
+          ))}
+
+          <div ref={messagesEndRef} />
+        </div>
+      )}
+
+      {/* Input Area */}
+      {!chat.isMinimized && chat.status !== 'risolto' && chat.status !== 'chiuso' && (
+        <div className="relative p-4 border-t border-white/40 bg-gradient-to-t from-white/70 via-white/60 to-white/50 backdrop-blur-xl">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-50"></div>
+          <div className="relative flex gap-3">
+            <Textarea
+              value={chat.newMessage}
+              onChange={(e) => onUpdateMessage(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  onSendMessage();
+                }
+              }}
+              placeholder="Scrivi risposta..."
+              className="chat-input flex-1 resize-none h-20 rounded-2xl border-2 px-4 py-3 text-sm font-medium placeholder:text-gray-400"
+            />
+            <div className="flex flex-col gap-2">
+              <Button
+                onClick={onSendMessage}
+                disabled={isSending || !chat.newMessage.trim()}
+                className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white px-4 rounded-2xl shadow-lg shadow-[#26847F]/30 hover:shadow-xl hover:shadow-[#26847F]/40 transition-all duration-300 disabled:opacity-50 h-10"
+              >
+                {isSending ? (
+                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                ) : (
+                  <Send className="w-4 h-4" />
+                )}
+              </Button>
+              <Button
+                onClick={onCloseTicket}
+                variant="outline"
+                className="px-4 h-10 rounded-2xl text-xs border-green-300 text-green-600 hover:bg-green-50"
+              >
+                <CheckCircle className="w-3 h-3 mr-1" />
+                Chiudi
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
