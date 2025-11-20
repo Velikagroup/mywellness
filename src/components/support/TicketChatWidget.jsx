@@ -74,35 +74,36 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
         }
       `}</style>
 
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200/50 bg-gradient-to-r from-[#26847F] to-teal-600 text-white rounded-t-2xl">
+      {/* Navbar interna minimale */}
+      <div className="p-3 border-b border-gray-200/30 bg-white/40 backdrop-blur-sm">
         <div className="flex items-center justify-between">
-          <div className="flex-1">
-            <h2 className="text-lg font-bold">💬 Ticket di Supporto</h2>
+          <div className="flex items-center gap-3 flex-1 min-w-0">
+            <div className="w-8 h-8 bg-gradient-to-br from-[#26847F] to-teal-500 rounded-full flex items-center justify-center flex-shrink-0">
+              <span className="text-white text-sm font-bold">💬</span>
+            </div>
             {!isMinimized && (
-              <>
-                <p className="text-xs text-white/80 mt-1">{localTicket.subject}</p>
-                <div className="flex items-center gap-2 mt-2">
-                  <Badge className="bg-white/20 text-white border-white/30 text-xs">
-                    {localTicket.category}
-                  </Badge>
-                  <Badge className={`text-xs ${
-                    localTicket.status === 'aperto' ? 'bg-blue-500' :
-                    localTicket.status === 'in_lavorazione' ? 'bg-yellow-500' :
-                    'bg-green-500'
-                  } text-white`}>
+              <div className="flex-1 min-w-0">
+                <p className="font-semibold text-sm text-gray-900 truncate">{localTicket.subject}</p>
+                <div className="flex items-center gap-2 mt-0.5">
+                  <span className="text-xs text-gray-500">{localTicket.category}</span>
+                  <span className="text-xs text-gray-300">•</span>
+                  <Badge className={`text-xs px-2 py-0 ${
+                    localTicket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
+                    localTicket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
+                    'bg-green-100 text-green-700'
+                  }`}>
                     {localTicket.status}
                   </Badge>
                 </div>
-              </>
+              </div>
             )}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 flex-shrink-0">
             <Button
               onClick={() => setIsMinimized(!isMinimized)}
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/20"
+              className="h-8 w-8 text-gray-500 hover:text-gray-900 hover:bg-gray-100"
             >
               {isMinimized ? <Maximize2 className="w-4 h-4" /> : <Minimize2 className="w-4 h-4" />}
             </Button>
@@ -110,18 +111,18 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
               onClick={onClose}
               variant="ghost"
               size="icon"
-              className="text-white hover:bg-white/20"
+              className="h-8 w-8 text-gray-500 hover:text-gray-900 hover:bg-gray-100"
             >
-              <X className="w-5 h-5" />
+              <X className="w-4 h-4" />
             </Button>
           </div>
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Messages - Ordine cronologico: dall'alto (più vecchio) al basso (più recente) */}
       {!isMinimized && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-transparent">
-          {/* Messaggio originale utente */}
+          {/* 1. Messaggio originale utente (primo cronologicamente) */}
           <div className="flex justify-end">
             <div className="max-w-[85%] bg-[#26847F] text-white rounded-2xl px-4 py-3 shadow-md">
               <p className="text-xs opacity-80 mb-1">Tu - {new Date(localTicket.created_date).toLocaleString('it-IT')}</p>
@@ -129,7 +130,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
             </div>
           </div>
 
-          {/* Risposta AI */}
+          {/* 2. Risposta AI (seconda cronologicamente) */}
           {localTicket.ai_response && (
             <div className="flex justify-start">
               <div className="max-w-[85%] bg-white/90 backdrop-blur-sm border border-blue-200/50 rounded-2xl px-4 py-3 shadow-md">
@@ -147,7 +148,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
             </div>
           )}
 
-          {/* Risposte successive dell'utente */}
+          {/* 3. Risposte successive dell'utente (terze cronologicamente) */}
           {localTicket.message.includes('--- Risposta Utente') && (
             localTicket.message.split('\n\n---').slice(1).map((msg, idx) => {
               if (msg.includes('Risposta Utente')) {
@@ -164,7 +165,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
             })
           )}
 
-          {/* Risposta Admin - Viene sempre DOPO le risposte utente */}
+          {/* 4. Risposta Admin (ultima cronologicamente - più recente in basso) */}
           {localTicket.admin_response && (
             <div className="flex justify-start">
               <div className="max-w-[85%] bg-white/90 backdrop-blur-sm border border-green-200/50 rounded-2xl px-4 py-3 shadow-md">
@@ -181,6 +182,8 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
               </div>
             </div>
           )}
+          
+          {/* Ref per scroll automatico all'ultimo messaggio */}
           <div ref={messagesEndRef} />
         </div>
       )}
