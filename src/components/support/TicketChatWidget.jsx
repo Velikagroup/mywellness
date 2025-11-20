@@ -5,6 +5,67 @@ import { Badge } from "@/components/ui/badge";
 import { X, Send, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
+// Component per renderizzare i messaggi con immagini inline
+function MessageContent({ content, isAI = false, isAdmin = false }) {
+  if (!content) return null;
+
+  const textColor = isAI || isAdmin ? 'text-gray-800' : 'text-white';
+  
+  // Split del contenuto per gestire immagini e testo
+  const parts = content.split(/(\[📎[^\]]+\]\([^)]+\))/g);
+  
+  return (
+    <div className={`text-sm leading-relaxed font-medium ${textColor} space-y-2`}>
+      {parts.map((part, idx) => {
+        // Controlla se è un link markdown con paperclip
+        const markdownMatch = part.match(/\[📎([^\]]+)\]\(([^)]+)\)/);
+        
+        if (markdownMatch) {
+          const fileName = markdownMatch[1];
+          const fileUrl = markdownMatch[2];
+          
+          // Controlla se è un'immagine
+          const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileUrl);
+          
+          if (isImage) {
+            return (
+              <div key={idx} className="my-2">
+                <img 
+                  src={fileUrl} 
+                  alt={fileName}
+                  className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => window.open(fileUrl, '_blank')}
+                />
+              </div>
+            );
+          } else {
+            // Per file non immagine, mostra un link di download
+            return (
+              <a
+                key={idx}
+                href={fileUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                  isAI || isAdmin ? 'bg-gray-100 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30'
+                } transition-colors`}
+              >
+                <Paperclip className="w-3 h-3" />
+                <span className="text-xs">{fileName}</span>
+              </a>
+            );
+          }
+        }
+        
+        // Testo normale
+        return part ? (
+          <p key={idx} className="whitespace-pre-wrap">{part}</p>
+        ) : null;
+      })}
+    </div>
+  );
+}
+
 export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
@@ -274,7 +335,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
           <div className="flex justify-end">
             <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
               <p className="text-xs opacity-75 mb-1.5 font-medium">Tu - {new Date(localTicket.created_date).toLocaleString('it-IT')}</p>
-              <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{localTicket.message.split('\n\n---')[0]}</p>
+              <MessageContent content={localTicket.message.split('\n\n---')[0]} />
             </div>
           </div>
 
@@ -291,7 +352,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                     <p className="text-xs text-gray-500 font-medium">Risposta automatica</p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{localTicket.ai_response}</p>
+                <MessageContent content={localTicket.ai_response} isAI />
               </div>
             </div>
           )}
@@ -309,7 +370,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                     <p className="text-xs text-gray-500 font-medium">Risposta ufficiale</p>
                   </div>
                 </div>
-                <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{localTicket.admin_response}</p>
+                <MessageContent content={localTicket.admin_response} isAdmin />
               </div>
             </div>
           )}
@@ -322,7 +383,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                 return (
                   <div key={idx} className="flex justify-end">
                     <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{content}</p>
+                      <MessageContent content={content} />
                     </div>
                   </div>
                 );
