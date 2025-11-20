@@ -237,11 +237,10 @@ export default function Settings() {
     }
 
     setIsSaving(true);
-    setIsGeneratingAI(true);
     try {
       const priority = user.subscription_plan === 'premium' ? 'premium' : 'normale';
 
-      // Crea il ticket
+      // Crea il ticket e apri direttamente la chat
       const newTicket = await base44.entities.SupportTicket.create({
         user_id: user.id,
         user_email: user.email,
@@ -250,48 +249,24 @@ export default function Settings() {
         message: ticketMessage,
         category: ticketCategory,
         priority: priority,
-        status: 'aperto'
+        status: 'aperto',
+        ai_response: '✅ Ticket ricevuto! Il nostro team ti risponderà entro 24 ore. Nel frattempo, puoi continuare a scrivere qui sotto se hai altre informazioni da aggiungere.'
       });
 
-      setCurrentTicket(newTicket);
-      setShowTicketChat(true);
-
-      // Genera risposta AI
-      const aiResponseData = await base44.integrations.Core.InvokeLLM({
-        prompt: `Sei un assistente virtuale di MyWellness, un'app di fitness e nutrizione con piani personalizzati AI.
-
-L'utente ha aperto un ticket di supporto con le seguenti informazioni:
-- Piano: ${user.subscription_plan || 'base'}
-- Categoria: ${ticketCategory}
-- Oggetto: ${ticketSubject}
-- Messaggio: ${ticketMessage}
-
-Fornisci una risposta utile, professionale e completa in italiano. 
-Se non puoi risolvere completamente il problema, fornisci comunque informazioni utili.
-NON menzionare email o contatti diretti. Se serve supporto umano, di' all'utente di cliccare il pulsante "Serve Ancora Aiuto" qui sotto.
-Sii conciso ma dettagliato (max 200 parole).`,
-        add_context_from_internet: false
-      });
-
-      const aiText = aiResponseData.data || aiResponseData;
-      setAiResponse(aiText);
-
-      // Aggiorna il ticket con la risposta AI
-      await base44.entities.SupportTicket.update(newTicket.id, {
-        ai_response: aiText
-      });
-
+      // Apri direttamente la chat
+      setSelectedTicketForChat(newTicket);
+      
+      // Reset form
       setTicketSubject('');
       setTicketMessage('');
       setTicketCategory('tecnico');
+      
       await loadUserData();
     } catch (error) {
       console.error('Error submitting ticket:', error);
       alert('❌ Errore nell\'invio del ticket');
-      setShowTicketChat(false);
     }
     setIsSaving(false);
-    setIsGeneratingAI(false);
   };
 
   const handleTicketResolved = async () => {
