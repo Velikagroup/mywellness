@@ -6,6 +6,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from './UpgradeModal';
+import { getStartOfWeek } from '@/utils/dateUtils';
 
 const CATEGORY_LABELS = {
   frutta_verdura: { label: 'Frutta & Verdura', emoji: '🥬', bg: 'bg-green-50' },
@@ -28,15 +29,7 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
   const [scanResult, setScanResult] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
-  const startOfWeek = (() => {
-    const now = new Date();
-    const dayOfWeek = now.getDay();
-    const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-    const monday = new Date(now);
-    monday.setDate(now.getDate() + diff);
-    monday.setHours(0, 0, 0, 0);
-    return monday.toISOString().split('T')[0];
-  })();
+  const startOfWeek = getStartOfWeek();
 
   const { data: lists = [], isLoading: isLoadingLists } = useQuery({
     queryKey: ['shoppingLists', user?.id, startOfWeek],

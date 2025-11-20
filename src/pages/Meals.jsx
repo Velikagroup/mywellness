@@ -18,6 +18,7 @@ import UpgradeModal from '../components/meals/UpgradeModal';
 import CheatMealStep from '../components/meals/CheatMealStep';
 import PantryModal from '../components/meals/PantryModal';
 import MealPlanWizard from '../components/meals/MealPlanWizard';
+import { getStartOfWeek } from '@/utils/dateUtils';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
@@ -77,15 +78,7 @@ const getDietRules = (dietType) => {
   return rules[dietType] || rules.mediterranean;
 };
 
-const getStartOfWeek = () => {
-  const now = new Date();
-  const dayOfWeek = now.getDay();
-  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
-  const monday = new Date(now);
-  monday.setDate(now.getDate() + diff);
-  monday.setHours(0, 0, 0, 0);
-  return monday.toISOString().split('T')[0];
-};
+import { getStartOfWeek } from '@/utils/dateUtils';
 
 const startOfWeek = getStartOfWeek();
 
