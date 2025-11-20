@@ -31,13 +31,16 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
     try {
       const uploadedUrls = [];
       for (const file of files) {
-        const { data } = await base44.integrations.Core.UploadFile({ file });
-        uploadedUrls.push({ name: file.name, url: data.file_url });
+        const result = await base44.integrations.Core.UploadFile({ file });
+        const fileUrl = result?.file_url || result?.data?.file_url;
+        if (fileUrl) {
+          uploadedUrls.push({ name: file.name, url: fileUrl });
+        }
       }
       setAttachedFiles(prev => [...prev, ...uploadedUrls]);
     } catch (error) {
       console.error('Error uploading files:', error);
-      alert('❌ Errore nel caricamento file');
+      alert('❌ Errore nel caricamento file: ' + error.message);
     }
     setUploadingFile(false);
     e.target.value = '';
