@@ -510,16 +510,38 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
     try {
       const uploadedUrls = [];
       for (const file of files) {
-        const { data } = await base44.integrations.Core.UploadFile({ file });
-        uploadedUrls.push({ name: file.name, url: data.file_url });
+        console.log('📤 Admin uploading file:', file.name);
+        
+        const response = await base44.integrations.Core.UploadFile({ file });
+        console.log('📥 Admin upload response:', JSON.stringify(response));
+        
+        // Estrai URL in tutti i formati
+        let fileUrl = null;
+        if (typeof response === 'string') {
+          fileUrl = response;
+        } else if (response) {
+          fileUrl = response.file_url || 
+                    response.url || 
+                    response.data?.file_url || 
+                    response.data?.url;
+        }
+        
+        if (!fileUrl) {
+          console.error('❌ File URL not found:', response);
+          throw new Error('URL file non ricevuto');
+        }
+        
+        console.log('✅ Admin file uploaded:', fileUrl);
+        uploadedUrls.push({ name: file.name, url: fileUrl });
       }
       setAttachedFiles(prev => [...prev, ...uploadedUrls]);
     } catch (error) {
-      console.error('Error uploading files:', error);
-      alert('❌ Errore nel caricamento file');
+      console.error('❌ Admin upload error:', error);
+      alert('❌ Errore caricamento: ' + error.message);
+    } finally {
+      setUploadingFile(false);
+      e.target.value = '';
     }
-    setUploadingFile(false);
-    e.target.value = '';
   };
 
   const removeAttachment = (url) => {
