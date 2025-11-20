@@ -550,7 +550,12 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
 
   const handleSendWithAttachments = () => {
     if (attachedFiles.length > 0) {
-      const fileLinks = attachedFiles.map(f => `[📎 ${f.name}](${f.url})`).join('\n');
+      const fileLinks = attachedFiles.map(f => {
+        // Controlla se il file è un'immagine dall'estensione
+        const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(f.url);
+        // Se è un'immagine, usa il formato markdown immagine, altrimenti link normale
+        return isImage ? `![${f.name}](${f.url})` : `[📎 ${f.name}](${f.url})`;
+      }).join('\n');
       const messageWithFiles = chat.newMessage.trim() 
         ? `${chat.newMessage}\n\n${fileLinks}` 
         : fileLinks;
