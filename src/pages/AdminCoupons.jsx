@@ -174,10 +174,9 @@ export default function AdminCoupons() {
               <div className="flex gap-2 mb-6">
                 <button
                   onClick={() => setNewCoupon({ ...newCoupon, discount_type: 'percentage' })}
-                  style={newCoupon.discount_type === 'percentage' ? { backgroundColor: '#26847F', borderColor: '#26847F', color: 'white' } : {}}
                   className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
                     newCoupon.discount_type === 'percentage'
-                      ? ''
+                      ? 'border-[#26847F] bg-[#26847F] !bg-opacity-100 text-white'
                       : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
@@ -186,10 +185,9 @@ export default function AdminCoupons() {
                 </button>
                 <button
                   onClick={() => setNewCoupon({ ...newCoupon, discount_type: 'lifetime_free' })}
-                  style={newCoupon.discount_type === 'lifetime_free' ? { backgroundColor: '#9333ea', borderColor: '#9333ea', color: 'white' } : {}}
                   className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
                     newCoupon.discount_type === 'lifetime_free'
-                      ? ''
+                      ? 'border-purple-500 bg-purple-500 !bg-opacity-100 text-white'
                       : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
