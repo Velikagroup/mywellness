@@ -28,6 +28,16 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [expandedCategories, setExpandedCategories] = useState({
+    frutta_verdura: true,
+    carne_pesce: true,
+    latticini_uova: true,
+    cereali_pasta: true,
+    legumi_frutta_secca: true,
+    condimenti_spezie: true,
+    bevande: true,
+    altro: true
+  });
 
   const getStartOfWeek = () => {
     const now = new Date();
@@ -387,13 +397,29 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                 </Button>
               </div>
 
-              {Object.entries(organizedItems).map(([category, items]) => (
-                <div key={category} className={`${CATEGORY_LABELS[category].bg} rounded-lg p-4 border`}>
-                  <h3 className="font-semibold text-gray-800 mb-3 flex items-center gap-2">
-                    <span className="text-xl">{CATEGORY_LABELS[category].emoji}</span>
-                    {CATEGORY_LABELS[category].label}
-                  </h3>
-                  <div className="space-y-2">
+              {Object.entries(organizedItems).map(([category, items]) => {
+                const isExpanded = expandedCategories[category];
+                return (
+                  <div key={category} className={`${CATEGORY_LABELS[category].bg} rounded-lg p-4 border`}>
+                    <button
+                      onClick={() => setExpandedCategories(prev => ({ ...prev, [category]: !prev[category] }))}
+                      className="w-full flex items-center gap-2 mb-3 hover:opacity-70 transition-opacity"
+                    >
+                      {isExpanded ? (
+                        <ChevronDown className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                      ) : (
+                        <ChevronRight className="w-5 h-5 text-gray-600 flex-shrink-0" />
+                      )}
+                      <span className="text-xl">{CATEGORY_LABELS[category].emoji}</span>
+                      <h3 className="font-semibold text-gray-800 flex-1 text-left">
+                        {CATEGORY_LABELS[category].label}
+                      </h3>
+                      <span className="text-xs text-gray-500 font-medium">
+                        {items.filter(i => !i.checked).length}/{items.length}
+                      </span>
+                    </button>
+                    {isExpanded && (
+                      <div className="space-y-2">
                     {items.map((item, idx) => (
                       <div
                         key={idx}
@@ -432,10 +458,12 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                           )}
                         </Button>
                       </div>
-                    ))}
+                      ))}
+                      </div>
+                    )}
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </DialogContent>
