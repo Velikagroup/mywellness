@@ -1494,21 +1494,12 @@ STRICT RULES:
                 </Button>
                 <Button
                   onClick={() => setShowShoppingList(true)}
-                  className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial relative overflow-visible"
-                  style={{ position: 'relative' }}
+                  className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial relative"
                 >
                   <ShoppingCart className="w-5 h-5" />
                   <span>Lista Spesa</span>
                   {shoppingLists.length > 0 && shoppingLists[0].items.length > 0 && (
-                    <span 
-                      className="absolute bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white"
-                      style={{ 
-                        top: '-8px', 
-                        right: '-8px',
-                        zIndex: 50,
-                        position: 'absolute'
-                      }}
-                    >
+                    <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
                       {shoppingLists[0].items.length}
                     </span>
                   )}
