@@ -459,7 +459,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
         </div>
       </div>
 
-      {/* Messages - Ordine cronologico: dall'alto (più vecchio) al basso (più recente) */}
+      {/* Messages - Cronologia completa in ordine */}
       {!isMinimized && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent via-white/5 to-transparent">
           {/* Info Banner 24h */}
@@ -475,53 +475,84 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
             </div>
           </div>
 
-          {/* 1. Messaggio originale utente (primo cronologicamente) */}
-          <div className="flex justify-end">
-            <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
-              <p className="text-xs opacity-75 mb-1.5 font-medium">Tu - {new Date(localTicket.created_date).toLocaleString('it-IT')}</p>
-              <MessageContent content={localTicket.message.split('\n\n---')[0]} />
-            </div>
-          </div>
-
-          {/* 2. Risposta Admin (seconda cronologicamente - PRIMA delle risposte successive utente) */}
-          {localTicket.admin_response && (
-            <div className="flex justify-start">
-              <div className="message-bubble admin-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30">
-                    <span className="text-white text-base">👨‍💼</span>
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-gray-900">Team MyWellness</p>
-                    <p className="text-xs text-gray-500 font-medium">Risposta ufficiale</p>
+          {/* Messaggi in ordine cronologico */}
+          {allMessages.map((msg, idx) => {
+            if (msg.type === 'user') {
+              return (
+                <div key={idx} className="flex justify-end">
+                  <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
+                    {idx === 0 && (
+                      <p className="text-xs opacity-75 mb-1.5 font-medium">Tu - {new Date(localTicket.created_date).toLocaleString('it-IT')}</p>
+                    )}
+                    <MessageContent content={msg.content} onImageClick={setFullscreenImage} />
                   </div>
                 </div>
-                <MessageContent content={localTicket.admin_response} isAdmin />
-              </div>
-            </div>
-          )}
-
-          {/* 4. Risposte successive dell'utente (ultime cronologicamente - DOPO admin response) */}
-          {localTicket.message.includes('--- Risposta Utente') && (
-            localTicket.message.split('\n\n---').slice(1).map((msg, idx) => {
-              if (msg.includes('Risposta Utente')) {
-                const content = msg.split('---\n')[1];
-                return (
-                  <div key={idx} className="flex justify-end">
-                    <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
-                      <MessageContent content={content} />
+              );
+            } else if (msg.type === 'ai') {
+              return (
+                <div key={idx} className="flex justify-start">
+                  <div className="message-bubble ai-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                        <span className="text-white text-base">🤖</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-900">AI</p>
+                      </div>
                     </div>
+                    <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{msg.content}</p>
                   </div>
-                );
-              }
-              return null;
-            })
-          )}
+                </div>
+              );
+            } else if (msg.type === 'admin') {
+              return (
+                <div key={idx} className="flex justify-start">
+                  <div className="message-bubble admin-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30">
+                        <span className="text-white text-base">👨‍💼</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-900">Team MyWellness</p>
+                        <p className="text-xs text-gray-500 font-medium">Risposta ufficiale</p>
+                      </div>
+                    </div>
+                    <MessageContent content={msg.content} isAdmin onImageClick={setFullscreenImage} />
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })}
           
           {/* Ref per scroll automatico all'ultimo messaggio */}
           <div ref={messagesEndRef} />
         </div>
       )}
+
+      {/* Fullscreen Image Preview */}
+      {fullscreenImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <button
+            onClick={() => setFullscreenImage(null)}
+            className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <img 
+            src={fullscreenImage} 
+            alt="Preview"
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+
+      {/* Input Area luxury - Solo se ticket non è chiuso */}
+      {!isMinimized && localTicket.status !== 'risolto' && localTicket.status !== 'chiuso' && !localTicket.ai_resolved && (
 
       {/* Input Area luxury - Solo se ticket non è chiuso */}
       {!isMinimized && localTicket.status !== 'risolto' && localTicket.status !== 'chiuso' && !localTicket.ai_resolved && (
