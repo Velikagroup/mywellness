@@ -6,7 +6,6 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from './UpgradeModal';
-import { getStartOfWeek } from '@/utils/dateUtils';
 
 const CATEGORY_LABELS = {
   frutta_verdura: { label: 'Frutta & Verdura', emoji: '🥬', bg: 'bg-green-50' },
@@ -28,6 +27,16 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
   const [isScanning, setIsScanning] = useState(false);
   const [scanResult, setScanResult] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+
+  const getStartOfWeek = () => {
+    const now = new Date();
+    const utcDate = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate());
+    const utcDay = new Date(utcDate).getUTCDay();
+    const diff = utcDay === 0 ? -6 : 1 - utcDay;
+    const monday = new Date(utcDate);
+    monday.setUTCDate(monday.getUTCDate() + diff);
+    return monday.toISOString().split('T')[0];
+  };
 
   const startOfWeek = getStartOfWeek();
 
