@@ -42,7 +42,8 @@ export default function AdminSupportTickets() {
 
   const loadTickets = async () => {
     try {
-      const allTickets = await base44.entities.SupportTicket.list(['-created_date']);
+      const allTickets = await base44.entities.SupportTicket.list('-created_date', 100);
+      console.log('✅ Tickets caricati:', allTickets.length, allTickets);
       setTickets(allTickets);
     } catch (error) {
       console.error('Error loading tickets:', error);
