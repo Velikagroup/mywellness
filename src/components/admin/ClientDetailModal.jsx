@@ -656,10 +656,10 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
                       <div>
                         <p className="text-sm text-gray-500 mb-1">Carta Salvata</p>
                         <p className="font-semibold">
-                          {client.card_brand ? `${client.card_brand.toUpperCase()} •••• ${client.card_last4}` : 'Nessuna carta salvata'}
+                          {client.stripe_card_brand ? `${client.stripe_card_brand.toUpperCase()} •••• ${client.stripe_card_last4}` : 'Nessuna carta salvata'}
                         </p>
                       </div>
-                      {client.card_brand && (
+                      {client.stripe_card_brand && (
                         <Badge className="bg-green-100 text-green-700">Attiva</Badge>
                       )}
                     </div>

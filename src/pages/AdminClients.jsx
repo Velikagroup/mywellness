@@ -618,8 +618,7 @@ export default function AdminClients() {
             </Button>
             <Button
               onClick={handleExportClients}
-              style={{ backgroundColor: 'var(--brand-primary)' }}
-              className="hover:bg-[var(--brand-primary-hover)] text-white flex items-center gap-2"
+              className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex items-center gap-2"
             >
               <Download className="w-4 h-4" />
               Esporta CSV
