@@ -663,14 +663,14 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   )}
                 </div>
 
-                {user?.cancellation_at_period_end && (
+                {user?.cancellation_at_period_end && user?.subscription_period_end && (
                   <div className="p-4 bg-orange-50 border-2 border-orange-200 rounded-xl">
                     <div className="flex items-center gap-2">
                       <AlertCircle className="w-5 h-5 text-orange-600" />
                       <p className="text-sm text-orange-900">
                         {user.subscription_status === 'trial' 
-                          ? 'Il tuo trial è stato cancellato e terminerà alla fine del periodo di prova'
-                          : `Il tuo abbonamento è stato cancellato e terminerà il ${user.subscription_period_end ? new Date(user.subscription_period_end).toLocaleDateString('it-IT') : 'periodo corrente'}`
+                          ? `Il tuo trial è stato cancellato e terminerà il ${new Date(user.subscription_period_end).toLocaleDateString('it-IT')}`
+                          : `Il tuo abbonamento è stato cancellato e terminerà il ${new Date(user.subscription_period_end).toLocaleDateString('it-IT')}`
                         }
                       </p>
                     </div>
