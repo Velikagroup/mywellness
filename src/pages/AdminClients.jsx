@@ -127,8 +127,9 @@ export default function AdminClients() {
 
   const loadClients = async () => {
     try {
-      const response = await base44.functions.invoke('adminListAllUsers');
-      const allClients = response.data?.users || [];
+      const response = await base44.functions.invoke('adminListAllUsers', {});
+      console.log('🔍 Raw response:', response);
+      const allClients = response.data?.users || response?.users || [];
       console.log('📊 Loaded clients:', allClients.length, allClients);
       setClients(allClients);
       setFilteredClients(allClients);
