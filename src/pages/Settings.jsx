@@ -253,6 +253,9 @@ export default function Settings() {
         status: 'aperto'
       });
 
+      setCurrentTicket(newTicket);
+      setShowTicketChat(true);
+
       // Genera risposta AI
       const aiResponseData = await base44.integrations.Core.InvokeLLM({
         prompt: `Sei un assistente virtuale di MyWellness, un'app di fitness e nutrizione con piani personalizzati AI.
@@ -265,24 +268,17 @@ L'utente ha aperto un ticket di supporto con le seguenti informazioni:
 
 Fornisci una risposta utile, professionale e completa in italiano. 
 Se non puoi risolvere completamente il problema, fornisci comunque informazioni utili.
-Alla fine della risposta, aggiungi: "Se questa risposta non risolve il tuo problema, il nostro team ti risponderà entro 24 ore. Continua pure a scrivere qui sotto se hai altre informazioni da aggiungere."
+NON menzionare email o contatti diretti. Se serve supporto umano, di' all'utente di cliccare il pulsante "Serve Ancora Aiuto" qui sotto.
 Sii conciso ma dettagliato (max 200 parole).`,
         add_context_from_internet: false
       });
 
       const aiText = aiResponseData.data || aiResponseData;
+      setAiResponse(aiText);
 
       // Aggiorna il ticket con la risposta AI
-      const updatedTicket = await base44.entities.SupportTicket.update(newTicket.id, {
-        ai_response: aiText,
-        status: 'in_lavorazione'
-      });
-
-      // Apri direttamente la chat widget
-      setSelectedTicketForChat({
-        ...newTicket,
-        ai_response: aiText,
-        status: 'in_lavorazione'
+      await base44.entities.SupportTicket.update(newTicket.id, {
+        ai_response: aiText
       });
 
       setTicketSubject('');
@@ -292,6 +288,7 @@ Sii conciso ma dettagliato (max 200 parole).`,
     } catch (error) {
       console.error('Error submitting ticket:', error);
       alert('❌ Errore nell\'invio del ticket');
+      setShowTicketChat(false);
     }
     setIsSaving(false);
     setIsGeneratingAI(false);
