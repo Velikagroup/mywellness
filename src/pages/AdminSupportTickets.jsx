@@ -193,8 +193,8 @@ export default function AdminSupportTickets() {
 
   const premiumTickets = tickets.filter(t => t.priority === 'premium');
   const normalTickets = tickets.filter(t => t.priority === 'normale');
-  const openTickets = tickets.filter(t => t.status === 'aperto' || t.status === 'in_lavorazione');
-  const resolvedTickets = tickets.filter(t => t.status === 'risolto' || t.status === 'chiuso');
+  const openTickets = tickets.filter(t => (t.status === 'aperto' || t.status === 'in_lavorazione') && !t.ai_resolved);
+  const resolvedTickets = tickets.filter(t => t.status === 'risolto' || t.status === 'chiuso' || t.ai_resolved);
 
   const TicketCard = ({ ticket }) => (
     <div
@@ -206,6 +206,7 @@ export default function AdminSupportTickets() {
           <div className="flex items-center gap-2 mb-2 flex-wrap">
             <h3 className="font-bold text-gray-900 text-sm sm:text-base break-words">{ticket.subject}</h3>
             {ticket.priority === 'premium' && <Crown className="w-4 h-4 text-purple-600 flex-shrink-0" />}
+            {ticket.ai_resolved && <Badge className="bg-green-100 text-green-700 text-xs">🤖 Risolto da AI</Badge>}
           </div>
           <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">{ticket.message}</p>
           <div className="flex items-center gap-2 flex-wrap">
@@ -217,10 +218,10 @@ export default function AdminSupportTickets() {
         <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
           ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
           ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
-          ticket.status === 'risolto' ? 'bg-green-100 text-green-700' :
+          ticket.status === 'risolto' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
           'bg-gray-100 text-gray-700'
         }`}>
-          {ticket.status}
+          {ticket.ai_resolved ? 'risolto (AI)' : ticket.status}
         </div>
       </div>
       <p className="text-xs text-gray-500">
@@ -383,6 +384,19 @@ export default function AdminSupportTickets() {
                   <p className="text-xs text-gray-500 mb-2">Messaggio Utente:</p>
                   <p className="text-xs sm:text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">{selectedTicket.message}</p>
                 </div>
+
+                {selectedTicket.ai_response && (
+                  <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-4 border-2 border-blue-200">
+                    <div className="flex items-center gap-2 mb-2">
+                      <span className="text-xl">🤖</span>
+                      <p className="text-xs font-bold text-blue-900">Risposta Automatica AI</p>
+                      {selectedTicket.ai_resolved && (
+                        <Badge className="bg-green-600 text-white text-xs ml-auto">✅ Accettata</Badge>
+                      )}
+                    </div>
+                    <p className="text-xs sm:text-sm text-blue-800 leading-relaxed whitespace-pre-wrap">{selectedTicket.ai_response}</p>
+                  </div>
+                )}
 
                 <div className="flex items-center gap-2 text-xs text-gray-500 mt-3">
                   <span>{selectedTicket.user_email}</span>
