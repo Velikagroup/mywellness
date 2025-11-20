@@ -31,6 +31,7 @@ import {
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
 import UpgradeModal from '../components/meals/UpgradeModal';
 
 export default function Settings() {
@@ -74,6 +75,10 @@ export default function Settings() {
   const [ticketSubject, setTicketSubject] = useState('');
   const [ticketMessage, setTicketMessage] = useState('');
   const [ticketCategory, setTicketCategory] = useState('tecnico');
+  const [showTicketChat, setShowTicketChat] = useState(false);
+  const [currentTicket, setCurrentTicket] = useState(null);
+  const [aiResponse, setAiResponse] = useState('');
+  const [isGeneratingAI, setIsGeneratingAI] = useState(false);
 
   // Dialogs
   const [showCancelDialog, setShowCancelDialog] = useState(false);
@@ -224,26 +229,55 @@ export default function Settings() {
   };
 
   const handleSubmitTicket = async () => {
-    if (!ticketSubject || !ticketMessage) {
+    if (!ticketSubject.trim() || !ticketMessage.trim()) {
       alert('❌ Compila tutti i campi');
       return;
     }
 
     setIsSaving(true);
+    setIsGeneratingAI(true);
     try {
       const priority = user.subscription_plan === 'premium' ? 'premium' : 'normale';
 
-      await base44.entities.SupportTicket.create({
+      // Crea il ticket
+      const newTicket = await base44.entities.SupportTicket.create({
         user_id: user.id,
         user_email: user.email,
         user_plan: user.subscription_plan,
         subject: ticketSubject,
         message: ticketMessage,
         category: ticketCategory,
-        priority: priority
+        priority: priority,
+        status: 'aperto'
       });
 
-      alert(`✅ Ticket inviato con successo! ${priority === 'premium' ? '⚡ Priorità PREMIUM attiva' : ''}`);
+      setCurrentTicket(newTicket);
+      setShowTicketChat(true);
+
+      // Genera risposta AI
+      const aiResponseData = await base44.integrations.Core.InvokeLLM({
+        prompt: `Sei un assistente virtuale di MyWellness, un'app di fitness e nutrizione con piani personalizzati AI.
+
+L'utente ha aperto un ticket di supporto con le seguenti informazioni:
+- Piano: ${user.subscription_plan || 'base'}
+- Categoria: ${ticketCategory}
+- Oggetto: ${ticketSubject}
+- Messaggio: ${ticketMessage}
+
+Fornisci una risposta utile, professionale e completa in italiano. 
+Se non puoi risolvere completamente il problema, fornisci comunque informazioni utili e suggerisci di contattare il supporto umano.
+Sii conciso ma dettagliato (max 200 parole).`,
+        add_context_from_internet: false
+      });
+
+      const aiText = aiResponseData.data || aiResponseData;
+      setAiResponse(aiText);
+
+      // Aggiorna il ticket con la risposta AI
+      await base44.entities.SupportTicket.update(newTicket.id, {
+        ai_response: aiText
+      });
+
       setTicketSubject('');
       setTicketMessage('');
       setTicketCategory('tecnico');
@@ -251,8 +285,43 @@ export default function Settings() {
     } catch (error) {
       console.error('Error submitting ticket:', error);
       alert('❌ Errore nell\'invio del ticket');
+      setShowTicketChat(false);
     }
     setIsSaving(false);
+    setIsGeneratingAI(false);
+  };
+
+  const handleTicketResolved = async () => {
+    try {
+      await base44.entities.SupportTicket.update(currentTicket.id, {
+        ai_resolved: true,
+        status: 'risolto',
+        resolved_at: new Date().toISOString()
+      });
+      alert('✅ Ticket chiuso! Siamo felici di averti aiutato.');
+      setShowTicketChat(false);
+      setCurrentTicket(null);
+      setAiResponse('');
+      await loadUserData();
+    } catch (error) {
+      console.error('Error resolving ticket:', error);
+      alert('❌ Errore nella chiusura del ticket');
+    }
+  };
+
+  const handleNeedMoreHelp = async () => {
+    try {
+      await base44.entities.SupportTicket.update(currentTicket.id, {
+        status: 'in_lavorazione'
+      });
+      alert('✅ Abbiamo ricevuto la tua richiesta. Un membro del team ti contatterà al più presto via email!');
+      setShowTicketChat(false);
+      setCurrentTicket(null);
+      setAiResponse('');
+      await loadUserData();
+    } catch (error) {
+      console.error('Error updating ticket:', error);
+    }
   };
 
   const handleUpgradePlan = () => {
@@ -1325,6 +1394,87 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 {isSaving ? 'Cancellazione...' : 'Conferma Cancellazione'}
               </Button>
             </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Chat Ticket AI */}
+      <Dialog open={showTicketChat} onOpenChange={setShowTicketChat}>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold flex items-center gap-2">
+              💬 Risposta Automatica
+            </DialogTitle>
+          </DialogHeader>
+
+          <div className="space-y-4 py-4">
+            {/* Ticket Info */}
+            <div className="p-4 bg-gray-50 rounded-xl border border-gray-200">
+              <p className="font-semibold text-gray-900 mb-2">{currentTicket?.subject}</p>
+              <p className="text-sm text-gray-600 mb-3">{currentTicket?.message}</p>
+              <div className="flex items-center gap-2">
+                <Badge variant="outline" className="text-xs">{currentTicket?.category}</Badge>
+                <Badge className="bg-purple-100 text-purple-700 text-xs">{user?.subscription_plan}</Badge>
+              </div>
+            </div>
+
+            {/* AI Response */}
+            {isGeneratingAI ? (
+              <div className="p-6 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-xl border-2 border-[var(--brand-primary)]/20">
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--brand-primary)]"></div>
+                  <p className="font-bold text-gray-900">L'AI sta analizzando la tua richiesta...</p>
+                </div>
+                <p className="text-sm text-gray-600">Sto generando una risposta personalizzata per te</p>
+              </div>
+            ) : aiResponse ? (
+              <div className="space-y-4">
+                <div className="p-6 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-xl border-2 border-[var(--brand-primary)]/20">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-10 h-10 bg-[var(--brand-primary)] rounded-full flex items-center justify-center">
+                      <span className="text-white text-xl">🤖</span>
+                    </div>
+                    <div>
+                      <p className="font-bold text-gray-900">Assistente AI MyWellness</p>
+                      <p className="text-xs text-gray-500">Risposta automatica</p>
+                    </div>
+                  </div>
+                  <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aiResponse}</p>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="bg-white rounded-xl border-2 border-gray-200 p-6">
+                  <p className="font-semibold text-gray-900 mb-4 text-center">
+                    Questa risposta ti è stata utile?
+                  </p>
+                  
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <Button
+                      onClick={handleTicketResolved}
+                      className="bg-green-600 hover:bg-green-700 text-white h-auto py-4 flex flex-col gap-1"
+                    >
+                      <span className="text-2xl">✅</span>
+                      <span className="font-bold">Problema Risolto</span>
+                      <span className="text-xs opacity-90">Chiudi il ticket</span>
+                    </Button>
+                    
+                    <Button
+                      onClick={handleNeedMoreHelp}
+                      variant="outline"
+                      className="border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] h-auto py-4 flex flex-col gap-1"
+                    >
+                      <span className="text-2xl">🙋</span>
+                      <span className="font-bold">Serve Ancora Aiuto</span>
+                      <span className="text-xs opacity-75">Contatta il team</span>
+                    </Button>
+                  </div>
+
+                  <p className="text-xs text-gray-500 text-center mt-4">
+                    💡 Se hai ancora bisogno di supporto, un membro del team ti contatterà via email
+                  </p>
+                </div>
+              </div>
+            ) : null}
           </div>
         </DialogContent>
       </Dialog>
