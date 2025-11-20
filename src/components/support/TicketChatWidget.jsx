@@ -289,30 +289,65 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
       {!isMinimized && localTicket.status !== 'risolto' && localTicket.status !== 'chiuso' && !localTicket.ai_resolved && (
         <div className="relative p-4 border-t border-white/40 bg-gradient-to-t from-white/70 via-white/60 to-white/50 backdrop-blur-xl">
           <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-50"></div>
-          <div className="relative flex gap-3">
-            <Textarea
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  handleSendMessage();
-                }
-              }}
-              placeholder="Scrivi la tua risposta..."
-              className="chat-input flex-1 resize-none h-20 rounded-2xl border-2 px-4 py-3 text-sm font-medium placeholder:text-gray-400"
-            />
-            <Button
-              onClick={handleSendMessage}
-              disabled={isSending || !newMessage.trim()}
-              className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white px-6 rounded-2xl shadow-lg shadow-[#26847F]/30 hover:shadow-xl hover:shadow-[#26847F]/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              {isSending ? (
-                <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
-              ) : (
-                <Send className="w-5 h-5" />
-              )}
-            </Button>
+          <div className="relative space-y-2">
+            {attachedFiles.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-xl">
+                {attachedFiles.map((file, idx) => (
+                  <div key={idx} className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border text-sm">
+                    <span className="text-gray-700">📎 {file.name}</span>
+                    <button
+                      onClick={() => removeAttachment(file.url)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <div className="flex-1 space-y-2">
+                <Textarea
+                  value={newMessage}
+                  onChange={(e) => setNewMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendMessage();
+                    }
+                  }}
+                  placeholder="Scrivi la tua risposta..."
+                  className="chat-input w-full resize-none h-20 rounded-2xl border-2 px-4 py-3 text-sm font-medium placeholder:text-gray-400"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingFile}
+                  variant="outline"
+                  className="w-full rounded-xl text-xs h-8"
+                >
+                  {uploadingFile ? 'Caricamento...' : '📎 Allega file'}
+                </Button>
+              </div>
+              <Button
+                onClick={handleSendMessage}
+                disabled={isSending || (!newMessage.trim() && attachedFiles.length === 0)}
+                className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white px-6 rounded-2xl shadow-lg shadow-[#26847F]/30 hover:shadow-xl hover:shadow-[#26847F]/40 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed self-end"
+              >
+                {isSending ? (
+                  <div className="animate-spin rounded-full h-5 w-5 border-2 border-white border-t-transparent"></div>
+                ) : (
+                  <Send className="w-5 h-5" />
+                )}
+              </Button>
+            </div>
           </div>
         </div>
       )}

@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2 } from 'lucide-react';
+import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 
 export default function AdminSupportTickets() {
   const navigate = useNavigate();
@@ -412,7 +412,7 @@ export default function AdminSupportTickets() {
       </div>
 
       {/* Chat Windows - Multiple side by side */}
-      <div className="fixed bottom-6 right-6 flex gap-3 z-50" style={{ maxWidth: 'calc(100vw - 48px)' }}>
+      <div className="fixed bottom-24 right-6 flex gap-3 z-50" style={{ maxWidth: 'calc(100vw - 48px)' }}>
         {openChats.map((chat, index) => (
           <ChatWindow
             key={chat.id}
@@ -433,10 +433,51 @@ export default function AdminSupportTickets() {
 
 function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage, onCloseTicket, isSending, index }) {
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState([]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat.message, chat.newMessage]);
+
+  const handleFileSelect = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    setUploadingFile(true);
+    try {
+      const uploadedUrls = [];
+      for (const file of files) {
+        const { data } = await base44.integrations.Core.UploadFile({ file });
+        uploadedUrls.push({ name: file.name, url: data.file_url });
+      }
+      setAttachedFiles(prev => [...prev, ...uploadedUrls]);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      alert('❌ Errore nel caricamento file');
+    }
+    setUploadingFile(false);
+    e.target.value = '';
+  };
+
+  const removeAttachment = (url) => {
+    setAttachedFiles(prev => prev.filter(f => f.url !== url));
+  };
+
+  const handleSendWithAttachments = () => {
+    if (attachedFiles.length > 0) {
+      const fileLinks = attachedFiles.map(f => `[📎 ${f.name}](${f.url})`).join('\n');
+      const messageWithFiles = chat.newMessage.trim() 
+        ? `${chat.newMessage}\n\n${fileLinks}` 
+        : fileLinks;
+      onUpdateMessage(messageWithFiles);
+      setAttachedFiles([]);
+      setTimeout(onSendMessage, 100);
+    } else {
+      onSendMessage();
+    }
+  };
 
   // Parse messages
   const messageParts = chat.message.split('\n\n---');
@@ -645,39 +686,74 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
       {!chat.isMinimized && chat.status !== 'risolto' && chat.status !== 'chiuso' && (
         <div className="relative p-4 border-t border-white/40 bg-gradient-to-t from-white/70 via-white/60 to-white/50 backdrop-blur-xl">
           <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-50"></div>
-          <div className="relative flex gap-3">
-            <Textarea
-              value={chat.newMessage}
-              onChange={(e) => onUpdateMessage(e.target.value)}
-              onKeyDown={(e) => {
-                if (e.key === 'Enter' && !e.shiftKey) {
-                  e.preventDefault();
-                  onSendMessage();
-                }
-              }}
-              placeholder="Scrivi risposta..."
-              className="chat-input flex-1 resize-none h-20 rounded-2xl border-2 px-4 py-3 text-sm font-medium placeholder:text-gray-400"
-            />
-            <div className="flex flex-col gap-2">
-              <Button
-                onClick={onSendMessage}
-                disabled={isSending || !chat.newMessage.trim()}
-                className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white px-4 rounded-2xl shadow-lg shadow-[#26847F]/30 hover:shadow-xl hover:shadow-[#26847F]/40 transition-all duration-300 disabled:opacity-50 h-10"
-              >
-                {isSending ? (
-                  <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                ) : (
-                  <Send className="w-4 h-4" />
-                )}
-              </Button>
-              <Button
-                onClick={onCloseTicket}
-                variant="outline"
-                className="px-4 h-10 rounded-2xl text-xs border-green-300 text-green-600 hover:bg-green-50"
-              >
-                <CheckCircle className="w-3 h-3 mr-1" />
-                Chiudi
-              </Button>
+          <div className="relative space-y-2">
+            {attachedFiles.length > 0 && (
+              <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-xl">
+                {attachedFiles.map((file, idx) => (
+                  <div key={idx} className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border text-sm">
+                    <span className="text-gray-700">📎 {file.name}</span>
+                    <button
+                      onClick={() => removeAttachment(file.url)}
+                      className="text-red-500 hover:text-red-700"
+                    >
+                      <X className="w-3 h-3" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            )}
+            <div className="flex gap-3">
+              <div className="flex-1 space-y-2">
+                <Textarea
+                  value={chat.newMessage}
+                  onChange={(e) => onUpdateMessage(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSendWithAttachments();
+                    }
+                  }}
+                  placeholder="Scrivi risposta..."
+                  className="chat-input w-full resize-none h-20 rounded-2xl border-2 px-4 py-3 text-sm font-medium placeholder:text-gray-400"
+                />
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  multiple
+                  onChange={handleFileSelect}
+                  className="hidden"
+                />
+                <Button
+                  type="button"
+                  onClick={() => fileInputRef.current?.click()}
+                  disabled={uploadingFile}
+                  variant="outline"
+                  className="w-full rounded-xl text-xs h-8"
+                >
+                  {uploadingFile ? 'Caricamento...' : '📎 Allega file'}
+                </Button>
+              </div>
+              <div className="flex flex-col gap-2">
+                <Button
+                  onClick={handleSendWithAttachments}
+                  disabled={isSending || (!chat.newMessage.trim() && attachedFiles.length === 0)}
+                  className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white px-4 rounded-2xl shadow-lg shadow-[#26847F]/30 hover:shadow-xl hover:shadow-[#26847F]/40 transition-all duration-300 disabled:opacity-50 h-10"
+                >
+                  {isSending ? (
+                    <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
+                  ) : (
+                    <Send className="w-4 h-4" />
+                  )}
+                </Button>
+                <Button
+                  onClick={onCloseTicket}
+                  variant="outline"
+                  className="px-4 h-10 rounded-2xl text-xs border-green-300 text-green-600 hover:bg-green-50"
+                >
+                  <CheckCircle className="w-3 h-3 mr-1" />
+                  Chiudi
+                </Button>
+              </div>
             </div>
           </div>
         </div>
