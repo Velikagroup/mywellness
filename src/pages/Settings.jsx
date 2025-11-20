@@ -651,7 +651,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     {user?.subscription_plan === 'premium' ? 'Cambia Piano' : 'Upgrade Piano'}
                   </Button>
 
-                  {user?.subscription_status === 'active' && !user?.cancellation_at_period_end && (
+                  {(user?.subscription_status === 'active' || user?.subscription_status === 'trial') && !user?.cancellation_at_period_end && (
                     <Button
                       onClick={() => setShowCancelDialog(true)}
                       variant="outline"
