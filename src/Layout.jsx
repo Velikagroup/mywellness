@@ -94,6 +94,7 @@ export default function Layout({ children }) {
     createPageUrl('Terms'),
     createPageUrl('Privacy'),
     createPageUrl('ApplePayVerification'),
+    createPageUrl('NotFound'),
     '/'
   ];
 
