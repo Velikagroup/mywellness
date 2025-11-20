@@ -77,18 +77,19 @@ export default function AdminSupportTickets() {
     ));
   };
 
-  const handleSendResponse = async (ticketId) => {
+  const handleSendResponse = async (ticketId, messageOverride = null) => {
     const chat = openChats.find(c => c.id === ticketId);
-    if (!chat || !chat.newMessage.trim()) {
+    const finalMessage = messageOverride || chat.newMessage;
+    if (!chat || !finalMessage.trim()) {
       return;
     }
 
     setSendingStates(prev => ({ ...prev, [ticketId]: true }));
     try {
-      const updatedMessage = chat.message + (chat.admin_response ? '' : '') + `\n\n--- Risposta Admin ---\n${chat.newMessage}`;
+      const updatedMessage = chat.message + (chat.admin_response ? '' : '') + `\n\n--- Risposta Admin ---\n${finalMessage}`;
       
       await base44.entities.SupportTicket.update(ticketId, {
-        admin_response: chat.newMessage,
+        admin_response: finalMessage,
         message: updatedMessage,
         status: 'in_lavorazione'
       });
@@ -199,7 +200,7 @@ export default function AdminSupportTickets() {
         c.id === ticketId 
           ? { 
               ...c, 
-              admin_response: chat.newMessage, 
+              admin_response: finalMessage, 
               message: updatedMessage,
               status: 'in_lavorazione',
               newMessage: '' 
@@ -480,7 +481,7 @@ export default function AdminSupportTickets() {
             chat={chat}
             onClose={() => handleCloseChat(chat.id)}
             onMinimize={() => handleMinimizeChat(chat.id)}
-            onSendMessage={() => handleSendResponse(chat.id)}
+            onSendMessage={(msgOverride) => handleSendResponse(chat.id, msgOverride)}
             onUpdateMessage={(msg) => updateChatMessage(chat.id, msg)}
             onCloseTicket={() => handleCloseTicketFromChat(chat.id)}
             isSending={sendingStates[chat.id] || false}
@@ -548,7 +549,7 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
     setAttachedFiles(prev => prev.filter(f => f.url !== url));
   };
 
-  const handleSendWithAttachments = () => {
+  const handleSendWithAttachments = async () => {
     if (attachedFiles.length > 0) {
       const fileLinks = attachedFiles.map(f => {
         // Controlla se il file è un'immagine dall'estensione
@@ -559,11 +560,11 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
       const messageWithFiles = chat.newMessage.trim() 
         ? `${chat.newMessage}\n\n${fileLinks}` 
         : fileLinks;
-      onUpdateMessage(messageWithFiles);
       setAttachedFiles([]);
-      setTimeout(onSendMessage, 100);
+      onUpdateMessage('');
+      await onSendMessage(messageWithFiles);
     } else {
-      onSendMessage();
+      await onSendMessage();
     }
   };
 
