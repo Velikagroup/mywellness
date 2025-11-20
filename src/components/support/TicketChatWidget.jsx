@@ -203,7 +203,12 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
       let messageContent = newMessage.trim();
       
       if (attachedFiles.length > 0) {
-        const fileLinks = attachedFiles.map(f => `[📎 ${f.name}](${f.url})`).join('\n');
+        const fileLinks = attachedFiles.map(f => {
+          // Controlla se il file è un'immagine dall'estensione
+          const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(f.url);
+          // Se è un'immagine, usa il formato markdown immagine, altrimenti link normale
+          return isImage ? `![${f.name}](${f.url})` : `[📎 ${f.name}](${f.url})`;
+        }).join('\n');
         messageContent = messageContent 
           ? `${messageContent}\n\n${fileLinks}` 
           : fileLinks;
