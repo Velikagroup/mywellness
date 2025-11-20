@@ -425,7 +425,7 @@ export default function AdminSupportTickets() {
                 <Button
                   onClick={handleSendResponse}
                   disabled={isSending || !adminResponse.trim()}
-                  className="flex-1 h-11 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-sm sm:text-base"
+                  className="flex-1 h-11 bg-[#26847F] hover:bg-[#1f6b66] text-white text-sm sm:text-base"
                 >
                   {isSending ? (
                     <div className="flex items-center gap-2">
