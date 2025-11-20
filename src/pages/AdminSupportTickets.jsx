@@ -141,12 +141,12 @@ export default function AdminSupportTickets() {
 
               <div style="background: #f3f4f6; padding: 20px; border-radius: 12px; margin: 20px 0;">
                 <h3 style="color: #111827; margin: 0 0 10px 0; font-size: 18px;">📋 Oggetto Ticket:</h3>
-                <p style="color: #4b5563; margin: 0; font-size: 16px; font-weight: 600;">${selectedTicket.subject}</p>
+                <p style="color: #4b5563; margin: 0; font-size: 16px; font-weight: 600;">${chat.subject}</p>
               </div>
 
               <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 25px; margin: 20px 0;">
                 <h3 style="color: #065f46; margin: 0 0 15px 0; font-size: 18px;">💬 Risposta del Team:</h3>
-                <p style="color: #047857; margin: 0; line-height: 1.8; white-space: pre-wrap;">${chat.newMessage}</p>
+                <p style="color: #047857; margin: 0; line-height: 1.8; white-space: pre-wrap;">${finalMessage}</p>
               </div>
 
               ${chat.priority === 'premium' ? `
@@ -550,22 +550,22 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
   };
 
   const handleSendWithAttachments = async () => {
+    let finalMsg = chat.newMessage;
+    
     if (attachedFiles.length > 0) {
       const fileLinks = attachedFiles.map(f => {
-        // Controlla se il file è un'immagine dall'estensione
         const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(f.url);
-        // Se è un'immagine, usa il formato markdown immagine, altrimenti link normale
         return isImage ? `![${f.name}](${f.url})` : `[📎 ${f.name}](${f.url})`;
       }).join('\n');
-      const messageWithFiles = chat.newMessage.trim() 
+      finalMsg = chat.newMessage.trim() 
         ? `${chat.newMessage}\n\n${fileLinks}` 
         : fileLinks;
-      setAttachedFiles([]);
-      onUpdateMessage('');
-      await onSendMessage(messageWithFiles);
-    } else {
-      await onSendMessage();
     }
+    
+    // Invia prima, poi pulisci
+    await onSendMessage(finalMsg);
+    setAttachedFiles([]);
+    onUpdateMessage('');
   };
 
   // Parse messages
