@@ -1463,35 +1463,29 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </div>
 
                 {/* Action Buttons */}
-                <div className="bg-white rounded-xl border-2 border-gray-200 p-6">
-                  <p className="font-semibold text-gray-900 mb-4 text-center">
+                <div className="bg-white rounded-xl border border-gray-200 p-4">
+                  <p className="text-sm text-gray-700 mb-3 text-center">
                     Questa risposta ti è stata utile?
                   </p>
                   
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="flex items-center justify-center gap-2">
                     <Button
                       onClick={handleTicketResolved}
-                      className="bg-green-600 hover:bg-green-700 text-white h-auto py-4 flex flex-col gap-1"
+                      size="sm"
+                      className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 h-auto"
                     >
-                      <span className="text-2xl">✅</span>
-                      <span className="font-bold">Problema Risolto</span>
-                      <span className="text-xs opacity-90">Chiudi il ticket</span>
+                      Problema Risolto
                     </Button>
                     
                     <Button
                       onClick={handleNeedMoreHelp}
+                      size="sm"
                       variant="outline"
-                      className="border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] h-auto py-4 flex flex-col gap-1"
+                      className="border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs px-3 py-1.5 h-auto"
                     >
-                      <span className="text-2xl">🙋</span>
-                      <span className="font-bold">Serve Ancora Aiuto</span>
-                      <span className="text-xs opacity-75">Contatta il team</span>
+                      Serve Ancora Aiuto
                     </Button>
                   </div>
-
-                  <p className="text-xs text-gray-500 text-center mt-4">
-                    💡 Se hai ancora bisogno di supporto, un membro del team ti contatterà via email
-                  </p>
                 </div>
               </div>
             ) : null}
