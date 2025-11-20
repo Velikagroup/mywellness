@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 
 // Component per renderizzare messaggi admin con immagini inline
-function AdminMessageContent({ content }) {
+function AdminMessageContent({ content, onImageClick }) {
   if (!content) return null;
   
   const parts = content.split(/(\!\[[^\]]*\]\([^)]+\)|\[📎[^\]]+\]\([^)]+\))/g);
@@ -29,7 +29,7 @@ function AdminMessageContent({ content }) {
                 src={imageUrl} 
                 alt={altText}
                 className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => window.open(imageUrl, '_blank')}
+                onClick={() => onImageClick?.(imageUrl)}
               />
             </div>
           );
@@ -71,6 +71,7 @@ export default function AdminSupportTickets() {
   const [openChats, setOpenChats] = useState([]);
   const [sendingStates, setSendingStates] = useState({});
   const [statusFilter, setStatusFilter] = useState('all');
+  const [fullscreenImage, setFullscreenImage] = useState(null);
 
   useEffect(() => {
     checkAccess();
@@ -586,14 +587,36 @@ export default function AdminSupportTickets() {
             onCloseTicket={() => handleCloseTicketFromChat(chat.id)}
             isSending={sendingStates[chat.id] || false}
             index={index}
+            onImageClick={setFullscreenImage}
           />
         ))}
       </div>
-    </div>
-  );
-}
 
-function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage, onCloseTicket, isSending, index }) {
+      {/* Fullscreen Image Preview */}
+      {fullscreenImage && (
+        <div 
+          className="fixed inset-0 z-[100] bg-black/90 flex items-center justify-center p-4"
+          onClick={() => setFullscreenImage(null)}
+        >
+          <button
+            onClick={() => setFullscreenImage(null)}
+            className="absolute top-4 right-4 w-12 h-12 bg-white/10 hover:bg-white/20 rounded-full flex items-center justify-center text-white transition-colors"
+          >
+            <X className="w-6 h-6" />
+          </button>
+          <img 
+            src={fullscreenImage} 
+            alt="Preview"
+            className="max-w-full max-h-full object-contain rounded-lg shadow-2xl"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </div>
+      )}
+      </div>
+      );
+      }
+
+      function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage, onCloseTicket, isSending, index, onImageClick }) {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const [uploadingFile, setUploadingFile] = useState(false);
@@ -838,7 +861,7 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
           <div className="flex justify-start">
             <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-3.5">
               <p className="text-xs opacity-75 mb-1.5 font-medium">Cliente - {new Date(chat.created_date).toLocaleString('it-IT')}</p>
-              <AdminMessageContent content={chat.message.split('\n\n---')[0]} />
+              <AdminMessageContent content={chat.message.split('\n\n---')[0]} onImageClick={onImageClick} />
             </div>
           </div>
 
@@ -864,7 +887,7 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
             <div className="flex justify-end">
               <div className="message-bubble admin-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
                 <p className="text-xs opacity-75 mb-1.5 font-medium">Tu (Admin)</p>
-                <AdminMessageContent content={chat.admin_response} />
+                <AdminMessageContent content={chat.admin_response} onImageClick={onImageClick} />
               </div>
             </div>
           )}
@@ -877,7 +900,7 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
                 return (
                   <div key={idx} className="flex justify-start">
                     <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-3.5">
-                      <AdminMessageContent content={content} />
+                      <AdminMessageContent content={content} onImageClick={onImageClick} />
                     </div>
                   </div>
                 );
