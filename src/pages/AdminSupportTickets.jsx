@@ -96,6 +96,15 @@ export default function AdminSupportTickets() {
 
       const fromEmail = 'info@projectmywellness.com';
       
+      // Converti markdown immagini in HTML per email
+      const emailMessage = finalMessage.replace(
+        /!\[([^\]]*)\]\(([^)]+)\)/g,
+        '<img src="$2" alt="$1" style="max-width: 100%; height: auto; border-radius: 8px; margin: 10px 0; display: block;" />'
+      ).replace(
+        /\[📎 ([^\]]+)\]\(([^)]+)\)/g,
+        '<a href="$2" target="_blank" style="color: #26847F; text-decoration: none; font-weight: 600;">📎 $1</a>'
+      );
+
       await base44.integrations.Core.SendEmail({
         from_name: `MyWellness Support <${fromEmail}>`,
         to: chat.user_email,
@@ -146,7 +155,7 @@ export default function AdminSupportTickets() {
 
               <div style="background: #ecfdf5; border-left: 4px solid #10b981; padding: 25px; margin: 20px 0;">
                 <h3 style="color: #065f46; margin: 0 0 15px 0; font-size: 18px;">💬 Risposta del Team:</h3>
-                <p style="color: #047857; margin: 0; line-height: 1.8; white-space: pre-wrap;">${finalMessage}</p>
+                <div style="color: #047857; margin: 0; line-height: 1.8;">${emailMessage}</div>
               </div>
 
               ${chat.priority === 'premium' ? `
