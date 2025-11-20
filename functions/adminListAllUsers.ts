@@ -10,8 +10,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Usa asServiceRole per recuperare tutti gli utenti
-    const allUsers = await base44.asServiceRole.entities.User.filter({});
+    // Recupera tutti gli utenti - base44 gestisce i permessi admin automaticamente
+    const allUsers = await base44.entities.User.filter({});
     
     return Response.json({ users: allUsers });
   } catch (error) {
