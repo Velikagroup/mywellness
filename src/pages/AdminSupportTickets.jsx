@@ -317,39 +317,76 @@ export default function AdminSupportTickets() {
   const allActiveTickets = filterByStatus(tickets.filter(t => !t.ai_resolved));
   const aiResolvedTickets = filterByStatus(tickets.filter(t => t.ai_resolved === true));
 
-  const TicketCard = ({ ticket }) => (
-    <div
-      onClick={() => handleOpenChat(ticket)}
-      className="p-4 border rounded-xl bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all cursor-pointer"
-    >
-      <div className="flex items-start justify-between gap-3 mb-3">
-        <div className="flex-1 min-w-0">
-          <div className="flex items-center gap-2 mb-2 flex-wrap">
-            <h3 className="font-bold text-gray-900 text-sm sm:text-base break-words">{ticket.subject}</h3>
-            {ticket.priority === 'premium' && <Crown className="w-4 h-4 text-purple-600 flex-shrink-0" />}
-            {ticket.ai_resolved && <Badge className="bg-green-100 text-green-700 text-xs">🤖 Risolto da AI</Badge>}
+  const TicketCard = ({ ticket }) => {
+    // Estrai le prime immagini dal messaggio
+    const imageMatches = ticket.message.match(/!\[([^\]]*)\]\(([^)]+)\)/g) || [];
+    const firstImages = imageMatches.slice(0, 2).map(match => {
+      const urlMatch = match.match(/\(([^)]+)\)/);
+      return urlMatch ? urlMatch[1] : null;
+    }).filter(Boolean);
+
+    return (
+      <div
+        onClick={() => handleOpenChat(ticket)}
+        className="p-4 border rounded-xl bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all cursor-pointer"
+      >
+        <div className="flex items-start justify-between gap-3 mb-3">
+          <div className="flex-1 min-w-0">
+            <div className="flex items-center gap-2 mb-2 flex-wrap">
+              <h3 className="font-bold text-gray-900 text-sm sm:text-base break-words">{ticket.subject}</h3>
+              {ticket.priority === 'premium' && <Crown className="w-4 h-4 text-purple-600 flex-shrink-0" />}
+              {ticket.ai_resolved && <Badge className="bg-green-100 text-green-700 text-xs">🤖 Risolto da AI</Badge>}
+            </div>
+            
+            {/* Mostra le immagini se presenti */}
+            {firstImages.length > 0 && (
+              <div className="flex gap-2 mb-3">
+                {firstImages.map((url, idx) => (
+                  <div key={idx} className="relative w-20 h-20 rounded-lg overflow-hidden border-2 border-gray-200">
+                    <img 
+                      src={url} 
+                      alt="Allegato"
+                      className="w-full h-full object-cover"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        window.open(url, '_blank');
+                      }}
+                    />
+                  </div>
+                ))}
+                {imageMatches.length > 2 && (
+                  <div className="w-20 h-20 rounded-lg bg-gray-100 border-2 border-gray-200 flex items-center justify-center">
+                    <span className="text-xs text-gray-600 font-semibold">+{imageMatches.length - 2}</span>
+                  </div>
+                )}
+              </div>
+            )}
+            
+            <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">
+              {ticket.message.split('\n\n---')[0].replace(/!\[[^\]]*\]\([^)]+\)/g, '').replace(/\[📎[^\]]+\]\([^)]+\)/g, '').trim()}
+            </p>
+            
+            <div className="flex items-center gap-2 flex-wrap">
+              <Badge variant="outline" className="text-xs">{ticket.user_email}</Badge>
+              <Badge className="bg-purple-100 text-purple-700 text-xs">{ticket.user_plan}</Badge>
+              <Badge className="text-xs">{ticket.category}</Badge>
+            </div>
           </div>
-          <p className="text-xs sm:text-sm text-gray-600 mb-3 line-clamp-2">{ticket.message}</p>
-          <div className="flex items-center gap-2 flex-wrap">
-            <Badge variant="outline" className="text-xs">{ticket.user_email}</Badge>
-            <Badge className="bg-purple-100 text-purple-700 text-xs">{ticket.user_plan}</Badge>
-            <Badge className="text-xs">{ticket.category}</Badge>
+          <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
+            ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
+            ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
+            ticket.status === 'risolto' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
+            'bg-gray-100 text-gray-700'
+          }`}>
+            {ticket.ai_resolved ? 'risolto (AI)' : ticket.status}
           </div>
         </div>
-        <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
-          ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
-          ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
-          ticket.status === 'risolto' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
-          'bg-gray-100 text-gray-700'
-        }`}>
-          {ticket.ai_resolved ? 'risolto (AI)' : ticket.status}
-        </div>
+        <p className="text-xs text-gray-500">
+          {new Date(ticket.created_date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })}
+        </p>
       </div>
-      <p className="text-xs text-gray-500">
-        {new Date(ticket.created_date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short', year: 'numeric' })}
-      </p>
-    </div>
-  );
+    );
+  };
 
   return (
     <div className="min-h-screen pb-20 overflow-x-hidden">
