@@ -232,7 +232,7 @@ export default function AdminCoupons() {
                       </PopoverContent>
                     </Popover>
                   </div>
-                  <Button type="submit" className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]">Crea Coupon</Button>
+                  <Button type="submit" className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white">Crea Coupon</Button>
                 </form>
               )}
 
