@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -128,7 +127,7 @@ export default function AdminClients() {
 
   const loadClients = async () => {
     try {
-      const allClients = await base44.entities.User.list(['-created_date']);
+      const allClients = await base44.asServiceRole.entities.User.list('-created_date');
       setClients(allClients);
       setFilteredClients(allClients);
       calculateStats(allClients);
@@ -534,7 +533,7 @@ export default function AdminClients() {
         }
 
         try {
-          const existing = await base44.entities.User.filter({ email: userData.email });
+          const existing = await base44.asServiceRole.entities.User.filter({ email: userData.email });
           if (existing && existing.length > 0) {
             skipped++;
             continue;
@@ -545,7 +544,7 @@ export default function AdminClients() {
           if (!userData.subscription_status) userData.subscription_status = 'trial';
           if (!userData.language) userData.language = 'it';
 
-          await base44.entities.User.create(userData);
+          await base44.asServiceRole.entities.User.create(userData);
           imported++;
           
         } catch (error) {
