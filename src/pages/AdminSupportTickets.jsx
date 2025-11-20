@@ -9,6 +9,60 @@ import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 
+// Component per renderizzare messaggi admin con immagini inline
+function AdminMessageContent({ content }) {
+  if (!content) return null;
+  
+  const parts = content.split(/(\!\[[^\]]*\]\([^)]+\)|\[📎[^\]]+\]\([^)]+\))/g);
+  
+  return (
+    <div className="text-sm leading-relaxed font-medium text-white space-y-2">
+      {parts.map((part, idx) => {
+        // Match immagine: ![alt](url)
+        const imageMatch = part.match(/\!\[([^\]]*)\]\(([^)]+)\)/);
+        if (imageMatch) {
+          const altText = imageMatch[1];
+          const imageUrl = imageMatch[2];
+          return (
+            <div key={idx} className="my-2">
+              <img 
+                src={imageUrl} 
+                alt={altText}
+                className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => window.open(imageUrl, '_blank')}
+              />
+            </div>
+          );
+        }
+        
+        // Match file attachment: [📎 nome](url)
+        const fileMatch = part.match(/\[📎 ([^\]]+)\]\(([^)]+)\)/);
+        if (fileMatch) {
+          const fileName = fileMatch[1];
+          const fileUrl = fileMatch[2];
+          return (
+            <a
+              key={idx}
+              href={fileUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-white/20 hover:bg-white/30 transition-colors"
+            >
+              <Paperclip className="w-3 h-3" />
+              <span className="text-xs">{fileName}</span>
+            </a>
+          );
+        }
+        
+        // Testo normale
+        return part && part.trim() ? (
+          <p key={idx} className="whitespace-pre-wrap">{part}</p>
+        ) : null;
+      })}
+    </div>
+  );
+}
+
 export default function AdminSupportTickets() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -768,13 +822,13 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
             </div>
           )}
 
-          {adminResponses.map((msg, idx) => (
-            <div key={`admin-${idx}`} className="flex justify-start">
+          {chat.admin_response && (
+            <div className="flex justify-start">
               <div className="message-bubble admin-message max-w-[85%] text-white rounded-3xl rounded-tl-md px-5 py-3.5">
-                <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{msg.content}</p>
+                <AdminMessageContent content={chat.admin_response} />
               </div>
             </div>
-          ))}
+          )}
 
           <div ref={messagesEndRef} />
         </div>
