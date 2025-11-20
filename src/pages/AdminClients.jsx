@@ -127,7 +127,8 @@ export default function AdminClients() {
 
   const loadClients = async () => {
     try {
-      const allClients = await base44.asServiceRole.entities.User.filter({});
+      const response = await base44.functions.invoke('adminListAllUsers');
+      const allClients = response.data?.users || [];
       console.log('📊 Loaded clients:', allClients.length, allClients);
       setClients(allClients);
       setFilteredClients(allClients);
@@ -535,7 +536,7 @@ export default function AdminClients() {
         }
 
         try {
-          const existing = await base44.asServiceRole.entities.User.filter({ email: userData.email });
+          const existing = await base44.entities.User.filter({ email: userData.email });
           if (existing && existing.length > 0) {
             skipped++;
             continue;
@@ -546,7 +547,7 @@ export default function AdminClients() {
           if (!userData.subscription_status) userData.subscription_status = 'trial';
           if (!userData.language) userData.language = 'it';
 
-          await base44.asServiceRole.entities.User.create(userData);
+          await base44.entities.User.create(userData);
           imported++;
           
         } catch (error) {
