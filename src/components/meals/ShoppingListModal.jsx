@@ -151,23 +151,10 @@ Return:
         return;
       }
 
-      // STEP 2A: Ricerca online valori ottimali (senza foto)
-      const researchPrompt = `Search the internet to find the BEST nutritional values for "${selectedIngredient.name}" products.
-
-Find:
-1. The optimal/best nutritional values per 100g for this food type
-2. What are considered the highest protein, lowest sugar, best macro ratios
-3. Top-rated brands/products in this category
-
-Return in Italian:
-- best_protein_per_100g: highest protein found
-- best_carbs_per_100g: lowest carbs found (if relevant)
-- best_fat_per_100g: lowest fat found (if relevant)
-- best_calories_per_100g: optimal calories
-- best_fiber_per_100g: highest fiber found
-- benchmark_description: brief description of what makes an excellent product in this category
-
-Return ONLY valid JSON.`;
+      // STEP 2A: Ricerca valori ottimali online (SENZA foto)
+      const researchPrompt = `Search internet for BEST nutritional values for "${selectedIngredient.name}".
+Find optimal values per 100g: highest protein, lowest sugar/fat (if lean food), best fiber.
+Return brief Italian summary: "I migliori [food] hanno: Xg proteine, Ykcal, etc."`;
 
       const benchmark = await base44.integrations.Core.InvokeLLM({
         prompt: researchPrompt,
@@ -180,38 +167,22 @@ Return ONLY valid JSON.`;
             best_fat_per_100g: { type: "number" },
             best_calories_per_100g: { type: "number" },
             best_fiber_per_100g: { type: "number" },
-            benchmark_description: { type: "string" }
+            benchmark_summary: { type: "string" }
           },
-          required: ["best_protein_per_100g", "best_calories_per_100g", "benchmark_description"]
+          required: ["benchmark_summary"]
         }
       });
 
-      // STEP 2B: Analisi foto e confronto con valori ottimali
-      const analysisPrompt = `You are a professional nutritionist analyzing a food product label.
+      // STEP 2B: Analisi foto (SENZA internet)
+      const analysisPrompt = `Extract values from label and score vs best for "${selectedIngredient.name}".
 
-CONTEXT:
-The user selected "${selectedIngredient.name}" from their shopping list.
+BEST: ${benchmark.benchmark_summary}
+Protein: ${benchmark.best_protein_per_100g || 'N/A'}g, Carbs: ${benchmark.best_carbs_per_100g || 'N/A'}g, Fat: ${benchmark.best_fat_per_100g || 'N/A'}g, Calories: ${benchmark.best_calories_per_100g || 'N/A'}kcal, Fiber: ${benchmark.best_fiber_per_100g || 'N/A'}g
 
-BEST VALUES FOUND ONLINE FOR THIS FOOD:
-${JSON.stringify(benchmark, null, 2)}
+Score 0-10: 10=matches best, 9=within 5%, 7-8=within 15%, 5-6=within 30%, 3-4=30-50% worse, 0-2=>50% worse.
 
-YOUR TASK:
-1. Extract nutritional values per 100g from the scanned label
-2. Compare them with the BEST values above
-3. Score 0-10 based on how close to optimal:
-   - 10: Matches or exceeds best values
-   - 9: Within 5% of best values
-   - 7-8: Within 10-15% of best
-   - 5-6: Within 20-30% of best
-   - 3-4: 30-50% worse than best
-   - 0-2: More than 50% worse than best
+Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score X/10 perché [why]."`;
 
-The explanation in Italian MUST include:
-- "I migliori ${selectedIngredient.name} hanno: [best values]"
-- "Questo prodotto ha: [scanned values]"
-- "Punteggio X/10 perché [comparison]"
-
-Return ONLY valid JSON, no markdown.`;
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
