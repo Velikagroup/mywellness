@@ -632,6 +632,8 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
         </div>
       )}
 
+      )}
+
       {!isMinimized && (localTicket.status === 'risolto' || localTicket.status === 'chiuso' || localTicket.ai_resolved) && (
         <div className="relative p-4 border-t border-white/40 bg-gradient-to-t from-green-50/90 via-green-50/70 to-white/50 backdrop-blur-xl">
           <div className="absolute inset-0 bg-gradient-to-t from-green-500/5 to-transparent"></div>
