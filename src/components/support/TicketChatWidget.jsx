@@ -553,9 +553,6 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
 
       {/* Input Area luxury - Solo se ticket non è chiuso */}
       {!isMinimized && localTicket.status !== 'risolto' && localTicket.status !== 'chiuso' && !localTicket.ai_resolved && (
-
-      {/* Input Area luxury - Solo se ticket non è chiuso */}
-      {!isMinimized && localTicket.status !== 'risolto' && localTicket.status !== 'chiuso' && !localTicket.ai_resolved && (
         <div className="relative p-4 border-t border-white/40 bg-gradient-to-t from-white/70 via-white/60 to-white/50 backdrop-blur-xl">
           <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-50"></div>
           <div className="relative space-y-2">
@@ -630,8 +627,6 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
             </div>
           </div>
         </div>
-      )}
-
       )}
 
       {!isMinimized && (localTicket.status === 'risolto' || localTicket.status === 'chiuso' || localTicket.ai_resolved) && (
