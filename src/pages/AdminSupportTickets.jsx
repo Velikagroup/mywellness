@@ -834,15 +834,15 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
       {/* Messages */}
       {!chat.isMinimized && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent via-white/5 to-transparent">
-          {/* 1. Messaggio originale utente */}
-          <div className="flex justify-end">
-            <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tr-md px-5 py-3.5">
-              <p className="text-xs opacity-75 mb-1.5 font-medium">Utente - {new Date(chat.created_date).toLocaleString('it-IT')}</p>
+          {/* 1. Messaggio originale utente (cliente a SINISTRA) */}
+          <div className="flex justify-start">
+            <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-3.5">
+              <p className="text-xs opacity-75 mb-1.5 font-medium">Cliente - {new Date(chat.created_date).toLocaleString('it-IT')}</p>
               <AdminMessageContent content={chat.message.split('\n\n---')[0]} />
             </div>
           </div>
 
-          {/* 2. Risposta AI (se presente) */}
+          {/* 2. Risposta AI (se presente) - rimane a sinistra */}
           {chat.ai_response && (
             <div className="flex justify-start">
               <div className="message-bubble ai-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
@@ -859,24 +859,24 @@ function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage,
             </div>
           )}
 
-          {/* 3. Risposta Admin (se presente) - PRIMA delle risposte successive utente */}
+          {/* 3. Risposta Admin (admin a DESTRA) */}
           {chat.admin_response && (
-            <div className="flex justify-start">
-              <div className="message-bubble admin-message max-w-[85%] text-white rounded-3xl rounded-tl-md px-5 py-3.5">
-                <p className="text-xs opacity-75 mb-1.5 font-medium">Team MyWellness</p>
+            <div className="flex justify-end">
+              <div className="message-bubble admin-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
+                <p className="text-xs opacity-75 mb-1.5 font-medium">Tu (Admin)</p>
                 <AdminMessageContent content={chat.admin_response} />
               </div>
             </div>
           )}
 
-          {/* 4. Risposte successive dell'utente (DOPO admin response) */}
+          {/* 4. Risposte successive dell'utente (cliente a SINISTRA) */}
           {chat.message.includes('--- Risposta Utente') && (
             chat.message.split('\n\n---').slice(1).map((msg, idx) => {
               if (msg.includes('Risposta Utente')) {
                 const content = msg.split('---\n')[1];
                 return (
-                  <div key={idx} className="flex justify-end">
-                    <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tr-md px-5 py-3.5">
+                  <div key={idx} className="flex justify-start">
+                    <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-3.5">
                       <AdminMessageContent content={content} />
                     </div>
                   </div>
