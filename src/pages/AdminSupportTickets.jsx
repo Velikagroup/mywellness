@@ -10,13 +10,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 
 // Component per renderizzare messaggi admin con immagini inline
-function AdminMessageContent({ content, onImageClick }) {
+function AdminMessageContent({ content, onImageClick, isUserMessage = false }) {
   if (!content) return null;
   
   const parts = content.split(/(\!\[[^\]]*\]\([^)]+\)|\[📎[^\]]+\]\([^)]+\))/g);
   
+  const textColorClass = isUserMessage ? 'text-[#0D47A1]' : 'text-white';
+  
   return (
-    <div className="text-sm leading-relaxed font-medium text-white space-y-2">
+    <div className={`text-sm leading-relaxed font-medium ${textColorClass} space-y-2`}>
       {parts.map((part, idx) => {
         // Match immagine: ![alt](url)
         const imageMatch = part.match(/\!\[([^\]]*)\]\(([^)]+)\)/);
@@ -29,7 +31,10 @@ function AdminMessageContent({ content, onImageClick }) {
                 src={imageUrl} 
                 alt={altText}
                 className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => onImageClick?.(imageUrl)}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImageClick?.(imageUrl);
+                }}
               />
             </div>
           );
@@ -691,22 +696,49 @@ export default function AdminSupportTickets() {
     onUpdateMessage('');
   };
 
-  // Parse messages
+  // Parse TUTTI i messaggi dal campo message in ordine cronologico
+  const allMessages = [];
   const messageParts = chat.message.split('\n\n---');
-  const userMessages = [];
-  const adminResponses = [];
-
+  
   messageParts.forEach((part, idx) => {
     if (idx === 0) {
-      userMessages.push({ content: part, timestamp: chat.created_date });
-    } else if (part.includes('Risposta Utente')) {
-      const content = part.split('---\n')[1];
-      userMessages.push({ content, timestamp: null });
+      // Primo messaggio del cliente
+      allMessages.push({ 
+        type: 'user', 
+        content: part, 
+        timestamp: chat.created_date 
+      });
     } else if (part.includes('Risposta Admin')) {
+      // Risposta admin
       const content = part.split('---\n')[1];
-      adminResponses.push({ content, timestamp: null });
+      if (content && content.trim()) {
+        allMessages.push({ 
+          type: 'admin', 
+          content, 
+          timestamp: null 
+        });
+      }
+    } else if (part.includes('Risposta Utente')) {
+      // Risposta successiva cliente
+      const content = part.split('---\n')[1];
+      if (content && content.trim()) {
+        allMessages.push({ 
+          type: 'user', 
+          content, 
+          timestamp: null 
+        });
+      }
     }
   });
+  
+  // Aggiungi risposta AI se presente (dopo il primo messaggio utente)
+  if (chat.ai_response && allMessages.length === 1) {
+    allMessages.splice(1, 0, {
+      type: 'ai',
+      content: chat.ai_response,
+      timestamp: null
+    });
+  }
 
   return (
     <div 
@@ -854,60 +886,49 @@ export default function AdminSupportTickets() {
         </div>
       </div>
 
-      {/* Messages */}
+      {/* Messages - Cronologia completa */}
       {!chat.isMinimized && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent via-white/5 to-transparent">
-          {/* 1. Messaggio originale utente (cliente a SINISTRA) */}
-          <div className="flex justify-start">
-            <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-3.5">
-              <p className="text-xs opacity-75 mb-1.5 font-medium">Cliente - {new Date(chat.created_date).toLocaleString('it-IT')}</p>
-              <AdminMessageContent content={chat.message.split('\n\n---')[0]} onImageClick={onImageClick} />
-            </div>
-          </div>
-
-          {/* 2. Risposta AI (se presente) - rimane a sinistra */}
-          {chat.ai_response && (
-            <div className="flex justify-start">
-              <div className="message-bubble ai-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <span className="text-white text-base">🤖</span>
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-gray-900">AI</p>
+          {allMessages.map((msg, idx) => {
+            if (msg.type === 'user') {
+              return (
+                <div key={idx} className="flex justify-start">
+                  <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-3.5">
+                    {idx === 0 && (
+                      <p className="text-xs opacity-75 mb-1.5 font-medium">Cliente - {new Date(chat.created_date).toLocaleString('it-IT')}</p>
+                    )}
+                    <AdminMessageContent content={msg.content} onImageClick={onImageClick} isUserMessage={true} />
                   </div>
                 </div>
-                <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{chat.ai_response}</p>
-              </div>
-            </div>
-          )}
-
-          {/* 3. Risposta Admin (admin a DESTRA) */}
-          {chat.admin_response && (
-            <div className="flex justify-end">
-              <div className="message-bubble admin-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
-                <p className="text-xs opacity-75 mb-1.5 font-medium">Tu (Admin)</p>
-                <AdminMessageContent content={chat.admin_response} onImageClick={onImageClick} />
-              </div>
-            </div>
-          )}
-
-          {/* 4. Risposte successive dell'utente (cliente a SINISTRA) */}
-          {chat.message.includes('--- Risposta Utente') && (
-            chat.message.split('\n\n---').slice(1).map((msg, idx) => {
-              if (msg.includes('Risposta Utente')) {
-                const content = msg.split('---\n')[1];
-                return (
-                  <div key={idx} className="flex justify-start">
-                    <div className="message-bubble user-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-3.5">
-                      <AdminMessageContent content={content} onImageClick={onImageClick} />
+              );
+            } else if (msg.type === 'ai') {
+              return (
+                <div key={idx} className="flex justify-start">
+                  <div className="message-bubble ai-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
+                    <div className="flex items-center gap-2.5 mb-3">
+                      <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
+                        <span className="text-white text-base">🤖</span>
+                      </div>
+                      <div>
+                        <p className="text-xs font-bold text-gray-900">AI</p>
+                      </div>
                     </div>
+                    <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{msg.content}</p>
                   </div>
-                );
-              }
-              return null;
-            })
-          )}
+                </div>
+              );
+            } else if (msg.type === 'admin') {
+              return (
+                <div key={idx} className="flex justify-end">
+                  <div className="message-bubble admin-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
+                    <p className="text-xs opacity-75 mb-1.5 font-medium">Tu (Admin)</p>
+                    <AdminMessageContent content={msg.content} onImageClick={onImageClick} isUserMessage={false} />
+                  </div>
+                </div>
+              );
+            }
+            return null;
+          })}
 
           <div ref={messagesEndRef} />
         </div>
