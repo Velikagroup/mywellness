@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { BlogPost } from '@/entities/BlogPost';
 import { User } from '@/entities/User';
@@ -390,7 +389,7 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
                   onClick={generateArticles}
                   disabled={!bulkTitles.trim()}
                   size="lg"
-                  className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white px-8 py-6 text-lg font-semibold shadow-lg"
+                  className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-8 py-6 text-lg font-semibold shadow-lg"
                 >
                   <Upload className="w-5 h-5 mr-2" />
                   Genera Articoli con AI
