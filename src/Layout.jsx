@@ -97,6 +97,18 @@ export default function Layout({ children }) {
     '/'
   ];
 
+  // Gestione 404 custom
+  React.useEffect(() => {
+    const isValidPath = validPathsWithLayout.includes(location.pathname) || 
+                        pathsWithoutLayout.includes(location.pathname) ||
+                        location.pathname.startsWith('/blog/') ||
+                        location.pathname === '/';
+    
+    if (!isValidPath && location.pathname !== createPageUrl('NotFound')) {
+      navigate(createPageUrl('NotFound'), { replace: true });
+    }
+  }, [location.pathname, navigate]);
+
   if (pathsWithoutLayout.includes(location.pathname) || 
       location.pathname.startsWith('/blog/') ||
       !validPathsWithLayout.includes(location.pathname)) {
