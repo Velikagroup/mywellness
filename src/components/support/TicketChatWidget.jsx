@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { X, Send, Minimize2, Maximize2 } from 'lucide-react';
+import { X, Send, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
@@ -10,7 +10,10 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
   const [isSending, setIsSending] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
   const [localTicket, setLocalTicket] = useState(ticket);
+  const [uploadingFile, setUploadingFile] = useState(false);
+  const [attachedFiles, setAttachedFiles] = useState([]);
   const messagesEndRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -20,21 +23,54 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
     scrollToBottom();
   }, [localTicket]);
 
+  const handleFileSelect = async (e) => {
+    const files = Array.from(e.target.files);
+    if (files.length === 0) return;
+
+    setUploadingFile(true);
+    try {
+      const uploadedUrls = [];
+      for (const file of files) {
+        const { data } = await base44.integrations.Core.UploadFile({ file });
+        uploadedUrls.push({ name: file.name, url: data.file_url });
+      }
+      setAttachedFiles(prev => [...prev, ...uploadedUrls]);
+    } catch (error) {
+      console.error('Error uploading files:', error);
+      alert('❌ Errore nel caricamento file');
+    }
+    setUploadingFile(false);
+    e.target.value = '';
+  };
+
+  const removeAttachment = (url) => {
+    setAttachedFiles(prev => prev.filter(f => f.url !== url));
+  };
+
   const handleSendMessage = async () => {
-    if (!newMessage.trim()) return;
+    if (!newMessage.trim() && attachedFiles.length === 0) return;
 
     setIsSending(true);
     try {
-      const updatedMessage = `${localTicket.message}\n\n--- Risposta Utente (${new Date().toLocaleString('it-IT')}) ---\n${newMessage}`;
+      let messageContent = newMessage.trim();
+      
+      if (attachedFiles.length > 0) {
+        const fileLinks = attachedFiles.map(f => `[📎 ${f.name}](${f.url})`).join('\n');
+        messageContent = messageContent 
+          ? `${messageContent}\n\n${fileLinks}` 
+          : fileLinks;
+      }
+
+      const updatedMessage = `${localTicket.message}\n\n--- Risposta Utente (${new Date().toLocaleString('it-IT')}) ---\n${messageContent}`;
       
       await base44.entities.SupportTicket.update(localTicket.id, {
         message: updatedMessage,
         status: 'in_lavorazione'
       });
 
-      // Aggiorna lo stato locale immediatamente per mostrare il messaggio
       setLocalTicket({ ...localTicket, message: updatedMessage });
       setNewMessage('');
+      setAttachedFiles([]);
       onUpdate();
     } catch (error) {
       console.error('Error sending message:', error);
@@ -44,7 +80,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
   };
 
   return (
-    <div className={`fixed ${isMinimized ? 'bottom-6 right-6 w-80 h-16' : 'bottom-6 right-6 w-full sm:w-[450px] h-[600px]'} luxury-chat-widget z-50 flex flex-col animate-slide-in transition-all duration-500`}>
+    <div className={`fixed ${isMinimized ? 'bottom-24 right-6 w-80 h-16' : 'bottom-24 right-6 w-full sm:w-[450px] h-[600px]'} luxury-chat-widget z-50 flex flex-col animate-slide-in transition-all duration-500`}>
       <style>{`
         @keyframes slide-in {
           from {
@@ -291,13 +327,13 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
           <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-50"></div>
           <div className="relative space-y-2">
             {attachedFiles.length > 0 && (
-              <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-xl">
+              <div className="flex flex-wrap gap-2 p-2 bg-white/80 rounded-xl border border-gray-200">
                 {attachedFiles.map((file, idx) => (
-                  <div key={idx} className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg border text-sm">
-                    <span className="text-gray-700">📎 {file.name}</span>
+                  <div key={idx} className="flex items-center gap-2 bg-white px-3 py-1.5 rounded-lg shadow-sm border text-xs">
+                    <span className="text-gray-700 font-medium">📎 {file.name}</span>
                     <button
                       onClick={() => removeAttachment(file.url)}
-                      className="text-red-500 hover:text-red-700"
+                      className="text-red-500 hover:text-red-700 transition-colors"
                     >
                       <X className="w-3 h-3" />
                     </button>
@@ -325,15 +361,26 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                   multiple
                   onChange={handleFileSelect}
                   className="hidden"
+                  accept="image/*,.pdf,.doc,.docx,.txt"
                 />
                 <Button
                   type="button"
                   onClick={() => fileInputRef.current?.click()}
                   disabled={uploadingFile}
                   variant="outline"
-                  className="w-full rounded-xl text-xs h-8"
+                  className="w-full rounded-xl text-xs h-9 font-semibold hover:bg-gray-50 transition-all"
                 >
-                  {uploadingFile ? 'Caricamento...' : '📎 Allega file'}
+                  {uploadingFile ? (
+                    <div className="flex items-center gap-2">
+                      <div className="animate-spin rounded-full h-3 w-3 border-2 border-gray-600 border-t-transparent"></div>
+                      Caricamento...
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-2">
+                      <Paperclip className="w-3.5 h-3.5" />
+                      Allega file
+                    </div>
+                  )}
                 </Button>
               </div>
               <Button
