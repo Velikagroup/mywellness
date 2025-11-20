@@ -316,29 +316,21 @@ export default function Settings() {
 
   const handleDownloadInvoice = async (transactionId) => {
     try {
-      const response = await base44.functions.invoke('generateInvoicePDF', {
+      const response = await base44.functions.invoke('downloadStripeInvoice', {
         transactionId: transactionId
       });
 
       const data = response.data || response;
 
-      if (data.success && data.invoiceHTML) {
-        const blob = new Blob([data.invoiceHTML], { type: 'text/html' });
-        const url = window.URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = `${data.invoiceNumber}.html`;
-        document.body.appendChild(a);
-        a.click();
-        window.URL.revokeObjectURL(url);
-        a.remove();
-        alert('✅ Fattura scaricata!');
+      if (data.success && data.pdfUrl) {
+        window.open(data.pdfUrl, '_blank');
       } else {
-        alert('❌ Errore nella generazione fattura');
+        alert(data.message || 'Fattura non disponibile per questa transazione');
       }
     } catch (error) {
       console.error('Error downloading invoice:', error);
-      alert('❌ Errore nel download');
+      const errorMsg = error?.response?.data?.message || 'Errore nel scaricare la fattura';
+      alert(errorMsg);
     }
   };
 
