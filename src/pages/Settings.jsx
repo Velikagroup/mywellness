@@ -486,7 +486,11 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
           <p className="text-sm sm:text-base text-gray-600">Gestisci il tuo profilo e preferenze</p>
         </div>
 
-        <Tabs defaultValue="account" className="w-full">
+        <Tabs defaultValue="account" className="w-full" onValueChange={(value) => {
+          if (value === 'affiliate') {
+            loadAffiliateStats();
+          }
+        }}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-gray-100/80 p-1 rounded-lg">
               <TabsTrigger value="account" className="text-xs sm:text-sm whitespace-nowrap">Account</TabsTrigger>
