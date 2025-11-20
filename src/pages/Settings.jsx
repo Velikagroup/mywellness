@@ -352,6 +352,7 @@ export default function Settings() {
   };
 
   const loadAffiliateStats = async () => {
+    if (isLoadingAffiliate) return; // Previeni chiamate multiple
     setIsLoadingAffiliate(true);
     try {
       const response = await base44.functions.invoke('affiliateGetStats');
