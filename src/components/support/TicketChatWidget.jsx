@@ -120,7 +120,6 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
         }
         
         .message-bubble {
-          animation: float 3s ease-in-out infinite;
           transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         
@@ -221,7 +220,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
       {!isMinimized && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent via-white/5 to-transparent">
           {/* 1. Messaggio originale utente (primo cronologicamente) */}
-          <div className="flex justify-end animate-slide-in">
+          <div className="flex justify-end">
             <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
               <p className="text-xs opacity-75 mb-1.5 font-medium">Tu - {new Date(localTicket.created_date).toLocaleString('it-IT')}</p>
               <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{localTicket.message.split('\n\n---')[0]}</p>
@@ -230,7 +229,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
 
           {/* 2. Risposta AI (seconda cronologicamente) */}
           {localTicket.ai_response && (
-            <div className="flex justify-start animate-slide-in" style={{ animationDelay: '0.1s' }}>
+            <div className="flex justify-start">
               <div className="message-bubble ai-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
@@ -246,26 +245,9 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
             </div>
           )}
 
-          {/* 3. Risposte successive dell'utente (terze cronologicamente) */}
-          {localTicket.message.includes('--- Risposta Utente') && (
-            localTicket.message.split('\n\n---').slice(1).map((msg, idx) => {
-              if (msg.includes('Risposta Utente')) {
-                const content = msg.split('---\n')[1];
-                return (
-                  <div key={idx} className="flex justify-end animate-slide-in" style={{ animationDelay: `${0.2 + idx * 0.1}s` }}>
-                    <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
-                      <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{content}</p>
-                    </div>
-                  </div>
-                );
-              }
-              return null;
-            })
-          )}
-
-          {/* 4. Risposta Admin (ultima cronologicamente - più recente in basso) */}
+          {/* 3. Risposta Admin (terza cronologicamente - PRIMA delle risposte successive utente) */}
           {localTicket.admin_response && (
-            <div className="flex justify-start animate-slide-in" style={{ animationDelay: '0.3s' }}>
+            <div className="flex justify-start">
               <div className="message-bubble admin-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
                 <div className="flex items-center gap-2.5 mb-3">
                   <div className="w-9 h-9 bg-gradient-to-br from-green-500 to-emerald-600 rounded-2xl flex items-center justify-center shadow-lg shadow-green-500/30">
@@ -279,6 +261,23 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                 <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{localTicket.admin_response}</p>
               </div>
             </div>
+          )}
+
+          {/* 4. Risposte successive dell'utente (ultime cronologicamente - DOPO admin response) */}
+          {localTicket.message.includes('--- Risposta Utente') && (
+            localTicket.message.split('\n\n---').slice(1).map((msg, idx) => {
+              if (msg.includes('Risposta Utente')) {
+                const content = msg.split('---\n')[1];
+                return (
+                  <div key={idx} className="flex justify-end">
+                    <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
+                      <p className="text-sm leading-relaxed whitespace-pre-wrap font-medium">{content}</p>
+                    </div>
+                  </div>
+                );
+              }
+              return null;
+            })
           )}
           
           {/* Ref per scroll automatico all'ultimo messaggio */}
