@@ -176,7 +176,7 @@ export default function AdminCoupons() {
                   onClick={() => setNewCoupon({ ...newCoupon, discount_type: 'percentage' })}
                   className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
                     newCoupon.discount_type === 'percentage'
-                      ? 'border-[#26847F] bg-[#e9f6f5] text-[#26847F]'
+                      ? 'border-[#26847F] bg-[#26847F] text-white'
                       : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
@@ -187,7 +187,7 @@ export default function AdminCoupons() {
                   onClick={() => setNewCoupon({ ...newCoupon, discount_type: 'lifetime_free' })}
                   className={`flex-1 px-4 py-3 rounded-lg border-2 transition-all ${
                     newCoupon.discount_type === 'lifetime_free'
-                      ? 'border-purple-500 bg-purple-100 text-purple-700'
+                      ? 'border-purple-500 bg-purple-500 text-white'
                       : 'border-gray-200 bg-white hover:border-gray-300 hover:bg-gray-50'
                   }`}
                 >
