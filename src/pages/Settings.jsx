@@ -265,7 +265,8 @@ L'utente ha aperto un ticket di supporto con le seguenti informazioni:
 - Messaggio: ${ticketMessage}
 
 Fornisci una risposta utile, professionale e completa in italiano. 
-Se non puoi risolvere completamente il problema, fornisci comunque informazioni utili e suggerisci di contattare il supporto umano.
+Se non puoi risolvere completamente il problema, fornisci comunque informazioni utili.
+NON menzionare email o contatti diretti. Se serve supporto umano, di' all'utente di cliccare il pulsante "Serve Ancora Aiuto" qui sotto.
 Sii conciso ma dettagliato (max 200 parole).`,
         add_context_from_internet: false
       });
@@ -1403,7 +1404,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
-              💬 Risposta Automatica
+              💬 Analizzando la tua richiesta
             </DialogTitle>
           </DialogHeader>
 
