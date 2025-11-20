@@ -6,6 +6,7 @@ import { base44 } from '@/api/base44Client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from './UpgradeModal';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 
 const CATEGORY_LABELS = {
   frutta_verdura: { label: 'Frutta & Verdura', emoji: '🥬', bg: 'bg-green-50' },
