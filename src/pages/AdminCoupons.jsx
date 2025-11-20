@@ -160,7 +160,7 @@ export default function AdminCoupons() {
           </div>
           <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
             <DialogTrigger asChild>
-              <Button className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white shadow-lg">
+              <Button className="bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-lg">
                 <PlusCircle className="mr-2 h-4 w-4" />
                 Crea Coupon
               </Button>
