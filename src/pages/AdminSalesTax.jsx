@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -368,7 +367,7 @@ export default function AdminSalesTax() {
               <Button
                 onClick={handleBulkSave}
                 disabled={saving}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 <Save className="w-4 h-4 mr-2" />
                 Salva Tutto
