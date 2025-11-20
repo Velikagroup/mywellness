@@ -33,6 +33,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import UpgradeModal from '../components/meals/UpgradeModal';
+import TicketChatWidget from '../components/support/TicketChatWidget';
 
 export default function Settings() {
   const navigate = useNavigate();
@@ -87,6 +88,7 @@ export default function Settings() {
   const [cancellationDetails, setCancellationDetails] = useState('');
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
+  const [selectedTicketForChat, setSelectedTicketForChat] = useState(null);
 
   // Affiliazione
   const [affiliateStats, setAffiliateStats] = useState(null);
@@ -1211,33 +1213,40 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 ) : (
                   <div className="space-y-3">
                     {supportTickets.map((ticket) => (
-                      <div key={ticket.id} className="p-4 border rounded-lg bg-white">
+                      <div
+                        key={ticket.id}
+                        onClick={() => setSelectedTicketForChat(ticket)}
+                        className="p-4 border rounded-lg bg-white hover:shadow-lg transition-all cursor-pointer group"
+                      >
                         <div className="flex items-start justify-between mb-2">
                           <div className="flex-1">
                             <div className="flex items-center gap-2 mb-1">
-                              <p className="font-semibold">{ticket.subject}</p>
+                              <p className="font-semibold group-hover:text-[#26847F] transition-colors">{ticket.subject}</p>
                               {ticket.priority === 'premium' && (
                                 <Crown className="w-4 h-4 text-purple-600" />
                               )}
+                              {ticket.ai_resolved && (
+                                <Badge className="bg-green-100 text-green-700 text-xs">🤖 Risolto AI</Badge>
+                              )}
                             </div>
-                            <p className="text-sm text-gray-600">{ticket.message}</p>
+                            <p className="text-sm text-gray-600 line-clamp-2">{ticket.message.split('\n\n---')[0]}</p>
                             <p className="text-xs text-gray-500 mt-2">
                               {new Date(ticket.created_date).toLocaleDateString('it-IT')} - {ticket.category}
                             </p>
                           </div>
-                          <div className={`px-3 py-1 rounded-full text-xs font-semibold ${
+                          <div className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
                             ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
                             ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
-                            ticket.status === 'risolto' ? 'bg-green-100 text-green-700' :
+                            ticket.status === 'risolto' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
                             'bg-gray-100 text-gray-700'
                           }`}>
-                            {ticket.status}
+                            {ticket.ai_resolved ? 'risolto' : ticket.status}
                           </div>
                         </div>
-                        {ticket.admin_response && (
-                          <div className="mt-3 p-3 bg-green-50 border-l-4 border-green-500 rounded">
-                            <p className="text-sm font-semibold text-green-900 mb-1">Risposta Admin:</p>
-                            <p className="text-sm text-green-800">{ticket.admin_response}</p>
+                        {(ticket.admin_response || ticket.ai_response) && (
+                          <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                            {ticket.admin_response && <span>💬 Risposta ricevuta</span>}
+                            {ticket.ai_response && !ticket.admin_response && <span>🤖 Risposta AI disponibile</span>}
                           </div>
                         )}
                       </div>
@@ -1479,6 +1488,15 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Ticket Chat Widget */}
+      {selectedTicketForChat && (
+        <TicketChatWidget
+          ticket={selectedTicketForChat}
+          onClose={() => setSelectedTicketForChat(null)}
+          onUpdate={loadUserData}
+        />
+      )}
     </div>
   );
 }
