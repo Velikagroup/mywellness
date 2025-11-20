@@ -313,7 +313,7 @@ Deno.serve(async (req) => {
         // Crea prima il trial a €0 per 3 giorni
         const trialSubscription = await stripe.subscriptions.create({
             customer: stripeCustomerId,
-            items: [{ price: 'TRIAL_PRICE_ID' }], // Verrà sostituito dopo setup
+            items: [{ price: 'price_1SVOUk2OXBs6ZYwlA3zq3ZPq' }],
             payment_behavior: 'default_incomplete',
             cancel_at_period_end: true, // Si cancella automaticamente dopo 3 giorni
             metadata: {
