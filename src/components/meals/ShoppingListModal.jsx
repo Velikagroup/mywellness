@@ -151,44 +151,41 @@ Return:
         return;
       }
 
-      // STEP 2: Analisi nutrizionale COMPARATIVA
+      // STEP 2: Analisi nutrizionale COMPARATIVA con ricerca internet
       const analysisPrompt = `You are a professional nutritionist analyzing a food product label.
 
 CRITICAL CONTEXT:
 The user selected "${selectedIngredient.name}" from their shopping list and is scanning THIS SPECIFIC PRODUCT.
 
-Your task:
-1. Identify the product name from the label (in Italian)
-2. Extract nutritional values per 100g
-3. Compare this product with OTHER products of THE SAME TYPE and give a RELATIVE score 0-10
+MANDATORY STEPS:
+1. SEARCH THE INTERNET to find the BEST nutritional values for "${selectedIngredient.name}" products
+   - Find what are considered the optimal/best nutritional values for this food type
+   - Identify the top-rated products in this category
+   - Note the highest protein, lowest sugar, best macro ratios
 
-RELATIVE SCORING (compare within the same food category):
-- If scanning "Pasta Integrale Brand X" → compare with OTHER pasta integrale brands
-- If scanning "Petto di Pollo Brand Y" → compare with OTHER chicken breast products
-- If scanning "Zucchine" → compare with OTHER zucchine (fresh vegetables)
+2. EXTRACT VALUES from the scanned label (per 100g)
 
-Score 0-10 (RELATIVE to similar products):
-- 9-10: Among the BEST options in this category (es: pasta integrale con 13g proteine/100g)
-- 7-8: GOOD option, better than average in this category
-- 5-6: AVERAGE for this category
-- 3-4: BELOW average, better options exist in this category
-- 0-2: POOR quality compared to similar products
+3. COMPARE AND SCORE the scanned product against the BEST values found online:
+   - Score 10: Values match or exceed the best products found online
+   - Score 9: Very close to the best (within 5% difference)
+   - Score 7-8: Above average, better than most products
+   - Score 5-6: Average/decent for this category
+   - Score 3-4: Below average, significantly worse than best options
+   - Score 0-2: Poor quality, much worse than optimal values
 
-Classification:
-- "bene" (7-10): Better than most similar products
-- "medio" (4-6): Average for this category
-- "male" (0-3): Worse than most similar products
+SCORING LOGIC:
+The score represents HOW CLOSE this product is to THE BEST available products of the same type.
+Use internet research to determine what "the best" looks like for this food category.
 
 Example:
-- Pasta integrale with 12g protein/100g = 9/10 (excellent pasta integrale)
-- Pasta normale white with 5g protein/100g = 4/10 (poor pasta, but we're comparing it to other pastas)
-- Chicken breast 23g protein, low fat = 10/10 (excellent for chicken)
-- Chicken breast processed with additives = 5/10 (mediocre for chicken)
+- If best pasta integrale online has 13g protein/100g and scanned has 12g → score 9 (very close to best)
+- If best pasta integrale has 13g protein and scanned has 10g → score 6-7 (decent but not close to best)
+- If best pasta integrale has 13g protein and scanned has 5g → score 2-3 (far from optimal)
 
-Explanation in Italian should mention:
-- What type of product it is
-- How it compares to similar products
-- Why the score (high/low protein, added sugars, quality of ingredients compared to alternatives)
+The explanation in Italian MUST include:
+1. "I migliori [food type] hanno: [best values found online]"
+2. "Questo prodotto ha: [scanned values]"
+3. "Differenza: [comparison showing how close to optimal]"
 
 Return ONLY valid JSON, no markdown.`;
 
@@ -196,6 +193,7 @@ Return ONLY valid JSON, no markdown.`;
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
         file_urls: [file_url],
+        add_context_from_internet: true,
         response_json_schema: {
           type: "object",
           properties: {
