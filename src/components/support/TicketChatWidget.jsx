@@ -339,25 +339,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
             </div>
           </div>
 
-          {/* 2. Risposta AI (seconda cronologicamente) */}
-          {localTicket.ai_response && (
-            <div className="flex justify-start">
-              <div className="message-bubble ai-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
-                <div className="flex items-center gap-2.5 mb-3">
-                  <div className="w-9 h-9 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                    <span className="text-white text-base">🤖</span>
-                  </div>
-                  <div>
-                    <p className="text-xs font-bold text-gray-900">Assistente AI</p>
-                    <p className="text-xs text-gray-500 font-medium">Risposta automatica</p>
-                  </div>
-                </div>
-                <MessageContent content={localTicket.ai_response} isAI />
-              </div>
-            </div>
-          )}
-
-          {/* 3. Risposta Admin (terza cronologicamente - PRIMA delle risposte successive utente) */}
+          {/* 2. Risposta Admin (seconda cronologicamente - PRIMA delle risposte successive utente) */}
           {localTicket.admin_response && (
             <div className="flex justify-start">
               <div className="message-bubble admin-message max-w-[85%] rounded-3xl rounded-tl-md px-5 py-4">
