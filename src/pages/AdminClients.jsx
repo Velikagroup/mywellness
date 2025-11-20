@@ -127,12 +127,14 @@ export default function AdminClients() {
 
   const loadClients = async () => {
     try {
-      const allClients = await base44.asServiceRole.entities.User.list('-created_date');
+      const allClients = await base44.asServiceRole.entities.User.list();
+      console.log('📊 Loaded clients:', allClients.length);
       setClients(allClients);
       setFilteredClients(allClients);
       calculateStats(allClients);
     } catch (error) {
       console.error('Error loading clients:', error);
+      alert('Errore caricamento clienti: ' + error.message);
     }
   };
 
