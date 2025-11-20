@@ -66,8 +66,7 @@ export default function AdminSupportTickets() {
     try {
       await base44.entities.SupportTicket.update(selectedTicket.id, {
         admin_response: adminResponse,
-        status: 'risolto',
-        resolved_at: new Date().toISOString()
+        status: 'in_lavorazione'
       });
 
       const fromEmail = 'info@projectmywellness.com';
@@ -172,15 +171,42 @@ export default function AdminSupportTickets() {
       });
 
       alert('✅ Risposta inviata con successo!');
-      setShowResponseDialog(false);
-      setSelectedTicket(null);
       setAdminResponse('');
       await loadTickets();
+      
+      // Aggiorna il ticket selezionato
+      setSelectedTicket({
+        ...selectedTicket,
+        admin_response: adminResponse,
+        status: 'in_lavorazione'
+      });
     } catch (error) {
       console.error('Error sending response:', error);
       alert('❌ Errore nell\'invio della risposta');
     }
     setIsSending(false);
+  };
+
+  const handleCloseTicket = async () => {
+    if (!confirm('Sei sicuro di voler chiudere questo ticket?')) {
+      return;
+    }
+
+    try {
+      await base44.entities.SupportTicket.update(selectedTicket.id, {
+        status: 'risolto',
+        resolved_at: new Date().toISOString()
+      });
+
+      alert('✅ Ticket chiuso con successo!');
+      setShowResponseDialog(false);
+      setSelectedTicket(null);
+      setAdminResponse('');
+      await loadTickets();
+    } catch (error) {
+      console.error('Error closing ticket:', error);
+      alert('❌ Errore nella chiusura del ticket');
+    }
   };
 
   if (isLoading) {
@@ -453,6 +479,16 @@ export default function AdminSupportTickets() {
                     </div>
                   )}
                 </Button>
+                {selectedTicket?.status !== 'risolto' && selectedTicket?.status !== 'chiuso' && (
+                  <Button
+                    onClick={handleCloseTicket}
+                    variant="outline"
+                    className="flex-1 h-11 border-green-300 text-green-600 hover:bg-green-50 text-sm sm:text-base"
+                  >
+                    <CheckCircle className="w-4 h-4 mr-2" />
+                    Chiudi Ticket
+                  </Button>
+                )}
               </div>
             </div>
           )}
