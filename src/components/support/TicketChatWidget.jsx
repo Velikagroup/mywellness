@@ -31,8 +31,10 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
     try {
       const uploadedUrls = [];
       for (const file of files) {
-        const { data } = await base44.integrations.Core.UploadFile({ file });
-        uploadedUrls.push({ name: file.name, url: data.file_url });
+        const response = await base44.integrations.Core.UploadFile({ file });
+        console.log('Upload response:', response);
+        const fileUrl = response?.file_url || response?.data?.file_url || response;
+        uploadedUrls.push({ name: file.name, url: fileUrl });
       }
       setAttachedFiles(prev => [...prev, ...uploadedUrls]);
     } catch (error) {
