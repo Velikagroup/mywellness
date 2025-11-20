@@ -121,7 +121,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
           })
         )}
 
-        {/* Risposta Admin */}
+        {/* Risposta Admin - Viene sempre DOPO le risposte utente */}
         {ticket.admin_response && (
           <div className="flex justify-start">
             <div className="max-w-[85%] bg-white border-2 border-green-200 rounded-2xl px-4 py-3">
