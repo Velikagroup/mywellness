@@ -1,11 +1,32 @@
 // Definizione dei piani e delle loro features
 export const PLANS = {
+  TRIAL: 'trial',
   BASE: 'base',
   PRO: 'pro',
   PREMIUM: 'premium'
 };
 
 export const PLAN_FEATURES = {
+  [PLANS.TRIAL]: {
+    name: 'Trial',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    ingredient_substitution: false,
+    workout_plan: false,
+    meal_photo_analysis: false,
+    auto_rebalance: false,
+    workout_tracking: false,
+    workout_modification: false,
+    progress_photo_analysis: false,
+    priority_support: false,
+    meal_plan_generations_per_month: 1,
+    workout_plan_generations_per_month: 0,
+    blocked_days: ['thursday', 'friday', 'saturday', 'sunday']
+  },
   [PLANS.BASE]: {
     name: 'Base',
     dashboard: true,

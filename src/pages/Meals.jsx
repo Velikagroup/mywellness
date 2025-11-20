@@ -1426,8 +1426,14 @@ STRICT RULES:
     { key: 'sunday', label: 'Domenica' }
   ];
 
-  const isTrialUser = user?.subscription_status === 'trial';
-  const availableDays = days; // Now always all 7 days for selection
+  const isTrialUser = user?.subscription_plan === 'trial';
+  const trialBlockedDays = ['thursday', 'friday', 'saturday', 'sunday'];
+  
+  // Mostra solo lunedì-mercoledì per utenti trial
+  const availableDays = isTrialUser 
+    ? days.filter(day => !trialBlockedDays.includes(day.key))
+    : days;
+  
   const todaysMeals = mealPlans.filter(plan => plan.day_of_week === selectedDay);
   
   const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
