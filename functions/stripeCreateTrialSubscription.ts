@@ -308,26 +308,48 @@ Deno.serve(async (req) => {
 
         console.log('✅ Payment method attached and set as default');
 
-        console.log('🔄 Creating subscription...');
-        const subscription = await stripe.subscriptions.create({
+        console.log('🔄 Creating TRIAL subscription (3 days, €0)...');
+        
+        // Crea prima il trial a €0 per 3 giorni
+        const trialSubscription = await stripe.subscriptions.create({
             customer: stripeCustomerId,
-            items: [{ price: selectedPriceId }],
-            trial_period_days: 3,
+            items: [{ price: 'TRIAL_PRICE_ID' }], // Verrà sostituito dopo setup
             payment_behavior: 'default_incomplete',
-            payment_settings: { 
-                save_default_payment_method: 'on_subscription',
-                payment_method_types: ['card']
-            },
-            expand: ['latest_invoice.payment_intent'],
+            cancel_at_period_end: true, // Si cancella automaticamente dopo 3 giorni
             metadata: {
                 user_id: user.id,
-                plan_type: planType,
+                subscription_type: 'trial',
+                converts_to_plan: planType,
+                converts_to_price: selectedPriceId,
                 billing_period: billingPeriod,
-                order_bump_selected: orderBumpSelected.toString(),
                 traffic_source: trafficSource || 'direct',
                 coupon_code: appliedCouponCode || 'none'
             }
         });
+
+        console.log(`✅ Trial subscription created: ${trialSubscription.id}`);
+        
+        // Schedula la subscription vera dopo 3 giorni
+        const scheduledDate = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
+        const subscriptionSchedule = await stripe.subscriptionSchedules.create({
+            customer: stripeCustomerId,
+            start_date: scheduledDate,
+            end_behavior: 'release',
+            phases: [
+                {
+                    items: [{ price: selectedPriceId }],
+                    iterations: 1
+                }
+            ],
+            metadata: {
+                user_id: user.id,
+                plan_type: planType,
+                billing_period: billingPeriod,
+                converted_from_trial: 'true'
+            }
+        });
+
+        console.log(`✅ Subscription scheduled for after trial: ${subscriptionSchedule.id}`);
 
         console.log(`✅ Subscription created: ${subscription.id}`);
 
@@ -359,9 +381,11 @@ Deno.serve(async (req) => {
         console.log('💾 Updating user record...');
         await base44.asServiceRole.entities.User.update(user.id, {
             subscription_status: 'trial',
-            subscription_plan: planType,
+            subscription_plan: 'trial', // Piano trial separato
+            target_plan_after_trial: planType, // Piano scelto dopo trial
             trial_ends_at: trialEndsAt.toISOString(),
-            stripe_subscription_id: subscription.id,
+            stripe_subscription_id: trialSubscription.id,
+            stripe_subscription_schedule_id: subscriptionSchedule.id,
             stripe_customer_id: stripeCustomerId,
             traffic_source: trafficSource || 'direct',
             phone_number: body.phoneNumber || user.phone_number,
@@ -517,9 +541,10 @@ Deno.serve(async (req) => {
         return Response.json({
             success: true,
             subscription: {
-                id: subscription.id,
-                status: subscription.status,
-                trial_end: subscription.trial_end
+                id: trialSubscription.id,
+                status: trialSubscription.status,
+                trial_end: trialSubscription.current_period_end,
+                scheduled_conversion: subscriptionSchedule.id
             },
             orderBump: orderBumpPaymentIntent ? {
                 id: orderBumpPaymentIntent.id,

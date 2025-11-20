@@ -361,12 +361,37 @@ Deno.serve(async (req) => {
                 if (users.length > 0) {
                     const user = users[0];
 
-                    await base44.asServiceRole.entities.User.update(user.id, {
-                        subscription_status: 'cancelled',
-                        stripe_subscription_id: null
-                    });
+                    // Se era trial e si cancella, attiva automaticamente il piano schedulato
+                    if (subscription.metadata?.subscription_type === 'trial') {
+                        console.log('✅ Trial ended, scheduled subscription should activate');
+                    } else {
+                        await base44.asServiceRole.entities.User.update(user.id, {
+                            subscription_status: 'cancelled',
+                            stripe_subscription_id: null
+                        });
+                        console.log(`✅ Subscription cancelled for user ${user.id}`);
+                    }
+                }
+                break;
+            }
 
-                    console.log(`✅ Subscription cancelled for user ${user.id}`);
+            case 'subscription_schedule.created':
+            case 'subscription_schedule.completed': {
+                const schedule = event.data.object;
+                console.log(`📅 Subscription schedule ${event.type}:`, schedule.id);
+
+                if (event.type === 'subscription_schedule.completed' && schedule.metadata?.converted_from_trial === 'true') {
+                    const userId = schedule.metadata.user_id;
+                    const planType = schedule.metadata.plan_type;
+                    
+                    if (userId) {
+                        await base44.asServiceRole.entities.User.update(userId, {
+                            subscription_status: 'active',
+                            subscription_plan: planType,
+                            trial_ends_at: null
+                        });
+                        console.log(`✅ User ${userId} converted from trial to ${planType}`);
+                    }
                 }
                 break;
             }
