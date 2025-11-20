@@ -217,10 +217,10 @@ export default function AdminSupportTickets() {
     );
   }
 
-  const premiumTickets = tickets.filter(t => t.priority === 'premium');
-  const normalTickets = tickets.filter(t => t.priority === 'normale');
-  const openTickets = tickets.filter(t => (t.status === 'aperto' || t.status === 'in_lavorazione') && !t.ai_resolved);
-  const resolvedTickets = tickets.filter(t => t.status === 'risolto' || t.status === 'chiuso' || t.ai_resolved);
+  const premiumTickets = tickets.filter(t => t.priority === 'premium' && !t.ai_resolved);
+  const normalTickets = tickets.filter(t => t.priority === 'normale' && !t.ai_resolved);
+  const allActiveTickets = tickets.filter(t => !t.ai_resolved);
+  const aiResolvedTickets = tickets.filter(t => t.ai_resolved === true);
 
   const TicketCard = ({ ticket }) => (
     <div
@@ -301,7 +301,7 @@ export default function AdminSupportTickets() {
                 </div>
                 <div className="min-w-0">
                   <p className="text-xs text-gray-500 truncate">Da Gestire</p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{openTickets.length}</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{allActiveTickets.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -314,8 +314,8 @@ export default function AdminSupportTickets() {
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500 truncate">Risolti</p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{resolvedTickets.length}</p>
+                  <p className="text-xs text-gray-500 truncate">Risolti AI</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{aiResolvedTickets.length}</p>
                 </div>
               </div>
             </CardContent>
@@ -324,7 +324,7 @@ export default function AdminSupportTickets() {
 
         <Tabs defaultValue="premium" className="w-full">
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-3 gap-2 bg-gray-100/80 p-1 rounded-lg">
+            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-4 gap-2 bg-gray-100/80 p-1 rounded-lg">
               <TabsTrigger value="premium" className="text-xs sm:text-sm whitespace-nowrap">
                 <Crown className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Premium ({premiumTickets.length})
@@ -333,7 +333,10 @@ export default function AdminSupportTickets() {
                 Normali ({normalTickets.length})
               </TabsTrigger>
               <TabsTrigger value="all" className="text-xs sm:text-sm whitespace-nowrap">
-                Tutti ({tickets.length})
+                Tutti ({allActiveTickets.length})
+              </TabsTrigger>
+              <TabsTrigger value="ai_resolved" className="text-xs sm:text-sm whitespace-nowrap">
+                🤖 Risolti AI ({aiResolvedTickets.length})
               </TabsTrigger>
             </TabsList>
           </div>
@@ -361,13 +364,24 @@ export default function AdminSupportTickets() {
           </TabsContent>
 
           <TabsContent value="all" className="space-y-3 mt-6">
-            {tickets.length === 0 ? (
+            {allActiveTickets.length === 0 ? (
               <div className="text-center py-12 bg-white/50 rounded-xl">
                 <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">Nessun ticket presente</p>
+                <p className="text-gray-500">Nessun ticket da gestire</p>
               </div>
             ) : (
-              tickets.map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)
+              allActiveTickets.map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)
+            )}
+          </TabsContent>
+
+          <TabsContent value="ai_resolved" className="space-y-3 mt-6">
+            {aiResolvedTickets.length === 0 ? (
+              <div className="text-center py-12 bg-white/50 rounded-xl">
+                <CheckCircle className="w-12 h-12 text-green-300 mx-auto mb-3" />
+                <p className="text-gray-500">Nessun ticket risolto dall'AI</p>
+              </div>
+            ) : (
+              aiResolvedTickets.map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)
             )}
           </TabsContent>
         </Tabs>
