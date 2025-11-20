@@ -1167,49 +1167,65 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 <CardTitle>Invia un Ticket di Supporto</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div>
-                  <Label>Categoria</Label>
-                  <Select value={ticketCategory} onValueChange={setTicketCategory}>
-                    <SelectTrigger className="bg-white">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="tecnico">Problema Tecnico</SelectItem>
-                      <SelectItem value="fatturazione">Fatturazione</SelectItem>
-                      <SelectItem value="abbonamento">Abbonamento</SelectItem>
-                      <SelectItem value="funzionalita">Richiesta Funzionalità</SelectItem>
-                      <SelectItem value="altro">Altro</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                {supportTickets.some(t => t.status !== 'risolto' && t.status !== 'chiuso' && !t.ai_resolved) ? (
+                  <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
+                    <div className="flex items-start gap-3">
+                      <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <div>
+                        <p className="font-semibold text-amber-900 mb-1">Hai già un ticket aperto</p>
+                        <p className="text-sm text-amber-700">
+                          Puoi inviare un nuovo ticket solo dopo che il precedente è stato chiuso. Controlla i tuoi ticket aperti qui sotto.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                ) : (
+                  <>
+                    <div>
+                      <Label>Categoria</Label>
+                      <Select value={ticketCategory} onValueChange={setTicketCategory}>
+                        <SelectTrigger className="bg-white">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="tecnico">Problema Tecnico</SelectItem>
+                          <SelectItem value="fatturazione">Fatturazione</SelectItem>
+                          <SelectItem value="abbonamento">Abbonamento</SelectItem>
+                          <SelectItem value="funzionalita">Richiesta Funzionalità</SelectItem>
+                          <SelectItem value="altro">Altro</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div>
-                  <Label>Oggetto</Label>
-                  <Input
-                    value={ticketSubject}
-                    onChange={(e) => setTicketSubject(e.target.value)}
-                    placeholder="Descrivi il problema in poche parole"
-                    className="bg-white"
-                  />
-                </div>
+                    <div>
+                      <Label>Oggetto</Label>
+                      <Input
+                        value={ticketSubject}
+                        onChange={(e) => setTicketSubject(e.target.value)}
+                        placeholder="Descrivi il problema in poche parole"
+                        className="bg-white"
+                      />
+                    </div>
 
-                <div>
-                  <Label>Messaggio</Label>
-                  <Textarea
-                    value={ticketMessage}
-                    onChange={(e) => setTicketMessage(e.target.value)}
-                    placeholder="Descrivi il problema in dettaglio..."
-                    className="bg-white h-32"
-                  />
-                </div>
+                    <div>
+                      <Label>Messaggio</Label>
+                      <Textarea
+                        value={ticketMessage}
+                        onChange={(e) => setTicketMessage(e.target.value)}
+                        placeholder="Descrivi il problema in dettaglio..."
+                        className="bg-white h-32"
+                      />
+                    </div>
 
-                <Button
-                  onClick={handleSubmitTicket}
-                  disabled={isSaving}
-                  className="bg-[#26847F] hover:bg-[#1f6b66] text-white w-full"
-                >
-                  {isSaving ? 'Invio...' : 'Invia Ticket'}
-                </Button>
+                    <Button
+                      onClick={handleSubmitTicket}
+                      disabled={isSaving}
+                      className="bg-[#26847F] hover:bg-[#1f6b66] text-white w-full"
+                    >
+                      {isSaving ? 'Invio...' : 'Invia Ticket'}
+                    </Button>
+                  </>
+                )}
               </CardContent>
             </Card>
 
