@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip } from 'lucide-react';
+import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip, Search } from 'lucide-react';
 
 // Component per renderizzare messaggi admin con immagini inline
 function AdminMessageContent({ content, onImageClick, isUserMessage = false }) {
@@ -78,6 +78,7 @@ export default function AdminSupportTickets() {
   const [statusFilter, setStatusFilter] = useState('all');
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [searchQuery, setSearchQuery] = useState('');
   const ticketsPerPage = 20;
 
   useEffect(() => {
@@ -314,16 +315,33 @@ export default function AdminSupportTickets() {
     );
   }
 
-  // Filtra per stato prima
-  const filterByStatus = (ticketList) => {
-    if (statusFilter === 'all') return ticketList;
-    return ticketList.filter(t => t.status === statusFilter);
+  // Filtra per stato e ricerca
+  const filterTickets = (ticketList) => {
+    let filtered = ticketList;
+    
+    // Filtra per stato
+    if (statusFilter !== 'all') {
+      filtered = filtered.filter(t => t.status === statusFilter);
+    }
+    
+    // Filtra per ricerca
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(t => 
+        t.subject?.toLowerCase().includes(query) ||
+        t.message?.toLowerCase().includes(query) ||
+        t.user_email?.toLowerCase().includes(query) ||
+        t.category?.toLowerCase().includes(query)
+      );
+    }
+    
+    return filtered;
   };
 
-  const premiumTickets = filterByStatus(tickets.filter(t => t.priority === 'premium' && !t.ai_resolved));
-  const normalTickets = filterByStatus(tickets.filter(t => t.priority === 'normale' && !t.ai_resolved));
-  const allActiveTickets = filterByStatus(tickets.filter(t => !t.ai_resolved));
-  const aiResolvedTickets = filterByStatus(tickets.filter(t => t.ai_resolved === true));
+  const premiumTickets = filterTickets(tickets.filter(t => t.priority === 'premium' && !t.ai_resolved));
+  const normalTickets = filterTickets(tickets.filter(t => t.priority === 'normale' && !t.ai_resolved));
+  const allActiveTickets = filterTickets(tickets.filter(t => !t.ai_resolved));
+  const aiResolvedTickets = filterTickets(tickets.filter(t => t.ai_resolved === true));
 
   // Paginazione
   const getPaginatedTickets = (ticketList) => {
@@ -445,10 +463,28 @@ export default function AdminSupportTickets() {
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Ticket di Supporto</h1>
           <p className="text-sm sm:text-base text-gray-600">Gestisci le richieste di assistenza clienti</p>
 
+          {/* Search Bar */}
+          <div className="relative mt-4">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+            <input
+              type="text"
+              placeholder="Cerca per oggetto, messaggio, email o categoria..."
+              value={searchQuery}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+                setCurrentPage(1);
+              }}
+              className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-xl bg-white/80 backdrop-blur-sm text-sm focus:outline-none focus:ring-2 focus:ring-[#26847F] focus:border-transparent"
+            />
+          </div>
+
           {/* Filtri per Stato */}
           <div className="flex flex-wrap gap-2 mt-4">
             <button
-              onClick={() => setStatusFilter('all')}
+              onClick={() => {
+                setStatusFilter('all');
+                setCurrentPage(1);
+              }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 statusFilter === 'all'
                   ? 'bg-gray-900 text-white shadow-md'
@@ -458,7 +494,10 @@ export default function AdminSupportTickets() {
               Tutti
             </button>
             <button
-              onClick={() => setStatusFilter('aperto')}
+              onClick={() => {
+                setStatusFilter('aperto');
+                setCurrentPage(1);
+              }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 statusFilter === 'aperto'
                   ? 'bg-blue-600 text-white shadow-md'
@@ -468,7 +507,10 @@ export default function AdminSupportTickets() {
               Aperti
             </button>
             <button
-              onClick={() => setStatusFilter('in_lavorazione')}
+              onClick={() => {
+                setStatusFilter('in_lavorazione');
+                setCurrentPage(1);
+              }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 statusFilter === 'in_lavorazione'
                   ? 'bg-yellow-600 text-white shadow-md'
@@ -478,7 +520,10 @@ export default function AdminSupportTickets() {
               In Lavorazione
             </button>
             <button
-              onClick={() => setStatusFilter('risolto')}
+              onClick={() => {
+                setStatusFilter('risolto');
+                setCurrentPage(1);
+              }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 statusFilter === 'risolto'
                   ? 'bg-green-600 text-white shadow-md'
@@ -488,7 +533,10 @@ export default function AdminSupportTickets() {
               Risolti
             </button>
             <button
-              onClick={() => setStatusFilter('chiuso')}
+              onClick={() => {
+                setStatusFilter('chiuso');
+                setCurrentPage(1);
+              }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 statusFilter === 'chiuso'
                   ? 'bg-gray-600 text-white shadow-md'
