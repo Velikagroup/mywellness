@@ -16,6 +16,7 @@ export default function AdminSupportTickets() {
   const [tickets, setTickets] = useState([]);
   const [openChats, setOpenChats] = useState([]);
   const [sendingStates, setSendingStates] = useState({});
+  const [statusFilter, setStatusFilter] = useState('all');
 
   useEffect(() => {
     checkAccess();
@@ -241,10 +242,16 @@ export default function AdminSupportTickets() {
     );
   }
 
-  const premiumTickets = tickets.filter(t => t.priority === 'premium' && !t.ai_resolved);
-  const normalTickets = tickets.filter(t => t.priority === 'normale' && !t.ai_resolved);
-  const allActiveTickets = tickets.filter(t => !t.ai_resolved);
-  const aiResolvedTickets = tickets.filter(t => t.ai_resolved === true);
+  // Filtra per stato prima
+  const filterByStatus = (ticketList) => {
+    if (statusFilter === 'all') return ticketList;
+    return ticketList.filter(t => t.status === statusFilter);
+  };
+
+  const premiumTickets = filterByStatus(tickets.filter(t => t.priority === 'premium' && !t.ai_resolved));
+  const normalTickets = filterByStatus(tickets.filter(t => t.priority === 'normale' && !t.ai_resolved));
+  const allActiveTickets = filterByStatus(tickets.filter(t => !t.ai_resolved));
+  const aiResolvedTickets = filterByStatus(tickets.filter(t => t.ai_resolved === true));
 
   const TicketCard = ({ ticket }) => (
     <div
@@ -286,6 +293,60 @@ export default function AdminSupportTickets() {
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Ticket di Supporto</h1>
           <p className="text-sm sm:text-base text-gray-600">Gestisci le richieste di assistenza clienti</p>
+
+          {/* Filtri per Stato */}
+          <div className="flex flex-wrap gap-2 mt-4">
+            <button
+              onClick={() => setStatusFilter('all')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                statusFilter === 'all'
+                  ? 'bg-gray-900 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              Tutti
+            </button>
+            <button
+              onClick={() => setStatusFilter('aperto')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                statusFilter === 'aperto'
+                  ? 'bg-blue-600 text-white shadow-md'
+                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+              }`}
+            >
+              Aperti
+            </button>
+            <button
+              onClick={() => setStatusFilter('in_lavorazione')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                statusFilter === 'in_lavorazione'
+                  ? 'bg-yellow-600 text-white shadow-md'
+                  : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+              }`}
+            >
+              In Lavorazione
+            </button>
+            <button
+              onClick={() => setStatusFilter('risolto')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                statusFilter === 'risolto'
+                  ? 'bg-green-600 text-white shadow-md'
+                  : 'bg-green-100 text-green-700 hover:bg-green-200'
+              }`}
+            >
+              Risolti
+            </button>
+            <button
+              onClick={() => setStatusFilter('chiuso')}
+              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                statusFilter === 'chiuso'
+                  ? 'bg-gray-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+              }`}
+            >
+              Chiusi
+            </button>
+          </div>
         </div>
 
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
