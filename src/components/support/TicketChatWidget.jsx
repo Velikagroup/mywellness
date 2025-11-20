@@ -11,21 +11,39 @@ function MessageContent({ content, isAI = false, isAdmin = false }) {
 
   const textColor = isAI || isAdmin ? 'text-gray-800' : 'text-white';
   
-  // Split del contenuto per gestire immagini e testo
-  const parts = content.split(/(\[📎[^\]]+\]\([^)]+\))/g);
+  // Split del contenuto per gestire TUTTI i tipi di link markdown
+  // Cattura [qualsiasi testo](url) oppure ![alt](url)
+  const parts = content.split(/(\[📎[^\]]+\]\([^)]+\)|\!\[[^\]]*\]\([^)]+\)|\[[^\]]+\]\(https?:\/\/[^)]+\))/g);
   
   return (
     <div className={`text-sm leading-relaxed font-medium ${textColor} space-y-2`}>
       {parts.map((part, idx) => {
-        // Controlla se è un link markdown con paperclip
-        const markdownMatch = part.match(/\[📎([^\]]+)\]\(([^)]+)\)/);
-        
-        if (markdownMatch) {
-          const fileName = markdownMatch[1];
-          const fileUrl = markdownMatch[2];
+        // Controlla markdown image: ![alt](url)
+        const imageMatch = part.match(/\!\[([^\]]*)\]\(([^)]+)\)/);
+        if (imageMatch) {
+          const altText = imageMatch[1];
+          const imageUrl = imageMatch[2];
           
-          // Controlla se è un'immagine
-          const isImage = /\.(jpg|jpeg|png|gif|webp|svg)$/i.test(fileUrl);
+          return (
+            <div key={idx} className="my-2">
+              <img 
+                src={imageUrl} 
+                alt={altText || 'Immagine'}
+                className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                onClick={() => window.open(imageUrl, '_blank')}
+              />
+            </div>
+          );
+        }
+        
+        // Controlla link markdown con paperclip: [📎nome](url)
+        const paperclipMatch = part.match(/\[📎([^\]]+)\]\(([^)]+)\)/);
+        if (paperclipMatch) {
+          const fileName = paperclipMatch[1].trim();
+          const fileUrl = paperclipMatch[2];
+          
+          // Controlla se è un'immagine dall'estensione
+          const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(fileUrl);
           
           if (isImage) {
             return (
@@ -39,7 +57,7 @@ function MessageContent({ content, isAI = false, isAdmin = false }) {
               </div>
             );
           } else {
-            // Per file non immagine, mostra un link di download
+            // File non immagine - mostra link download
             return (
               <a
                 key={idx}
@@ -57,8 +75,45 @@ function MessageContent({ content, isAI = false, isAdmin = false }) {
           }
         }
         
+        // Controlla link markdown generico: [testo](http...)
+        const linkMatch = part.match(/\[([^\]]+)\]\((https?:\/\/[^)]+)\)/);
+        if (linkMatch) {
+          const linkText = linkMatch[1];
+          const url = linkMatch[2];
+          
+          // Se l'URL è un'immagine, renderizza come immagine
+          const isImage = /\.(jpg|jpeg|png|gif|webp|svg|bmp)$/i.test(url);
+          
+          if (isImage) {
+            return (
+              <div key={idx} className="my-2">
+                <img 
+                  src={url} 
+                  alt={linkText}
+                  className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
+                  onClick={() => window.open(url, '_blank')}
+                />
+              </div>
+            );
+          } else {
+            return (
+              <a
+                key={idx}
+                href={url}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`inline-flex items-center gap-1 px-3 py-1.5 rounded-lg ${
+                  isAI || isAdmin ? 'bg-gray-100 hover:bg-gray-200' : 'bg-white/20 hover:bg-white/30'
+                } transition-colors underline`}
+              >
+                <span className="text-xs">{linkText}</span>
+              </a>
+            );
+          }
+        }
+        
         // Testo normale
-        return part ? (
+        return part && part.trim() ? (
           <p key={idx} className="whitespace-pre-wrap">{part}</p>
         ) : null;
       })}
@@ -93,14 +148,32 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
       const uploadedUrls = [];
       for (const file of files) {
         const response = await base44.integrations.Core.UploadFile({ file });
-        console.log('Upload response:', response);
-        const fileUrl = response?.file_url || response?.data?.file_url || response;
+        console.log('📤 Upload response:', response);
+        
+        // Estrai l'URL in tutti i formati possibili
+        let fileUrl = null;
+        if (typeof response === 'string') {
+          fileUrl = response;
+        } else if (response?.file_url) {
+          fileUrl = response.file_url;
+        } else if (response?.data?.file_url) {
+          fileUrl = response.data.file_url;
+        } else if (response?.url) {
+          fileUrl = response.url;
+        }
+        
+        if (!fileUrl) {
+          console.error('❌ URL non trovato nella risposta:', response);
+          throw new Error('URL file non trovato');
+        }
+        
+        console.log('✅ File uploaded:', fileUrl);
         uploadedUrls.push({ name: file.name, url: fileUrl });
       }
       setAttachedFiles(prev => [...prev, ...uploadedUrls]);
     } catch (error) {
-      console.error('Error uploading files:', error);
-      alert('❌ Errore nel caricamento file');
+      console.error('❌ Error uploading files:', error);
+      alert('❌ Errore nel caricamento file: ' + (error.message || 'Riprova'));
     }
     setUploadingFile(false);
     e.target.value = '';
