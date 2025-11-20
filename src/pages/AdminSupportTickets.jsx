@@ -77,6 +77,8 @@ export default function AdminSupportTickets() {
   const [sendingStates, setSendingStates] = useState({});
   const [statusFilter, setStatusFilter] = useState('all');
   const [fullscreenImage, setFullscreenImage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const ticketsPerPage = 20;
 
   useEffect(() => {
     checkAccess();
@@ -323,6 +325,48 @@ export default function AdminSupportTickets() {
   const allActiveTickets = filterByStatus(tickets.filter(t => !t.ai_resolved));
   const aiResolvedTickets = filterByStatus(tickets.filter(t => t.ai_resolved === true));
 
+  // Paginazione
+  const getPaginatedTickets = (ticketList) => {
+    const startIndex = (currentPage - 1) * ticketsPerPage;
+    const endIndex = startIndex + ticketsPerPage;
+    return ticketList.slice(startIndex, endIndex);
+  };
+
+  const getTotalPages = (ticketList) => {
+    return Math.ceil(ticketList.length / ticketsPerPage);
+  };
+
+  const PaginationControls = ({ ticketList }) => {
+    const totalPages = getTotalPages(ticketList);
+    if (totalPages <= 1) return null;
+
+    return (
+      <div className="flex items-center justify-center gap-2 mt-6">
+        <Button
+          onClick={() => setCurrentPage(prev => Math.max(1, prev - 1))}
+          disabled={currentPage === 1}
+          variant="outline"
+          size="sm"
+          className="h-9"
+        >
+          ← Precedente
+        </Button>
+        <span className="text-sm text-gray-600 px-3">
+          Pagina {currentPage} di {totalPages}
+        </span>
+        <Button
+          onClick={() => setCurrentPage(prev => Math.min(totalPages, prev + 1))}
+          disabled={currentPage === totalPages}
+          variant="outline"
+          size="sm"
+          className="h-9"
+        >
+          Successiva →
+        </Button>
+      </div>
+    );
+  };
+
   const TicketCard = ({ ticket }) => {
     // Estrai le prime immagini dal messaggio
     const imageMatches = ticket.message.match(/!\[([^\]]*)\]\(([^)]+)\)/g) || [];
@@ -514,7 +558,7 @@ export default function AdminSupportTickets() {
           </Card>
         </div>
 
-        <Tabs defaultValue="premium" className="w-full">
+        <Tabs defaultValue="premium" className="w-full" onValueChange={() => setCurrentPage(1)}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-4 gap-2 bg-gray-100/80 p-1 rounded-lg">
               <TabsTrigger value="premium" className="text-xs sm:text-sm whitespace-nowrap">
@@ -540,7 +584,10 @@ export default function AdminSupportTickets() {
                 <p className="text-gray-500">Nessun ticket premium in attesa</p>
               </div>
             ) : (
-              premiumTickets.map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)
+              <>
+                {getPaginatedTickets(premiumTickets).map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)}
+                <PaginationControls ticketList={premiumTickets} />
+              </>
             )}
           </TabsContent>
 
@@ -551,7 +598,10 @@ export default function AdminSupportTickets() {
                 <p className="text-gray-500">Nessun ticket normale in attesa</p>
               </div>
             ) : (
-              normalTickets.map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)
+              <>
+                {getPaginatedTickets(normalTickets).map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)}
+                <PaginationControls ticketList={normalTickets} />
+              </>
             )}
           </TabsContent>
 
@@ -562,7 +612,10 @@ export default function AdminSupportTickets() {
                 <p className="text-gray-500">Nessun ticket da gestire</p>
               </div>
             ) : (
-              allActiveTickets.map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)
+              <>
+                {getPaginatedTickets(allActiveTickets).map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)}
+                <PaginationControls ticketList={allActiveTickets} />
+              </>
             )}
           </TabsContent>
 
@@ -573,7 +626,10 @@ export default function AdminSupportTickets() {
                 <p className="text-gray-500">Nessun ticket risolto dall'AI</p>
               </div>
             ) : (
-              aiResolvedTickets.map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)
+              <>
+                {getPaginatedTickets(aiResolvedTickets).map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)}
+                <PaginationControls ticketList={aiResolvedTickets} />
+              </>
             )}
           </TabsContent>
         </Tabs>
