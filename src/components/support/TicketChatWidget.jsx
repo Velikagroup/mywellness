@@ -147,36 +147,48 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
     try {
       const uploadedUrls = [];
       for (const file of files) {
-        const response = await base44.integrations.Core.UploadFile({ file });
-        console.log('📤 Upload response:', response);
+        console.log('📤 Uploading file:', file.name);
         
-        // Estrai l'URL in tutti i formati possibili
+        let response;
+        try {
+          response = await base44.integrations.Core.UploadFile({ file });
+        } catch (uploadError) {
+          console.error('❌ Upload failed:', uploadError);
+          throw new Error('Upload fallito: ' + (uploadError.message || 'Errore sconosciuto'));
+        }
+        
+        console.log('📥 Raw response:', JSON.stringify(response));
+        
+        // Estrai l'URL provando tutti i formati
         let fileUrl = null;
+        
         if (typeof response === 'string') {
           fileUrl = response;
-        } else if (response?.file_url) {
-          fileUrl = response.file_url;
-        } else if (response?.data?.file_url) {
-          fileUrl = response.data.file_url;
-        } else if (response?.url) {
-          fileUrl = response.url;
+        } else if (response) {
+          fileUrl = response.file_url || 
+                    response.url || 
+                    response.data?.file_url || 
+                    response.data?.url;
         }
         
         if (!fileUrl) {
-          console.error('❌ URL non trovato nella risposta:', response);
-          throw new Error('URL file non trovato');
+          console.error('❌ File URL not found in response:', response);
+          throw new Error('URL file non ricevuto dal server');
         }
         
-        console.log('✅ File uploaded:', fileUrl);
+        console.log('✅ File URL extracted:', fileUrl);
         uploadedUrls.push({ name: file.name, url: fileUrl });
       }
+      
       setAttachedFiles(prev => [...prev, ...uploadedUrls]);
+      console.log('✅ All files uploaded successfully');
     } catch (error) {
-      console.error('❌ Error uploading files:', error);
-      alert('❌ Errore nel caricamento file: ' + (error.message || 'Riprova'));
+      console.error('❌ Upload error:', error);
+      alert('❌ Errore caricamento: ' + error.message);
+    } finally {
+      setUploadingFile(false);
+      e.target.value = '';
     }
-    setUploadingFile(false);
-    e.target.value = '';
   };
 
   const removeAttachment = (url) => {
