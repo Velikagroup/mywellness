@@ -151,49 +151,71 @@ Return:
         return;
       }
 
-      // STEP 2: Analisi nutrizionale COMPARATIVA con ricerca internet
+      // STEP 2A: Ricerca online valori ottimali (senza foto)
+      const researchPrompt = `Search the internet to find the BEST nutritional values for "${selectedIngredient.name}" products.
+
+Find:
+1. The optimal/best nutritional values per 100g for this food type
+2. What are considered the highest protein, lowest sugar, best macro ratios
+3. Top-rated brands/products in this category
+
+Return in Italian:
+- best_protein_per_100g: highest protein found
+- best_carbs_per_100g: lowest carbs found (if relevant)
+- best_fat_per_100g: lowest fat found (if relevant)
+- best_calories_per_100g: optimal calories
+- best_fiber_per_100g: highest fiber found
+- benchmark_description: brief description of what makes an excellent product in this category
+
+Return ONLY valid JSON.`;
+
+      const benchmark = await base44.integrations.Core.InvokeLLM({
+        prompt: researchPrompt,
+        add_context_from_internet: true,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            best_protein_per_100g: { type: "number" },
+            best_carbs_per_100g: { type: "number" },
+            best_fat_per_100g: { type: "number" },
+            best_calories_per_100g: { type: "number" },
+            best_fiber_per_100g: { type: "number" },
+            benchmark_description: { type: "string" }
+          },
+          required: ["best_protein_per_100g", "best_calories_per_100g", "benchmark_description"]
+        }
+      });
+
+      // STEP 2B: Analisi foto e confronto con valori ottimali
       const analysisPrompt = `You are a professional nutritionist analyzing a food product label.
 
-CRITICAL CONTEXT:
-The user selected "${selectedIngredient.name}" from their shopping list and is scanning THIS SPECIFIC PRODUCT.
+CONTEXT:
+The user selected "${selectedIngredient.name}" from their shopping list.
 
-MANDATORY STEPS:
-1. SEARCH THE INTERNET to find the BEST nutritional values for "${selectedIngredient.name}" products
-   - Find what are considered the optimal/best nutritional values for this food type
-   - Identify the top-rated products in this category
-   - Note the highest protein, lowest sugar, best macro ratios
+BEST VALUES FOUND ONLINE FOR THIS FOOD:
+${JSON.stringify(benchmark, null, 2)}
 
-2. EXTRACT VALUES from the scanned label (per 100g)
-
-3. COMPARE AND SCORE the scanned product against the BEST values found online:
-   - Score 10: Values match or exceed the best products found online
-   - Score 9: Very close to the best (within 5% difference)
-   - Score 7-8: Above average, better than most products
-   - Score 5-6: Average/decent for this category
-   - Score 3-4: Below average, significantly worse than best options
-   - Score 0-2: Poor quality, much worse than optimal values
-
-SCORING LOGIC:
-The score represents HOW CLOSE this product is to THE BEST available products of the same type.
-Use internet research to determine what "the best" looks like for this food category.
-
-Example:
-- If best pasta integrale online has 13g protein/100g and scanned has 12g → score 9 (very close to best)
-- If best pasta integrale has 13g protein and scanned has 10g → score 6-7 (decent but not close to best)
-- If best pasta integrale has 13g protein and scanned has 5g → score 2-3 (far from optimal)
+YOUR TASK:
+1. Extract nutritional values per 100g from the scanned label
+2. Compare them with the BEST values above
+3. Score 0-10 based on how close to optimal:
+   - 10: Matches or exceeds best values
+   - 9: Within 5% of best values
+   - 7-8: Within 10-15% of best
+   - 5-6: Within 20-30% of best
+   - 3-4: 30-50% worse than best
+   - 0-2: More than 50% worse than best
 
 The explanation in Italian MUST include:
-1. "I migliori [food type] hanno: [best values found online]"
-2. "Questo prodotto ha: [scanned values]"
-3. "Differenza: [comparison showing how close to optimal]"
+- "I migliori ${selectedIngredient.name} hanno: [best values]"
+- "Questo prodotto ha: [scanned values]"
+- "Punteggio X/10 perché [comparison]"
 
 Return ONLY valid JSON, no markdown.`;
-
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
         file_urls: [file_url],
-        add_context_from_internet: true,
         response_json_schema: {
           type: "object",
           properties: {
