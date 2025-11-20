@@ -257,6 +257,19 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
       {/* Messages - Ordine cronologico: dall'alto (più vecchio) al basso (più recente) */}
       {!isMinimized && (
         <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent via-white/5 to-transparent">
+          {/* Info Banner 24h */}
+          <div className="relative px-4 py-3 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-2xl shadow-sm">
+            <div className="flex items-start gap-3">
+              <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center flex-shrink-0 shadow-md">
+                <span className="text-white text-sm">⏱️</span>
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-semibold text-gray-900 mb-1">Riceverai risposta entro 24 ore</p>
+                <p className="text-xs text-gray-600 leading-relaxed">Il nostro team sta esaminando la tua richiesta. Nel frattempo, puoi continuare a scrivere qui sotto per aggiungere dettagli.</p>
+              </div>
+            </div>
+          </div>
+
           {/* 1. Messaggio originale utente (primo cronologicamente) */}
           <div className="flex justify-end">
             <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
