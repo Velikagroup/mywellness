@@ -6,7 +6,7 @@ import { X, Send, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
 // Component per renderizzare i messaggi con immagini inline
-function MessageContent({ content, isAI = false, isAdmin = false }) {
+function MessageContent({ content, isAI = false, isAdmin = false, onImageClick }) {
   if (!content) return null;
 
   const textColor = isAI || isAdmin ? 'text-gray-800' : 'text-white';
@@ -30,7 +30,10 @@ function MessageContent({ content, isAI = false, isAdmin = false }) {
                 src={imageUrl} 
                 alt={altText || 'Immagine'}
                 className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-                onClick={() => window.open(imageUrl, '_blank')}
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onImageClick?.(imageUrl);
+                }}
               />
             </div>
           );
@@ -52,7 +55,10 @@ function MessageContent({ content, isAI = false, isAdmin = false }) {
                   src={fileUrl} 
                   alt={fileName}
                   className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-                  onClick={() => window.open(fileUrl, '_blank')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImageClick?.(fileUrl);
+                  }}
                 />
               </div>
             );
@@ -91,7 +97,10 @@ function MessageContent({ content, isAI = false, isAdmin = false }) {
                   src={url} 
                   alt={linkText}
                   className="max-w-full rounded-lg shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-                  onClick={() => window.open(url, '_blank')}
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onImageClick?.(url);
+                  }}
                 />
               </div>
             );
@@ -128,6 +137,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
   const [localTicket, setLocalTicket] = useState(ticket);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [fullscreenImage, setFullscreenImage] = useState(null);
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
 
@@ -231,6 +241,50 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
     }
     setIsSending(false);
   };
+
+  // Parse TUTTI i messaggi dal campo message in ordine cronologico
+  const allMessages = [];
+  const messageParts = localTicket.message.split('\n\n---');
+  
+  messageParts.forEach((part, idx) => {
+    if (idx === 0) {
+      // Primo messaggio del cliente
+      allMessages.push({ 
+        type: 'user', 
+        content: part, 
+        timestamp: localTicket.created_date 
+      });
+    } else if (part.includes('Risposta Admin')) {
+      // Risposta admin
+      const content = part.split('---\n')[1];
+      if (content && content.trim()) {
+        allMessages.push({ 
+          type: 'admin', 
+          content, 
+          timestamp: null 
+        });
+      }
+    } else if (part.includes('Risposta Utente')) {
+      // Risposta successiva cliente
+      const content = part.split('---\n')[1];
+      if (content && content.trim()) {
+        allMessages.push({ 
+          type: 'user', 
+          content, 
+          timestamp: null 
+        });
+      }
+    }
+  });
+  
+  // Aggiungi risposta AI se presente (dopo il primo messaggio utente)
+  if (localTicket.ai_response && allMessages.length === 1) {
+    allMessages.splice(1, 0, {
+      type: 'ai',
+      content: localTicket.ai_response,
+      timestamp: null
+    });
+  }
 
   return (
     <div className={`fixed ${isMinimized ? 'bottom-32 right-6 w-80 h-16' : 'bottom-32 right-6 w-full sm:w-[450px] h-[600px]'} luxury-chat-widget z-50 flex flex-col animate-slide-in transition-all duration-500`}>
