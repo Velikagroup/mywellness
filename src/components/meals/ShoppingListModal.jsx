@@ -151,49 +151,47 @@ Return:
         return;
       }
 
-      // STEP 2: Analisi nutrizionale con criteri aggiustati
-      const analysisPrompt = `You are a professional nutritionist analyzing a food product label for FITNESS and BODYBUILDING purposes.
+      // STEP 2: Analisi nutrizionale COMPARATIVA
+      const analysisPrompt = `You are a professional nutritionist analyzing a food product label.
 
-Analyze this product label photo and provide:
-1. Product name (in Italian)
-2. Nutritional values per 100g:
-   - Calories (kcal)
-   - Protein (g)
-   - Carbs (g)
-   - Fat (g)
-   - Fiber (g) if available
-3. Health score 0-10 (0=very unhealthy, 10=very healthy)
-4. Health classification: "male" (0-3), "medio" (4-6), "bene" (7-10)
-5. Brief explanation in Italian why this score
+CRITICAL CONTEXT:
+The user selected "${selectedIngredient.name}" from their shopping list and is scanning THIS SPECIFIC PRODUCT.
 
-IMPORTANT SCORING CRITERIA (FITNESS-ORIENTED):
-✅ POSITIVE factors (heavily weighted):
-- High protein content (20g+ per 100g = excellent)
-- Quality protein sources (meat, fish, eggs, dairy, legumes)
-- Moderate healthy fats (omega-3, monounsaturated)
-- Good protein to calorie ratio
-- Presence of fiber
+Your task:
+1. Identify the product name from the label (in Italian)
+2. Extract nutritional values per 100g
+3. Compare this product with OTHER products of THE SAME TYPE and give a RELATIVE score 0-10
 
-⚠️ MODERATE factors (less penalizing):
-- Saturated fats: NOT automatically bad if from quality sources (meat, eggs, dairy)
-- Simple processing: ground meat, minimally processed = GOOD (not penalize)
-- Moderate carbs if from whole grains
+RELATIVE SCORING (compare within the same food category):
+- If scanning "Pasta Integrale Brand X" → compare with OTHER pasta integrale brands
+- If scanning "Petto di Pollo Brand Y" → compare with OTHER chicken breast products
+- If scanning "Zucchine" → compare with OTHER zucchine (fresh vegetables)
 
-❌ NEGATIVE factors:
-- Added sugars (highly negative)
-- Trans fats (highly negative)
-- Excessive sodium (>1000mg per 100g)
-- Ultra-processed with many additives/preservatives
-- Very high carbs with low protein
-- Industrial processing with artificial ingredients
+Score 0-10 (RELATIVE to similar products):
+- 9-10: Among the BEST options in this category (es: pasta integrale con 13g proteine/100g)
+- 7-8: GOOD option, better than average in this category
+- 5-6: AVERAGE for this category
+- 3-4: BELOW average, better options exist in this category
+- 0-2: POOR quality compared to similar products
 
-DISTINGUISH:
-- Ground beef = minimally processed = GOOD for fitness
-- Industrial burger with additives/preservatives = bad
-- Natural saturated fats (meat, eggs) = acceptable
-- Trans fats/hydrogenated oils = very bad
+Classification:
+- "bene" (7-10): Better than most similar products
+- "medio" (4-6): Average for this category
+- "male" (0-3): Worse than most similar products
+
+Example:
+- Pasta integrale with 12g protein/100g = 9/10 (excellent pasta integrale)
+- Pasta normale white with 5g protein/100g = 4/10 (poor pasta, but we're comparing it to other pastas)
+- Chicken breast 23g protein, low fat = 10/10 (excellent for chicken)
+- Chicken breast processed with additives = 5/10 (mediocre for chicken)
+
+Explanation in Italian should mention:
+- What type of product it is
+- How it compares to similar products
+- Why the score (high/low protein, added sugars, quality of ingredients compared to alternatives)
 
 Return ONLY valid JSON, no markdown.`;
+
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
