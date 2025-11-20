@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
@@ -130,7 +129,8 @@ export default function PricingPage() {
         "Piano nutrizionale settimanale personalizzato",
         "🔄 4 generazioni piano nutrizionale/mese",
         "Ricette con foto AI e istruzioni",
-        "🔄 Sostituzione ingredienti AI", 
+        "🔄 Sostituzione ingredienti AI",
+        "📦 Dispensa ingredienti personalizzati", 
         "Calcolo BMR e massa grassa",
         "Lista della spesa automatica",
         "Tracking peso e progressi"
