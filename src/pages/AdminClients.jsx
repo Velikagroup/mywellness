@@ -127,8 +127,8 @@ export default function AdminClients() {
 
   const loadClients = async () => {
     try {
-      const allClients = await base44.asServiceRole.entities.User.list();
-      console.log('📊 Loaded clients:', allClients.length);
+      const allClients = await base44.asServiceRole.entities.User.filter({});
+      console.log('📊 Loaded clients:', allClients.length, allClients);
       setClients(allClients);
       setFilteredClients(allClients);
       calculateStats(allClients);
