@@ -412,7 +412,7 @@ export default function AdminSupportTickets() {
       </div>
 
       {/* Chat Windows - Multiple side by side */}
-      <div className="fixed bottom-40 right-6 flex gap-3 z-50" style={{ maxWidth: 'calc(100vw - 48px)' }}>
+      <div className="fixed bottom-32 right-6 flex gap-3 z-50" style={{ maxWidth: 'calc(100vw - 48px)' }}>
         {openChats.map((chat, index) => (
           <ChatWindow
             key={chat.id}

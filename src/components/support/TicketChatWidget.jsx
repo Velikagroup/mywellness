@@ -83,7 +83,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
   };
 
   return (
-    <div className={`fixed ${isMinimized ? 'bottom-40 right-6 w-80 h-16' : 'bottom-40 right-6 w-full sm:w-[450px] h-[600px]'} luxury-chat-widget z-50 flex flex-col animate-slide-in transition-all duration-500`}>
+    <div className={`fixed ${isMinimized ? 'bottom-32 right-6 w-80 h-16' : 'bottom-32 right-6 w-full sm:w-[450px] h-[600px]'} luxury-chat-widget z-50 flex flex-col animate-slide-in transition-all duration-500`}>
       <style>{`
         @keyframes slide-in {
           from {
