@@ -574,7 +574,8 @@ export default function AdminSupportTickets() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+          {/* Totale */}
           <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -582,27 +583,14 @@ export default function AdminSupportTickets() {
                   <HelpCircle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500 truncate">Totale</p>
+                  <p className="text-xs text-gray-500 truncate">Totale Ticket</p>
                   <p className="text-xl sm:text-2xl font-bold text-gray-900">{tickets.length}</p>
                 </div>
               </div>
             </CardContent>
           </Card>
 
-          <Card className="water-glass-effect border-gray-200/30">
-            <CardContent className="p-3 sm:p-4">
-              <div className="flex items-center gap-2 sm:gap-3">
-                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
-                  <Crown className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
-                </div>
-                <div className="min-w-0">
-                  <p className="text-xs text-gray-500 truncate">Premium</p>
-                  <p className="text-xl sm:text-2xl font-bold text-gray-900">{premiumTickets.length}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
+          {/* Da Gestire */}
           <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 sm:gap-3">
@@ -617,15 +605,81 @@ export default function AdminSupportTickets() {
             </CardContent>
           </Card>
 
+          {/* Chiusi */}
+          <Card className="water-glass-effect border-gray-200/30">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gray-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-500 truncate">Chiusi</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                    {tickets.filter(t => t.status === 'chiuso' || t.ai_resolved).length}
+                  </p>
+                  <div className="flex gap-2 mt-1 text-xs">
+                    <span className="text-green-600 font-semibold">
+                      🤖 {Math.round((aiResolvedTickets.length / Math.max(tickets.filter(t => t.status === 'chiuso' || t.ai_resolved).length, 1)) * 100)}%
+                    </span>
+                    <span className="text-gray-400">•</span>
+                    <span className="text-gray-600 font-semibold">
+                      👤 {Math.round(((tickets.filter(t => t.status === 'chiuso' && !t.ai_resolved).length) / Math.max(tickets.filter(t => t.status === 'chiuso' || t.ai_resolved).length, 1)) * 100)}%
+                    </span>
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Chiusi AI */}
           <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-3 sm:p-4">
               <div className="flex items-center gap-2 sm:gap-3">
                 <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 </div>
-                <div className="min-w-0">
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-gray-500 truncate">Chiusi AI</p>
                   <p className="text-xl sm:text-2xl font-bold text-gray-900">{aiResolvedTickets.length}</p>
+                  <p className="text-xs text-green-600 font-semibold mt-1">
+                    {tickets.length > 0 ? Math.round((aiResolvedTickets.length / tickets.length) * 100) : 0}% del totale
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Tempo Medio Risposta */}
+          <Card className="water-glass-effect border-gray-200/30">
+            <CardContent className="p-3 sm:p-4">
+              <div className="flex items-center gap-2 sm:gap-3">
+                <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="text-xs text-gray-500 truncate">Tempo Medio</p>
+                  <p className="text-xl sm:text-2xl font-bold text-gray-900">
+                    {(() => {
+                      const respondedTickets = tickets.filter(t => t.admin_response || t.ai_response);
+                      if (respondedTickets.length === 0) return '0m';
+                      
+                      const totalMinutes = respondedTickets.reduce((sum, t) => {
+                        const created = new Date(t.created_date).getTime();
+                        const responded = t.resolved_at ? new Date(t.resolved_at).getTime() : Date.now();
+                        return sum + Math.floor((responded - created) / 1000 / 60);
+                      }, 0);
+                      
+                      const avgMinutes = Math.floor(totalMinutes / respondedTickets.length);
+                      
+                      if (avgMinutes < 60) return `${avgMinutes}m`;
+                      const hours = Math.floor(avgMinutes / 60);
+                      const mins = avgMinutes % 60;
+                      return `${hours}h ${mins}m`;
+                    })()}
+                  </p>
+                  <p className="text-xs text-purple-600 font-semibold mt-1">
+                    di risposta
+                  </p>
                 </div>
               </div>
             </CardContent>
