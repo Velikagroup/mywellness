@@ -393,10 +393,16 @@ export default function AdminSupportTickets() {
       return urlMatch ? urlMatch[1] : null;
     }).filter(Boolean);
 
+    const isUnopened = ticket.status === 'aperto';
+
     return (
       <div
         onClick={() => handleOpenChat(ticket)}
-        className="p-4 border rounded-xl bg-white/80 backdrop-blur-sm hover:shadow-lg transition-all cursor-pointer"
+        className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
+          isUnopened 
+            ? 'water-glass-effect border-blue-300/50 bg-blue-50/30' 
+            : 'water-glass-effect border-gray-200/30'
+        }`}
       >
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
@@ -860,28 +866,25 @@ export default function AdminSupportTickets() {
             transform: translateY(0) scale(1);
           }
         }
-        
+
         .animate-slide-in {
           animation: slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
-        
+
         .luxury-chat-widget {
-          backdrop-filter: blur(24px) saturate(200%);
+          backdrop-filter: blur(12px) saturate(180%);
           background: linear-gradient(135deg, 
-            rgba(255, 255, 255, 0.98) 0%,
-            rgba(252, 252, 254, 0.95) 25%,
-            rgba(250, 250, 253, 0.92) 50%,
-            rgba(252, 252, 254, 0.95) 75%,
-            rgba(255, 255, 255, 0.98) 100%
+            rgba(249, 250, 251, 0.75) 0%,
+            rgba(243, 244, 246, 0.65) 50%,
+            rgba(249, 250, 251, 0.75) 100%
           );
-          border: 1px solid rgba(255, 255, 255, 0.9);
+          border: 1px solid rgba(156, 163, 175, 0.3);
           border-radius: 24px;
           overflow: hidden;
           box-shadow: 
-            0 20px 60px -15px rgba(38, 132, 127, 0.25),
-            0 10px 40px -10px rgba(38, 132, 127, 0.15),
-            0 0 0 1px rgba(255, 255, 255, 0.5) inset,
-            0 2px 4px 0 rgba(255, 255, 255, 0.8) inset;
+            0 8px 32px 0 rgba(31, 38, 135, 0.08),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
         
         .message-bubble {
@@ -926,27 +929,27 @@ export default function AdminSupportTickets() {
         }
         
         .chat-input {
-          backdrop-filter: blur(12px);
-          background: rgba(255, 255, 255, 0.85);
-          border: 1px solid rgba(200, 200, 220, 0.3);
+          backdrop-filter: blur(8px);
+          background: rgba(255, 255, 255, 0.7);
+          border: 1px solid rgba(156, 163, 175, 0.3);
           box-shadow: 
             0 2px 8px rgba(0, 0, 0, 0.04),
-            inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            inset 0 1px 2px rgba(255, 255, 255, 0.8);
           transition: all 0.3s ease;
         }
-        
+
         .chat-input:focus {
-          background: rgba(255, 255, 255, 0.95);
+          background: rgba(255, 255, 255, 0.85);
           border-color: rgba(38, 132, 127, 0.4);
           box-shadow: 
-            0 4px 16px rgba(38, 132, 127, 0.15),
-            inset 0 1px 2px rgba(255, 255, 255, 0.9);
+            0 4px 16px rgba(38, 132, 127, 0.12),
+            inset 0 1px 2px rgba(255, 255, 255, 0.8);
         }
       `}</style>
 
       {/* Navbar */}
-      <div className="relative p-4 border-b border-white/40 bg-gradient-to-r from-white/60 via-white/50 to-white/60 backdrop-blur-xl">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#26847F]/5 via-transparent to-teal-500/5 opacity-50"></div>
+      <div className="relative p-4 border-b border-gray-200/30 backdrop-blur-sm bg-white/30">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#26847F]/3 via-transparent to-teal-500/3 opacity-50"></div>
         <div className="relative flex items-center justify-between">
           <div className="flex items-center gap-3 flex-1 min-w-0">
             <div className="relative w-10 h-10 bg-gradient-to-br from-[#26847F] via-teal-500 to-[#26847F] rounded-2xl flex items-center justify-center flex-shrink-0 shadow-lg shadow-[#26847F]/30">
@@ -992,7 +995,7 @@ export default function AdminSupportTickets() {
 
       {/* Messages - Cronologia completa */}
       {!chat.isMinimized && (
-        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gradient-to-b from-transparent via-white/5 to-transparent">
+        <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-transparent">
           {allMessages.map((msg, idx) => {
             if (msg.type === 'user') {
               return (
@@ -1040,8 +1043,8 @@ export default function AdminSupportTickets() {
 
       {/* Input Area */}
       {!chat.isMinimized && chat.status !== 'risolto' && chat.status !== 'chiuso' && (
-        <div className="relative p-4 border-t border-white/40 bg-gradient-to-t from-white/70 via-white/60 to-white/50 backdrop-blur-xl">
-          <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-50"></div>
+        <div className="relative p-4 border-t border-gray-200/30 backdrop-blur-sm bg-white/30">
+          <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-30"></div>
           <div className="relative space-y-2">
             {attachedFiles.length > 0 && (
               <div className="flex flex-wrap gap-2 p-2 bg-gray-50 rounded-xl">
