@@ -483,13 +483,13 @@ export default function AdminSupportTickets() {
         .ticket-in-progress {
           backdrop-filter: blur(12px) saturate(180%);
           background: linear-gradient(135deg, 
-            rgba(219, 234, 254, 0.6) 0%,
-            rgba(191, 219, 254, 0.5) 50%,
-            rgba(219, 234, 254, 0.6) 100%
+            rgba(254, 249, 195, 0.7) 0%,
+            rgba(253, 224, 71, 0.5) 50%,
+            rgba(254, 249, 195, 0.7) 100%
           ) !important;
-          border: 1px solid rgba(147, 197, 253, 0.5) !important;
+          border: 1px solid rgba(250, 204, 21, 0.5) !important;
           box-shadow: 
-            0 8px 32px 0 rgba(59, 130, 246, 0.15),
+            0 8px 32px 0 rgba(234, 179, 8, 0.15),
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
         }
