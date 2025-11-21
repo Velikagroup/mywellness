@@ -1372,7 +1372,7 @@ export default function AdminAnalytics() {
               <Button
                 onClick={handleSaveExpense}
                 disabled={isSavingExpense}
-                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 {isSavingExpense ? 'Salvataggio...' : 'Salva Spesa'}
               </Button>
