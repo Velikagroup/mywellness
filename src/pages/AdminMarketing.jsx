@@ -1179,7 +1179,7 @@ export default function AdminMarketing() {
             </div>
             <Button
               onClick={() => setShowInfluencerDialog(true)}
-              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+              className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
             >
               <Plus className="w-4 h-4 mr-2" />
               Aggiungi Influencer
@@ -1377,7 +1377,7 @@ export default function AdminMarketing() {
                 <p className="text-gray-600 mb-6">Inizia ad aggiungere influencer per tracciare le loro performance</p>
                 <Button
                   onClick={() => setShowInfluencerDialog(true)}
-                  className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                  className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   <Plus className="w-4 h-4 mr-2" />
                   Aggiungi Primo Influencer
@@ -1645,7 +1645,7 @@ export default function AdminMarketing() {
               </Button>
               <Button
                 onClick={handleCreateInfluencer}
-                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 Crea Influencer
               </Button>
