@@ -85,13 +85,17 @@ export default function WorkoutPreviewDemo() {
           </div>
           
           {/* Action Button */}
-          <button
-            disabled
-            className="w-full bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-900 font-bold py-2.5 rounded-xl opacity-90 cursor-not-allowed flex items-center justify-center gap-2 mt-4"
-          >
-            <RotateCcw className="w-4 h-4" />
-            Modifica Sessione
-          </button>
+          <div className="mt-3">
+            <button
+              disabled
+              className="w-full bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-900 font-bold py-2.5 rounded-xl opacity-90 cursor-not-allowed flex items-center justify-center gap-2"
+            >
+              <RotateCcw className="w-4 h-4" />
+              Modifica Sessione
+            </button>
+          </div>
+          
+
         </div>
 
         {/* Content */}
@@ -141,25 +145,29 @@ export default function WorkoutPreviewDemo() {
                   {expandedExercise === exercise.id && (
                     <div className="px-3 pb-3 border-t border-gray-100 expand-animation">
                       <div className="pt-3 space-y-3">
-                        {/* Set Tracker */}
+                        {/* Set Tracking */}
                         <div>
-                          <p className="text-xs font-semibold text-gray-700 mb-2">Registra Serie</p>
+                          <p className="text-xs font-semibold text-gray-700 mb-2">Serie</p>
                           <div className="flex gap-2">
-                            <div className="flex-1 bg-green-50 border-2 border-green-500 rounded-lg px-3 py-2">
-                              <p className="text-xs font-bold text-green-700">Set 1 ✓</p>
-                              <p className="text-xs text-green-600">12 rip • 0kg</p>
+                            <div className="flex-1 bg-green-50 border-2 border-green-500 rounded-lg px-2 py-2 flex items-center justify-between">
+                              <span className="text-xs font-medium text-green-900">Serie 1</span>
+                              <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                                <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                </svg>
+                              </div>
                             </div>
-                            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 opacity-60">
-                              <p className="text-xs font-semibold text-gray-500">Set 2</p>
-                              <p className="text-xs text-gray-400">- rip • -kg</p>
+                            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 flex items-center justify-between opacity-60">
+                              <span className="text-xs font-medium text-gray-600">Serie 2</span>
+                              <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                             </div>
-                            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 opacity-60">
-                              <p className="text-xs font-semibold text-gray-500">Set 3</p>
-                              <p className="text-xs text-gray-400">- rip • -kg</p>
+                            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 flex items-center justify-between opacity-60">
+                              <span className="text-xs font-medium text-gray-600">Serie 3</span>
+                              <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                             </div>
-                            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-3 py-2 opacity-60">
-                              <p className="text-xs font-semibold text-gray-500">Set 4</p>
-                              <p className="text-xs text-gray-400">- rip • -kg</p>
+                            <div className="flex-1 bg-gray-50 border border-gray-200 rounded-lg px-2 py-2 flex items-center justify-between opacity-60">
+                              <span className="text-xs font-medium text-gray-600">Serie 4</span>
+                              <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                             </div>
                           </div>
                         </div>
