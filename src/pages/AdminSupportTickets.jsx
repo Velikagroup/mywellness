@@ -453,7 +453,7 @@ export default function AdminSupportTickets() {
           <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
             ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
             ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
-            ticket.status === 'chiuso' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
+            ticket.status === 'chiuso' || ticket.ai_resolved ? 'bg-transparent text-gray-400 border border-gray-300' :
             'bg-gray-100 text-gray-700'
           }`}>
             {ticket.ai_resolved ? 'chiuso (AI)' : ticket.status}
