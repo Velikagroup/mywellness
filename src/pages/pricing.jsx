@@ -946,6 +946,156 @@ export default function PricingPage() {
             ))}
           </div>
 
+          {/* Comparison Table */}
+          <div className="max-w-6xl mx-auto mt-20 mb-20 px-4 sm:px-6">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-12">
+              Confronta <span className="animated-text-gradient">i Piani</span>
+            </h2>
+            
+            <div className="water-glass-effect rounded-3xl border border-white/40 overflow-hidden shadow-2xl">
+              <div className="overflow-x-auto">
+                <table className="w-full">
+                  <thead>
+                    <tr className="border-b border-gray-200/50">
+                      <th className="text-left p-6 text-sm font-bold text-gray-700 bg-white/30">Funzionalità</th>
+                      <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
+                        <div className="flex flex-col items-center gap-2">
+                          <Shield className="w-6 h-6 text-gray-600" />
+                          <span>Standard</span>
+                        </div>
+                      </th>
+                      <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
+                        <div className="flex flex-col items-center gap-2">
+                          <Target className="w-6 h-6 text-blue-600" />
+                          <span>Base</span>
+                        </div>
+                      </th>
+                      <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
+                        <div className="flex flex-col items-center gap-2">
+                          <Zap className="w-6 h-6 text-[var(--brand-primary)]" />
+                          <span>Pro</span>
+                        </div>
+                      </th>
+                      <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
+                        <div className="flex flex-col items-center gap-2">
+                          <Crown className="w-6 h-6 text-purple-600" />
+                          <span>Premium</span>
+                        </div>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Dashboard scientifica completa</td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Calcolo BMR e massa grassa</td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Tracking peso e progressi</td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Conta calorie istantaneo</td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Piano nutrizionale personalizzato</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Generazioni piano nutrizionale/mese</td>
+                      <td className="p-4 text-center text-sm text-gray-500">-</td>
+                      <td className="p-4 text-center text-sm font-semibold text-gray-900">4</td>
+                      <td className="p-4 text-center text-sm font-semibold text-gray-900">8</td>
+                      <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">Illimitate</td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Ricette con foto AI e istruzioni</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Lista della spesa automatica</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Piano di allenamento personalizzato</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Generazioni piano allenamento/mese</td>
+                      <td className="p-4 text-center text-sm text-gray-500">-</td>
+                      <td className="p-4 text-center text-sm text-gray-500">-</td>
+                      <td className="p-4 text-center text-sm font-semibold text-gray-900">4</td>
+                      <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">Illimitate</td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Analisi AI dei pasti con foto</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Ribilanciamento automatico calorie</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Analisi progressi con foto AI</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Scansione etichette con Health Score AI</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">Supporto prioritario</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
           {/* FAQ Section */}
           <div className="max-w-3xl mx-auto mt-32 mb-20 px-4 sm:px-6">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-16">Domande <span className="animated-text-gradient">Frequenti</span></h2>
