@@ -1422,6 +1422,75 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
         ))}
       </div>
 
+      {/* Assign Ticket Modal */}
+      <Dialog open={showAssignModal} onOpenChange={setShowAssignModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Assegna Ticket a Operatore</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            {ticketToAssign && (
+              <>
+                <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                  <p className="text-sm font-bold text-gray-900 mb-1">{ticketToAssign.subject}</p>
+                  <p className="text-xs text-gray-600">{ticketToAssign.user_email}</p>
+                  {ticketToAssign.customer_language && (
+                    <Badge className="mt-2 bg-blue-50 text-blue-700 text-xs">
+                      🌍 Lingua: {ticketToAssign.customer_language.toUpperCase()}
+                    </Badge>
+                  )}
+                </div>
+
+                <div className="space-y-2">
+                  <p className="text-sm font-semibold text-gray-700">Seleziona operatore:</p>
+                  {operators.length === 0 ? (
+                    <p className="text-xs text-gray-500">Nessun operatore disponibile</p>
+                  ) : (
+                    <>
+                      <Button
+                        onClick={() => handleAssignTicket(null)}
+                        variant="outline"
+                        className="w-full justify-start text-sm"
+                      >
+                        ❌ Non assegnato
+                      </Button>
+                      {operators.map(op => {
+                        const languageMatch = ticketToAssign.customer_language && 
+                          op.languages?.includes(ticketToAssign.customer_language);
+                        
+                        return (
+                          <Button
+                            key={op.email}
+                            onClick={() => handleAssignTicket(op.email)}
+                            variant="outline"
+                            className={`w-full justify-start text-sm ${
+                              languageMatch ? 'border-green-300 bg-green-50' : ''
+                            }`}
+                          >
+                            <div className="flex items-center justify-between w-full">
+                              <span>
+                                👤 {op.full_name || op.email.split('@')[0]}
+                                {op.role === 'admin' && <span className="ml-2 text-xs text-purple-600">(Admin)</span>}
+                              </span>
+                              {op.languages && op.languages.length > 0 && (
+                                <span className="text-xs text-gray-500">
+                                  {op.languages.join(', ')}
+                                  {languageMatch && ' ✓'}
+                                </span>
+                              )}
+                            </div>
+                          </Button>
+                        );
+                      })}
+                    </>
+                  )}
+                </div>
+              </>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
       {/* Fullscreen Image Preview */}
       {fullscreenImage && (
         <div 
