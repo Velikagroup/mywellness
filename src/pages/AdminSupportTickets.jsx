@@ -7,7 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip, Search } from 'lucide-react';
+import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip, Search, BarChart3, TrendingUp } from 'lucide-react';
+import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 
 // Component per renderizzare messaggi admin con immagini inline
 function AdminMessageContent({ content, onImageClick, isUserMessage = false }) {
@@ -79,6 +80,8 @@ export default function AdminSupportTickets() {
   const [fullscreenImage, setFullscreenImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchQuery, setSearchQuery] = useState('');
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [showStats, setShowStats] = useState(false);
   const ticketsPerPage = 20;
 
   useEffect(() => {
@@ -345,6 +348,57 @@ export default function AdminSupportTickets() {
   const normalTickets = filterTickets(tickets.filter(t => t.priority === 'normale' && !t.ai_resolved));
   const allActiveTickets = filterTickets(tickets.filter(t => !t.ai_resolved));
   const aiResolvedTickets = filterTickets(tickets.filter(t => t.ai_resolved === true));
+
+  // Statistiche mensili/annuali
+  const getAvailableYears = () => {
+    if (tickets.length === 0) return [new Date().getFullYear()];
+    const years = tickets.map(t => new Date(t.created_date).getFullYear());
+    return [...new Set(years)].sort((a, b) => b - a);
+  };
+
+  const getMonthlyStats = () => {
+    const months = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+    const monthlyData = [];
+
+    for (let month = 0; month < 12; month++) {
+      const monthTickets = tickets.filter(t => {
+        const date = new Date(t.created_date);
+        return date.getFullYear() === selectedYear && date.getMonth() === month;
+      });
+
+      const closedTickets = monthTickets.filter(t => t.status === 'chiuso' || t.ai_resolved);
+      const aiClosed = monthTickets.filter(t => t.ai_resolved);
+      const adminClosed = monthTickets.filter(t => t.status === 'chiuso' && !t.ai_resolved);
+
+      // Calcola tempo medio risposta per il mese
+      const respondedTickets = monthTickets.filter(t => t.admin_response || t.ai_response);
+      let avgResponseTime = 0;
+      if (respondedTickets.length > 0) {
+        const totalMinutes = respondedTickets.reduce((sum, t) => {
+          const created = new Date(t.created_date).getTime();
+          const responded = t.resolved_at ? new Date(t.resolved_at).getTime() : Date.now();
+          return sum + Math.floor((responded - created) / 1000 / 60);
+        }, 0);
+        avgResponseTime = Math.floor(totalMinutes / respondedTickets.length);
+      }
+
+      monthlyData.push({
+        month: months[month],
+        totale: monthTickets.length,
+        chiusi: closedTickets.length,
+        chiusiAI: aiClosed.length,
+        chiusiAdmin: adminClosed.length,
+        aperti: monthTickets.filter(t => t.status === 'aperto').length,
+        inLavorazione: monthTickets.filter(t => t.status === 'in_lavorazione').length,
+        tempoMedio: avgResponseTime
+      });
+    }
+
+    return monthlyData;
+  };
+
+  const monthlyStats = getMonthlyStats();
+  const availableYears = getAvailableYears();
 
   // Paginazione
   const getPaginatedTickets = (ticketList) => {
@@ -685,6 +739,182 @@ export default function AdminSupportTickets() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Statistiche Mensili/Annuali */}
+        <Card className="water-glass-effect border-gray-200/30">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-pink-500 rounded-xl flex items-center justify-center">
+                  <BarChart3 className="w-5 h-5 text-white" />
+                </div>
+                <div>
+                  <h2 className="text-lg font-bold text-gray-900">Statistiche Temporali</h2>
+                  <p className="text-xs text-gray-500">Andamento ticket nel tempo</p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2">
+                <select
+                  value={selectedYear}
+                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#26847F]"
+                >
+                  {availableYears.map(year => (
+                    <option key={year} value={year}>{year}</option>
+                  ))}
+                </select>
+                <Button
+                  onClick={() => setShowStats(!showStats)}
+                  variant="outline"
+                  size="sm"
+                  className="text-xs"
+                >
+                  {showStats ? 'Nascondi' : 'Mostra'}
+                </Button>
+              </div>
+            </div>
+
+            {showStats && (
+              <div className="space-y-6">
+                {/* Riepilogo Anno */}
+                <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                  <div className="bg-blue-50 rounded-lg p-3 border border-blue-100">
+                    <p className="text-xs text-blue-600 font-semibold mb-1">Totale {selectedYear}</p>
+                    <p className="text-2xl font-bold text-blue-900">
+                      {monthlyStats.reduce((sum, m) => sum + m.totale, 0)}
+                    </p>
+                  </div>
+                  <div className="bg-green-50 rounded-lg p-3 border border-green-100">
+                    <p className="text-xs text-green-600 font-semibold mb-1">Chiusi Totali</p>
+                    <p className="text-2xl font-bold text-green-900">
+                      {monthlyStats.reduce((sum, m) => sum + m.chiusi, 0)}
+                    </p>
+                  </div>
+                  <div className="bg-emerald-50 rounded-lg p-3 border border-emerald-100">
+                    <p className="text-xs text-emerald-600 font-semibold mb-1">Chiusi AI</p>
+                    <p className="text-2xl font-bold text-emerald-900">
+                      {monthlyStats.reduce((sum, m) => sum + m.chiusiAI, 0)}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 border border-gray-200">
+                    <p className="text-xs text-gray-600 font-semibold mb-1">Chiusi Admin</p>
+                    <p className="text-2xl font-bold text-gray-900">
+                      {monthlyStats.reduce((sum, m) => sum + m.chiusiAdmin, 0)}
+                    </p>
+                  </div>
+                  <div className="bg-purple-50 rounded-lg p-3 border border-purple-100">
+                    <p className="text-xs text-purple-600 font-semibold mb-1">Tempo Medio</p>
+                    <p className="text-2xl font-bold text-purple-900">
+                      {(() => {
+                        const totalTickets = monthlyStats.reduce((sum, m) => sum + m.totale, 0);
+                        if (totalTickets === 0) return '0m';
+                        const totalTime = monthlyStats.reduce((sum, m) => sum + (m.tempoMedio * m.totale), 0);
+                        const avgMinutes = Math.floor(totalTime / totalTickets);
+                        if (avgMinutes < 60) return `${avgMinutes}m`;
+                        const hours = Math.floor(avgMinutes / 60);
+                        const mins = avgMinutes % 60;
+                        return `${hours}h ${mins}m`;
+                      })()}
+                    </p>
+                  </div>
+                </div>
+
+                {/* Grafico Ticket per Mese */}
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Ticket per Mese</h3>
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={monthlyStats}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        }}
+                      />
+                      <Legend wrapperStyle={{ fontSize: '12px' }} />
+                      <Bar dataKey="totale" fill="#3b82f6" name="Totale" />
+                      <Bar dataKey="chiusiAI" fill="#10b981" name="Chiusi AI" />
+                      <Bar dataKey="chiusiAdmin" fill="#6b7280" name="Chiusi Admin" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Grafico Tempo Medio Risposta */}
+                <div>
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Tempo Medio Risposta (minuti)</h3>
+                  <ResponsiveContainer width="100%" height={250}>
+                    <LineChart data={monthlyStats}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px',
+                          boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
+                        }}
+                      />
+                      <Legend wrapperStyle={{ fontSize: '12px' }} />
+                      <Line 
+                        type="monotone" 
+                        dataKey="tempoMedio" 
+                        stroke="#a855f7" 
+                        strokeWidth={2}
+                        name="Tempo Medio (min)"
+                        dot={{ fill: '#a855f7', r: 4 }}
+                      />
+                    </LineChart>
+                  </ResponsiveContainer>
+                </div>
+
+                {/* Tabella Dettagliata */}
+                <div className="overflow-x-auto">
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Dettaglio Mensile</h3>
+                  <table className="w-full text-xs">
+                    <thead>
+                      <tr className="bg-gray-100 border-b border-gray-200">
+                        <th className="text-left p-2 font-semibold text-gray-700">Mese</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">Totale</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">Aperti</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">In Lav.</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">Chiusi</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">AI</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">Admin</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">% AI</th>
+                        <th className="text-center p-2 font-semibold text-gray-700">Tempo Medio</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {monthlyStats.map((stat, idx) => (
+                        <tr key={idx} className="border-b border-gray-100 hover:bg-gray-50">
+                          <td className="p-2 font-medium text-gray-900">{stat.month}</td>
+                          <td className="p-2 text-center font-semibold text-blue-600">{stat.totale}</td>
+                          <td className="p-2 text-center text-orange-600">{stat.aperti}</td>
+                          <td className="p-2 text-center text-yellow-600">{stat.inLavorazione}</td>
+                          <td className="p-2 text-center font-semibold text-gray-900">{stat.chiusi}</td>
+                          <td className="p-2 text-center text-green-600">{stat.chiusiAI}</td>
+                          <td className="p-2 text-center text-gray-600">{stat.chiusiAdmin}</td>
+                          <td className="p-2 text-center font-semibold text-emerald-600">
+                            {stat.chiusi > 0 ? Math.round((stat.chiusiAI / stat.chiusi) * 100) : 0}%
+                          </td>
+                          <td className="p-2 text-center text-purple-600">
+                            {stat.tempoMedio < 60 ? `${stat.tempoMedio}m` : 
+                             `${Math.floor(stat.tempoMedio / 60)}h ${stat.tempoMedio % 60}m`}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            )}
+          </CardContent>
+        </Card>
 
         <Tabs defaultValue="premium" className="w-full" onValueChange={() => setCurrentPage(1)}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
