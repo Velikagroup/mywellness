@@ -360,7 +360,8 @@ export default function PricingPage() {
       const discount = (basePrice * couponData.discount_value) / 100;
       return (basePrice - discount).toFixed(2);
     }
-    return basePrice.toFixed(2);
+    const formattedPrice = basePrice.toFixed(2);
+    return formattedPrice.endsWith('.00') ? formattedPrice.slice(0, -3) : formattedPrice;
   };
 
   const getSavings = (plan) => {
