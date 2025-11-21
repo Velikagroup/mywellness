@@ -30,12 +30,28 @@ export default function DashboardPreviewDemo() {
   const caloriesRemaining = totalCaloriesToBurn - caloriesBurned;
 
   return (
-    <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
+    <>
+      <style>{`
+        .water-glass-effect {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(249, 250, 251, 0.75) 0%,
+            rgba(243, 244, 246, 0.65) 50%,
+            rgba(249, 250, 241, 0.75) 100%
+          );
+          box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.08),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+      `}</style>
+      
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
       {/* Colonna Sinistra - 8 colonne */}
       <div className="lg:col-span-8 space-y-4">
         {/* Top Stats Row */}
         <div className="grid grid-cols-3 gap-4">
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+          <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardContent className="p-4">
               <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Iniziale</p>
               <div className="flex items-baseline gap-1.5">
@@ -45,7 +61,7 @@ export default function DashboardPreviewDemo() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+          <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardContent className="p-4">
               <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Target</p>
               <div className="flex items-baseline gap-1.5">
@@ -55,7 +71,7 @@ export default function DashboardPreviewDemo() {
             </CardContent>
           </Card>
 
-          <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border border-green-200/50 shadow-sm rounded-lg">
+          <Card className="water-glass-effect border border-green-200/50 shadow-lg rounded-lg">
             <CardContent className="p-4">
               <p className="text-[10px] font-medium text-green-700 mb-1 uppercase tracking-wider">Variazione</p>
               <div className="flex items-baseline gap-1.5">
@@ -70,7 +86,7 @@ export default function DashboardPreviewDemo() {
         {/* Charts Row */}
         <div className="grid grid-cols-2 gap-4">
           {/* Weight Chart */}
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+          <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardHeader className="pb-2 pt-4 px-4">
               <CardTitle className="text-xs font-semibold text-gray-900 flex items-center gap-1.5">
                 <Scale className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
@@ -134,7 +150,7 @@ export default function DashboardPreviewDemo() {
           </Card>
 
           {/* Calorie Breakdown */}
-          <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+          <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardHeader className="pb-2 pt-4 px-4">
               <CardTitle className="text-xs font-semibold text-gray-900">
                 Scomposizione Calorica Obiettivo
@@ -201,7 +217,7 @@ export default function DashboardPreviewDemo() {
         </div>
 
         {/* Weight Logger */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+        <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-center gap-1.5 mb-3">
               <Scale className="w-4 h-4 text-[var(--brand-primary)]" />
@@ -232,7 +248,7 @@ export default function DashboardPreviewDemo() {
       {/* Colonna Destra - 4 colonne */}
       <div className="lg:col-span-4 space-y-3">
         {/* Target Calorico */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+        <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Target Calorico</p>
@@ -249,7 +265,7 @@ export default function DashboardPreviewDemo() {
         </Card>
 
         {/* Metabolismo Basale */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+        <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Metabolismo Basale (BMR)</p>
@@ -266,7 +282,7 @@ export default function DashboardPreviewDemo() {
         </Card>
 
         {/* Massa Grassa */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+        <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Massa Grassa</p>
@@ -283,7 +299,7 @@ export default function DashboardPreviewDemo() {
         </Card>
 
         {/* Avanzamento Obiettivo */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+        <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Avanzamento Obiettivo</p>
@@ -300,7 +316,7 @@ export default function DashboardPreviewDemo() {
         </Card>
 
         {/* Giorni di Allenamento */}
-        <Card className="bg-white/55 backdrop-blur-md border border-gray-200/40 shadow-sm rounded-lg">
+        <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Giorni di Allenamento</p>
@@ -324,5 +340,6 @@ export default function DashboardPreviewDemo() {
         </p>
       </div>
     </div>
+    </>
   );
 }
