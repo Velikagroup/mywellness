@@ -904,7 +904,45 @@ export default function AdminAnalytics() {
         <div className="space-y-6">
           <div className="flex items-center justify-between">
             <h2 className="text-2xl font-bold text-gray-900">Finanza</h2>
-...
+            <div className="flex gap-3">
+              <Button
+                onClick={() => setShowManageRecurringVariableExpenses(true)}
+                variant="outline"
+              >
+                <Zap className="w-4 h-4 mr-2" />
+                Gestisci Spese Variabili
+              </Button>
+              <Button
+                onClick={() => setShowAddExpense(true)}
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+              >
+                <Plus className="w-4 h-4 mr-2" />
+                Aggiungi Spesa
+              </Button>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-6">
+                <p className="text-sm text-gray-500 mb-2">Entrate Mensili</p>
+                <p className="text-3xl font-bold text-green-600">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
+              </CardContent>
+            </Card>
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-6">
+                <p className="text-sm text-gray-500 mb-2">Spese Mensili</p>
+                <p className="text-3xl font-bold text-red-600">€{totalMonthlyExpenses.toLocaleString('it-IT')}</p>
+              </CardContent>
+            </Card>
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-6">
+                <p className="text-sm text-gray-500 mb-2">Profitto Netto</p>
+                <p className={`text-3xl font-bold ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  €{monthlyProfit.toLocaleString('it-IT')}
+                </p>
+              </CardContent>
+            </Card>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
