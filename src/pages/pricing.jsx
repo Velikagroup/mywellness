@@ -858,7 +858,7 @@ export default function PricingPage() {
                     <div className="mb-2">
                       {plan.isFree ? (
                         <>
-                          <span className="text-6xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                          <span className="text-4xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
                             Gratis
                           </span>
                           <div className="mt-2">
@@ -872,7 +872,7 @@ export default function PricingPage() {
                               <span className="text-2xl font-bold text-gray-400 line-through">€{getOriginalPrice(plan)}</span>
                             </div>
                           )}
-                          <span className="text-6xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                          <span className="text-4xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
                             €{getPrice(plan)}
                           </span>
                           <span className="text-gray-600 ml-2 text-lg font-semibold">/mese</span>
