@@ -295,7 +295,7 @@ export default function AdminSupportTickets() {
 
     try {
       await base44.entities.SupportTicket.update(ticketId, {
-        status: 'risolto',
+        status: 'chiuso',
         resolved_at: new Date().toISOString()
       });
 
@@ -395,7 +395,7 @@ export default function AdminSupportTickets() {
 
     const isUnopened = ticket.status === 'aperto';
     const isInProgress = ticket.status === 'in_lavorazione';
-    const isResolved = ticket.status === 'risolto';
+    const isClosed = ticket.status === 'chiuso';
 
     return (
       <div
@@ -403,7 +403,7 @@ export default function AdminSupportTickets() {
         className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
           isUnopened ? 'ticket-unopened' : 
           isInProgress ? 'ticket-in-progress' : 
-          isResolved ? 'ticket-resolved' :
+          isClosed ? 'ticket-closed' :
           'water-glass-effect border-gray-200/30'
         }`}
       >
@@ -452,7 +452,7 @@ export default function AdminSupportTickets() {
           <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
             ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
             ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
-            ticket.status === 'risolto' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
+            ticket.status === 'chiuso' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
             'bg-gray-100 text-gray-700'
           }`}>
             {ticket.ai_resolved ? 'risolto (AI)' : ticket.status}
@@ -496,7 +496,7 @@ export default function AdminSupportTickets() {
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
         }
         
-        .ticket-resolved {
+        .ticket-closed {
           backdrop-filter: blur(12px) saturate(180%);
           background: linear-gradient(135deg, 
             rgba(220, 252, 231, 0.7) 0%,
@@ -573,16 +573,16 @@ export default function AdminSupportTickets() {
             </button>
             <button
               onClick={() => {
-                setStatusFilter('risolto');
+                setStatusFilter('chiuso');
                 setCurrentPage(1);
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                statusFilter === 'risolto'
+                statusFilter === 'chiuso'
                   ? 'bg-green-600 text-white shadow-md'
                   : 'bg-green-100 text-green-700 hover:bg-green-200'
               }`}
             >
-              Risolti
+              Chiusi
             </button>
             <button
               onClick={() => {
@@ -1088,7 +1088,7 @@ export default function AdminSupportTickets() {
       )}
 
       {/* Input Area */}
-      {!chat.isMinimized && chat.status !== 'risolto' && chat.status !== 'chiuso' && (
+      {!chat.isMinimized && chat.status !== 'chiuso' && (
         <div className="relative p-4 border-t border-gray-200/30 backdrop-blur-sm bg-white/30">
           <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-30"></div>
           <div className="relative space-y-2">
