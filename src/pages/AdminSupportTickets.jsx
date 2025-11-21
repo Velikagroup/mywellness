@@ -248,11 +248,13 @@ export default function AdminSupportTickets() {
       
       // Cambia stato in "in_lavorazione" solo se è la prima risposta dell'admin
       const newStatus = chat.status === 'aperto' ? 'in_lavorazione' : chat.status;
+      const isFirstResponse = !chat.admin_response && !chat.ai_response;
       
       await base44.entities.SupportTicket.update(ticketId, {
         admin_response: finalMessage,
         message: updatedMessage,
-        status: newStatus
+        status: newStatus,
+        ...(isFirstResponse && { first_response_at: new Date().toISOString() })
       });
 
       const fromEmail = 'info@projectmywellness.com';
@@ -516,13 +518,13 @@ export default function AdminSupportTickets() {
       const aiClosed = monthTickets.filter(t => t.ai_resolved);
       const adminClosed = monthTickets.filter(t => t.status === 'chiuso' && !t.ai_resolved);
 
-      // Calcola tempo medio risposta per il mese
-      const respondedTickets = monthTickets.filter(t => t.admin_response || t.ai_response);
+      // Calcola tempo medio risposta per il mese (solo ticket con first_response_at)
+      const respondedTickets = monthTickets.filter(t => t.first_response_at);
       let avgResponseTime = 0;
       if (respondedTickets.length > 0) {
         const totalMinutes = respondedTickets.reduce((sum, t) => {
           const created = new Date(t.created_date).getTime();
-          const responded = t.resolved_at ? new Date(t.resolved_at).getTime() : Date.now();
+          const responded = new Date(t.first_response_at).getTime();
           return sum + Math.floor((responded - created) / 1000 / 60);
         }, 0);
         avgResponseTime = Math.floor(totalMinutes / respondedTickets.length);
@@ -1045,12 +1047,12 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                   <p className="text-xs text-gray-500 truncate">Tempo Medio</p>
                   <p className="text-xl sm:text-2xl font-bold text-gray-900">
                     {(() => {
-                      const respondedTickets = tickets.filter(t => t.admin_response || t.ai_response);
+                      const respondedTickets = tickets.filter(t => t.first_response_at);
                       if (respondedTickets.length === 0) return '0m';
                       
                       const totalMinutes = respondedTickets.reduce((sum, t) => {
                         const created = new Date(t.created_date).getTime();
-                        const responded = t.resolved_at ? new Date(t.resolved_at).getTime() : Date.now();
+                        const responded = new Date(t.first_response_at).getTime();
                         return sum + Math.floor((responded - created) / 1000 / 60);
                       }, 0);
                       
