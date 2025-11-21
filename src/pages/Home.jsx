@@ -1000,10 +1000,7 @@ export default function Home() {
               {testimonials.slice(0, window.innerWidth < 768 ? 6 : testimonials.length).map((testimonial, index) => (
               <div
                 key={index}
-                className="rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all break-inside-avoid mb-6 backdrop-blur-xl bg-gradient-to-br from-white/15 via-white/10 to-white/5 hover:from-white/20 hover:via-white/15 hover:to-white/10 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] hover:shadow-[0_8px_40px_0_rgba(31,38,135,0.25)]"
-                style={{
-                  boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 1px 0 0 rgba(255, 255, 255, 0.7), inset 0 -1px 0 0 rgba(0, 0, 0, 0.05)'
-                }}>
+                className="water-glass-effect rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all break-inside-avoid mb-6">
                   <div className="flex items-start gap-4 mb-4">
                     <img
                     src={testimonial.photo}
