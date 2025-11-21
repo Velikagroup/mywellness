@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -722,7 +721,7 @@ ${ctaHtml}
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -736,7 +735,7 @@ ${ctaHtml}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
@@ -750,7 +749,7 @@ ${ctaHtml}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
@@ -764,7 +763,7 @@ ${ctaHtml}
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -792,7 +791,7 @@ ${ctaHtml}
           </TabsList>
 
           <TabsContent value="system" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <div className="flex items-center justify-between">
                   <CardTitle className="flex items-center gap-2">
@@ -874,7 +873,7 @@ ${ctaHtml}
 
             {/* Bozze */}
             {draftBroadcasts.length > 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <FileText className="w-5 h-5" />
@@ -907,7 +906,7 @@ ${ctaHtml}
 
             {/* Programmate */}
             {scheduledBroadcasts.length > 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Calendar className="w-5 h-5" />
@@ -945,7 +944,7 @@ ${ctaHtml}
 
             {/* Inviate */}
             {sentBroadcasts.length > 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <CheckCircle className="w-5 h-5" />
@@ -984,7 +983,7 @@ ${ctaHtml}
             )}
 
             {broadcasts.length === 0 && (
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardContent className="p-12 text-center">
                   <Send className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                   <h3 className="text-lg font-semibold text-gray-900 mb-2">Nessuna campagna broadcast ancora</h3>
