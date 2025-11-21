@@ -394,12 +394,15 @@ export default function AdminSupportTickets() {
     }).filter(Boolean);
 
     const isUnopened = ticket.status === 'aperto';
+    const isInProgress = ticket.status === 'in_lavorazione';
 
     return (
       <div
         onClick={() => handleOpenChat(ticket)}
         className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
-          isUnopened ? 'ticket-unopened' : 'water-glass-effect border-gray-200/30'
+          isUnopened ? 'ticket-unopened' : 
+          isInProgress ? 'ticket-in-progress' : 
+          'water-glass-effect border-gray-200/30'
         }`}
       >
         <div className="flex items-start justify-between gap-3 mb-3">
@@ -473,6 +476,20 @@ export default function AdminSupportTickets() {
           border: 1px solid rgba(96, 165, 250, 0.6) !important;
           box-shadow: 
             0 8px 32px 0 rgba(59, 130, 246, 0.2),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+        
+        .ticket-in-progress {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(219, 234, 254, 0.6) 0%,
+            rgba(191, 219, 254, 0.5) 50%,
+            rgba(219, 234, 254, 0.6) 100%
+          ) !important;
+          border: 1px solid rgba(147, 197, 253, 0.5) !important;
+          box-shadow: 
+            0 8px 32px 0 rgba(59, 130, 246, 0.15),
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
         }
