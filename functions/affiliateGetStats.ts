@@ -26,8 +26,14 @@ Deno.serve(async (req) => {
       affiliate_user_id: user.id 
     });
 
-    // Carica affiliati unici
+    // Carica affiliati unici (paganti)
     const referredUserIds = [...new Set(allCredits.map(c => c.referred_user_id))];
+    
+    // Conta gli utenti unici che hanno fatto login con questo link (anche non paganti)
+    const usersWithAffiliateCode = await base44.entities.User.filter({
+      applied_affiliate_code: affiliateLink.affiliate_code
+    });
+    const totalLinkClicks = usersWithAffiliateCode.length;
     
     // Carica prelievi
     const withdrawals = await base44.entities.AffiliateWithdrawal.filter({ 
@@ -59,6 +65,7 @@ Deno.serve(async (req) => {
       affiliate_url: `${req.headers.get('origin')}/?ref=${affiliateLink.affiliate_code}`,
       stats: {
         total_referrals: referredUserIds.length,
+        total_link_clicks: totalLinkClicks,
         total_earned: affiliateLink.total_earned,
         available_balance: affiliateLink.available_balance,
         total_withdrawn: totalWithdrawn,
