@@ -559,7 +559,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
         </div>
 
         <Tabs defaultValue="account" className="w-full" onValueChange={(value) => {
-          if (value === 'affiliate') {
+          if (value === 'affiliate' && !affiliateStats) {
             loadAffiliateStats();
           }
         }}>
