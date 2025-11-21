@@ -82,6 +82,9 @@ export default function AdminSupportTickets() {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
   const [showStats, setShowStats] = useState(false);
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
+  const [topTopics, setTopTopics] = useState(null);
+  const [isAnalyzingTopics, setIsAnalyzingTopics] = useState(false);
   const ticketsPerPage = 20;
 
   useEffect(() => {
@@ -351,9 +354,17 @@ export default function AdminSupportTickets() {
 
   // Statistiche mensili/annuali
   const getAvailableYears = () => {
-    if (tickets.length === 0) return [new Date().getFullYear()];
-    const years = tickets.map(t => new Date(t.created_date).getFullYear());
-    return [...new Set(years)].sort((a, b) => b - a);
+    const currentYear = new Date().getFullYear();
+    const historicalYears = tickets.length > 0 
+      ? tickets.map(t => new Date(t.created_date).getFullYear())
+      : [];
+    
+    // Combina anni storici con anni futuri fino al 2030
+    const allYears = [
+      ...new Set([...historicalYears, currentYear, 2026, 2027, 2028, 2029, 2030])
+    ];
+    
+    return allYears.sort((a, b) => b - a);
   };
 
   const getMonthlyStats = () => {
@@ -399,6 +410,74 @@ export default function AdminSupportTickets() {
 
   const monthlyStats = getMonthlyStats();
   const availableYears = getAvailableYears();
+
+  // Analisi AI argomenti più richiesti
+  const analyzeTopTopics = async () => {
+    setIsAnalyzingTopics(true);
+    try {
+      const monthNames = ['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
+                          'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'];
+      
+      const monthTickets = tickets.filter(t => {
+        const date = new Date(t.created_date);
+        return date.getFullYear() === selectedYear && date.getMonth() === selectedMonth;
+      });
+
+      if (monthTickets.length === 0) {
+        alert('Nessun ticket in questo mese');
+        setIsAnalyzingTopics(false);
+        return;
+      }
+
+      // Prepara i dati per l'AI
+      const ticketsSummary = monthTickets.map(t => ({
+        subject: t.subject,
+        category: t.category,
+        message: t.message.split('\n\n---')[0] // Solo il primo messaggio
+      }));
+
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analizza questi ${ticketsSummary.length} ticket di supporto del mese di ${monthNames[selectedMonth]} ${selectedYear}.
+
+Ticket:
+${JSON.stringify(ticketsSummary, null, 2)}
+
+Identifica i 10 argomenti/problemi più ricorrenti. Per ogni argomento indica:
+1. Nome breve dell'argomento (max 5 parole)
+2. Descrizione chiara del problema (1-2 frasi)
+3. Numero stimato di ticket relativi a questo argomento
+4. Categoria prevalente
+5. Livello di priorità (bassa/media/alta) in base alla gravità
+
+Rispondi SOLO con un JSON array, nessun altro testo.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            topics: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  description: { type: "string" },
+                  count: { type: "number" },
+                  category: { type: "string" },
+                  priority: { type: "string", enum: ["bassa", "media", "alta"] }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      const data = response.data || response;
+      setTopTopics(data.topics || []);
+    } catch (error) {
+      console.error('Error analyzing topics:', error);
+      alert('❌ Errore nell\'analisi AI');
+    }
+    setIsAnalyzingTopics(false);
+  };
 
   // Paginazione
   const getPaginatedTickets = (ticketList) => {
@@ -756,7 +835,10 @@ export default function AdminSupportTickets() {
               <div className="flex items-center gap-2">
                 <select
                   value={selectedYear}
-                  onChange={(e) => setSelectedYear(Number(e.target.value))}
+                  onChange={(e) => {
+                    setSelectedYear(Number(e.target.value));
+                    setTopTopics(null);
+                  }}
                   className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#26847F]"
                 >
                   {availableYears.map(year => (
@@ -910,6 +992,99 @@ export default function AdminSupportTickets() {
                       ))}
                     </tbody>
                   </table>
+                </div>
+
+                {/* Analisi AI Argomenti Più Richiesti */}
+                <div className="border-t border-gray-200 pt-6">
+                  <div className="flex items-center justify-between mb-4">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 bg-gradient-to-br from-indigo-500 to-purple-500 rounded-xl flex items-center justify-center">
+                        <TrendingUp className="w-5 h-5 text-white" />
+                      </div>
+                      <div>
+                        <h3 className="text-sm font-bold text-gray-900">🤖 Analisi AI - Top 10 Argomenti</h3>
+                        <p className="text-xs text-gray-500">Argomenti più richiesti nel mese selezionato</p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <select
+                        value={selectedMonth}
+                        onChange={(e) => {
+                          setSelectedMonth(Number(e.target.value));
+                          setTopTopics(null);
+                        }}
+                        className="px-3 py-2 border border-gray-200 rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-[#26847F]"
+                      >
+                        {['Gennaio', 'Febbraio', 'Marzo', 'Aprile', 'Maggio', 'Giugno', 
+                          'Luglio', 'Agosto', 'Settembre', 'Ottobre', 'Novembre', 'Dicembre'].map((month, idx) => (
+                          <option key={idx} value={idx}>{month}</option>
+                        ))}
+                      </select>
+                      <Button
+                        onClick={analyzeTopTopics}
+                        disabled={isAnalyzingTopics}
+                        className="bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white text-xs"
+                      >
+                        {isAnalyzingTopics ? (
+                          <>
+                            <div className="animate-spin rounded-full h-3 w-3 border-2 border-white border-t-transparent mr-2"></div>
+                            Analisi...
+                          </>
+                        ) : (
+                          '🔍 Analizza con AI'
+                        )}
+                      </Button>
+                    </div>
+                  </div>
+
+                  {topTopics && topTopics.length > 0 && (
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      {topTopics.map((topic, idx) => (
+                        <div 
+                          key={idx} 
+                          className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow"
+                        >
+                          <div className="flex items-start justify-between mb-2">
+                            <div className="flex items-center gap-2">
+                              <div className={`w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm ${
+                                idx === 0 ? 'bg-gradient-to-br from-yellow-400 to-orange-500 text-white' :
+                                idx === 1 ? 'bg-gradient-to-br from-gray-300 to-gray-400 text-white' :
+                                idx === 2 ? 'bg-gradient-to-br from-amber-600 to-amber-700 text-white' :
+                                'bg-gray-100 text-gray-700'
+                              }`}>
+                                {idx + 1}
+                              </div>
+                              <h4 className="font-bold text-gray-900 text-sm">{topic.name}</h4>
+                            </div>
+                            <div className="flex items-center gap-2">
+                              <span className={`px-2 py-1 rounded-full text-xs font-semibold ${
+                                topic.priority === 'alta' ? 'bg-red-100 text-red-700' :
+                                topic.priority === 'media' ? 'bg-yellow-100 text-yellow-700' :
+                                'bg-blue-100 text-blue-700'
+                              }`}>
+                                {topic.priority}
+                              </span>
+                            </div>
+                          </div>
+                          <p className="text-xs text-gray-600 mb-3 leading-relaxed">{topic.description}</p>
+                          <div className="flex items-center justify-between text-xs">
+                            <span className="text-gray-500">
+                              📊 <strong className="text-gray-900">{topic.count}</strong> ticket
+                            </span>
+                            <span className="px-2 py-1 bg-purple-50 text-purple-700 rounded-full font-semibold">
+                              {topic.category}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+
+                  {topTopics && topTopics.length === 0 && (
+                    <div className="text-center py-8 bg-gray-50 rounded-lg">
+                      <p className="text-gray-500 text-sm">Nessun argomento identificato per questo mese</p>
+                    </div>
+                  )}
                 </div>
               </div>
             )}
