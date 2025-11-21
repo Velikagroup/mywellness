@@ -599,7 +599,8 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
 
     const isUnopened = ticket.status === 'aperto';
     const isInProgress = ticket.status === 'in_lavorazione';
-    const hasNewResponse = newResponseTickets.has(ticket.id);
+    const isChatOpen = openChats.some(chat => chat.id === ticket.id);
+    const hasNewResponse = newResponseTickets.has(ticket.id) && !isChatOpen;
 
     return (
       <div
