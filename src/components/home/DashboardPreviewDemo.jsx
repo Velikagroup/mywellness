@@ -298,23 +298,6 @@ export default function DashboardPreviewDemo() {
           </CardContent>
         </Card>
 
-        {/* Avanzamento Obiettivo */}
-        <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
-          <CardContent className="p-4">
-            <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Avanzamento Obiettivo</p>
-              <span className="text-[9px] text-green-600 font-semibold">↗ +15.2%</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Target className="w-4 h-4 text-green-600" />
-              <div className="flex items-baseline gap-1">
-                <span className="text-3xl font-black text-gray-900">{progress}</span>
-                <span className="text-xs text-gray-500 font-medium">%</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Giorni di Allenamento */}
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
