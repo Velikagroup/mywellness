@@ -584,19 +584,6 @@ export default function AdminSupportTickets() {
             >
               Chiusi
             </button>
-            <button
-              onClick={() => {
-                setStatusFilter('chiuso');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                statusFilter === 'chiuso'
-                  ? 'bg-gray-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Chiusi
-            </button>
           </div>
         </div>
 
