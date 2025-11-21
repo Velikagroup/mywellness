@@ -119,7 +119,7 @@ export const UpgradePrompt = ({ requiredPlan, featureName, onUpgradeClick }) => 
       </p>
       <button
         onClick={onUpgradeClick}
-        className="inline-block bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white px-6 py-3 rounded-lg font-semibold transition-all"
+        className="inline-block bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold transition-all"
       >
         Upgrade a {requiredPlan === PLANS.PRO ? 'Pro' : 'Premium'}
       </button>
