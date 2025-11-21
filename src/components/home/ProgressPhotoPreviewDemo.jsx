@@ -115,19 +115,17 @@ export default function ProgressPhotoPreviewDemo() {
             </div>
           </div>
 
-          {/* Two Column Layout */}
-          <div className="grid md:grid-cols-2 gap-6 p-6">
-            {/* LEFT COLUMN - Visual Scores */}
-            <div className="space-y-4">
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-4 border border-blue-200">
-                <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
-                  </div>
-                  Analisi Scientifica
-                </h3>
-                
-                <div className="grid grid-cols-2 gap-3">
+          {/* Full Width Analysis Section */}
+          <div className="p-6">
+            <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-6 border border-blue-200 mb-6">
+              <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                Analisi Scientifica
+              </h3>
+              
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Muscle Definition Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-blue-100 text-center">
                     <p className="text-xs text-gray-600 mb-2">Definizione Muscolare</p>
@@ -228,28 +226,27 @@ export default function ProgressPhotoPreviewDemo() {
                       <span className="text-xs font-bold text-green-600">{analysisData.detailedAnalysis.posture.change}</span>
                     </div>
                   </div>
-                </div>
               </div>
             </div>
 
-            {/* RIGHT COLUMN - Recommendations */}
-            <div className="space-y-4">
-              <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-4 border border-amber-200">
-                <h3 className="text-base font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <div className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
-                    <Sparkles className="w-4 h-4 text-white" />
-                  </div>
-                  Raccomandazioni Personal Trainer AI
-                </h3>
+            {/* Recommendations Section - Full Width */}
+            <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-6 border border-amber-200 mb-6">
+              <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                <div className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
+                  <Sparkles className="w-4 h-4 text-white" />
+                </div>
+                Raccomandazioni Personal Trainer AI
+              </h3>
 
+              <div className="grid md:grid-cols-2 gap-6">
                 {/* Diet Recommendations */}
-                <div className="mb-3">
-                  <h4 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                <div>
+                  <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
                     🍽️ Modifiche Nutrizionali
                   </h4>
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     {analysisData.recommendations.diet.map((rec, idx) => (
-                      <div key={idx} className="bg-white/90 rounded-lg p-2 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
+                      <div key={idx} className="bg-white/90 rounded-lg p-3 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
                         <span className="text-amber-500 font-bold mt-0.5 flex-shrink-0">{idx + 1}.</span>
                         <span className="leading-relaxed">{rec}</span>
                       </div>
@@ -259,12 +256,12 @@ export default function ProgressPhotoPreviewDemo() {
 
                 {/* Workout Recommendations */}
                 <div>
-                  <h4 className="text-sm font-bold text-gray-800 mb-2 flex items-center gap-2">
+                  <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
                     💪 Modifiche Allenamento
                   </h4>
-                  <div className="space-y-1.5">
+                  <div className="space-y-2">
                     {analysisData.recommendations.workout.map((rec, idx) => (
-                      <div key={idx} className="bg-white/90 rounded-lg p-2 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
+                      <div key={idx} className="bg-white/90 rounded-lg p-3 text-xs text-gray-700 flex items-start gap-2 border border-amber-100">
                         <span className="text-amber-500 font-bold mt-0.5 flex-shrink-0">{idx + 1}.</span>
                         <span className="leading-relaxed">{rec}</span>
                       </div>
@@ -272,53 +269,53 @@ export default function ProgressPhotoPreviewDemo() {
                   </div>
                 </div>
               </div>
+            </div>
 
-              {/* Action Buttons - Reordered */}
-              <div className="space-y-2">
-                {/* Diet Button - FIRST */}
-                <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-3 border border-teal-200">
-                  <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                    <Utensils className="w-4 h-4 text-teal-600" />
-                    Applica Modifiche Nutrizionali?
-                  </p>
-                  <button
-                    disabled
-                    className="w-full bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    Applica Piano Nutrizionale
-                  </button>
-                </div>
+            {/* Action Buttons - Full Width Grid */}
+            <div className="grid md:grid-cols-3 gap-4">
+              {/* Diet Button */}
+              <div className="bg-gradient-to-br from-teal-50 to-green-50 rounded-xl p-4 border border-teal-200">
+                <p className="text-xs font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Utensils className="w-4 h-4 text-teal-600" />
+                  Applica Modifiche Nutrizionali?
+                </p>
+                <button
+                  disabled
+                  className="w-full bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Applica Piano Nutrizionale
+                </button>
+              </div>
 
-                {/* Workout Button - SECOND */}
-                <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-3 border border-purple-200">
-                  <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                    <Dumbbell className="w-4 h-4 text-purple-600" />
-                    Applica Modifiche Allenamento?
-                  </p>
-                  <button
-                    disabled
-                    className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
-                  >
-                    <CheckCircle2 className="w-4 h-4" />
-                    Applica Piano Allenamento
-                  </button>
-                </div>
+              {/* Workout Button */}
+              <div className="bg-gradient-to-br from-purple-50 to-indigo-50 rounded-xl p-4 border border-purple-200">
+                <p className="text-xs font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Dumbbell className="w-4 h-4 text-purple-600" />
+                  Applica Modifiche Allenamento?
+                </p>
+                <button
+                  disabled
+                  className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  Applica Piano Allenamento
+                </button>
+              </div>
 
-                {/* Save Analysis Button - LAST */}
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-3 border border-blue-200">
-                  <p className="text-xs font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                    <Save className="w-4 h-4 text-blue-600" />
-                    Salva Analisi nella Cronologia
-                  </p>
-                  <button
-                    disabled
-                    className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-2 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
-                  >
-                    <Save className="w-4 h-4" />
-                    Salva Analisi
-                  </button>
-                </div>
+              {/* Save Analysis Button */}
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
+                <p className="text-xs font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Save className="w-4 h-4 text-blue-600" />
+                  Salva Analisi nella Cronologia
+                </p>
+                <button
+                  disabled
+                  className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-xs"
+                >
+                  <Save className="w-4 h-4" />
+                  Salva Analisi
+                </button>
               </div>
             </div>
           </div>
