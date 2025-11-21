@@ -424,7 +424,7 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
                 posts.map(post => (
                   <div
                     key={post.id}
-                    className="flex items-center justify-between p-4 border rounded-lg hover:bg-gray-50 transition-colors"
+                    className="flex items-center justify-between p-4 water-glass-effect border-gray-200/30 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-4 flex-1">
                       {/* Featured image display removed */}
