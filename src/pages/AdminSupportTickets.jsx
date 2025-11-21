@@ -522,12 +522,12 @@ export default function AdminSupportTickets() {
       const respondedTickets = monthTickets.filter(t => t.first_response_at);
       let avgResponseTime = 0;
       if (respondedTickets.length > 0) {
-        const totalMinutes = respondedTickets.reduce((sum, t) => {
+        const totalSeconds = respondedTickets.reduce((sum, t) => {
           const created = new Date(t.created_date).getTime();
           const responded = new Date(t.first_response_at).getTime();
-          return sum + Math.floor((responded - created) / 1000 / 60);
+          return sum + Math.floor((responded - created) / 1000);
         }, 0);
-        avgResponseTime = Math.floor(totalMinutes / respondedTickets.length);
+        avgResponseTime = Math.floor(totalSeconds / respondedTickets.length);
       }
 
       monthlyData.push({
@@ -1048,20 +1048,23 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                   <p className="text-xl sm:text-2xl font-bold text-gray-900">
                     {(() => {
                       const respondedTickets = tickets.filter(t => t.first_response_at);
-                      if (respondedTickets.length === 0) return '0m';
+                      if (respondedTickets.length === 0) return '0s';
                       
-                      const totalMinutes = respondedTickets.reduce((sum, t) => {
+                      const totalSeconds = respondedTickets.reduce((sum, t) => {
                         const created = new Date(t.created_date).getTime();
                         const responded = new Date(t.first_response_at).getTime();
-                        return sum + Math.floor((responded - created) / 1000 / 60);
+                        return sum + Math.floor((responded - created) / 1000);
                       }, 0);
                       
-                      const avgMinutes = Math.floor(totalMinutes / respondedTickets.length);
+                      const avgSeconds = Math.floor(totalSeconds / respondedTickets.length);
                       
-                      if (avgMinutes < 60) return `${avgMinutes}m`;
-                      const hours = Math.floor(avgMinutes / 60);
-                      const mins = avgMinutes % 60;
-                      return `${hours}h ${mins}m`;
+                      const hours = Math.floor(avgSeconds / 3600);
+                      const mins = Math.floor((avgSeconds % 3600) / 60);
+                      const secs = avgSeconds % 60;
+                      
+                      if (hours > 0) return `${hours}h ${mins}m ${secs}s`;
+                      if (mins > 0) return `${mins}m ${secs}s`;
+                      return `${secs}s`;
                     })()}
                   </p>
                   <p className="text-xs text-purple-600 font-semibold mt-1">
@@ -1143,13 +1146,15 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                     <p className="text-2xl font-bold text-purple-900">
                       {(() => {
                         const totalTickets = monthlyStats.reduce((sum, m) => sum + m.totale, 0);
-                        if (totalTickets === 0) return '0m';
+                        if (totalTickets === 0) return '0s';
                         const totalTime = monthlyStats.reduce((sum, m) => sum + (m.tempoMedio * m.totale), 0);
-                        const avgMinutes = Math.floor(totalTime / totalTickets);
-                        if (avgMinutes < 60) return `${avgMinutes}m`;
-                        const hours = Math.floor(avgMinutes / 60);
-                        const mins = avgMinutes % 60;
-                        return `${hours}h ${mins}m`;
+                        const avgSeconds = Math.floor(totalTime / totalTickets);
+                        const hours = Math.floor(avgSeconds / 3600);
+                        const mins = Math.floor((avgSeconds % 3600) / 60);
+                        const secs = avgSeconds % 60;
+                        if (hours > 0) return `${hours}h ${mins}m ${secs}s`;
+                        if (mins > 0) return `${mins}m ${secs}s`;
+                        return `${secs}s`;
                       })()}
                     </p>
                   </div>
@@ -1181,7 +1186,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
 
                 {/* Grafico Tempo Medio Risposta */}
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900 mb-3">Tempo Medio Risposta (minuti)</h3>
+                  <h3 className="text-sm font-bold text-gray-900 mb-3">Tempo Medio Risposta</h3>
                   <ResponsiveContainer width="100%" height={250}>
                     <LineChart data={monthlyStats}>
                       <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
@@ -1194,6 +1199,14 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                           borderRadius: '8px',
                           boxShadow: '0 4px 12px rgba(0,0,0,0.1)'
                         }}
+                        formatter={(value) => {
+                          const hours = Math.floor(value / 3600);
+                          const mins = Math.floor((value % 3600) / 60);
+                          const secs = value % 60;
+                          if (hours > 0) return `${hours}h ${mins}m ${secs}s`;
+                          if (mins > 0) return `${mins}m ${secs}s`;
+                          return `${secs}s`;
+                        }}
                       />
                       <Legend wrapperStyle={{ fontSize: '12px' }} />
                       <Line 
@@ -1201,7 +1214,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                         dataKey="tempoMedio" 
                         stroke="#a855f7" 
                         strokeWidth={2}
-                        name="Tempo Medio (min)"
+                        name="Tempo Medio (sec)"
                         dot={{ fill: '#a855f7', r: 4 }}
                       />
                     </LineChart>
@@ -1239,8 +1252,14 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                             {stat.chiusi > 0 ? Math.round((stat.chiusiAI / stat.chiusi) * 100) : 0}%
                           </td>
                           <td className="p-2 text-center text-purple-600">
-                            {stat.tempoMedio < 60 ? `${stat.tempoMedio}m` : 
-                             `${Math.floor(stat.tempoMedio / 60)}h ${stat.tempoMedio % 60}m`}
+                            {(() => {
+                              const hours = Math.floor(stat.tempoMedio / 3600);
+                              const mins = Math.floor((stat.tempoMedio % 3600) / 60);
+                              const secs = stat.tempoMedio % 60;
+                              if (hours > 0) return `${hours}h ${mins}m ${secs}s`;
+                              if (mins > 0) return `${mins}m ${secs}s`;
+                              return `${secs}s`;
+                            })()}
                           </td>
                         </tr>
                       ))}
