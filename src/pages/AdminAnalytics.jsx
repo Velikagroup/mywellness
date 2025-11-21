@@ -841,7 +841,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardHeader>
               <CardTitle>Breakdown Transazioni per Tipo</CardTitle>
             </CardHeader>
