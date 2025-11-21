@@ -1607,9 +1607,9 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
               <div className="absolute inset-0 bg-white/20 rounded-2xl animate-pulse"></div>
               <span className="relative text-white text-lg">💬</span>
             </div>
-            {!chat.isMinimized && (
-              <div className="flex-1 min-w-0">
-                <p className="font-bold text-sm text-gray-900 truncate mb-0.5">{chat.subject}</p>
+            <div className="flex-1 min-w-0">
+              <p className="font-bold text-sm text-gray-900 truncate mb-0.5">{chat.subject}</p>
+              {!chat.isMinimized && (
                 <div className="flex items-center gap-2">
                   <span className="text-xs font-medium text-gray-600">{chat.user_email}</span>
                   <Badge className={`text-xs px-2 py-0 font-semibold shadow-sm ${
@@ -1620,8 +1620,8 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                     {chat.status}
                   </Badge>
                 </div>
-              </div>
-            )}
+              )}
+            </div>
           </div>
           <div className="flex items-center gap-1.5 flex-shrink-0">
             <Button
