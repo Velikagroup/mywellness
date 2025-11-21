@@ -968,7 +968,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
             ) : (
               <>
                 {/* Stats Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
@@ -1001,12 +1001,26 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-gray-600">Affiliati</p>
+                          <p className="text-sm text-gray-600">Affiliati Paganti</p>
                           <p className="text-3xl font-bold text-purple-700">
                             {affiliateStats.stats.total_referrals}
                           </p>
                         </div>
                         <Users className="w-10 h-10 text-purple-600" />
+                      </div>
+                    </CardContent>
+                  </Card>
+
+                  <Card className="bg-gradient-to-br from-orange-50 to-yellow-50 border-orange-200">
+                    <CardContent className="pt-6">
+                      <div className="flex items-center justify-between">
+                        <div>
+                          <p className="text-sm text-gray-600">Login con Link</p>
+                          <p className="text-3xl font-bold text-orange-700">
+                            {affiliateStats.stats.total_link_clicks || 0}
+                          </p>
+                        </div>
+                        <Users className="w-10 h-10 text-orange-600" />
                       </div>
                     </CardContent>
                   </Card>
