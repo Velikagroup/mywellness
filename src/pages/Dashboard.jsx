@@ -578,7 +578,7 @@ export default function Dashboard() {
                     userPlan={user?.subscription_plan}
                   />
                 ) : (
-                  <div className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl p-6">
+                  <div className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl p-6">
                     <UpgradePrompt 
                       requiredPlan={PLANS.PRO} 
                       featureName="Piano di Allenamento"
