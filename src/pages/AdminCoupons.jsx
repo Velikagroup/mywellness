@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -6,17 +6,19 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
-import { Trash2, PlusCircle, Calendar as CalendarIcon, Tag, Percent, Crown, Sparkles } from 'lucide-react';
+import { Trash2, PlusCircle, Calendar as CalendarIcon, Tag, Percent, Crown, Sparkles, TrendingUp, DollarSign, ShoppingCart, BarChart3 } from 'lucide-react';
 import { Popover, PopoverTrigger, PopoverContent } from "@/components/ui/popover";
 import { Calendar } from "@/components/ui/calendar";
-import { format } from "date-fns";
+import { format, startOfMonth, endOfMonth, startOfYear, endOfYear } from "date-fns";
 import { it } from 'date-fns/locale';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { BarChart, Bar, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, PieChart, Pie, Cell } from 'recharts';
 
 export default function AdminCoupons() {
   const [coupons, setCoupons] = useState([]);
+  const [transactions, setTransactions] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [newCoupon, setNewCoupon] = useState({
     code: '',
@@ -30,11 +32,16 @@ export default function AdminCoupons() {
   });
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [isCreatingLifetime, setIsCreatingLifetime] = useState(false);
+  const [selectedPeriod, setSelectedPeriod] = useState('all');
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+  const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
 
   const loadCoupons = async () => {
     setIsLoading(true);
     const fetchedCoupons = await base44.entities.Coupon.list('-created_date');
+    const fetchedTransactions = await base44.entities.Transaction.list('-payment_date', 1000);
     setCoupons(fetchedCoupons);
+    setTransactions(fetchedTransactions);
     setIsLoading(false);
   };
 
@@ -148,6 +155,100 @@ export default function AdminCoupons() {
       alert("Errore durante l'aggiornamento dello stato: " + error.message);
     }
   };
+
+  // Calcola statistiche coupon
+  const couponStats = useMemo(() => {
+    // Filtra transazioni con coupon applicato
+    const transactionsWithCoupon = transactions.filter(t => 
+      t.metadata?.coupon_code || t.metadata?.original_amount
+    );
+
+    // Filtra per periodo
+    let filteredTransactions = transactionsWithCoupon;
+    if (selectedPeriod === 'month') {
+      const start = startOfMonth(new Date(selectedYear, selectedMonth));
+      const end = endOfMonth(new Date(selectedYear, selectedMonth));
+      filteredTransactions = transactionsWithCoupon.filter(t => {
+        const date = new Date(t.payment_date);
+        return date >= start && date <= end;
+      });
+    } else if (selectedPeriod === 'year') {
+      const start = startOfYear(new Date(selectedYear, 0));
+      const end = endOfYear(new Date(selectedYear, 0));
+      filteredTransactions = transactionsWithCoupon.filter(t => {
+        const date = new Date(t.payment_date);
+        return date >= start && date <= end;
+      });
+    }
+
+    // Calcola totali
+    const totalPurchases = filteredTransactions.length;
+    const totalRevenue = filteredTransactions.reduce((sum, t) => sum + (t.amount / 100), 0);
+    const totalDiscounts = filteredTransactions.reduce((sum, t) => {
+      const originalAmount = t.metadata?.original_amount || t.amount;
+      return sum + ((originalAmount - t.amount) / 100);
+    }, 0);
+
+    // Statistiche per coupon
+    const couponUsage = {};
+    filteredTransactions.forEach(t => {
+      const code = t.metadata?.coupon_code || 'UNKNOWN';
+      if (!couponUsage[code]) {
+        couponUsage[code] = {
+          code,
+          uses: 0,
+          revenue: 0,
+          discounts: 0
+        };
+      }
+      couponUsage[code].uses++;
+      couponUsage[code].revenue += t.amount / 100;
+      const originalAmount = t.metadata?.original_amount || t.amount;
+      couponUsage[code].discounts += (originalAmount - t.amount) / 100;
+    });
+
+    // Statistiche mensili (ultimi 12 mesi)
+    const monthlyStats = {};
+    const now = new Date();
+    for (let i = 11; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1);
+      const key = format(date, 'MMM yyyy');
+      monthlyStats[key] = {
+        month: key,
+        purchases: 0,
+        revenue: 0,
+        discounts: 0
+      };
+    }
+
+    transactionsWithCoupon.forEach(t => {
+      const date = new Date(t.payment_date);
+      const key = format(date, 'MMM yyyy');
+      if (monthlyStats[key]) {
+        monthlyStats[key].purchases++;
+        monthlyStats[key].revenue += t.amount / 100;
+        const originalAmount = t.metadata?.original_amount || t.amount;
+        monthlyStats[key].discounts += (originalAmount - t.amount) / 100;
+      }
+    });
+
+    // Coupon più usati
+    const topCoupons = Object.values(couponUsage)
+      .sort((a, b) => b.uses - a.uses)
+      .slice(0, 10);
+
+    return {
+      totalPurchases,
+      totalRevenue: Math.round(totalRevenue * 100) / 100,
+      totalDiscounts: Math.round(totalDiscounts * 100) / 100,
+      avgDiscount: totalPurchases > 0 ? Math.round((totalDiscounts / totalPurchases) * 100) / 100 : 0,
+      couponUsage: Object.values(couponUsage),
+      monthlyStats: Object.values(monthlyStats),
+      topCoupons
+    };
+  }, [transactions, selectedPeriod, selectedYear, selectedMonth]);
+
+  const COLORS = ['#26847F', '#1f6b66', '#3b9b95', '#56b2ab', '#71c9c1'];
 
   return (
     <div className="min-h-screen pb-20">
@@ -306,8 +407,272 @@ export default function AdminCoupons() {
           </Dialog>
         </div>
 
+        {/* Analytics Section */}
+        <div className="space-y-6">
+          {/* Filtri Periodo */}
+          <Card className="water-glass-effect border-gray-200/30">
+            <CardHeader>
+              <CardTitle className="text-lg flex items-center gap-2">
+                <BarChart3 className="w-5 h-5 text-[#26847F]" />
+                Analytics Coupon
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="flex flex-wrap gap-4 items-center">
+                <div className="flex gap-2">
+                  <Button
+                    variant={selectedPeriod === 'all' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPeriod('all')}
+                    size="sm"
+                    className={selectedPeriod === 'all' ? 'bg-[#26847F] hover:bg-[#1f6b66]' : ''}
+                  >
+                    Tutti
+                  </Button>
+                  <Button
+                    variant={selectedPeriod === 'month' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPeriod('month')}
+                    size="sm"
+                    className={selectedPeriod === 'month' ? 'bg-[#26847F] hover:bg-[#1f6b66]' : ''}
+                  >
+                    Mese
+                  </Button>
+                  <Button
+                    variant={selectedPeriod === 'year' ? 'default' : 'outline'}
+                    onClick={() => setSelectedPeriod('year')}
+                    size="sm"
+                    className={selectedPeriod === 'year' ? 'bg-[#26847F] hover:bg-[#1f6b66]' : ''}
+                  >
+                    Anno
+                  </Button>
+                </div>
+
+                {selectedPeriod === 'month' && (
+                  <Select value={selectedMonth.toString()} onValueChange={(v) => setSelectedMonth(parseInt(v))}>
+                    <SelectTrigger className="w-40">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'].map((m, i) => (
+                        <SelectItem key={i} value={i.toString()}>{m} {selectedYear}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+
+                {(selectedPeriod === 'month' || selectedPeriod === 'year') && (
+                  <Select value={selectedYear.toString()} onValueChange={(v) => setSelectedYear(parseInt(v))}>
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[2025, 2024, 2023].map(y => (
+                        <SelectItem key={y} value={y.toString()}>{y}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Stats Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                    <ShoppingCart className="w-5 h-5 text-blue-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Acquisti con Coupon</p>
+                    <p className="text-2xl font-bold text-gray-900">{couponStats.totalPurchases}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                    <DollarSign className="w-5 h-5 text-green-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Fatturato con Coupon</p>
+                    <p className="text-2xl font-bold text-gray-900">€{couponStats.totalRevenue}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center">
+                    <TrendingUp className="w-5 h-5 text-red-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Sconti Totali Dati</p>
+                    <p className="text-2xl font-bold text-gray-900">€{couponStats.totalDiscounts}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardContent className="p-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+                    <Percent className="w-5 h-5 text-purple-600" />
+                  </div>
+                  <div>
+                    <p className="text-sm text-gray-500">Sconto Medio</p>
+                    <p className="text-2xl font-bold text-gray-900">€{couponStats.avgDiscount}</p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Charts */}
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Top 10 Coupon */}
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardHeader>
+                <CardTitle className="text-base">Top 10 Coupon Più Usati</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {couponStats.topCoupons.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <BarChart data={couponStats.topCoupons}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="code" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <Bar dataKey="uses" fill="#26847F" name="Utilizzi" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-center text-gray-500 py-12">Nessun dato disponibile</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Distribuzione Sconti */}
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardHeader>
+                <CardTitle className="text-base">Distribuzione Fatturato vs Sconti</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {couponStats.topCoupons.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <PieChart>
+                      <Pie
+                        data={couponStats.topCoupons.slice(0, 5)}
+                        dataKey="discounts"
+                        nameKey="code"
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={100}
+                        label={(entry) => `${entry.code}: €${entry.discounts.toFixed(0)}`}
+                      >
+                        {couponStats.topCoupons.slice(0, 5).map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-center text-gray-500 py-12">Nessun dato disponibile</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Trend Mensile */}
+            <Card className="water-glass-effect border-gray-200/30 lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="text-base">Trend Ultimi 12 Mesi</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {couponStats.monthlyStats.length > 0 ? (
+                  <ResponsiveContainer width="100%" height={300}>
+                    <LineChart data={couponStats.monthlyStats}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
+                      <XAxis dataKey="month" tick={{ fontSize: 12 }} />
+                      <YAxis tick={{ fontSize: 12 }} />
+                      <Tooltip 
+                        contentStyle={{ 
+                          backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                          border: '1px solid #e5e7eb',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      <Legend />
+                      <Line type="monotone" dataKey="purchases" stroke="#26847F" strokeWidth={2} name="Acquisti" />
+                      <Line type="monotone" dataKey="revenue" stroke="#3b9b95" strokeWidth={2} name="Fatturato (€)" />
+                      <Line type="monotone" dataKey="discounts" stroke="#f59e0b" strokeWidth={2} name="Sconti (€)" />
+                    </LineChart>
+                  </ResponsiveContainer>
+                ) : (
+                  <p className="text-center text-gray-500 py-12">Nessun dato disponibile</p>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Tabella Dettaglio Coupon */}
+            <Card className="water-glass-effect border-gray-200/30 lg:col-span-2">
+              <CardHeader>
+                <CardTitle className="text-base">Dettaglio Performance Coupon</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="overflow-x-auto">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Codice</TableHead>
+                        <TableHead className="text-right">Utilizzi</TableHead>
+                        <TableHead className="text-right">Fatturato</TableHead>
+                        <TableHead className="text-right">Sconti Dati</TableHead>
+                        <TableHead className="text-right">Sconto Medio</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {couponStats.couponUsage.length > 0 ? (
+                        couponStats.couponUsage
+                          .sort((a, b) => b.uses - a.uses)
+                          .map((item, idx) => (
+                            <TableRow key={idx}>
+                              <TableCell className="font-mono font-semibold">{item.code}</TableCell>
+                              <TableCell className="text-right">{item.uses}</TableCell>
+                              <TableCell className="text-right text-green-600 font-semibold">€{item.revenue.toFixed(2)}</TableCell>
+                              <TableCell className="text-right text-red-600 font-semibold">€{item.discounts.toFixed(2)}</TableCell>
+                              <TableCell className="text-right">€{(item.discounts / item.uses).toFixed(2)}</TableCell>
+                            </TableRow>
+                          ))
+                      ) : (
+                        <TableRow>
+                          <TableCell colSpan={5} className="text-center text-gray-500">
+                            Nessun coupon utilizzato
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </TableBody>
+                  </Table>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+
         {/* Coupons Card */}
-        <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
+        <Card className="water-glass-effect border-gray-200/30 shadow-xl rounded-xl">
           <CardHeader>
             <CardTitle className="text-lg text-gray-900">Tutti i Coupon</CardTitle>
           </CardHeader>
