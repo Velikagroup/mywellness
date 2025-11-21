@@ -151,10 +151,13 @@ export default function AdminSupportTickets() {
     try {
       const updatedMessage = chat.message + (chat.admin_response ? '' : '') + `\n\n--- Risposta Admin ---\n${finalMessage}`;
       
+      // Cambia stato in "in_lavorazione" solo se è la prima risposta dell'admin
+      const newStatus = chat.status === 'aperto' ? 'in_lavorazione' : chat.status;
+      
       await base44.entities.SupportTicket.update(ticketId, {
         admin_response: finalMessage,
         message: updatedMessage,
-        status: 'in_lavorazione'
+        status: newStatus
       });
 
       const fromEmail = 'info@projectmywellness.com';
@@ -274,7 +277,7 @@ export default function AdminSupportTickets() {
               ...c, 
               admin_response: finalMessage, 
               message: updatedMessage,
-              status: 'in_lavorazione',
+              status: newStatus,
               newMessage: '' 
             }
           : c
