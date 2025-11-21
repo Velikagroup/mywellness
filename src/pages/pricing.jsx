@@ -630,7 +630,7 @@ export default function PricingPage() {
             rgba(38, 132, 127, 0.05)
           );
           border-radius: 1rem;
-          padding: 1rem;
+          padding: 1.25rem 1rem;
           margin: 1rem 0;
           border: 1px solid rgba(38, 132, 127, 0.1);
         }
@@ -821,11 +821,11 @@ export default function PricingPage() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-6 mb-16">
             {plans.map((plan, index) => (
               <Card 
                 key={plan.id}
-                className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
+                className={`water-glass-effect border-2 transition-all duration-300 hover:shadow-2xl h-full flex flex-col ${plan.popular ? 'border-[var(--brand-primary)] scale-100 md:scale-105' : 'border-white/40'} ${selectedPlan === plan.id ? 'ring-4 ring-[var(--brand-primary)]/30' : ''}`}
               >
                 {plan.popular && (
                   <div className="popular-badge text-[var(--brand-primary)] text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
@@ -846,15 +846,15 @@ export default function PricingPage() {
                   </div>
                 )}
 
-                <CardHeader className="text-center pb-6 pt-6 px-4 sm:px-6">
-                  <div className={`icon-container w-20 h-20 ${plan.iconBg} rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg`}>
-                    <plan.icon className={`w-10 h-10 ${plan.iconColor}`} />
+                <CardHeader className="text-center pb-6 pt-8 px-6">
+                  <div className={`icon-container w-16 h-16 ${plan.iconBg} rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg`}>
+                    <plan.icon className={`w-8 h-8 ${plan.iconColor}`} />
                   </div>
                   
-                  <h3 className="text-3xl font-black text-gray-900 mb-3 tracking-tight">{plan.name}</h3>
-                  <p className="text-gray-600 text-sm mb-6 px-2 leading-relaxed">{plan.description}</p>
+                  <h3 className="text-2xl font-black text-gray-900 mb-3 tracking-tight min-h-[32px]">{plan.name}</h3>
+                  <p className="text-gray-600 text-sm mb-6 leading-relaxed min-h-[40px]">{plan.description}</p>
                   
-                  <div className="price-display">
+                  <div className="price-display min-h-[120px] flex flex-col justify-center">
                     <div className="mb-2">
                       {plan.isFree ? (
                         <>
@@ -919,8 +919,8 @@ export default function PricingPage() {
                   )}
                 </CardHeader>
 
-                <CardContent className="px-4 sm:px-6 pb-6">
-                  <ul className="space-y-3 mb-8">
+                <CardContent className="px-6 pb-6 flex-1 flex flex-col">
+                  <ul className="space-y-3 mb-6 flex-1">
                     {plan.features.map((feature, idx) => (
                       <li key={idx} className="feature-item flex items-start gap-3 group">
                         <div className="flex-shrink-0 w-6 h-6 rounded-full bg-[var(--brand-primary)] flex items-center justify-center mt-0.5 shadow-md group-hover:shadow-lg transition-all">
@@ -933,7 +933,7 @@ export default function PricingPage() {
 
                   <button
                     onClick={() => handleSelectPlan(plan.id)}
-                    className={`cta-button w-full text-base font-bold py-4 rounded-2xl transition-all shadow-lg hover:shadow-2xl relative z-10 ${
+                    className={`cta-button w-full text-base font-bold py-3.5 rounded-xl transition-all shadow-lg hover:shadow-2xl relative z-10 ${
                       plan.popular
                         ? 'bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white'
                         : 'bg-gradient-to-r from-gray-900 to-gray-800 hover:from-gray-800 hover:to-gray-700 text-white'
