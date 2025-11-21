@@ -53,7 +53,23 @@ export default function HealthScorePreviewDemo() {
   const scoreColor = getScoreColor(nutritionAnalysis.healthScore);
 
   return (
-    <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
+    <>
+      <style>{`
+        .water-glass-effect {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(249, 250, 251, 0.75) 0%,
+            rgba(243, 244, 246, 0.65) 50%,
+            rgba(249, 250, 241, 0.75) 100%
+          );
+          box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.08),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+      `}</style>
+      
+      <Card className="water-glass-effect border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
       <CardHeader className="border-b border-gray-200/50 pb-4 bg-gradient-to-br from-white via-purple-50/30 to-white">
         <CardTitle className="flex items-center gap-3 text-xl">
           <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-indigo-600 rounded-2xl flex items-center justify-center shadow-lg">
@@ -220,5 +236,6 @@ export default function HealthScorePreviewDemo() {
         </div>
       </CardContent>
     </Card>
+    </>
   );
 }

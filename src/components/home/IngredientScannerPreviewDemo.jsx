@@ -29,6 +29,19 @@ export default function IngredientScannerPreviewDemo() {
   return (
     <>
       <style>{`
+        .water-glass-effect {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(249, 250, 251, 0.75) 0%,
+            rgba(243, 244, 246, 0.65) 50%,
+            rgba(249, 250, 241, 0.75) 100%
+          );
+          box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.08),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
+
         @keyframes scan-line {
           0% { top: 0%; }
           100% { top: 100%; }
@@ -55,7 +68,7 @@ export default function IngredientScannerPreviewDemo() {
         }
       `}</style>
 
-      <Card className="w-full max-w-md mx-auto bg-white/90 backdrop-blur-xl border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
+      <Card className="w-full max-w-md mx-auto water-glass-effect border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
         {/* Header */}
         <div className="bg-gradient-to-br from-blue-50 to-indigo-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-3">
