@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -162,7 +161,7 @@ export default function AdminFeedback() {
 
           <TabsContent value="discovery" className="space-y-6 mt-6">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle className="text-base sm:text-lg">Distribuzione Canali</CardTitle>
                 </CardHeader>
@@ -194,7 +193,7 @@ export default function AdminFeedback() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle className="text-base sm:text-lg">Classifica Canali di Acquisizione</CardTitle>
                 </CardHeader>
@@ -244,7 +243,7 @@ export default function AdminFeedback() {
 
           <TabsContent value="cancellations" className="space-y-6 mt-6">
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-red-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -258,7 +257,7 @@ export default function AdminFeedback() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -272,7 +271,7 @@ export default function AdminFeedback() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -286,7 +285,7 @@ export default function AdminFeedback() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardContent className="p-3 sm:p-4">
                   <div className="flex items-center gap-2 sm:gap-3">
                     <div className="w-8 h-8 sm:w-10 sm:h-10 bg-purple-100 rounded-full flex items-center justify-center flex-shrink-0">
@@ -304,7 +303,7 @@ export default function AdminFeedback() {
             </div>
 
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle className="text-base sm:text-lg">Distribuzione Motivi</CardTitle>
                 </CardHeader>
@@ -336,7 +335,7 @@ export default function AdminFeedback() {
                 </CardContent>
               </Card>
 
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle className="text-base sm:text-lg">Classifica Motivi</CardTitle>
                 </CardHeader>
@@ -358,7 +357,7 @@ export default function AdminFeedback() {
               </Card>
             </div>
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Feedback Dettagliati</CardTitle>
               </CardHeader>
@@ -407,7 +406,7 @@ export default function AdminFeedback() {
           </TabsContent>
 
           <TabsContent value="general" className="space-y-6 mt-6">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle className="text-base sm:text-lg">Feedback Email Ricevuti</CardTitle>
               </CardHeader>
