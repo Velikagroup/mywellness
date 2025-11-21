@@ -278,7 +278,7 @@ export default function AdminFeedback() {
                       <AlertCircle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs text-gray-500 truncate">Gg Medi</p>
+                      <p className="text-xs text-gray-500 truncate">Giorni Medi Uso</p>
                       <p className="text-xl sm:text-2xl font-bold text-gray-900">{avgDaysUsed}</p>
                     </div>
                   </div>
@@ -292,7 +292,7 @@ export default function AdminFeedback() {
                       <ThumbsDown className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-xs text-gray-500 truncate">Top</p>
+                      <p className="text-xs text-gray-500 truncate">Motivo Principale</p>
                       <p className="text-xs sm:text-sm font-bold text-gray-900 truncate">
                         {barData[0]?.reason?.split(' ')[0] || 'N/A'}
                       </p>
