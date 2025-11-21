@@ -84,22 +84,7 @@ export default function WorkoutPreviewDemo() {
             </div>
           </div>
           
-          {/* Action Buttons */}
-          <div className="flex gap-2">
-            <button
-              disabled
-              className="flex-1 bg-gradient-to-r from-amber-400 to-yellow-500 text-gray-900 font-bold py-2.5 rounded-xl opacity-90 cursor-not-allowed flex items-center justify-center gap-2"
-            >
-              <RotateCcw className="w-4 h-4" />
-              Modifica Sessione
-            </button>
-            <button
-              disabled
-              className="flex-1 bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed"
-            >
-              Registra Allenamento
-            </button>
-          </div>
+
         </div>
 
         {/* Content */}
