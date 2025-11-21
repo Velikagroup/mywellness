@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useCallback } from "react";
 import { base44 } from "@/api/base44Client";
 import { useNavigate } from 'react-router-dom';
@@ -744,10 +743,23 @@ export default function Quiz() {
           animation: gradientShift 45s ease-in-out infinite;
           background-attachment: fixed;
         }
+
+        .water-glass-effect {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(249, 250, 251, 0.75) 0%,
+            rgba(243, 244, 246, 0.65) 50%,
+            rgba(249, 250, 241, 0.75) 100%
+          );
+          box-shadow: 
+            0 8px 32px 0 rgba(31, 38, 135, 0.08),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
+        }
       `}</style>
 
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="bg-white/80 backdrop-blur-sm rounded-full px-6 py-3 shadow-lg">
+        <div className="water-glass-effect rounded-full px-6 py-3">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
