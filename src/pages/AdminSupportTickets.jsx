@@ -89,11 +89,39 @@ export default function AdminSupportTickets() {
   const [selectedMonth, setSelectedMonth] = useState(new Date().getMonth());
   const [topTopics, setTopTopics] = useState(null);
   const [isAnalyzingTopics, setIsAnalyzingTopics] = useState(false);
+  const [newResponseTickets, setNewResponseTickets] = useState(new Set());
   const ticketsPerPage = 20;
 
   useEffect(() => {
     checkAccess();
   }, []);
+
+  // Polling real-time per aggiornamenti ticket
+  useEffect(() => {
+    if (!user) return;
+
+    const pollInterval = setInterval(async () => {
+      try {
+        const updatedTickets = await base44.entities.SupportTicket.list('-created_date', 100);
+        
+        // Identifica ticket con nuove risposte utente
+        updatedTickets.forEach(ticket => {
+          if (ticket.status === 'in_lavorazione') {
+            const oldTicket = tickets.find(t => t.id === ticket.id);
+            if (oldTicket && ticket.message !== oldTicket.message) {
+              setNewResponseTickets(prev => new Set([...prev, ticket.id]));
+            }
+          }
+        });
+        
+        setTickets(updatedTickets);
+      } catch (error) {
+        console.error('Error polling tickets:', error);
+      }
+    }, 3000); // Polling ogni 3 secondi
+
+    return () => clearInterval(pollInterval);
+  }, [user, tickets]);
 
   const checkAccess = async () => {
     try {
@@ -125,6 +153,13 @@ export default function AdminSupportTickets() {
     if (openChats.find(chat => chat.id === ticket.id)) {
       return;
     }
+    
+    // Rimuovi dalla lista di nuove risposte
+    setNewResponseTickets(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(ticket.id);
+      return newSet;
+    });
     
     // Aggiungi il ticket alle chat aperte
     setOpenChats(prev => [...prev, {
@@ -280,7 +315,8 @@ export default function AdminSupportTickets() {
         `
       });
 
-      // Aggiorna la chat locale
+      // Non serve più loadTickets - il real-time lo aggiorna automaticamente
+      // Aggiorna solo la chat locale
       setOpenChats(prev => prev.map(c => 
         c.id === ticketId 
           ? { 
@@ -292,8 +328,6 @@ export default function AdminSupportTickets() {
             }
           : c
       ));
-      
-      await loadTickets();
     } catch (error) {
       console.error('Error sending response:', error);
       alert('❌ Errore nell\'invio della risposta');
@@ -313,7 +347,7 @@ export default function AdminSupportTickets() {
       });
 
       handleCloseChat(ticketId);
-      await loadTickets();
+      // Real-time aggiornerà automaticamente
     } catch (error) {
       console.error('Error closing ticket:', error);
       alert('❌ Errore nella chiusura del ticket');
@@ -535,12 +569,14 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
 
     const isUnopened = ticket.status === 'aperto';
     const isInProgress = ticket.status === 'in_lavorazione';
+    const hasNewResponse = newResponseTickets.has(ticket.id);
 
     return (
       <div
         onClick={() => handleOpenChat(ticket)}
         className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
           isUnopened ? 'ticket-unopened' : 
+          isInProgress && hasNewResponse ? 'ticket-in-progress ticket-pulsing' : 
           isInProgress ? 'ticket-in-progress' : 
           'water-glass-effect border-gray-200/30'
         }`}
@@ -585,6 +621,11 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
               <Badge variant="outline" className="text-xs">{ticket.user_email}</Badge>
               <Badge className="bg-purple-100 text-purple-700 text-xs">{ticket.user_plan}</Badge>
               <Badge className="text-xs">{ticket.category}</Badge>
+              {hasNewResponse && (
+                <Badge className="bg-red-500 text-white text-xs animate-pulse">
+                  🔴 Nuova Risposta
+                </Badge>
+              )}
             </div>
           </div>
           <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
@@ -632,6 +673,28 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
             0 8px 32px 0 rgba(234, 179, 8, 0.15),
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+
+        @keyframes pulse-glow {
+          0%, 100% {
+            box-shadow: 
+              0 8px 32px 0 rgba(234, 179, 8, 0.15),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05),
+              0 0 0 0 rgba(250, 204, 21, 0.7);
+          }
+          50% {
+            box-shadow: 
+              0 8px 32px 0 rgba(234, 179, 8, 0.3),
+              inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+              inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05),
+              0 0 20px 4px rgba(250, 204, 21, 0.5);
+          }
+        }
+
+        .ticket-pulsing {
+          animation: pulse-glow 2s ease-in-out infinite;
+          border: 2px solid rgba(250, 204, 21, 0.8) !important;
         }
       `}</style>
       <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
@@ -1213,6 +1276,22 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat.message, chat.newMessage]);
+
+  // Polling real-time per questo specifico ticket
+  useEffect(() => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const updatedTicket = await base44.entities.SupportTicket.filter({ id: chat.id });
+        if (updatedTicket[0] && updatedTicket[0].message !== chat.message) {
+          window.dispatchEvent(new CustomEvent('ticketUpdated', { detail: updatedTicket[0] }));
+        }
+      } catch (error) {
+        console.error('Error polling ticket:', error);
+      }
+    }, 2000); // Polling ogni 2 secondi
+
+    return () => clearInterval(pollInterval);
+  }, [chat.id, chat.message]);
 
   useEffect(() => {
     loadQuickResponses();
