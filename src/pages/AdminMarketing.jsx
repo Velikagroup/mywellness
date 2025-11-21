@@ -1388,9 +1388,9 @@ export default function AdminMarketing() {
         </div>
 
         {/* Connetti Piattaforme Advertising - SPOSTATO IN FONDO */}
-        <Accordion type="single" collapsible className="water-glass-effect border-gray-200/30 rounded-xl shadow-lg">
+        <Card className="water-glass-effect border-gray-200/30 rounded-xl shadow-lg">
+        <Accordion type="single" collapsible>
           <AccordionItem value="item-1" className="border-none">
-            <Card className="border-none shadow-none bg-transparent">
               <CardHeader className="pb-0">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <LinkIcon className="w-5 h-5 text-[var(--brand-primary)]" />
@@ -1455,9 +1455,9 @@ export default function AdminMarketing() {
                   </div>
                 </CardContent>
               </AccordionContent>
-            </Card>
           </AccordionItem>
         </Accordion>
+        </Card>
       </div>
 
       {/* Connect Platform Dialog */}
