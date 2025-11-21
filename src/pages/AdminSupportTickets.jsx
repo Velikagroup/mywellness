@@ -412,7 +412,7 @@ export default function AdminSupportTickets() {
             <div className="flex items-center gap-2 mb-2 flex-wrap">
               <h3 className="font-bold text-gray-900 text-sm sm:text-base break-words">{ticket.subject}</h3>
               {ticket.priority === 'premium' && <Crown className="w-4 h-4 text-purple-600 flex-shrink-0" />}
-              {ticket.ai_resolved && <Badge className="bg-green-100 text-green-700 text-xs">🤖 Risolto da AI</Badge>}
+              {ticket.ai_resolved && <Badge className="bg-green-100 text-green-700 text-xs">🤖 Chiuso da AI</Badge>}
             </div>
             
             {/* Mostra le immagini se presenti */}
@@ -455,7 +455,7 @@ export default function AdminSupportTickets() {
             ticket.status === 'chiuso' || ticket.ai_resolved ? 'bg-green-100 text-green-700' :
             'bg-gray-100 text-gray-700'
           }`}>
-            {ticket.ai_resolved ? 'risolto (AI)' : ticket.status}
+            {ticket.ai_resolved ? 'chiuso (AI)' : ticket.status}
           </div>
         </div>
         <p className="text-xs text-gray-500">
@@ -650,7 +650,7 @@ export default function AdminSupportTickets() {
                   <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs text-gray-500 truncate">Risolti AI</p>
+                  <p className="text-xs text-gray-500 truncate">Chiusi AI</p>
                   <p className="text-xl sm:text-2xl font-bold text-gray-900">{aiResolvedTickets.length}</p>
                 </div>
               </div>
@@ -672,7 +672,7 @@ export default function AdminSupportTickets() {
                 Tutti ({allActiveTickets.length})
               </TabsTrigger>
               <TabsTrigger value="ai_resolved" className="text-xs sm:text-sm whitespace-nowrap">
-                🤖 Risolti AI ({aiResolvedTickets.length})
+                🤖 Chiusi AI ({aiResolvedTickets.length})
               </TabsTrigger>
             </TabsList>
           </div>
@@ -723,7 +723,7 @@ export default function AdminSupportTickets() {
             {aiResolvedTickets.length === 0 ? (
               <div className="text-center py-12 bg-white/50 rounded-xl">
                 <CheckCircle className="w-12 h-12 text-green-300 mx-auto mb-3" />
-                <p className="text-gray-500">Nessun ticket risolto dall'AI</p>
+                <p className="text-gray-500">Nessun ticket chiuso dall'AI</p>
               </div>
             ) : (
               <>
