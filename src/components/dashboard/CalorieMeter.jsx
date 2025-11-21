@@ -38,38 +38,88 @@ export default function CalorieMeter({ isOpen, onClose }) {
         fileUrl = uploadResult.file_url;
       }
 
-      const prompt = `Sei un nutrizionista esperto specializzato nell'analisi nutrizionale precisa di piatti.
+      const prompt = `Sei un nutrizionista esperto certificato con 20 anni di esperienza nell'analisi nutrizionale PRECISA di piatti.
 
 ${fileUrl 
-  ? `ANALIZZA ATTENTAMENTE questa foto del piatto seguendo questi passaggi:
+  ? `METODOLOGIA DI ANALISI SCIENTIFICA - SEGUI QUESTO PROTOCOLLO ESATTO:
 
-1. IDENTIFICAZIONE: Osserva attentamente tutti gli alimenti visibili nel piatto
-2. QUANTIFICAZIONE: Stima la porzione totale in grammi basandoti sulle dimensioni del piatto e la quantità di cibo
-3. COMPOSIZIONE: Identifica ogni ingrediente principale e la sua quantità approssimativa
-4. CALCOLO: Calcola le calorie totali e i macronutrienti (proteine, carboidrati, grassi) in base alle quantità stimate
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 1: IDENTIFICAZIONE INGREDIENTI
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-REGOLE FONDAMENTALI:
-- Analizza SOLO ciò che vedi nella foto
-- Basa le tue stime su porzioni standard e realistiche
-- Se vedi carne, stima il peso della carne visibile
-- Se vedi verdure, stima il volume/peso delle verdure
-- Considera i condimenti visibili (olio, salse, etc)
-- Sii CONSISTENTE: la stessa foto deve dare sempre lo stesso risultato
-- Fornisci valori nutrizionali REALISTICI basati su database nutrizionali standard`
-  : `Analizza questo piatto descritto dall'utente: "${description}"
+Osserva la foto e identifica OGNI singolo ingrediente visibile:
+- Tipo di alimento (es: carne rossa, pollo, pesce, verdure, carboidrati)
+- Metodo di cottura (crudo, grigliato, fritto, bollito, al forno)
+- Condimenti e salse visibili (olio, burro, salse, spezie)
 
-Fornisci valori nutrizionali realistici basati sulla descrizione fornita.`}
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 2: QUANTIFICAZIONE PRECISA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-FORMATO RISPOSTA RICHIESTO:
-- Nome del piatto in italiano (es: "Bistecca di manzo con verdure grigliate")
-- Calorie totali del piatto
-- Proteine totali in grammi
-- Carboidrati totali in grammi  
-- Grassi totali in grammi
-- Porzione stimata in grammi
-- Lista degli ingredienti principali identificati
+Per OGNI ingrediente identificato:
+1. Stima il PESO in grammi usando questi riferimenti:
+   - Piatto standard: diametro 24-26cm
+   - Palmo di mano adulto: ~100g di proteine
+   - Pugno chiuso: ~100g di carboidrati
+   - Pollice: ~15-20g di grassi
+   - Cucchiaio: ~10-15g
 
-Fornisci un'analisi PRECISA, CONSISTENTE e REALISTICA.`;
+2. Consulta mentalmente i valori nutrizionali STANDARD per 100g:
+   - Usa database nutrizionali scientifici (USDA, CIQUAL)
+   - Considera il metodo di cottura (es: fritto +50% grassi)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 3: CALCOLO MATEMATICO INGREDIENTE PER INGREDIENTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Per OGNI ingrediente calcola:
+- Calorie = (kcal per 100g × peso stimato) / 100
+- Proteine = (g proteine per 100g × peso stimato) / 100
+- Carboidrati = (g carbo per 100g × peso stimato) / 100
+- Grassi = (g grassi per 100g × peso stimato) / 100
+
+SOMMA tutti i valori di tutti gli ingredienti per il totale finale.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+FASE 4: VERIFICA COERENZA
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Controlla che:
+- Calorie totali = (Proteine × 4) + (Carboidrati × 4) + (Grassi × 9)
+- I valori sono REALISTICI per la porzione
+- Proteine: tipicamente 20-40% delle calorie
+- Carboidrati: tipicamente 30-50% delle calorie
+- Grassi: tipicamente 20-35% delle calorie
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+REGOLE DETERMINISTICHE ASSOLUTE
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+✓ USA SEMPRE gli stessi valori nutrizionali per lo stesso alimento
+✓ SE vedi 200g di carne → USA SEMPRE 200g, non 180g o 220g
+✓ MANTIENI la coerenza matematica: stessa foto = stessi numeri
+✓ BASA le stime su dimensioni STANDARD del piatto (24-26cm)
+✓ ARROTONDA ai 5g più vicini per consistenza
+✓ SE c'è olio visibile → aggiungi 10-15g di olio (90-135 kcal)
+✓ SE il cibo è fritto → aumenta i grassi del 40-50%`
+  : `Analizza questo piatto: "${description}"
+
+Usa gli stessi criteri scientifici per stimare i valori nutrizionali.`}
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT RICHIESTO
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+Fornisci ESATTAMENTE:
+- Nome del piatto in italiano
+- Calorie totali (somma di tutti gli ingredienti)
+- Proteine totali in grammi (somma)
+- Carboidrati totali in grammi (somma)
+- Grassi totali in grammi (somma)
+- Porzione totale stimata in grammi
+- Lista ingredienti principali identificati con peso stimato
+
+IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEMPRE dare gli stessi risultati.`;
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt,
