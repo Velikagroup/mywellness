@@ -38,24 +38,43 @@ export default function CalorieMeter({ isOpen, onClose }) {
         fileUrl = uploadResult.file_url;
       }
 
-      const prompt = `Sei un nutrizionista esperto. ${
-        fileUrl 
-          ? 'Analizza questa foto di un piatto e calcola il contenuto nutrizionale.' 
-          : `Analizza questo piatto: "${description}"`
-      }
+      const prompt = `Sei un nutrizionista esperto specializzato nell'analisi nutrizionale precisa di piatti.
 
-Fornisci:
-- Nome del piatto (in italiano)
-- Calorie totali
-- Proteine (g)
-- Carboidrati (g)
-- Grassi (g)
-- Porzione stimata (g)
-- Ingredienti principali identificati`;
+${fileUrl 
+  ? `ANALIZZA ATTENTAMENTE questa foto del piatto seguendo questi passaggi:
+
+1. IDENTIFICAZIONE: Osserva attentamente tutti gli alimenti visibili nel piatto
+2. QUANTIFICAZIONE: Stima la porzione totale in grammi basandoti sulle dimensioni del piatto e la quantità di cibo
+3. COMPOSIZIONE: Identifica ogni ingrediente principale e la sua quantità approssimativa
+4. CALCOLO: Calcola le calorie totali e i macronutrienti (proteine, carboidrati, grassi) in base alle quantità stimate
+
+REGOLE FONDAMENTALI:
+- Analizza SOLO ciò che vedi nella foto
+- Basa le tue stime su porzioni standard e realistiche
+- Se vedi carne, stima il peso della carne visibile
+- Se vedi verdure, stima il volume/peso delle verdure
+- Considera i condimenti visibili (olio, salse, etc)
+- Sii CONSISTENTE: la stessa foto deve dare sempre lo stesso risultato
+- Fornisci valori nutrizionali REALISTICI basati su database nutrizionali standard`
+  : `Analizza questo piatto descritto dall'utente: "${description}"
+
+Fornisci valori nutrizionali realistici basati sulla descrizione fornita.`}
+
+FORMATO RISPOSTA RICHIESTO:
+- Nome del piatto in italiano (es: "Bistecca di manzo con verdure grigliate")
+- Calorie totali del piatto
+- Proteine totali in grammi
+- Carboidrati totali in grammi  
+- Grassi totali in grammi
+- Porzione stimata in grammi
+- Lista degli ingredienti principali identificati
+
+Fornisci un'analisi PRECISA, CONSISTENTE e REALISTICA.`;
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt,
         file_urls: fileUrl ? [fileUrl] : undefined,
+        add_context_from_internet: false,
         response_json_schema: {
           type: "object",
           properties: {
@@ -66,7 +85,8 @@ Fornisci:
             fat: { type: "number" },
             portion_size: { type: "number" },
             main_ingredients: { type: "array", items: { type: "string" } }
-          }
+          },
+          required: ["dish_name", "calories", "protein", "carbs", "fat", "portion_size", "main_ingredients"]
         }
       });
 
