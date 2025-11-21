@@ -172,17 +172,17 @@ export default function AdminSupportTickets() {
   };
 
   const handleOpenChat = (ticket) => {
-    // Controlla se il ticket è già aperto
-    if (openChats.find(chat => chat.id === ticket.id)) {
-      return;
-    }
-    
-    // Rimuovi dalla lista di nuove risposte
+    // Rimuovi SUBITO dalla lista di nuove risposte (anche se già aperta)
     setNewResponseTickets(prev => {
       const newSet = new Set(prev);
       newSet.delete(ticket.id);
       return newSet;
     });
+    
+    // Controlla se il ticket è già aperto
+    if (openChats.find(chat => chat.id === ticket.id)) {
+      return;
+    }
     
     // Aggiungi il ticket alle chat aperte
     setOpenChats(prev => [...prev, {
@@ -203,11 +203,14 @@ export default function AdminSupportTickets() {
   };
 
   const updateChatMessage = (ticketId, newMessage) => {
-    // Rimuovi badge "Nuova Risposta" appena l'admin inizia a scrivere
+    // 🔥 RIMUOVI BADGE APPENA SI SCRIVE (anche al primo carattere)
     setNewResponseTickets(prev => {
-      const newSet = new Set(prev);
-      newSet.delete(ticketId);
-      return newSet;
+      if (prev.has(ticketId)) {
+        const newSet = new Set(prev);
+        newSet.delete(ticketId);
+        return newSet;
+      }
+      return prev;
     });
     
     setOpenChats(prev => prev.map(chat =>
@@ -381,6 +384,19 @@ export default function AdminSupportTickets() {
     } catch (error) {
       console.error('Error closing ticket:', error);
       alert('❌ Errore nella chiusura del ticket');
+    }
+  };
+
+  const handleReopenTicket = async (ticketId) => {
+    try {
+      await base44.entities.SupportTicket.update(ticketId, {
+        status: 'in_lavorazione',
+        resolved_at: null
+      });
+      alert('✅ Ticket riaperto con successo');
+    } catch (error) {
+      console.error('Error reopening ticket:', error);
+      alert('❌ Errore nella riapertura del ticket');
     }
   };
 
@@ -1260,6 +1276,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
             onSendMessage={(msgOverride) => handleSendResponse(chat.id, msgOverride)}
             onUpdateMessage={(msg) => updateChatMessage(chat.id, msg)}
             onCloseTicket={() => handleCloseTicketFromChat(chat.id)}
+            onReopenTicket={() => handleReopenTicket(chat.id)}
             isSending={sendingStates[chat.id] || false}
             index={index}
             onImageClick={setFullscreenImage}
@@ -1291,7 +1308,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
       );
       }
 
-      function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage, onCloseTicket, isSending, index, onImageClick }) {
+      function ChatWindow({ chat, onClose, onMinimize, onSendMessage, onUpdateMessage, onCloseTicket, onReopenTicket, isSending, index, onImageClick }) {
   const messagesEndRef = useRef(null);
   const fileInputRef = useRef(null);
   const [uploadingFile, setUploadingFile] = useState(false);
@@ -1303,6 +1320,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
   const [newResponseTitle, setNewResponseTitle] = useState('');
   const [newResponseContent, setNewResponseContent] = useState('');
   const [newResponseCategory, setNewResponseCategory] = useState('generale');
+  const [isImprovingWithAI, setIsImprovingWithAI] = useState(false);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -1444,6 +1462,47 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
 
   const removeAttachment = (url) => {
     setAttachedFiles(prev => prev.filter(f => f.url !== url));
+  };
+
+  const handleImproveWithAI = async () => {
+    if (!chat.newMessage.trim()) {
+      alert('Scrivi prima un messaggio da migliorare');
+      return;
+    }
+
+    setIsImprovingWithAI(true);
+    try {
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Sei un assistente clienti professionale di MyWellness, un'app di fitness e nutrizione AI.
+
+Migliora il seguente messaggio di risposta al cliente rendendolo:
+- Formale ma cordiale e empatico
+- Educato e professionale
+- Conciso e chiaro
+- Strutturato bene con paragrafi se necessario
+- Mantieni TUTTE le informazioni tecniche e i dettagli del messaggio originale
+
+Messaggio originale da migliorare:
+"${chat.newMessage}"
+
+Rispondi SOLO con il messaggio migliorato, senza introduzioni o spiegazioni.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            improved_message: { type: "string" }
+          }
+        }
+      });
+
+      const improved = response?.improved_message || response?.data?.improved_message;
+      if (improved) {
+        onUpdateMessage(improved);
+      }
+    } catch (error) {
+      console.error('Error improving message:', error);
+      alert('❌ Errore nel miglioramento AI');
+    }
+    setIsImprovingWithAI(false);
   };
 
   const handleSendWithAttachments = async () => {
@@ -1701,7 +1760,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
       )}
 
       {/* Input Area */}
-      {!chat.isMinimized && chat.status !== 'chiuso' && (
+      {!chat.isMinimized && (
         <div className="relative p-4 border-t border-gray-200/30 backdrop-blur-sm bg-white/30">
           <div className="absolute inset-0 bg-gradient-to-t from-[#26847F]/3 to-transparent opacity-30"></div>
           <div className="relative space-y-2">
@@ -1741,13 +1800,13 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                   onChange={handleFileSelect}
                   className="hidden"
                 />
-                <div className="flex gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <Button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
                     disabled={uploadingFile}
                     variant="outline"
-                    className="flex-1 rounded-xl text-xs h-8"
+                    className="rounded-xl text-xs h-8"
                   >
                     {uploadingFile ? 'Caricamento...' : '📎 Allega'}
                   </Button>
@@ -1755,10 +1814,23 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                     type="button"
                     onClick={() => setShowQuickResponses(!showQuickResponses)}
                     variant="outline"
-                    className="flex-1 rounded-xl text-xs h-8 bg-purple-50 hover:bg-purple-100 border-purple-200"
+                    className="rounded-xl text-xs h-8 bg-purple-50 hover:bg-purple-100 border-purple-200"
                   >
                     <Zap className="w-3 h-3 mr-1" />
                     Veloci
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={handleImproveWithAI}
+                    disabled={isImprovingWithAI || !chat.newMessage.trim()}
+                    variant="outline"
+                    className="rounded-xl text-xs h-8 bg-blue-50 hover:bg-blue-100 border-blue-200"
+                  >
+                    {isImprovingWithAI ? (
+                      <div className="animate-spin rounded-full h-3 w-3 border-2 border-blue-600 border-t-transparent"></div>
+                    ) : (
+                      <>✨ AI</>
+                    )}
                   </Button>
                 </div>
               </div>
@@ -1774,14 +1846,25 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                     <Send className="w-4 h-4" />
                   )}
                 </Button>
-                <Button
-                  onClick={onCloseTicket}
-                  variant="outline"
-                  className="px-4 h-10 rounded-2xl text-xs border-green-300 text-green-600 hover:bg-green-50"
-                >
-                  <CheckCircle className="w-3 h-3 mr-1" />
-                  Chiudi
-                </Button>
+                {chat.status === 'chiuso' ? (
+                  <Button
+                    onClick={onReopenTicket}
+                    variant="outline"
+                    className="px-4 h-10 rounded-2xl text-xs border-blue-300 text-blue-600 hover:bg-blue-50"
+                  >
+                    <RefreshCw className="w-3 h-3 mr-1" />
+                    Riapri
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={onCloseTicket}
+                    variant="outline"
+                    className="px-4 h-10 rounded-2xl text-xs border-green-300 text-green-600 hover:bg-green-50"
+                  >
+                    <CheckCircle className="w-3 h-3 mr-1" />
+                    Chiudi
+                  </Button>
+                )}
               </div>
             </div>
 
