@@ -579,7 +579,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
           {/* ACCOUNT */}
           <TabsContent value="account" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Informazioni Personali</CardTitle>
               </CardHeader>
@@ -633,7 +633,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </CardContent>
               </Card>
             ) : (
-              <Card className="bg-white/80 backdrop-blur-sm">
+              <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle>Cambio Password</CardTitle>
                 </CardHeader>
@@ -679,7 +679,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </Card>
             )}
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardContent className="pt-6">
                 <Button
                   onClick={handleLogout}
@@ -695,7 +695,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
           {/* SUBSCRIPTION */}
           <TabsContent value="subscription" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Il Tuo Piano</CardTitle>
               </CardHeader>
@@ -756,7 +756,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
           {/* BILLING */}
           <TabsContent value="billing" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Dati di Fatturazione</CardTitle>
               </CardHeader>
@@ -845,7 +845,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Storico Transazioni</CardTitle>
               </CardHeader>
@@ -883,7 +883,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
           {/* NOTIFICATIONS */}
           <TabsContent value="notifications" className="space-y-6">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Preferenze Email</CardTitle>
               </CardHeader>
@@ -1016,7 +1016,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </div>
 
                 {/* Link di Affiliazione */}
-                <Card className="bg-white/80 backdrop-blur-sm">
+                <Card className="water-glass-effect border-gray-200/30">
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Share2 className="w-5 h-5" />
@@ -1046,7 +1046,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </Card>
 
                 {/* Prelievi */}
-                <Card className="bg-white/80 backdrop-blur-sm">
+                <Card className="water-glass-effect border-gray-200/30">
                   <CardHeader>
                     <CardTitle>Preleva Crediti</CardTitle>
                   </CardHeader>
@@ -1104,7 +1104,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
                 {/* Crediti Recenti */}
                 {affiliateStats.recent_credits?.length > 0 && (
-                  <Card className="bg-white/80 backdrop-blur-sm">
+                  <Card className="water-glass-effect border-gray-200/30">
                     <CardHeader>
                       <CardTitle>Crediti Recenti</CardTitle>
                     </CardHeader>
@@ -1162,7 +1162,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </Card>
             )}
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Invia un Ticket di Supporto</CardTitle>
               </CardHeader>
@@ -1229,7 +1229,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>I Tuoi Ticket</CardTitle>
               </CardHeader>
