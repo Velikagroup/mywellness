@@ -106,20 +106,29 @@ export default function AdminSupportTickets() {
         
         // Identifica ticket con nuove risposte utente
         updatedTickets.forEach(ticket => {
-          if (ticket.status === 'in_lavorazione') {
-            const oldTicket = tickets.find(t => t.id === ticket.id);
-            if (oldTicket && ticket.message !== oldTicket.message) {
+          const oldTicket = tickets.find(t => t.id === ticket.id);
+          
+          if (oldTicket && ticket.message !== oldTicket.message) {
+            // Marca come nuova risposta se è in lavorazione
+            if (ticket.status === 'in_lavorazione') {
               setNewResponseTickets(prev => new Set([...prev, ticket.id]));
-              
-              // 🔥 AGGIORNA ANCHE LE CHAT APERTE IN REAL-TIME
-              setOpenChats(prevChats => 
-                prevChats.map(chat => 
-                  chat.id === ticket.id 
-                    ? { ...chat, message: ticket.message, status: ticket.status, admin_response: ticket.admin_response }
-                    : chat
-                )
-              );
             }
+            
+            // 🔥 AGGIORNA ANCHE LE CHAT APERTE IN REAL-TIME
+            setOpenChats(prevChats => 
+              prevChats.map(chat => 
+                chat.id === ticket.id 
+                  ? { 
+                      ...chat, 
+                      message: ticket.message, 
+                      status: ticket.status, 
+                      admin_response: ticket.admin_response 
+                    }
+                  : chat
+              )
+            );
+            
+            console.log('🔄 Ticket aggiornato in real-time (admin):', ticket.id);
           }
         });
         
@@ -129,9 +138,13 @@ export default function AdminSupportTickets() {
       }
     };
 
+    // Prima chiamata immediata
+    pollTickets();
+    
+    // Poi polling ogni 2 secondi
     const interval = setInterval(pollTickets, 2000);
     return () => clearInterval(interval);
-  }, [user, tickets]);
+  }, [user]);
 
   const checkAccess = async () => {
     try {

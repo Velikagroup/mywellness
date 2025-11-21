@@ -147,25 +147,36 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [localTicket, localTicket.message]);
+  }, [localTicket.message]);
 
   // 🔥 POLLING REAL-TIME per nuovi messaggi admin ogni 2 secondi
   useEffect(() => {
     const pollTicket = async () => {
       try {
         const updated = await base44.entities.SupportTicket.filter({ id: ticket.id });
-        if (updated && updated.length > 0 && updated[0].message !== localTicket.message) {
-          setLocalTicket(updated[0]);
-          onUpdate?.();
+        if (updated && updated.length > 0) {
+          const freshTicket = updated[0];
+          // Aggiorna solo se il messaggio è cambiato
+          if (freshTicket.message !== localTicket.message || 
+              freshTicket.status !== localTicket.status ||
+              freshTicket.admin_response !== localTicket.admin_response) {
+            console.log('🔄 Ticket aggiornato in real-time:', freshTicket);
+            setLocalTicket(freshTicket);
+            scrollToBottom();
+          }
         }
       } catch (error) {
         console.error('Error polling ticket:', error);
       }
     };
 
+    // Prima chiamata immediata
+    pollTicket();
+    
+    // Poi polling ogni 2 secondi
     const interval = setInterval(pollTicket, 2000);
     return () => clearInterval(interval);
-  }, [ticket.id, localTicket.message]);
+  }, [ticket.id]);
 
   const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);
