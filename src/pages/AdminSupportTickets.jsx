@@ -1273,20 +1273,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat.message, chat.newMessage]);
 
-  // Real-time update per questo specifico ticket
-  useEffect(() => {
-    const unsubscribe = base44.entities.SupportTicket.subscribe((updatedTickets) => {
-      const updatedTicket = updatedTickets.find(t => t.id === chat.id);
-      if (updatedTicket && updatedTicket.message !== chat.message) {
-        // Aggiorna il messaggio in tempo reale
-        onUpdateMessage(chat.newMessage); // Mantieni il messaggio corrente
-        // Forza re-render con nuovo messaggio
-        window.dispatchEvent(new CustomEvent('ticketUpdated', { detail: updatedTicket }));
-      }
-    });
-
-    return () => unsubscribe();
-  }, [chat.id, chat.message]);
+  // 🔥 NESSUNA subscription locale necessaria - aggiornamenti gestiti dal parent
 
   useEffect(() => {
     loadQuickResponses();
