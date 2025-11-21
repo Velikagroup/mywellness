@@ -90,11 +90,28 @@ export default function AdminSupportTickets() {
   const [topTopics, setTopTopics] = useState(null);
   const [isAnalyzingTopics, setIsAnalyzingTopics] = useState(false);
   const [newResponseTickets, setNewResponseTickets] = useState(new Set());
+  const [operators, setOperators] = useState([]);
+  const [assignedToFilter, setAssignedToFilter] = useState('all');
+  const [showAssignModal, setShowAssignModal] = useState(false);
+  const [ticketToAssign, setTicketToAssign] = useState(null);
   const ticketsPerPage = 20;
 
   useEffect(() => {
     checkAccess();
+    loadOperators();
   }, []);
+
+  const loadOperators = async () => {
+    try {
+      const allUsers = await base44.entities.User.list();
+      const supportUsers = allUsers.filter(u => 
+        u.role === 'admin' || u.custom_role === 'customer_support'
+      );
+      setOperators(supportUsers);
+    } catch (error) {
+      console.error('Error loading operators:', error);
+    }
+  };
 
   // 🔥 POLLING REAL-TIME per aggiornamenti ticket ogni 2 secondi
   useEffect(() => {
@@ -400,6 +417,29 @@ export default function AdminSupportTickets() {
     }
   };
 
+  const handleAssignTicket = async (operatorEmail) => {
+    if (!ticketToAssign) return;
+
+    try {
+      await base44.entities.SupportTicket.update(ticketToAssign.id, {
+        assigned_to: operatorEmail,
+        status: ticketToAssign.status === 'aperto' ? 'in_lavorazione' : ticketToAssign.status
+      });
+      
+      setShowAssignModal(false);
+      setTicketToAssign(null);
+      alert('✅ Ticket assegnato con successo');
+    } catch (error) {
+      console.error('Error assigning ticket:', error);
+      alert('❌ Errore nell\'assegnazione');
+    }
+  };
+
+  const openAssignModal = (ticket) => {
+    setTicketToAssign(ticket);
+    setShowAssignModal(true);
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -408,13 +448,24 @@ export default function AdminSupportTickets() {
     );
   }
 
-  // Filtra per stato e ricerca
+  // Filtra per stato, operatore assegnato e ricerca
   const filterTickets = (ticketList) => {
     let filtered = ticketList;
     
     // Filtra per stato
     if (statusFilter !== 'all') {
       filtered = filtered.filter(t => t.status === statusFilter);
+    }
+    
+    // Filtra per operatore assegnato
+    if (assignedToFilter !== 'all') {
+      if (assignedToFilter === 'unassigned') {
+        filtered = filtered.filter(t => !t.assigned_to);
+      } else if (assignedToFilter === 'me') {
+        filtered = filtered.filter(t => t.assigned_to === user?.email);
+      } else {
+        filtered = filtered.filter(t => t.assigned_to === assignedToFilter);
+      }
     }
     
     // Filtra per ricerca
@@ -606,35 +657,40 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
   };
 
   const TicketCard = ({ ticket }) => {
-    // Estrai le prime immagini dal messaggio
-    const imageMatches = ticket.message.match(/!\[([^\]]*)\]\(([^)]+)\)/g) || [];
-    const firstImages = imageMatches.slice(0, 2).map(match => {
-      const urlMatch = match.match(/\(([^)]+)\)/);
-      return urlMatch ? urlMatch[1] : null;
-    }).filter(Boolean);
+  // Estrai le prime immagini dal messaggio
+  const imageMatches = ticket.message.match(/!\[([^\]]*)\]\(([^)]+)\)/g) || [];
+  const firstImages = imageMatches.slice(0, 2).map(match => {
+  const urlMatch = match.match(/\(([^)]+)\)/);
+  return urlMatch ? urlMatch[1] : null;
+  }).filter(Boolean);
 
-    const isUnopened = ticket.status === 'aperto';
-    const isInProgress = ticket.status === 'in_lavorazione';
-    const isChatOpen = openChats.some(chat => chat.id === ticket.id);
-    const hasNewResponse = newResponseTickets.has(ticket.id) && !isChatOpen;
+  const isUnopened = ticket.status === 'aperto';
+  const isInProgress = ticket.status === 'in_lavorazione';
+  const isChatOpen = openChats.some(chat => chat.id === ticket.id);
+  const hasNewResponse = newResponseTickets.has(ticket.id) && !isChatOpen;
+  const assignedOperator = operators.find(op => op.email === ticket.assigned_to);
 
-    return (
-      <div
-        onClick={() => handleOpenChat(ticket)}
-        className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
-          isUnopened ? 'ticket-unopened' : 
-          isInProgress && hasNewResponse ? 'ticket-in-progress ticket-pulsing' : 
-          isInProgress ? 'ticket-in-progress' : 
-          'water-glass-effect border-gray-200/30'
-        }`}
-      >
-        <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-2 mb-2 flex-wrap">
-              <h3 className="font-bold text-gray-900 text-sm sm:text-base break-words">{ticket.subject}</h3>
-              {ticket.priority === 'premium' && <Crown className="w-4 h-4 text-purple-600 flex-shrink-0" />}
-              {ticket.ai_resolved && <Badge className="bg-green-100 text-green-700 text-xs">🤖 Chiuso da AI</Badge>}
-            </div>
+  return (
+  <div
+  className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
+    isUnopened ? 'ticket-unopened' : 
+    isInProgress && hasNewResponse ? 'ticket-in-progress ticket-pulsing' : 
+    isInProgress ? 'ticket-in-progress' : 
+    'water-glass-effect border-gray-200/30'
+  }`}
+  >
+  <div className="flex items-start justify-between gap-3 mb-3">
+    <div className="flex-1 min-w-0" onClick={() => handleOpenChat(ticket)}>
+      <div className="flex items-center gap-2 mb-2 flex-wrap">
+        <h3 className="font-bold text-gray-900 text-sm sm:text-base break-words">{ticket.subject}</h3>
+        {ticket.priority === 'premium' && <Crown className="w-4 h-4 text-purple-600 flex-shrink-0" />}
+        {ticket.ai_resolved && <Badge className="bg-green-100 text-green-700 text-xs">🤖 Chiuso da AI</Badge>}
+        {assignedOperator && (
+          <Badge className="bg-indigo-100 text-indigo-700 text-xs">
+            👤 {assignedOperator.full_name || assignedOperator.email.split('@')[0]}
+          </Badge>
+        )}
+      </div>
             
             {/* Mostra le immagini se presenti */}
             {firstImages.length > 0 && (
@@ -668,6 +724,11 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
               <Badge variant="outline" className="text-xs">{ticket.user_email}</Badge>
               <Badge className="bg-purple-100 text-purple-700 text-xs">{ticket.user_plan}</Badge>
               <Badge className="text-xs">{ticket.category}</Badge>
+              {ticket.customer_language && ticket.customer_language !== 'it' && (
+                <Badge className="bg-blue-50 text-blue-700 text-xs">
+                  🌍 {ticket.customer_language.toUpperCase()}
+                </Badge>
+              )}
               {hasNewResponse && (
                 <Badge className="bg-red-500 text-white text-xs animate-pulse">
                   🔴 Nuova Risposta
@@ -675,13 +736,26 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
               )}
             </div>
           </div>
-          <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap flex-shrink-0 ${
-            ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
-            ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
-            ticket.status === 'chiuso' || ticket.ai_resolved ? 'bg-transparent text-gray-400 border border-gray-300' :
-            'bg-gray-100 text-gray-700'
-          }`}>
-            {ticket.ai_resolved ? 'chiuso (AI)' : ticket.status}
+          <div className="flex flex-col gap-2 items-end flex-shrink-0">
+            <div className={`px-2 sm:px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
+              ticket.status === 'aperto' ? 'bg-blue-100 text-blue-700' :
+              ticket.status === 'in_lavorazione' ? 'bg-yellow-100 text-yellow-700' :
+              ticket.status === 'chiuso' || ticket.ai_resolved ? 'bg-transparent text-gray-400 border border-gray-300' :
+              'bg-gray-100 text-gray-700'
+            }`}>
+              {ticket.ai_resolved ? 'chiuso (AI)' : ticket.status}
+            </div>
+            <Button
+              onClick={(e) => {
+                e.stopPropagation();
+                openAssignModal(ticket);
+              }}
+              variant="outline"
+              size="sm"
+              className="text-xs h-7 px-2"
+            >
+              {ticket.assigned_to ? '↻ Riassegna' : '+ Assegna'}
+            </Button>
           </div>
         </div>
         <p className="text-xs text-gray-500">
@@ -764,60 +838,124 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
             />
           </div>
 
-          {/* Filtri per Stato */}
-          <div className="flex flex-wrap gap-2 mt-4">
-            <button
-              onClick={() => {
-                setStatusFilter('all');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                statusFilter === 'all'
-                  ? 'bg-gray-900 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-              }`}
-            >
-              Tutti
-            </button>
-            <button
-              onClick={() => {
-                setStatusFilter('aperto');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                statusFilter === 'aperto'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
-              }`}
-            >
-              Aperti
-            </button>
-            <button
-              onClick={() => {
-                setStatusFilter('in_lavorazione');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                statusFilter === 'in_lavorazione'
-                  ? 'bg-yellow-600 text-white shadow-md'
-                  : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
-              }`}
-            >
-              In Lavorazione
-            </button>
-            <button
-              onClick={() => {
-                setStatusFilter('chiuso');
-                setCurrentPage(1);
-              }}
-              className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
-                statusFilter === 'chiuso'
-                  ? 'bg-gray-600 text-white shadow-md'
-                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-              }`}
-            >
-              Chiusi
-            </button>
+          {/* Filtri per Stato e Operatore */}
+          <div className="space-y-3 mt-4">
+            <div className="flex flex-wrap gap-2">
+              <button
+                onClick={() => {
+                  setStatusFilter('all');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  statusFilter === 'all'
+                    ? 'bg-gray-900 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                }`}
+              >
+                Tutti
+              </button>
+              <button
+                onClick={() => {
+                  setStatusFilter('aperto');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  statusFilter === 'aperto'
+                    ? 'bg-blue-600 text-white shadow-md'
+                    : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                }`}
+              >
+                Aperti
+              </button>
+              <button
+                onClick={() => {
+                  setStatusFilter('in_lavorazione');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  statusFilter === 'in_lavorazione'
+                    ? 'bg-yellow-600 text-white shadow-md'
+                    : 'bg-yellow-100 text-yellow-700 hover:bg-yellow-200'
+                }`}
+              >
+                In Lavorazione
+              </button>
+              <button
+                onClick={() => {
+                  setStatusFilter('chiuso');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  statusFilter === 'chiuso'
+                    ? 'bg-gray-600 text-white shadow-md'
+                    : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                }`}
+              >
+                Chiusi
+              </button>
+            </div>
+
+            <div className="flex flex-wrap gap-2 items-center">
+              <span className="text-xs text-gray-600 font-semibold">Operatore:</span>
+              <button
+                onClick={() => {
+                  setAssignedToFilter('all');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  assignedToFilter === 'all'
+                    ? 'bg-indigo-600 text-white shadow-md'
+                    : 'bg-indigo-50 text-indigo-700 hover:bg-indigo-100'
+                }`}
+              >
+                Tutti
+              </button>
+              <button
+                onClick={() => {
+                  setAssignedToFilter('me');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  assignedToFilter === 'me'
+                    ? 'bg-green-600 text-white shadow-md'
+                    : 'bg-green-50 text-green-700 hover:bg-green-100'
+                }`}
+              >
+                I Miei
+              </button>
+              <button
+                onClick={() => {
+                  setAssignedToFilter('unassigned');
+                  setCurrentPage(1);
+                }}
+                className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                  assignedToFilter === 'unassigned'
+                    ? 'bg-orange-600 text-white shadow-md'
+                    : 'bg-orange-50 text-orange-700 hover:bg-orange-100'
+                }`}
+              >
+                Non Assegnati
+              </button>
+              {operators.map(op => (
+                <button
+                  key={op.email}
+                  onClick={() => {
+                    setAssignedToFilter(op.email);
+                    setCurrentPage(1);
+                  }}
+                  className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
+                    assignedToFilter === op.email
+                      ? 'bg-purple-600 text-white shadow-md'
+                      : 'bg-purple-50 text-purple-700 hover:bg-purple-100'
+                  }`}
+                >
+                  {op.full_name || op.email.split('@')[0]}
+                  {op.languages && op.languages.length > 0 && (
+                    <span className="ml-1 opacity-75">({op.languages.join(', ')})</span>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
 
