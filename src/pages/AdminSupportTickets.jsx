@@ -398,11 +398,9 @@ export default function AdminSupportTickets() {
     return (
       <div
         onClick={() => handleOpenChat(ticket)}
-        className="p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer water-glass-effect border-gray-200/30"
-        style={isUnopened ? {
-          background: 'linear-gradient(135deg, rgba(219, 234, 254, 0.4) 0%, rgba(191, 219, 254, 0.3) 50%, rgba(219, 234, 254, 0.4) 100%)',
-          borderColor: 'rgba(147, 197, 253, 0.4)'
-        } : {}}
+        className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
+          isUnopened ? 'ticket-unopened' : 'water-glass-effect border-gray-200/30'
+        }`}
       >
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
@@ -869,6 +867,20 @@ export default function AdminSupportTickets() {
 
         .animate-slide-in {
           animation: slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
+
+        .ticket-unopened {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(219, 234, 254, 0.5) 0%,
+            rgba(191, 219, 254, 0.4) 50%,
+            rgba(219, 234, 254, 0.5) 100%
+          ) !important;
+          border: 1px solid rgba(147, 197, 253, 0.4) !important;
+          box-shadow: 
+            0 8px 32px 0 rgba(59, 130, 246, 0.12),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
         }
 
         .luxury-chat-widget {
