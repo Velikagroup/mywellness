@@ -626,55 +626,14 @@ export default function AdminCoupons() {
               </CardContent>
             </Card>
 
-            {/* Tabella Dettaglio Coupon */}
-            <Card className="water-glass-effect border-gray-200/30 lg:col-span-2">
-              <CardHeader>
-                <CardTitle className="text-base">Dettaglio Performance Coupon</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="overflow-x-auto">
-                  <Table>
-                    <TableHeader>
-                      <TableRow>
-                        <TableHead>Codice</TableHead>
-                        <TableHead className="text-right">Utilizzi</TableHead>
-                        <TableHead className="text-right">Fatturato</TableHead>
-                        <TableHead className="text-right">Sconti Dati</TableHead>
-                        <TableHead className="text-right">Sconto Medio</TableHead>
-                      </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                      {couponStats.couponUsage.length > 0 ? (
-                        couponStats.couponUsage
-                          .sort((a, b) => b.uses - a.uses)
-                          .map((item, idx) => (
-                            <TableRow key={idx}>
-                              <TableCell className="font-mono font-semibold">{item.code}</TableCell>
-                              <TableCell className="text-right">{item.uses}</TableCell>
-                              <TableCell className="text-right text-green-600 font-semibold">€{item.revenue.toFixed(2)}</TableCell>
-                              <TableCell className="text-right text-red-600 font-semibold">€{item.discounts.toFixed(2)}</TableCell>
-                              <TableCell className="text-right">€{(item.discounts / item.uses).toFixed(2)}</TableCell>
-                            </TableRow>
-                          ))
-                      ) : (
-                        <TableRow>
-                          <TableCell colSpan={5} className="text-center text-gray-500">
-                            Nessun coupon utilizzato
-                          </TableCell>
-                        </TableRow>
-                      )}
-                    </TableBody>
-                  </Table>
-                </div>
-              </CardContent>
-            </Card>
+
           </div>
         </div>
 
         {/* Coupons Card */}
         <Card className="water-glass-effect border-gray-200/30 shadow-xl rounded-xl">
           <CardHeader>
-            <CardTitle className="text-lg text-gray-900">Tutti i Coupon</CardTitle>
+            <CardTitle className="text-lg text-gray-900">Tutti i Coupon e Performance</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="overflow-x-auto">
@@ -686,64 +645,71 @@ export default function AdminCoupons() {
                     <TableHead>Sconto/Piano</TableHead>
                     <TableHead>Email</TableHead>
                     <TableHead>Scadenza</TableHead>
-                    <TableHead>Usato</TableHead>
+                    <TableHead className="text-right">Utilizzi</TableHead>
+                    <TableHead className="text-right">Fatturato</TableHead>
+                    <TableHead className="text-right">Sconti Dati</TableHead>
                     <TableHead>Stato</TableHead>
                     <TableHead className="text-right">Azioni</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {isLoading ? (
-                    <TableRow><TableCell colSpan={8} className="text-center">Caricamento...</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={10} className="text-center">Caricamento...</TableCell></TableRow>
                   ) : coupons.length > 0 ? (
-                    coupons.map((coupon) => (
-                      <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
-                        <TableCell className="font-medium font-mono text-sm">{coupon.code}</TableCell>
-                        <TableCell>
-                          {coupon.discount_type === 'lifetime_free' ? (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
-                              <Crown className="w-3 h-3" />
-                              Lifetime Free
-                            </span>
-                          ) : (
-                            <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
-                              <Percent className="w-3 h-3" />
-                              Sconto %
-                            </span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          {coupon.discount_type === 'lifetime_free' 
-                            ? <span className="font-semibold text-purple-700 uppercase">{coupon.assigned_plan || 'Premium'}</span>
-                            : `${coupon.discount_value}%`
-                          }
-                        </TableCell>
-                        <TableCell className="text-sm text-gray-600">
-                          {coupon.assigned_to_email || '-'}
-                        </TableCell>
-                        <TableCell>{coupon.expires_at ? format(new Date(coupon.expires_at), 'dd/MM/yyyy') : 'Mai'}</TableCell>
-                        <TableCell>
-                          {coupon.used_by ? (
-                            <span className="text-xs text-green-600 font-semibold">✓ Usato</span>
-                          ) : (
-                            <span className="text-xs text-gray-400">Non usato</span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Switch
-                            checked={coupon.is_active}
-                            onCheckedChange={() => handleToggleActive(coupon)}
-                            aria-label="Attiva/Disattiva"
-                          />
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <Button variant="ghost" size="icon" onClick={() => handleDeleteCoupon(coupon.id)}>
-                            <Trash2 className="h-4 w-4 text-red-500" />
-                          </Button>
-                        </TableCell>
-                      </TableRow>
-                    ))
+                    coupons.map((coupon) => {
+                      const stats = couponStats.couponUsage.find(u => u.code === coupon.code) || { uses: 0, revenue: 0, discounts: 0 };
+                      return (
+                        <TableRow key={coupon.id} className={coupon.discount_type === 'lifetime_free' ? 'bg-purple-50/30' : ''}>
+                          <TableCell className="font-medium font-mono text-sm">{coupon.code}</TableCell>
+                          <TableCell>
+                            {coupon.discount_type === 'lifetime_free' ? (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                                <Crown className="w-3 h-3" />
+                                Lifetime
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2 py-1 bg-blue-100 text-blue-700 rounded-full text-xs font-semibold">
+                                <Percent className="w-3 h-3" />
+                                Sconto
+                              </span>
+                            )}
+                          </TableCell>
+                          <TableCell>
+                            {coupon.discount_type === 'lifetime_free' 
+                              ? <span className="font-semibold text-purple-700 uppercase">{coupon.assigned_plan || 'Premium'}</span>
+                              : `${coupon.discount_value}%`
+                            }
+                          </TableCell>
+                          <TableCell className="text-sm text-gray-600">
+                            {coupon.assigned_to_email || '-'}
+                          </TableCell>
+                          <TableCell className="text-sm">{coupon.expires_at ? format(new Date(coupon.expires_at), 'dd/MM/yyyy') : 'Mai'}</TableCell>
+                          <TableCell className="text-right font-semibold text-blue-600">
+                            {stats.uses > 0 ? stats.uses : '-'}
+                          </TableCell>
+                          <TableCell className="text-right font-semibold text-green-600">
+                            {stats.revenue > 0 ? `€${stats.revenue.toFixed(2)}` : '-'}
+                          </TableCell>
+                          <TableCell className="text-right font-semibold text-red-600">
+                            {stats.discounts > 0 ? `€${stats.discounts.toFixed(2)}` : '-'}
+                          </TableCell>
+                          <TableCell>
+                            <Switch
+                              checked={coupon.is_active}
+                              onCheckedChange={() => handleToggleActive(coupon)}
+                              aria-label="Attiva/Disattiva"
+                            />
+                          </TableCell>
+                          <TableCell className="text-right">
+                            <Button variant="ghost" size="icon" onClick={() => handleDeleteCoupon(coupon.id)}>
+                              <Trash2 className="h-4 w-4 text-red-500" />
+                            </Button>
+                          </TableCell>
+                        </TableRow>
+                      );
+                    })
                   ) : (
-                    <TableRow><TableCell colSpan={8} className="text-center">Nessun coupon trovato.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={10} className="text-center">Nessun coupon trovato.</TableCell></TableRow>
                   )}
                 </TableBody>
               </Table>
