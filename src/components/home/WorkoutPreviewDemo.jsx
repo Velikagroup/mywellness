@@ -3,7 +3,7 @@ import { Card } from '@/components/ui/card';
 import { ChevronDown, Dumbbell, Clock, RotateCcw } from 'lucide-react';
 
 export default function WorkoutPreviewDemo() {
-  const [expandedExercise, setExpandedExercise] = useState(null);
+  const [expandedExercise, setExpandedExercise] = useState(1);
 
   const warmup = [
     { name: 'Corsa sul Posto', duration: '5 minuti' },
