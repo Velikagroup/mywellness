@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const TARGET_ZONES = [
@@ -16,9 +15,16 @@ const TARGET_ZONES = [
 ];
 
 export default function TargetZoneStep({ data, onDataChange, onNext }) {
-  const handleSelection = (zone) => {
-    onDataChange({ target_zone: zone });
-    setTimeout(() => onNext(), 300);
+  const selectedZones = data.target_zones || [];
+
+  const handleSelection = (zoneId) => {
+    let newZones;
+    if (selectedZones.includes(zoneId)) {
+      newZones = selectedZones.filter(z => z !== zoneId);
+    } else {
+      newZones = [...selectedZones, zoneId];
+    }
+    onDataChange({ target_zones: newZones });
   };
 
   return (
@@ -27,8 +33,8 @@ export default function TargetZoneStep({ data, onDataChange, onNext }) {
         <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">🎯</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Su quale zona vuoi concentrarti maggiormente?</h2>
-        <p className="text-gray-600">Scegli la tua area principale di miglioramento</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">Su quali zone vuoi concentrarti?</h2>
+        <p className="text-gray-600">Seleziona una o più aree di miglioramento</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-w-4xl mx-auto">
@@ -37,7 +43,7 @@ export default function TargetZoneStep({ data, onDataChange, onNext }) {
             key={zone.id}
             onClick={() => handleSelection(zone.id)}
             className={`p-4 rounded-lg border-2 transition-all hover:shadow-md text-center ${
-              data.target_zone === zone.id
+              selectedZones.includes(zone.id)
                 ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] shadow-lg'
                 : 'border-gray-200 hover:border-teal-300'
             }`}

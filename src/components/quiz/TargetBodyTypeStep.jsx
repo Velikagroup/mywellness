@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const MALE_BODY_TYPES = [
@@ -30,7 +29,6 @@ export default function TargetBodyTypeStep({ data, onDataChange, onNext }) {
 
   const handleSelection = (percentage) => {
     onDataChange({ target_body_fat_visual: percentage });
-    setTimeout(() => onNext(), 300);
   };
 
   return (

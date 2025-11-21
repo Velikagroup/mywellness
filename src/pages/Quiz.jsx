@@ -181,7 +181,7 @@ export default function Quiz() {
 
   const isCurrentStepValid = () => {
     const stepComponent = dynamicSteps[currentStep]?.component;
-    
+
     if (stepComponent === IntroStep) {
       return !!quizData.gender;
     }
@@ -213,12 +213,12 @@ export default function Quiz() {
       return !!quizData.target_body_fat_visual;
     }
     if (stepComponent === TargetZoneStep) {
-      return !!quizData.target_zone;
+      return !!quizData.target_zones && quizData.target_zones.length > 0;
     }
     if (stepComponent === WeightLossSpeedStep) {
       return !!quizData.weight_loss_speed;
     }
-    
+
     return true;
   };
 
