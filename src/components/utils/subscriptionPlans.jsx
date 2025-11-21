@@ -1,6 +1,7 @@
 // Definizione dei piani e delle loro features
 export const PLANS = {
   TRIAL: 'trial',
+  STANDARD: 'standard',
   BASE: 'base',
   PRO: 'pro',
   PREMIUM: 'premium'
@@ -26,6 +27,25 @@ export const PLAN_FEATURES = {
     meal_plan_generations_per_month: 1,
     workout_plan_generations_per_month: 0,
     blocked_days: ['thursday', 'friday', 'saturday', 'sunday']
+  },
+  [PLANS.STANDARD]: {
+    name: 'Standard',
+    dashboard: true,
+    meal_plan: false,
+    recipes_with_images: false,
+    bmr_calculation: true,
+    shopping_list: false,
+    weight_tracking: true,
+    ingredient_substitution: false,
+    workout_plan: false,
+    meal_photo_analysis: false,
+    auto_rebalance: false,
+    workout_tracking: false,
+    workout_modification: false,
+    progress_photo_analysis: false,
+    priority_support: false,
+    meal_plan_generations_per_month: 0,
+    workout_plan_generations_per_month: 0
   },
   [PLANS.BASE]: {
     name: 'Base',
