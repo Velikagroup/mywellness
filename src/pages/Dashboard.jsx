@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess, PLANS, UpgradePrompt } from '@/components/utils/subscriptionPlans';
-import { Target, TrendingUp, Calendar, Activity, ArrowRight, BarChart3, Users, Settings, RefreshCw, Info, Edit3 } from "lucide-react";
+import { Target, TrendingUp, Calendar, Activity, ArrowRight, BarChart3, Users, Settings, RefreshCw, Info, Edit3, Calculator } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import TechnicalStatsCard from "../components/dashboard/TechnicalStatsCard";
 import AdvancedProgressChart from "../components/dashboard/AdvancedProgressChart";
@@ -22,6 +22,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import OnboardingTour from "../components/onboarding/OnboardingTour";
+import CalorieMeter from "../components/dashboard/CalorieMeter";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -49,6 +50,7 @@ export default function Dashboard() {
   const [isSavingBodyFat, setIsSavingBodyFat] = useState(false);
   const [isSavingCalories, setIsSavingCalories] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showCalorieMeter, setShowCalorieMeter] = useState(false);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -510,15 +512,26 @@ export default function Dashboard() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">Analisi Progressi</h1>
               <p className="text-gray-600">Tracciamento dettagliato e proiezioni</p>
             </div>
-            <button
-              onClick={handleRecalibrate}
-              className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] w-full lg:w-auto"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <RefreshCw className="w-4 h-4" />
-                <span>Ricalibra</span>
-              </div>
-            </button>
+            <div className="flex gap-3">
+              <button
+                onClick={handleRecalibrate}
+                className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Ricalibra</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setShowCalorieMeter(true)}
+                className="liquid-glass-button text-[#26847F] font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <Calculator className="w-4 h-4" />
+                  <span>Conta Calorie</span>
+                </div>
+              </button>
+            </div>
           </div>
 
         {/* Header Mobile - visibile solo su mobile */}
@@ -530,15 +543,26 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-600">Tracciamento dettagliato e proiezioni</p>
               </div>
             </div>
-            <button
-              onClick={handleRecalibrate}
-              className="w-full liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
-            >
-              <div className="flex items-center justify-center gap-2">
-                <RefreshCw className="w-4 h-4" />
-                <span>Ricalibra</span>
-              </div>
-            </button>
+            <div className="grid grid-cols-2 gap-3">
+              <button
+                onClick={handleRecalibrate}
+                className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <RefreshCw className="w-4 h-4" />
+                  <span>Ricalibra</span>
+                </div>
+              </button>
+              <button
+                onClick={() => setShowCalorieMeter(true)}
+                className="liquid-glass-button text-[#26847F] font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+              >
+                <div className="flex items-center justify-center gap-2">
+                  <Calculator className="w-4 h-4" />
+                  <span>Conta Kcal</span>
+                </div>
+              </button>
+            </div>
           </div>
         )}
 
@@ -689,6 +713,13 @@ export default function Dashboard() {
           onClose={() => setShowPhotoGallery(false)}
           photos={progressPhotos}
           onDeletePhoto={handleDeletePhoto}
+        />
+      )}
+
+      {showCalorieMeter && (
+        <CalorieMeter
+          isOpen={showCalorieMeter}
+          onClose={() => setShowCalorieMeter(false)}
         />
       )}
 
