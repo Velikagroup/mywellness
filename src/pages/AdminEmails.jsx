@@ -864,7 +864,7 @@ ${ctaHtml}
             <div className="flex justify-end">
               <Button
                 onClick={handleNewBroadcast}
-                className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 <Send className="w-4 h-4 mr-2" />
                 Nuova Campagna Broadcast
@@ -990,7 +990,7 @@ ${ctaHtml}
                   <p className="text-gray-600 mb-6">Crea la tua prima campagna email per iniziare</p>
                   <Button
                     onClick={handleNewBroadcast}
-                    className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                    className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                   >
                     <Send className="w-4 h-4 mr-2" />
                     Crea Prima Campagna
@@ -1152,7 +1152,7 @@ ${ctaHtml}
                   <div className="flex gap-3 pt-4">
                     <Button
                       onClick={handleSaveEdit}
-                      className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                      className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                     >
                       💾 Salva Modifiche
                     </Button>
@@ -1231,7 +1231,7 @@ ${ctaHtml}
                 <div className="flex justify-end pt-2">
                   <Button
                     onClick={() => setShowEmailPreview(false)}
-                    className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+                    className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                   >
                     Chiudi
                   </Button>
@@ -1585,7 +1585,7 @@ ${ctaHtml}
               
               <Button
                 onClick={() => handleSaveBroadcast('send_now')}
-                className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 <Send className="w-4 h-4 mr-2" />
                 Invia Subito
