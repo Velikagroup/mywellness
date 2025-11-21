@@ -203,6 +203,13 @@ export default function AdminSupportTickets() {
   };
 
   const updateChatMessage = (ticketId, newMessage) => {
+    // Rimuovi badge "Nuova Risposta" appena l'admin inizia a scrivere
+    setNewResponseTickets(prev => {
+      const newSet = new Set(prev);
+      newSet.delete(ticketId);
+      return newSet;
+    });
+    
     setOpenChats(prev => prev.map(chat =>
       chat.id === ticketId ? { ...chat, newMessage } : chat
     ));
