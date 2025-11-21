@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag } from 'lucide-react';
+import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag, Gift } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -114,6 +114,28 @@ export default function PricingPage() {
 
   const plans = [
     {
+      id: 'standard',
+      name: "Standard",
+      priceMonthly: 0,
+      priceAnnual: 0,
+      stripePriceIdMonthly: null,
+      stripePriceIdAnnual: null,
+      icon: Shield,
+      iconColor: "text-gray-600",
+      iconBg: "bg-gray-100",
+      description: "Piano gratuito per monitorare i tuoi progressi",
+      features: [
+        "Dashboard scientifica completa",
+        "Calcolo BMR e massa grassa",
+        "Tracking peso e progressi",
+        "🔥 Conta calorie istantaneo",
+        "Impostazioni profilo"
+      ],
+      cta: "Inizia Gratis",
+      popular: false,
+      isFree: true
+    },
+    {
       id: 'base',
       name: "Base",
       priceMonthly: 19,
@@ -125,15 +147,13 @@ export default function PricingPage() {
       iconBg: "bg-blue-100",
       description: "Perfetto per iniziare il tuo percorso nutrizionale",
       features: [
-        "Dashboard scientifica completa",
+        "Tutto del Piano Standard",
         "Piano nutrizionale settimanale personalizzato",
         "🔄 4 generazioni piano nutrizionale/mese",
         "Ricette con foto AI e istruzioni",
         "🔄 Sostituzione ingredienti AI",
         "📦 Dispensa ingredienti personalizzati", 
-        "Calcolo BMR e massa grassa",
-        "Lista della spesa automatica",
-        "Tracking peso e progressi"
+        "Lista della spesa automatica"
       ],
       cta: "Iniza Gratis",
       popular: false
@@ -800,7 +820,7 @@ export default function PricingPage() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-8 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-8 mb-16">
             {plans.map((plan, index) => (
               <Card 
                 key={plan.id}
@@ -835,18 +855,31 @@ export default function PricingPage() {
                   
                   <div className="price-display">
                     <div className="mb-2">
-                      {couponValid && couponData && (
-                        <div className="mb-2">
-                          <span className="text-2xl font-bold text-gray-400 line-through">€{getOriginalPrice(plan)}</span>
-                        </div>
+                      {plan.isFree ? (
+                        <>
+                          <span className="text-6xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                            Gratis
+                          </span>
+                          <div className="mt-2">
+                            <span className="text-sm text-gray-600">Per sempre • Nessun costo nascosto</span>
+                          </div>
+                        </>
+                      ) : (
+                        <>
+                          {couponValid && couponData && (
+                            <div className="mb-2">
+                              <span className="text-2xl font-bold text-gray-400 line-through">€{getOriginalPrice(plan)}</span>
+                            </div>
+                          )}
+                          <span className="text-6xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
+                            €{getPrice(plan)}
+                          </span>
+                          <span className="text-gray-600 ml-2 text-lg font-semibold">/mese</span>
+                        </>
                       )}
-                      <span className="text-6xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                        €{getPrice(plan)}
-                      </span>
-                      <span className="text-gray-600 ml-2 text-lg font-semibold">/mese</span>
                     </div>
                     
-                    {isAnnual && !couponValid && (
+                    {!plan.isFree && isAnnual && !couponValid && (
                       <div className="space-y-1">
                         <p className="text-sm text-gray-500 line-through">€{plan.priceMonthly}/mese</p>
                         <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
@@ -856,7 +889,7 @@ export default function PricingPage() {
                       </div>
                     )}
                     
-                    {couponValid && couponData && (
+                    {!plan.isFree && couponValid && couponData && (
                       <div className="mt-2">
                         <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
                           <Check className="w-3 h-3" />
@@ -866,12 +899,19 @@ export default function PricingPage() {
                     )}
                   </div>
                   
-                  <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 text-green-700 rounded-full text-xs font-bold shadow-sm">
-                    <Check className="w-4 h-4" />
-                    3 GIORNI GRATIS
-                  </div>
+                  {!plan.isFree ? (
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 text-green-700 rounded-full text-xs font-bold shadow-sm">
+                      <Check className="w-4 h-4" />
+                      3 GIORNI GRATIS
+                    </div>
+                  ) : (
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 text-gray-700 rounded-full text-xs font-bold shadow-sm">
+                      <Gift className="w-4 h-4" />
+                      GRATIS PER SEMPRE
+                    </div>
+                  )}
                   
-                  {isAnnual && (
+                  {!plan.isFree && isAnnual && (
                     <p className="text-xs text-gray-500 mt-3 font-medium">
                       💳 Fatturato annualmente (€{(getPrice(plan) * 12).toFixed(0)}/anno)
                     </p>

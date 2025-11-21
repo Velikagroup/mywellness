@@ -16,6 +16,25 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
 
   const plans = [
     {
+      id: 'standard',
+      name: 'Standard',
+      description: 'Piano gratuito per monitorare i tuoi progressi',
+      monthlyPrice: 0,
+      yearlyPrice: 0,
+      yearlyMonthly: 0,
+      icon: CheckCircle,
+      iconBg: 'bg-gray-100',
+      iconColor: 'text-gray-600',
+      isFree: true,
+      features: [
+        'Dashboard scientifica completa',
+        'Calcolo BMR e massa grassa',
+        'Tracking peso e progressi',
+        '🔥 Conta calorie istantaneo',
+        'Impostazioni profilo'
+      ]
+    },
+    {
       id: 'base',
       name: 'Base',
       description: 'Perfetto per iniziare il tuo percorso nutrizionale',
@@ -26,14 +45,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       iconBg: 'bg-blue-100',
       iconColor: 'text-blue-600',
       features: [
-        'Dashboard scientifica completa',
+        'Tutto del Piano Standard',
         'Piano nutrizionale settimanale personalizzato',
         '🔄 4 generazioni piano nutrizionale/mese',
         'Ricette con foto AI e istruzioni',
         '🔄 Sostituzione ingredienti AI',
-        'Calcolo BMR e massa grassa',
-        'Lista della spesa automatica',
-        'Tracking peso e progressi'
+        'Lista della spesa automatica'
       ]
     },
     {
@@ -218,7 +235,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
               </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 max-w-7xl mx-auto">
+            <div className="grid md:grid-cols-4 gap-6 max-w-7xl mx-auto">
               {plans.map((plan) => {
                 const Icon = plan.icon;
                 const isCurrentPlan = currentPlan === plan.id;
@@ -249,7 +266,14 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
                       </div>
 
                       <div className="text-center mb-6">
-                        {billingCycle === 'monthly' ? (
+                        {plan.isFree ? (
+                          <div>
+                            <div className="text-4xl font-black text-gray-900">
+                              Gratis
+                            </div>
+                            <div className="text-sm text-gray-600 mt-1">Per sempre</div>
+                          </div>
+                        ) : billingCycle === 'monthly' ? (
                           <div>
                             <div className="text-4xl font-black text-gray-900">
                               €{plan.monthlyPrice}
