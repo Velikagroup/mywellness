@@ -700,7 +700,7 @@ export default function Home() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="w-full max-w-[calc(100vw-2rem)] md:max-w-md mx-auto px-2 md:px-0">
+              <div className="max-w-md mx-auto">
                 <MealPlanPreviewDemo />
               </div>
             </motion.div>
