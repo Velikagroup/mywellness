@@ -627,7 +627,7 @@ export default function AdminClients() {
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -641,7 +641,7 @@ export default function AdminClients() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
@@ -659,7 +659,7 @@ export default function AdminClients() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
@@ -673,7 +673,7 @@ export default function AdminClients() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 bg-amber-100 rounded-full flex items-center justify-center">
@@ -688,7 +688,7 @@ export default function AdminClients() {
           </Card>
         </div>
 
-        <Card className="bg-white/80 backdrop-blur-sm">
+        <Card className="water-glass-effect border-gray-200/30">
           <CardContent className="p-6">
             <div className="flex flex-col md:flex-row gap-4">
               <div className="flex-1 relative">
@@ -727,7 +727,7 @@ export default function AdminClients() {
           </CardContent>
         </Card>
 
-        <Card className="bg-white/80 backdrop-blur-sm">
+        <Card className="water-glass-effect border-gray-200/30">
           <CardHeader>
             <CardTitle className="flex items-center gap-2">
               <Users className="w-5 h-5" />
