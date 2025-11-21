@@ -30,7 +30,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
         'Dashboard scientifica completa',
         'Calcolo BMR e massa grassa',
         'Tracking peso e progressi',
-        '🔥 Conta calorie istantaneo',
+        'Conta calorie istantaneo',
         'Impostazioni profilo'
       ]
     },
@@ -47,9 +47,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       features: [
         'Tutto del Piano Standard',
         'Piano nutrizionale settimanale personalizzato',
-        '🔄 4 generazioni piano nutrizionale/mese',
+        '4 generazioni piano nutrizionale/mese',
         'Ricette con foto AI e istruzioni',
-        '🔄 Sostituzione ingredienti AI',
+        'Sostituzione ingredienti AI',
         'Lista della spesa automatica'
       ]
     },
@@ -67,12 +67,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       badge: '✅ PIÙ SCELTO ✅',
       features: [
         'Tutto del Piano Base',
-        '🔄 8 generazioni piano nutrizionale/mese',
+        '8 generazioni piano nutrizionale/mese',
         'Piano di allenamento personalizzato',
-        '🔄 4 generazioni piano allenamento/mese',
+        '4 generazioni piano allenamento/mese',
         'Workout con warm-up e cool-down',
         'Schede adattive al tuo livello',
-        '🔥 Analisi AI dei pasti con foto',
+        'Analisi AI dei pasti con foto',
         'Ribilanciamento automatico calorie',
         'Tracking allenamento'
       ]
@@ -90,12 +90,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       badge: '💎 PIANO ESCLUSIVO',
       features: [
         'Tutto del Piano Pro',
-        '♾️ Generazioni ILLIMITATE piani nutrizionali',
-        '♾️ Generazioni ILLIMITATE piani allenamento',
-        '🔥 Modifica schede AI per imprevisti',
-        '🔥 Analisi progressi con foto AI',
-        '📸 Scansione etichette con Health Score AI',
-        '🎯 Supporto prioritario'
+        'Generazioni ILLIMITATE piani nutrizionali',
+        'Generazioni ILLIMITATE piani allenamento',
+        'Modifica schede AI per imprevisti',
+        'Analisi progressi con foto AI',
+        'Scansione etichette con Health Score AI',
+        'Supporto prioritario'
       ]
     }
   ];

@@ -128,7 +128,7 @@ export default function PricingPage() {
         "Dashboard scientifica completa",
         "Calcolo BMR e massa grassa",
         "Tracking peso e progressi",
-        "🔥 Conta calorie istantaneo",
+        "Conta calorie istantaneo",
         "Impostazioni profilo"
       ],
       cta: "Inizia Gratis",
@@ -149,10 +149,10 @@ export default function PricingPage() {
       features: [
         "Tutto del Piano Standard",
         "Piano nutrizionale settimanale personalizzato",
-        "🔄 4 generazioni piano nutrizionale/mese",
+        "4 generazioni piano nutrizionale/mese",
         "Ricette con foto AI e istruzioni",
-        "🔄 Sostituzione ingredienti AI",
-        "📦 Dispensa ingredienti personalizzati", 
+        "Sostituzione ingredienti AI",
+        "Dispensa ingredienti personalizzati", 
         "Lista della spesa automatica"
       ],
       cta: "Iniza Gratis",
@@ -171,13 +171,13 @@ export default function PricingPage() {
       description: "Il piano più completo per risultati garantiti",
       features: [
         "Tutto del Piano Base",
-        "🔄 8 generazioni piano nutrizionale/mese",
+        "8 generazioni piano nutrizionale/mese",
         "Piano di allenamento personalizzato",
-        "🔄 4 generazioni piano allenamento/mese",
+        "4 generazioni piano allenamento/mese",
         "Workout con warm-up e cool-down",
         "Schede adattive al tuo livello",
-        "📸 Analisi AI dei pasti con foto",
-        "⚖️ Ribilanciamento automatico calorie",
+        "Analisi AI dei pasti con foto",
+        "Ribilanciamento automatico calorie",
         "Tracking allenamenti"
       ],
       cta: "Iniza Gratis",
@@ -196,12 +196,12 @@ export default function PricingPage() {
       description: "Per chi vuole il massimo con AI avanzata",
       features: [
         "Tutto del Piano Pro",
-        "♾️ Generazioni ILLIMITATE piani nutrizionali",
-        "♾️ Generazioni ILLIMITATE piani allenamento",
-        "💪 Modifica scheda AI per imprevisti",
-        "📊 Analisi progressi con foto AI",
-        "📸 Scansione etichette con Health Score AI",
-        "🎯 Supporto prioritario"
+        "Generazioni ILLIMITATE piani nutrizionali",
+        "Generazioni ILLIMITATE piani allenamento",
+        "Modifica scheda AI per imprevisti",
+        "Analisi progressi con foto AI",
+        "Scansione etichette con Health Score AI",
+        "Supporto prioritario"
       ],
       cta: "Iniza Gratis",
       popular: false
