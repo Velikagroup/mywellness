@@ -565,8 +565,8 @@ export default function AdminSupportTickets() {
               }}
               className={`px-3 py-1.5 rounded-full text-xs font-semibold transition-all ${
                 statusFilter === 'chiuso'
-                  ? 'bg-green-600 text-white shadow-md'
-                  : 'bg-green-100 text-green-700 hover:bg-green-200'
+                  ? 'bg-gray-600 text-white shadow-md'
+                  : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               Chiusi
