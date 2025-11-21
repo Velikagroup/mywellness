@@ -398,7 +398,6 @@ export default function AdminSupportTickets() {
 
     const isUnopened = ticket.status === 'aperto';
     const isInProgress = ticket.status === 'in_lavorazione';
-    const isClosed = ticket.status === 'chiuso';
 
     return (
       <div
@@ -406,7 +405,6 @@ export default function AdminSupportTickets() {
         className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
           isUnopened ? 'ticket-unopened' : 
           isInProgress ? 'ticket-in-progress' : 
-          isClosed ? 'ticket-closed' :
           'water-glass-effect border-gray-200/30'
         }`}
       >
@@ -495,20 +493,6 @@ export default function AdminSupportTickets() {
           border: 1px solid rgba(250, 204, 21, 0.5) !important;
           box-shadow: 
             0 8px 32px 0 rgba(234, 179, 8, 0.15),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
-        }
-        
-        .ticket-closed {
-          backdrop-filter: blur(12px) saturate(180%);
-          background: linear-gradient(135deg, 
-            rgba(220, 252, 231, 0.7) 0%,
-            rgba(187, 247, 208, 0.6) 50%,
-            rgba(220, 252, 231, 0.7) 100%
-          ) !important;
-          border: 1px solid rgba(134, 239, 172, 0.5) !important;
-          box-shadow: 
-            0 8px 32px 0 rgba(34, 197, 94, 0.15),
             inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
         }
