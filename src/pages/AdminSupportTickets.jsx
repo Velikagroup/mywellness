@@ -398,11 +398,11 @@ export default function AdminSupportTickets() {
     return (
       <div
         onClick={() => handleOpenChat(ticket)}
-        className={`p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer ${
-          isUnopened 
-            ? 'water-glass-effect border-blue-300/50 bg-blue-50/30' 
-            : 'water-glass-effect border-gray-200/30'
-        }`}
+        className="p-4 border rounded-xl hover:shadow-lg transition-all cursor-pointer water-glass-effect border-gray-200/30"
+        style={isUnopened ? {
+          background: 'linear-gradient(135deg, rgba(219, 234, 254, 0.4) 0%, rgba(191, 219, 254, 0.3) 50%, rgba(219, 234, 254, 0.4) 100%)',
+          borderColor: 'rgba(147, 197, 253, 0.4)'
+        } : {}}
       >
         <div className="flex items-start justify-between gap-3 mb-3">
           <div className="flex-1 min-w-0">
