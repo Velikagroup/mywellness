@@ -34,8 +34,14 @@ export default function CalorieMeter({ isOpen, onClose }) {
     try {
       let fileUrl = null;
       if (selectedFile) {
-        const uploadResult = await base44.integrations.Core.UploadFile({ file: selectedFile });
-        fileUrl = uploadResult.file_url;
+        try {
+          const uploadResult = await base44.integrations.Core.UploadFile({ file: selectedFile });
+          fileUrl = uploadResult.file_url;
+          console.log('📤 File uploaded:', fileUrl);
+        } catch (uploadError) {
+          console.error('❌ Upload error:', uploadError);
+          throw new Error('Errore nel caricamento della foto. Riprova.');
+        }
       }
 
       const prompt = `Sei un nutrizionista esperto certificato con 20 anni di esperienza nell'analisi nutrizionale PRECISA di piatti.
@@ -121,6 +127,8 @@ Fornisci ESATTAMENTE:
 
 IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEMPRE dare gli stessi risultati.`;
 
+      console.log('🔍 Starting AI analysis...');
+      
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt,
         file_urls: fileUrl ? [fileUrl] : undefined,
@@ -140,12 +148,57 @@ IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEM
         }
       });
 
-      setResult(analysis);
+      console.log('✅ AI analysis result:', analysis);
+
+      // ✅ VALIDAZIONE ROBUSTA dei risultati
+      if (!analysis || typeof analysis !== 'object') {
+        throw new Error('Risposta AI non valida');
+      }
+
+      // Valida e pulisci i dati
+      const validatedResult = {
+        dish_name: analysis.dish_name || 'Piatto non identificato',
+        calories: Number(analysis.calories) || 0,
+        protein: Number(analysis.protein) || 0,
+        carbs: Number(analysis.carbs) || 0,
+        fat: Number(analysis.fat) || 0,
+        portion_size: Number(analysis.portion_size) || 0,
+        main_ingredients: Array.isArray(analysis.main_ingredients) ? analysis.main_ingredients : []
+      };
+
+      // Verifica che i valori siano numerici e positivi
+      if (validatedResult.calories < 0 || validatedResult.protein < 0 || 
+          validatedResult.carbs < 0 || validatedResult.fat < 0) {
+        throw new Error('Valori nutrizionali non validi');
+      }
+
+      // Verifica coerenza matematica approssimativa
+      const calculatedCalories = (validatedResult.protein * 4) + (validatedResult.carbs * 4) + (validatedResult.fat * 9);
+      const tolerance = 0.3; // 30% di tolleranza
+      if (Math.abs(calculatedCalories - validatedResult.calories) > (validatedResult.calories * tolerance)) {
+        console.warn('⚠️ Incoerenza matematica rilevata. Aggiusto i valori...');
+        // Aggiusta leggermente per coerenza
+        validatedResult.calories = Math.round(calculatedCalories);
+      }
+
+      console.log('✅ Validated result:', validatedResult);
+      setResult(validatedResult);
+      
     } catch (error) {
-      console.error('Error analyzing:', error);
-      alert('Errore durante l\'analisi. Riprova.');
+      console.error('❌ Error analyzing:', error);
+      
+      let errorMessage = 'Errore durante l\'analisi. ';
+      if (error.message) {
+        errorMessage += error.message;
+      } else {
+        errorMessage += 'Riprova o contatta il supporto se il problema persiste.';
+      }
+      
+      alert(errorMessage);
+      setResult(null);
+    } finally {
+      setIsAnalyzing(false);
     }
-    setIsAnalyzing(false);
   };
 
   const handleReset = () => {
@@ -258,12 +311,16 @@ IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEM
                 <div className="grid grid-cols-2 gap-3 mb-3">
                   <div className="bg-white/80 rounded-lg p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">Calorie</p>
-                    <p className="text-2xl font-bold text-[#26847F]">{Math.round(result.calories)}</p>
+                    <p className="text-2xl font-bold text-[#26847F]">
+                      {result?.calories ? Math.round(result.calories) : 0}
+                    </p>
                     <p className="text-xs text-gray-500">kcal</p>
                   </div>
                   <div className="bg-white/80 rounded-lg p-3 text-center">
                     <p className="text-xs text-gray-600 mb-1">Porzione</p>
-                    <p className="text-2xl font-bold text-gray-800">{Math.round(result.portion_size)}</p>
+                    <p className="text-2xl font-bold text-gray-800">
+                      {result?.portion_size ? Math.round(result.portion_size) : 0}
+                    </p>
                     <p className="text-xs text-gray-500">g</p>
                   </div>
                 </div>
@@ -271,15 +328,21 @@ IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEM
                 <div className="grid grid-cols-3 gap-2 mb-3">
                   <div className="bg-white/80 rounded-lg p-2 text-center">
                     <p className="text-xs text-gray-600 mb-1">Proteine</p>
-                    <p className="text-lg font-bold text-red-600">{result.protein.toFixed(1)}g</p>
+                    <p className="text-lg font-bold text-red-600">
+                      {result?.protein ? result.protein.toFixed(1) : '0.0'}g
+                    </p>
                   </div>
                   <div className="bg-white/80 rounded-lg p-2 text-center">
                     <p className="text-xs text-gray-600 mb-1">Carbo</p>
-                    <p className="text-lg font-bold text-blue-600">{result.carbs.toFixed(1)}g</p>
+                    <p className="text-lg font-bold text-blue-600">
+                      {result?.carbs ? result.carbs.toFixed(1) : '0.0'}g
+                    </p>
                   </div>
                   <div className="bg-white/80 rounded-lg p-2 text-center">
                     <p className="text-xs text-gray-600 mb-1">Grassi</p>
-                    <p className="text-lg font-bold text-yellow-600">{result.fat.toFixed(1)}g</p>
+                    <p className="text-lg font-bold text-yellow-600">
+                      {result?.fat ? result.fat.toFixed(1) : '0.0'}g
+                    </p>
                   </div>
                 </div>
 
