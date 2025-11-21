@@ -462,6 +462,21 @@ export default function AdminSupportTickets() {
 
   return (
     <div className="min-h-screen pb-20 overflow-x-hidden">
+      <style>{`
+        .ticket-unopened {
+          backdrop-filter: blur(12px) saturate(180%);
+          background: linear-gradient(135deg, 
+            rgba(219, 234, 254, 0.5) 0%,
+            rgba(191, 219, 254, 0.4) 50%,
+            rgba(219, 234, 254, 0.5) 100%
+          ) !important;
+          border: 1px solid rgba(147, 197, 253, 0.4) !important;
+          box-shadow: 
+            0 8px 32px 0 rgba(59, 130, 246, 0.12),
+            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
+            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
+        }
+      `}</style>
       <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-6">
         <div>
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Ticket di Supporto</h1>
@@ -867,20 +882,6 @@ export default function AdminSupportTickets() {
 
         .animate-slide-in {
           animation: slide-in 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .ticket-unopened {
-          backdrop-filter: blur(12px) saturate(180%);
-          background: linear-gradient(135deg, 
-            rgba(219, 234, 254, 0.5) 0%,
-            rgba(191, 219, 254, 0.4) 50%,
-            rgba(219, 234, 254, 0.5) 100%
-          ) !important;
-          border: 1px solid rgba(147, 197, 253, 0.4) !important;
-          box-shadow: 
-            0 8px 32px 0 rgba(59, 130, 246, 0.12),
-            inset 0 1px 1px 0 rgba(255, 255, 255, 0.9),
-            inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05) !important;
         }
 
         .luxury-chat-widget {
