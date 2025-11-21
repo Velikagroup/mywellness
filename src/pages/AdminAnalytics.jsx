@@ -1258,9 +1258,9 @@ export default function AdminAnalytics() {
       </div>
 
       <Dialog open={showAddExpense} onOpenChange={setShowAddExpense}>
-        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto water-glass-effect border-gray-200/30">
+        <DialogContent className="max-w-md max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-gray-900 font-bold">Aggiungi Nuova Spesa</DialogTitle>
+            <DialogTitle>Aggiungi Nuova Spesa</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
             <div>
@@ -1390,9 +1390,9 @@ export default function AdminAnalytics() {
 
       {/* NEW DIALOG for managing recurring variable expenses */}
       <Dialog open={showManageRecurringVariableExpenses} onOpenChange={setShowManageRecurringVariableExpenses}>
-        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto water-glass-effect border-gray-200/30">
+        <DialogContent className="max-w-xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-gray-900 font-bold">Gestisci Spese Variabili Ricorrenti</DialogTitle>
+            <DialogTitle>Gestisci Spese Variabili Ricorrenti</DialogTitle>
           </DialogHeader>
           <div className="space-y-6 pt-4">
             {recurringExpenses.length === 0 ? (
