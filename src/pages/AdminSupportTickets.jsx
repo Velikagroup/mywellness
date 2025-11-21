@@ -7,8 +7,12 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip, Search, BarChart3, TrendingUp } from 'lucide-react';
+import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip, Search, BarChart3, TrendingUp, Zap, Plus, Edit2, Trash2 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Label } from '@/components/ui/label';
+import { Input } from '@/components/ui/input';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 // Component per renderizzare messaggi admin con immagini inline
 function AdminMessageContent({ content, onImageClick, isUserMessage = false }) {
@@ -1198,10 +1202,107 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
   const fileInputRef = useRef(null);
   const [uploadingFile, setUploadingFile] = useState(false);
   const [attachedFiles, setAttachedFiles] = useState([]);
+  const [quickResponses, setQuickResponses] = useState([]);
+  const [showQuickResponses, setShowQuickResponses] = useState(false);
+  const [showManageDialog, setShowManageDialog] = useState(false);
+  const [editingResponse, setEditingResponse] = useState(null);
+  const [newResponseTitle, setNewResponseTitle] = useState('');
+  const [newResponseContent, setNewResponseContent] = useState('');
+  const [newResponseCategory, setNewResponseCategory] = useState('generale');
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat.message, chat.newMessage]);
+
+  useEffect(() => {
+    loadQuickResponses();
+  }, []);
+
+  const loadQuickResponses = async () => {
+    try {
+      const responses = await base44.entities.QuickResponse.list('-usage_count', 50);
+      setQuickResponses(responses);
+    } catch (error) {
+      console.error('Error loading quick responses:', error);
+    }
+  };
+
+  const handleUseQuickResponse = async (response) => {
+    onUpdateMessage(response.content);
+    setShowQuickResponses(false);
+    
+    // Incrementa usage_count
+    try {
+      await base44.entities.QuickResponse.update(response.id, {
+        usage_count: (response.usage_count || 0) + 1
+      });
+      await loadQuickResponses();
+    } catch (error) {
+      console.error('Error updating usage count:', error);
+    }
+  };
+
+  const handleSaveQuickResponse = async () => {
+    if (!newResponseTitle.trim() || !newResponseContent.trim()) {
+      alert('Compila tutti i campi');
+      return;
+    }
+
+    try {
+      if (editingResponse) {
+        await base44.entities.QuickResponse.update(editingResponse.id, {
+          title: newResponseTitle,
+          content: newResponseContent,
+          category: newResponseCategory
+        });
+      } else {
+        await base44.entities.QuickResponse.create({
+          title: newResponseTitle,
+          content: newResponseContent,
+          category: newResponseCategory,
+          usage_count: 0
+        });
+      }
+      
+      await loadQuickResponses();
+      setNewResponseTitle('');
+      setNewResponseContent('');
+      setNewResponseCategory('generale');
+      setEditingResponse(null);
+      setShowManageDialog(false);
+    } catch (error) {
+      console.error('Error saving quick response:', error);
+      alert('❌ Errore nel salvataggio');
+    }
+  };
+
+  const handleDeleteQuickResponse = async (id) => {
+    if (!confirm('Eliminare questa risposta veloce?')) return;
+    
+    try {
+      await base44.entities.QuickResponse.delete(id);
+      await loadQuickResponses();
+    } catch (error) {
+      console.error('Error deleting quick response:', error);
+      alert('❌ Errore nell\'eliminazione');
+    }
+  };
+
+  const openEditDialog = (response) => {
+    setEditingResponse(response);
+    setNewResponseTitle(response.title);
+    setNewResponseContent(response.content);
+    setNewResponseCategory(response.category);
+    setShowManageDialog(true);
+  };
+
+  const openNewDialog = () => {
+    setEditingResponse(null);
+    setNewResponseTitle('');
+    setNewResponseContent('');
+    setNewResponseCategory('generale');
+    setShowManageDialog(true);
+  };
 
   const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);
@@ -1534,7 +1635,7 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                       handleSendWithAttachments();
                     }
                   }}
-                  placeholder="Scrivi risposta..."
+                  placeholder="Scrivi risposta... (o usa risposte veloci)"
                   className="chat-input w-full resize-none h-20 rounded-2xl border-2 px-4 py-3 text-sm font-medium placeholder:text-gray-400"
                 />
                 <input
@@ -1544,15 +1645,26 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                   onChange={handleFileSelect}
                   className="hidden"
                 />
-                <Button
-                  type="button"
-                  onClick={() => fileInputRef.current?.click()}
-                  disabled={uploadingFile}
-                  variant="outline"
-                  className="w-full rounded-xl text-xs h-8"
-                >
-                  {uploadingFile ? 'Caricamento...' : '📎 Allega file'}
-                </Button>
+                <div className="flex gap-2">
+                  <Button
+                    type="button"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingFile}
+                    variant="outline"
+                    className="flex-1 rounded-xl text-xs h-8"
+                  >
+                    {uploadingFile ? 'Caricamento...' : '📎 Allega'}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => setShowQuickResponses(!showQuickResponses)}
+                    variant="outline"
+                    className="flex-1 rounded-xl text-xs h-8 bg-purple-50 hover:bg-purple-100 border-purple-200"
+                  >
+                    <Zap className="w-3 h-3 mr-1" />
+                    Veloci
+                  </Button>
+                </div>
               </div>
               <div className="flex flex-col gap-2">
                 <Button
@@ -1576,9 +1688,160 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
                 </Button>
               </div>
             </div>
+
+            {/* Quick Responses Panel */}
+            {showQuickResponses && (
+              <div className="absolute bottom-full left-0 right-0 mb-2 bg-white border border-gray-200 rounded-2xl shadow-xl max-h-80 overflow-y-auto">
+                <div className="sticky top-0 bg-gradient-to-r from-purple-50 to-indigo-50 p-3 border-b border-gray-200 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Zap className="w-4 h-4 text-purple-600" />
+                    <span className="text-sm font-bold text-gray-900">Risposte Veloci</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <Button
+                      onClick={openNewDialog}
+                      size="sm"
+                      className="h-7 text-xs bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      <Plus className="w-3 h-3 mr-1" />
+                      Nuova
+                    </Button>
+                    <button
+                      onClick={() => setShowQuickResponses(false)}
+                      className="text-gray-400 hover:text-gray-600"
+                    >
+                      <X className="w-4 h-4" />
+                    </button>
+                  </div>
+                </div>
+
+                <div className="p-2 space-y-1">
+                  {quickResponses.length === 0 ? (
+                    <p className="text-center text-gray-500 text-xs py-8">
+                      Nessuna risposta veloce salvata
+                    </p>
+                  ) : (
+                    quickResponses.map((response) => (
+                      <div
+                        key={response.id}
+                        className="group p-3 hover:bg-gray-50 rounded-xl cursor-pointer transition-colors border border-transparent hover:border-purple-200"
+                      >
+                        <div className="flex items-start justify-between gap-2">
+                          <div 
+                            onClick={() => handleUseQuickResponse(response)}
+                            className="flex-1"
+                          >
+                            <div className="flex items-center gap-2 mb-1">
+                              <h4 className="font-semibold text-sm text-gray-900">{response.title}</h4>
+                              <span className="px-2 py-0.5 bg-purple-100 text-purple-700 rounded-full text-xs font-semibold">
+                                {response.category}
+                              </span>
+                              {response.usage_count > 0 && (
+                                <span className="text-xs text-gray-500">
+                                  🔥 {response.usage_count}
+                                </span>
+                              )}
+                            </div>
+                            <p className="text-xs text-gray-600 line-clamp-2">{response.content}</p>
+                          </div>
+                          <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                openEditDialog(response);
+                              }}
+                              className="p-1.5 hover:bg-blue-50 rounded-lg text-blue-600"
+                            >
+                              <Edit2 className="w-3 h-3" />
+                            </button>
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleDeleteQuickResponse(response.id);
+                              }}
+                              className="p-1.5 hover:bg-red-50 rounded-lg text-red-600"
+                            >
+                              <Trash2 className="w-3 h-3" />
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
           </div>
         </div>
       )}
+
+      {/* Dialog Gestione Risposta Veloce */}
+      <Dialog open={showManageDialog} onOpenChange={setShowManageDialog}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle className="flex items-center gap-2">
+              <Zap className="w-5 h-5 text-purple-600" />
+              {editingResponse ? 'Modifica Risposta Veloce' : 'Nuova Risposta Veloce'}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <Label>Titolo</Label>
+              <Input
+                value={newResponseTitle}
+                onChange={(e) => setNewResponseTitle(e.target.value)}
+                placeholder="Es: Problema login account"
+                className="mt-1"
+              />
+            </div>
+            <div>
+              <Label>Categoria</Label>
+              <Select value={newResponseCategory} onValueChange={setNewResponseCategory}>
+                <SelectTrigger className="mt-1">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="tecnico">Tecnico</SelectItem>
+                  <SelectItem value="abbonamento">Abbonamento</SelectItem>
+                  <SelectItem value="generale">Generale</SelectItem>
+                  <SelectItem value="fatturazione">Fatturazione</SelectItem>
+                  <SelectItem value="funzionalita">Funzionalità</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div>
+              <Label>Contenuto Risposta</Label>
+              <Textarea
+                value={newResponseContent}
+                onChange={(e) => setNewResponseContent(e.target.value)}
+                placeholder="Scrivi la risposta completa..."
+                className="mt-1 h-48 resize-none"
+              />
+            </div>
+            <div className="flex gap-3">
+              <Button
+                onClick={() => {
+                  setShowManageDialog(false);
+                  setEditingResponse(null);
+                  setNewResponseTitle('');
+                  setNewResponseContent('');
+                  setNewResponseCategory('generale');
+                }}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
+              </Button>
+              <Button
+                onClick={handleSaveQuickResponse}
+                className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+              >
+                {editingResponse ? 'Salva Modifiche' : 'Crea Risposta'}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
