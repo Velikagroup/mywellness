@@ -314,9 +314,7 @@ Sii conciso ma dettagliato (max 200 parole).`,
 
   const handleNeedMoreHelp = async () => {
     try {
-      await base44.entities.SupportTicket.update(currentTicket.id, {
-        status: 'in_lavorazione'
-      });
+      // NON cambiare lo stato - rimane "aperto" finché l'admin non risponde
       
       // Chiudi il dialog AI
       setShowTicketChat(false);
@@ -325,7 +323,6 @@ Sii conciso ma dettagliato (max 200 parole).`,
       // Apri la chat widget con messaggio che riceverà risposta entro 24h
       const updatedTicket = {
         ...currentTicket,
-        status: 'in_lavorazione',
         message: currentTicket.message + '\n\n--- Risposta AI ---\n✅ Richiesta inoltrata al team! Riceverai risposta via chat entro 24 ore. Continua pure a scrivere qui sotto se hai altre informazioni da aggiungere.'
       };
       setSelectedTicketForChat(updatedTicket);
