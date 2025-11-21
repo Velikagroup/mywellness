@@ -269,25 +269,25 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
 
         {/* Stats */}
         <div className="grid grid-cols-4 gap-4 mt-8">
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <p className="text-sm text-gray-500">Totale Articoli</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <p className="text-sm text-gray-500">Pubblicati</p>
               <p className="text-2xl font-bold text-green-600">{stats.published}</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <p className="text-sm text-gray-500">Bozze</p>
               <p className="text-2xl font-bold text-orange-600">{stats.drafts}</p>
             </CardContent>
           </Card>
-          <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <p className="text-sm text-gray-500">Visualizzazioni Totali</p>
               <p className="text-2xl font-bold text-blue-600">{stats.views}</p>
@@ -367,7 +367,7 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
 
         {/* Bulk Generation */}
         {!isGenerating ? (
-          <Card className="mt-8 bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
+          <Card className="mt-8 water-glass-effect border-gray-200/30 shadow-xl">
             <CardHeader>
               <CardTitle>📝 Generazione Articoli in Bulk</CardTitle>
               <p className="text-sm text-gray-500">Inserisci un titolo per riga. L'AI genererà automaticamente contenuto + categoria per ogni articolo.</p>
@@ -398,7 +398,7 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
             </CardContent>
           </Card>
         ) : (
-          <Card className="mt-8 bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
+          <Card className="mt-8 water-glass-effect border-gray-200/30 shadow-xl">
             <CardContent className="p-8 text-center space-y-4">
               <div className="w-16 h-16 mx-auto bg-[var(--brand-primary-light)] rounded-full flex items-center justify-center">
                 <Loader2 className="w-8 h-8 text-[var(--brand-primary)] animate-spin" />
@@ -412,7 +412,7 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
         )}
 
         {/* Articles List */}
-        <Card className="mt-8 bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-xl">
+        <Card className="mt-8 water-glass-effect border-gray-200/30 shadow-xl">
           <CardHeader>
             <CardTitle>Articoli Esistenti ({posts.length})</CardTitle>
           </CardHeader>
