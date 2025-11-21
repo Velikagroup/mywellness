@@ -634,16 +634,10 @@ export default function AdminSupportTickets() {
 
         <Tabs defaultValue="premium" className="w-full" onValueChange={() => setCurrentPage(1)}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
-            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-4 gap-2 bg-gray-100/80 p-1 rounded-lg">
+            <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-2 gap-2 bg-gray-100/80 p-1 rounded-lg">
               <TabsTrigger value="premium" className="text-xs sm:text-sm whitespace-nowrap">
                 <Crown className="w-3 h-3 sm:w-4 sm:h-4 mr-1 sm:mr-2" />
                 Premium ({premiumTickets.length})
-              </TabsTrigger>
-              <TabsTrigger value="normal" className="text-xs sm:text-sm whitespace-nowrap">
-                Normali ({normalTickets.length})
-              </TabsTrigger>
-              <TabsTrigger value="all" className="text-xs sm:text-sm whitespace-nowrap">
-                Tutti ({allActiveTickets.length})
               </TabsTrigger>
               <TabsTrigger value="ai_resolved" className="text-xs sm:text-sm whitespace-nowrap">
                 🤖 Chiusi AI ({aiResolvedTickets.length})
@@ -661,34 +655,6 @@ export default function AdminSupportTickets() {
               <>
                 {getPaginatedTickets(premiumTickets).map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)}
                 <PaginationControls ticketList={premiumTickets} />
-              </>
-            )}
-          </TabsContent>
-
-          <TabsContent value="normal" className="space-y-3 mt-6">
-            {normalTickets.length === 0 ? (
-              <div className="text-center py-12 bg-white/50 rounded-xl">
-                <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">Nessun ticket normale in attesa</p>
-              </div>
-            ) : (
-              <>
-                {getPaginatedTickets(normalTickets).map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)}
-                <PaginationControls ticketList={normalTickets} />
-              </>
-            )}
-          </TabsContent>
-
-          <TabsContent value="all" className="space-y-3 mt-6">
-            {allActiveTickets.length === 0 ? (
-              <div className="text-center py-12 bg-white/50 rounded-xl">
-                <HelpCircle className="w-12 h-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">Nessun ticket da gestire</p>
-              </div>
-            ) : (
-              <>
-                {getPaginatedTickets(allActiveTickets).map(ticket => <TicketCard key={ticket.id} ticket={ticket} />)}
-                <PaginationControls ticketList={allActiveTickets} />
               </>
             )}
           </TabsContent>
