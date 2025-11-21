@@ -24,6 +24,7 @@ export default function AdminBlog() {
   const [generationProgress, setGenerationProgress] = useState(0);
   const [generationStatus, setGenerationStatus] = useState('');
   const [editingPost, setEditingPost] = useState(null);
+  const [searchQuery, setSearchQuery] = useState('');
   // Image-related states removed as per changes.
 
   useEffect(() => {
@@ -417,11 +418,31 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
             <CardTitle>Articoli Esistenti ({posts.length})</CardTitle>
           </CardHeader>
           <CardContent>
+            <div className="mb-4">
+              <Input
+                placeholder="🔍 Cerca articolo per titolo..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full"
+              />
+            </div>
             <div className="space-y-2">
               {posts.length === 0 ? (
                 <p className="text-center text-gray-500 py-8">Nessun articolo ancora. Inizia a generare!</p>
               ) : (
-                posts.map(post => (
+                posts
+                  .filter(post => 
+                    post.title.toLowerCase().includes(searchQuery.toLowerCase())
+                  )
+                  .sort((a, b) => {
+                    const viewsA = a.views || 0;
+                    const viewsB = b.views || 0;
+                    if (viewsB !== viewsA) {
+                      return viewsB - viewsA;
+                    }
+                    return a.title.localeCompare(b.title);
+                  })
+                  .map(post => (
                   <div
                     key={post.id}
                     className="flex items-center justify-between p-4 water-glass-effect border-gray-200/30 rounded-lg hover:bg-gray-50 transition-colors"
