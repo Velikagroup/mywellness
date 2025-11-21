@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -751,7 +750,7 @@ export default function AdminMarketing() {
 
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -765,7 +764,7 @@ export default function AdminMarketing() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -779,7 +778,7 @@ export default function AdminMarketing() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -796,7 +795,7 @@ export default function AdminMarketing() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -813,7 +812,7 @@ export default function AdminMarketing() {
         </div>
 
         {/* ROAS Trend */}
-        <Card className="bg-white/80 backdrop-blur-sm">
+        <Card className="water-glass-effect border-gray-200/30">
           <CardHeader>
             <CardTitle>Andamento ROAS e Spend</CardTitle>
           </CardHeader>
@@ -885,7 +884,7 @@ export default function AdminMarketing() {
           </div>
 
           {/* Box Vendite Organiche Social */}
-          <Card className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-lg">
+          <Card className="water-glass-effect border-gray-200/30 rounded-xl shadow-lg">
             <CardHeader className="pb-4"> {/* Adjusted padding */}
               <div className="flex items-center justify-between mb-4">
                 <div className="flex items-center gap-4">
@@ -1056,7 +1055,7 @@ export default function AdminMarketing() {
               };
 
               return (
-                <Card key={index} className="bg-white/80 backdrop-blur-sm">
+                <Card key={index} className="water-glass-effect border-gray-200/30">
                   <CardContent className="p-6">
                     <div className="flex items-start justify-between mb-4">
                       <div>
@@ -1204,7 +1203,7 @@ export default function AdminMarketing() {
                 };
 
                 return (
-                  <Card key={influencer.id} className="bg-white/80 backdrop-blur-sm">
+                  <Card key={influencer.id} className="water-glass-effect border-gray-200/30">
                     <CardContent className="p-6">
                       <div className="flex items-start justify-between mb-4">
                         <div className="flex items-center gap-3">
@@ -1371,7 +1370,7 @@ export default function AdminMarketing() {
               })}
             </div>
           ) : (
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardContent className="p-12 text-center">
                 <Activity className="w-16 h-16 text-gray-300 mx-auto mb-4" />
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Nessun Influencer</h3>
@@ -1389,7 +1388,7 @@ export default function AdminMarketing() {
         </div>
 
         {/* Connetti Piattaforme Advertising - SPOSTATO IN FONDO */}
-        <Accordion type="single" collapsible className="bg-white/80 backdrop-blur-sm rounded-xl border border-gray-200/50 shadow-lg">
+        <Accordion type="single" collapsible className="water-glass-effect border-gray-200/30 rounded-xl shadow-lg">
           <AccordionItem value="item-1" className="border-none">
             <Card className="border-none shadow-none bg-transparent">
               <CardHeader className="pb-0">

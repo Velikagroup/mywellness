@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
@@ -622,7 +621,7 @@ export default function AdminAnalytics() {
 
         {/* Overview Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -637,7 +636,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -652,7 +651,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -667,7 +666,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -690,7 +689,7 @@ export default function AdminAnalytics() {
           <h2 className="text-2xl font-bold text-gray-900">Overview</h2>
           
           {/* Funnel Unificato di Conversione */}
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <Target className="w-5 h-5 text-[var(--brand-primary)]" />
@@ -748,7 +747,7 @@ export default function AdminAnalytics() {
 
           {/* Funnel Breakdown per Tipo (opzionale - per dettagli) */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle className="text-base">Breakdown: Trial Setup</CardTitle>
               </CardHeader>
@@ -774,7 +773,7 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle className="text-base">Breakdown: Landing Checkout</CardTitle>
               </CardHeader>
@@ -801,7 +800,7 @@ export default function AdminAnalytics() {
             </Card>
           </div>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardHeader>
               <CardTitle>Andamento Entrate Reali da Transazioni</CardTitle>
             </CardHeader>
@@ -924,19 +923,19 @@ export default function AdminAnalytics() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardContent className="p-6">
                 <p className="text-sm text-gray-500 mb-2">Entrate Mensili</p>
                 <p className="text-3xl font-bold text-green-600">€{mrrFromPriceMap.toLocaleString('it-IT')}</p>
               </CardContent>
             </Card>
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardContent className="p-6">
                 <p className="text-sm text-gray-500 mb-2">Spese Mensili</p>
                 <p className="text-3xl font-bold text-red-600">€{totalMonthlyExpenses.toLocaleString('it-IT')}</p>
               </CardContent>
             </Card>
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardContent className="p-6">
                 <p className="text-sm text-gray-500 mb-2">Profitto Netto</p>
                 <p className={`text-3xl font-bold ${monthlyProfit >= 0 ? 'text-green-600' : 'text-red-600'}`}>
@@ -980,7 +979,7 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Spese Recenti</CardTitle>
               </CardHeader>
@@ -1060,7 +1059,7 @@ export default function AdminAnalytics() {
               </CardContent>
             </Card>
 
-            <Card className="bg-white/80 backdrop-blur-sm">
+            <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Stati Abbonamento</CardTitle>
               </CardHeader>
@@ -1102,7 +1101,7 @@ export default function AdminAnalytics() {
             </Card>
           </div>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardHeader>
               <CardTitle>Metriche Chiave</CardTitle>
             </CardHeader>
@@ -1135,7 +1134,7 @@ export default function AdminAnalytics() {
         <div className="space-y-6">
           <h2 className="text-2xl font-bold text-gray-900">Proiezioni</h2>
           
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-6">
               <div className="flex items-center gap-4">
                 <div className="flex-1">
@@ -1168,7 +1167,7 @@ export default function AdminAnalytics() {
             </CardContent>
           </Card>
 
-          <Card className="bg-white/80 backdrop-blur-sm">
+          <Card className="water-glass-effect border-gray-200/30">
             <CardHeader>
               <CardTitle>Proiezione Cash Flow (12 Mesi)</CardTitle>
               <p className="text-sm text-gray-500">Basato su crescita {projectionGrowthRate}% mensile delle entrate e spese mensili fisse</p>

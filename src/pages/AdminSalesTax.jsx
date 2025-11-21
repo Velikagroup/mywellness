@@ -412,7 +412,7 @@ export default function AdminSalesTax() {
               const taxAmount = totalAmount - baseExclTax;
 
               return (
-                <Card key={country.code} className="bg-white">
+                <Card key={country.code} className="water-glass-effect border-gray-200/30">
                   <CardContent className="p-4">
                     <div className="grid md:grid-cols-12 gap-4 items-center">
                       {/* Country */}
