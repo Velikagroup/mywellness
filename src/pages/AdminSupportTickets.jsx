@@ -96,31 +96,27 @@ export default function AdminSupportTickets() {
     checkAccess();
   }, []);
 
-  // Polling real-time per aggiornamenti ticket
+  // Real-time subscription per aggiornamenti ticket
   useEffect(() => {
     if (!user) return;
 
-    const pollInterval = setInterval(async () => {
-      try {
-        const updatedTickets = await base44.entities.SupportTicket.list('-created_date', 100);
-        
-        // Identifica ticket con nuove risposte utente
-        updatedTickets.forEach(ticket => {
-          if (ticket.status === 'in_lavorazione') {
-            const oldTicket = tickets.find(t => t.id === ticket.id);
-            if (oldTicket && ticket.message !== oldTicket.message) {
-              setNewResponseTickets(prev => new Set([...prev, ticket.id]));
-            }
-          }
-        });
-        
-        setTickets(updatedTickets);
-      } catch (error) {
-        console.error('Error polling tickets:', error);
-      }
-    }, 3000); // Polling ogni 3 secondi
+    const unsubscribe = base44.entities.SupportTicket.subscribe((updatedTickets) => {
+      const previousTickets = tickets;
+      setTickets(updatedTickets);
 
-    return () => clearInterval(pollInterval);
+      // Identifica ticket con nuove risposte utente
+      updatedTickets.forEach(ticket => {
+        if (ticket.status === 'in_lavorazione') {
+          const oldTicket = previousTickets.find(t => t.id === ticket.id);
+          if (oldTicket && ticket.message !== oldTicket.message) {
+            // Nuovo messaggio ricevuto
+            setNewResponseTickets(prev => new Set([...prev, ticket.id]));
+          }
+        }
+      });
+    });
+
+    return () => unsubscribe();
   }, [user, tickets]);
 
   const checkAccess = async () => {
@@ -1277,20 +1273,19 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [chat.message, chat.newMessage]);
 
-  // Polling real-time per questo specifico ticket
+  // Real-time update per questo specifico ticket
   useEffect(() => {
-    const pollInterval = setInterval(async () => {
-      try {
-        const updatedTicket = await base44.entities.SupportTicket.filter({ id: chat.id });
-        if (updatedTicket[0] && updatedTicket[0].message !== chat.message) {
-          window.dispatchEvent(new CustomEvent('ticketUpdated', { detail: updatedTicket[0] }));
-        }
-      } catch (error) {
-        console.error('Error polling ticket:', error);
+    const unsubscribe = base44.entities.SupportTicket.subscribe((updatedTickets) => {
+      const updatedTicket = updatedTickets.find(t => t.id === chat.id);
+      if (updatedTicket && updatedTicket.message !== chat.message) {
+        // Aggiorna il messaggio in tempo reale
+        onUpdateMessage(chat.newMessage); // Mantieni il messaggio corrente
+        // Forza re-render con nuovo messaggio
+        window.dispatchEvent(new CustomEvent('ticketUpdated', { detail: updatedTicket }));
       }
-    }, 2000); // Polling ogni 2 secondi
+    });
 
-    return () => clearInterval(pollInterval);
+    return () => unsubscribe();
   }, [chat.id, chat.message]);
 
   useEffect(() => {
