@@ -147,7 +147,25 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
 
   useEffect(() => {
     scrollToBottom();
-  }, [localTicket]);
+  }, [localTicket, localTicket.message]);
+
+  // 🔥 POLLING REAL-TIME per nuovi messaggi admin ogni 2 secondi
+  useEffect(() => {
+    const pollTicket = async () => {
+      try {
+        const updated = await base44.entities.SupportTicket.filter({ id: ticket.id });
+        if (updated && updated.length > 0 && updated[0].message !== localTicket.message) {
+          setLocalTicket(updated[0]);
+          onUpdate?.();
+        }
+      } catch (error) {
+        console.error('Error polling ticket:', error);
+      }
+    };
+
+    const interval = setInterval(pollTicket, 2000);
+    return () => clearInterval(interval);
+  }, [ticket.id, localTicket.message]);
 
   const handleFileSelect = async (e) => {
     const files = Array.from(e.target.files);

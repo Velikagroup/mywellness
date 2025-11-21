@@ -96,27 +96,41 @@ export default function AdminSupportTickets() {
     checkAccess();
   }, []);
 
-  // Real-time subscription per aggiornamenti ticket
+  // 🔥 POLLING REAL-TIME per aggiornamenti ticket ogni 2 secondi
   useEffect(() => {
     if (!user) return;
 
-    const unsubscribe = base44.entities.SupportTicket.subscribe((updatedTickets) => {
-      const previousTickets = tickets;
-      setTickets(updatedTickets);
-
-      // Identifica ticket con nuove risposte utente
-      updatedTickets.forEach(ticket => {
-        if (ticket.status === 'in_lavorazione') {
-          const oldTicket = previousTickets.find(t => t.id === ticket.id);
-          if (oldTicket && ticket.message !== oldTicket.message) {
-            // Nuovo messaggio ricevuto
-            setNewResponseTickets(prev => new Set([...prev, ticket.id]));
+    const pollTickets = async () => {
+      try {
+        const updatedTickets = await base44.entities.SupportTicket.list('-created_date', 100);
+        
+        // Identifica ticket con nuove risposte utente
+        updatedTickets.forEach(ticket => {
+          if (ticket.status === 'in_lavorazione') {
+            const oldTicket = tickets.find(t => t.id === ticket.id);
+            if (oldTicket && ticket.message !== oldTicket.message) {
+              setNewResponseTickets(prev => new Set([...prev, ticket.id]));
+              
+              // 🔥 AGGIORNA ANCHE LE CHAT APERTE IN REAL-TIME
+              setOpenChats(prevChats => 
+                prevChats.map(chat => 
+                  chat.id === ticket.id 
+                    ? { ...chat, message: ticket.message, status: ticket.status, admin_response: ticket.admin_response }
+                    : chat
+                )
+              );
+            }
           }
-        }
-      });
-    });
+        });
+        
+        setTickets(updatedTickets);
+      } catch (error) {
+        console.error('Error polling tickets:', error);
+      }
+    };
 
-    return () => unsubscribe();
+    const interval = setInterval(pollTickets, 2000);
+    return () => clearInterval(interval);
   }, [user, tickets]);
 
   const checkAccess = async () => {
