@@ -1174,7 +1174,7 @@ export default function Home() {
 
               {/* Titolo principale */}
               <h3 className="text-3xl font-bold text-center mb-3">
-                Scopri la tua <span className="text-[var(--brand-primary)]">massa grassa</span>
+                Scopri la tua <span className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 bg-clip-text text-transparent">massa grassa</span>
               </h3>
 
               {/* Sottotitolo */}
@@ -1211,18 +1211,20 @@ export default function Home() {
               </div>
 
               {/* Footer con bullet points */}
-              <div className="space-y-2 text-center text-sm text-gray-600">
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-base">⏱️</span>
-                  <span>Richiede solo 3 minuti</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-base">🎯</span>
-                  <span>Calcoli scientifici precisi</span>
-                </div>
-                <div className="flex items-center justify-center gap-2">
-                  <span className="text-base">📊</span>
-                  <span>I tuoi dati sono privati e sicuri</span>
+              <div className="bg-gray-50/80 backdrop-blur-sm rounded-2xl p-5 border border-gray-200/50">
+                <div className="space-y-3 text-sm text-gray-700">
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-base">⏱️</span>
+                    <span>Richiede solo 3 minuti</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-base">🎯</span>
+                    <span>Calcoli scientifici precisi</span>
+                  </div>
+                  <div className="flex items-center justify-center gap-2">
+                    <span className="text-base">📊</span>
+                    <span>I tuoi dati sono privati e sicuri</span>
+                  </div>
                 </div>
               </div>
             </div>
