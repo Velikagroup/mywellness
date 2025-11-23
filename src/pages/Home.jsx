@@ -1174,7 +1174,7 @@ export default function Home() {
 
               {/* Titolo principale */}
               <h3 className="text-3xl font-bold text-center mb-3">
-                Scopri la tua <span className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 bg-clip-text text-transparent">massa grassa</span>
+                Scopri la tua <span className="animated-text-gradient">massa grassa</span>
               </h3>
 
               {/* Sottotitolo */}
