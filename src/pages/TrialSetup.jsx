@@ -136,6 +136,31 @@ export default function TrialSetup() {
           await validateCouponFromURL(couponParam, currentUser.email);
         }
 
+        // Applica automaticamente sconto affiliato se presente
+        const affiliateCode = localStorage.getItem('affiliateCode');
+        if (affiliateCode && currentUser.email && !appliedCoupon) {
+          console.log('🔗 Applicazione automatica sconto affiliato:', affiliateCode);
+          try {
+            const response = await base44.functions.invoke('stripeApplyAffiliateDiscount', {
+              affiliate_code: affiliateCode
+            });
+            
+            const responseData = response.data || response;
+            
+            if (responseData.success) {
+              setAppliedCoupon({
+                code: affiliateCode,
+                discount_type: 'percentage',
+                discount_value: 20
+              });
+              console.log('✅ Sconto affiliato del 20% applicato automaticamente!');
+              localStorage.removeItem('affiliateCode'); // Rimuovi dopo l'applicazione
+            }
+          } catch (error) {
+            console.error('Error applying affiliate discount:', error);
+          }
+        }
+
         if (refSource) {
           setTrafficSource(refSource);
           localStorage.setItem('trafficSource', refSource);

@@ -52,6 +52,14 @@ export default function Home() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
+    // Cattura codice affiliato dall'URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const affiliateCode = urlParams.get('affiliate');
+    if (affiliateCode) {
+      localStorage.setItem('affiliateCode', affiliateCode.toUpperCase());
+      console.log('🔗 Codice affiliato salvato:', affiliateCode.toUpperCase());
+    }
+
     // Pop-up quiz dopo 5 secondi
     const timer = setTimeout(() => {
       setShowQuizPopup(true);
