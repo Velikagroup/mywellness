@@ -14,6 +14,14 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        // ✅ SECURITY: Only admins can create test payments
+        if (user.role !== 'admin') {
+            console.error('❌ Non-admin user trying to create test payment');
+            return Response.json({ 
+                error: 'Forbidden: Only admins can create test payments' 
+            }, { status: 403 });
+        }
+
         console.log('🧪 Creating test payment for user:', user.email);
 
         // Get or create Stripe customer

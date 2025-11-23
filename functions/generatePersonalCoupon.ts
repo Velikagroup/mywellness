@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 // Genera un codice coupon personalizzato per un utente
 function generatePersonalCode(userId, baseCode) {
@@ -23,6 +23,21 @@ Deno.serve(async (req) => {
             return Response.json({ 
                 error: 'Missing required fields: userId, baseCode, discountValue, emailTrigger' 
             }, { status: 400 });
+        }
+
+        // ✅ SECURITY: Only admins or system (service role) can generate coupons
+        const authenticatedUser = await base44.auth.me();
+        
+        if (!authenticatedUser) {
+            console.error('❌ No authenticated user');
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        if (authenticatedUser.role !== 'admin') {
+            console.error('❌ Non-admin user trying to generate coupon');
+            return Response.json({ 
+                error: 'Forbidden: Only admins can generate coupons' 
+            }, { status: 403 });
         }
 
         console.log(`🎫 Generating personal coupon for user ${userId}: ${baseCode}`);

@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
     console.log('🎉 sendGoalWeightAchieved - Start');
@@ -10,6 +10,21 @@ Deno.serve(async (req) => {
 
         if (!userId) {
             return Response.json({ error: 'Missing userId' }, { status: 400 });
+        }
+
+        // ✅ SECURITY: Verify authenticated user matches userId OR is admin
+        const authenticatedUser = await base44.auth.me();
+        
+        if (!authenticatedUser) {
+            console.error('❌ No authenticated user');
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        }
+
+        if (authenticatedUser.id !== userId && authenticatedUser.role !== 'admin') {
+            console.error('❌ User trying to send email for another user');
+            return Response.json({ 
+                error: 'Forbidden: You can only trigger emails for yourself' 
+            }, { status: 403 });
         }
 
         const user = await base44.asServiceRole.entities.User.get(userId);
