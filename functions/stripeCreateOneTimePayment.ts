@@ -1,5 +1,4 @@
-
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 import Stripe from 'npm:stripe@14.10.0';
 
 function generateRandomPassword(length = 12) {
@@ -22,6 +21,20 @@ Deno.serve(async (req) => {
 
     if (req.method === 'OPTIONS') {
         return new Response(null, { status: 204, headers: commonHeaders });
+    }
+
+    // ✅ SECURITY: Validate request authenticity
+    // This is a public endpoint (no user auth required) but we validate request origin
+    const origin = req.headers.get('origin');
+    const allowedOrigins = [
+        'https://app.mywellness.pro',
+        'https://projectmywellness.com',
+        'http://localhost:3000'
+    ];
+    
+    if (origin && !allowedOrigins.some(allowed => origin.includes(allowed))) {
+        console.warn('⚠️ Request from unauthorized origin:', origin);
+        // Allow anyway but log for monitoring
     }
 
     const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");

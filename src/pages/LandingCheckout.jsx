@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -244,7 +243,17 @@ export default function LandingCheckout() {
 
     // Load Stripe.js
     const loadStripe = async () => {
-      const stripeKey = 'pk_live_51S6Kgr2OXBs6ZYwl4yACMzsDOQ72eT6A2glTBx5dXJWDmDEABHkXbDMzl77MMb3ZQOpXHWJpBiVQWJjZhZz34Nnl00FuwXVxIM';
+      // Fetch publishable key from backend
+      const keyResponse = await fetch(`${window.location.origin}/functions/getStripePublishableKey`);
+      const keyData = await keyResponse.json();
+      const stripeKey = keyData.publishableKey;
+
+      if (!stripeKey) {
+        console.error('Failed to load Stripe key');
+        alert('Errore nel caricamento del sistema di pagamento. Riprova.');
+        return null;
+      }
+
       if (!window.Stripe) {
         return new Promise((resolve) => {
           const script = document.createElement('script');
@@ -261,7 +270,12 @@ export default function LandingCheckout() {
     };
 
     loadStripe().then(stripeInstance => {
-      setStripe(stripeInstance);
+      if (stripeInstance) {
+        setStripe(stripeInstance);
+      }
+    }).catch(error => {
+      console.error('Error loading Stripe:', error);
+      alert('Errore nel caricamento del sistema di pagamento.');
     });
 
     // Leggi parametro UTM dalla URL
