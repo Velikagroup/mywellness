@@ -52,14 +52,11 @@ export default function Home() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Pop-up quiz dopo 5 secondi, solo la prima volta
-    const hasSeenQuizPopup = localStorage.getItem('hasSeenQuizPopup');
-    if (!hasSeenQuizPopup) {
-      const timer = setTimeout(() => {
-        setShowQuizPopup(true);
-      }, 5000);
-      return () => clearTimeout(timer);
-    }
+    // Pop-up quiz dopo 5 secondi
+    const timer = setTimeout(() => {
+      setShowQuizPopup(true);
+    }, 5000);
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
@@ -231,14 +228,12 @@ export default function Home() {
   };
 
   const handleQuizPopupStart = (gender) => {
-    localStorage.setItem('hasSeenQuizPopup', 'true');
     localStorage.setItem('quizData', JSON.stringify({ gender }));
     setShowQuizPopup(false);
     navigate(createPageUrl('Quiz'));
   };
 
   const handleQuizPopupClose = () => {
-    localStorage.setItem('hasSeenQuizPopup', 'true');
     setShowQuizPopup(false);
   };
 
