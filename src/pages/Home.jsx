@@ -1136,7 +1136,22 @@ export default function Home() {
 
       {/* Quiz Pop-up */}
       <Dialog open={showQuizPopup} onOpenChange={handleQuizPopupClose}>
-        <DialogContent className="sm:max-w-lg bg-white rounded-3xl border-0 shadow-2xl p-0 overflow-hidden">
+        <DialogContent 
+          className="sm:max-w-lg rounded-3xl border-0 shadow-2xl p-0 overflow-hidden"
+          style={{
+            background: '#f9fafb',
+            backgroundImage: `
+              radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
+              radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+              radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+              radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%)
+            `,
+            backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
+            animation: 'gradientShift 45s ease-in-out infinite'
+          }}
+        >
           <div className="relative">
             {/* Progress Bar */}
             <div className="h-2 bg-gray-100">
