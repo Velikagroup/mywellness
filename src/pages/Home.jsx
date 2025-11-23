@@ -1,6 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
@@ -46,9 +47,19 @@ export default function Home() {
 
   const [liveStats, setLiveStats] = useState({ users: 0, totalKg: 0 });
   const [isLoading, setIsLoading] = useState(false);
+  const [showQuizPopup, setShowQuizPopup] = useState(false);
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Pop-up quiz dopo 5 secondi, solo la prima volta
+    const hasSeenQuizPopup = localStorage.getItem('hasSeenQuizPopup');
+    if (!hasSeenQuizPopup) {
+      const timer = setTimeout(() => {
+        setShowQuizPopup(true);
+      }, 5000);
+      return () => clearTimeout(timer);
+    }
   }, []);
 
   useEffect(() => {
@@ -217,6 +228,17 @@ export default function Home() {
       navigate(createPageUrl('Quiz'));
     }
     setIsLoading(false);
+  };
+
+  const handleQuizPopupStart = () => {
+    localStorage.setItem('hasSeenQuizPopup', 'true');
+    setShowQuizPopup(false);
+    handleGetStarted();
+  };
+
+  const handleQuizPopupClose = () => {
+    localStorage.setItem('hasSeenQuizPopup', 'true');
+    setShowQuizPopup(false);
   };
 
   const handleLogin = async () => {
