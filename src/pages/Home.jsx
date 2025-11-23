@@ -1136,93 +1136,80 @@ export default function Home() {
 
       {/* Quiz Pop-up */}
       <Dialog open={showQuizPopup} onOpenChange={handleQuizPopupClose}>
-        <DialogContent className="sm:max-w-2xl bg-white rounded-3xl border-0 shadow-2xl p-0 overflow-hidden">
+        <DialogContent className="sm:max-w-lg bg-white rounded-3xl border-0 shadow-2xl p-0 overflow-hidden">
           <div className="relative">
-            {/* Header con gradiente */}
-            <div className="bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 px-8 py-8 text-center">
-              <div className="w-16 h-16 mx-auto mb-4 bg-white/20 backdrop-blur-sm rounded-full flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-white" />
-              </div>
-              <h3 className="text-2xl font-bold text-white mb-2">
-                Inizia il Tuo Percorso Wellness!
-              </h3>
-              <p className="text-white/90 text-sm">
-                Piano nutrizionale personalizzato in 2 minuti
-              </p>
+            {/* Progress Bar */}
+            <div className="h-2 bg-gray-100">
+              <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 w-[8%] rounded-r-full transition-all" />
+            </div>
+
+            {/* Progress Text */}
+            <div className="px-8 pt-6 pb-2">
+              <p className="text-sm text-gray-600 text-center">1 / 12 domande completate</p>
             </div>
 
             {/* Contenuto */}
-            <div className="px-8 py-8">
-              <div className="text-center mb-6">
-                <div className="inline-flex items-center gap-2 bg-gray-100 rounded-full px-4 py-1.5 mb-4">
-                  <div className="w-6 h-6 rounded-full bg-[var(--brand-primary)] text-white text-xs font-bold flex items-center justify-center">
-                    1
-                  </div>
-                  <span className="text-sm font-medium text-gray-700">Prima domanda</span>
+            <div className="px-8 py-6">
+              {/* Icona centrale */}
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-400 rounded-2xl flex items-center justify-center shadow-lg">
+                  <Sparkles className="w-8 h-8 text-white" />
                 </div>
-                <h4 className="text-xl font-bold text-gray-900 mb-2">
-                  Seleziona il tuo genere
-                </h4>
-                <p className="text-sm text-gray-600">
-                  Per creare un piano su misura per te
-                </p>
               </div>
 
-              {/* Scelta Genere - Interattiva */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              {/* Titolo principale */}
+              <h3 className="text-3xl font-bold text-center mb-3">
+                Scopri la tua <span className="text-[var(--brand-primary)]">massa grassa</span>
+              </h3>
+
+              {/* Sottotitolo */}
+              <p className="text-center text-gray-600 mb-6">
+                e costruisci il <strong>piano nutrizionale</strong> fatto su misura per te
+              </p>
+
+              {/* Label */}
+              <p className="text-center text-sm font-semibold text-gray-700 mb-4">
+                Seleziona il tuo sesso:
+              </p>
+
+              {/* Scelta Genere - Style Minimale come nell'immagine */}
+              <div className="grid grid-cols-2 gap-4 mb-8">
                 <button
                   onClick={() => handleQuizPopupStart('male')}
-                  className="group relative overflow-hidden bg-gradient-to-br from-blue-50 to-cyan-50 hover:from-blue-100 hover:to-cyan-100 border-2 border-blue-200 hover:border-blue-400 rounded-2xl p-6 transition-all hover:scale-105 hover:shadow-xl"
+                  className="bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-[var(--brand-primary)] rounded-2xl p-6 transition-all hover:shadow-md"
                 >
-                  <div className="text-center space-y-3">
-                    <div className="text-5xl mb-2">👨</div>
-                    <div className="font-bold text-gray-900 text-lg">Uomo</div>
-                    <div className="text-xs text-gray-600">
-                      Piano ottimizzato per uomo
-                    </div>
+                  <div className="text-center space-y-2">
+                    <div className="text-4xl mb-1">👨</div>
+                    <div className="font-semibold text-gray-900">Uomo</div>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-blue-500/0 to-blue-500/0 group-hover:from-blue-500/5 group-hover:to-blue-500/10 transition-all pointer-events-none" />
                 </button>
 
                 <button
                   onClick={() => handleQuizPopupStart('female')}
-                  className="group relative overflow-hidden bg-gradient-to-br from-pink-50 to-purple-50 hover:from-pink-100 hover:to-purple-100 border-2 border-pink-200 hover:border-pink-400 rounded-2xl p-6 transition-all hover:scale-105 hover:shadow-xl"
+                  className="bg-white hover:bg-gray-50 border-2 border-gray-200 hover:border-[var(--brand-primary)] rounded-2xl p-6 transition-all hover:shadow-md"
                 >
-                  <div className="text-center space-y-3">
-                    <div className="text-5xl mb-2">👩</div>
-                    <div className="font-bold text-gray-900 text-lg">Donna</div>
-                    <div className="text-xs text-gray-600">
-                      Piano ottimizzato per donna
-                    </div>
+                  <div className="text-center space-y-2">
+                    <div className="text-4xl mb-1">👩</div>
+                    <div className="font-semibold text-gray-900">Donna</div>
                   </div>
-                  <div className="absolute inset-0 bg-gradient-to-t from-pink-500/0 to-pink-500/0 group-hover:from-pink-500/5 group-hover:to-pink-500/10 transition-all pointer-events-none" />
                 </button>
               </div>
 
-              {/* Features Preview */}
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 mb-6">
-                <div className="grid grid-cols-3 gap-3 text-center">
-                  <div className="space-y-1">
-                    <div className="text-2xl">🎯</div>
-                    <div className="text-xs font-medium text-gray-700">Obiettivi<br/>Personalizzati</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-2xl">🤖</div>
-                    <div className="text-xs font-medium text-gray-700">Intelligenza<br/>Artificiale</div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className="text-2xl">⚡</div>
-                    <div className="text-xs font-medium text-gray-700">Risultati<br/>Veloci</div>
-                  </div>
+              {/* Footer con bullet points */}
+              <div className="space-y-2 text-center text-sm text-gray-600">
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-base">⏱️</span>
+                  <span>Richiede solo 3 minuti</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-base">🎯</span>
+                  <span>Calcoli scientifici precisi</span>
+                </div>
+                <div className="flex items-center justify-center gap-2">
+                  <span className="text-base">📊</span>
+                  <span>I tuoi dati sono privati e sicuri</span>
                 </div>
               </div>
-
-              <button
-                onClick={handleQuizPopupClose}
-                className="w-full text-sm text-gray-500 hover:text-gray-700 transition-colors py-2 font-medium"
-              >
-                Continua a navigare
-              </button>
             </div>
           </div>
         </DialogContent>
