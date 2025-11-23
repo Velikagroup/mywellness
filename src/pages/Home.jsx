@@ -1132,6 +1132,44 @@ export default function Home() {
           </div>
         </div>
       </footer>
-    </div>
-  );
-}
+
+      {/* Quiz Pop-up */}
+      <Dialog open={showQuizPopup} onOpenChange={handleQuizPopupClose}>
+        <DialogContent className="sm:max-w-md bg-white rounded-3xl border-0 shadow-2xl p-8">
+          <div className="text-center space-y-6">
+            <div className="w-20 h-20 mx-auto bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-full flex items-center justify-center shadow-xl">
+              <Sparkles className="w-10 h-10 text-white" />
+            </div>
+
+            <div>
+              <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                Inizia il Tuo Percorso Wellness!
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                Rispondi a poche domande e ricevi un piano nutrizionale personalizzato creato dall'AI.
+              </p>
+            </div>
+
+            <div className="space-y-3">
+              <Button
+                onClick={handleQuizPopupStart}
+                disabled={isLoading}
+                className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl px-6 py-4 text-base font-semibold shadow-lg hover:shadow-xl transition-all"
+              >
+                Inizia il Quiz Gratuito
+                <Sparkles className="w-5 h-5 ml-2" />
+              </Button>
+
+              <button
+                onClick={handleQuizPopupClose}
+                className="w-full text-sm text-gray-500 hover:text-gray-700 transition-colors py-2"
+              >
+                Continua a navigare
+              </button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+      </div>
+      );
+      }
