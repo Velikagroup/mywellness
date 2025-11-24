@@ -123,9 +123,11 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
     const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
     if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
       setShowConfirmDialog(false);
+      setIsCalculating(false);
       setCheckoutPlan(plan.id);
       setCheckoutBilling(billingCycle);
-      setShowUpgradeCheckout(true);
+      onClose();
+      setTimeout(() => setShowUpgradeCheckout(true), 100);
       return;
     }
     
@@ -156,7 +158,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       setShowConfirmDialog(false);
       setCheckoutPlan(selectedPlanToUpgrade.id);
       setCheckoutBilling(billingCycle);
-      setShowUpgradeCheckout(true);
+      onClose();
+      setTimeout(() => setShowUpgradeCheckout(true), 100);
       return;
     }
 
