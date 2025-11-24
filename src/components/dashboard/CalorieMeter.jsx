@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Camera, Calculator, Upload, X, Loader2, Sparkles, Zap } from 'lucide-react';
 import { base44 } from "@/api/base44Client";
 import UpgradeModal from '../meals/UpgradeModal';
+import UpgradeCheckoutModal from '../modals/UpgradeCheckoutModal';
 
 export default function CalorieMeter({ isOpen, onClose }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -15,6 +16,7 @@ export default function CalorieMeter({ isOpen, onClose }) {
   const [result, setResult] = useState(null);
   const [user, setUser] = useState(null);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
 
   React.useEffect(() => {
     const loadUser = async () => {
@@ -393,7 +395,10 @@ IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEM
                         Sblocca piani pasto settimanali personalizzati, ricette con foto AI, lista della spesa automatica e molto altro!
                       </p>
                       <Button
-                        onClick={() => setShowUpgradeModal(true)}
+                        onClick={() => {
+                          onClose();
+                          setShowUpgradeCheckout(true);
+                        }}
                         className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold text-sm h-10"
                       >
                         Upgrade a Base • Da €19/mese
@@ -428,6 +433,13 @@ IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEM
         onClose={() => setShowUpgradeModal(false)}
         currentPlan={user?.subscription_plan || 'standard'}
         targetPlan="base"
+      />
+
+      <UpgradeCheckoutModal
+        isOpen={showUpgradeCheckout}
+        onClose={() => setShowUpgradeCheckout(false)}
+        selectedPlan="base"
+        selectedBillingPeriod="monthly"
       />
     </Dialog>
   );
