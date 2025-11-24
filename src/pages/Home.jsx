@@ -219,10 +219,9 @@ export default function Home() {
     try {
       const currentUser = await base44.auth.me();
 
-      if (currentUser && currentUser.quiz_completed) {
+      if (currentUser && currentUser.quiz_completed && 
+          (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial')) {
         navigate(createPageUrl('Dashboard'));
-      } else if (currentUser) {
-        navigate(createPageUrl('Quiz'));
       } else {
         navigate(createPageUrl('Quiz'));
       }

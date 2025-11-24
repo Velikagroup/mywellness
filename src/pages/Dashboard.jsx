@@ -60,11 +60,11 @@ export default function Dashboard() {
       const currentUser = await base44.auth.me();
       console.log('👤 User loaded:', currentUser.id);
       
-      // ✅ CRITICAL: Verifica se l'utente ha una subscription attiva o in trial
+      // ✅ Se l'utente non ha subscription, rimanda al quiz
       if (!currentUser.subscription_status || 
           (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial')) {
-        console.warn('⚠️ User has no active subscription, redirecting to TrialSetup');
-        navigate(createPageUrl('TrialSetup'), { replace: true });
+        console.warn('⚠️ User has no active subscription, redirecting to Quiz');
+        navigate(createPageUrl('Quiz'), { replace: true });
         return;
       }
       
