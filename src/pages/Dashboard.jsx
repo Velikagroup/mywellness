@@ -163,14 +163,18 @@ export default function Dashboard() {
     const isStandard = user.subscription_plan === 'standard' || !user.subscription_plan;
     if (!isStandard) return;
 
-    // Mostra all'apertura
     const showPrompt = () => setShowNutritionUnlock(true);
-    showPrompt();
 
-    // Ripeti ogni 60 secondi
-    const interval = setInterval(showPrompt, 60000);
+    // Mostra dopo 5 secondi al caricamento
+    const initialTimeout = setTimeout(showPrompt, 5000);
 
-    return () => clearInterval(interval);
+    // Ripeti ogni 30 secondi dopo il primo
+    const interval = setInterval(showPrompt, 30000);
+
+    return () => {
+      clearTimeout(initialTimeout);
+      clearInterval(interval);
+    };
   }, [user, isLoading]);
 
   const handleMealUpdate = (updatedMeal) => {
