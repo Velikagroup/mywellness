@@ -13,6 +13,20 @@ export default function CalorieMeter({ isOpen, onClose }) {
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
 
+  React.useEffect(() => {
+    const loadUser = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      } catch (error) {
+        console.error('Error loading user:', error);
+      }
+    };
+    if (isOpen) {
+      loadUser();
+    }
+  }, [isOpen]);
+
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
     if (file) {
