@@ -160,10 +160,27 @@ export default function Dashboard() {
   useEffect(() => {
     if (!user || isLoading) return;
     
-    const isStandard = user.subscription_plan === 'standard' || !user.subscription_plan;
-    if (!isStandard) return;
+    const isStandard = user.subscription_plan === 'standard' || 
+                       user.subscription_plan === 'trial' || 
+                       !user.subscription_plan;
+    
+    console.log('🔔 Nutrition unlock check:', { 
+      plan: user.subscription_plan, 
+      isStandard,
+      showNutritionUnlock 
+    });
+    
+    if (!isStandard) {
+      console.log('❌ User has premium plan, skipping nutrition unlock');
+      return;
+    }
 
-    const showPrompt = () => setShowNutritionUnlock(true);
+    console.log('✅ User is standard/trial - activating nutrition unlock');
+
+    const showPrompt = () => {
+      console.log('📢 Opening nutrition unlock prompt');
+      setShowNutritionUnlock(true);
+    };
 
     // Mostra dopo 5 secondi al caricamento
     const initialTimeout = setTimeout(showPrompt, 5000);
