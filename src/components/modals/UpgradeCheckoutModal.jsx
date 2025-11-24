@@ -1026,9 +1026,21 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
               </div>
 
               <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
+                {activeDiscount && (
+                  <div className="flex justify-between text-sm text-gray-500">
+                    <span>Prezzo originale</span>
+                    <span className="line-through">€{selectedBillingPeriod === 'monthly' ? monthlyPrice.toFixed(2) : yearlyPrice.toFixed(2)}</span>
+                  </div>
+                )}
+                {activeDiscount && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Sconto {activeDiscount.value}%</span>
+                    <span>-€{(selectedBillingPeriod === 'monthly' ? (monthlyPrice - discountedMonthlyPrice) : (yearlyPrice - discountedYearlyPrice)).toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm sm:text-base text-gray-700 font-semibold pt-2 border-t border-gray-200">
                   <span>Pagamento Oggi</span>
-                  <span>€{selectedBillingPeriod === 'monthly' ? monthlyPrice : (monthlyPrice * 12 * 0.8).toFixed(2)}</span>
+                  <span>€{finalPrice.toFixed(2)}</span>
                 </div>
                 <p className="text-xs text-gray-500 text-center pt-2">
                   Piano {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} - {selectedBillingPeriod === 'monthly' ? 'Mensile' : 'Annuale'}
@@ -1046,12 +1058,12 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                     Attivazione...
                   </div>
                 ) : (
-                  `Paga €${selectedBillingPeriod === 'monthly' ? monthlyPrice : (monthlyPrice * 12 * 0.8).toFixed(2)} Ora`
+                  `Paga €${finalPrice.toFixed(2)} Ora`
                 )}
               </Button>
 
               <p className="text-xs text-center text-gray-500 mt-4 px-2">
-                Addebito immediato di €{selectedBillingPeriod === 'monthly' ? monthlyPrice : (monthlyPrice * 12 * 0.8).toFixed(2)}. Accesso illimitato a tutte le funzionalità.
+                Addebito immediato di €{finalPrice.toFixed(2)}. {activeDiscount && selectedBillingPeriod === 'monthly' && 'Dal secondo mese prezzo pieno. '}Accesso illimitato a tutte le funzionalità.
               </p>
             </>
           )}
