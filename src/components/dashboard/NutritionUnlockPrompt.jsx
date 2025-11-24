@@ -131,27 +131,27 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[85vh] p-0 overflow-hidden">
+      <DialogContent className="max-w-2xl max-h-[85vh] sm:max-h-[85vh] max-h-[75vh] p-0 overflow-hidden w-[95vw] sm:w-auto">
         <div className="relative">
           {/* Header fisso */}
-          <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-white via-white to-transparent px-6 pt-6 pb-8">
+          <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-white via-white to-transparent px-3 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8">
             <button
               onClick={onClose}
-              className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors z-30"
+              className="absolute top-2 right-2 sm:top-4 sm:right-4 p-1.5 sm:p-2 hover:bg-gray-100 rounded-full transition-colors z-30"
             >
-              <X className="w-5 h-5 text-gray-600" />
+              <X className="w-4 h-4 sm:w-5 sm:h-5 text-gray-600" />
             </button>
 
-            <div className="flex items-center gap-3 mb-3">
-              <div className="w-14 h-14 bg-gradient-to-br from-purple-500 to-blue-500 rounded-2xl flex items-center justify-center">
-                <Sparkles className="w-7 h-7 text-white" />
+            <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
+              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Sparkles className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
               </div>
               <div>
-                <h2 className="text-2xl font-black text-gray-900">
+                <h2 className="text-lg sm:text-2xl font-black text-gray-900 leading-tight">
                   Il Tuo Piano è Pronto! 🎉
                 </h2>
-                <p className="text-sm text-gray-600">
-                  Sblocca l'accesso completo in 30 secondi
+                <p className="text-xs sm:text-sm text-gray-600">
+                  Sblocca l'accesso in 30 secondi
                 </p>
               </div>
             </div>
@@ -160,8 +160,8 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
           {/* Contenuto scrollabile */}
           <div 
             ref={contentRef}
-            className="overflow-y-auto pt-32 pb-6 px-6"
-            style={{ maxHeight: '70vh' }}
+            className="overflow-y-auto pt-24 sm:pt-32 pb-4 sm:pb-6 px-3 sm:px-6"
+            style={{ maxHeight: '60vh', WebkitOverflowScrolling: 'touch' }}
           >
             <AnimatePresence mode="wait">
               {!showMealDetail ? (
@@ -170,35 +170,35 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
-                  className="space-y-4"
+                  className="space-y-2 sm:space-y-4"
                 >
                   {FAKE_MEAL_PLAN.map((day) => (
                     <div
                       key={day.id}
-                      className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-4 border-2 border-gray-200"
+                      className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl sm:rounded-2xl p-2.5 sm:p-4 border border-gray-200 sm:border-2"
                     >
-                      <h3 className="text-lg font-bold text-gray-900 mb-3 flex items-center gap-2">
-                        <span className="w-2 h-2 rounded-full bg-[#26847F]"></span>
+                      <h3 className="text-sm sm:text-lg font-bold text-gray-900 mb-2 sm:mb-3 flex items-center gap-1.5 sm:gap-2">
+                        <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-[#26847F]"></span>
                         {day.day}
                       </h3>
-                      <div className="space-y-2">
+                      <div className="space-y-1.5 sm:space-y-2">
                         {day.meals.map((meal, idx) => (
                           <div
                             key={idx}
-                            className="bg-white rounded-xl p-3 flex items-center justify-between hover:shadow-md transition-shadow"
+                            className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 flex items-center justify-between"
                           >
-                            <div className="flex items-center gap-3">
-                              <div className="w-10 h-10 bg-gradient-to-br from-[#26847F] to-teal-400 rounded-lg flex items-center justify-center">
-                                <Utensils className="w-5 h-5 text-white" />
+                            <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#26847F] to-teal-400 rounded-md sm:rounded-lg flex items-center justify-center flex-shrink-0">
+                                <Utensils className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
                               </div>
-                              <div>
-                                <p className="text-sm font-bold text-gray-900">{meal.name}</p>
-                                <p className="text-xs text-gray-500">{meal.type} • {meal.time}</p>
+                              <div className="min-w-0">
+                                <p className="text-xs sm:text-sm font-bold text-gray-900 truncate">{meal.name}</p>
+                                <p className="text-[10px] sm:text-xs text-gray-500">{meal.type} • {meal.time}</p>
                               </div>
                             </div>
-                            <div className="text-right">
-                              <p className="text-sm font-bold text-[#26847F]">{meal.calories}</p>
-                              <p className="text-xs text-gray-500">kcal</p>
+                            <div className="text-right flex-shrink-0 ml-2">
+                              <p className="text-xs sm:text-sm font-bold text-[#26847F]">{meal.calories}</p>
+                              <p className="text-[10px] sm:text-xs text-gray-500">kcal</p>
                             </div>
                           </div>
                         ))}
@@ -212,70 +212,70 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
                   initial={{ opacity: 0, scale: 0.95 }}
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.95 }}
-                  className="space-y-4"
+                  className="space-y-2 sm:space-y-4"
                 >
-                  <div className="relative rounded-2xl overflow-hidden">
+                  <div className="relative rounded-xl sm:rounded-2xl overflow-hidden">
                     <img
                       src={DETAILED_MEAL.image}
                       alt={DETAILED_MEAL.name}
-                      className="w-full h-48 object-cover"
+                      className="w-full h-32 sm:h-48 object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent"></div>
-                    <div className="absolute bottom-4 left-4 right-4">
-                      <h3 className="text-2xl font-black text-white mb-2">{DETAILED_MEAL.name}</h3>
-                      <div className="flex items-center gap-4 text-sm text-white/90">
+                    <div className="absolute bottom-2 sm:bottom-4 left-2 sm:left-4 right-2 sm:right-4">
+                      <h3 className="text-base sm:text-2xl font-black text-white mb-1 sm:mb-2">{DETAILED_MEAL.name}</h3>
+                      <div className="flex items-center gap-2 sm:gap-4 text-xs sm:text-sm text-white/90">
                         <span className="flex items-center gap-1">
-                          <Clock className="w-4 h-4" />
+                          <Clock className="w-3 h-3 sm:w-4 sm:h-4" />
                           {DETAILED_MEAL.prepTime} min
                         </span>
                         <span className="flex items-center gap-1">
-                          <ChefHat className="w-4 h-4" />
+                          <ChefHat className="w-3 h-3 sm:w-4 sm:h-4" />
                           {DETAILED_MEAL.difficulty}
                         </span>
                       </div>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-4 gap-2">
-                    <div className="bg-gradient-to-br from-[#E0F2F1] to-teal-50 rounded-xl p-3 text-center">
-                      <p className="text-xs text-gray-600 mb-1">Calorie</p>
-                      <p className="text-lg font-black text-[#26847F]">{DETAILED_MEAL.calories}</p>
+                  <div className="grid grid-cols-4 gap-1.5 sm:gap-2">
+                    <div className="bg-gradient-to-br from-[#E0F2F1] to-teal-50 rounded-lg sm:rounded-xl p-2 sm:p-3 text-center">
+                      <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1">Calorie</p>
+                      <p className="text-sm sm:text-lg font-black text-[#26847F]">{DETAILED_MEAL.calories}</p>
                     </div>
-                    <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-xl p-3 text-center">
-                      <p className="text-xs text-gray-600 mb-1">Proteine</p>
-                      <p className="text-lg font-black text-red-600">{DETAILED_MEAL.protein}g</p>
+                    <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg sm:rounded-xl p-2 sm:p-3 text-center">
+                      <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1">Proteine</p>
+                      <p className="text-sm sm:text-lg font-black text-red-600">{DETAILED_MEAL.protein}g</p>
                     </div>
-                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-3 text-center">
-                      <p className="text-xs text-gray-600 mb-1">Carbo</p>
-                      <p className="text-lg font-black text-blue-600">{DETAILED_MEAL.carbs}g</p>
+                    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg sm:rounded-xl p-2 sm:p-3 text-center">
+                      <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1">Carbo</p>
+                      <p className="text-sm sm:text-lg font-black text-blue-600">{DETAILED_MEAL.carbs}g</p>
                     </div>
-                    <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-xl p-3 text-center">
-                      <p className="text-xs text-gray-600 mb-1">Grassi</p>
-                      <p className="text-lg font-black text-yellow-600">{DETAILED_MEAL.fat}g</p>
+                    <div className="bg-gradient-to-br from-yellow-50 to-amber-50 rounded-lg sm:rounded-xl p-2 sm:p-3 text-center">
+                      <p className="text-[10px] sm:text-xs text-gray-600 mb-0.5 sm:mb-1">Grassi</p>
+                      <p className="text-sm sm:text-lg font-black text-yellow-600">{DETAILED_MEAL.fat}g</p>
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-2xl p-4">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">📦 Ingredienti</h4>
-                    <div className="space-y-2">
+                  <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-2.5 sm:p-4">
+                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3">📦 Ingredienti</h4>
+                    <div className="space-y-1.5 sm:space-y-2">
                       {DETAILED_MEAL.ingredients.map((ing, idx) => (
-                        <div key={idx} className="flex items-center justify-between text-sm">
-                          <span className="text-gray-700">{ing.name}</span>
-                          <div className="flex items-center gap-3">
-                            <span className="text-gray-500 font-medium">{ing.qty}</span>
-                            <span className="text-[#26847F] font-bold text-xs">{ing.calories} kcal</span>
+                        <div key={idx} className="flex items-center justify-between text-xs sm:text-sm">
+                          <span className="text-gray-700 truncate mr-2">{ing.name}</span>
+                          <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                            <span className="text-gray-500 font-medium text-xs sm:text-sm">{ing.qty}</span>
+                            <span className="text-[#26847F] font-bold text-[10px] sm:text-xs">{ing.calories} kcal</span>
                           </div>
                         </div>
                       ))}
                     </div>
                   </div>
 
-                  <div className="bg-gray-50 rounded-2xl p-4">
-                    <h4 className="text-sm font-bold text-gray-900 mb-3">👨‍🍳 Preparazione</h4>
-                    <ol className="space-y-2">
+                  <div className="bg-gray-50 rounded-xl sm:rounded-2xl p-2.5 sm:p-4">
+                    <h4 className="text-xs sm:text-sm font-bold text-gray-900 mb-2 sm:mb-3">👨‍🍳 Preparazione</h4>
+                    <ol className="space-y-1.5 sm:space-y-2">
                       {DETAILED_MEAL.instructions.map((step, idx) => (
-                        <li key={idx} className="flex gap-3 text-sm text-gray-700">
-                          <span className="flex-shrink-0 w-6 h-6 bg-[#26847F] text-white rounded-full flex items-center justify-center text-xs font-bold">
+                        <li key={idx} className="flex gap-2 sm:gap-3 text-xs sm:text-sm text-gray-700">
+                          <span className="flex-shrink-0 w-5 h-5 sm:w-6 sm:h-6 bg-[#26847F] text-white rounded-full flex items-center justify-center text-[10px] sm:text-xs font-bold">
                             {idx + 1}
                           </span>
                           <span>{step}</span>
@@ -289,15 +289,15 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
           </div>
 
           {/* CTA fisso in basso */}
-          <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent px-6 py-4">
+          <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent px-3 sm:px-6 py-3 sm:py-4">
             <Button
               onClick={onUpgrade}
-              className="w-full h-14 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-lg font-black rounded-2xl shadow-2xl"
+              className="w-full h-12 sm:h-14 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-sm sm:text-lg font-black rounded-xl sm:rounded-2xl shadow-2xl"
             >
-              🎯 Sblocca Piano Nutrizionale • Da €19/mese
+              🎯 Sblocca Piano • €19/mese
             </Button>
-            <p className="text-xs text-center text-gray-500 mt-2">
-              Il tuo piano completo ti aspetta • Inizia subito
+            <p className="text-[10px] sm:text-xs text-center text-gray-500 mt-1.5 sm:mt-2">
+              Il tuo piano completo ti aspetta
             </p>
           </div>
         </div>
