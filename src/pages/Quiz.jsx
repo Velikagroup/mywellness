@@ -351,24 +351,34 @@ export default function Quiz() {
           console.warn('⚠️ Errore nel registrare peso iniziale (non critico):', weightError);
         }
         
+        // ✅ Crea subscription trial automatica dopo il quiz
+        if (!isRecapMode) {
+          try {
+            console.log('🔄 Creating trial subscription...');
+            const trialResponse = await base44.functions.invoke('stripeCreateTrialSubscription');
+            const trialData = trialResponse.data || trialResponse;
+            
+            if (trialData.success) {
+              console.log('✅ Trial subscription created automatically');
+            }
+          } catch (error) {
+            console.error('Error creating trial:', error);
+          }
+        }
+        
         localStorage.removeItem('quizData');
         console.log('✅ User data saved');
         
-        // Se è recap mode, vai alla Dashboard, altrimenti al TrialSetup
-        if (isRecapMode) {
-          console.log('🔄 Recap mode: redirecting to Dashboard...');
-          navigate(createPageUrl('Dashboard'), { replace: true });
-        } else {
-          console.log('✅ Normal mode: redirecting to TrialSetup...');
-          navigate(createPageUrl('TrialSetup'), { replace: true });
-        }
+        // Vai sempre alla Dashboard
+        console.log('🔄 Redirecting to Dashboard...');
+        navigate(createPageUrl('Dashboard'), { replace: true });
       } else {
         // Utente NON loggato - salva nel localStorage e fai login
         localStorage.setItem('quizData', JSON.stringify({...quizData, ...userDataToSave}));
-        localStorage.setItem('redirectToTrialSetup', 'true');
+        localStorage.setItem('redirectAfterLogin', 'dashboard');
         
-        const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup');
-        await base44.auth.redirectToLogin(trialSetupUrl);
+        const dashboardUrl = window.location.origin + createPageUrl('Dashboard');
+        await base44.auth.redirectToLogin(dashboardUrl);
       }
       
     } catch (error) {
