@@ -213,10 +213,7 @@ export default function PricingPage() {
       question: "Posso cancellare in qualsiasi momento?",
       answer: "Sì, puoi cancellare quando vuoi senza alcun vincolo o penale. Il servizio resterà attivo fino alla fine del periodo già pagato."
     },
-    {
-      question: "Come funzionano i 3 giorni gratis?",
-      answer: "La prova gratuita di 3 giorni ti dà accesso completo a tutte le funzionalità del piano scelto. Puoi cancellare in qualsiasi momento prima della scadenza per evitare ogni addebito. Se non cancelli, l'abbonamento si attiverà automaticamente al termine della prova."
-    },
+
     {
       question: "Cosa succede se raggiungo il limite di generazioni mensili?",
       answer: "Se raggiungi il limite di generazioni del tuo piano (4/mese per Base, 8 nutrizionali + 4 allenamento per Pro), potrai comunque utilizzare i piani già generati. Per generare nuovi piani dovrai attendere il mese successivo oppure fare upgrade a un piano superiore. Il piano Premium ha generazioni illimitate!"
@@ -780,16 +777,11 @@ export default function PricingPage() {
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary-light)] border border-[var(--brand-primary)]/30 rounded-full text-sm mb-6">
-              <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />
-              <span className="text-[var(--brand-primary-dark-text)] font-semibold">3 Giorni Gratis su Tutti i Piani</span>
-            </div>
-            
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight px-2">
               Scegli <span className="animated-text-gradient">il Piano Perfetto per Te</span>
             </h1>
             <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 px-2">
-              3 giorni di prova gratuita su tutti i piani • Cancella quando vuoi
+              Cancella quando vuoi • Senza vincoli
             </p>
 
             {/* Billing Toggle */}
@@ -900,17 +892,7 @@ export default function PricingPage() {
                     )}
                   </div>
                   
-                  {!plan.isFree ? (
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 text-green-700 rounded-full text-xs font-bold shadow-sm">
-                      <Check className="w-4 h-4" />
-                      3 GIORNI GRATIS
-                    </div>
-                  ) : (
-                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-gray-50 to-gray-100 border-2 border-gray-200 text-gray-700 rounded-full text-xs font-bold shadow-sm">
-                      <Gift className="w-4 h-4" />
-                      GRATIS PER SEMPRE
-                    </div>
-                  )}
+                  <div className="h-10"></div>
                   
                   {!plan.isFree && isAnnual && (
                     <p className="text-xs text-gray-500 mt-3 font-medium">
