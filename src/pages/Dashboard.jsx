@@ -630,8 +630,9 @@ export default function Dashboard() {
                   onPhotoAnalyze={handlePhotoAnalyze}
                   userPlan={user?.subscription_plan}
                   onUpgradeClick={() => {
-                    setUpgradePlanTarget('base');
-                    setShowUpgradeModal(true);
+                    setCheckoutPlan('base');
+                    setCheckoutBilling('monthly');
+                    setShowUpgradeCheckout(true);
                   }}
                 />
                 <TrainingStatus 
@@ -650,8 +651,9 @@ export default function Dashboard() {
                   }}
                   userPlan={user?.subscription_plan}
                   onUpgradeClick={() => {
-                    setUpgradePlanTarget('pro');
-                    setShowUpgradeModal(true);
+                    setCheckoutPlan('pro');
+                    setCheckoutBilling('monthly');
+                    setShowUpgradeCheckout(true);
                   }}
                 />
               </div>
