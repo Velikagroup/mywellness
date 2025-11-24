@@ -125,7 +125,22 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
         )}
 
         <div className="space-y-4">
-          {sortedMeals.length > 0 ? sortedMeals.map((meal) => {
+          {!hasFeatureAccess(userPlan, 'meal_plan') ? (
+            <div className="text-center py-12 px-4">
+              <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Utensils className="w-8 h-8 text-blue-600" />
+              </div>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">Piano Nutrizionale Personalizzato</h3>
+              <p className="text-gray-600 mb-6 max-w-md mx-auto">
+                Sblocca il piano nutrizionale settimanale con ricette AI, lista spesa automatica e molto altro
+              </p>
+              <Link to={createPageUrl('pricing')}>
+                <Button className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold">
+                  Prova Base 3 Giorni Gratis
+                </Button>
+              </Link>
+            </div>
+          ) : sortedMeals.length > 0 ? sortedMeals.map((meal) => {
             const mealLog = getMealLog(meal.id);
             const isLogged = !!mealLog;
             const displayCalories = isLogged ? mealLog.actual_calories : meal.total_calories;

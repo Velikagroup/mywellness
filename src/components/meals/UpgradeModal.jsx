@@ -199,6 +199,11 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
 
           <div className="p-8 md:p-12">
             <div className="text-center mb-12">
+              <div className="inline-block bg-blue-50 border border-blue-200 rounded-full px-6 py-2 mb-4">
+                <p className="text-sm font-semibold text-blue-800">
+                  Piano Attuale: <span className="capitalize">{currentPlan === 'trial' ? 'Standard' : currentPlan}</span>
+                </p>
+              </div>
               <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
                 Scegli <span className="gradient-text">il Tuo Piano</span>
               </h2>
@@ -238,7 +243,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
             <div className="grid md:grid-cols-4 gap-6 max-w-7xl mx-auto">
               {plans.map((plan) => {
                 const Icon = plan.icon;
-                const isCurrentPlan = currentPlan === plan.id;
+                // Normalizza i piani: trial e standard sono lo stesso
+                const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
+                const isCurrentPlan = normalizedCurrentPlan === plan.id;
                 
                 return (
                   <div key={plan.id} className="relative">
