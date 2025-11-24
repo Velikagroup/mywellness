@@ -10,12 +10,19 @@ Deno.serve(async (req) => {
     }
 
     // Controlla se ha già un link
-    const existingLinks = await base44.entities.AffiliateLink.filter({ user_id: user.id });
+    const existingLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: user.id });
     
     if (existingLinks.length > 0) {
+      const link = existingLinks[0];
       return Response.json({ 
         success: true, 
-        affiliate_link: existingLinks[0] 
+        affiliate_link: `https://app.projectmywellness.com?affiliate=${link.affiliate_code}`,
+        affiliate_code: link.affiliate_code,
+        stats: {
+          total_referrals: link.total_referrals || 0,
+          total_earned: link.total_earned || 0,
+          available_balance: link.available_balance || 0
+        }
       });
     }
 
@@ -24,8 +31,10 @@ Deno.serve(async (req) => {
     const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
     const affiliateCode = `${firstName}${randomSuffix}`;
 
+    console.log('🔑 Generating new affiliate code:', affiliateCode);
+
     // Crea link affiliazione
-    const affiliateLink = await base44.entities.AffiliateLink.create({
+    const affiliateLink = await base44.asServiceRole.entities.AffiliateLink.create({
       user_id: user.id,
       affiliate_code: affiliateCode,
       total_referrals: 0,
@@ -34,9 +43,17 @@ Deno.serve(async (req) => {
       is_active: user.subscription_status === 'active' || user.subscription_status === 'trial'
     });
 
+    console.log('✅ Affiliate link created:', affiliateLink.id);
+
     return Response.json({ 
       success: true, 
-      affiliate_link: affiliateLink 
+      affiliate_link: `https://app.projectmywellness.com?affiliate=${affiliateCode}`,
+      affiliate_code: affiliateCode,
+      stats: {
+        total_referrals: 0,
+        total_earned: 0,
+        available_balance: 0
+      }
     });
 
   } catch (error) {
