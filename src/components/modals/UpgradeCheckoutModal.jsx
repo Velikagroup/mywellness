@@ -73,6 +73,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
   const [user, setUser] = useState(null);
   const [trafficSource, setTrafficSource] = useState('direct');
+  const [affiliateDiscount, setAffiliateDiscount] = useState(null);
 
   useEffect(() => {
     if (!isOpen) return;
