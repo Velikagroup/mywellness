@@ -726,7 +726,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             </div>
             <div>
               <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
-              <Popover open={countryPopoverOpen} onOpenChange={setCountryPopoverOpen}>
+              <Popover open={countryPopoverOpen} onOpenChange={setCountryPopoverOpen} modal={true}>
                 <PopoverTrigger asChild>
                   <Button
                     variant="outline"
@@ -740,7 +740,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[100]">
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[200]">
                   <Command>
                     <CommandInput placeholder="Cerca paese..." />
                     <CommandList>
