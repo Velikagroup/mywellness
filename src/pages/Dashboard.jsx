@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [progressPhotos, setProgressPhotos] = React.useState([]);
   const [isMobile, setIsMobile] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradePlanTarget, setUpgradePlanTarget] = useState(null);
   const [showEditBMR, setShowEditBMR] = useState(false);
   const [showEditBodyFat, setShowEditBodyFat] = useState(false);
   const [showEditCalories, setShowEditCalories] = useState(false);
@@ -584,12 +585,16 @@ export default function Dashboard() {
                   onMealSelect={setSelectedMeal}
                   onPhotoAnalyze={handlePhotoAnalyze}
                   userPlan={user?.subscription_plan}
-                  onUpgradeClick={() => setShowUpgradeModal(true)}
+                  onUpgradeClick={() => {
+                    setUpgradePlanTarget('base');
+                    setShowUpgradeModal(true);
+                  }}
                 />
                 <TrainingStatus 
                   workout={todayWorkout} 
                   onProgressPhotoClick={() => {
                     if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
+                      setUpgradePlanTarget('premium');
                       setShowUpgradeModal(true);
                       return;
                     }
@@ -600,7 +605,10 @@ export default function Dashboard() {
                     setShowPhotoGallery(true);
                   }}
                   userPlan={user?.subscription_plan}
-                  onUpgradeClick={() => setShowUpgradeModal(true)}
+                  onUpgradeClick={() => {
+                    setUpgradePlanTarget('pro');
+                    setShowUpgradeModal(true);
+                  }}
                 />
               </div>
             </div>
@@ -694,8 +702,12 @@ export default function Dashboard() {
       {showUpgradeModal && (
         <UpgradeModal
           isOpen={showUpgradeModal}
-          onClose={() => setShowUpgradeModal(false)}
+          onClose={() => {
+            setShowUpgradeModal(false);
+            setUpgradePlanTarget(null);
+          }}
           currentPlan={user?.subscription_plan}
+          targetPlan={upgradePlanTarget}
         />
       )}
       
