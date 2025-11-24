@@ -491,6 +491,14 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
   };
 
   const monthlyPrice = planPrices[selectedPlan] || 19;
+  
+  // Calculate discounted price (affiliate 20% or coupon)
+  const activeDiscount = affiliateDiscount || appliedCoupon;
+  const discountPercentage = activeDiscount?.value || 0;
+  const discountedMonthlyPrice = monthlyPrice * (1 - discountPercentage / 100);
+  const yearlyPrice = monthlyPrice * 12 * 0.8;
+  const discountedYearlyPrice = yearlyPrice * (1 - discountPercentage / 100);
+  const finalPrice = selectedBillingPeriod === 'monthly' ? discountedMonthlyPrice : discountedYearlyPrice;
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
