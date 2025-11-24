@@ -9,27 +9,27 @@ const FAKE_MEAL_PLAN = [
     id: 1,
     day: 'Lunedì',
     meals: [
-      { type: 'Colazione', name: 'Pancakes Proteici', calories: 420, time: '08:00' },
-      { type: 'Pranzo', name: 'Salmone al Forno', calories: 580, time: '13:00' },
-      { type: 'Cena', name: 'Pollo alla Griglia', calories: 520, time: '20:00' }
+      { type: 'Colazione', name: 'Pancakes Proteici', calories: 420, time: '08:00', image: 'https://images.unsplash.com/photo-1528207776546-365bb710ee93?w=400&q=80' },
+      { type: 'Pranzo', name: 'Salmone al Forno', calories: 580, time: '13:00', image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&q=80' },
+      { type: 'Cena', name: 'Pollo alla Griglia', calories: 520, time: '20:00', image: 'https://images.unsplash.com/photo-1598103442097-8b74394b95c6?w=400&q=80' }
     ]
   },
   {
     id: 2,
     day: 'Martedì',
     meals: [
-      { type: 'Colazione', name: 'Yogurt Greco', calories: 380, time: '08:00' },
-      { type: 'Pranzo', name: 'Pasta Integrale', calories: 620, time: '13:00' },
-      { type: 'Cena', name: 'Burger di Lenticchie', calories: 480, time: '20:00' }
+      { type: 'Colazione', name: 'Yogurt Greco', calories: 380, time: '08:00', image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&q=80' },
+      { type: 'Pranzo', name: 'Pasta Integrale', calories: 620, time: '13:00', image: 'https://images.unsplash.com/photo-1621996346565-e3dbc646d9a9?w=400&q=80' },
+      { type: 'Cena', name: 'Burger di Lenticchie', calories: 480, time: '20:00', image: 'https://images.unsplash.com/photo-1568901346375-23c9450c58cd?w=400&q=80' }
     ]
   },
   {
     id: 3,
     day: 'Mercoledì',
     meals: [
-      { type: 'Colazione', name: 'Avocado Toast', calories: 440, time: '08:00' },
-      { type: 'Pranzo', name: 'Insalata Caesar', calories: 560, time: '13:00' },
-      { type: 'Cena', name: 'Tonno alla Piastra', calories: 500, time: '20:00' }
+      { type: 'Colazione', name: 'Avocado Toast', calories: 440, time: '08:00', image: 'https://images.unsplash.com/photo-1525351484163-7529414344d8?w=400&q=80' },
+      { type: 'Pranzo', name: 'Insalata Caesar', calories: 560, time: '13:00', image: 'https://images.unsplash.com/photo-1546069901-ba9599a7e63c?w=400&q=80' },
+      { type: 'Cena', name: 'Tonno alla Piastra', calories: 500, time: '20:00', image: 'https://images.unsplash.com/photo-1580959474423-ef287d46f28e?w=400&q=80' }
     ]
   }
 ];
@@ -229,9 +229,11 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
                             className="bg-white rounded-lg sm:rounded-xl p-2 sm:p-3 flex items-center justify-between"
                           >
                             <div className="flex items-center gap-2 sm:gap-3 min-w-0">
-                              <div className="w-8 h-8 sm:w-10 sm:h-10 bg-gradient-to-br from-[#26847F] to-teal-400 rounded-md sm:rounded-lg flex items-center justify-center flex-shrink-0">
-                                <Utensils className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
-                              </div>
+                              <img 
+                                src={meal.image} 
+                                alt={meal.name}
+                                className="w-12 h-12 sm:w-14 sm:h-14 rounded-md sm:rounded-lg object-cover flex-shrink-0"
+                              />
                               <div className="min-w-0">
                                 <p className="text-xs sm:text-sm font-bold text-gray-900 truncate">{meal.name}</p>
                                 <p className="text-[10px] sm:text-xs text-gray-500">{meal.type} • {meal.time}</p>
