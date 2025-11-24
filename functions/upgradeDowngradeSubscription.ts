@@ -23,6 +23,19 @@ Deno.serve(async (req) => {
 
         console.log(`✅ User ${user.email} requesting change to ${newPlan}/${newBillingPeriod}`);
 
+        const isUpgradeFromFree = !user.stripe_subscription_id || user.subscription_plan === 'trial' || user.subscription_plan === 'standard';
+        
+        if (isUpgradeFromFree) {
+            console.log('🆕 Upgrade from free plan - redirect to pricing page for checkout');
+            // Per upgrade da piano gratuito, reindirizza alla pagina pricing
+            return Response.json({ 
+                success: true,
+                requiresCheckout: true,
+                redirectUrl: '/pricing',
+                message: 'Completa il checkout per attivare il piano'
+            });
+        }
+
         if (!user.stripe_subscription_id) {
             return Response.json({ 
                 success: false, 

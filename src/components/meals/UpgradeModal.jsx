@@ -138,6 +138,16 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
       const data = response.data || response;
 
       if (data.success) {
+        // Se richiede checkout (upgrade da piano gratuito)
+        if (data.requiresCheckout) {
+          // Salva i dati del piano selezionato per il checkout
+          localStorage.setItem('selectedPlan', selectedPlanToUpgrade.id);
+          localStorage.setItem('selectedBillingCycle', billingCycle);
+          // Vai alla pagina pricing per completare il pagamento
+          window.location.href = '/pricing';
+          return;
+        }
+        
         if (data.isDowngrade) {
           alert(`✅ ${data.message}\nEffettivo dal: ${data.effectiveDate}`);
         } else {
