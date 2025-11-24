@@ -68,17 +68,40 @@ const DETAILED_MEAL = {
 export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
   const [showMealDetail, setShowMealDetail] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
+  const [isAnimating, setIsAnimating] = useState(false);
   const contentRef = useRef(null);
+  const animationRef = useRef(null);
 
   useEffect(() => {
+    // Reset completo quando il modal si chiude
     if (!isOpen) {
       setShowMealDetail(false);
       setScrollProgress(0);
+      setIsAnimating(false);
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+      if (animationRef.current) {
+        clearTimeout(animationRef.current);
+        animationRef.current = null;
+      }
       return;
     }
 
+    // Delay iniziale prima di partire con l'animazione per evitare scatti
+    const startDelay = setTimeout(() => {
+      setIsAnimating(true);
+    }, 300);
+
     // Sequenza animazione: mostra piano → apri dettaglio pasto → scrolla → chiudi dettaglio → ripeti
     const sequence = async () => {
+      // Reset stato iniziale
+      setShowMealDetail(false);
+      setScrollProgress(0);
+      if (contentRef.current) {
+        contentRef.current.scrollTop = 0;
+      }
+
       // Mostra piano per 3 secondi
       await new Promise(resolve => setTimeout(resolve, 3000));
       
@@ -87,7 +110,7 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
       await new Promise(resolve => setTimeout(resolve, 1000));
 
       // Scrolla gradualmente verso il basso
-      const scrollDuration = 6000; // 6 secondi di scroll
+      const scrollDuration = 6000;
       const startTime = Date.now();
       
       const scrollInterval = setInterval(() => {
@@ -120,13 +143,26 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
     };
 
     // Loop infinito
+    let running = true;
     const loopAnimation = async () => {
-      while (isOpen) {
+      while (running && isOpen) {
         await sequence();
       }
     };
 
-    loopAnimation();
+    const startAnimation = async () => {
+      await new Promise(resolve => setTimeout(resolve, 300));
+      if (running && isOpen) {
+        loopAnimation();
+      }
+    };
+
+    startAnimation();
+
+    return () => {
+      running = false;
+      clearTimeout(startDelay);
+    };
   }, [isOpen]);
 
   return (
@@ -161,7 +197,12 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
           <div 
             ref={contentRef}
             className="overflow-y-auto pt-24 sm:pt-32 pb-4 sm:pb-6 px-3 sm:px-6"
-            style={{ maxHeight: '60vh', WebkitOverflowScrolling: 'touch' }}
+            style={{ 
+              maxHeight: '60vh', 
+              WebkitOverflowScrolling: 'touch',
+              opacity: isAnimating ? 1 : 0,
+              transition: 'opacity 0.3s ease-in-out'
+            }}
           >
             <AnimatePresence mode="wait">
               {!showMealDetail ? (
