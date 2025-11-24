@@ -40,10 +40,11 @@ Deno.serve(async (req) => {
             orderBumpSelected = false,
             appliedCouponCode = null,
             trafficSource = null,
-            billingInfo 
+            billingInfo,
+            skipTrial = false
         } = body;
 
-        console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode });
+        console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode, skipTrial });
 
         // 🎫 VERIFICA SE IL COUPON È LIFETIME_FREE
         let isLifetimeFree = false;
@@ -308,50 +309,88 @@ Deno.serve(async (req) => {
 
         console.log('✅ Payment method attached and set as default');
 
-        console.log('🔄 Creating TRIAL subscription (3 days, €0)...');
-        
-        // Crea prima il trial a €0 per 3 giorni
-        const trialSubscription = await stripe.subscriptions.create({
-            customer: stripeCustomerId,
-            items: [{ price: 'price_1SVOUk2OXBs6ZYwlA3zq3ZPq' }],
-            payment_behavior: 'default_incomplete',
-            cancel_at_period_end: true, // Si cancella automaticamente dopo 3 giorni
-            metadata: {
-                user_id: user.id,
-                subscription_type: 'trial',
-                converts_to_plan: planType,
-                converts_to_price: selectedPriceId,
-                billing_period: billingPeriod,
-                traffic_source: trafficSource || 'direct',
-                coupon_code: appliedCouponCode || 'none'
-            }
-        });
+        let finalSubscription;
+        let subscriptionSchedule = null;
 
-        console.log(`✅ Trial subscription created: ${trialSubscription.id}`);
-        
-        // Schedula la subscription vera dopo 3 giorni
-        const scheduledDate = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
-        const subscriptionSchedule = await stripe.subscriptionSchedules.create({
-            customer: stripeCustomerId,
-            start_date: scheduledDate,
-            end_behavior: 'release',
-            phases: [
-                {
-                    items: [{ price: selectedPriceId }],
-                    iterations: 1
+        if (skipTrial) {
+            console.log('🔄 Creating IMMEDIATE paid subscription (no trial)...');
+            
+            // Crea direttamente una subscription attiva a pagamento
+            finalSubscription = await stripe.subscriptions.create({
+                customer: stripeCustomerId,
+                items: [{ price: selectedPriceId }],
+                payment_behavior: 'default_incomplete',
+                payment_settings: {
+                    payment_method_types: ['card'],
+                    save_default_payment_method: 'on_subscription'
+                },
+                expand: ['latest_invoice.payment_intent'],
+                metadata: {
+                    user_id: user.id,
+                    subscription_type: 'paid',
+                    plan_type: planType,
+                    billing_period: billingPeriod,
+                    traffic_source: trafficSource || 'direct',
+                    coupon_code: appliedCouponCode || 'none'
                 }
-            ],
-            metadata: {
-                user_id: user.id,
-                plan_type: planType,
-                billing_period: billingPeriod,
-                converted_from_trial: 'true'
+            });
+
+            console.log(`✅ Paid subscription created: ${finalSubscription.id}`);
+            
+            // Conferma il pagamento immediatamente
+            if (finalSubscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
+                await stripe.paymentIntents.confirm(finalSubscription.latest_invoice.payment_intent.id, {
+                    payment_method: finalPaymentMethodId
+                });
             }
-        });
 
-        console.log(`✅ Subscription scheduled for after trial: ${subscriptionSchedule.id}`);
+        } else {
+            console.log('🔄 Creating TRIAL subscription (3 days, €0)...');
+            
+            // Crea prima il trial a €0 per 3 giorni
+            const trialSubscription = await stripe.subscriptions.create({
+                customer: stripeCustomerId,
+                items: [{ price: 'price_1SVOUk2OXBs6ZYwlA3zq3ZPq' }],
+                payment_behavior: 'default_incomplete',
+                cancel_at_period_end: true,
+                metadata: {
+                    user_id: user.id,
+                    subscription_type: 'trial',
+                    converts_to_plan: planType,
+                    converts_to_price: selectedPriceId,
+                    billing_period: billingPeriod,
+                    traffic_source: trafficSource || 'direct',
+                    coupon_code: appliedCouponCode || 'none'
+                }
+            });
 
-        console.log(`✅ Subscription created: ${subscription.id}`);
+            console.log(`✅ Trial subscription created: ${trialSubscription.id}`);
+            
+            // Schedula la subscription vera dopo 3 giorni
+            const scheduledDate = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
+            subscriptionSchedule = await stripe.subscriptionSchedules.create({
+                customer: stripeCustomerId,
+                start_date: scheduledDate,
+                end_behavior: 'release',
+                phases: [
+                    {
+                        items: [{ price: selectedPriceId }],
+                        iterations: 1
+                    }
+                ],
+                metadata: {
+                    user_id: user.id,
+                    plan_type: planType,
+                    billing_period: billingPeriod,
+                    converted_from_trial: 'true'
+                }
+            });
+
+            console.log(`✅ Subscription scheduled for after trial: ${subscriptionSchedule.id}`);
+            finalSubscription = trialSubscription;
+        }
+
+        console.log(`✅ Subscription created: ${finalSubscription.id}`);
 
         let orderBumpPaymentIntent = null;
         if (orderBumpSelected) {
@@ -375,31 +414,56 @@ Deno.serve(async (req) => {
             console.log(`✅ Order Bump payment created: ${orderBumpPaymentIntent.id}`);
         }
 
-        const trialEndsAt = new Date();
-        trialEndsAt.setDate(trialEndsAt.getDate() + 3);
-
         console.log('💾 Updating user record...');
-        await base44.asServiceRole.entities.User.update(user.id, {
-            subscription_status: 'trial',
-            subscription_plan: 'trial', // Piano trial separato
-            target_plan_after_trial: planType, // Piano scelto dopo trial
-            trial_ends_at: trialEndsAt.toISOString(),
-            stripe_subscription_id: trialSubscription.id,
-            stripe_subscription_schedule_id: subscriptionSchedule.id,
-            stripe_customer_id: stripeCustomerId,
-            traffic_source: trafficSource || 'direct',
-            phone_number: body.phoneNumber || user.phone_number,
-            billing_name: billingInfo?.name || user.full_name,
-            billing_address: billingInfo?.address,
-            billing_city: billingInfo?.city,
-            billing_zip: billingInfo?.zip,
-            billing_country: billingInfo?.country,
-            company_name: billingInfo?.companyName,
-            tax_id: billingInfo?.taxId,
-            pec_sdi: billingInfo?.pecSdi,
-            billing_type: billingInfo?.billingType || 'private',
-            quiz_completed: true
-        });
+        
+        if (skipTrial) {
+            // Pagamento immediato - piano attivo subito
+            await base44.asServiceRole.entities.User.update(user.id, {
+                subscription_status: 'active',
+                subscription_plan: planType,
+                trial_ends_at: null,
+                stripe_subscription_id: finalSubscription.id,
+                stripe_subscription_schedule_id: null,
+                stripe_customer_id: stripeCustomerId,
+                traffic_source: trafficSource || 'direct',
+                phone_number: body.phoneNumber || user.phone_number,
+                billing_name: billingInfo?.name || user.full_name,
+                billing_address: billingInfo?.address,
+                billing_city: billingInfo?.city,
+                billing_zip: billingInfo?.zip,
+                billing_country: billingInfo?.country,
+                company_name: billingInfo?.companyName,
+                tax_id: billingInfo?.taxId,
+                pec_sdi: billingInfo?.pecSdi,
+                billing_type: billingInfo?.billingType || 'private',
+                quiz_completed: true
+            });
+        } else {
+            const trialEndsAt = new Date();
+            trialEndsAt.setDate(trialEndsAt.getDate() + 3);
+            
+            await base44.asServiceRole.entities.User.update(user.id, {
+                subscription_status: 'trial',
+                subscription_plan: 'trial',
+                target_plan_after_trial: planType,
+                trial_ends_at: trialEndsAt.toISOString(),
+                stripe_subscription_id: finalSubscription.id,
+                stripe_subscription_schedule_id: subscriptionSchedule?.id,
+                stripe_customer_id: stripeCustomerId,
+                traffic_source: trafficSource || 'direct',
+                phone_number: body.phoneNumber || user.phone_number,
+                billing_name: billingInfo?.name || user.full_name,
+                billing_address: billingInfo?.address,
+                billing_city: billingInfo?.city,
+                billing_zip: billingInfo?.zip,
+                billing_country: billingInfo?.country,
+                company_name: billingInfo?.companyName,
+                tax_id: billingInfo?.taxId,
+                pec_sdi: billingInfo?.pecSdi,
+                billing_type: billingInfo?.billingType || 'private',
+                quiz_completed: true
+            });
+        }
 
         console.log('✅ User updated with subscription data');
 
@@ -541,10 +605,11 @@ Deno.serve(async (req) => {
         return Response.json({
             success: true,
             subscription: {
-                id: trialSubscription.id,
-                status: trialSubscription.status,
-                trial_end: trialSubscription.current_period_end,
-                scheduled_conversion: subscriptionSchedule.id
+                id: finalSubscription.id,
+                status: finalSubscription.status,
+                trial_end: skipTrial ? null : finalSubscription.current_period_end,
+                scheduled_conversion: subscriptionSchedule?.id,
+                immediate_payment: skipTrial
             },
             orderBump: orderBumpPaymentIntent ? {
                 id: orderBumpPaymentIntent.id,
