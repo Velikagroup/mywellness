@@ -173,9 +173,13 @@ export default function Quiz() {
 
   useEffect(() => {
     const loadUserData = async () => {
-      // Se c'è un setup da completare, non caricare il quiz normale
-      if (localStorage.getItem('quizDataToSave') && localStorage.getItem('needsTrialSetup')) {
-        return;
+      // ✅ PRIORITÀ ASSOLUTA: Se c'è un setup da completare post-login, NON fare nient'altro
+      const quizDataToSave = localStorage.getItem('quizDataToSave');
+      const needsTrialSetup = localStorage.getItem('needsTrialSetup');
+      
+      if (quizDataToSave && needsTrialSetup) {
+        console.log('🛑 Setup post-login in corso, skip loadUserData normale');
+        return; // Il primo useEffect gestirà tutto
       }
       
       setIsLoadingUser(true);
