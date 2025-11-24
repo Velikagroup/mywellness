@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2, TrendingUp, TrendingDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import PaymentMethodModal from './PaymentMethodModal';
+import { createPageUrl } from '@/utils';
 
 export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', targetPlan = null }) {
   const [billingCycle, setBillingCycle] = useState('monthly');
@@ -12,7 +12,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [pricingInfo, setPricingInfo] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const plans = [
     {
@@ -138,10 +137,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const handleConfirmUpgrade = async () => {
     if (!selectedPlanToUpgrade) return;
 
-    // Se richiede pagamento (upgrade da piano gratuito), apri il modal di pagamento
+    // Se richiede pagamento (upgrade da piano gratuito), reindirizza a TrialSetup
     if (pricingInfo?.requiresCheckout) {
-      setShowConfirmDialog(false);
-      setShowPaymentModal(true);
+      window.location.href = createPageUrl('TrialSetup') + `?plan=${selectedPlanToUpgrade.id}&billing=${billingCycle}`;
       return;
     }
 
@@ -172,12 +170,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       alert('❌ Errore durante l\'operazione. Riprova.');
     }
     setIsUpgrading(false);
-  };
-
-  const handlePaymentSuccess = () => {
-    setShowPaymentModal(false);
-    onClose();
-    window.location.reload();
   };
 
   return (
@@ -509,15 +501,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
           </div>
         </DialogContent>
       </Dialog>
-
-      <PaymentMethodModal
-        isOpen={showPaymentModal}
-        onClose={() => setShowPaymentModal(false)}
-        plan={selectedPlanToUpgrade}
-        billingCycle={billingCycle}
-        onSuccess={handlePaymentSuccess}
-        pricingInfo={pricingInfo}
-      />
     </>
   );
 }
