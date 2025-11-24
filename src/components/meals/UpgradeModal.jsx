@@ -4,6 +4,7 @@ import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2, TrendingUp,
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { createPageUrl } from '@/utils';
+import UpgradeCheckoutModal from '../modals/UpgradeCheckoutModal';
 
 export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', targetPlan = null }) {
   const [billingCycle, setBillingCycle] = useState('monthly');
@@ -12,6 +13,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [pricingInfo, setPricingInfo] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
+  const [checkoutPlan, setCheckoutPlan] = useState('base');
+  const [checkoutBilling, setCheckoutBilling] = useState('monthly');
 
   const plans = [
     {
@@ -115,11 +119,14 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
     setIsCalculating(true);
     setShowConfirmDialog(true);
     
-    // Se è un upgrade da piano gratuito (standard/trial), vai direttamente al checkout
+    // Se è un upgrade da piano gratuito (standard/trial), apri il checkout modale
     const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
     if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
-      // Reindirizza direttamente a TrialSetup
-      window.location.href = createPageUrl('TrialSetup') + `?plan=${plan.id}&billing=${billingCycle}`;
+      onClose();
+      setShowConfirmDialog(false);
+      setCheckoutPlan(plan.id);
+      setCheckoutBilling(billingCycle);
+      setShowUpgradeCheckout(true);
       return;
     }
     
@@ -145,9 +152,13 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const handleConfirmUpgrade = async () => {
     if (!selectedPlanToUpgrade) return;
 
-    // Se richiede pagamento (upgrade da piano gratuito), reindirizza a TrialSetup
+    // Se richiede pagamento (upgrade da piano gratuito), apri il checkout modale
     if (pricingInfo?.requiresCheckout) {
-      window.location.href = createPageUrl('TrialSetup') + `?plan=${selectedPlanToUpgrade.id}&billing=${billingCycle}`;
+      onClose();
+      setShowConfirmDialog(false);
+      setCheckoutPlan(selectedPlanToUpgrade.id);
+      setCheckoutBilling(billingCycle);
+      setShowUpgradeCheckout(true);
       return;
     }
 
@@ -509,6 +520,13 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
           </div>
         </DialogContent>
       </Dialog>
+
+      <UpgradeCheckoutModal
+        isOpen={showUpgradeCheckout}
+        onClose={() => setShowUpgradeCheckout(false)}
+        selectedPlan={checkoutPlan}
+        selectedBillingPeriod={checkoutBilling}
+      />
     </>
   );
 }
