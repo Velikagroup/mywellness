@@ -10,7 +10,7 @@ Deno.serve(async (req) => {
     }
 
     // Carica affiliate link
-    const affiliateLinks = await base44.entities.AffiliateLink.filter({ user_id: user.id });
+    const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: user.id });
     
     if (affiliateLinks.length === 0) {
       return Response.json({ 
@@ -22,7 +22,7 @@ Deno.serve(async (req) => {
     const affiliateLink = affiliateLinks[0];
 
     // Carica tutti i crediti
-    const allCredits = await base44.entities.AffiliateCredit.filter({ 
+    const allCredits = await base44.asServiceRole.entities.AffiliateCredit.filter({ 
       affiliate_user_id: user.id 
     });
 
@@ -30,13 +30,13 @@ Deno.serve(async (req) => {
     const referredUserIds = [...new Set(allCredits.map(c => c.referred_user_id))];
     
     // Conta gli utenti unici che hanno fatto login con questo link (anche non paganti)
-    const usersWithAffiliateCode = await base44.entities.User.filter({
-      applied_affiliate_code: affiliateLink.affiliate_code
+    const usersWithAffiliateCode = await base44.asServiceRole.entities.User.filter({
+      referred_by_affiliate_code: affiliateLink.affiliate_code
     });
     const totalLinkClicks = usersWithAffiliateCode.length;
     
     // Carica prelievi
-    const withdrawals = await base44.entities.AffiliateWithdrawal.filter({ 
+    const withdrawals = await base44.asServiceRole.entities.AffiliateWithdrawal.filter({ 
       user_id: user.id 
     });
 
@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
       success: true,
       has_affiliate_link: true,
       affiliate_code: affiliateLink.affiliate_code,
-      affiliate_url: `${req.headers.get('origin')}/?ref=${affiliateLink.affiliate_code}`,
+      affiliate_url: `https://app.projectmywellness.com?affiliate=${affiliateLink.affiliate_code}`,
       stats: {
         total_referrals: referredUserIds.length,
         total_link_clicks: totalLinkClicks,
