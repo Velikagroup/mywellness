@@ -115,7 +115,15 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
     setIsCalculating(true);
     setShowConfirmDialog(true);
     
-    // Calcola il prezzo prorated
+    // Se è un upgrade da piano gratuito (standard/trial), vai direttamente al checkout
+    const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
+    if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
+      // Reindirizza direttamente a TrialSetup
+      window.location.href = createPageUrl('TrialSetup') + `?plan=${plan.id}&billing=${billingCycle}`;
+      return;
+    }
+    
+    // Calcola il prezzo prorated per upgrade tra piani a pagamento
     try {
       const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
         newPlan: plan.id,
