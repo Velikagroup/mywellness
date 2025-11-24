@@ -630,6 +630,7 @@ export default function Dashboard() {
                   onPhotoAnalyze={handlePhotoAnalyze}
                   userPlan={user?.subscription_plan}
                   onUpgradeClick={() => {
+                    setShowNutritionUnlock(false);
                     setCheckoutPlan('base');
                     setCheckoutBilling('monthly');
                     setShowUpgradeCheckout(true);
@@ -651,6 +652,7 @@ export default function Dashboard() {
                   }}
                   userPlan={user?.subscription_plan}
                   onUpgradeClick={() => {
+                    setShowNutritionUnlock(false);
                     setCheckoutPlan('pro');
                     setCheckoutBilling('monthly');
                     setShowUpgradeCheckout(true);
