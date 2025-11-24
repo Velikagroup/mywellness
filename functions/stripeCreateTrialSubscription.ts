@@ -41,7 +41,8 @@ Deno.serve(async (req) => {
             appliedCouponCode = null,
             trafficSource = null,
             billingInfo,
-            skipTrial = false
+            skipTrial = false,
+            affiliateDiscountPercent = null
         } = body;
 
         console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode, skipTrial });
