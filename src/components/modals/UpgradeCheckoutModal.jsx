@@ -633,10 +633,11 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                 Email
               </Label>
               <Input
-                id="email" name="email" type="email" placeholder="mario.rossi@example.com"
-                value={billingInfo.email} onChange={handleBillingInfoChange}
-                className="h-12 text-base bg-white"
-                autoComplete="email"
+                id="email" name="email" type="email"
+                value={billingInfo.email}
+                readOnly
+                disabled
+                className="h-12 text-base bg-gray-100 text-gray-600 cursor-not-allowed"
               />
             </div>
             <div>
