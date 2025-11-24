@@ -109,24 +109,24 @@ export default function Quiz() {
   const [isSaving, setIsSaving] = useState(false);
   const [quizActivityTracked, setQuizActivityTracked] = useState(false);
 
+  // ✅ PRIORITÀ: Controlla subito se deve completare il setup dopo login
   useEffect(() => {
-    const loadUserData = async () => {
-      setIsLoadingUser(true);
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
+    const completeSetupAfterLogin = async () => {
+      const quizDataToSave = localStorage.getItem('quizDataToSave');
+      const needsTrialSetup = localStorage.getItem('needsTrialSetup');
+      
+      if (quizDataToSave && needsTrialSetup) {
+        console.log('🔄 Detected post-login setup needed, processing...');
+        setIsLoadingUser(true);
         
-        console.log('🔍 Quiz Mode Check:', { isRecapMode, quiz_completed: currentUser?.quiz_completed });
-        
-        // ✅ Controlla se c'è un quiz da salvare dopo il login
-        const quizDataToSave = localStorage.getItem('quizDataToSave');
-        const needsTrialSetup = localStorage.getItem('needsTrialSetup');
-        
-        if (currentUser && quizDataToSave && needsTrialSetup) {
-          console.log('🔄 User just logged in, completing quiz setup...');
+        try {
+          const currentUser = await base44.auth.me();
           
-          try {
+          if (currentUser) {
+            console.log('✅ User authenticated, completing setup...');
             const dataToSave = JSON.parse(quizDataToSave);
+            
+            // Salva tutti i dati utente
             await base44.auth.updateMe(dataToSave);
             
             // Registra peso iniziale
@@ -147,18 +147,43 @@ export default function Quiz() {
               trial_ends_at: trialEndsAt.toISOString()
             });
             
-            console.log('✅ Trial status set (7 days, dashboard only)');
+            console.log('✅ Setup completed, redirecting to Dashboard...');
             
+            // Pulisci localStorage
             localStorage.removeItem('quizDataToSave');
             localStorage.removeItem('needsTrialSetup');
             localStorage.removeItem('quizData');
             
+            // Vai direttamente alla Dashboard
             navigate(createPageUrl('Dashboard'), { replace: true });
             return;
-          } catch (error) {
-            console.error('Error completing quiz setup:', error);
           }
+        } catch (error) {
+          console.error('Error completing post-login setup:', error);
+          localStorage.removeItem('quizDataToSave');
+          localStorage.removeItem('needsTrialSetup');
         }
+        
+        setIsLoadingUser(false);
+      }
+    };
+    
+    completeSetupAfterLogin();
+  }, [navigate]);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      // Se c'è un setup da completare, non caricare il quiz normale
+      if (localStorage.getItem('quizDataToSave') && localStorage.getItem('needsTrialSetup')) {
+        return;
+      }
+      
+      setIsLoadingUser(true);
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+        
+        console.log('🔍 Quiz Mode Check:', { isRecapMode, quiz_completed: currentUser?.quiz_completed });
         
         // ✅ FIX RECAP MODE: Se è recap mode, resetta SEMPRE
         if (isRecapMode && currentUser) {
