@@ -4,13 +4,22 @@ import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2, TrendingUp,
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
-export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) {
+export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', targetPlan = null }) {
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedPlanToUpgrade, setSelectedPlanToUpgrade] = useState(null);
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [pricingInfo, setPricingInfo] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
+
+  React.useEffect(() => {
+    if (targetPlan && isOpen) {
+      const plan = plans.find(p => p.id === targetPlan);
+      if (plan) {
+        handleSelectPlan(plan);
+      }
+    }
+  }, [targetPlan, isOpen]);
 
   if (!isOpen) return null;
 
