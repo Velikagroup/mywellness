@@ -15,20 +15,20 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
       <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl h-full">
         <CardHeader className="pb-3">
           <CardTitle className="text-base sm:text-lg flex items-center gap-2">
-            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center shadow-sm">
-              <Dumbbell className="w-6 h-6 text-purple-600" />
+            <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
+              <Dumbbell className="w-6 h-6 text-orange-600" />
             </div>
             Scheda Allenamento
           </CardTitle>
         </CardHeader>
         <CardContent>
           <div className="text-center py-12 px-4">
-            <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center mx-auto mb-4">
-              <Dumbbell className="w-8 h-8 text-purple-600" />
+            <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Dumbbell className="w-8 h-8 text-orange-600" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Feature Pro</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Piano di Allenamento Personalizzato</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Piano di Allenamento disponibile con il Piano Pro
+              Sblocca il piano di allenamento settimanale con schede personalizzate, analisi progressi AI e molto altro
             </p>
             <Button 
               onClick={onUpgradeClick}
