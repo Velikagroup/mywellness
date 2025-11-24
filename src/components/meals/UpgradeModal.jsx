@@ -12,17 +12,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const [pricingInfo, setPricingInfo] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
 
-  React.useEffect(() => {
-    if (targetPlan && isOpen) {
-      const plan = plans.find(p => p.id === targetPlan);
-      if (plan) {
-        handleSelectPlan(plan);
-      }
-    }
-  }, [targetPlan, isOpen]);
-
-  if (!isOpen) return null;
-
   const plans = [
     {
       id: 'standard',
@@ -108,6 +97,17 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       ]
     }
   ];
+
+  React.useEffect(() => {
+    if (targetPlan && isOpen) {
+      const plan = plans.find(p => p.id === targetPlan);
+      if (plan) {
+        handleSelectPlan(plan);
+      }
+    }
+  }, [targetPlan, isOpen]);
+
+  if (!isOpen) return null;
 
   const handleSelectPlan = async (plan) => {
     setSelectedPlanToUpgrade(plan);
