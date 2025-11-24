@@ -584,6 +584,7 @@ export default function Dashboard() {
                   onMealSelect={setSelectedMeal}
                   onPhotoAnalyze={handlePhotoAnalyze}
                   userPlan={user?.subscription_plan}
+                  onUpgradeClick={() => setShowUpgradeModal(true)}
                 />
                 {hasFeatureAccess(user?.subscription_plan, 'workout_plan') ? (
                   <TrainingStatus 

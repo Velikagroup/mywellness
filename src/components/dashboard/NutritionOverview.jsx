@@ -8,7 +8,7 @@ import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 import { base44 } from "@/api/base44Client";
 import { Checkbox } from "@/components/ui/checkbox";
 
-export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan }) {
+export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onUpgradeClick }) {
   const [savingMealId, setSavingMealId] = React.useState(null);
 
   const getMealLog = (mealId) => {
@@ -92,11 +92,22 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
             </div>
             Protocollo Nutrizionale
           </CardTitle>
-          <Link to={createPageUrl("Meals")}>
-            <Button variant="ghost" size="icon" className="text-gray-500 hover:bg-gray-200/50 hover:text-gray-900">
+          {hasFeatureAccess(userPlan, 'meal_plan') ? (
+            <Link to={createPageUrl("Meals")}>
+              <Button variant="ghost" size="icon" className="text-gray-500 hover:bg-gray-200/50 hover:text-gray-900">
+                <ArrowRight className="w-5 h-5" />
+              </Button>
+            </Link>
+          ) : (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              className="text-gray-500 hover:bg-gray-200/50 hover:text-gray-900"
+              onClick={onUpgradeClick}
+            >
               <ArrowRight className="w-5 h-5" />
             </Button>
-          </Link>
+          )}
         </div>
       </CardHeader>
 
@@ -134,11 +145,12 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
                 Sblocca il piano nutrizionale settimanale con ricette AI, lista spesa automatica e molto altro
               </p>
-              <Link to={createPageUrl('pricing')}>
-                <Button className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold">
-                  Prova Base 3 Giorni Gratis
-                </Button>
-              </Link>
+              <Button 
+                onClick={onUpgradeClick}
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
+              >
+                Prova Base 3 Giorni Gratis
+              </Button>
             </div>
           ) : sortedMeals.length > 0 ? sortedMeals.map((meal) => {
             const mealLog = getMealLog(meal.id);
