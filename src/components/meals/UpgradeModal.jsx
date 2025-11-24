@@ -99,7 +99,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   ];
 
   React.useEffect(() => {
-    if (targetPlan && isOpen) {
+    if (targetPlan && isOpen && !showConfirmDialog) {
       const plan = plans.find(p => p.id === targetPlan);
       if (plan) {
         handleSelectPlan(plan);
@@ -177,6 +177,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
 
   return (
     <>
+      {/* Nascondi la vista comparativa se c'è un targetPlan specifico */}
+      {!targetPlan && (
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
         <style>{`
           @keyframes shimmer {
@@ -361,6 +363,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
           </div>
         </div>
       </div>
+      )}
 
       <Dialog open={showConfirmDialog} onOpenChange={setShowConfirmDialog}>
         <DialogContent className="max-w-md z-[200]">
