@@ -156,11 +156,54 @@ export default function Quiz() {
             const trialEndsAt = new Date();
             trialEndsAt.setDate(trialEndsAt.getDate() + 7);
             
-            await base44.auth.updateMe({
+            // Controlla se c'è un codice affiliato salvato
+            const affiliateCode = localStorage.getItem('affiliateCode');
+            
+            const updateData = {
               subscription_status: 'trial',
               subscription_plan: 'trial',
               trial_ends_at: trialEndsAt.toISOString()
-            });
+            };
+            
+            // Se c'è un codice affiliato, salvalo sull'utente e crea il credito
+            if (affiliateCode) {
+              console.log('🔗 Affiliate code found:', affiliateCode);
+              updateData.referred_by_affiliate_code = affiliateCode;
+              
+              // Cerca il link affiliato e crea il credito
+              try {
+                const affiliateLinks = await base44.entities.AffiliateLink.filter({ 
+                  affiliate_code: affiliateCode.toUpperCase() 
+                });
+                
+                if (affiliateLinks.length > 0) {
+                  const affiliateLink = affiliateLinks[0];
+                  console.log('✅ Affiliate link found, creating credit...');
+                  
+                  // Crea il credito per il referrer
+                  await base44.entities.AffiliateCredit.create({
+                    affiliate_link_id: affiliateLink.id,
+                    referrer_user_id: affiliateLink.user_id,
+                    referred_user_id: currentUser.id,
+                    referred_user_email: currentUser.email,
+                    credit_type: 'signup',
+                    credit_amount: 0, // Verrà aggiornato alla conversione
+                    status: 'pending'
+                  });
+                  
+                  // Aggiorna il contatore di referral sul link
+                  await base44.entities.AffiliateLink.update(affiliateLink.id, {
+                    total_referrals: (affiliateLink.total_referrals || 0) + 1
+                  });
+                  
+                  console.log('✅ Affiliate credit created and referral count updated');
+                }
+              } catch (affError) {
+                console.warn('⚠️ Affiliate tracking error (non-critical):', affError);
+              }
+            }
+            
+            await base44.auth.updateMe(updateData);
             
             console.log('✅ Setup completed, redirecting to Dashboard...');
             
@@ -168,6 +211,7 @@ export default function Quiz() {
             localStorage.removeItem('quizDataToSave');
             localStorage.removeItem('needsTrialSetup');
             localStorage.removeItem('quizData');
+            localStorage.removeItem('affiliateCode');
             
             // Vai direttamente alla Dashboard
             navigate(createPageUrl('Dashboard'), { replace: true });
