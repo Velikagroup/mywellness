@@ -118,6 +118,44 @@ export default function Quiz() {
         
         console.log('🔍 Quiz Mode Check:', { isRecapMode, quiz_completed: currentUser?.quiz_completed });
         
+        // ✅ Controlla se c'è un quiz da salvare dopo il login
+        const quizDataToSave = localStorage.getItem('quizDataToSave');
+        const needsTrialSetup = localStorage.getItem('needsTrialSetup');
+        
+        if (currentUser && quizDataToSave && needsTrialSetup) {
+          console.log('🔄 User just logged in, completing quiz setup...');
+          
+          try {
+            const dataToSave = JSON.parse(quizDataToSave);
+            await base44.auth.updateMe(dataToSave);
+            
+            // Registra peso iniziale
+            const today = new Date().toISOString().split('T')[0];
+            await base44.entities.WeightHistory.create({
+              user_id: currentUser.id,
+              weight: dataToSave.current_weight,
+              date: today
+            });
+            
+            // Crea trial subscription
+            const trialResponse = await base44.functions.invoke('stripeCreateTrialSubscription');
+            const trialData = trialResponse.data || trialResponse;
+            
+            if (trialData.success) {
+              console.log('✅ Trial subscription created');
+            }
+            
+            localStorage.removeItem('quizDataToSave');
+            localStorage.removeItem('needsTrialSetup');
+            localStorage.removeItem('quizData');
+            
+            navigate(createPageUrl('Dashboard'), { replace: true });
+            return;
+          } catch (error) {
+            console.error('Error completing quiz setup:', error);
+          }
+        }
+        
         // ✅ FIX RECAP MODE: Se è recap mode, resetta SEMPRE
         if (isRecapMode && currentUser) {
           console.log('🔄 RECAP MODE ATTIVO - Reset quiz data...');
@@ -281,6 +319,69 @@ export default function Quiz() {
   };
 
   const handleRevealBodyFat = async () => {
+    // Se l'utente NON è loggato, fai login prima
+    if (!user || !user.id) {
+      console.log('🔐 User not logged in, redirecting to login...');
+      
+      // Calcola i dati da salvare
+      const age = quizData.age || calculateAge(quizData.birthdate);
+      const bmr = calculateBMR(
+        quizData.current_weight,
+        quizData.height,
+        age,
+        quizData.gender
+      );
+
+      const activityMultiplier = getActivityMultiplier(quizData.activity_level || 'sedentary');
+      let dailyCalories = bmr * activityMultiplier;
+
+      if (quizData.weight_loss_speed === 'very_fast') {
+        dailyCalories *= 0.75;
+      } else if (quizData.weight_loss_speed === 'moderate') {
+        dailyCalories *= 0.8;
+      } else if (quizData.weight_loss_speed === 'slow') {
+        dailyCalories *= 0.9;
+      }
+
+      const bodyFat = calculateBodyFat(
+        quizData.gender,
+        quizData.height,
+        quizData.waist_circumference,
+        quizData.neck_circumference,
+        quizData.hip_circumference
+      );
+
+      const userDataToSave = {
+        gender: quizData.gender,
+        birthdate: quizData.birthdate,
+        age: age,
+        height: quizData.height,
+        current_weight: quizData.current_weight,
+        target_weight: quizData.target_weight,
+        neck_circumference: quizData.neck_circumference,
+        waist_circumference: quizData.waist_circumference,
+        hip_circumference: quizData.hip_circumference,
+        current_body_fat_visual: quizData.current_body_fat_visual,
+        target_body_fat_visual: quizData.target_body_fat_visual,
+        target_zone: quizData.target_zone,
+        weight_loss_speed: quizData.weight_loss_speed,
+        body_fat_percentage: bodyFat !== null ? parseFloat(bodyFat.toFixed(1)) : null,
+        bmr: Math.round(bmr),
+        daily_calories: Math.round(dailyCalories),
+        quiz_completed: true,
+      };
+      
+      // Salva nel localStorage
+      localStorage.setItem('quizDataToSave', JSON.stringify(userDataToSave));
+      localStorage.setItem('needsTrialSetup', 'true');
+      
+      // Redirect al login, poi tornerà al Quiz
+      const quizUrl = window.location.origin + createPageUrl('Quiz');
+      await base44.auth.redirectToLogin(quizUrl);
+      return;
+    }
+    
+    // Utente loggato - salva e procedi
     setIsSaving(true);
     
     try {
@@ -311,7 +412,6 @@ export default function Quiz() {
         quizData.hip_circumference
       );
 
-      // ✅ SOLO campi validi dell'entità User
       const userDataToSave = {
         gender: quizData.gender,
         birthdate: quizData.birthdate,
@@ -332,57 +432,48 @@ export default function Quiz() {
         quiz_completed: true,
       };
 
-      // Controlla se l'utente è già loggato
-      if (user && user.id) {
-        console.log('💾 Saving user data...', userDataToSave);
-        // Utente loggato - salva dati direttamente
-        await base44.auth.updateMe(userDataToSave);
-        
-        // ✅ NUOVO: Registra il peso iniziale nel grafico
-        const today = new Date().toISOString().split('T')[0];
-        try {
-          await base44.entities.WeightHistory.create({
-            user_id: user.id,
-            weight: quizData.current_weight,
-            date: today
-          });
-          console.log('✅ Peso iniziale registrato:', quizData.current_weight, 'kg');
-        } catch (weightError) {
-          console.warn('⚠️ Errore nel registrare peso iniziale (non critico):', weightError);
-        }
-        
-        // ✅ Crea subscription trial automatica dopo il quiz
-        if (!isRecapMode) {
-          try {
-            console.log('🔄 Creating trial subscription...');
-            const trialResponse = await base44.functions.invoke('stripeCreateTrialSubscription');
-            const trialData = trialResponse.data || trialResponse;
-            
-            if (trialData.success) {
-              console.log('✅ Trial subscription created automatically');
-            }
-          } catch (error) {
-            console.error('Error creating trial:', error);
-          }
-        }
-        
-        localStorage.removeItem('quizData');
-        console.log('✅ User data saved');
-        
-        // Vai sempre alla Dashboard
-        console.log('🔄 Redirecting to Dashboard...');
-        navigate(createPageUrl('Dashboard'), { replace: true });
-      } else {
-        // Utente NON loggato - salva nel localStorage e fai login
-        localStorage.setItem('quizData', JSON.stringify({...quizData, ...userDataToSave}));
-        localStorage.setItem('redirectAfterLogin', 'dashboard');
-        
-        const dashboardUrl = window.location.origin + createPageUrl('Dashboard');
-        await base44.auth.redirectToLogin(dashboardUrl);
+      console.log('💾 Saving user data...', userDataToSave);
+      await base44.auth.updateMe(userDataToSave);
+      
+      // Registra il peso iniziale nel grafico
+      const today = new Date().toISOString().split('T')[0];
+      try {
+        await base44.entities.WeightHistory.create({
+          user_id: user.id,
+          weight: quizData.current_weight,
+          date: today
+        });
+        console.log('✅ Peso iniziale registrato:', quizData.current_weight, 'kg');
+      } catch (weightError) {
+        console.warn('⚠️ Errore nel registrare peso iniziale (non critico):', weightError);
       }
       
+      // Crea subscription trial automatica
+      if (!isRecapMode) {
+        try {
+          console.log('🔄 Creating trial subscription...');
+          const trialResponse = await base44.functions.invoke('stripeCreateTrialSubscription');
+          const trialData = trialResponse.data || trialResponse;
+          
+          if (trialData.success) {
+            console.log('✅ Trial subscription created automatically');
+          }
+        } catch (error) {
+          console.error('Error creating trial:', error);
+        }
+      }
+      
+      localStorage.removeItem('quizData');
+      localStorage.removeItem('quizDataToSave');
+      localStorage.removeItem('needsTrialSetup');
+      console.log('✅ User data saved');
+      
+      // Vai alla Dashboard
+      console.log('🔄 Redirecting to Dashboard...');
+      navigate(createPageUrl('Dashboard'), { replace: true });
+      
     } catch (error) {
-      console.error("Error preparing quiz data:", error);
+      console.error("Error saving quiz data:", error);
       alert("Si è verificato un errore durante il salvataggio dei dati. Riprova.");
       setIsSaving(false);
     }
