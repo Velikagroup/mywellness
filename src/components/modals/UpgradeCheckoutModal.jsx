@@ -566,7 +566,18 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             {selectedPlan === 'premium' && 'Piano Premium - Accesso completo a tutte le funzionalità'}
           </p>
           
-          {appliedCoupon && (
+          {affiliateDiscount && (
+            <div className="mt-4 p-4 bg-gradient-to-r from-purple-50 to-pink-50 border-2 border-purple-200 rounded-xl">
+              <div className="flex items-center justify-center gap-2">
+                <Sparkles className="w-5 h-5 text-purple-600" />
+                <span className="font-bold text-purple-700">
+                  🎁 Sconto Affiliato {affiliateDiscount.value}% sul primo mese!
+                </span>
+              </div>
+            </div>
+          )}
+
+          {appliedCoupon && !affiliateDiscount && (
             <div className="mt-4 p-4 bg-gradient-to-r from-green-50 to-emerald-50 border-2 border-green-200 rounded-xl">
               <div className="flex items-center justify-center gap-2">
                 <Tag className="w-5 h-5 text-green-600" />
