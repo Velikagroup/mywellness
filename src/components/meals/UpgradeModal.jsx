@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { CheckCircle, X, Sparkles, Zap, Crown, AlertCircle, Loader2, TrendingUp, TrendingDown } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import PaymentMethodModal from './PaymentMethodModal';
 
 export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', targetPlan = null }) {
   const [billingCycle, setBillingCycle] = useState('monthly');
@@ -11,6 +12,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [pricingInfo, setPricingInfo] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
 
   const plans = [
     {
@@ -136,6 +138,13 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const handleConfirmUpgrade = async () => {
     if (!selectedPlanToUpgrade) return;
 
+    // Se richiede pagamento (upgrade da piano gratuito), apri il modal di pagamento
+    if (pricingInfo?.requiresCheckout) {
+      setShowConfirmDialog(false);
+      setShowPaymentModal(true);
+      return;
+    }
+
     setIsUpgrading(true);
     try {
       const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
@@ -147,16 +156,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       const data = response.data || response;
 
       if (data.success) {
-        // Se richiede checkout (upgrade da piano gratuito)
-        if (data.requiresCheckout) {
-          // Salva i dati del piano selezionato per il checkout
-          localStorage.setItem('selectedPlan', selectedPlanToUpgrade.id);
-          localStorage.setItem('selectedBillingCycle', billingCycle);
-          // Vai alla pagina TrialSetup per completare il pagamento
-          window.location.href = createPageUrl('TrialSetup');
-          return;
-        }
-        
         if (data.isDowngrade) {
           alert(`✅ ${data.message}\nEffettivo dal: ${data.effectiveDate}`);
         } else {
@@ -173,6 +172,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       alert('❌ Errore durante l\'operazione. Riprova.');
     }
     setIsUpgrading(false);
+  };
+
+  const handlePaymentSuccess = () => {
+    setShowPaymentModal(false);
+    onClose();
+    window.location.reload();
   };
 
   return (
@@ -490,6 +495,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                         Elaborazione...
                       </>
+                    ) : pricingInfo?.requiresCheckout ? (
+                      'Continua al Pagamento'
                     ) : pricingInfo?.isDowngrade ? (
                       'Conferma Downgrade'
                     ) : (
@@ -502,6 +509,15 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
           </div>
         </DialogContent>
       </Dialog>
+
+      <PaymentMethodModal
+        isOpen={showPaymentModal}
+        onClose={() => setShowPaymentModal(false)}
+        plan={selectedPlanToUpgrade}
+        billingCycle={billingCycle}
+        onSuccess={handlePaymentSuccess}
+        pricingInfo={pricingInfo}
+      />
     </>
   );
 }
