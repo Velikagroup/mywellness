@@ -160,9 +160,15 @@ export default function Dashboard() {
     }
   }, [user, isLoading]);
 
-  // ✅ Nutrition unlock prompt per utenti standard
+  // ✅ Nutrition unlock prompt per utenti standard (aspetta che l'onboarding finisca)
   useEffect(() => {
     if (!user || isLoading) return;
+    
+    // ⏳ Se l'onboarding è ancora in corso, non avviare i timer
+    if (showOnboarding) {
+      console.log('⏳ Onboarding in corso, nutrition unlock rinviato');
+      return;
+    }
     
     const isStandard = user.subscription_plan === 'standard' || 
                        user.subscription_plan === 'trial' || 
@@ -172,7 +178,8 @@ export default function Dashboard() {
       plan: user.subscription_plan, 
       isStandard,
       showNutritionUnlock,
-      showUpgradeCheckout 
+      showUpgradeCheckout,
+      showOnboarding
     });
     
     if (!isStandard) {
@@ -196,7 +203,7 @@ export default function Dashboard() {
       }
     };
 
-    // Mostra dopo 5 secondi al caricamento
+    // Mostra dopo 5 secondi al caricamento (solo se onboarding completato)
     const initialTimeout = setTimeout(showPrompt, 5000);
 
     // Ripeti ogni 30 secondi dopo il primo
@@ -206,7 +213,7 @@ export default function Dashboard() {
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [user, isLoading, showUpgradeCheckout]);
+  }, [user, isLoading, showUpgradeCheckout, showOnboarding]);
 
   const handleMealUpdate = (updatedMeal) => {
     const updatedMeals = todayMeals.map(m => m.id === updatedMeal.id ? updatedMeal : m);
