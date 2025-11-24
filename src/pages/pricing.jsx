@@ -892,10 +892,8 @@ export default function PricingPage() {
                     )}
                   </div>
                   
-                  <div className="h-2"></div>
-                  
                   {!plan.isFree && isAnnual && (
-                    <p className="text-xs text-gray-500 mt-3 font-medium">
+                    <p className="text-xs text-gray-500 mt-2 font-medium">
                       💳 Fatturato annualmente (€{(getPrice(plan) * 12).toFixed(0)}/anno)
                     </p>
                   )}
