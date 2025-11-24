@@ -12,7 +12,7 @@ const SPORT_QUESTIONS = {
   bodybuilding: {
     title: 'Bodybuilding',
     questions: [
-      { id: 'weak_points', type: 'multiselect', label: 'Punti carenti da enfatizzare', options: ['Petto', 'Dorso', 'Spalle', 'Braccia', 'Gambe', 'Polpacci', 'Addominali'] },
+      { id: 'weak_points', type: 'multiselect', label: 'Punti carenti da enfatizzare', options: ['Petto', 'Dorso', 'Spalle', 'Braccia', 'Gambe', 'Polpacci', 'Glutei', 'Addominali'] },
       { id: 'body_fat', type: 'number', label: 'Percentuale massa grassa stimata (%)', placeholder: '15' },
       { id: 'training_split', type: 'select', label: 'Split preferita', options: ['Push/Pull/Legs', 'Upper/Lower', 'Bro Split (1 muscolo/giorno)', 'Full Body'] }
     ]
