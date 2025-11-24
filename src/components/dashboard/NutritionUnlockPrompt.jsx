@@ -179,12 +179,12 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
             </button>
 
             <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-3">
-              <div className="w-10 h-10 sm:w-14 sm:h-14 bg-gradient-to-br from-[#26847F] to-teal-500 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
-                <Apple className="w-5 h-5 sm:w-7 sm:h-7 text-white" />
+              <div className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl flex items-center justify-center flex-shrink-0">
+                <Apple className="w-5 h-5 sm:w-7 sm:h-7 text-[#26847F] transform scale-x-[-1]" />
               </div>
               <div>
                 <h2 className="text-lg sm:text-2xl font-black text-gray-900 leading-tight">
-                  Il Tuo Piano Nutrizionale è Pronto! 🎉
+                  Il Tuo Piano Nutrizionale è Pronto!
                 </h2>
                 <p className="text-xs sm:text-sm text-gray-600">
                   Sblocca l'accesso in 30 secondi
