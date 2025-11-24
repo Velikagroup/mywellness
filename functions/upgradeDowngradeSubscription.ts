@@ -23,15 +23,38 @@ Deno.serve(async (req) => {
 
         console.log(`✅ User ${user.email} requesting change to ${newPlan}/${newBillingPeriod}`);
 
+        const PLAN_PRICES = {
+            base: { monthly: 19, yearly: 182.4 },
+            pro: { monthly: 29, yearly: 278.4 },
+            premium: { monthly: 39, yearly: 374.4 }
+        };
+
         const isUpgradeFromFree = !user.stripe_subscription_id || user.subscription_plan === 'trial' || user.subscription_plan === 'standard';
         
         if (isUpgradeFromFree) {
-            console.log('🆕 Upgrade from free plan - redirect to pricing page for checkout');
-            // Per upgrade da piano gratuito, reindirizza alla pagina pricing
+            console.log('🆕 Upgrade from free plan - requires checkout');
+            
+            // Calcola il prezzo del piano selezionato
+            const planPrice = PLAN_PRICES[newPlan]?.[newBillingPeriod];
+            
+            if (calculateOnly) {
+                return Response.json({ 
+                    success: true,
+                    requiresCheckout: true,
+                    currentPlan: user.subscription_plan || 'standard',
+                    currentBillingPeriod: 'none',
+                    newPlanPrice: planPrice,
+                    amountToPay: planPrice,
+                    isDowngrade: false,
+                    percentageRemaining: 0
+                });
+            }
+            
+            // Per upgrade da piano gratuito, reindirizza a TrialSetup
             return Response.json({ 
                 success: true,
                 requiresCheckout: true,
-                redirectUrl: '/pricing',
+                redirectUrl: '/TrialSetup',
                 message: 'Completa il checkout per attivare il piano'
             });
         }
@@ -56,12 +79,6 @@ Deno.serve(async (req) => {
                 monthly: 'price_1SNDMX2OXBs6ZYwlKR7FIudX',
                 yearly: 'price_1SNDMY2OXBs6ZYwlcZzmNSnk'
             }
-        };
-
-        const PLAN_PRICES = {
-            base: { monthly: 19, yearly: 182.4 },
-            pro: { monthly: 29, yearly: 278.4 },
-            premium: { monthly: 39, yearly: 374.4 }
         };
 
         const newPriceId = PRICE_IDS[newPlan]?.[newBillingPeriod];

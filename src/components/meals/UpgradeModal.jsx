@@ -143,8 +143,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base' }) 
           // Salva i dati del piano selezionato per il checkout
           localStorage.setItem('selectedPlan', selectedPlanToUpgrade.id);
           localStorage.setItem('selectedBillingCycle', billingCycle);
-          // Vai alla pagina pricing per completare il pagamento
-          window.location.href = '/pricing';
+          // Vai alla pagina TrialSetup per completare il pagamento
+          window.location.href = createPageUrl('TrialSetup');
           return;
         }
         
