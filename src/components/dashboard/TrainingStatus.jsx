@@ -6,8 +6,41 @@ import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 
-export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan, onViewGalleryClick }) {
+export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan, onViewGalleryClick, onUpgradeClick }) {
   const navigate = useNavigate();
+  const hasWorkoutAccess = userPlan === 'pro' || userPlan === 'premium';
+
+  if (!hasWorkoutAccess) {
+    return (
+      <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl h-full">
+        <CardHeader className="pb-3">
+          <CardTitle className="text-base sm:text-lg flex items-center gap-2">
+            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center shadow-sm">
+              <Dumbbell className="w-6 h-6 text-purple-600" />
+            </div>
+            Scheda Allenamento
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="text-center py-12 px-4">
+            <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center mx-auto mb-4">
+              <Dumbbell className="w-8 h-8 text-purple-600" />
+            </div>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">Feature Pro</h3>
+            <p className="text-gray-600 mb-6 max-w-md mx-auto">
+              Piano di Allenamento disponibile con il Piano Pro
+            </p>
+            <Button 
+              onClick={onUpgradeClick}
+              className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
+            >
+              Upgrade a Pro
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
 
   if (!workout) {
     return (
