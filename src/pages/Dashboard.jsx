@@ -739,22 +739,20 @@ export default function Dashboard() {
         />
       )}
 
-      {showCalorieMeter && (
-        <CalorieMeter
-          isOpen={showCalorieMeter}
-          onClose={() => setShowCalorieMeter(false)}
-        />
+      <CalorieMeter
+        isOpen={showCalorieMeter}
+        onClose={() => setShowCalorieMeter(false)}
+      />
 
-        <NutritionUnlockPrompt
-          isOpen={showNutritionUnlock}
-          onClose={() => setShowNutritionUnlock(false)}
-          onUpgrade={() => {
-            setShowNutritionUnlock(false);
-            setUpgradePlanTarget('base');
-            setShowUpgradeModal(true);
-          }}
-        />
-      )}
+      <NutritionUnlockPrompt
+        isOpen={showNutritionUnlock}
+        onClose={() => setShowNutritionUnlock(false)}
+        onUpgrade={() => {
+          setShowNutritionUnlock(false);
+          setUpgradePlanTarget('base');
+          setShowUpgradeModal(true);
+        }}
+      />
 
       {/* Dialog Modifica BMR */}
       <Dialog open={showEditBMR} onOpenChange={setShowEditBMR}>
