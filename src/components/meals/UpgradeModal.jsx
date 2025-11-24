@@ -13,7 +13,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const [isUpgrading, setIsUpgrading] = useState(false);
   const [pricingInfo, setPricingInfo] = useState(null);
   const [isCalculating, setIsCalculating] = useState(false);
-  const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
+  const [showCheckoutView, setShowCheckoutView] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState('base');
   const [checkoutBilling, setCheckoutBilling] = useState('monthly');
 
@@ -119,15 +119,14 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
     setIsCalculating(true);
     setShowConfirmDialog(true);
     
-    // Se è un upgrade da piano gratuito (standard/trial), apri il checkout modale
+    // Se è un upgrade da piano gratuito (standard/trial), passa alla vista checkout
     const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
     if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
       setShowConfirmDialog(false);
       setIsCalculating(false);
       setCheckoutPlan(plan.id);
       setCheckoutBilling(billingCycle);
-      onClose();
-      setTimeout(() => setShowUpgradeCheckout(true), 100);
+      setShowCheckoutView(true);
       return;
     }
     
@@ -153,13 +152,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const handleConfirmUpgrade = async () => {
     if (!selectedPlanToUpgrade) return;
 
-    // Se richiede pagamento (upgrade da piano gratuito), apri il checkout modale
+    // Se richiede pagamento (upgrade da piano gratuito), passa alla vista checkout
     if (pricingInfo?.requiresCheckout) {
       setShowConfirmDialog(false);
       setCheckoutPlan(selectedPlanToUpgrade.id);
       setCheckoutBilling(billingCycle);
-      onClose();
-      setTimeout(() => setShowUpgradeCheckout(true), 100);
+      setShowCheckoutView(true);
       return;
     }
 
@@ -194,6 +192,19 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
 
   return (
     <>
+      {/* Mostra checkout se richiesto, altrimenti la vista comparativa */}
+      {showCheckoutView ? (
+        <UpgradeCheckoutModal
+          isOpen={true}
+          onClose={() => {
+            setShowCheckoutView(false);
+            onClose();
+          }}
+          selectedPlan={checkoutPlan}
+          selectedBillingPeriod={checkoutBilling}
+        />
+      ) : (
+      <>
       {/* Nascondi la vista comparativa se c'è un targetPlan specifico */}
       {!targetPlan && (
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
@@ -521,13 +532,8 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
           </div>
         </DialogContent>
       </Dialog>
-
-      <UpgradeCheckoutModal
-        isOpen={showUpgradeCheckout}
-        onClose={() => setShowUpgradeCheckout(false)}
-        selectedPlan={checkoutPlan}
-        selectedBillingPeriod={checkoutBilling}
-      />
+      </>
+      )}
     </>
   );
 }
