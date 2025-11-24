@@ -781,7 +781,7 @@ export default function PricingPage() {
               Scegli <span className="animated-text-gradient">il Piano Perfetto per Te</span>
             </h1>
             <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 px-2">
-              Cancella quando vuoi • Senza vincoli
+              Nessun vincolo • Cancella quando vuoi
             </p>
 
             {/* Billing Toggle */}
