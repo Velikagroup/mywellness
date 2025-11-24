@@ -106,6 +106,15 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
           }
         }
 
+        // Check if user came from affiliate and apply 20% first month discount
+        if (currentUser.referred_by) {
+          setAffiliateDiscount({
+            type: 'affiliate_referral',
+            value: 20,
+            code: currentUser.referred_by
+          });
+        }
+
         if (!stripeLoadedRef.current) {
           const keyResponse = await base44.functions.invoke('getStripePublishableKey');
           const responseData = keyResponse.data || keyResponse;
