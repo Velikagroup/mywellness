@@ -107,12 +107,16 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
         }
 
         // Check if user came from affiliate and apply 20% first month discount
+        console.log('🔍 Checking referred_by:', currentUser.referred_by, 'Full user:', currentUser);
         if (currentUser.referred_by) {
+          console.log('✅ Affiliate discount applied for referred_by:', currentUser.referred_by);
           setAffiliateDiscount({
             type: 'affiliate_referral',
             value: 20,
             code: currentUser.referred_by
           });
+        } else {
+          console.log('❌ No referred_by found on user');
         }
 
         if (!stripeLoadedRef.current) {
