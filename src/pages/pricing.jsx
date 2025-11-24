@@ -892,7 +892,7 @@ export default function PricingPage() {
                     )}
                   </div>
                   
-                  <div className="h-10"></div>
+                  <div className="h-2"></div>
                   
                   {!plan.isFree && isAnnual && (
                     <p className="text-xs text-gray-500 mt-3 font-medium">
