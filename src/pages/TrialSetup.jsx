@@ -80,6 +80,7 @@ export default function TrialSetup() {
   const [selectedPlan, setSelectedPlan] = useState('base');
   const [selectedBillingPeriod, setSelectedBillingPeriod] = useState('monthly');
   const [trialSetupTracked, setTrialSetupTracked] = useState(false);
+  const [skipTrial, setSkipTrial] = useState(false);
 
   const validateCouponFromURL = async (code, email) => {
     try {
@@ -244,10 +245,26 @@ export default function TrialSetup() {
           return;
         }
 
+        // Verifica se l'utente arriva da un upgrade (piano Standard/Trial -> Base/Pro/Premium)
+        const savedPlan = localStorage.getItem('selectedPlan');
+        const savedBillingCycle = localStorage.getItem('selectedBillingCycle');
+        
+        if (savedPlan && (savedPlan === 'base' || savedPlan === 'pro' || savedPlan === 'premium')) {
+          console.log('🔄 Detected upgrade from free plan:', savedPlan);
+          setSelectedPlan(savedPlan);
+          setSkipTrial(true); // Skip trial per upgrade da piano gratuito
+          localStorage.removeItem('selectedPlan');
+        }
+        
+        if (savedBillingCycle) {
+          setSelectedBillingPeriod(savedBillingCycle);
+          localStorage.removeItem('selectedBillingCycle');
+        }
+
         const fromLanding = location.state?.fromLanding || false;
         if (fromLanding) {
           setSelectedPlan('premium');
-        } else {
+        } else if (!savedPlan) {
           setSelectedPlan('base');
         }
 
@@ -477,6 +494,7 @@ export default function TrialSetup() {
             orderBumpSelected: false,
             appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
             trafficSource: trafficSource,
+            skipTrial: skipTrial,
             billingInfo: {
               name: ev.payerName || billingInfo.name,
               email: ev.payerEmail || billingInfo.email,
@@ -571,6 +589,7 @@ export default function TrialSetup() {
         orderBumpSelected: false,
         appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
         trafficSource: trafficSource,
+        skipTrial: skipTrial,
         billingInfo: {
           name: billingInfo.name,
           email: billingInfo.email,
@@ -725,7 +744,7 @@ export default function TrialSetup() {
               <Sparkles className="w-10 h-10 text-white" />
             </div>
             <CardTitle className="text-3xl font-bold text-gray-900 mb-3">
-              Prova Gratuita {TRIAL_DAYS} Giorni
+              {skipTrial ? 'Completa il Pagamento' : `Prova Gratuita ${TRIAL_DAYS} Giorni`}
             </CardTitle>
             <p className="text-gray-600 text-base">
               {selectedPlan === 'base' && 'Piano Base - Nutrizionale completo con dashboard scientifica'}
@@ -1183,13 +1202,27 @@ export default function TrialSetup() {
                 </div>
 
                 <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
-                  <div className="flex justify-between text-sm sm:text-base text-gray-700 font-semibold pt-2 border-t border-gray-200">
-                    <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
-                    <span>€0.00</span>
-                  </div>
-                  <p className="text-xs text-gray-500 text-center pt-2">
-                    Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
-                  </p>
+                  {skipTrial ? (
+                    <>
+                      <div className="flex justify-between text-sm sm:text-base text-gray-700 font-semibold pt-2 border-t border-gray-200">
+                        <span>Pagamento Oggi</span>
+                        <span>€{selectedBillingPeriod === 'monthly' ? monthlyPrice : (monthlyPrice * 12 * 0.8).toFixed(2)}</span>
+                      </div>
+                      <p className="text-xs text-gray-500 text-center pt-2">
+                        Piano {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} - {selectedBillingPeriod === 'monthly' ? 'Mensile' : 'Annuale'}
+                      </p>
+                    </>
+                  ) : (
+                    <>
+                      <div className="flex justify-between text-sm sm:text-base text-gray-700 font-semibold pt-2 border-t border-gray-200">
+                        <span>Oggi (Prova {TRIAL_DAYS} Giorni)</span>
+                        <span>€0.00</span>
+                      </div>
+                      <p className="text-xs text-gray-500 text-center pt-2">
+                        Dopo {TRIAL_DAYS} giorni: €{monthlyPrice}/mese (puoi cancellare in qualsiasi momento)
+                      </p>
+                    </>
+                  )}
                 </div>
 
                 <Button
@@ -1202,13 +1235,18 @@ export default function TrialSetup() {
                       <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
                       Attivazione...
                     </div>
+                  ) : skipTrial ? (
+                    `Paga €${selectedBillingPeriod === 'monthly' ? monthlyPrice : (monthlyPrice * 12 * 0.8).toFixed(2)} Ora`
                   ) : (
                     `Inizia Prova Gratuita (€0.00 oggi)`
                   )}
                 </Button>
 
                 <p className="text-xs text-center text-gray-500 mt-4 px-2">
-                  Nessun addebito durante i {TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.
+                  {skipTrial 
+                    ? `Addebito immediato di €${selectedBillingPeriod === 'monthly' ? monthlyPrice : (monthlyPrice * 12 * 0.8).toFixed(2)}. Accesso illimitato a tutte le funzionalità.`
+                    : `Nessun addebito durante i ${TRIAL_DAYS} giorni di prova. Cancella in qualsiasi momento.`
+                  }
                 </p>
               </>
             )}
