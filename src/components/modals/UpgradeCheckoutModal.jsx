@@ -429,6 +429,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
         appliedCouponCode: appliedCoupon ? appliedCoupon.code : null,
         trafficSource: trafficSource,
         skipTrial: true,
+        affiliateDiscountPercent: affiliateDiscount && selectedBillingPeriod === 'monthly' ? affiliateDiscount.value : null,
         billingInfo: {
           name: billingInfo.name,
           email: billingInfo.email,
