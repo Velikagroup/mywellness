@@ -1099,7 +1099,7 @@ export default function PricingPage() {
               <div className="md:hidden">
                 <div className="flex">
                   {/* Colonna Funzionalità - FISSA */}
-                  <div className="flex-shrink-0 w-40 bg-white/30">
+                  <div className="flex-shrink-0 w-40">
                     <div className="border-b border-gray-200/50 p-4 h-20 flex items-center">
                       <span className="text-xs font-bold text-gray-700">Funzionalità</span>
                     </div>
