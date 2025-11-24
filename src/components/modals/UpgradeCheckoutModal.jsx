@@ -163,7 +163,6 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             color: '#1f2937',
             fontFamily: "'Inter', 'system-ui', 'sans-serif'",
             fontSmoothing: 'antialiased',
-            lineHeight: '24px',
             '::placeholder': {
               color: '#9ca3af',
             },
