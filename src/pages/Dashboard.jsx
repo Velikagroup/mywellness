@@ -171,7 +171,8 @@ export default function Dashboard() {
     console.log('🔔 Nutrition unlock check:', { 
       plan: user.subscription_plan, 
       isStandard,
-      showNutritionUnlock 
+      showNutritionUnlock,
+      showUpgradeCheckout 
     });
     
     if (!isStandard) {
@@ -179,11 +180,20 @@ export default function Dashboard() {
       return;
     }
 
+    // Non mostrare se il checkout è già aperto
+    if (showUpgradeCheckout) {
+      console.log('🛑 Checkout is open, skipping nutrition unlock');
+      return;
+    }
+
     console.log('✅ User is standard/trial - activating nutrition unlock');
 
     const showPrompt = () => {
-      console.log('📢 Opening nutrition unlock prompt');
-      setShowNutritionUnlock(true);
+      // Verifica di nuovo prima di mostrare
+      if (!showUpgradeCheckout) {
+        console.log('📢 Opening nutrition unlock prompt');
+        setShowNutritionUnlock(true);
+      }
     };
 
     // Mostra dopo 5 secondi al caricamento
@@ -196,7 +206,7 @@ export default function Dashboard() {
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [user, isLoading]);
+  }, [user, isLoading, showUpgradeCheckout]);
 
   const handleMealUpdate = (updatedMeal) => {
     const updatedMeals = todayMeals.map(m => m.id === updatedMeal.id ? updatedMeal : m);

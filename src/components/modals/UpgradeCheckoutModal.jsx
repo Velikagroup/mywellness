@@ -485,7 +485,8 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent 
-        className="max-w-2xl max-h-[90vh] overflow-y-auto water-glass-effect"
+        className="max-w-2xl max-h-[90vh] overflow-y-auto water-glass-effect z-[60]"
+        overlayClassName="z-[55]"
         overlayStyle={{
           background: '#f9fafb',
           backgroundImage: `
