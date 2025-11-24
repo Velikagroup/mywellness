@@ -88,7 +88,7 @@ export default function Layout({ children }) {
 
   const mainNavItems = [
     { name: 'Dashboard', icon: Home, path: 'Dashboard' },
-    { name: 'Nutrizione', icon: Utensils, path: 'Meals' },
+    { name: 'Nutrizione', icon: Utensils, path: 'Meals', requiresFeature: 'meal_plan' },
     { name: 'Allenamento', icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' },
     { name: 'Impostazioni', icon: SettingsIcon, path: 'Settings' }
   ].filter(item => {
