@@ -146,7 +146,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                 Sblocca il piano nutrizionale settimanale con ricette AI, lista spesa automatica e molto altro
               </p>
               <Button 
-                onClick={onUpgradeClick}
+                onClick={() => window.location.href = createPageUrl('TrialSetup') + '?plan=base&billing=monthly'}
                 className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
               >
                 Upgrade a Base
