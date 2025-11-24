@@ -137,13 +137,17 @@ export default function Quiz() {
               date: today
             });
             
-            // Crea trial subscription
-            const trialResponse = await base44.functions.invoke('stripeCreateTrialSubscription');
-            const trialData = trialResponse.data || trialResponse;
+            // Imposta trial status (7 giorni, solo dashboard)
+            const trialEndsAt = new Date();
+            trialEndsAt.setDate(trialEndsAt.getDate() + 7);
             
-            if (trialData.success) {
-              console.log('✅ Trial subscription created');
-            }
+            await base44.auth.updateMe({
+              subscription_status: 'trial',
+              subscription_plan: 'trial',
+              trial_ends_at: trialEndsAt.toISOString()
+            });
+            
+            console.log('✅ Trial status set (7 days, dashboard only)');
             
             localStorage.removeItem('quizDataToSave');
             localStorage.removeItem('needsTrialSetup');
@@ -448,18 +452,22 @@ export default function Quiz() {
         console.warn('⚠️ Errore nel registrare peso iniziale (non critico):', weightError);
       }
       
-      // Crea subscription trial automatica
+      // Crea piano trial SENZA Stripe (solo dashboard)
       if (!isRecapMode) {
         try {
-          console.log('🔄 Creating trial subscription...');
-          const trialResponse = await base44.functions.invoke('stripeCreateTrialSubscription');
-          const trialData = trialResponse.data || trialResponse;
+          console.log('🔄 Setting trial status...');
+          const trialEndsAt = new Date();
+          trialEndsAt.setDate(trialEndsAt.getDate() + 7); // 7 giorni di trial gratuito
           
-          if (trialData.success) {
-            console.log('✅ Trial subscription created automatically');
-          }
+          await base44.auth.updateMe({
+            subscription_status: 'trial',
+            subscription_plan: 'trial',
+            trial_ends_at: trialEndsAt.toISOString()
+          });
+          
+          console.log('✅ Trial status set (7 days, dashboard only)');
         } catch (error) {
-          console.error('Error creating trial:', error);
+          console.error('Error setting trial:', error);
         }
       }
       

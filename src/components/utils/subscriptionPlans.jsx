@@ -11,10 +11,10 @@ export const PLAN_FEATURES = {
   [PLANS.TRIAL]: {
     name: 'Trial',
     dashboard: true,
-    meal_plan: true,
-    recipes_with_images: true,
+    meal_plan: false,
+    recipes_with_images: false,
     bmr_calculation: true,
-    shopping_list: true,
+    shopping_list: false,
     weight_tracking: true,
     ingredient_substitution: false,
     workout_plan: false,
@@ -24,9 +24,8 @@ export const PLAN_FEATURES = {
     workout_modification: false,
     progress_photo_analysis: false,
     priority_support: false,
-    meal_plan_generations_per_month: 1,
-    workout_plan_generations_per_month: 0,
-    blocked_days: ['thursday', 'friday', 'saturday', 'sunday']
+    meal_plan_generations_per_month: 0,
+    workout_plan_generations_per_month: 0
   },
   [PLANS.STANDARD]: {
     name: 'Standard',
