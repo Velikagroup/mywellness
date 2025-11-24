@@ -23,6 +23,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import OnboardingTour from "../components/onboarding/OnboardingTour";
 import CalorieMeter from "../components/dashboard/CalorieMeter";
+import NutritionUnlockPrompt from "../components/dashboard/NutritionUnlockPrompt";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -52,6 +53,7 @@ export default function Dashboard() {
   const [isSavingCalories, setIsSavingCalories] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCalorieMeter, setShowCalorieMeter] = useState(false);
+  const [showNutritionUnlock, setShowNutritionUnlock] = useState(false);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -152,6 +154,23 @@ export default function Dashboard() {
     if (user && !isLoading) {
       checkOnboarding();
     }
+  }, [user, isLoading]);
+
+  // ✅ Nutrition unlock prompt per utenti standard
+  useEffect(() => {
+    if (!user || isLoading) return;
+    
+    const isStandard = user.subscription_plan === 'standard' || !user.subscription_plan;
+    if (!isStandard) return;
+
+    // Mostra all'apertura
+    const showPrompt = () => setShowNutritionUnlock(true);
+    showPrompt();
+
+    // Ripeti ogni 60 secondi
+    const interval = setInterval(showPrompt, 60000);
+
+    return () => clearInterval(interval);
   }, [user, isLoading]);
 
   const handleMealUpdate = (updatedMeal) => {
@@ -724,6 +743,16 @@ export default function Dashboard() {
         <CalorieMeter
           isOpen={showCalorieMeter}
           onClose={() => setShowCalorieMeter(false)}
+        />
+
+        <NutritionUnlockPrompt
+          isOpen={showNutritionUnlock}
+          onClose={() => setShowNutritionUnlock(false)}
+          onUpgrade={() => {
+            setShowNutritionUnlock(false);
+            setUpgradePlanTarget('base');
+            setShowUpgradeModal(true);
+          }}
         />
       )}
 
