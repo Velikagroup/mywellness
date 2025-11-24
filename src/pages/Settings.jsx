@@ -393,10 +393,17 @@ Sii conciso ma dettagliato (max 200 parole).`,
     setIsSaving(false);
   };
 
-  const handleDownloadInvoice = async (transactionId) => {
+  const handleDownloadInvoice = async (transaction) => {
     try {
+      // Se c'è già l'URL salvato, aprilo direttamente
+      if (transaction.invoice_pdf_url) {
+        window.open(transaction.invoice_pdf_url, '_blank');
+        return;
+      }
+
+      // Altrimenti usa la funzione backend
       const response = await base44.functions.invoke('downloadStripeInvoice', {
-        transactionId: transactionId
+        transactionId: transaction.id
       });
 
       const data = response.data || response;
@@ -861,14 +868,25 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                         </div>
                         <div className="flex items-center gap-3">
                           <p className="text-lg font-bold text-[#26847F]">€{t.amount.toFixed(2)}</p>
-                          <Button
-                            onClick={() => handleDownloadInvoice(t.id)}
-                            size="sm"
-                            variant="outline"
-                          >
-                            <Download className="w-4 h-4 mr-2" />
-                            Fattura
-                          </Button>
+                          {t.invoice_pdf_url ? (
+                            <Button
+                              onClick={() => handleDownloadInvoice(t)}
+                              size="sm"
+                              variant="outline"
+                            >
+                              <Download className="w-4 h-4 mr-2" />
+                              Fattura
+                            </Button>
+                          ) : (
+                            <Button
+                              onClick={() => handleDownloadInvoice(t)}
+                              size="sm"
+                              variant="outline"
+                            >
+                              <Download className="w-4 h-4 mr-2" />
+                              Fattura
+                            </Button>
+                          )}
                         </div>
                       </div>
                     ))}

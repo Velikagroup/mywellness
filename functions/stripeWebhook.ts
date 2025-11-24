@@ -141,6 +141,7 @@ Deno.serve(async (req) => {
                         if (invoiceResponse?.data?.invoice_url) {
                             console.log('✅ Invoice generated:', invoiceResponse.data.invoice_url);
                             await base44.asServiceRole.entities.Transaction.update(transaction.id, {
+                                invoice_pdf_url: invoiceResponse.data.invoice_url,
                                 metadata: {
                                     ...transaction.metadata,
                                     invoice_url: invoiceResponse.data.invoice_url
@@ -218,6 +219,7 @@ Deno.serve(async (req) => {
 
                         if (invoiceResponse?.data?.invoice_url) {
                             await base44.asServiceRole.entities.Transaction.update(transaction.id, {
+                                invoice_pdf_url: invoiceResponse.data.invoice_url,
                                 metadata: {
                                     ...transaction.metadata,
                                     invoice_url: invoiceResponse.data.invoice_url
