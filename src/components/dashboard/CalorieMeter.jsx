@@ -3,8 +3,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Camera, Calculator, Upload, X, Loader2, Sparkles } from 'lucide-react';
+import { Camera, Calculator, Upload, X, Loader2, Sparkles, Zap } from 'lucide-react';
 import { base44 } from "@/api/base44Client";
+import UpgradeModal from '../meals/UpgradeModal';
 
 export default function CalorieMeter({ isOpen, onClose }) {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -12,6 +13,8 @@ export default function CalorieMeter({ isOpen, onClose }) {
   const [description, setDescription] = useState('');
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [result, setResult] = useState(null);
+  const [user, setUser] = useState(null);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   React.useEffect(() => {
     const loadUser = async () => {
@@ -26,6 +29,8 @@ export default function CalorieMeter({ isOpen, onClose }) {
       loadUser();
     }
   }, [isOpen]);
+
+  const isStandardOrTrial = user?.subscription_plan === 'standard' || user?.subscription_plan === 'trial' || !user?.subscription_plan;
 
   const handleFileSelect = (e) => {
     const file = e.target.files[0];
@@ -374,6 +379,30 @@ IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEM
                 )}
               </div>
 
+              {isStandardOrTrial && (
+                <div className="bg-gradient-to-br from-purple-50 to-blue-50 border-2 border-purple-200 rounded-xl p-5">
+                  <div className="flex items-start gap-3">
+                    <div className="w-12 h-12 bg-gradient-to-br from-purple-600 to-blue-600 rounded-xl flex items-center justify-center flex-shrink-0">
+                      <Zap className="w-6 h-6 text-white" />
+                    </div>
+                    <div className="flex-1">
+                      <h4 className="text-base font-bold text-gray-900 mb-1.5">
+                        🚀 Passa a Base per Piani Completi
+                      </h4>
+                      <p className="text-xs text-gray-700 mb-3 leading-relaxed">
+                        Sblocca piani pasto settimanali personalizzati, ricette con foto AI, lista della spesa automatica e molto altro!
+                      </p>
+                      <Button
+                        onClick={() => setShowUpgradeModal(true)}
+                        className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-semibold text-sm h-10"
+                      >
+                        Upgrade a Base • Da €19/mese
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              )}
+
               <div className="flex gap-3">
                 <Button
                   onClick={handleReset}
@@ -393,6 +422,13 @@ IMPORTANTE: Usa la MASSIMA PRECISIONE e CONSISTENZA. La stessa immagine deve SEM
           )}
         </div>
       </DialogContent>
+
+      <UpgradeModal
+        isOpen={showUpgradeModal}
+        onClose={() => setShowUpgradeModal(false)}
+        currentPlan={user?.subscription_plan || 'standard'}
+        targetPlan="base"
+      />
     </Dialog>
   );
 }
