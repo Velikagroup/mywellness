@@ -109,7 +109,7 @@ export default function Quiz() {
   const [isSaving, setIsSaving] = useState(false);
   const [quizActivityTracked, setQuizActivityTracked] = useState(false);
 
-  // ✅ PRIORITÀ: Controlla subito se deve completare il setup dopo login
+  // ✅ PRIORITÀ ASSOLUTA: Controlla subito se deve completare il setup dopo login
   useEffect(() => {
     const completeSetupAfterLogin = async () => {
       const quizDataToSave = localStorage.getItem('quizDataToSave');
@@ -120,10 +120,20 @@ export default function Quiz() {
         setIsLoadingUser(true);
         
         try {
+          // Verifica autenticazione
+          const isAuthenticated = await base44.auth.isAuthenticated();
+          console.log('🔐 Is authenticated:', isAuthenticated);
+          
+          if (!isAuthenticated) {
+            console.log('❌ User not authenticated yet, waiting...');
+            setIsLoadingUser(false);
+            return;
+          }
+          
           const currentUser = await base44.auth.me();
           
           if (currentUser) {
-            console.log('✅ User authenticated, completing setup...');
+            console.log('✅ User authenticated, completing setup...', currentUser.email);
             const dataToSave = JSON.parse(quizDataToSave);
             
             // Salva tutti i dati utente
@@ -131,11 +141,16 @@ export default function Quiz() {
             
             // Registra peso iniziale
             const today = new Date().toISOString().split('T')[0];
-            await base44.entities.WeightHistory.create({
-              user_id: currentUser.id,
-              weight: dataToSave.current_weight,
-              date: today
-            });
+            try {
+              await base44.entities.WeightHistory.create({
+                user_id: currentUser.id,
+                weight: dataToSave.current_weight,
+                date: today
+              });
+              console.log('✅ Peso iniziale registrato');
+            } catch (weightError) {
+              console.warn('⚠️ Peso già esistente o errore:', weightError);
+            }
             
             // Imposta trial status (7 giorni, solo dashboard)
             const trialEndsAt = new Date();
@@ -149,7 +164,7 @@ export default function Quiz() {
             
             console.log('✅ Setup completed, redirecting to Dashboard...');
             
-            // Pulisci localStorage
+            // Pulisci localStorage PRIMA del redirect
             localStorage.removeItem('quizDataToSave');
             localStorage.removeItem('needsTrialSetup');
             localStorage.removeItem('quizData');
@@ -160,6 +175,13 @@ export default function Quiz() {
           }
         } catch (error) {
           console.error('Error completing post-login setup:', error);
+          // Se errore 401, l'utente non è ancora autenticato - aspetta
+          if (error?.response?.status === 401 || error?.message?.includes('401')) {
+            console.log('⏳ Auth in progress, will retry...');
+            setIsLoadingUser(false);
+            return;
+          }
+          // Solo in caso di errore critico, pulisci
           localStorage.removeItem('quizDataToSave');
           localStorage.removeItem('needsTrialSetup');
         }
