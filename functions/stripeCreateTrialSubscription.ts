@@ -316,8 +316,26 @@ Deno.serve(async (req) => {
         if (skipTrial) {
             console.log('🔄 Creating IMMEDIATE paid subscription (no trial)...');
             
+            // 🎁 Create Stripe coupon if affiliate discount applies
+            let stripeCouponId = null;
+            if (affiliateDiscountPercent && affiliateDiscountPercent > 0) {
+                console.log(`🎁 Creating ${affiliateDiscountPercent}% affiliate discount coupon...`);
+                const stripeCoupon = await stripe.coupons.create({
+                    percent_off: affiliateDiscountPercent,
+                    duration: 'once',
+                    name: `Affiliate Discount ${affiliateDiscountPercent}%`,
+                    metadata: {
+                        user_id: user.id,
+                        referred_by: user.referred_by || 'unknown',
+                        type: 'affiliate_first_month'
+                    }
+                });
+                stripeCouponId = stripeCoupon.id;
+                console.log(`✅ Stripe coupon created: ${stripeCouponId}`);
+            }
+            
             // Crea direttamente una subscription attiva a pagamento
-            finalSubscription = await stripe.subscriptions.create({
+            const subscriptionParams = {
                 customer: stripeCustomerId,
                 items: [{ price: selectedPriceId }],
                 payment_behavior: 'default_incomplete',
@@ -332,9 +350,17 @@ Deno.serve(async (req) => {
                     plan_type: planType,
                     billing_period: billingPeriod,
                     traffic_source: trafficSource || 'direct',
-                    coupon_code: appliedCouponCode || 'none'
+                    coupon_code: appliedCouponCode || 'none',
+                    affiliate_discount_applied: affiliateDiscountPercent ? 'true' : 'false'
                 }
-            });
+            };
+            
+            // Apply coupon if exists
+            if (stripeCouponId) {
+                subscriptionParams.coupon = stripeCouponId;
+            }
+            
+            finalSubscription = await stripe.subscriptions.create(subscriptionParams);
 
             console.log(`✅ Paid subscription created: ${finalSubscription.id}`);
             
