@@ -18,6 +18,7 @@ import PhotoMealAnalyzer from "../components/meals/PhotoMealAnalyzer";
 import ProgressPhotoAnalyzer from "../components/training/ProgressPhotoAnalyzer";
 import ProgressPhotoGallery from "../components/training/ProgressPhotoGallery";
 import UpgradeModal from "../components/meals/UpgradeModal";
+import UpgradeCheckoutModal from "../components/modals/UpgradeCheckoutModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -54,6 +55,9 @@ export default function Dashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCalorieMeter, setShowCalorieMeter] = useState(false);
   const [showNutritionUnlock, setShowNutritionUnlock] = useState(false);
+  const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
+  const [checkoutPlan, setCheckoutPlan] = useState('base');
+  const [checkoutBilling, setCheckoutBilling] = useState('monthly');
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -770,9 +774,17 @@ export default function Dashboard() {
         onClose={() => setShowNutritionUnlock(false)}
         onUpgrade={() => {
           setShowNutritionUnlock(false);
-          setUpgradePlanTarget('base');
-          setShowUpgradeModal(true);
+          setCheckoutPlan('base');
+          setCheckoutBilling('monthly');
+          setShowUpgradeCheckout(true);
         }}
+      />
+
+      <UpgradeCheckoutModal
+        isOpen={showUpgradeCheckout}
+        onClose={() => setShowUpgradeCheckout(false)}
+        selectedPlan={checkoutPlan}
+        selectedBillingPeriod={checkoutBilling}
       />
 
       {/* Dialog Modifica BMR */}
