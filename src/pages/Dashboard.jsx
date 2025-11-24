@@ -586,31 +586,22 @@ export default function Dashboard() {
                   userPlan={user?.subscription_plan}
                   onUpgradeClick={() => setShowUpgradeModal(true)}
                 />
-                {hasFeatureAccess(user?.subscription_plan, 'workout_plan') ? (
-                  <TrainingStatus 
-                    workout={todayWorkout} 
-                    onProgressPhotoClick={() => {
-                      if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
-                        setShowUpgradeModal(true);
-                        return;
-                      }
-                      setShowProgressPhoto(true);
-                    }}
-                    onViewGalleryClick={async () => {
-                      await loadProgressPhotos();
-                      setShowPhotoGallery(true);
-                    }}
-                    userPlan={user?.subscription_plan}
-                  />
-                ) : (
-                  <div className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl p-6">
-                    <UpgradePrompt 
-                      requiredPlan={PLANS.PRO} 
-                      featureName="Piano di Allenamento"
-                      onUpgradeClick={() => setShowUpgradeModal(true)}
-                    />
-                  </div>
-                )}
+                <TrainingStatus 
+                  workout={todayWorkout} 
+                  onProgressPhotoClick={() => {
+                    if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
+                      setShowUpgradeModal(true);
+                      return;
+                    }
+                    setShowProgressPhoto(true);
+                  }}
+                  onViewGalleryClick={async () => {
+                    await loadProgressPhotos();
+                    setShowPhotoGallery(true);
+                  }}
+                  userPlan={user?.subscription_plan}
+                  onUpgradeClick={() => setShowUpgradeModal(true)}
+                />
               </div>
             </div>
 

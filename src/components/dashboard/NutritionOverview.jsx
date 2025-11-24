@@ -149,7 +149,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                 onClick={onUpgradeClick}
                 className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
               >
-                Prova Base 3 Giorni Gratis
+                Upgrade a Base
               </Button>
             </div>
           ) : sortedMeals.length > 0 ? sortedMeals.map((meal) => {
