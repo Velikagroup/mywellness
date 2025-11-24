@@ -953,7 +953,8 @@ export default function PricingPage() {
             </h2>
             
             <div className="water-glass-effect rounded-3xl border border-white/40 overflow-hidden shadow-2xl">
-              <div className="overflow-x-auto">
+              {/* Desktop - tabella normale */}
+              <div className="hidden md:block overflow-x-auto">
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200/50">
@@ -1092,6 +1093,160 @@ export default function PricingPage() {
                     </tr>
                   </tbody>
                 </table>
+              </div>
+              
+              {/* Mobile - colonna fissa + scroll orizzontale */}
+              <div className="md:hidden">
+                <div className="flex">
+                  {/* Colonna Funzionalità - FISSA */}
+                  <div className="flex-shrink-0 w-40 bg-white/30">
+                    <div className="border-b border-gray-200/50 p-4 h-20 flex items-center">
+                      <span className="text-xs font-bold text-gray-700">Funzionalità</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Dashboard scientifica completa</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Calcolo BMR e massa grassa</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Tracking peso e progressi</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Conta calorie istantaneo</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Piano nutrizionale personalizzato</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Generazioni piano nutrizionale/mese</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Ricette con foto AI e istruzioni</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Lista della spesa automatica</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Piano di allenamento personalizzato</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Generazioni piano allenamento/mese</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Analisi AI dei pasti con foto</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Ribilanciamento automatico calorie</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Analisi progressi con foto AI</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Scansione etichette con Health Score AI</span>
+                    </div>
+                    <div className="p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">Supporto prioritario</span>
+                    </div>
+                  </div>
+                  
+                  {/* Colonne Piani - SCROLLABILI */}
+                  <div className="overflow-x-auto flex-1">
+                    <div className="flex min-w-max">
+                      {/* Standard */}
+                      <div className="w-24 flex-shrink-0">
+                        <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
+                          <Shield className="w-5 h-5 text-gray-600" />
+                          <span className="text-xs font-bold text-gray-700">Standard</span>
+                        </div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs text-gray-500">-</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs text-gray-500">-</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                      </div>
+                      
+                      {/* Base */}
+                      <div className="w-24 flex-shrink-0">
+                        <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
+                          <Target className="w-5 h-5 text-blue-600" />
+                          <span className="text-xs font-bold text-gray-700">Base</span>
+                        </div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-gray-900">4</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs text-gray-500">-</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                      </div>
+                      
+                      {/* Pro */}
+                      <div className="w-24 flex-shrink-0">
+                        <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
+                          <Zap className="w-5 h-5 text-[var(--brand-primary)]" />
+                          <span className="text-xs font-bold text-gray-700">Pro</span>
+                        </div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-gray-900">8</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-gray-900">4</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                      </div>
+                      
+                      {/* Premium */}
+                      <div className="w-24 flex-shrink-0">
+                        <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
+                          <Crown className="w-5 h-5 text-purple-600" />
+                          <span className="text-xs font-bold text-gray-700">Premium</span>
+                        </div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">Illimitate</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">Illimitate</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
