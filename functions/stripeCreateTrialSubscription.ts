@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
             affiliateDiscountPercent = null
         } = body;
 
-        console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode, skipTrial });
+        console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode, skipTrial, affiliateDiscountPercent });
 
         // 🎫 VERIFICA SE IL COUPON È LIFETIME_FREE
         let isLifetimeFree = false;
