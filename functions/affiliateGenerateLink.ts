@@ -16,7 +16,7 @@ Deno.serve(async (req) => {
       const link = existingLinks[0];
       return Response.json({ 
         success: true, 
-        affiliate_link: `https://app.projectmywellness.com?affiliate=${link.affiliate_code}`,
+        affiliate_link: `https://projectmywellness.com?affiliate=${link.affiliate_code}`,
         affiliate_code: link.affiliate_code,
         stats: {
           total_referrals: link.total_referrals || 0,
@@ -47,7 +47,7 @@ Deno.serve(async (req) => {
 
     return Response.json({ 
       success: true, 
-      affiliate_link: `https://app.projectmywellness.com?affiliate=${affiliateCode}`,
+      affiliate_link: `https://projectmywellness.com?affiliate=${affiliateCode}`,
       affiliate_code: affiliateCode,
       stats: {
         total_referrals: 0,
