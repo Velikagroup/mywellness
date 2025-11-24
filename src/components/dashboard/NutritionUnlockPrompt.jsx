@@ -167,7 +167,7 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-4xl max-h-[85vh] sm:max-h-[85vh] max-h-[75vh] p-0 overflow-hidden w-[95vw] sm:w-auto">
+      <DialogContent className="max-w-6xl max-h-[85vh] p-0 overflow-hidden w-[95vw] sm:w-auto">
         <div className="relative">
           {/* Header fisso */}
           <div className="absolute top-0 left-0 right-0 z-20 bg-gradient-to-b from-white via-white to-transparent px-3 sm:px-6 pt-4 sm:pt-6 pb-6 sm:pb-8">
