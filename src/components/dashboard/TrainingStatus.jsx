@@ -31,7 +31,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
               Sblocca il piano di allenamento settimanale con schede personalizzate, analisi progressi AI e molto altro
             </p>
             <Button 
-              onClick={() => window.location.href = createPageUrl('TrialSetup') + '?plan=pro&billing=monthly'}
+              onClick={onUpgradeClick}
               className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
             >
               Upgrade a Pro
