@@ -483,30 +483,23 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
   const monthlyPrice = planPrices[selectedPlan] || 19;
 
   return (
-    <>
-      {isOpen && (
-        <div 
-          className="fixed inset-0 z-40 animated-gradient-bg"
-          style={{
-            background: '#f9fafb',
-            backgroundImage: `
-              radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
-              radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
-              radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
-              radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%)
-            `,
-            backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
-            animation: 'gradientShift 45s ease-in-out infinite'
-          }}
-        />
-      )}
-      
-      <Dialog open={isOpen} onOpenChange={onClose}>
-        <DialogContent 
-          className="max-w-2xl max-h-[90vh] overflow-y-auto water-glass-effect z-50"
-        >
+    <Dialog open={isOpen} onOpenChange={onClose}>
+      <DialogContent 
+        className="max-w-2xl max-h-[90vh] overflow-y-auto water-glass-effect"
+        overlayStyle={{
+          background: '#f9fafb',
+          backgroundImage: `
+            radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
+            radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+            radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+            radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%)
+          `,
+          backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
+          animation: 'gradientShift 45s ease-in-out infinite'
+        }}
+      >
           <style>{`
             @keyframes gradientShift {
               0% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
@@ -1032,8 +1025,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             </>
           )}
         </div>
-        </DialogContent>
-      </Dialog>
-    </>
+      </DialogContent>
+    </Dialog>
   );
 }
