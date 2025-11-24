@@ -122,7 +122,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
     // Se è un upgrade da piano gratuito (standard/trial), apri il checkout modale
     const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
     if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
-      onClose();
       setShowConfirmDialog(false);
       setCheckoutPlan(plan.id);
       setCheckoutBilling(billingCycle);
@@ -154,7 +153,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
 
     // Se richiede pagamento (upgrade da piano gratuito), apri il checkout modale
     if (pricingInfo?.requiresCheckout) {
-      onClose();
       setShowConfirmDialog(false);
       setCheckoutPlan(selectedPlanToUpgrade.id);
       setCheckoutBilling(billingCycle);
