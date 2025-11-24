@@ -522,10 +522,8 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             border-radius: 12px;
             background-color: white;
             transition: all 0.3s ease;
-            min-height: 56px;
-            padding: 16px;
-            display: flex;
-            align-items: center;
+            min-height: 52px;
+            padding: 12px;
           }
           
           #card-element-container:focus-within {
@@ -533,13 +531,8 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             box-shadow: 0 0 0 3px rgba(38, 132, 127, 0.1);
           }
           
-          #card-element-container .StripeElement {
-            width: 100%;
-            height: 24px;
-          }
-          
           #card-element-container iframe {
-            height: 24px !important;
+            min-height: 28px !important;
           }
         `}</style>
 
