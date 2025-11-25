@@ -1117,8 +1117,11 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
         // ✅ Assicurati che user_id sia sempre quello fresco
         meal.user_id = freshUser.id;
         
+        console.log(`📝 Creando pasto ${i+1}/${allGeneratedMeals.length}: ${meal.name} per user_id: ${meal.user_id}`);
+        
         try {
-          const createdMeal = await createMealMutation.mutateAsync(meal);
+          const createdMeal = await base44.entities.MealPlan.create(meal);
+          console.log(`✅ Pasto creato con ID: ${createdMeal.id}`);
           createdMealIds.push({ id: createdMeal.id, meal });
         } catch (createError) {
           console.error(`❌ Errore creazione pasto ${meal.name}:`, createError);
