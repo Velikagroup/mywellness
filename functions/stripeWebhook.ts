@@ -178,7 +178,97 @@ Deno.serve(async (req) => {
                 break;
             }
 
-            case 'invoice.payment_succeeded': {
+            case 'invoice.created': {
+                    // 🔗 AFFILIATE: Applica credito affiliazione come sconto sulla fattura
+                    const invoiceCreated = event.data.object;
+                    console.log('📄 Invoice created:', invoiceCreated.id);
+                    
+                    // Solo per fatture di subscription (non one-time)
+                    if (!invoiceCreated.subscription || invoiceCreated.billing_reason === 'subscription_create') {
+                        console.log('⏭️ Skipping - not a renewal invoice');
+                        break;
+                    }
+
+                    const invoiceCustomerId = invoiceCreated.customer;
+                    const invoiceUsers = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: invoiceCustomerId });
+
+                    if (invoiceUsers.length > 0) {
+                        const invoiceUser = invoiceUsers[0];
+                        console.log('👤 User found:', invoiceUser.email);
+
+                        // Cerca affiliate link dell'utente
+                        const userAffiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: invoiceUser.id });
+
+                        if (userAffiliateLinks.length > 0) {
+                            const userAffiliateLink = userAffiliateLinks[0];
+                            const availableBalance = userAffiliateLink.available_balance || 0;
+
+                            if (availableBalance > 0) {
+                                console.log(`💰 User has €${availableBalance.toFixed(2)} affiliate credit available`);
+
+                                // Calcola quanto sconto applicare (massimo = importo fattura)
+                                const invoiceAmount = invoiceCreated.amount_due / 100;
+                                const discountToApply = Math.min(availableBalance, invoiceAmount);
+                                const discountInCents = Math.round(discountToApply * 100);
+
+                                if (discountInCents > 0) {
+                                    try {
+                                        // Crea un invoice item negativo (sconto)
+                                        await stripe.invoiceItems.create({
+                                            customer: invoiceCustomerId,
+                                            invoice: invoiceCreated.id,
+                                            amount: -discountInCents,
+                                            currency: 'eur',
+                                            description: `Credito Affiliazione MyWellness (-€${discountToApply.toFixed(2)})`
+                                        });
+
+                                        console.log(`✅ Applied €${discountToApply.toFixed(2)} affiliate discount to invoice`);
+
+                                        // Aggiorna il saldo disponibile
+                                        const newBalance = availableBalance - discountToApply;
+                                        await base44.asServiceRole.entities.AffiliateLink.update(userAffiliateLink.id, {
+                                            available_balance: newBalance
+                                        });
+                                        console.log(`✅ Updated affiliate balance: €${newBalance.toFixed(2)}`);
+
+                                        // Trova i crediti disponibili e marcali come usati
+                                        const availableCredits = await base44.asServiceRole.entities.AffiliateCredit.filter({
+                                            affiliate_user_id: invoiceUser.id,
+                                            commission_status: 'available'
+                                        });
+
+                                        let remainingToMark = discountToApply;
+                                        for (const credit of availableCredits) {
+                                            if (remainingToMark <= 0) break;
+                                            
+                                            if (credit.commission_amount <= remainingToMark) {
+                                                await base44.asServiceRole.entities.AffiliateCredit.update(credit.id, {
+                                                    commission_status: 'used_for_subscription'
+                                                });
+                                                remainingToMark -= credit.commission_amount;
+                                            } else {
+                                                // Credito parzialmente usato - per semplicità lo marchiamo tutto come usato
+                                                await base44.asServiceRole.entities.AffiliateCredit.update(credit.id, {
+                                                    commission_status: 'used_for_subscription'
+                                                });
+                                                remainingToMark = 0;
+                                            }
+                                        }
+
+                                        console.log(`✅ Marked affiliate credits as used for subscription`);
+                                    } catch (discountError) {
+                                        console.error('❌ Error applying affiliate discount:', discountError.message);
+                                    }
+                                }
+                            } else {
+                                console.log('⏭️ No affiliate credit available');
+                            }
+                        }
+                    }
+                    break;
+                }
+
+        case 'invoice.payment_succeeded': {
                 console.log('💰 Processing invoice.payment_succeeded...');
                 const invoice = event.data.object;
                 console.log('Invoice ID:', invoice.id);
