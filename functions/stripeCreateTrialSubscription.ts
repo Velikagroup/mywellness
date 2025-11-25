@@ -377,6 +377,47 @@ Deno.serve(async (req) => {
                     await stripe.paymentIntents.confirm(paymentIntent.id);
                 }
                 console.log(`✅ Payment confirmed, amount: €${paymentIntent.amount / 100}`);
+                
+                // 🔗 AFFILIATE: Traccia commissione per pagamento immediato
+                const affiliateCode = user.referred_by_affiliate_code || user.referred_by;
+                if (affiliateCode && paymentIntent.amount > 0) {
+                    try {
+                        console.log(`🔗 Tracking affiliate commission for code: ${affiliateCode}`);
+                        const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
+                            affiliate_code: affiliateCode
+                        });
+
+                        if (affiliateLinks.length > 0) {
+                            const affiliateLink = affiliateLinks[0];
+                            const paidAmount = paymentIntent.amount / 100;
+                            const commissionAmount = paidAmount * 0.10; // 10%
+
+                            // Crea credito commissione
+                            await base44.asServiceRole.entities.AffiliateCredit.create({
+                                affiliate_user_id: affiliateLink.user_id,
+                                referred_user_id: user.id,
+                                stripe_payment_intent_id: paymentIntent.id,
+                                amount_paid: paidAmount,
+                                commission_amount: commissionAmount,
+                                commission_status: 'available',
+                                payment_date: new Date().toISOString()
+                            });
+
+                            // Aggiorna totali affiliate link
+                            await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
+                                total_referrals: (affiliateLink.total_referrals || 0) + 1,
+                                total_earned: (affiliateLink.total_earned || 0) + commissionAmount,
+                                available_balance: (affiliateLink.available_balance || 0) + commissionAmount
+                            });
+
+                            console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for ${affiliateLink.user_id}`);
+                        } else {
+                            console.warn(`⚠️ Affiliate link not found for code: ${affiliateCode}`);
+                        }
+                    } catch (affiliateError) {
+                        console.error('⚠️ Affiliate tracking error:', affiliateError.message);
+                    }
+                }
             }
 
         } else {
