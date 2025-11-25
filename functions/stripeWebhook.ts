@@ -315,6 +315,8 @@ Deno.serve(async (req) => {
             case 'customer.subscription.updated': {
                 const subscription = event.data.object;
                 console.log(`📋 Subscription ${event.type}:`, subscription.id);
+                console.log('Subscription status:', subscription.status);
+                console.log('Current period end:', subscription.current_period_end);
 
                 const customerId = subscription.customer;
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
@@ -322,13 +324,23 @@ Deno.serve(async (req) => {
                 if (users.length > 0) {
                     const user = users[0];
 
+                    // ✅ Safe date conversion
+                    let periodEnd = null;
+                    if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
+                        periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+                    }
+
                     const updateData = {
                         stripe_subscription_id: subscription.id,
                         subscription_status: subscription.status === 'active' ? 'active' :
                                            subscription.status === 'trialing' ? 'trial' :
-                                           subscription.status === 'canceled' ? 'cancelled' : 'expired',
-                        subscription_period_end: new Date(subscription.current_period_end * 1000).toISOString()
+                                           subscription.status === 'canceled' ? 'cancelled' : 'expired'
                     };
+                    
+                    // Solo aggiungi period_end se valido
+                    if (periodEnd) {
+                        updateData.subscription_period_end = periodEnd;
+                    }
 
                     // Determine plan from price
                     if (subscription.items?.data?.[0]?.price) {
