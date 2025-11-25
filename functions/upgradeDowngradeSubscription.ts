@@ -156,9 +156,11 @@ Deno.serve(async (req) => {
 
                         if (affiliateLinks.length > 0) {
                             const affiliateLink = affiliateLinks[0];
+                            const affiliateLinkId = affiliateLink.id || affiliateLink._id;
                             const paidAmount = invoiceAmount / 100; // Use invoice amount, not paymentIntent
                             const commissionAmount = paidAmount * 0.10;
                             console.log(`💰 Commission calculation: ${paidAmount} * 10% = ${commissionAmount}`);
+                            console.log(`📋 AffiliateLink ID: ${affiliateLinkId}, user_id: ${affiliateLink.user_id}`);
 
                             const paymentIntentId = typeof paymentIntent === 'string' ? paymentIntent : paymentIntent?.id;
                             
@@ -173,11 +175,24 @@ Deno.serve(async (req) => {
                             });
                             console.log(`✅ AffiliateCredit created: ${affiliateCredit.id}`);
 
-                            await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
-                                total_referrals: (affiliateLink.total_referrals || 0) + 1,
-                                total_earned: (affiliateLink.total_earned || 0) + commissionAmount,
-                                available_balance: (affiliateLink.available_balance || 0) + commissionAmount
-                            });
+                            // Update AffiliateLink totals
+                            try {
+                                const currentTotalReferrals = affiliateLink.total_referrals || 0;
+                                const currentTotalEarned = affiliateLink.total_earned || 0;
+                                const currentAvailableBalance = affiliateLink.available_balance || 0;
+                                
+                                console.log(`📊 Current totals - referrals: ${currentTotalReferrals}, earned: ${currentTotalEarned}, balance: ${currentAvailableBalance}`);
+                                
+                                const updateResult = await base44.asServiceRole.entities.AffiliateLink.update(affiliateLinkId, {
+                                    total_referrals: currentTotalReferrals + 1,
+                                    total_earned: currentTotalEarned + commissionAmount,
+                                    available_balance: currentAvailableBalance + commissionAmount
+                                });
+                                console.log(`✅ AffiliateLink update result:`, JSON.stringify(updateResult));
+                            } catch (updateError) {
+                                console.error(`⚠️ AffiliateLink update failed: ${updateError.message}`);
+                                console.error(`Stack: ${updateError.stack}`);
+                            }
 
                             console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for affiliate ${affiliateLink.user_id}`);
                         } else {
@@ -398,8 +413,10 @@ Deno.serve(async (req) => {
 
                             if (affiliateLinks.length > 0) {
                                 const affiliateLink = affiliateLinks[0];
+                                const affiliateLinkId = affiliateLink.id || affiliateLink._id;
                                 const commissionAmount = amountToPay * 0.10;
                                 console.log(`💰 Commission calculation: ${amountToPay} * 10% = ${commissionAmount}`);
+                                console.log(`📋 AffiliateLink ID: ${affiliateLinkId}, user_id: ${affiliateLink.user_id}`);
 
                                 const affiliateCredit = await base44.asServiceRole.entities.AffiliateCredit.create({
                                     affiliate_user_id: affiliateLink.user_id,
@@ -412,11 +429,24 @@ Deno.serve(async (req) => {
                                 });
                                 console.log(`✅ AffiliateCredit created: ${affiliateCredit.id}`);
 
-                                await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
-                                    total_referrals: (affiliateLink.total_referrals || 0) + 1,
-                                    total_earned: (affiliateLink.total_earned || 0) + commissionAmount,
-                                    available_balance: (affiliateLink.available_balance || 0) + commissionAmount
-                                });
+                                // Update AffiliateLink totals
+                                try {
+                                    const currentTotalReferrals = affiliateLink.total_referrals || 0;
+                                    const currentTotalEarned = affiliateLink.total_earned || 0;
+                                    const currentAvailableBalance = affiliateLink.available_balance || 0;
+                                    
+                                    console.log(`📊 Current totals - referrals: ${currentTotalReferrals}, earned: ${currentTotalEarned}, balance: ${currentAvailableBalance}`);
+                                    
+                                    const updateResult = await base44.asServiceRole.entities.AffiliateLink.update(affiliateLinkId, {
+                                        total_referrals: currentTotalReferrals + 1,
+                                        total_earned: currentTotalEarned + commissionAmount,
+                                        available_balance: currentAvailableBalance + commissionAmount
+                                    });
+                                    console.log(`✅ AffiliateLink update result:`, JSON.stringify(updateResult));
+                                } catch (updateError) {
+                                    console.error(`⚠️ AffiliateLink update failed: ${updateError.message}`);
+                                    console.error(`Stack: ${updateError.stack}`);
+                                }
 
                                 console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for affiliate ${affiliateLink.user_id}`);
                             } else {
