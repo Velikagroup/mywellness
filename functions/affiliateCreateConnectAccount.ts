@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
     console.log('✅ Account Stripe Connect creato:', account.id);
 
     // Aggiorna affiliate link con account ID
-    await base44.entities.AffiliateLink.update(affiliateLink.id, {
+    await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
       stripe_connect_account_id: account.id
     });
 
