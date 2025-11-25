@@ -258,7 +258,10 @@ export default function MealsPage() {
     queryKey: ['mealPlans', user?.id],
     queryFn: async () => {
       if (!user?.id) return [];
-      return await base44.entities.MealPlan.filter({ user_id: user.id });
+      console.log('🔍 Fetching meal plans for user_id:', user.id);
+      const plans = await base44.entities.MealPlan.list();
+      console.log('📦 All meal plans fetched:', plans.length, plans.map(p => ({ id: p.id, user_id: p.user_id, name: p.name })));
+      return plans;
     },
     enabled: !!user?.id,
     staleTime: 0,
