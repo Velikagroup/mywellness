@@ -440,7 +440,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                   {isCalculating ? (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="w-6 h-6 text-[var(--brand-primary)] animate-spin" />
-                      <span className="ml-2 text-sm text-gray-600">Calcolo Stripe in corso...</span>
+                      <span className="ml-2 text-sm text-gray-600">Calcolo in corso...</span>
                     </div>
                   ) : pricingInfo && (
                     <div className="space-y-3 pt-3 border-t border-[#26847F]/20">
@@ -456,6 +456,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                       </div>
                       {!pricingInfo.isDowngrade && (
                         <>
+                          {pricingInfo.creditFromCurrentPlan > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Credito residuo ({pricingInfo.percentageRemaining}%):</span>
+                              <span className="font-semibold text-green-600">-€{pricingInfo.creditFromCurrentPlan.toFixed(2)}</span>
+                            </div>
+                          )}
                           {pricingInfo.affiliateCreditApplied > 0 && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-600">Credito Affiliazione:</span>
@@ -469,9 +475,6 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                               €{pricingInfo.amountToPay.toFixed(2)}
                             </span>
                           </div>
-                          <p className="text-xs text-gray-500 text-center">
-                            Importo prorated calcolato da Stripe (include credito residuo del piano attuale)
-                          </p>
                         </>
                       )}
                     </div>
