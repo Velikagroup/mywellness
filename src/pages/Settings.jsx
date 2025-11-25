@@ -545,6 +545,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
   }
 
   const planLabels = {
+    trial: 'Trial',
+    standard: 'Standard',
     base: 'Base',
     pro: 'Pro',
     premium: 'Premium'
