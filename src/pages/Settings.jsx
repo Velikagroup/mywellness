@@ -142,10 +142,16 @@ export default function Settings() {
         workout_reminders: currentUser.email_notifications?.workout_reminders ?? true
       });
 
-      // ✅ FIX: Corretto l'ordinamento - rimuovi array, passa stringa
-      const userTransactions = await base44.entities.Transaction.filter({ user_id: currentUser.id }, '-payment_date');
-      console.log('📊 Transactions loaded:', userTransactions.length);
-      setTransactions(userTransactions);
+      // ✅ FIX: Carica transazioni dell'utente
+      console.log('🔍 Loading transactions for user_id:', currentUser.id);
+      try {
+        const userTransactions = await base44.entities.Transaction.filter({ user_id: currentUser.id }, '-payment_date');
+        console.log('📊 Transactions loaded:', userTransactions.length, userTransactions);
+        setTransactions(userTransactions);
+      } catch (txError) {
+        console.error('❌ Error loading transactions:', txError);
+        setTransactions([]);
+      }
 
       const userTickets = await base44.entities.SupportTicket.filter({ user_id: currentUser.id }, '-created_date');
       setSupportTickets(userTickets);
