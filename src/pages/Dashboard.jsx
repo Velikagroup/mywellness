@@ -18,6 +18,7 @@ import PhotoMealAnalyzer from "../components/meals/PhotoMealAnalyzer";
 import ProgressPhotoAnalyzer from "../components/training/ProgressPhotoAnalyzer";
 import ProgressPhotoGallery from "../components/training/ProgressPhotoGallery";
 import UpgradeModal from "../components/meals/UpgradeModal";
+import UpgradeCheckoutModal from "../components/modals/UpgradeCheckoutModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,7 +41,8 @@ export default function Dashboard() {
   const [showPhotoGallery, setShowPhotoGallery] = React.useState(false);
   const [progressPhotos, setProgressPhotos] = React.useState([]);
   const [isMobile, setIsMobile] = useState(false);
-  
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradePlanTarget, setUpgradePlanTarget] = useState(null);
   const [showEditBMR, setShowEditBMR] = useState(false);
   const [showEditBodyFat, setShowEditBodyFat] = useState(false);
   const [showEditCalories, setShowEditCalories] = useState(false);
@@ -56,8 +58,6 @@ export default function Dashboard() {
   const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState('base');
   const [checkoutBilling, setCheckoutBilling] = useState('monthly');
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [upgradeTargetPlan, setUpgradeTargetPlan] = useState(null);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -654,26 +654,27 @@ export default function Dashboard() {
                   }}
                 />
                 <TrainingStatus 
-                                        workout={todayWorkout} 
-                                        onProgressPhotoClick={() => {
-                                          if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
-                                            setUpgradeTargetPlan('premium');
-                                            setShowUpgradeModal(true);
-                                            return;
-                                          }
-                                          setShowProgressPhoto(true);
-                                        }}
-                                        onViewGalleryClick={async () => {
-                                          await loadProgressPhotos();
-                                          setShowPhotoGallery(true);
-                                        }}
-                                        userPlan={user?.subscription_plan}
-                                        onUpgradeClick={() => {
-                                          setShowNutritionUnlock(false);
-                                          setUpgradeTargetPlan('pro');
-                                          setShowUpgradeModal(true);
-                                        }}
-                                      />
+                  workout={todayWorkout} 
+                  onProgressPhotoClick={() => {
+                    if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
+                      setUpgradePlanTarget('premium');
+                      setShowUpgradeModal(true);
+                      return;
+                    }
+                    setShowProgressPhoto(true);
+                  }}
+                  onViewGalleryClick={async () => {
+                    await loadProgressPhotos();
+                    setShowPhotoGallery(true);
+                  }}
+                  userPlan={user?.subscription_plan}
+                  onUpgradeClick={() => {
+                    setShowNutritionUnlock(false);
+                    setCheckoutPlan('pro');
+                    setCheckoutBilling('monthly');
+                    setShowUpgradeCheckout(true);
+                  }}
+                />
               </div>
             </div>
 
@@ -763,7 +764,17 @@ export default function Dashboard() {
           onAnalysisComplete={handleProgressAnalysisComplete}
         />
       )}
-
+      {showUpgradeModal && (
+        <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => {
+            setShowUpgradeModal(false);
+            setUpgradePlanTarget(null);
+          }}
+          currentPlan={user?.subscription_plan}
+          targetPlan={upgradePlanTarget}
+        />
+      )}
       
       {showPhotoGallery && (
         <ProgressPhotoGallery
@@ -780,24 +791,22 @@ export default function Dashboard() {
       />
 
       <NutritionUnlockPrompt
-                    isOpen={showNutritionUnlock}
-                    onClose={() => setShowNutritionUnlock(false)}
-                    onUpgrade={() => {
-                      setShowNutritionUnlock(false);
-                      setUpgradeTargetPlan('base');
-                      setShowUpgradeModal(true);
-                    }}
-                  />
+        isOpen={showNutritionUnlock}
+        onClose={() => setShowNutritionUnlock(false)}
+        onUpgrade={() => {
+          setShowNutritionUnlock(false);
+          setCheckoutPlan('base');
+          setCheckoutBilling('monthly');
+          setShowUpgradeCheckout(true);
+        }}
+      />
 
-                  <UpgradeModal
-                    isOpen={showUpgradeModal}
-                    onClose={() => {
-                      setShowUpgradeModal(false);
-                      setUpgradeTargetPlan(null);
-                    }}
-                    currentPlan={user?.subscription_plan}
-                    targetPlan={upgradeTargetPlan}
-                  />
+      <UpgradeCheckoutModal
+        isOpen={showUpgradeCheckout}
+        onClose={() => setShowUpgradeCheckout(false)}
+        selectedPlan={checkoutPlan}
+        selectedBillingPeriod={checkoutBilling}
+      />
 
       {/* Dialog Modifica BMR */}
       <Dialog open={showEditBMR} onOpenChange={setShowEditBMR}>
