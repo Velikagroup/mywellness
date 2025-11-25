@@ -143,10 +143,16 @@ export default function Settings() {
       });
 
       // ✅ FIX: Carica transazioni dell'utente
-      console.log('🔍 Loading transactions for user_id:', currentUser.id);
+      console.log('🔍 Loading transactions for user:', {
+        id: currentUser.id,
+        email: currentUser.email,
+        stripe_customer_id: currentUser.stripe_customer_id,
+        stripe_subscription_id: currentUser.stripe_subscription_id
+      });
       try {
-        const userTransactions = await base44.entities.Transaction.filter({ user_id: currentUser.id }, '-payment_date');
-        console.log('📊 Transactions loaded:', userTransactions.length, userTransactions);
+        // Prima prova a caricare TUTTE le transazioni visibili all'utente (RLS dovrebbe filtrare)
+        const userTransactions = await base44.entities.Transaction.list('-payment_date', 50);
+        console.log('📊 Transactions loaded (via list):', userTransactions.length, userTransactions);
         setTransactions(userTransactions);
       } catch (txError) {
         console.error('❌ Error loading transactions:', txError);
