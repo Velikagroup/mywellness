@@ -440,7 +440,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                   {isCalculating ? (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="w-6 h-6 text-[var(--brand-primary)] animate-spin" />
-                      <span className="ml-2 text-sm text-gray-600">Calcolo in corso...</span>
+                      <span className="ml-2 text-sm text-gray-600">Calcolo Stripe in corso...</span>
                     </div>
                   ) : pricingInfo && (
                     <div className="space-y-3 pt-3 border-t border-[#26847F]/20">
@@ -469,8 +469,11 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                             </div>
                           )}
                           <div className="h-px bg-gray-300"></div>
-                          <div className="flex justify-between">
-                            <span className="font-bold text-gray-900">Da pagare ora:</span>
+                          <div className="flex justify-between items-center">
+                            <div>
+                              <span className="font-bold text-gray-900">Da pagare ora:</span>
+                              <p className="text-xs text-gray-500">(importo calcolato da Stripe)</p>
+                            </div>
                             <span className="font-black text-2xl text-[#26847F]">
                               €{pricingInfo.amountToPay.toFixed(2)}
                             </span>
