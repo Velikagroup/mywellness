@@ -40,8 +40,7 @@ export default function Dashboard() {
   const [showPhotoGallery, setShowPhotoGallery] = React.useState(false);
   const [progressPhotos, setProgressPhotos] = React.useState([]);
   const [isMobile, setIsMobile] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
-  const [upgradePlanTarget, setUpgradePlanTarget] = useState(null);
+  
   const [showEditBMR, setShowEditBMR] = useState(false);
   const [showEditBodyFat, setShowEditBodyFat] = useState(false);
   const [showEditCalories, setShowEditCalories] = useState(false);
