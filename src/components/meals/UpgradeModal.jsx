@@ -456,10 +456,18 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                       </div>
                       {!pricingInfo.isDowngrade && (
                         <>
-                          <div className="flex justify-between text-sm">
-                            <span className="text-gray-600">Credito residuo ({pricingInfo.percentageRemaining}%):</span>
-                            <span className="font-semibold text-green-600">-€{pricingInfo.creditFromCurrentPlan.toFixed(2)}</span>
-                          </div>
+                          {pricingInfo.creditFromCurrentPlan > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Credito residuo ({pricingInfo.percentageRemaining}%):</span>
+                              <span className="font-semibold text-green-600">-€{pricingInfo.creditFromCurrentPlan.toFixed(2)}</span>
+                            </div>
+                          )}
+                          {pricingInfo.affiliateCreditApplied > 0 && (
+                            <div className="flex justify-between text-sm">
+                              <span className="text-gray-600">Credito Affiliazione:</span>
+                              <span className="font-semibold text-purple-600">-€{pricingInfo.affiliateCreditApplied.toFixed(2)}</span>
+                            </div>
+                          )}
                           <div className="h-px bg-gray-300"></div>
                           <div className="flex justify-between">
                             <span className="font-bold text-gray-900">Da pagare ora:</span>
