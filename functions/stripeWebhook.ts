@@ -436,6 +436,119 @@ Deno.serve(async (req) => {
                 break;
             }
 
+            case 'payment_intent.succeeded': {
+                const paymentIntent = event.data.object;
+                console.log('💳 Processing payment_intent.succeeded:', paymentIntent.id);
+                console.log('Amount:', paymentIntent.amount / 100, paymentIntent.currency);
+                console.log('Customer:', paymentIntent.customer);
+                console.log('Metadata:', JSON.stringify(paymentIntent.metadata));
+
+                const customerId = paymentIntent.customer;
+                const amount = paymentIntent.amount / 100;
+
+                if (!customerId) {
+                    console.log('⚠️ No customer ID on payment intent, skipping');
+                    break;
+                }
+
+                const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
+                console.log('👥 Users found:', users.length);
+
+                if (users.length > 0) {
+                    const user = users[0];
+                    console.log('✅ User found:', user.id, user.email);
+
+                    // Controlla se esiste già una transaction con questo payment_intent_id
+                    const existingTransactions = await base44.asServiceRole.entities.Transaction.filter({
+                        stripe_payment_intent_id: paymentIntent.id
+                    });
+
+                    if (existingTransactions.length > 0) {
+                        console.log('⚠️ Transaction already exists for this payment intent, skipping');
+                        break;
+                    }
+
+                    const metadata = paymentIntent.metadata || {};
+                    const trafficSource = metadata.traffic_source || user.traffic_source || 'direct';
+                    const plan = metadata.plan || user.subscription_plan || 'base';
+                    const billingPeriod = metadata.billing_period || 'monthly';
+
+                    // Crea transaction
+                    const transaction = await base44.asServiceRole.entities.Transaction.create({
+                        user_id: user.id,
+                        stripe_payment_intent_id: paymentIntent.id,
+                        amount: amount,
+                        currency: paymentIntent.currency || 'eur',
+                        status: 'succeeded',
+                        type: metadata.type || 'subscription_payment',
+                        plan: plan,
+                        billing_period: billingPeriod,
+                        payment_date: new Date(paymentIntent.created * 1000).toISOString(),
+                        description: metadata.description || `Pagamento ${plan}`,
+                        traffic_source: trafficSource,
+                        metadata: {
+                            ...metadata,
+                            payment_method: paymentIntent.payment_method_types?.[0] || 'card'
+                        }
+                    });
+
+                    console.log(`✅ Transaction created from payment_intent: ${transaction.id}`);
+
+                    // 🔗 AFFILIATE: Traccia commissione se utente è affiliato
+                    if (user.referred_by_affiliate_code && amount > 0) {
+                        try {
+                            const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
+                                affiliate_code: user.referred_by_affiliate_code
+                            });
+
+                            if (affiliateLinks.length > 0) {
+                                const affiliateLink = affiliateLinks[0];
+                                const commissionAmount = amount * 0.10; // 10%
+
+                                await base44.asServiceRole.entities.AffiliateCredit.create({
+                                    affiliate_user_id: affiliateLink.user_id,
+                                    referred_user_id: user.id,
+                                    transaction_id: transaction.id,
+                                    stripe_payment_intent_id: paymentIntent.id,
+                                    amount_paid: amount,
+                                    commission_amount: commissionAmount,
+                                    commission_status: 'available',
+                                    payment_date: new Date(paymentIntent.created * 1000).toISOString()
+                                });
+
+                                await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
+                                    total_earned: affiliateLink.total_earned + commissionAmount,
+                                    available_balance: affiliateLink.available_balance + commissionAmount
+                                });
+
+                                console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)}`);
+                            }
+                        } catch (affiliateError) {
+                            console.error('⚠️ Affiliate tracking error:', affiliateError);
+                        }
+                    }
+
+                    // Genera fattura PDF
+                    try {
+                        const invoiceResponse = await base44.asServiceRole.functions.invoke('generateInvoicePDF', {
+                            transactionId: transaction.id
+                        });
+
+                        if (invoiceResponse?.data?.invoice_url) {
+                            await base44.asServiceRole.entities.Transaction.update(transaction.id, {
+                                invoice_pdf_url: invoiceResponse.data.invoice_url
+                            });
+                            console.log(`✅ Invoice PDF generated`);
+                        }
+                    } catch (invoiceError) {
+                        console.error('⚠️ Invoice generation failed:', invoiceError.message);
+                    }
+                } else {
+                    console.warn('⚠️ No user found with stripe_customer_id:', customerId);
+                }
+                break;
+            }
+
             default:
                 console.log(`⚠️ Unhandled event type: ${event.type}`);
         }
