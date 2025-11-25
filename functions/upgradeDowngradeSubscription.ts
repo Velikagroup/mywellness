@@ -150,13 +150,15 @@ Deno.serve(async (req) => {
                     try {
                         console.log(`🔗 Tracking affiliate commission for code: ${affiliateCode}`);
                         const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
-                            affiliate_code: affiliateCode
+                            affiliate_code: affiliateCode.toUpperCase()
                         });
+                        console.log('🔍 Affiliate links found:', affiliateLinks.length);
 
                         if (affiliateLinks.length > 0) {
                             const affiliateLink = affiliateLinks[0];
-                            const paidAmount = paymentIntent.amount / 100;
+                            const paidAmount = invoiceAmount / 100; // Use invoice amount, not paymentIntent
                             const commissionAmount = paidAmount * 0.10;
+                            console.log(`💰 Commission calculation: ${paidAmount} * 10% = ${commissionAmount}`);
 
                             await base44.asServiceRole.entities.AffiliateCredit.create({
                                 affiliate_user_id: affiliateLink.user_id,
