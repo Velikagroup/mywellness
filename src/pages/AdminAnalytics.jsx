@@ -85,6 +85,9 @@ export default function AdminAnalytics() {
 
   // NEW STATE for projection growth rate
   const [projectionGrowthRate, setProjectionGrowthRate] = useState(15);
+  
+  // Sync transactions state
+  const [isSyncingTransactions, setIsSyncingTransactions] = useState(false);
 
   useEffect(() => {
     checkAccess();
