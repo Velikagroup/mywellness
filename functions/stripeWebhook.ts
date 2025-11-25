@@ -104,10 +104,14 @@ Deno.serve(async (req) => {
 
                             if (affiliateLinks.length > 0) {
                                 const affiliateLink = affiliateLinks[0];
+                                const affiliateLinkId = affiliateLink.id || affiliateLink._id;
                                 const commissionAmount = amount * 0.10; // 10%
+                                
+                                console.log(`📋 AffiliateLink found - ID: ${affiliateLinkId}, user_id: ${affiliateLink.user_id}`);
+                                console.log(`📊 Current totals - earned: ${affiliateLink.total_earned || 0}, balance: ${affiliateLink.available_balance || 0}`);
 
                                 // Crea credito commissione
-                                await base44.asServiceRole.entities.AffiliateCredit.create({
+                                const creditResult = await base44.asServiceRole.entities.AffiliateCredit.create({
                                     affiliate_user_id: affiliateLink.user_id,
                                     referred_user_id: user.id,
                                     transaction_id: transaction.id,
@@ -117,12 +121,23 @@ Deno.serve(async (req) => {
                                     commission_status: 'available',
                                     payment_date: new Date().toISOString()
                                 });
+                                console.log(`✅ AffiliateCredit created: ${creditResult.id}`);
 
                                 // Aggiorna totali affiliate link
-                                await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
-                                    total_earned: affiliateLink.total_earned + commissionAmount,
-                                    available_balance: affiliateLink.available_balance + commissionAmount
-                                });
+                                const newTotalEarned = (affiliateLink.total_earned || 0) + commissionAmount;
+                                const newAvailableBalance = (affiliateLink.available_balance || 0) + commissionAmount;
+                                
+                                try {
+                                    const updateResult = await base44.asServiceRole.entities.AffiliateLink.update(affiliateLinkId, {
+                                        total_earned: newTotalEarned,
+                                        available_balance: newAvailableBalance
+                                    });
+                                    console.log(`✅ AffiliateLink updated - new earned: ${newTotalEarned}, new balance: ${newAvailableBalance}`);
+                                    console.log(`📋 Update result:`, JSON.stringify(updateResult));
+                                } catch (updateErr) {
+                                    console.error(`❌ AffiliateLink update FAILED: ${updateErr.message}`);
+                                    console.error(`Stack: ${updateErr.stack}`);
+                                }
 
                                 console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for ${affiliateLink.user_id}`);
                             }
