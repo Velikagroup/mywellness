@@ -55,12 +55,41 @@ Deno.serve(async (req) => {
       }
     }
 
-    // Se non ha invoice_id, cerca via payment_intent
+    // Se non ha invoice_id, prova prima a ottenere la ricevuta dal payment intent
     if (transaction.stripe_payment_intent_id) {
       try {
-        // Cerca invoice associata al payment intent
+        const paymentIntent = await stripe.paymentIntents.retrieve(transaction.stripe_payment_intent_id, {
+          expand: ['latest_charge']
+        });
+        
+        // Prima prova receipt_url dal charge
+        if (paymentIntent.latest_charge?.receipt_url) {
+          return Response.json({ 
+            success: true,
+            pdfUrl: paymentIntent.latest_charge.receipt_url,
+            invoiceNumber: 'Ricevuta'
+          });
+        }
+        
+        // Se il charge ha un ID, cerca direttamente il charge per la ricevuta
+        if (paymentIntent.latest_charge?.id) {
+          const charge = await stripe.charges.retrieve(paymentIntent.latest_charge.id);
+          if (charge.receipt_url) {
+            return Response.json({ 
+              success: true,
+              pdfUrl: charge.receipt_url,
+              invoiceNumber: 'Ricevuta'
+            });
+          }
+        }
+      } catch (e) {
+        console.log('Error getting receipt from payment intent:', e.message);
+      }
+      
+      // Poi cerca invoice associata al payment intent
+      try {
         const invoices = await stripe.invoices.list({
-          limit: 10,
+          limit: 50,
         });
         
         for (const inv of invoices.data) {
@@ -75,24 +104,25 @@ Deno.serve(async (req) => {
       } catch (e) {
         console.log('Error searching invoices:', e.message);
       }
-    }
-
-    // Se non trova nulla, genera ricevuta dal payment intent
-    if (transaction.stripe_payment_intent_id) {
+      
+      // Cerca tutti i charge per questo payment intent
       try {
-        const paymentIntent = await stripe.paymentIntents.retrieve(transaction.stripe_payment_intent_id, {
-          expand: ['latest_charge']
+        const charges = await stripe.charges.list({
+          payment_intent: transaction.stripe_payment_intent_id,
+          limit: 5
         });
         
-        if (paymentIntent.latest_charge?.receipt_url) {
-          return Response.json({ 
-            success: true,
-            pdfUrl: paymentIntent.latest_charge.receipt_url,
-            invoiceNumber: 'Ricevuta'
-          });
+        for (const charge of charges.data) {
+          if (charge.receipt_url) {
+            return Response.json({ 
+              success: true,
+              pdfUrl: charge.receipt_url,
+              invoiceNumber: 'Ricevuta'
+            });
+          }
         }
       } catch (e) {
-        console.log('Error getting receipt:', e.message);
+        console.log('Error listing charges:', e.message);
       }
     }
 
