@@ -672,11 +672,10 @@ export default function Dashboard() {
                   }}
                   userPlan={user?.subscription_plan}
                   onUpgradeClick={() => {
-                    setShowNutritionUnlock(false);
-                    setCheckoutPlan('pro');
-                    setCheckoutBilling('monthly');
-                    setShowUpgradeCheckout(true);
-                  }}
+                                            setShowNutritionUnlock(false);
+                                            setUpgradeTargetPlan('pro');
+                                            setShowUpgradeModal(true);
+                                          }}
                 />
               </div>
             </div>
