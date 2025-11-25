@@ -335,9 +335,11 @@ Deno.serve(async (req) => {
             }
             
             // Crea direttamente una subscription attiva a pagamento
+            // IMPORTANTE: trial_period_days: 0 sovrascrive il trial configurato nel prezzo Stripe
             const subscriptionParams = {
                 customer: stripeCustomerId,
                 items: [{ price: selectedPriceId }],
+                trial_period_days: 0, // 🔥 FORZA NESSUN TRIAL - addebita subito
                 payment_behavior: 'default_incomplete',
                 payment_settings: {
                     payment_method_types: ['card'],
