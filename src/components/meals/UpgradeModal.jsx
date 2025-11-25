@@ -119,18 +119,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
     setIsCalculating(true);
     setShowConfirmDialog(true);
     
-    // Se è un upgrade da piano gratuito (standard/trial), passa alla vista checkout
     const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
-    if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
-      setShowConfirmDialog(false);
-      setIsCalculating(false);
-      setCheckoutPlan(plan.id);
-      setCheckoutBilling(billingCycle);
-      setShowCheckoutView(true);
-      return;
-    }
     
-    // Calcola il prezzo prorated per upgrade tra piani a pagamento
+    // Calcola il prezzo prorated per qualsiasi upgrade/downgrade
     try {
       const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
         newPlan: plan.id,
@@ -142,9 +133,28 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       
       if (data.success && data.calculate) {
         setPricingInfo(data);
+        
+        // Se l'utente NON ha una carta salvata, mostra checkout
+        if (!data.hasPaymentMethod && normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
+          setShowConfirmDialog(false);
+          setIsCalculating(false);
+          setCheckoutPlan(plan.id);
+          setCheckoutBilling(billingCycle);
+          setShowCheckoutView(true);
+          return;
+        }
       }
     } catch (error) {
       console.error('Error calculating pricing:', error);
+      // Fallback: se errore e piano standard, mostra checkout
+      if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
+        setShowConfirmDialog(false);
+        setIsCalculating(false);
+        setCheckoutPlan(plan.id);
+        setCheckoutBilling(billingCycle);
+        setShowCheckoutView(true);
+        return;
+      }
     }
     setIsCalculating(false);
   };
