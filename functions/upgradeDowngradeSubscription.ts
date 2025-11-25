@@ -315,16 +315,7 @@ Deno.serve(async (req) => {
         // ========== UPGRADE ==========
         console.log('⬆️ Processing upgrade - immediate charge with OUR calculated amount');
         
-        // Aggiorna subscription SENZA proration automatico di Stripe
-        await stripe.subscriptions.update(user.stripe_subscription_id, {
-            items: [{
-                id: subscription.items.data[0].id,
-                price: newPriceId
-            }],
-            proration_behavior: 'none'
-        });
-        
-        // Addebito manuale con il NOSTRO importo calcolato
+        // PRIMA: Addebito manuale con il NOSTRO importo calcolato
         let paidInvoice = null;
         if (finalAmountToPay > 0) {
             console.log(`💳 Creating manual charge for €${finalAmountToPay.toFixed(2)}`);
@@ -355,8 +346,28 @@ Deno.serve(async (req) => {
             } else {
                 console.log(`✅ Invoice already paid automatically: ${paidInvoice.id}`);
             }
+            
+            // Verifica che il pagamento sia andato a buon fine
+            if (paidInvoice.status !== 'paid') {
+                console.error('❌ Payment failed - invoice status:', paidInvoice.status);
+                return Response.json({
+                    success: false,
+                    error: 'Il pagamento non è andato a buon fine. Riprova.'
+                }, { status: 400 });
+            }
         }
+        
+        // DOPO: Aggiorna subscription su Stripe SOLO se il pagamento è riuscito
+        console.log('📦 Updating subscription on Stripe...');
+        await stripe.subscriptions.update(user.stripe_subscription_id, {
+            items: [{
+                id: subscription.items.data[0].id,
+                price: newPriceId
+            }],
+            proration_behavior: 'none'
+        });
 
+        // INFINE: Aggiorna utente nel database
         await base44.asServiceRole.entities.User.update(user.id, {
             subscription_plan: newPlan,
             subscription_status: 'active',
