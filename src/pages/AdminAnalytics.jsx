@@ -23,7 +23,8 @@ import {
   CheckCircle,
   Clock,
   Target,
-  Zap
+  Zap,
+  RefreshCw
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { format, subMonths, startOfMonth, endOfMonth, differenceInDays, isWithinInterval, parseISO } from 'date-fns';
