@@ -149,7 +149,18 @@ export default function AdminAnalytics() {
         // Fetch users and transactions - the outline implies refetching or using the "all" lists
         // and then filtering them client-side for the current dateRange
         const allUsers = await base44.entities.User.list();
-        const allTransactions = await base44.entities.Transaction.list();
+        
+        // Load transactions via backend function (admin can see all)
+        let allTransactions = [];
+        try {
+          const txResponse = await base44.functions.invoke('adminListTransactions');
+          const txData = txResponse.data || txResponse;
+          if (txData.success && txData.transactions) {
+            allTransactions = txData.transactions;
+          }
+        } catch (txError) {
+          console.error('Error loading transactions for analytics:', txError);
+        }
 
         // Explicitly server-side filter expenses for this stats calculation, as per outline
         const fetchedExpenses = await base44.entities.Expense.filter({
