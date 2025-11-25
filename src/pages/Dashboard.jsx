@@ -65,13 +65,13 @@ export default function Dashboard() {
     setIsLoading(true);
     try {
       const currentUser = await base44.auth.me();
-      console.log('👤 User loaded:', currentUser.id);
+      console.log('👤 User loaded:', currentUser.id, 'subscription:', currentUser.subscription_status);
       
-      // ✅ Se l'utente non ha subscription, rimanda al quiz
+      // ✅ Se l'utente non ha subscription attiva, rimanda alla pagina pricing
       if (!currentUser.subscription_status || 
           (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial')) {
-        console.warn('⚠️ User has no active subscription, redirecting to Quiz');
-        navigate(createPageUrl('Quiz'), { replace: true });
+        console.warn('⚠️ User has no active subscription, redirecting to Pricing');
+        navigate(createPageUrl('pricing'), { replace: true });
         return;
       }
       
