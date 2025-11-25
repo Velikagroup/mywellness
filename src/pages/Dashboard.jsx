@@ -655,27 +655,26 @@ export default function Dashboard() {
                   }}
                 />
                 <TrainingStatus 
-                  workout={todayWorkout} 
-                  onProgressPhotoClick={() => {
-                    if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
-                      setUpgradePlanTarget('premium');
-                      setShowUpgradeModal(true);
-                      return;
-                    }
-                    setShowProgressPhoto(true);
-                  }}
-                  onViewGalleryClick={async () => {
-                    await loadProgressPhotos();
-                    setShowPhotoGallery(true);
-                  }}
-                  userPlan={user?.subscription_plan}
-                  onUpgradeClick={() => {
-                    setShowNutritionUnlock(false);
-                    setCheckoutPlan('pro');
-                    setCheckoutBilling('monthly');
-                    setShowUpgradeCheckout(true);
-                  }}
-                />
+                                        workout={todayWorkout} 
+                                        onProgressPhotoClick={() => {
+                                          if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
+                                            setUpgradeTargetPlan('premium');
+                                            setShowUpgradeModal(true);
+                                            return;
+                                          }
+                                          setShowProgressPhoto(true);
+                                        }}
+                                        onViewGalleryClick={async () => {
+                                          await loadProgressPhotos();
+                                          setShowPhotoGallery(true);
+                                        }}
+                                        userPlan={user?.subscription_plan}
+                                        onUpgradeClick={() => {
+                                          setShowNutritionUnlock(false);
+                                          setUpgradeTargetPlan('pro');
+                                          setShowUpgradeModal(true);
+                                        }}
+                                      />
               </div>
             </div>
 
