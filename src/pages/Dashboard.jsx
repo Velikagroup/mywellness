@@ -764,17 +764,7 @@ export default function Dashboard() {
           onAnalysisComplete={handleProgressAnalysisComplete}
         />
       )}
-      {showUpgradeModal && (
-        <UpgradeModal
-          isOpen={showUpgradeModal}
-          onClose={() => {
-            setShowUpgradeModal(false);
-            setUpgradePlanTarget(null);
-          }}
-          currentPlan={user?.subscription_plan}
-          targetPlan={upgradePlanTarget}
-        />
-      )}
+
       
       {showPhotoGallery && (
         <ProgressPhotoGallery
