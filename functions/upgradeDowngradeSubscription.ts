@@ -29,28 +29,134 @@ Deno.serve(async (req) => {
             premium: { monthly: 39, yearly: 374.4 }
         };
 
+        const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+        const stripe = new Stripe(stripeSecretKey, { apiVersion: '2023-10-16' });
+
         const isUpgradeFromFree = !user.stripe_subscription_id || user.subscription_plan === 'trial' || user.subscription_plan === 'standard';
         
         if (isUpgradeFromFree) {
-            console.log('🆕 Upgrade from free plan - requires checkout');
+            console.log('🆕 Upgrade from free/trial plan');
             
             // Calcola il prezzo del piano selezionato
             const planPrice = PLAN_PRICES[newPlan]?.[newBillingPeriod];
             
+            // Verifica se l'utente ha già un metodo di pagamento salvato su Stripe
+            let hasPaymentMethod = false;
+            if (user.stripe_customer_id) {
+                try {
+                    const paymentMethods = await stripe.paymentMethods.list({
+                        customer: user.stripe_customer_id,
+                        type: 'card'
+                    });
+                    hasPaymentMethod = paymentMethods.data.length > 0;
+                    console.log(`💳 User has ${paymentMethods.data.length} saved payment methods`);
+                } catch (e) {
+                    console.error('Error checking payment methods:', e.message);
+                }
+            }
+            
             if (calculateOnly) {
                 return Response.json({ 
                     success: true,
-                    requiresCheckout: true,
+                    calculate: true,
+                    requiresCheckout: !hasPaymentMethod,
+                    hasPaymentMethod: hasPaymentMethod,
                     currentPlan: user.subscription_plan || 'standard',
                     currentBillingPeriod: 'none',
                     newPlanPrice: planPrice,
                     amountToPay: planPrice,
+                    creditFromCurrentPlan: 0,
                     isDowngrade: false,
                     percentageRemaining: 0
                 });
             }
             
-            // Per upgrade da piano gratuito, reindirizza a TrialSetup
+            // Se ha metodo di pagamento, crea subscription direttamente
+            if (hasPaymentMethod) {
+                console.log('✅ User has payment method - creating subscription directly');
+                
+                const PRICE_IDS_NEW = {
+                    base: { monthly: 'price_1SXADj2OXBs6ZYwlY8id3Yhy', yearly: 'price_1SXADj2OXBs6ZYwlywQCp6oR' },
+                    pro: { monthly: 'price_1SXADj2OXBs6ZYwlqdFI6aUU', yearly: 'price_1SXADk2OXBs6ZYwl0zZsxETJ' },
+                    premium: { monthly: 'price_1SXADk2OXBs6ZYwlxiqqQqVA', yearly: 'price_1SXADl2OXBs6ZYwl0PlnAeX9' }
+                };
+                
+                const newPriceId = PRICE_IDS_NEW[newPlan]?.[newBillingPeriod];
+                
+                // Crea la subscription con addebito immediato
+                const subscription = await stripe.subscriptions.create({
+                    customer: user.stripe_customer_id,
+                    items: [{ price: newPriceId }],
+                    payment_behavior: 'error_if_incomplete',
+                    expand: ['latest_invoice.payment_intent'],
+                    metadata: {
+                        user_id: user.id,
+                        subscription_type: 'paid',
+                        plan_type: newPlan,
+                        billing_period: newBillingPeriod,
+                        upgraded_from: user.subscription_plan || 'standard'
+                    }
+                });
+                
+                console.log(`✅ Subscription created: ${subscription.id}`);
+                console.log(`💰 Invoice status: ${subscription.latest_invoice?.status}`);
+                
+                // Aggiorna l'utente
+                await base44.asServiceRole.entities.User.update(user.id, {
+                    subscription_status: 'active',
+                    subscription_plan: newPlan,
+                    stripe_subscription_id: subscription.id,
+                    trial_ends_at: null
+                });
+                
+                // 🔗 AFFILIATE: Traccia commissione
+                const affiliateCode = user.referred_by_affiliate_code || user.referred_by;
+                const paymentIntent = subscription.latest_invoice?.payment_intent;
+                if (affiliateCode && paymentIntent && paymentIntent.amount > 0) {
+                    try {
+                        console.log(`🔗 Tracking affiliate commission for code: ${affiliateCode}`);
+                        const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
+                            affiliate_code: affiliateCode
+                        });
+
+                        if (affiliateLinks.length > 0) {
+                            const affiliateLink = affiliateLinks[0];
+                            const paidAmount = paymentIntent.amount / 100;
+                            const commissionAmount = paidAmount * 0.10;
+
+                            await base44.asServiceRole.entities.AffiliateCredit.create({
+                                affiliate_user_id: affiliateLink.user_id,
+                                referred_user_id: user.id,
+                                stripe_payment_intent_id: paymentIntent.id,
+                                amount_paid: paidAmount,
+                                commission_amount: commissionAmount,
+                                commission_status: 'available',
+                                payment_date: new Date().toISOString()
+                            });
+
+                            await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
+                                total_referrals: (affiliateLink.total_referrals || 0) + 1,
+                                total_earned: (affiliateLink.total_earned || 0) + commissionAmount,
+                                available_balance: (affiliateLink.available_balance || 0) + commissionAmount
+                            });
+
+                            console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)}`);
+                        }
+                    } catch (affiliateError) {
+                        console.error('⚠️ Affiliate tracking error:', affiliateError.message);
+                    }
+                }
+                
+                return Response.json({
+                    success: true,
+                    isDowngrade: false,
+                    message: `Piano aggiornato a ${newPlan}!`,
+                    amountCharged: planPrice,
+                    subscriptionId: subscription.id
+                });
+            }
+            
+            // Altrimenti richiede checkout
             return Response.json({ 
                 success: true,
                 requiresCheckout: true,
