@@ -328,15 +328,15 @@ Deno.serve(async (req) => {
         } else {
             console.log('⬆️ Processing upgrade - immediate charge with proration');
             
-            // Per upgrade, addebita immediatamente la differenza
+            // Per upgrade, addebita immediatamente SOLO la differenza prorated
+            // NON usare billing_cycle_anchor: 'now' che resetta il ciclo e addebita l'intero nuovo piano
             await stripe.subscriptions.update(user.stripe_subscription_id, {
                 items: [{
                     id: subscription.items.data[0].id,
                     price: newPriceId
                 }],
-                proration_behavior: 'always_invoice',
-                billing_cycle_anchor: 'now',
-                trial_end: 'now'
+                proration_behavior: 'always_invoice'
+                // billing_cycle_anchor rimane invariato per mantenere il ciclo originale
             });
 
             await base44.asServiceRole.entities.User.update(user.id, {
