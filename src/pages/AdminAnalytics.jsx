@@ -361,6 +361,29 @@ export default function AdminAnalytics() {
     setIsSyncingTransactions(false);
   };
 
+  // Cleanup duplicate transactions
+  const handleCleanupDuplicates = async () => {
+    if (!confirm('⚠️ Vuoi eliminare le transazioni duplicate? Questa azione non può essere annullata.')) {
+      return;
+    }
+    setIsCleaningDuplicates(true);
+    try {
+      const response = await base44.functions.invoke('cleanupDuplicateTransactions');
+      const data = response.data || response;
+      
+      if (data.success) {
+        alert(`✅ Pulizia completata!\n\nTransazioni totali trovate: ${data.totalFound}\nDuplicati eliminati: ${data.duplicatesDeleted}\nTransazioni rimanenti: ${data.remaining}`);
+        await loadData();
+      } else {
+        alert('❌ Errore: ' + (data.error || 'Errore sconosciuto'));
+      }
+    } catch (error) {
+      console.error('Error cleaning duplicates:', error);
+      alert('❌ Errore nella pulizia: ' + error.message);
+    }
+    setIsCleaningDuplicates(false);
+  };
+
   // Filter users and expenses by date range (these use the *all* states)
   const filteredUsers = users.filter(u => {
     if (!u.created_date) return false;
