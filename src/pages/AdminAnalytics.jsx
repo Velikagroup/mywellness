@@ -600,15 +600,26 @@ export default function AdminAnalytics() {
               <p className="text-gray-600">Panoramica completa delle metriche e proiezioni finanziarie</p>
             </div>
 
-            <Button
-              onClick={handleSyncStripeTransactions}
-              disabled={isSyncingTransactions}
-              variant="outline"
-              className="border-2 border-blue-300 text-blue-700 hover:bg-blue-50"
-            >
-              <RefreshCw className={`w-4 h-4 mr-2 ${isSyncingTransactions ? 'animate-spin' : ''}`} />
-              {isSyncingTransactions ? 'Sincronizzazione...' : 'Sincronizza Stripe'}
-            </Button>
+            <div className="flex gap-2">
+              <Button
+                onClick={handleCleanupDuplicates}
+                disabled={isCleaningDuplicates}
+                variant="outline"
+                className="border-2 border-orange-300 text-orange-700 hover:bg-orange-50"
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${isCleaningDuplicates ? 'animate-spin' : ''}`} />
+                {isCleaningDuplicates ? 'Pulizia...' : 'Pulisci Duplicati'}
+              </Button>
+              <Button
+                onClick={handleSyncStripeTransactions}
+                disabled={isSyncingTransactions}
+                variant="outline"
+                className="border-2 border-blue-300 text-blue-700 hover:bg-blue-50"
+              >
+                <RefreshCw className={`w-4 h-4 mr-2 ${isSyncingTransactions ? 'animate-spin' : ''}`} />
+                {isSyncingTransactions ? 'Sincronizzazione...' : 'Sincronizza Stripe'}
+              </Button>
+            </div>
 
             <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
               <PopoverTrigger asChild>
