@@ -319,6 +319,26 @@ export default function AdminAnalytics() {
     setIsSavingExpense(false);
   };
 
+  // Sync Stripe transactions
+  const handleSyncStripeTransactions = async () => {
+    setIsSyncingTransactions(true);
+    try {
+      const response = await base44.functions.invoke('syncStripeTransactions');
+      const data = response.data || response;
+      
+      if (data.success) {
+        alert(`✅ Sincronizzazione completata!\n\nTransazioni create: ${data.totalCreated}\nTransazioni già esistenti: ${data.totalSkipped}\nUtenti processati: ${data.usersProcessed}`);
+        await loadData(); // Reload all data
+      } else {
+        alert('❌ Errore: ' + (data.error || 'Errore sconosciuto'));
+      }
+    } catch (error) {
+      console.error('Error syncing transactions:', error);
+      alert('❌ Errore nella sincronizzazione: ' + error.message);
+    }
+    setIsSyncingTransactions(false);
+  };
+
   // Filter users and expenses by date range (these use the *all* states)
   const filteredUsers = users.filter(u => {
     if (!u.created_date) return false;
