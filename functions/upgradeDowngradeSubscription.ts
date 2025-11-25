@@ -325,6 +325,7 @@ Deno.serve(async (req) => {
         });
         
         // Addebito manuale con il NOSTRO importo calcolato
+        let paidInvoice = null;
         if (finalAmountToPay > 0) {
             console.log(`💳 Creating manual charge for €${finalAmountToPay.toFixed(2)}`);
             
@@ -336,20 +337,24 @@ Deno.serve(async (req) => {
                 description: `Upgrade da ${currentPlan} a ${newPlan} - Differenza prorated`
             });
             
-            // Crea la fattura come bozza
+            // Crea la fattura e finalizzala subito per l'addebito automatico
             const invoice = await stripe.invoices.create({
                 customer: user.stripe_customer_id,
                 collection_method: 'charge_automatically',
-                auto_advance: false // Non avanzare automaticamente
+                auto_advance: true
             });
             
-            // Finalizza la fattura
-            const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
-            console.log(`📄 Invoice finalized: ${finalizedInvoice.id}, status: ${finalizedInvoice.status}`);
+            // Finalizza la fattura - questo triggera l'addebito automatico
+            paidInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
+            console.log(`📄 Invoice finalized and charging: ${paidInvoice.id}, status: ${paidInvoice.status}`);
             
-            // Paga la fattura
-            const paidInvoice = await stripe.invoices.pay(finalizedInvoice.id);
-            console.log(`✅ Invoice paid: ${paidInvoice.id}, amount: €${paidInvoice.amount_paid / 100}, status: ${paidInvoice.status}`);
+            // Se non è già pagata, proviamo a pagarla manualmente
+            if (paidInvoice.status !== 'paid') {
+                paidInvoice = await stripe.invoices.pay(paidInvoice.id);
+                console.log(`✅ Invoice paid: ${paidInvoice.id}, amount: €${paidInvoice.amount_paid / 100}`);
+            } else {
+                console.log(`✅ Invoice already paid automatically: ${paidInvoice.id}`);
+            }
         }
 
         await base44.asServiceRole.entities.User.update(user.id, {
