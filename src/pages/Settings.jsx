@@ -1133,32 +1133,33 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   </CardContent>
                 </Card>
 
-                {/* Crediti Recenti */}
-                {affiliateStats.recent_credits?.length > 0 && (
+                {/* Transazioni Affiliati */}
+                {affiliateStats.affiliate_transactions?.length > 0 && (
                   <Card className="water-glass-effect border-gray-200/30">
                     <CardHeader>
-                      <CardTitle>Crediti Recenti</CardTitle>
+                      <CardTitle>Transazioni Affiliati</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
-                        {affiliateStats.recent_credits.map((credit) => (
-                          <div key={credit.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                        {affiliateStats.affiliate_transactions.map((tx) => (
+                          <div key={tx.id} className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                             <div>
-                              <p className="font-semibold text-sm">
-                                €{credit.commission_amount.toFixed(2)} da affiliato
-                              </p>
+                              <p className="font-semibold text-sm">{tx.referred_user_email}</p>
                               <p className="text-xs text-gray-600">
-                                {new Date(credit.payment_date).toLocaleDateString('it-IT')}
+                                {new Date(tx.payment_date).toLocaleDateString('it-IT')} • Pagato: €{tx.amount_paid.toFixed(2)}
                               </p>
                             </div>
-                            <span className={`px-3 py-1 rounded-full text-xs font-semibold ${
-                              credit.commission_status === 'available' ? 'bg-green-100 text-green-700' :
-                              credit.commission_status === 'withdrawn' ? 'bg-gray-100 text-gray-700' :
-                              'bg-blue-100 text-blue-700'
-                            }`}>
-                              {credit.commission_status === 'available' ? 'Disponibile' :
-                               credit.commission_status === 'withdrawn' ? 'Prelevato' : 'Usato'}
-                            </span>
+                            <div className="text-right">
+                              <p className="font-bold text-green-700">+€{tx.commission_amount.toFixed(2)}</p>
+                              <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${
+                                tx.commission_status === 'available' ? 'bg-green-100 text-green-700' :
+                                tx.commission_status === 'withdrawn' ? 'bg-gray-100 text-gray-700' :
+                                'bg-blue-100 text-blue-700'
+                              }`}>
+                                {tx.commission_status === 'available' ? 'Disponibile' :
+                                 tx.commission_status === 'withdrawn' ? 'Prelevato' : 'Usato'}
+                              </span>
+                            </div>
                           </div>
                         ))}
                       </div>
