@@ -1346,7 +1346,12 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesT
       setTimeout(async () => {
         setIsGenerating(false);
         setShowGenerator(false);
-        await loadMealPlans();
+        
+        // ✅ Forza il refresh dei dati
+        console.log('🔄 Refreshing meal plans...');
+        await queryClient.invalidateQueries({ queryKey: ['mealPlans'] });
+        await queryClient.refetchQueries({ queryKey: ['mealPlans'] });
+        
         setAddedDays([]);
         
         // Aggiorna contatore generazioni
