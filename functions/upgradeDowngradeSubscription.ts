@@ -314,33 +314,32 @@ Deno.serve(async (req) => {
 
         // ========== UPGRADE ==========
         console.log('⬆️ Processing upgrade - immediate charge with OUR calculated amount');
+        console.log(`💰 Amount to charge: €${finalAmountToPay.toFixed(2)}`);
         
-        // PRIMA: Addebito diretto con PaymentIntent
+        // STEP 1: Addebito diretto con PaymentIntent (PRIMA di tutto)
         let paymentIntent = null;
         if (finalAmountToPay > 0) {
             console.log(`💳 Creating direct charge for €${finalAmountToPay.toFixed(2)}`);
             
-            // Recupera il metodo di pagamento predefinito del cliente
-            const customer = await stripe.customers.retrieve(user.stripe_customer_id);
-            const defaultPaymentMethod = customer.invoice_settings?.default_payment_method;
+            // Recupera metodi di pagamento
+            const paymentMethods = await stripe.paymentMethods.list({
+                customer: user.stripe_customer_id,
+                type: 'card'
+            });
             
-            if (!defaultPaymentMethod) {
-                // Cerca un metodo di pagamento salvato
-                const paymentMethods = await stripe.paymentMethods.list({
-                    customer: user.stripe_customer_id,
-                    type: 'card'
-                });
-                
-                if (paymentMethods.data.length === 0) {
-                    return Response.json({
-                        success: false,
-                        error: 'Nessun metodo di pagamento trovato. Aggiungi una carta.'
-                    }, { status: 400 });
-                }
-                
-                // Usa il primo metodo di pagamento disponibile
-                const paymentMethodId = paymentMethods.data[0].id;
-                
+            console.log(`💳 Found ${paymentMethods.data.length} payment methods`);
+            
+            if (paymentMethods.data.length === 0) {
+                return Response.json({
+                    success: false,
+                    error: 'Nessun metodo di pagamento trovato. Aggiungi una carta.'
+                }, { status: 400 });
+            }
+            
+            const paymentMethodId = paymentMethods.data[0].id;
+            console.log(`💳 Using payment method: ${paymentMethodId}`);
+            
+            try {
                 paymentIntent = await stripe.paymentIntents.create({
                     amount: Math.round(finalAmountToPay * 100),
                     currency: 'eur',
@@ -352,51 +351,47 @@ Deno.serve(async (req) => {
                     metadata: {
                         user_id: user.id,
                         upgrade_from: currentPlan,
-                        upgrade_to: newPlan
+                        upgrade_to: newPlan,
+                        type: 'upgrade_proration'
                     }
                 });
-            } else {
-                paymentIntent = await stripe.paymentIntents.create({
-                    amount: Math.round(finalAmountToPay * 100),
-                    currency: 'eur',
-                    customer: user.stripe_customer_id,
-                    payment_method: defaultPaymentMethod,
-                    off_session: true,
-                    confirm: true,
-                    description: `Upgrade da ${currentPlan} a ${newPlan} - Differenza prorated`,
-                    metadata: {
-                        user_id: user.id,
-                        upgrade_from: currentPlan,
-                        upgrade_to: newPlan
-                    }
-                });
-            }
-            
-            console.log(`✅ PaymentIntent created: ${paymentIntent.id}, status: ${paymentIntent.status}`);
-            
-            // Verifica che il pagamento sia andato a buon fine
-            if (paymentIntent.status !== 'succeeded') {
-                console.error('❌ Payment failed - status:', paymentIntent.status);
+                
+                console.log(`✅ PaymentIntent created: ${paymentIntent.id}, status: ${paymentIntent.status}, amount: ${paymentIntent.amount}`);
+                
+                // Verifica che il pagamento sia andato a buon fine
+                if (paymentIntent.status !== 'succeeded') {
+                    console.error('❌ Payment failed - status:', paymentIntent.status);
+                    return Response.json({
+                        success: false,
+                        error: `Il pagamento non è andato a buon fine (${paymentIntent.status}). Riprova.`
+                    }, { status: 400 });
+                }
+                
+                console.log(`✅ Payment successful! Amount charged: €${paymentIntent.amount / 100}`);
+                
+            } catch (paymentError) {
+                console.error('❌ PaymentIntent error:', paymentError.message);
                 return Response.json({
                     success: false,
-                    error: 'Il pagamento non è andato a buon fine. Riprova.'
+                    error: `Errore nel pagamento: ${paymentError.message}`
                 }, { status: 400 });
             }
-            
-            console.log(`✅ Payment successful! Amount charged: €${paymentIntent.amount / 100}`);
+        } else {
+            console.log('ℹ️ No payment needed (amount is 0)');
         }
         
-        // DOPO: Aggiorna subscription su Stripe SOLO se il pagamento è riuscito
+        // STEP 2: Aggiorna subscription su Stripe SOLO se il pagamento è riuscito (o non era necessario)
         console.log('📦 Updating subscription on Stripe...');
-        await stripe.subscriptions.update(user.stripe_subscription_id, {
+        const updatedSubscription = await stripe.subscriptions.update(user.stripe_subscription_id, {
             items: [{
                 id: subscription.items.data[0].id,
                 price: newPriceId
             }],
             proration_behavior: 'none'
         });
+        console.log(`✅ Subscription updated on Stripe: ${updatedSubscription.id}, price: ${newPriceId}`);
 
-        // INFINE: Aggiorna utente nel database
+        // STEP 3: Aggiorna utente nel database
         await base44.asServiceRole.entities.User.update(user.id, {
             subscription_plan: newPlan,
             subscription_status: 'active',
@@ -404,6 +399,7 @@ Deno.serve(async (req) => {
             pending_plan_change: null,
             pending_billing_period: null
         });
+        console.log(`✅ User updated in database: ${newPlan}`);
 
         // Crea Transaction
         if (finalAmountToPay > 0) {
