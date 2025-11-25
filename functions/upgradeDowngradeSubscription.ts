@@ -302,17 +302,44 @@ Deno.serve(async (req) => {
         // Calcola il costo del nuovo piano
         const newPlanPrice = PLAN_PRICES[newPlan][newBillingPeriod];
 
-        // Importo da pagare = Nuovo piano completo - Credito rimanente
-        let amountToPay = newPlanPrice - creditFromCurrentPlan;
-
         // Per downgrade, il credito viene mantenuto fino alla fine del periodo
         const isDowngrade = (
             (currentPlan === 'premium' && (newPlan === 'pro' || newPlan === 'base')) ||
             (currentPlan === 'pro' && newPlan === 'base')
         );
 
-        if (isDowngrade) {
-            amountToPay = 0; // Nessun addebito per downgrade
+        // 🔑 USA STRIPE UPCOMING INVOICE per calcolare l'importo ESATTO
+        let amountToPay = 0;
+        let stripeProrationAmount = 0;
+        
+        if (!isDowngrade) {
+            try {
+                console.log('📋 Fetching Stripe upcoming invoice for exact proration...');
+                const upcomingInvoice = await stripe.invoices.retrieveUpcoming({
+                    customer: user.stripe_customer_id,
+                    subscription: user.stripe_subscription_id,
+                    subscription_items: [{
+                        id: subscription.items.data[0].id,
+                        price: newPriceId
+                    }],
+                    subscription_proration_behavior: 'always_invoice'
+                });
+                
+                // L'importo da Stripe è in centesimi
+                stripeProrationAmount = upcomingInvoice.amount_due / 100;
+                amountToPay = stripeProrationAmount;
+                
+                console.log('💰 Stripe upcoming invoice:', {
+                    amount_due: upcomingInvoice.amount_due,
+                    subtotal: upcomingInvoice.subtotal,
+                    total: upcomingInvoice.total,
+                    amountToPay: amountToPay.toFixed(2)
+                });
+            } catch (upcomingError) {
+                console.error('⚠️ Error fetching upcoming invoice, using manual calculation:', upcomingError.message);
+                // Fallback al calcolo manuale se Stripe fallisce
+                amountToPay = newPlanPrice - creditFromCurrentPlan;
+            }
         }
 
         // Arrotonda a 2 decimali
@@ -322,6 +349,7 @@ Deno.serve(async (req) => {
             currentPlanPrice: currentPlanPrice.toFixed(2),
             creditFromCurrentPlan: creditFromCurrentPlan.toFixed(2),
             newPlanPrice: newPlanPrice.toFixed(2),
+            stripeProrationAmount: stripeProrationAmount.toFixed(2),
             amountToPay: amountToPay.toFixed(2),
             isDowngrade
         });
