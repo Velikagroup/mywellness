@@ -58,9 +58,12 @@ Deno.serve(async (req) => {
 
   } catch (error) {
     console.error('Error generating affiliate link:', error);
+    console.error('Error stack:', error.stack);
+    console.error('Error name:', error.name);
     return Response.json({ 
       error: 'Internal server error',
-      details: error.message 
+      details: error.message,
+      name: error.name
     }, { status: 500 });
   }
 });
