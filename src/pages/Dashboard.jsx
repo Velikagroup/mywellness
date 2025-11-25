@@ -18,7 +18,6 @@ import PhotoMealAnalyzer from "../components/meals/PhotoMealAnalyzer";
 import ProgressPhotoAnalyzer from "../components/training/ProgressPhotoAnalyzer";
 import ProgressPhotoGallery from "../components/training/ProgressPhotoGallery";
 import UpgradeModal from "../components/meals/UpgradeModal";
-import UpgradeCheckoutModal from "../components/modals/UpgradeCheckoutModal";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
