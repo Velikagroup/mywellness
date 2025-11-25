@@ -971,11 +971,15 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
           }
         }
 
-          if (!dayResponse?.meals || dayResponse.meals.length !== mealsPerDay) {
-            console.error(`❌ SKIP: Giorno ${day} ha ${dayResponse?.meals?.length || 0} pasti invece di ${mealsPerDay}`);
-            alert(`⚠️ Impossibile generare tutti i pasti per ${day}. Continuo con gli altri giorni...`);
+          if (!dayResponse?.meals || dayResponse.meals.length === 0) {
+            console.error(`❌ SKIP: Giorno ${day} non ha pasti`);
+            alert(`⚠️ Impossibile generare pasti per ${day}. Continuo con gli altri giorni...`);
             continue;
           }
+          
+          // ✅ Prendi solo i primi N pasti richiesti (in caso l'LLM ne generi di più)
+          const mealsToProcess = dayResponse.meals.slice(0, mealsPerDay);
+          console.log(`📦 ${day}: ricevuti ${dayResponse.meals.length} pasti, processo ${mealsToProcess.length}`);
 
           // Processa ogni pasto del giorno
           for (const mealData of dayResponse.meals) {
