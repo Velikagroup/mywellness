@@ -315,46 +315,75 @@ Deno.serve(async (req) => {
         // ========== UPGRADE ==========
         console.log('⬆️ Processing upgrade - immediate charge with OUR calculated amount');
         
-        // PRIMA: Addebito manuale con il NOSTRO importo calcolato
-        let paidInvoice = null;
+        // PRIMA: Addebito diretto con PaymentIntent
+        let paymentIntent = null;
         if (finalAmountToPay > 0) {
-            console.log(`💳 Creating manual charge for €${finalAmountToPay.toFixed(2)}`);
+            console.log(`💳 Creating direct charge for €${finalAmountToPay.toFixed(2)}`);
             
-            // Crea invoice item
-            await stripe.invoiceItems.create({
-                customer: user.stripe_customer_id,
-                amount: Math.round(finalAmountToPay * 100),
-                currency: 'eur',
-                description: `Upgrade da ${currentPlan} a ${newPlan} - Differenza prorated`
-            });
+            // Recupera il metodo di pagamento predefinito del cliente
+            const customer = await stripe.customers.retrieve(user.stripe_customer_id);
+            const defaultPaymentMethod = customer.invoice_settings?.default_payment_method;
             
-            // Crea la fattura e finalizzala subito per l'addebito automatico
-            const invoice = await stripe.invoices.create({
-                customer: user.stripe_customer_id,
-                collection_method: 'charge_automatically',
-                auto_advance: true
-            });
-            
-            // Finalizza la fattura - questo triggera l'addebito automatico
-            paidInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
-            console.log(`📄 Invoice finalized and charging: ${paidInvoice.id}, status: ${paidInvoice.status}`);
-            
-            // Se non è già pagata, proviamo a pagarla manualmente
-            if (paidInvoice.status !== 'paid') {
-                paidInvoice = await stripe.invoices.pay(paidInvoice.id);
-                console.log(`✅ Invoice paid: ${paidInvoice.id}, amount: €${paidInvoice.amount_paid / 100}`);
+            if (!defaultPaymentMethod) {
+                // Cerca un metodo di pagamento salvato
+                const paymentMethods = await stripe.paymentMethods.list({
+                    customer: user.stripe_customer_id,
+                    type: 'card'
+                });
+                
+                if (paymentMethods.data.length === 0) {
+                    return Response.json({
+                        success: false,
+                        error: 'Nessun metodo di pagamento trovato. Aggiungi una carta.'
+                    }, { status: 400 });
+                }
+                
+                // Usa il primo metodo di pagamento disponibile
+                const paymentMethodId = paymentMethods.data[0].id;
+                
+                paymentIntent = await stripe.paymentIntents.create({
+                    amount: Math.round(finalAmountToPay * 100),
+                    currency: 'eur',
+                    customer: user.stripe_customer_id,
+                    payment_method: paymentMethodId,
+                    off_session: true,
+                    confirm: true,
+                    description: `Upgrade da ${currentPlan} a ${newPlan} - Differenza prorated`,
+                    metadata: {
+                        user_id: user.id,
+                        upgrade_from: currentPlan,
+                        upgrade_to: newPlan
+                    }
+                });
             } else {
-                console.log(`✅ Invoice already paid automatically: ${paidInvoice.id}`);
+                paymentIntent = await stripe.paymentIntents.create({
+                    amount: Math.round(finalAmountToPay * 100),
+                    currency: 'eur',
+                    customer: user.stripe_customer_id,
+                    payment_method: defaultPaymentMethod,
+                    off_session: true,
+                    confirm: true,
+                    description: `Upgrade da ${currentPlan} a ${newPlan} - Differenza prorated`,
+                    metadata: {
+                        user_id: user.id,
+                        upgrade_from: currentPlan,
+                        upgrade_to: newPlan
+                    }
+                });
             }
             
+            console.log(`✅ PaymentIntent created: ${paymentIntent.id}, status: ${paymentIntent.status}`);
+            
             // Verifica che il pagamento sia andato a buon fine
-            if (paidInvoice.status !== 'paid') {
-                console.error('❌ Payment failed - invoice status:', paidInvoice.status);
+            if (paymentIntent.status !== 'succeeded') {
+                console.error('❌ Payment failed - status:', paymentIntent.status);
                 return Response.json({
                     success: false,
                     error: 'Il pagamento non è andato a buon fine. Riprova.'
                 }, { status: 400 });
             }
+            
+            console.log(`✅ Payment successful! Amount charged: €${paymentIntent.amount / 100}`);
         }
         
         // DOPO: Aggiorna subscription su Stripe SOLO se il pagamento è riuscito
