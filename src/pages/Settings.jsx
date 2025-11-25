@@ -545,7 +545,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
   }
 
   const planLabels = {
-    trial: 'Trial',
+    trial: 'Standard',
     standard: 'Standard',
     base: 'Base',
     pro: 'Pro',
@@ -553,7 +553,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
   };
 
   const statusLabels = {
-    trial: 'Trial',
+    trial: 'Attivo',
     active: 'Attivo',
     expired: 'Scaduto',
     cancelled: 'Cancellato'
