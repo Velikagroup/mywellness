@@ -166,8 +166,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const handleConfirmUpgrade = async () => {
     if (!selectedPlanToUpgrade) return;
 
-    // Se richiede pagamento (upgrade da piano gratuito), passa alla vista checkout
-    if (pricingInfo?.requiresCheckout) {
+    // Se richiede checkout (no metodo pagamento salvato), passa alla vista checkout
+    if (pricingInfo?.requiresCheckout || pricingInfo?.hasPaymentMethod === false) {
+      console.log('🔄 Requires checkout - opening checkout view');
       setShowConfirmDialog(false);
       setCheckoutPlan(selectedPlanToUpgrade.id);
       setCheckoutBilling(billingCycle);
@@ -177,6 +178,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
 
     setIsUpgrading(true);
     try {
+      console.log('💳 Processing upgrade with saved payment method...');
       const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
         newPlan: selectedPlanToUpgrade.id,
         newBillingPeriod: billingCycle,
@@ -184,6 +186,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       });
 
       const data = response.data || response;
+      console.log('📊 Upgrade response:', data);
 
       if (data.success) {
         if (data.isDowngrade) {
