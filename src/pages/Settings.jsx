@@ -142,17 +142,9 @@ export default function Settings() {
         workout_reminders: currentUser.email_notifications?.workout_reminders ?? true
       });
 
-      // ✅ FIX: Carica transazioni dell'utente
-      console.log('🔍 Loading transactions for user:', {
-        id: currentUser.id,
-        email: currentUser.email,
-        stripe_customer_id: currentUser.stripe_customer_id,
-        stripe_subscription_id: currentUser.stripe_subscription_id
-      });
+      // ✅ FIX: Carica transazioni dell'utente filtrando per user_id
       try {
-        // Prima prova a caricare TUTTE le transazioni visibili all'utente (RLS dovrebbe filtrare)
-        const userTransactions = await base44.entities.Transaction.list('-payment_date', 50);
-        console.log('📊 Transactions loaded (via list):', userTransactions.length, userTransactions);
+        const userTransactions = await base44.entities.Transaction.filter({ user_id: currentUser.id }, '-payment_date', 50);
         setTransactions(userTransactions);
       } catch (txError) {
         console.error('❌ Error loading transactions:', txError);
