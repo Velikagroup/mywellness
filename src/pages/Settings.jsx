@@ -142,10 +142,15 @@ export default function Settings() {
         workout_reminders: currentUser.email_notifications?.workout_reminders ?? true
       });
 
-      // ✅ FIX: Carica transazioni dell'utente filtrando per user_id
+      // ✅ FIX: Carica transazioni tramite backend function per bypassare RLS
       try {
-        const userTransactions = await base44.entities.Transaction.filter({ user_id: currentUser.id }, '-payment_date', 50);
-        setTransactions(userTransactions);
+        const txResponse = await base44.functions.invoke('getUserTransactions');
+        const txData = txResponse.data || txResponse;
+        if (txData.success && txData.transactions) {
+          setTransactions(txData.transactions);
+        } else {
+          setTransactions([]);
+        }
       } catch (txError) {
         console.error('❌ Error loading transactions:', txError);
         setTransactions([]);
