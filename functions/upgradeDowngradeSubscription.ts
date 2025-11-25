@@ -326,22 +326,39 @@ Deno.serve(async (req) => {
             isDowngrade
         });
 
-        // Se è solo un calcolo, ritorna i dati
-        if (calculateOnly) {
-            return Response.json({
-                success: true,
-                calculate: true,
-                hasPaymentMethod: true, // Se ha subscription attiva, ha metodo di pagamento
-                currentPlan,
-                currentBillingPeriod,
-                currentPlanPrice,
-                newPlanPrice,
-                creditFromCurrentPlan,
-                amountToPay,
-                isDowngrade,
-                percentageRemaining: Math.round(percentageRemaining * 100)
-            });
-        }
+        // Cerca credito affiliazione disponibile
+            let affiliateCredit = 0;
+            try {
+                const userAffiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: user.id });
+                if (userAffiliateLinks.length > 0) {
+                    affiliateCredit = userAffiliateLinks[0].available_balance || 0;
+                }
+            } catch (e) {
+                console.log('No affiliate credit found');
+            }
+
+            // Applica credito affiliazione all'importo da pagare
+            const affiliateCreditToApply = !isDowngrade ? Math.min(affiliateCredit, amountToPay) : 0;
+            const finalAmountToPay = Math.max(0, amountToPay - affiliateCreditToApply);
+
+            // Se è solo un calcolo, ritorna i dati
+            if (calculateOnly) {
+                return Response.json({
+                    success: true,
+                    calculate: true,
+                    hasPaymentMethod: true, // Se ha subscription attiva, ha metodo di pagamento
+                    currentPlan,
+                    currentBillingPeriod,
+                    currentPlanPrice,
+                    newPlanPrice,
+                    creditFromCurrentPlan,
+                    amountToPay: finalAmountToPay,
+                    affiliateCredit: affiliateCredit,
+                    affiliateCreditApplied: affiliateCreditToApply,
+                    isDowngrade,
+                    percentageRemaining: Math.round(percentageRemaining * 100)
+                });
+            }
 
         // Procedi con l'upgrade/downgrade
         if (isDowngrade) {
