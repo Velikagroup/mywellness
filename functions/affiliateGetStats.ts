@@ -34,6 +34,29 @@ Deno.serve(async (req) => {
       referred_by_affiliate_code: affiliateLink.affiliate_code
     });
     const totalLinkClicks = usersWithAffiliateCode.length;
+
+    // Carica email degli utenti affiliati per le transazioni
+    const referredUsersMap = {};
+    for (const userId of referredUserIds) {
+      try {
+        const users = await base44.asServiceRole.entities.User.filter({ id: userId });
+        if (users.length > 0) {
+          referredUsersMap[userId] = users[0].email;
+        }
+      } catch (e) {
+        console.error('Error fetching user:', userId, e.message);
+      }
+    }
+
+    // Prepara transazioni con email
+    const transactionsWithEmail = allCredits.map(credit => ({
+      id: credit.id,
+      referred_user_email: referredUsersMap[credit.referred_user_id] || 'N/D',
+      amount_paid: credit.amount_paid,
+      commission_amount: credit.commission_amount,
+      commission_status: credit.commission_status,
+      payment_date: credit.payment_date
+    })).sort((a, b) => new Date(b.payment_date) - new Date(a.payment_date));
     
     // Carica prelievi
     const withdrawals = await base44.asServiceRole.entities.AffiliateWithdrawal.filter({ 
@@ -74,7 +97,8 @@ Deno.serve(async (req) => {
         onboarding_completed: affiliateLink.onboarding_completed
       },
       monthly_earnings: monthlyEarnings,
-      recent_credits: allCredits.slice(-10).reverse()
+      recent_credits: allCredits.slice(-10).reverse(),
+      affiliate_transactions: transactionsWithEmail
     });
 
   } catch (error) {
