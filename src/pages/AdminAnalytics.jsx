@@ -88,6 +88,7 @@ export default function AdminAnalytics() {
   
   // Sync transactions state
   const [isSyncingTransactions, setIsSyncingTransactions] = useState(false);
+  const [isCleaningDuplicates, setIsCleaningDuplicates] = useState(false);
 
   useEffect(() => {
     checkAccess();
