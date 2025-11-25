@@ -160,15 +160,18 @@ Deno.serve(async (req) => {
                             const commissionAmount = paidAmount * 0.10;
                             console.log(`💰 Commission calculation: ${paidAmount} * 10% = ${commissionAmount}`);
 
-                            await base44.asServiceRole.entities.AffiliateCredit.create({
+                            const paymentIntentId = typeof paymentIntent === 'string' ? paymentIntent : paymentIntent?.id;
+                            
+                            const affiliateCredit = await base44.asServiceRole.entities.AffiliateCredit.create({
                                 affiliate_user_id: affiliateLink.user_id,
                                 referred_user_id: user.id,
-                                stripe_payment_intent_id: paymentIntent.id,
+                                stripe_payment_intent_id: paymentIntentId,
                                 amount_paid: paidAmount,
                                 commission_amount: commissionAmount,
                                 commission_status: 'available',
                                 payment_date: new Date().toISOString()
                             });
+                            console.log(`✅ AffiliateCredit created: ${affiliateCredit.id}`);
 
                             await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
                                 total_referrals: (affiliateLink.total_referrals || 0) + 1,
@@ -176,11 +179,16 @@ Deno.serve(async (req) => {
                                 available_balance: (affiliateLink.available_balance || 0) + commissionAmount
                             });
 
-                            console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)}`);
+                            console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for affiliate ${affiliateLink.user_id}`);
+                        } else {
+                            console.log('⚠️ No affiliate link found for code:', affiliateCode);
                         }
                     } catch (affiliateError) {
                         console.error('⚠️ Affiliate tracking error:', affiliateError.message);
+                        console.error('Stack:', affiliateError.stack);
                     }
+                } else {
+                    console.log('⚠️ Skipping affiliate tracking - no code or no amount:', { affiliateCode, invoiceAmount });
                 }
                 
                 return Response.json({
