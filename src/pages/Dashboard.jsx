@@ -669,10 +669,10 @@ export default function Dashboard() {
                   }}
                   userPlan={user?.subscription_plan}
                   onUpgradeClick={() => {
-                                            setShowNutritionUnlock(false);
-                                            setUpgradeTargetPlan('pro');
-                                            setShowUpgradeModal(true);
-                                          }}
+                                      setShowNutritionUnlock(false);
+                                      setUpgradePlanTarget('pro');
+                                      setShowUpgradeModal(true);
+                                    }}
                 />
               </div>
             </div>
