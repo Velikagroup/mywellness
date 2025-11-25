@@ -328,6 +328,7 @@ Deno.serve(async (req) => {
         if (finalAmountToPay > 0) {
             console.log(`💳 Creating manual charge for €${finalAmountToPay.toFixed(2)}`);
             
+            // Crea invoice item
             await stripe.invoiceItems.create({
                 customer: user.stripe_customer_id,
                 amount: Math.round(finalAmountToPay * 100),
@@ -335,14 +336,20 @@ Deno.serve(async (req) => {
                 description: `Upgrade da ${currentPlan} a ${newPlan} - Differenza prorated`
             });
             
+            // Crea la fattura come bozza
             const invoice = await stripe.invoices.create({
                 customer: user.stripe_customer_id,
-                auto_advance: true,
-                collection_method: 'charge_automatically'
+                collection_method: 'charge_automatically',
+                auto_advance: false // Non avanzare automaticamente
             });
             
-            const paidInvoice = await stripe.invoices.pay(invoice.id);
-            console.log(`✅ Invoice paid: ${paidInvoice.id}, amount: €${paidInvoice.amount_paid / 100}`);
+            // Finalizza la fattura
+            const finalizedInvoice = await stripe.invoices.finalizeInvoice(invoice.id);
+            console.log(`📄 Invoice finalized: ${finalizedInvoice.id}, status: ${finalizedInvoice.status}`);
+            
+            // Paga la fattura
+            const paidInvoice = await stripe.invoices.pay(finalizedInvoice.id);
+            console.log(`✅ Invoice paid: ${paidInvoice.id}, amount: €${paidInvoice.amount_paid / 100}, status: ${paidInvoice.status}`);
         }
 
         await base44.asServiceRole.entities.User.update(user.id, {
