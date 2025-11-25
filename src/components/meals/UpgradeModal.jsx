@@ -451,17 +451,11 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Prezzo piano completo:</span>
+                        <span className="text-gray-600">Nuovo piano:</span>
                         <span className="font-semibold text-gray-900">€{pricingInfo.newPlanPrice.toFixed(2)}</span>
                       </div>
                       {!pricingInfo.isDowngrade && (
                         <>
-                          {pricingInfo.creditFromCurrentPlan > 0 && (
-                            <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Credito residuo ({pricingInfo.percentageRemaining}%):</span>
-                              <span className="font-semibold text-green-600">-€{pricingInfo.creditFromCurrentPlan.toFixed(2)}</span>
-                            </div>
-                          )}
                           {pricingInfo.affiliateCreditApplied > 0 && (
                             <div className="flex justify-between text-sm">
                               <span className="text-gray-600">Credito Affiliazione:</span>
@@ -470,14 +464,14 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                           )}
                           <div className="h-px bg-gray-300"></div>
                           <div className="flex justify-between items-center">
-                            <div>
-                              <span className="font-bold text-gray-900">Da pagare ora:</span>
-                              <p className="text-xs text-gray-500">(importo calcolato da Stripe)</p>
-                            </div>
+                            <span className="font-bold text-gray-900">Da pagare ora:</span>
                             <span className="font-black text-2xl text-[#26847F]">
                               €{pricingInfo.amountToPay.toFixed(2)}
                             </span>
                           </div>
+                          <p className="text-xs text-gray-500 text-center">
+                            Importo prorated calcolato da Stripe (include credito residuo del piano attuale)
+                          </p>
                         </>
                       )}
                     </div>
