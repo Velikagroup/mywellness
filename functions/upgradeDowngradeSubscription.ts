@@ -496,15 +496,48 @@ Deno.serve(async (req) => {
                 }
             }
 
-            console.log('✅ Upgrade completed with immediate billing');
+            // Scala il credito affiliazione usato
+                if (affiliateCreditToApply > 0) {
+                    try {
+                        const userAffiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: user.id });
+                        if (userAffiliateLinks.length > 0) {
+                            const userAffiliateLink = userAffiliateLinks[0];
+                            const newBalance = (userAffiliateLink.available_balance || 0) - affiliateCreditToApply;
+                            await base44.asServiceRole.entities.AffiliateLink.update(userAffiliateLink.id, {
+                                available_balance: Math.max(0, newBalance)
+                            });
+                            console.log(`✅ Applied €${affiliateCreditToApply.toFixed(2)} affiliate credit, new balance: €${newBalance.toFixed(2)}`);
 
-            return Response.json({
-                success: true,
-                isDowngrade: false,
-                message: `Piano aggiornato a ${newPlan}!`,
-                amountCharged: amountToPay
-            });
-        }
+                            // Marca i crediti come usati per subscription
+                            const availableCredits = await base44.asServiceRole.entities.AffiliateCredit.filter({
+                                affiliate_user_id: user.id,
+                                commission_status: 'available'
+                            });
+
+                            let remainingToMark = affiliateCreditToApply;
+                            for (const credit of availableCredits) {
+                                if (remainingToMark <= 0) break;
+                                await base44.asServiceRole.entities.AffiliateCredit.update(credit.id, {
+                                    commission_status: 'used_for_subscription'
+                                });
+                                remainingToMark -= credit.commission_amount;
+                            }
+                        }
+                    } catch (affiliateErr) {
+                        console.error('Error updating affiliate credit:', affiliateErr.message);
+                    }
+                }
+
+                console.log('✅ Upgrade completed with immediate billing');
+
+                return Response.json({
+                    success: true,
+                    isDowngrade: false,
+                    message: `Piano aggiornato a ${newPlan}!`,
+                    amountCharged: finalAmountToPay,
+                    affiliateCreditUsed: affiliateCreditToApply
+                });
+            }
 
     } catch (error) {
         console.error('❌ Upgrade/Downgrade error:', error);
