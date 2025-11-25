@@ -253,7 +253,11 @@ export default function Quiz() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        console.log('🔍 Quiz Mode Check:', { isRecapMode, quiz_completed: currentUser?.quiz_completed });
+        console.log('🔍 Quiz Mode Check:', { 
+          isRecapMode, 
+          quiz_completed: currentUser?.quiz_completed,
+          subscription_status: currentUser?.subscription_status 
+        });
         
         // ✅ FIX RECAP MODE: Se è recap mode, resetta SEMPRE
         if (isRecapMode && currentUser) {
@@ -265,10 +269,20 @@ export default function Quiz() {
           setCurrentStep(0);
           window.history.replaceState({}, '', createPageUrl('Quiz') + '?mode=recap&step=0');
         } else if (currentUser && currentUser.quiz_completed && !isRecapMode) {
-          // Se l'utente ha già completato il quiz e NON è in recap mode → vai alla Dashboard
-          console.log('✅ Quiz già completato, redirect to Dashboard');
-          navigate(createPageUrl('Dashboard'), { replace: true });
-          return;
+          // ✅ Se l'utente ha completato il quiz E ha subscription attiva → vai alla Dashboard
+          const hasActiveSubscription = currentUser.subscription_status === 'active' || 
+                                        currentUser.subscription_status === 'trial';
+          
+          if (hasActiveSubscription) {
+            console.log('✅ Quiz già completato + subscription attiva, redirect to Dashboard');
+            navigate(createPageUrl('Dashboard'), { replace: true });
+            return;
+          } else {
+            // Ha completato il quiz ma subscription non attiva → mostra pricing
+            console.log('⚠️ Quiz completato ma no subscription, redirect to Pricing');
+            navigate(createPageUrl('pricing'), { replace: true });
+            return;
+          }
         }
         
       } catch (error) {
