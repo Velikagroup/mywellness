@@ -58,6 +58,8 @@ export default function Dashboard() {
   const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState('base');
   const [checkoutBilling, setCheckoutBilling] = useState('monthly');
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [upgradeTargetPlan, setUpgradeTargetPlan] = useState(null);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
