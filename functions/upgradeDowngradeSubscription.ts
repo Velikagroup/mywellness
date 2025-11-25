@@ -383,6 +383,51 @@ Deno.serve(async (req) => {
                         }
                     });
                     console.log(`✅ Transaction created: ${transaction.id}`);
+                    
+                    // 🔗 AFFILIATE: Traccia commissione per upgrade prorated
+                    const affiliateCode = user.referred_by_affiliate_code || user.referred_by;
+                    console.log('🔗 Checking affiliate for prorated upgrade:', user.email, 'code:', affiliateCode);
+                    
+                    if (affiliateCode && amountToPay > 0) {
+                        try {
+                            console.log(`🔗 Tracking affiliate commission for code: ${affiliateCode}`);
+                            const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
+                                affiliate_code: affiliateCode.toUpperCase()
+                            });
+                            console.log('🔍 Affiliate links found:', affiliateLinks.length);
+
+                            if (affiliateLinks.length > 0) {
+                                const affiliateLink = affiliateLinks[0];
+                                const commissionAmount = amountToPay * 0.10;
+                                console.log(`💰 Commission calculation: ${amountToPay} * 10% = ${commissionAmount}`);
+
+                                const affiliateCredit = await base44.asServiceRole.entities.AffiliateCredit.create({
+                                    affiliate_user_id: affiliateLink.user_id,
+                                    referred_user_id: user.id,
+                                    transaction_id: transaction.id,
+                                    amount_paid: amountToPay,
+                                    commission_amount: commissionAmount,
+                                    commission_status: 'available',
+                                    payment_date: new Date().toISOString()
+                                });
+                                console.log(`✅ AffiliateCredit created: ${affiliateCredit.id}`);
+
+                                await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
+                                    total_referrals: (affiliateLink.total_referrals || 0) + 1,
+                                    total_earned: (affiliateLink.total_earned || 0) + commissionAmount,
+                                    available_balance: (affiliateLink.available_balance || 0) + commissionAmount
+                                });
+
+                                console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for affiliate ${affiliateLink.user_id}`);
+                            } else {
+                                console.log('⚠️ No affiliate link found for code:', affiliateCode);
+                            }
+                        } catch (affiliateError) {
+                            console.error('⚠️ Affiliate tracking error:', affiliateError.message);
+                        }
+                    } else {
+                        console.log('⚠️ Skipping affiliate tracking - no code or no amount:', { affiliateCode, amountToPay });
+                    }
                 } catch (txError) {
                     console.error('⚠️ Transaction creation error:', txError.message);
                 }
