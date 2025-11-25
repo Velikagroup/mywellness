@@ -791,22 +791,24 @@ export default function Dashboard() {
       />
 
       <NutritionUnlockPrompt
-        isOpen={showNutritionUnlock}
-        onClose={() => setShowNutritionUnlock(false)}
-        onUpgrade={() => {
-          setShowNutritionUnlock(false);
-          setCheckoutPlan('base');
-          setCheckoutBilling('monthly');
-          setShowUpgradeCheckout(true);
-        }}
-      />
+                    isOpen={showNutritionUnlock}
+                    onClose={() => setShowNutritionUnlock(false)}
+                    onUpgrade={() => {
+                      setShowNutritionUnlock(false);
+                      setUpgradeTargetPlan('base');
+                      setShowUpgradeModal(true);
+                    }}
+                  />
 
-      <UpgradeCheckoutModal
-        isOpen={showUpgradeCheckout}
-        onClose={() => setShowUpgradeCheckout(false)}
-        selectedPlan={checkoutPlan}
-        selectedBillingPeriod={checkoutBilling}
-      />
+                  <UpgradeModal
+                    isOpen={showUpgradeModal}
+                    onClose={() => {
+                      setShowUpgradeModal(false);
+                      setUpgradeTargetPlan(null);
+                    }}
+                    currentPlan={user?.subscription_plan}
+                    targetPlan={upgradeTargetPlan}
+                  />
 
       {/* Dialog Modifica BMR */}
       <Dialog open={showEditBMR} onOpenChange={setShowEditBMR}>
