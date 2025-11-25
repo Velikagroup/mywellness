@@ -958,7 +958,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             </div>
           </div>
 
-          {paymentMethod === 'card' && (
+          {paymentMethod === 'card' && stripe && (
             <div className="space-y-4 pt-4">
               <div>
                 <Label htmlFor="card-element" className="text-sm font-semibold text-gray-700 mb-3 block">
@@ -967,11 +967,21 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                 <div 
                   id="card-element-container"
                   ref={cardElementRef}
+                  style={{ minHeight: '52px' }}
                 />
                 <p className="text-xs text-gray-500 mt-3 flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5" />
                   Pagamento sicuro gestito da Stripe. I tuoi dati sono protetti con crittografia SSL.
                 </p>
+              </div>
+            </div>
+          )}
+          
+          {paymentMethod === 'card' && !stripe && (
+            <div className="space-y-4 pt-4">
+              <div className="flex items-center justify-center p-6 bg-gray-50 rounded-xl">
+                <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#26847F] mr-3"></div>
+                <span className="text-gray-600">Caricamento sistema di pagamento...</span>
               </div>
             </div>
           )}
