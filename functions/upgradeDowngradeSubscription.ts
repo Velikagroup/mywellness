@@ -402,10 +402,12 @@ Deno.serve(async (req) => {
         console.log(`✅ User updated in database: ${newPlan}`);
 
         // Crea Transaction
-        if (finalAmountToPay > 0) {
+        if (finalAmountToPay > 0 && paymentIntent) {
             try {
+                console.log('📝 Creating Transaction record...');
                 const transaction = await base44.asServiceRole.entities.Transaction.create({
                     user_id: user.id,
+                    stripe_payment_intent_id: paymentIntent.id,
                     stripe_subscription_id: user.stripe_subscription_id,
                     amount: finalAmountToPay,
                     currency: 'eur',
@@ -418,9 +420,11 @@ Deno.serve(async (req) => {
                     traffic_source: user.traffic_source || 'direct',
                     metadata: {
                         upgraded_from: currentPlan,
-                        credit_applied: creditFromCurrentPlan.toFixed(2)
+                        credit_applied: creditFromCurrentPlan.toFixed(2),
+                        payment_intent_id: paymentIntent.id
                     }
                 });
+                console.log(`✅ Transaction created: ${transaction.id}`);
                 
                 // Traccia commissione affiliato
                 const affiliateCode = user.referred_by_affiliate_code || user.referred_by;
