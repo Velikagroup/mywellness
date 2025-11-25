@@ -141,8 +141,12 @@ Deno.serve(async (req) => {
                 
                 // 🔗 AFFILIATE: Traccia commissione
                 const affiliateCode = user.referred_by_affiliate_code || user.referred_by;
+                console.log('🔗 Checking affiliate for user:', user.email, 'code:', affiliateCode);
                 const paymentIntent = subscription.latest_invoice?.payment_intent;
-                if (affiliateCode && paymentIntent && paymentIntent.amount > 0) {
+                const invoiceAmount = subscription.latest_invoice?.amount_paid;
+                console.log('💰 Payment info - Intent:', paymentIntent?.id || paymentIntent, 'Amount:', invoiceAmount);
+                
+                if (affiliateCode && invoiceAmount > 0) {
                     try {
                         console.log(`🔗 Tracking affiliate commission for code: ${affiliateCode}`);
                         const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
