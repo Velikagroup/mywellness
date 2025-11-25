@@ -347,6 +347,33 @@ Deno.serve(async (req) => {
                 pending_billing_period: null
             });
 
+            // ✅ Crea Transaction per upgrade con proration
+            if (amountToPay > 0) {
+                try {
+                    const transaction = await base44.asServiceRole.entities.Transaction.create({
+                        user_id: user.id,
+                        stripe_subscription_id: user.stripe_subscription_id,
+                        amount: amountToPay,
+                        currency: 'eur',
+                        status: 'succeeded',
+                        type: 'subscription_payment',
+                        plan: newPlan,
+                        billing_period: newBillingPeriod,
+                        payment_date: new Date().toISOString(),
+                        description: `Upgrade prorated da ${currentPlan} a ${newPlan}`,
+                        traffic_source: user.traffic_source || 'direct',
+                        metadata: {
+                            upgraded_from: currentPlan,
+                            credit_applied: creditFromCurrentPlan.toFixed(2),
+                            payment_method: 'card'
+                        }
+                    });
+                    console.log(`✅ Transaction created: ${transaction.id}`);
+                } catch (txError) {
+                    console.error('⚠️ Transaction creation error:', txError.message);
+                }
+            }
+
             console.log('✅ Upgrade completed with immediate billing');
 
             return Response.json({
