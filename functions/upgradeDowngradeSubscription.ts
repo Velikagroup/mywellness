@@ -109,6 +109,36 @@ Deno.serve(async (req) => {
                     trial_ends_at: null
                 });
                 
+                // ✅ Crea Transaction subito (non aspettare il webhook)
+                const paidAmount = subscription.latest_invoice?.amount_paid 
+                    ? subscription.latest_invoice.amount_paid / 100 
+                    : planPrice;
+                    
+                try {
+                    const transaction = await base44.asServiceRole.entities.Transaction.create({
+                        user_id: user.id,
+                        stripe_payment_intent_id: subscription.latest_invoice?.payment_intent?.id || subscription.latest_invoice?.payment_intent,
+                        stripe_invoice_id: subscription.latest_invoice?.id,
+                        stripe_subscription_id: subscription.id,
+                        amount: paidAmount,
+                        currency: 'eur',
+                        status: 'succeeded',
+                        type: 'subscription_payment',
+                        plan: newPlan,
+                        billing_period: newBillingPeriod,
+                        payment_date: new Date().toISOString(),
+                        description: `Upgrade a ${newPlan} (${newBillingPeriod === 'yearly' ? 'Annuale' : 'Mensile'})`,
+                        traffic_source: user.traffic_source || 'direct',
+                        metadata: {
+                            upgraded_from: user.subscription_plan || 'standard',
+                            payment_method: 'card'
+                        }
+                    });
+                    console.log(`✅ Transaction created: ${transaction.id}`);
+                } catch (txError) {
+                    console.error('⚠️ Transaction creation error:', txError.message);
+                }
+                
                 // 🔗 AFFILIATE: Traccia commissione
                 const affiliateCode = user.referred_by_affiliate_code || user.referred_by;
                 const paymentIntent = subscription.latest_invoice?.payment_intent;
