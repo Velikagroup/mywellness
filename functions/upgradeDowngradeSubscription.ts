@@ -308,38 +308,11 @@ Deno.serve(async (req) => {
             (currentPlan === 'pro' && newPlan === 'base')
         );
 
-        // 🔑 USA STRIPE UPCOMING INVOICE per calcolare l'importo ESATTO
+        // 🔑 CALCOLO MANUALE: Nuovo piano - Credito residuo
         let amountToPay = 0;
-        let stripeProrationAmount = 0;
         
         if (!isDowngrade) {
-            try {
-                console.log('📋 Fetching Stripe upcoming invoice for exact proration...');
-                const upcomingInvoice = await stripe.invoices.retrieveUpcoming({
-                    customer: user.stripe_customer_id,
-                    subscription: user.stripe_subscription_id,
-                    subscription_items: [{
-                        id: subscription.items.data[0].id,
-                        price: newPriceId
-                    }],
-                    subscription_proration_behavior: 'always_invoice'
-                });
-                
-                // L'importo da Stripe è in centesimi
-                stripeProrationAmount = upcomingInvoice.amount_due / 100;
-                amountToPay = stripeProrationAmount;
-                
-                console.log('💰 Stripe upcoming invoice:', {
-                    amount_due: upcomingInvoice.amount_due,
-                    subtotal: upcomingInvoice.subtotal,
-                    total: upcomingInvoice.total,
-                    amountToPay: amountToPay.toFixed(2)
-                });
-            } catch (upcomingError) {
-                console.error('⚠️ Error fetching upcoming invoice, using manual calculation:', upcomingError.message);
-                // Fallback al calcolo manuale se Stripe fallisce
-                amountToPay = newPlanPrice - creditFromCurrentPlan;
-            }
+            amountToPay = newPlanPrice - creditFromCurrentPlan;
         }
 
         // Arrotonda a 2 decimali
@@ -349,7 +322,6 @@ Deno.serve(async (req) => {
             currentPlanPrice: currentPlanPrice.toFixed(2),
             creditFromCurrentPlan: creditFromCurrentPlan.toFixed(2),
             newPlanPrice: newPlanPrice.toFixed(2),
-            stripeProrationAmount: stripeProrationAmount.toFixed(2),
             amountToPay: amountToPay.toFixed(2),
             isDowngrade
         });
