@@ -804,11 +804,21 @@ export default function Dashboard() {
       />
 
       <UpgradeCheckoutModal
-        isOpen={showUpgradeCheckout}
-        onClose={() => setShowUpgradeCheckout(false)}
-        selectedPlan={checkoutPlan}
-        selectedBillingPeriod={checkoutBilling}
-      />
+                isOpen={showUpgradeCheckout}
+                onClose={() => setShowUpgradeCheckout(false)}
+                selectedPlan={checkoutPlan}
+                selectedBillingPeriod={checkoutBilling}
+              />
+
+              <UpgradeModal
+                isOpen={showUpgradeModal}
+                onClose={() => {
+                  setShowUpgradeModal(false);
+                  setUpgradeTargetPlan(null);
+                }}
+                currentPlan={user?.subscription_plan}
+                targetPlan={upgradeTargetPlan}
+              />
 
       {/* Dialog Modifica BMR */}
       <Dialog open={showEditBMR} onOpenChange={setShowEditBMR}>
