@@ -988,7 +988,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
             ) : (
               <>
                 {/* Stats Overview */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
@@ -997,22 +997,11 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                           <p className="text-3xl font-bold text-green-700">
                             €{affiliateStats.stats.available_balance.toFixed(2)}
                           </p>
-                        </div>
-                        <DollarSign className="w-10 h-10 text-green-600" />
-                      </div>
-                    </CardContent>
-                  </Card>
-
-                  <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-blue-200">
-                    <CardContent className="pt-6">
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <p className="text-sm text-gray-600">Totale Guadagnato</p>
-                          <p className="text-3xl font-bold text-blue-700">
-                            €{affiliateStats.stats.total_earned.toFixed(2)}
+                          <p className="text-xs text-gray-500 mt-1">
+                            Scalato automaticamente al rinnovo
                           </p>
                         </div>
-                        <Crown className="w-10 h-10 text-blue-600" />
+                        <DollarSign className="w-10 h-10 text-green-600" />
                       </div>
                     </CardContent>
                   </Card>
