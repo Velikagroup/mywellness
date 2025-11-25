@@ -130,12 +130,14 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       });
 
       const data = response.data || response;
+      console.log('📊 Pricing response:', data);
       
       if (data.success && data.calculate) {
         setPricingInfo(data);
         
-        // Se l'utente NON ha una carta salvata, mostra checkout
-        if (!data.hasPaymentMethod && normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
+        // Se l'utente NON ha una carta salvata E viene da piano gratuito, mostra checkout
+        if (data.hasPaymentMethod === false && normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
+          console.log('🔄 No payment method - showing checkout');
           setShowConfirmDialog(false);
           setIsCalculating(false);
           setCheckoutPlan(plan.id);
@@ -143,10 +145,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
           setShowCheckoutView(true);
           return;
         }
+        // Altrimenti mostra il popup di conferma con pagamento one-click
+        console.log('✅ Has payment method - showing confirm dialog');
       }
     } catch (error) {
       console.error('Error calculating pricing:', error);
-      // Fallback: se errore e piano standard, mostra checkout
+      // Fallback: se errore e piano standard senza subscription, mostra checkout
       if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
         setShowConfirmDialog(false);
         setIsCalculating(false);
