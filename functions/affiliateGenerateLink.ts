@@ -9,8 +9,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Controlla se ha già un link
-    const existingLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: user.id });
+    // Controlla se ha già un link (usa user context per rispettare RLS)
+    const existingLinks = await base44.entities.AffiliateLink.filter({ user_id: user.id });
     
     if (existingLinks.length > 0) {
       const link = existingLinks[0];
@@ -32,9 +32,10 @@ Deno.serve(async (req) => {
     const affiliateCode = `${firstName}${randomSuffix}`;
 
     console.log('🔑 Generating new affiliate code:', affiliateCode);
+    console.log('👤 User ID:', user.id);
 
-    // Crea link affiliazione
-    const affiliateLink = await base44.asServiceRole.entities.AffiliateLink.create({
+    // Crea link affiliazione (usa user context per rispettare RLS)
+    const affiliateLink = await base44.entities.AffiliateLink.create({
       user_id: user.id,
       affiliate_code: affiliateCode,
       total_referrals: 0,
