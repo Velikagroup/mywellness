@@ -111,13 +111,11 @@ export default function AdminAnalytics() {
   const loadData = async () => {
     try {
       // Fetch ALL data, regardless of date range for initial full lists
-      const [usersData, expensesData, transactionsData] = await Promise.all([
+      const [usersData, expensesData] = await Promise.all([
         base44.entities.User.list(),
-        base44.entities.Expense.list(), // Fetch all expenses
-        base44.entities.Transaction.list()
+        base44.entities.Expense.list() // Fetch all expenses
       ]);
       setUsers(usersData);
-      setTransactions(transactionsData);
 
       // Store ALL expenses in the `expenses` state for general use and filtering
       setExpenses(expensesData);
@@ -125,6 +123,18 @@ export default function AdminAnalytics() {
       // Filter out parent recurring variable expenses for the specific `recurringExpenses` state
       const parentRecurringVariableExpenses = expensesData.filter(e => e.recurring_variable && !e.parent_expense_id);
       setRecurringExpenses(parentRecurringVariableExpenses);
+
+      // Load transactions via backend function (admin can see all)
+      try {
+        const txResponse = await base44.functions.invoke('adminListTransactions');
+        const txData = txResponse.data || txResponse;
+        if (txData.success && txData.transactions) {
+          setTransactions(txData.transactions);
+        }
+      } catch (txError) {
+        console.error('Error loading transactions:', txError);
+        setTransactions([]);
+      }
     } catch (error) {
       console.error('Error loading data:', error);
     }
