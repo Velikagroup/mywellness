@@ -555,6 +555,16 @@ export default function AdminAnalytics() {
               <p className="text-gray-600">Panoramica completa delle metriche e proiezioni finanziarie</p>
             </div>
 
+            <Button
+              onClick={handleSyncStripeTransactions}
+              disabled={isSyncingTransactions}
+              variant="outline"
+              className="border-2 border-blue-300 text-blue-700 hover:bg-blue-50"
+            >
+              <RefreshCw className={`w-4 h-4 mr-2 ${isSyncingTransactions ? 'animate-spin' : ''}`} />
+              {isSyncingTransactions ? 'Sincronizzazione...' : 'Sincronizza Stripe'}
+            </Button>
+
             <Popover open={showDatePicker} onOpenChange={setShowDatePicker}>
               <PopoverTrigger asChild>
                 <Button variant="outline" className="w-full lg:w-auto justify-start text-left font-normal border-2">
