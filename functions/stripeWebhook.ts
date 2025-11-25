@@ -324,10 +324,17 @@ Deno.serve(async (req) => {
                 if (users.length > 0) {
                     const user = users[0];
 
-                    // ✅ Safe date conversion
+                    // ✅ Safe date conversion with try-catch
                     let periodEnd = null;
-                    if (subscription.current_period_end && typeof subscription.current_period_end === 'number') {
-                        periodEnd = new Date(subscription.current_period_end * 1000).toISOString();
+                    try {
+                        if (subscription.current_period_end && typeof subscription.current_period_end === 'number' && subscription.current_period_end > 0) {
+                            const dateObj = new Date(subscription.current_period_end * 1000);
+                            if (!isNaN(dateObj.getTime())) {
+                                periodEnd = dateObj.toISOString();
+                            }
+                        }
+                    } catch (dateError) {
+                        console.warn('⚠️ Error parsing period end date:', dateError.message);
                     }
 
                     const updateData = {
@@ -336,7 +343,7 @@ Deno.serve(async (req) => {
                                            subscription.status === 'trialing' ? 'trial' :
                                            subscription.status === 'canceled' ? 'cancelled' : 'expired'
                     };
-                    
+
                     // Solo aggiungi period_end se valido
                     if (periodEnd) {
                         updateData.subscription_period_end = periodEnd;
