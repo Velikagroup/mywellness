@@ -388,18 +388,40 @@ Deno.serve(async (req) => {
                 effectiveDate: new Date(periodEnd * 1000).toLocaleDateString('it-IT')
             });
         } else {
-            console.log('⬆️ Processing upgrade - immediate charge with proration');
+            console.log('⬆️ Processing upgrade - immediate charge with OUR calculated amount');
             
-            // Per upgrade, addebita immediatamente SOLO la differenza prorated
-            // NON usare billing_cycle_anchor: 'now' che resetta il ciclo e addebita l'intero nuovo piano
+            // 🔑 DISABILITA PRORATION di Stripe - addebitiamo NOI l'importo calcolato
+            // Prima aggiorniamo la subscription SENZA proration
             await stripe.subscriptions.update(user.stripe_subscription_id, {
                 items: [{
                     id: subscription.items.data[0].id,
                     price: newPriceId
                 }],
-                proration_behavior: 'always_invoice'
-                // billing_cycle_anchor rimane invariato per mantenere il ciclo originale
+                proration_behavior: 'none' // Nessun proration automatico di Stripe
             });
+            
+            // Poi creiamo un addebito manuale per l'importo che abbiamo calcolato NOI
+            if (finalAmountToPay > 0) {
+                console.log(`💳 Creating manual charge for €${finalAmountToPay.toFixed(2)}`);
+                
+                // Crea una invoice item per l'importo calcolato
+                await stripe.invoiceItems.create({
+                    customer: user.stripe_customer_id,
+                    amount: Math.round(finalAmountToPay * 100), // Stripe vuole centesimi
+                    currency: 'eur',
+                    description: `Upgrade da ${currentPlan} a ${newPlan} - Differenza prorated`
+                });
+                
+                // Crea e paga immediatamente la fattura
+                const invoice = await stripe.invoices.create({
+                    customer: user.stripe_customer_id,
+                    auto_advance: true,
+                    collection_method: 'charge_automatically'
+                });
+                
+                const paidInvoice = await stripe.invoices.pay(invoice.id);
+                console.log(`✅ Invoice paid: ${paidInvoice.id}, amount: €${paidInvoice.amount_paid / 100}`);
+            }
 
             await base44.asServiceRole.entities.User.update(user.id, {
                 subscription_plan: newPlan,
