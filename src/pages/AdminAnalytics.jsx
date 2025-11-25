@@ -445,7 +445,7 @@ export default function AdminAnalytics() {
 
       trends.push({
         month: format(currentDate, 'MMM yy', { locale: it }),
-        revenue: Math.round(monthRevenue),
+        revenue: parseFloat(monthRevenue.toFixed(2)),
         users: activeInMonth
       });
       currentDate = new Date(currentDate.setMonth(currentDate.getMonth() + 1));
@@ -723,8 +723,8 @@ export default function AdminAnalytics() {
                 {/* Breakdown acquisti per tipo */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-4 pl-20">
                   <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                    <p className="text-sm text-blue-700 mb-1">Trial Subscriptions</p>
-                    <p className="text-2xl font-bold text-blue-900">{stats.trialPurchases}</p>
+                    <p className="text-sm text-blue-700 mb-1">Standard → Base/Pro/Premium</p>
+                    <p className="text-2xl font-bold text-blue-900">{stats.paidUsers}</p>
                   </div>
                   <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
                     <p className="text-sm text-purple-700 mb-1">Landing Offer (€67)</p>
@@ -749,23 +749,23 @@ export default function AdminAnalytics() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle className="text-base">Breakdown: Trial Setup</CardTitle>
+                <CardTitle className="text-base">Breakdown: Standard Plan</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="space-y-3">
                   <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
-                    <span className="text-sm font-medium text-blue-900">Quiz → Trial Attivi</span>
-                    <span className="font-bold text-blue-900">{stats.trialUsers}</span>
+                    <span className="text-sm font-medium text-blue-900">Quiz → Standard Plan</span>
+                    <span className="font-bold text-blue-900">{stats.trialUsers + stats.paidUsers}</span>
                   </div>
                   <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                    <span className="font-medium text-green-900">Trial → Abbonati Paganti</span>
-                    <span className="font-bold text-green-900">{stats.trialPurchases}</span>
+                    <span className="font-medium text-green-900">Standard → Piano Base/Pro/Premium</span>
+                    <span className="font-bold text-green-900">{stats.paidUsers}</span>
                   </div>
                   <div className="p-3 bg-gradient-to-r from-blue-50 to-green-50 rounded-lg border border-blue-200">
-                    <p className="text-xs text-gray-600 mb-1">Conversione Trial</p>
+                    <p className="text-xs text-gray-600 mb-1">Conversione Standard → Pagante</p>
                     <p className="text-2xl font-bold text-blue-900">
-                      {stats.quizCompletedUsers > 0 
-                        ? ((stats.trialPurchases / stats.quizCompletedUsers) * 100).toFixed(1) 
+                      {(stats.trialUsers + stats.paidUsers) > 0 
+                        ? ((stats.paidUsers / (stats.trialUsers + stats.paidUsers)) * 100).toFixed(1) 
                         : '0.0'}%
                     </p>
                   </div>
@@ -790,8 +790,8 @@ export default function AdminAnalytics() {
                   <div className="p-3 bg-gradient-to-r from-cyan-50 to-purple-50 rounded-lg border border-cyan-200">
                     <p className="text-xs text-gray-600 mb-1">Conversione Landing</p>
                     <p className="text-2xl font-bold text-purple-900">
-                      {stats.quizCompletedUsers > 0 
-                        ? ((stats.landingOfferPurchases / stats.quizCompletedUsers) * 100).toFixed(1) 
+                      {stats.checkoutStartedUsers > 0 
+                        ? ((stats.landingOfferPurchases / stats.checkoutStartedUsers) * 100).toFixed(1) 
                         : '0.0'}%
                     </p>
                   </div>
@@ -887,7 +887,7 @@ export default function AdminAnalytics() {
                               {format(parseISO(transaction.payment_date), 'dd/MM/yyyy HH:mm')}
                             </p>
                           </div>
-                          <p className="font-bold text-green-600">+€{transaction.amount}</p>
+                          <p className="font-bold text-green-600">+€{transaction.amount.toFixed(2)}</p>
                         </div>
                       ))}
                   </div>
