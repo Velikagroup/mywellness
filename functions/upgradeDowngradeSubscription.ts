@@ -56,20 +56,36 @@ Deno.serve(async (req) => {
             }
             
             if (calculateOnly) {
-                return Response.json({ 
-                    success: true,
-                    calculate: true,
-                    requiresCheckout: !hasPaymentMethod,
-                    hasPaymentMethod: hasPaymentMethod,
-                    currentPlan: user.subscription_plan || 'standard',
-                    currentBillingPeriod: 'none',
-                    newPlanPrice: planPrice,
-                    amountToPay: planPrice,
-                    creditFromCurrentPlan: 0,
-                    isDowngrade: false,
-                    percentageRemaining: 0
-                });
-            }
+                          // Cerca credito affiliazione disponibile
+                          let affiliateCredit = 0;
+                          try {
+                              const userAffiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: user.id });
+                              if (userAffiliateLinks.length > 0) {
+                                  affiliateCredit = userAffiliateLinks[0].available_balance || 0;
+                              }
+                          } catch (e) {
+                              console.log('No affiliate credit found');
+                          }
+
+                          const affiliateCreditToApply = Math.min(affiliateCredit, planPrice);
+                          const finalAmountToPay = Math.max(0, planPrice - affiliateCreditToApply);
+
+                          return Response.json({ 
+                              success: true,
+                              calculate: true,
+                              requiresCheckout: !hasPaymentMethod,
+                              hasPaymentMethod: hasPaymentMethod,
+                              currentPlan: user.subscription_plan || 'standard',
+                              currentBillingPeriod: 'none',
+                              newPlanPrice: planPrice,
+                              amountToPay: finalAmountToPay,
+                              creditFromCurrentPlan: 0,
+                              affiliateCredit: affiliateCredit,
+                              affiliateCreditApplied: affiliateCreditToApply,
+                              isDowngrade: false,
+                              percentageRemaining: 0
+                          });
+                      }
             
             // Se ha metodo di pagamento, crea subscription direttamente
             if (hasPaymentMethod) {
