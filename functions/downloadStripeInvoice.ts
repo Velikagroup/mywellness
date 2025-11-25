@@ -16,8 +16,8 @@ Deno.serve(async (req) => {
       return Response.json({ error: 'Transaction ID is required' }, { status: 400 });
     }
 
-    // Get transaction from database
-    const transactions = await base44.entities.Transaction.filter({ id: transactionId });
+    // Get transaction from database using service role
+    const transactions = await base44.asServiceRole.entities.Transaction.filter({ id: transactionId });
     const transaction = transactions[0];
 
     if (!transaction) {
@@ -27,14 +27,6 @@ Deno.serve(async (req) => {
     // Verify user owns this transaction
     if (transaction.user_id !== user.id && user.role !== 'admin') {
       return Response.json({ error: 'Unauthorized access to this transaction' }, { status: 403 });
-    }
-
-    // Check if we have a Stripe invoice ID
-    if (!transaction.stripe_invoice_id) {
-      return Response.json({ 
-        error: 'No invoice available for this transaction',
-        message: 'Questa transazione non ha una fattura Stripe associata'
-      }, { status: 404 });
     }
 
     // Initialize Stripe
@@ -47,22 +39,67 @@ Deno.serve(async (req) => {
       apiVersion: '2023-10-16',
     });
 
-    // Get invoice from Stripe
-    const invoice = await stripe.invoices.retrieve(transaction.stripe_invoice_id);
-
-    if (!invoice.invoice_pdf) {
-      return Response.json({ 
-        error: 'Invoice PDF not available',
-        message: 'Il PDF della fattura non è ancora disponibile'
-      }, { status: 404 });
+    // Prima prova con stripe_invoice_id se presente
+    if (transaction.stripe_invoice_id) {
+      try {
+        const invoice = await stripe.invoices.retrieve(transaction.stripe_invoice_id);
+        if (invoice.invoice_pdf) {
+          return Response.json({ 
+            success: true,
+            pdfUrl: invoice.invoice_pdf,
+            invoiceNumber: invoice.number
+          });
+        }
+      } catch (e) {
+        console.log('Invoice not found by ID, trying payment intent...');
+      }
     }
 
-    // Return the Stripe PDF URL
+    // Se non ha invoice_id, cerca via payment_intent
+    if (transaction.stripe_payment_intent_id) {
+      try {
+        // Cerca invoice associata al payment intent
+        const invoices = await stripe.invoices.list({
+          limit: 10,
+        });
+        
+        for (const inv of invoices.data) {
+          if (inv.payment_intent === transaction.stripe_payment_intent_id && inv.invoice_pdf) {
+            return Response.json({ 
+              success: true,
+              pdfUrl: inv.invoice_pdf,
+              invoiceNumber: inv.number
+            });
+          }
+        }
+      } catch (e) {
+        console.log('Error searching invoices:', e.message);
+      }
+    }
+
+    // Se non trova nulla, genera ricevuta dal payment intent
+    if (transaction.stripe_payment_intent_id) {
+      try {
+        const paymentIntent = await stripe.paymentIntents.retrieve(transaction.stripe_payment_intent_id, {
+          expand: ['latest_charge']
+        });
+        
+        if (paymentIntent.latest_charge?.receipt_url) {
+          return Response.json({ 
+            success: true,
+            pdfUrl: paymentIntent.latest_charge.receipt_url,
+            invoiceNumber: 'Ricevuta'
+          });
+        }
+      } catch (e) {
+        console.log('Error getting receipt:', e.message);
+      }
+    }
+
     return Response.json({ 
-      success: true,
-      pdfUrl: invoice.invoice_pdf,
-      invoiceNumber: invoice.number
-    });
+      success: false,
+      message: 'Nessuna fattura disponibile per questa transazione'
+    }, { status: 404 });
 
   } catch (error) {
     console.error('Error downloading Stripe invoice:', error);
