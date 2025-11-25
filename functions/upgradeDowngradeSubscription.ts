@@ -256,6 +256,7 @@ Deno.serve(async (req) => {
             return Response.json({
                 success: true,
                 calculate: true,
+                hasPaymentMethod: true, // Se ha subscription attiva, ha metodo di pagamento
                 currentPlan,
                 currentBillingPeriod,
                 currentPlanPrice,
