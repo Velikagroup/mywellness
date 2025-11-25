@@ -335,16 +335,12 @@ Deno.serve(async (req) => {
             }
             
             // Crea direttamente una subscription attiva a pagamento
-            // IMPORTANTE: trial_period_days: 0 sovrascrive il trial configurato nel prezzo Stripe
+            // IMPORTANTE: default_payment_method per addebitare subito
             const subscriptionParams = {
                 customer: stripeCustomerId,
                 items: [{ price: selectedPriceId }],
-                trial_period_days: 0, // 🔥 FORZA NESSUN TRIAL - addebita subito
-                payment_behavior: 'default_incomplete',
-                payment_settings: {
-                    payment_method_types: ['card'],
-                    save_default_payment_method: 'on_subscription'
-                },
+                default_payment_method: finalPaymentMethodId, // 🔥 ADDEBITA SUBITO con questo metodo
+                payment_behavior: 'error_if_incomplete', // 🔥 ERRORE se pagamento fallisce
                 expand: ['latest_invoice.payment_intent'],
                 metadata: {
                     user_id: user.id,
@@ -365,12 +361,22 @@ Deno.serve(async (req) => {
             finalSubscription = await stripe.subscriptions.create(subscriptionParams);
 
             console.log(`✅ Paid subscription created: ${finalSubscription.id}`);
+            console.log(`💰 Invoice status: ${finalSubscription.latest_invoice?.status}`);
+            console.log(`💳 Payment intent status: ${finalSubscription.latest_invoice?.payment_intent?.status}`);
             
-            // Conferma il pagamento immediatamente
-            if (finalSubscription.latest_invoice?.payment_intent?.status === 'requires_payment_method') {
-                await stripe.paymentIntents.confirm(finalSubscription.latest_invoice.payment_intent.id, {
-                    payment_method: finalPaymentMethodId
-                });
+            // Conferma il pagamento se necessario
+            const paymentIntent = finalSubscription.latest_invoice?.payment_intent;
+            if (paymentIntent) {
+                if (paymentIntent.status === 'requires_payment_method') {
+                    console.log('🔄 Confirming payment with payment method...');
+                    await stripe.paymentIntents.confirm(paymentIntent.id, {
+                        payment_method: finalPaymentMethodId
+                    });
+                } else if (paymentIntent.status === 'requires_confirmation') {
+                    console.log('🔄 Confirming payment intent...');
+                    await stripe.paymentIntents.confirm(paymentIntent.id);
+                }
+                console.log(`✅ Payment confirmed, amount: €${paymentIntent.amount / 100}`);
             }
 
         } else {

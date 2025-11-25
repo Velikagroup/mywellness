@@ -334,6 +334,14 @@ Deno.serve(async (req) => {
                     if (subscription.items?.data?.[0]?.price) {
                         const priceId = subscription.items.data[0].price.id;
                         const PRICE_MAP = {
+                            // Nuovi prezzi senza trial
+                            'price_1SXADj2OXBs6ZYwlY8id3Yhy': 'base',
+                            'price_1SXADj2OXBs6ZYwlywQCp6oR': 'base',
+                            'price_1SXADj2OXBs6ZYwlqdFI6aUU': 'pro',
+                            'price_1SXADk2OXBs6ZYwl0zZsxETJ': 'pro',
+                            'price_1SXADk2OXBs6ZYwlxiqqQqVA': 'premium',
+                            'price_1SXADl2OXBs6ZYwl0PlnAeX9': 'premium',
+                            // Vecchi prezzi (per retrocompatibilità)
                             'price_1SNDMW2OXBs6ZYwlp5UgCO8Y': 'base',
                             'price_1SNDMW2OXBs6ZYwlUfiZP4Su': 'base',
                             'price_1SNDMX2OXBs6ZYwlx6jXOgFf': 'pro',
