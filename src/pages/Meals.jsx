@@ -1105,10 +1105,22 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
       updateProgress(95, "Salvataggio pasti...");
       const createdMealIds = [];
       
+      // ✅ Ricarica l'utente per assicurarsi che l'ID sia corretto
+      const freshUser = await base44.auth.me();
+      console.log('📝 Salvando pasti per user_id:', freshUser.id);
+      
       for (let i = 0; i < allGeneratedMeals.length; i++) {
         const meal = allGeneratedMeals[i];
-        const createdMeal = await createMealMutation.mutateAsync(meal);
-        createdMealIds.push({ id: createdMeal.id, meal });
+        // ✅ Assicurati che user_id sia sempre quello fresco
+        meal.user_id = freshUser.id;
+        
+        try {
+          const createdMeal = await createMealMutation.mutateAsync(meal);
+          createdMealIds.push({ id: createdMeal.id, meal });
+        } catch (createError) {
+          console.error(`❌ Errore creazione pasto ${meal.name}:`, createError);
+          throw new Error(`Impossibile salvare il pasto "${meal.name}": ${createError.message}`);
+        }
       }
       
       // ✅ VALIDAZIONE FINALE: verifica che TUTTI i pasti siano stati creati
