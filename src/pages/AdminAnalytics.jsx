@@ -826,6 +826,7 @@ export default function AdminAnalytics() {
                         borderRadius: '8px'
                       }}
                       cursor={{ fill: 'rgba(0, 0, 0, 0.05)' }}
+                      formatter={(value) => [`€${value.toFixed(2)}`, 'Entrate (€)']}
                     />
                     <Legend />
                     <Bar 
