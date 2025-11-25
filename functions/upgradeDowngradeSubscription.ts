@@ -174,16 +174,16 @@ Deno.serve(async (req) => {
 
         const PRICE_IDS = {
             base: {
-                monthly: 'price_1SNDMW2OXBs6ZYwlp5UgCO8Y',
-                yearly: 'price_1SNDMW2OXBs6ZYwlUfiZP4Su'
+                monthly: 'price_1SXADj2OXBs6ZYwlY8id3Yhy',
+                yearly: 'price_1SXADj2OXBs6ZYwlywQCp6oR'
             },
             pro: {
-                monthly: 'price_1SNDMX2OXBs6ZYwlx6jXOgFf',
-                yearly: 'price_1SNDMX2OXBs6ZYwlvGtzkQKA'
+                monthly: 'price_1SXADj2OXBs6ZYwlqdFI6aUU',
+                yearly: 'price_1SXADk2OXBs6ZYwl0zZsxETJ'
             },
             premium: {
-                monthly: 'price_1SNDMX2OXBs6ZYwlKR7FIudX',
-                yearly: 'price_1SNDMY2OXBs6ZYwlcZzmNSnk'
+                monthly: 'price_1SXADk2OXBs6ZYwlxiqqQqVA',
+                yearly: 'price_1SXADl2OXBs6ZYwl0PlnAeX9'
             }
         };
 
@@ -195,9 +195,6 @@ Deno.serve(async (req) => {
                 error: 'Invalid plan or billing period' 
             }, { status: 400 });
         }
-
-        const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
-        const stripe = new Stripe(stripeSecretKey, { apiVersion: '2023-10-16' });
 
         console.log('📦 Retrieving current subscription...');
         const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
