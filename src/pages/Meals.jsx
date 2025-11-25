@@ -982,7 +982,7 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
           console.log(`📦 ${day}: ricevuti ${dayResponse.meals.length} pasti, processo ${mealsToProcess.length}`);
 
           // Processa ogni pasto del giorno
-          for (const mealData of dayResponse.meals) {
+          for (const mealData of mealsToProcess) {
             const mealType = mealData.meal_type;
             const targetCals = mealCalorieDistribution[mealType];
             const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
