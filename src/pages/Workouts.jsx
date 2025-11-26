@@ -613,17 +613,39 @@ ${trainingData.fitness_goal === 'esplosivita' ? '- Focus: Plyometric exercises, 
 ${trainingData.fitness_goal === 'mobilita' ? '- Focus: Dynamic stretching, mobility drills, controlled movements, incorporate yoga/pilates style exercises. Improve range of motion.' : ''}
 ${trainingData.fitness_goal === 'tonificazione' ? '- Focus: 10-15 reps, moderate weight, focus on form and muscle activation, incorporate supersets for higher intensity.' : ''}
 
-WEIGHT/INTENSITY GUIDELINES:
+WEIGHT/INTENSITY GUIDELINES (CRITICAL - MUST INCLUDE FOR EVERY EXERCISE):
+- FOR EVERY EXERCISE you MUST provide 'intensity_tips' array with 2-4 specific load/intensity recommendations
+- User weight: ${trainingData.current_weight || 'unknown'}kg - use this to estimate appropriate loads where relevant
+
 ${trainingData.sport_specific_data ? `
 - If user provided MAX LIFTS (squat_max, deadlift_max, bench_max, etc.): Calculate working weights as percentages. Example: if squat_max=100kg, use 80kg for 5x5 strength work (80%), 65kg for 3x12 hypertrophy (65%), etc.
 - CRITICAL: If user specified WEAK PHASES of lifts (e.g., squat_weak_phase="Uscita dalla buca"): 
-  * Include ACCESSORY EXERCISES that target that specific phase (e.g., for weak squat lockout → add pin squats, pause squats at sticking point)
-  * In the main lift's 'description' field, provide TECHNICAL CUES in Italian focused on that weak phase (e.g., "Focus esplosivo nell'uscita dalla buca, spingi forte con i talloni")
-  * Add tempo variations to address the weak phase (e.g., slow eccentric for control, pause at weak point for strength)
+  * Include ACCESSORY EXERCISES that target that specific phase
+  * In the main lift's 'description' field, provide TECHNICAL CUES in Italian focused on that weak phase
+  * Add tempo variations to address the weak phase
 - If user provided performance times (100m, 500m row, etc.): Use these as benchmarks for interval work and progression targets.
-- For bodyweight exercises: If user gave max reps, adjust set/rep schemes accordingly (someone who does 20 pull-ups needs different programming than someone who does 5).
-- ALWAYS include weight recommendations AND technical execution tips in the 'description' field in Italian (e.g., "Usa 70-80% del massimale (circa 85kg). Focus sulla fase eccentrica controllata di 3 secondi, poi esplosione verso l'alto" or "Serie da 8-10 rip, mantieni sempre 2 rip di riserva. Concentrati sul controllo nella discesa").
+- For bodyweight exercises: If user gave max reps, adjust set/rep schemes accordingly.
 ` : ''}
+
+INTENSITY TIPS RULES (MANDATORY FOR EACH EXERCISE):
+1. For WEIGHTED exercises (bilanciere, manubri, macchine):
+   - Use % of 1RM: "Usa il 70-75% del tuo massimale" 
+   - Or RPE scale: "RPE 7-8: dovresti riuscire a fare altre 2-3 ripetizioni"
+   - Or practical test: "Scegli un peso che renda le ultime 2-3 ripetizioni impegnative ma con forma corretta"
+   
+2. For BODYWEIGHT exercises (flessioni, trazioni, plank):
+   - How to increase difficulty: "Se troppo facile, rallenta la discesa a 3 secondi"
+   - How to decrease: "Se troppo difficile, usa una banda elastica di assistenza"
+   - Target feel: "Dovresti sentire bruciore muscolare nelle ultime 3-4 ripetizioni"
+
+3. For CARDIO/HIIT exercises:
+   - Heart rate zones: "Mantieni la frequenza cardiaca al 70-80% della massima"
+   - Perceived exertion: "Dovresti riuscire a parlare ma non cantare"
+   - Pace guidelines based on user fitness level
+
+4. For ISOMETRIC exercises (plank, wall sit):
+   - Duration progression: "Se riesci a tenere oltre 60 sec, aggiungi peso o variante più difficile"
+   - Form cues: "Quando inizi a tremare, hai raggiunto l'intensità giusta"
 
 CRITICAL REQUIREMENTS:
 1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
