@@ -2,48 +2,44 @@ import React, { useState } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Loader2, Sparkles, Dumbbell } from 'lucide-react';
+import { Loader2, Sparkles, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 
-export default function ReplaceExerciseModal({ 
+export default function AddExerciseModal({ 
   isOpen, 
   onClose, 
-  exercise, 
   workoutPlan,
-  onExerciseReplaced 
+  onExerciseAdded 
 }) {
   const [exerciseName, setExerciseName] = useState('');
-  const [isReplacing, setIsReplacing] = useState(false);
+  const [sets, setSets] = useState(3);
+  const [reps, setReps] = useState('10-12 ripetizioni');
+  const [rest, setRest] = useState('60 secondi');
+  const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState('');
 
-  const handleReplace = async () => {
+  const handleAdd = async () => {
     if (!exerciseName.trim()) {
       setError('Inserisci il nome dell\'esercizio');
       return;
     }
 
-    setIsReplacing(true);
+    setIsAdding(true);
     setError('');
 
     try {
-      // Usa le stesse serie e ripetizioni dell'esercizio originale
-      const originalSets = exercise.sets;
-      const originalReps = exercise.reps;
-      const originalRest = exercise.rest;
-
-      const prompt = `Sei un personal trainer esperto e fisioterapista. L'utente vuole fare l'esercizio: "${exerciseName}"
+      const prompt = `Sei un personal trainer esperto e fisioterapista. L'utente vuole aggiungere l'esercizio: "${exerciseName}"
 
 CREA i dettagli COMPLETI per questo esercizio, come se fossi un istruttore che spiega l'esercizio a un principiante.
 
 REGOLE CRITICHE:
 1. Crea un TITOLO ITALIANO corretto per l'esercizio (es: se l'utente scrive "push up" → "Flessioni", "squat" → "Squat", "bench press" → "Panca Piana")
-2. Mantieni: ${originalSets} serie, ${originalReps}, riposo ${originalRest}
-3. GENERA una descrizione dettagliata di 2-3 frasi su come eseguire l'esercizio correttamente
-4. GENERA 6-8 consigli specifici sulla forma corretta (form_tips) - devono essere pratici e dettagliati
-5. IDENTIFICA i muscoli specifici coinvolti in italiano (target_muscles)
-6. IDENTIFICA i gruppi muscolari principali (muscle_groups)
-7. IDENTIFICA l'attrezzatura necessaria (equipment)
-8. IDENTIFICA il livello di difficoltà
+2. GENERA una descrizione dettagliata di 2-3 frasi su come eseguire l'esercizio correttamente
+3. GENERA 6-8 consigli specifici sulla forma corretta (form_tips) - devono essere pratici e dettagliati
+4. IDENTIFICA i muscoli specifici coinvolti in italiano (target_muscles)
+5. IDENTIFICA i gruppi muscolari principali (muscle_groups)
+6. IDENTIFICA l'attrezzatura necessaria (equipment)
+7. IDENTIFICA il livello di difficoltà
 
 ESEMPIO DI OUTPUT ATTESO:
 - name: "Panca Piana con Bilanciere"
@@ -86,12 +82,12 @@ Restituisci i dati nel formato JSON richiesto.`;
         }
       });
 
-      // Crea il nuovo esercizio con i dati originali + nuovi dettagli completi
+      // Crea il nuovo esercizio con tutti i dettagli
       const newExercise = {
         name: llmResult.name,
-        sets: originalSets,
-        reps: originalReps,
-        rest: originalRest,
+        sets: sets,
+        reps: reps,
+        rest: rest,
         description: llmResult.detailed_description,
         detailed_description: llmResult.detailed_description,
         form_tips: llmResult.form_tips,
@@ -101,23 +97,27 @@ Restituisci i dati nel formato JSON richiesto.`;
         difficulty: llmResult.difficulty
       };
 
-      // Aggiorna il workout plan sostituendo l'esercizio
-      const updatedExercises = workoutPlan.exercises.map(ex => 
-        ex.name === exercise.name ? newExercise : ex
-      );
+      // Aggiungi l'esercizio al workout plan
+      const updatedExercises = [...(workoutPlan.exercises || []), newExercise];
 
       await base44.entities.WorkoutPlan.update(workoutPlan.id, {
         exercises: updatedExercises
       });
 
-      onExerciseReplaced();
+      // Reset form
+      setExerciseName('');
+      setSets(3);
+      setReps('10-12 ripetizioni');
+      setRest('60 secondi');
+      
+      onExerciseAdded();
       onClose();
       
     } catch (err) {
-      console.error('Error replacing exercise:', err);
+      console.error('Error adding exercise:', err);
       setError(`Errore: ${err.message || 'Riprova tra qualche secondo'}`);
     } finally {
-      setIsReplacing(false);
+      setIsAdding(false);
     }
   };
 
@@ -126,39 +126,67 @@ Restituisci i dati nel formato JSON richiesto.`;
       <DialogContent className="max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
-            <Dumbbell className="w-6 h-6 text-[#26847F]" />
-            Sostituisci Esercizio
+            <Plus className="w-6 h-6 text-[#26847F]" />
+            Aggiungi Esercizio
           </DialogTitle>
           <DialogDescription>
-            Scrivi il nome dell'esercizio che vuoi fare e l'AI creerà tutti i dettagli
+            Scrivi il nome dell'esercizio e l'AI creerà tutti i dettagli automaticamente
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
-          <div className="bg-gray-50 rounded-lg p-3 border">
-            <p className="text-xs text-gray-500 mb-1">Esercizio attuale:</p>
-            <p className="font-semibold text-gray-800">{exercise?.name}</p>
-            <p className="text-sm text-gray-600">{exercise?.sets} × {exercise?.reps}</p>
-          </div>
-
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nuovo esercizio:
+              Nome esercizio:
             </label>
             <Input
-              placeholder="Es: Panca inclinata, Squat bulgaro, Rematore..."
+              placeholder="Es: Panca piana, Squat, Trazioni, Curl bicipiti..."
               value={exerciseName}
               onChange={(e) => {
                 setExerciseName(e.target.value);
                 setError('');
               }}
               className="w-full"
-              disabled={isReplacing}
+              disabled={isAdding}
             />
-            <p className="text-xs text-gray-500 mt-1">
-              L'AI genererà automaticamente nome corretto, descrizione e consigli sulla forma
-            </p>
           </div>
+
+          <div className="grid grid-cols-3 gap-3">
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Serie</label>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                value={sets}
+                onChange={(e) => setSets(parseInt(e.target.value) || 3)}
+                className="text-center"
+                disabled={isAdding}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Ripetizioni</label>
+              <Input
+                value={reps}
+                onChange={(e) => setReps(e.target.value)}
+                placeholder="10-12 rip."
+                disabled={isAdding}
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-gray-600 mb-1">Riposo</label>
+              <Input
+                value={rest}
+                onChange={(e) => setRest(e.target.value)}
+                placeholder="60 sec"
+                disabled={isAdding}
+              />
+            </div>
+          </div>
+
+          <p className="text-xs text-gray-500">
+            L'AI genererà automaticamente: nome corretto italiano, descrizione dettagliata, consigli sulla forma, muscoli coinvolti e difficoltà
+          </p>
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3">
@@ -170,17 +198,17 @@ Restituisci i dati nel formato JSON richiesto.`;
             <Button
               variant="outline"
               onClick={onClose}
-              disabled={isReplacing}
+              disabled={isAdding}
               className="flex-1"
             >
               Annulla
             </Button>
             <Button
-              onClick={handleReplace}
-              disabled={isReplacing || !exerciseName.trim()}
+              onClick={handleAdd}
+              disabled={isAdding || !exerciseName.trim()}
               className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
             >
-              {isReplacing ? (
+              {isAdding ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
                   Generazione...
@@ -188,7 +216,7 @@ Restituisci i dati nel formato JSON richiesto.`;
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Sostituisci
+                  Aggiungi
                 </>
               )}
             </Button>
