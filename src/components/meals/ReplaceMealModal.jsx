@@ -32,7 +32,9 @@ export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritio
     setError('');
 
     try {
-      const targetCalories = meal.total_calories || 400;
+      // CRITICO: usa ESATTAMENTE le calorie del pasto originale
+      const targetCalories = meal.total_calories;
+      console.log('🎯 Target calories from original meal:', targetCalories);
       
       const dietRules = {
         mediterranean: "Grassi sani, cereali integrali, pesce, verdure",
@@ -46,7 +48,7 @@ export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritio
 
 CREA UNA VERSIONE NUTRIZIONALMENTE BILANCIATA di questo piatto.
 
-Target: circa ${targetCalories} kcal
+CRITICO: Il pasto DEVE avere ESATTAMENTE ${targetCalories} kcal (tolleranza massima ±10 kcal)
 Dieta: ${nutritionData?.diet_type || 'mediterranean'}
 ${dietRules[nutritionData?.diet_type] || ''}
 
