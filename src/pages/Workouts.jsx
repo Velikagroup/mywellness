@@ -658,74 +658,79 @@ ${selectedDays.length > 0 ? `
 
       DO NOT skip any day. Every single day must have a plan object.`;
 
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: finalPrompt,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            workout_plans: {
-              type: "array",
-              items: {
-                type: "object",
-                properties: {
-                  day_of_week: { 
-                    type: "string", 
-                    enum: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
-                    description: "REQUIRED: Must be one of the 7 days of the week"
+      let response;
+      try {
+        response = await base44.integrations.Core.InvokeLLM({
+          prompt: finalPrompt,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              workout_plans: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    day_of_week: { 
+                      type: "string", 
+                      enum: ["monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"],
+                      description: "REQUIRED: Must be one of the 7 days of the week"
+                    },
+                    plan_name: { type: "string" },
+                    workout_type: { type: "string" },
+                    exercises: { 
+                      type: "array", 
+                      items: { 
+                        type: "object", 
+                        properties: { 
+                          name: { type: "string" }, 
+                          sets: { type: "number" }, 
+                          reps: { type: "string" }, 
+                          rest: { type: "string" },
+                          description: { type: "string" }
+                        },
+                        required: ["name", "sets", "reps", "rest"]
+                      } 
+                    },
+                    warm_up: { 
+                      type: "array", 
+                      items: { 
+                        type: "object", 
+                        properties: { 
+                          name: { type: "string" }, 
+                          duration: { type: "string" },
+                          description: { type: "string" }
+                        },
+                        required: ["name", "duration"]
+                      } 
+                    },
+                    cool_down: { 
+                      type: "array", 
+                      items: { 
+                        type: "object", 
+                        properties: { 
+                          name: { type: "string" }, 
+                          duration: { type: "string" },
+                          description: { type: "string" }
+                        },
+                        required: ["name", "duration"]
+                      } 
+                    },
+                    total_duration: { type: "number" },
+                    calories_burned: { type: "number" },
+                    difficulty_level: { type: "string", enum: ["beginner", "intermediate", "advanced"] }
                   },
-                  plan_name: { type: "string" },
-                  workout_type: { type: "string" },
-                  exercises: { 
-                    type: "array", 
-                    items: { 
-                      type: "object", 
-                      properties: { 
-                        name: { type: "string" }, 
-                        sets: { type: "number" }, 
-                        reps: { type: "string" }, 
-                        rest: { type: "string" },
-                        description: { type: "string" }
-                      },
-                      required: ["name", "sets", "reps", "rest"]
-                    } 
-                  },
-                  warm_up: { 
-                    type: "array", 
-                    items: { 
-                      type: "object", 
-                      properties: { 
-                        name: { type: "string" }, 
-                        duration: { type: "string" },
-                        description: { type: "string" }
-                      },
-                      required: ["name", "duration"]
-                    } 
-                  },
-                  cool_down: { 
-                    type: "array", 
-                    items: { 
-                      type: "object", 
-                      properties: { 
-                        name: { type: "string" }, 
-                        duration: { type: "string" },
-                        description: { type: "string" }
-                      },
-                      required: ["name", "duration"]
-                    } 
-                  },
-                  total_duration: { type: "number" },
-                  calories_burned: { type: "number" },
-                  difficulty_level: { type: "string", enum: ["beginner", "intermediate", "advanced"] }
-                },
-                required: ["day_of_week", "plan_name", "workout_type", "exercises", "warm_up", "cool_down", "total_duration", "calories_burned", "difficulty_level"]
-              },
-              minItems: 7,
-              maxItems: 7
-            }
-          },
-          required: ["workout_plans"]
-        }
-      });
+                  required: ["day_of_week", "plan_name", "workout_type", "exercises", "warm_up", "cool_down", "total_duration", "calories_burned", "difficulty_level"]
+                }
+              }
+            },
+            required: ["workout_plans"]
+          }
+        });
+      } catch (llmError) {
+        console.error('❌ Errore LLM:', llmError);
+        // Se l'LLM fallisce, creiamo una risposta vuota che verrà completata dopo
+        response = { workout_plans: [] };
+      }
 
       updateProgress(60, "Validazione esercizi selezionati dal database...");
 
