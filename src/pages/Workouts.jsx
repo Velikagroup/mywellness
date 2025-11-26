@@ -1699,7 +1699,18 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                           )}
                           {workoutForSelectedDay.exercises?.length > 0 && (
                             <div>
-                              <h5 className="font-semibold text-gray-800 mb-2">Esercizi Principali</h5>
+                              <div className="flex items-center justify-between mb-2">
+                                <h5 className="font-semibold text-gray-800">Esercizi Principali</h5>
+                                <Button
+                                  variant="outline"
+                                  size="sm"
+                                  onClick={() => setShowAddExerciseModal(true)}
+                                  className="text-[#26847F] border-[#26847F] hover:bg-[#e9f6f5]"
+                                >
+                                  <Plus className="w-4 h-4 mr-1" />
+                                  Aggiungi
+                                </Button>
+                              </div>
                               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
                                 {workoutForSelectedDay.exercises.map((ex, idx) => {
                                    const enrichedExercise = enrichExerciseWithDetails(ex);
