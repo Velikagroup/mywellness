@@ -1140,6 +1140,28 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     setShowCheatCompensation(false);
   };
 
+  // Elimina un singolo esercizio dal workout
+  const handleDeleteExercise = async (exerciseToDelete, workoutPlan) => {
+    if (!workoutPlan || !exerciseToDelete) return;
+    
+    setDeletingExercise(exerciseToDelete.name);
+    
+    try {
+      const updatedExercises = workoutPlan.exercises.filter(ex => ex.name !== exerciseToDelete.name);
+      
+      await base44.entities.WorkoutPlan.update(workoutPlan.id, {
+        exercises: updatedExercises
+      });
+      
+      queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
+    } catch (error) {
+      console.error("Error deleting exercise:", error);
+      alert("Errore nell'eliminazione dell'esercizio. Riprova.");
+    } finally {
+      setDeletingExercise(null);
+    }
+  };
+
   // Calcola il numero di esercizi nella scheda settimanale
   const totalExercisesInWeeklyPlan = React.useMemo(() => {
     return workoutPlans.reduce((total, plan) => {
