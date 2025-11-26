@@ -118,20 +118,10 @@ Deno.serve(async (req) => {
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 8px;
         }
         .logo-icon {
-            width: 36px;
-            height: 36px;
-        }
-        .logo-text {
-            font-size: 20px;
-            font-weight: 600;
-            color: #222;
-            letter-spacing: -0.3px;
-        }
-        .logo-text span {
-            color: #26847F;
+            width: 40px;
+            height: 40px;
         }
         .invoice-title {
             text-align: right;
