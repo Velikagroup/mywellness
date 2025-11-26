@@ -44,22 +44,27 @@ export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritio
         vegan: "100% vegetale"
       };
 
-      const prompt = `Sei un nutrizionista esperto. L'utente vuole sostituire un pasto con: "${mealName}"
+      const prompt = `Sei un nutrizionista esperto. L'utente vuole sostituire il suo pasto attuale con: "${mealName}"
 
-CREA UNA VERSIONE NUTRIZIONALMENTE BILANCIATA di questo piatto.
+OBIETTIVO PRINCIPALE: Creare ESATTAMENTE il piatto richiesto "${mealName}" con le calorie specificate.
 
-CRITICO: Il pasto DEVE avere ESATTAMENTE ${targetCalories} kcal (tolleranza massima ±10 kcal)
+⚠️ VINCOLO CALORICO ASSOLUTO: Il pasto DEVE avere ESATTAMENTE ${targetCalories} kcal.
+- NON creare un piatto diverso da quello richiesto
+- Adatta le PORZIONI degli ingredienti per raggiungere ${targetCalories} kcal
+- Se servono più/meno calorie, aumenta/riduci le quantità proporzionalmente
+
 Dieta: ${nutritionData?.diet_type || 'mediterranean'}
 ${dietRules[nutritionData?.diet_type] || ''}
 
-REGOLE CRITICHE:
-- Usa NOMI ITALIANI per tutti gli ingredienti
-- Per le uova, usa SOLO numeri interi (1, 2, 3), MAI decimali
-- Fornisci valori nutrizionali ACCURATI
-- Mantieni il piatto il più fedele possibile alla richiesta dell'utente
-- Se è un piatto "non sano" (pizza, hamburger, etc.), crea una versione più bilanciata
+REGOLE:
+1. Crea ESATTAMENTE "${mealName}" - non un piatto simile o alternativo
+2. Usa NOMI ITALIANI per tutti gli ingredienti
+3. Per le uova, usa SOLO numeri interi (1, 2, 3), MAI decimali
+4. Calcola con precisione: la somma delle calorie degli ingredienti deve fare ${targetCalories} kcal
+5. Se il piatto richiesto ha naturalmente meno calorie, aumenta le porzioni o aggiungi contorni
+6. Se ha più calorie, riduci le porzioni mantenendo il piatto riconoscibile
 
-Restituisci i dati nel formato JSON richiesto.`;
+Restituisci il piatto "${mealName}" nel formato JSON richiesto.`;
 
       console.log('🚀 Calling LLM for meal replacement...');
       
