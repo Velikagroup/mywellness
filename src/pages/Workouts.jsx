@@ -588,10 +588,18 @@ ${trainingData.sport_specific_data ? `
 CRITICAL REQUIREMENTS:
 1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
 2. EVERY workout plan MUST have a "day_of_week" field with one of these exact values: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-3. ${selectedDays.length > 0 ? `IMPORTANT: The user has EXPLICITLY selected these ${selectedDays.length} days for ACTIVE WORKOUTS: ${selectedDays.join(', ')}. 
-   - For EACH of these days (${selectedDays.join(', ')}): Create a FULL workout plan with exercises, warm-up, and cool-down.
-   - For days NOT in this list (${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ')}): Create REST day plans.
-   - DO NOT create rest days for ${selectedDays.join(', ')} - these MUST have full workouts!` : `The user wants ${workoutDays} workout days total. Distribute them logically across the week (e.g., Monday, Wednesday, Friday for 3 days), avoiding consecutive training of the same major muscle groups. The remaining days should be rest days.`}
+3. USER'S WORKOUT SCHEDULE:
+${selectedDays.length > 0 ? `
+   ⚠️ MANDATORY ACTIVE WORKOUT DAYS: ${selectedDays.join(', ').toUpperCase()}
+   ⚠️ REST DAYS ONLY: ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ').toUpperCase() || 'NONE'}
+   
+   YOU MUST CREATE FULL WORKOUTS (with exercises, warm_up, cool_down) FOR: ${selectedDays.join(', ')}
+   YOU MUST CREATE REST PLANS (workout_type: "rest", empty exercises) ONLY FOR: ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ') || 'NO REST DAYS'}
+   
+   ❌ DO NOT PUT ${selectedDays.join(', ')} AS REST DAYS - THEY ARE MANDATORY WORKOUT DAYS!
+` : `
+   The user wants ${workoutDays} workout days total. Choose ${workoutDays} days from Monday to Friday for workouts, keeping Saturday and Sunday as rest days if possible.
+`}
 4. For workout days: provide 'plan_name' (in Italian), 'workout_type', 'warm_up' array (in Italian), 'exercises' array (in Italian), 'cool_down' array (in Italian), 'total_duration', 'calories_burned', 'difficulty_level'.
 5. For rest days: provide 'plan_name' (e.g., "Recupero Attivo"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
 6. Each exercise MUST have Italian names (e.g., "Squat con Manubri", "Flessioni", "Plank", "Affondi", "Curl Bicipiti") AND MUST be present in the provided Exercise Database. DO NOT invent exercises.
