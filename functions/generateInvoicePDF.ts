@@ -358,12 +358,7 @@ Deno.serve(async (req) => {
 <body>
     <div class="header">
         <div class="logo-section">
-            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="20" cy="20" r="18" fill="#26847F"/>
-                <path d="M12 20.5C12 16 15 13 20 13C25 13 28 16 28 20.5C28 25 25 28 20 28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
-                <circle cx="20" cy="20" r="3" fill="white"/>
-            </svg>
-            <span class="logo-text">My<span>Wellness</span></span>
+            <img class="logo-icon" src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/39941f303_IconaMyWellness.png" alt="MyWellness">
         </div>
         <div class="invoice-title">
             <h1>FATTURA</h1>
