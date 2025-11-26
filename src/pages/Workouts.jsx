@@ -1187,7 +1187,9 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     { id: 'sunday', label: 'Domenica' }
   ];
   
-  const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.day_of_week === selectedDay);
+  const workoutForSelectedDay = React.useMemo(() => {
+    return adjustedWorkout || workoutPlans.find(plan => plan.day_of_week === selectedDay);
+  }, [adjustedWorkout, workoutPlans, selectedDay]);
   
   const getDayLabel = (dayId) => days.find(d => d.id === dayId)?.label || dayId;
 
