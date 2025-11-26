@@ -3,7 +3,7 @@ import { base44 } from "@/api/base44Client";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dumbbell, Database, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, AlertCircle, Crown } from "lucide-react";
+import { Dumbbell, Database, Target, ArrowLeft, ArrowRight, BrainCircuit, CheckCircle, ShieldAlert, AlertCircle, Crown, Plus } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import ExerciseCard from "../components/workouts/ExerciseCard";
 import { createPageUrl } from "@/utils";
