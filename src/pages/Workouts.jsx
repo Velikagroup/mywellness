@@ -1144,25 +1144,27 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     setShowCheatCompensation(false);
   };
 
-  // Elimina un singolo esercizio dal workout
-  const handleDeleteExercise = async (exerciseToDelete, workoutPlan) => {
-    if (!workoutPlan || !exerciseToDelete) return;
+  // Conferma eliminazione esercizio
+  const confirmDeleteExercise = async () => {
+    if (!deleteExerciseTarget) return;
     
-    setDeletingExercise(exerciseToDelete.name);
+    const { exercise, workoutPlan } = deleteExerciseTarget;
+    setIsDeletingExercise(true);
     
     try {
-      const updatedExercises = workoutPlan.exercises.filter(ex => ex.name !== exerciseToDelete.name);
+      const updatedExercises = workoutPlan.exercises.filter(ex => ex.name !== exercise.name);
       
       await base44.entities.WorkoutPlan.update(workoutPlan.id, {
         exercises: updatedExercises
       });
       
       queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
+      setDeleteExerciseTarget(null);
     } catch (error) {
       console.error("Error deleting exercise:", error);
       alert("Errore nell'eliminazione dell'esercizio. Riprova.");
     } finally {
-      setDeletingExercise(null);
+      setIsDeletingExercise(false);
     }
   };
 
