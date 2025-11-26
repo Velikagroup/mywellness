@@ -99,6 +99,10 @@ export default function Workouts() {
 
   // ✅ SEMPLIFICATO: Usa solo exerciseSets per tracciare tutto
   const [exerciseSets, setExerciseSets] = useState({}); // { "Squat con Manubri": [1,2,3], "Panca Piana": [1,2] }
+  
+  // Stati per sostituzione/eliminazione esercizi
+  const [replaceExerciseTarget, setReplaceExerciseTarget] = useState(null);
+  const [deletingExercise, setDeletingExercise] = useState(null);
 
   // Query per workout plans - usa list() e filtra client-side per evitare problemi RLS
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts, refetch: refetchWorkouts } = useQuery({
