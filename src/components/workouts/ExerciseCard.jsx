@@ -2,10 +2,20 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Dumbbell, Info, Zap, Eye, Check } from "lucide-react";
+import { Dumbbell, Info, Zap, Eye, Check, RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { motion } from 'framer-motion';
 
-export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, completedSets = [], onSetToggle, isToday = true }) {
+export default function ExerciseCard({ 
+  exercise, 
+  isCompleted, 
+  onToggleComplete, 
+  completedSets = [], 
+  onSetToggle, 
+  isToday = true,
+  onReplace,
+  onDelete,
+  isDeleting = false
+}) {
   const [showDetails, setShowDetails] = useState(false);
   
   const toggleSet = (setNumber) => {
@@ -99,24 +109,57 @@ export default function ExerciseCard({ exercise, isCompleted, onToggleComplete, 
               </div>
             )}
             
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 flex-wrap">
               {exercise.difficulty && (
                 <span className={`text-xs px-2 py-1 rounded border font-semibold ${difficultyColors[exercise.difficulty] || 'bg-gray-100 text-gray-700'}`}>
                   {difficultyLabels[exercise.difficulty] || exercise.difficulty}
                 </span>
               )}
               
-              {(exercise.detailed_description || exercise.form_tips || exercise.target_muscles) && (
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowDetails(true)}
-                  className="text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5] ml-auto"
-                >
-                  <Eye className="w-4 h-4 mr-1" />
-                  Dettagli
-                </Button>
-              )}
+              <div className="flex items-center gap-1 ml-auto">
+                {/* Pulsante Sostituisci */}
+                {onReplace && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onReplace}
+                    className="text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5] p-2"
+                    title="Sostituisci esercizio"
+                  >
+                    <RotateCcw className="w-4 h-4" />
+                  </Button>
+                )}
+                
+                {/* Pulsante Elimina */}
+                {onDelete && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={onDelete}
+                    disabled={isDeleting}
+                    className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2"
+                    title="Elimina esercizio"
+                  >
+                    {isDeleting ? (
+                      <Loader2 className="w-4 h-4 animate-spin" />
+                    ) : (
+                      <Trash2 className="w-4 h-4" />
+                    )}
+                  </Button>
+                )}
+                
+                {(exercise.detailed_description || exercise.form_tips || exercise.target_muscles) && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowDetails(true)}
+                    className="text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]"
+                  >
+                    <Eye className="w-4 h-4 mr-1" />
+                    Dettagli
+                  </Button>
+                )}
+              </div>
             </div>
           </CardContent>
 
