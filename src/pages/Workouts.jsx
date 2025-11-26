@@ -354,6 +354,12 @@ export default function Workouts() {
       return;
     }
     
+    // 🔧 DEBUG: Log i dati prima di salvare
+    console.log('🚀 START GENERATION - trainingData:', {
+      workout_days: trainingData.workout_days,
+      workout_days_selected: trainingData.workout_days_selected
+    });
+    
     await base44.auth.updateMe(trainingData);
     setShowAssessment(false);
     await generateWorkoutPlan();
