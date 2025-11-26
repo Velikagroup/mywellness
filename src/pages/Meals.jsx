@@ -1760,20 +1760,20 @@ STRICT RULES:
                                 </div>
                               )}
                             </button>
-                            {/* Pulsante Sostituisci Pasto - icona a sinistra dei dati */}
+                            {/* Pulsante Sostituisci Pasto */}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setReplaceMealTarget(meal);
                               }}
                               disabled={regeneratingMealId === meal.id}
-                              className="absolute top-1/2 -translate-y-1/2 right-[85px] sm:right-[100px] w-8 h-8 flex items-center justify-center rounded-full bg-[#26847F] text-white shadow-md hover:shadow-lg hover:bg-[#1f6b66] transition-all"
-                              title="Sostituisci questo pasto"
+                              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center rounded-lg bg-white/90 backdrop-blur-sm border border-gray-200 text-gray-500 hover:text-[#26847F] hover:border-[#26847F] hover:bg-[#e9f6f5] shadow-sm hover:shadow-md transition-all duration-200"
+                              title="Sostituisci pasto"
                             >
                               {regeneratingMealId === meal.id ? (
-                                <RotateCcw className="w-4 h-4 animate-spin" />
+                                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#26847F]" />
                               ) : (
-                                <RotateCcw className="w-4 h-4" />
+                                <RotateCcw className="w-3.5 h-3.5" />
                               )}
                             </button>
                           </div>
