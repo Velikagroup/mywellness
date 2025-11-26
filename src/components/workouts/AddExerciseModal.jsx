@@ -40,12 +40,18 @@ REGOLE CRITICHE:
 5. IDENTIFICA i gruppi muscolari principali (muscle_groups)
 6. IDENTIFICA l'attrezzatura necessaria (equipment)
 7. IDENTIFICA il livello di difficoltà
+8. CRITICO - GENERA indicazioni sul CARICO/INTENSITÀ (intensity_tips):
+   - Per esercizi con pesi: indica la percentuale del massimale (es: "70-80% del tuo massimale") o RPE (es: "RPE 7-8, dovresti riuscire a fare 2-3 ripetizioni in più")
+   - Per esercizi a corpo libero: indica come regolare la difficoltà (es: "Se troppo facile, rallenta la fase eccentrica a 3 secondi")
+   - Per esercizi cardio/resistenza: indica frequenza cardiaca o percezione dello sforzo
+   - Dai SEMPRE un riferimento pratico che l'utente può usare per capire se sta usando il carico giusto
 
 ESEMPIO DI OUTPUT ATTESO:
 - name: "Panca Piana con Bilanciere"
 - detailed_description: "Esercizio fondamentale per lo sviluppo del petto. Sdraiati sulla panca con i piedi ben piantati a terra, afferra il bilanciere con una presa leggermente più larga delle spalle..."
 - form_tips: ["Mantieni le scapole retratte e depresse durante tutto il movimento", "I gomiti devono formare un angolo di 45° rispetto al busto", ...]
 - target_muscles: ["Grande pettorale", "Deltoide anteriore", "Tricipite brachiale"]
+- intensity_tips: ["Usa un carico pari al 70-75% del tuo massimale per l'ipertrofia", "Dovresti arrivare a fine serie con 2-3 ripetizioni di riserva (RPE 7-8)", "Se non conosci il tuo massimale, scegli un peso che ti permetta di completare tutte le ripetizioni con forma perfetta, ma le ultime 2 devono essere impegnative"]
 
 Restituisci i dati nel formato JSON richiesto.`;
 
@@ -76,9 +82,14 @@ Restituisci i dati nel formato JSON richiesto.`;
             difficulty: { 
               type: "string",
               enum: ["beginner", "intermediate", "advanced"]
+            },
+            intensity_tips: {
+              type: "array",
+              items: { type: "string" },
+              description: "2-4 consigli specifici sul carico/intensità da usare"
             }
           },
-          required: ["name", "detailed_description", "form_tips", "target_muscles", "muscle_groups", "equipment", "difficulty"]
+          required: ["name", "detailed_description", "form_tips", "target_muscles", "muscle_groups", "equipment", "difficulty", "intensity_tips"]
         }
       });
 
@@ -96,7 +107,8 @@ Restituisci i dati nel formato JSON richiesto.`;
         target_muscles: Array.isArray(llmResult.target_muscles) ? llmResult.target_muscles : [],
         muscle_groups: Array.isArray(llmResult.muscle_groups) ? llmResult.muscle_groups : [],
         equipment: llmResult.equipment || 'corpo_libero',
-        difficulty: llmResult.difficulty || 'intermediate'
+        difficulty: llmResult.difficulty || 'intermediate',
+        intensity_tips: Array.isArray(llmResult.intensity_tips) ? llmResult.intensity_tips : []
       };
       
       console.log('🏋️ New exercise object to save:', JSON.stringify(newExercise, null, 2));
