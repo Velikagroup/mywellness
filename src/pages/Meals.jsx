@@ -320,9 +320,13 @@ export default function MealsPage() {
       }
 
       try {
-        // Fetch tutte le generazioni e filtra per user_id, plan_type e mese corrente
-        const allGenerations = await base44.entities.PlanGeneration.list();
+        // ✅ FIX: Usa .list() e filtra localmente per evitare problemi RLS
+        const [allGenerations, allCredits] = await Promise.all([
+          base44.entities.PlanGeneration.list(),
+          base44.entities.PlanGenerationCredit.list()
+        ]);
         console.log(`📊 All generations fetched:`, allGenerations.length);
+        console.log(`📊 All credits fetched:`, allCredits.length);
 
         const generations = allGenerations.filter(g => {
           const matches = g.user_id === user.id && 
@@ -332,9 +336,21 @@ export default function MealsPage() {
           return matches;
         });
 
+        // ✅ FIX: Filtra crediti localmente per l'utente corrente
+        const extraCredits = allCredits.filter(c => 
+          c.user_id === user.id && 
+          c.plan_type === 'meal'
+        );
+
+        // Calcola crediti extra disponibili
+        const extraCreditsAvailable = extraCredits
+          .filter(c => !c.expiration_month || c.expiration_month >= currentMonth)
+          .reduce((sum, c) => sum + c.credits_amount, 0);
+
         const used = generations.length;
-        const remaining = Math.max(0, limit - used);
-        console.log(`📊 Generazioni meal usate: ${used}/${limit}, rimanenti: ${remaining}`);
+        const totalLimit = limit + extraCreditsAvailable;
+        const remaining = Math.max(0, totalLimit - used);
+        console.log(`📊 Generazioni meal usate: ${used}/${limit}, extra: ${extraCreditsAvailable}, rimanenti: ${remaining}`);
         setRemainingGenerations(remaining);
         setGenerationLimitReached(remaining === 0);
       } catch (error) {
