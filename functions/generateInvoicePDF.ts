@@ -100,37 +100,35 @@ Deno.serve(async (req) => {
             padding: 40px; 
             max-width: 800px;
             margin: 0 auto;
-            color: #333;
+            color: #111;
             background: #fff;
             line-height: 1.5;
         }
         .header { 
-            border-bottom: 3px solid #26847F; 
+            border-bottom: 1px solid #e0e0e0; 
             padding-bottom: 25px; 
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
         }
-        .company { 
-            font-weight: bold; 
-            font-size: 28px; 
-            color: #26847F;
-            margin-bottom: 12px;
+        .logo-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
-        .company-details {
-            font-size: 12px;
-            line-height: 1.7;
-            color: #555;
+        .logo-section img {
+            height: 32px;
         }
         .invoice-title {
             text-align: right;
         }
         .invoice-title h1 {
             margin: 0;
-            font-size: 32px;
-            color: #26847F;
-            font-weight: 700;
+            font-size: 28px;
+            color: #111;
+            font-weight: 600;
+            letter-spacing: -0.5px;
         }
         .invoice-meta {
             font-size: 13px;
@@ -148,29 +146,25 @@ Deno.serve(async (req) => {
         }
         .party {
             flex: 1;
-            padding: 20px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            border: 1px solid #e9ecef;
         }
         .party h3 {
             margin: 0 0 12px 0;
-            font-size: 11px;
-            color: #26847F;
+            font-size: 10px;
+            color: #999;
             text-transform: uppercase;
-            letter-spacing: 1px;
-            font-weight: 700;
+            letter-spacing: 1.5px;
+            font-weight: 600;
         }
         .party p {
-            margin: 4px 0;
+            margin: 3px 0;
             font-size: 13px;
             line-height: 1.6;
-            color: #444;
+            color: #333;
         }
         .party .name {
             font-weight: 600;
             font-size: 14px;
-            color: #333;
+            color: #111;
         }
         .items { 
             margin: 35px 0; 
@@ -178,28 +172,27 @@ Deno.serve(async (req) => {
         .items table { 
             width: 100%; 
             border-collapse: collapse;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
         .items th { 
-            background: #26847F;
-            color: white;
+            background: #fafafa;
+            color: #111;
             padding: 14px 16px; 
             text-align: left;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            border-top: 1px solid #e0e0e0;
+            border-bottom: 1px solid #e0e0e0;
         }
         .items th:last-child {
             text-align: right;
         }
         .items td { 
             padding: 16px; 
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #f0f0f0;
             font-size: 13px;
-            background: #fff;
+            color: #333;
         }
         .items td:last-child {
             text-align: right;
@@ -214,57 +207,53 @@ Deno.serve(async (req) => {
             justify-content: flex-end;
         }
         .summary-table {
-            min-width: 320px;
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            border: 1px solid #e9ecef;
+            min-width: 280px;
         }
         .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 10px 0;
-            font-size: 14px;
+            padding: 8px 0;
+            font-size: 13px;
         }
         .summary-row.subtotal {
             border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 15px;
+            padding-bottom: 12px;
         }
         .summary-row.tax {
             color: #666;
         }
         .summary-row.total {
-            border-top: 2px solid #26847F;
-            margin-top: 10px;
-            padding-top: 15px;
-            font-size: 18px;
+            border-top: 2px solid #111;
+            margin-top: 8px;
+            padding-top: 12px;
+            font-size: 16px;
             font-weight: 700;
-            color: #26847F;
+            color: #111;
         }
         .summary-label {
             color: #666;
         }
         .summary-value {
-            font-weight: 600;
-            color: #333;
+            font-weight: 500;
+            color: #111;
         }
         .paid-badge {
             display: inline-flex;
             align-items: center;
             gap: 6px;
-            margin-top: 20px;
-            padding: 10px 20px;
-            background: linear-gradient(135deg, #10b981, #059669);
+            margin-top: 16px;
+            padding: 8px 16px;
+            background: #111;
             color: white;
-            border-radius: 6px;
+            border-radius: 4px;
             font-weight: 600;
-            font-size: 13px;
-            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+            font-size: 12px;
+            letter-spacing: 0.5px;
         }
         .footer { 
             margin-top: 50px; 
             padding-top: 25px; 
-            border-top: 2px solid #eee; 
+            border-top: 1px solid #e0e0e0; 
             font-size: 11px; 
             color: #888;
             line-height: 1.8;
@@ -276,6 +265,22 @@ Deno.serve(async (req) => {
             font-weight: 600;
             color: #666;
             margin-bottom: 5px;
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .company-footer {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #f0f0f0;
+            text-align: center;
+            font-size: 10px;
+            color: #999;
+        }
+        .company-footer .company-name {
+            font-weight: 600;
+            color: #666;
+            margin-bottom: 4px;
         }
         .print-btn {
             position: fixed;
@@ -289,7 +294,7 @@ Deno.serve(async (req) => {
             font-size: 14px;
             font-weight: 600;
             cursor: pointer;
-            box-shadow: 0 4px 12px rgba(38, 132, 127, 0.3);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
             display: flex;
             align-items: center;
             gap: 8px;
@@ -312,44 +317,36 @@ Deno.serve(async (req) => {
 </head>
 <body>
     <div class="header">
-        <div>
-            <div class="company">VELIKA GROUP LLC</div>
-            <div class="company-details">
-                30 N Gould St 32651<br>
-                Sheridan, WY 82801<br>
-                United States<br>
-                EIN: 36-5141800<br>
-                Email: velika.03@outlook.it
-            </div>
+        <div class="logo-section">
+            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness">
         </div>
         <div class="invoice-title">
             <h1>FATTURA</h1>
             <div class="invoice-meta">
-                <div><strong>Numero:</strong> ${invoiceNumber}</div>
-                <div><strong>Data:</strong> ${invoiceDate}</div>
+                <div><strong>N°</strong> ${invoiceNumber}</div>
+                <div><strong>Data</strong> ${invoiceDate}</div>
             </div>
         </div>
     </div>
 
     <div class="parties">
         <div class="party">
-            <h3>Venditore</h3>
+            <h3>Da</h3>
             <p class="name">VELIKA GROUP LLC</p>
             <p>30 N Gould St 32651</p>
-            <p>Sheridan, WY 82801</p>
-            <p>United States</p>
+            <p>Sheridan, WY 82801, US</p>
             <p>EIN: 36-5141800</p>
         </div>
         <div class="party">
-            <h3>Acquirente</h3>
+            <h3>A</h3>
             <p class="name">${userData.full_name || userData.email}</p>
             ${userData.billing_type === 'company' && userData.company_name ? `<p>${userData.company_name}</p>` : ''}
             ${userData.billing_address ? `<p>${userData.billing_address}</p>` : ''}
             ${userData.billing_city || userData.billing_zip ? `<p>${userData.billing_city || ''} ${userData.billing_zip || ''}</p>` : ''}
             ${userData.billing_country ? `<p>${userData.billing_country}</p>` : ''}
-            ${userData.tax_id ? `<p><strong>${userData.billing_type === 'company' ? 'P.IVA' : 'C.F.'}:</strong> ${userData.tax_id}</p>` : ''}
-            ${userData.billing_type === 'company' && userData.pec_sdi ? `<p><strong>PEC/SDI:</strong> ${userData.pec_sdi}</p>` : ''}
-            <p><strong>Email:</strong> ${userData.email}</p>
+            ${userData.tax_id ? `<p>${userData.billing_type === 'company' ? 'P.IVA' : 'C.F.'}: ${userData.tax_id}</p>` : ''}
+            ${userData.billing_type === 'company' && userData.pec_sdi ? `<p>PEC/SDI: ${userData.pec_sdi}</p>` : ''}
+            <p>${userData.email}</p>
         </div>
     </div>
 
@@ -377,25 +374,25 @@ Deno.serve(async (req) => {
     <div class="summary">
         <div class="summary-table">
             <div class="summary-row subtotal">
-                <span class="summary-label">Imponibile:</span>
+                <span class="summary-label">Imponibile</span>
                 <span class="summary-value">€${netAmount.toFixed(2)}</span>
             </div>
             ${taxAmount > 0 ? `
             <div class="summary-row tax">
-                <span class="summary-label">${taxName} (${taxPercentage}%):</span>
+                <span class="summary-label">${taxName} (${taxPercentage}%)</span>
                 <span class="summary-value">€${taxAmount.toFixed(2)}</span>
             </div>
             ` : `
             <div class="summary-row tax">
-                <span class="summary-label">Tasse:</span>
-                <span class="summary-value">€0.00 (esente)</span>
+                <span class="summary-label">Tasse</span>
+                <span class="summary-value">€0.00</span>
             </div>
             `}
             <div class="summary-row total">
-                <span>TOTALE:</span>
+                <span>Totale</span>
                 <span>€${transaction.amount.toFixed(2)}</span>
             </div>
-            <div style="text-align: center;">
+            <div style="text-align: right;">
                 <div class="paid-badge">✓ PAGATO</div>
             </div>
         </div>
@@ -406,13 +403,14 @@ Deno.serve(async (req) => {
             <div class="footer-title">Dettagli Pagamento</div>
             <div>Metodo: ${transaction.metadata?.payment_method || 'Carta di Credito/Debito'}</div>
             <div>Processato tramite: Stripe Inc.</div>
-            <div>ID Transazione: ${transaction.stripe_payment_intent_id || transaction.id}</div>
-            <div>Data/Ora Pagamento: ${new Date(transaction.payment_date).toLocaleString('it-IT')}</div>
+            <div>ID: ${transaction.stripe_payment_intent_id || transaction.id}</div>
+            <div>Data: ${new Date(transaction.payment_date).toLocaleString('it-IT')}</div>
         </div>
-        <div class="footer-section">
-            <div class="footer-title">Note</div>
-            <div>Questa è una fattura elettronica generata automaticamente dal sistema MyWellness.</div>
-            <div>Per qualsiasi domanda, contattare: velika.03@outlook.it</div>
+        
+        <div class="company-footer">
+            <div class="company-name">VELIKA GROUP LLC</div>
+            <div>30 N Gould St 32651, Sheridan, WY 82801, United States</div>
+            <div>EIN: 36-5141800 • velika.03@outlook.it</div>
         </div>
     </div>
 
