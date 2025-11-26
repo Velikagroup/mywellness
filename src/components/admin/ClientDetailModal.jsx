@@ -751,7 +751,7 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
                 <Button
                   onClick={handleGrantCredits}
                   disabled={isProcessing || !creditReason.trim()}
-                  className="flex-1 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white"
+                  className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   Conferma
                 </Button>
