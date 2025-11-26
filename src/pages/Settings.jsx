@@ -404,9 +404,16 @@ Sii conciso ma dettagliato (max 200 parole).`,
 
   const handleDownloadInvoice = async (transaction) => {
     try {
-      // Se c'è già l'URL salvato, aprilo direttamente
+      // Se c'è già l'URL salvato, usa un link diretto (funziona su iOS)
       if (transaction.invoice_pdf_url) {
-        window.open(transaction.invoice_pdf_url, '_blank');
+        // Crea un link temporaneo e clicca - funziona meglio su iOS
+        const link = document.createElement('a');
+        link.href = transaction.invoice_pdf_url;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
         return;
       }
 
@@ -418,7 +425,14 @@ Sii conciso ma dettagliato (max 200 parole).`,
       const data = response.data || response;
 
       if (data.success && data.pdfUrl) {
-        window.open(data.pdfUrl, '_blank');
+        // Usa un link temporaneo invece di window.open (iOS compatible)
+        const link = document.createElement('a');
+        link.href = data.pdfUrl;
+        link.target = '_blank';
+        link.rel = 'noopener noreferrer';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
       } else {
         alert(data.message || 'Fattura non disponibile per questa transazione');
       }
