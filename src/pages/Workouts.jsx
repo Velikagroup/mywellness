@@ -500,10 +500,18 @@ export default function Workouts() {
       }
 
       const workoutDays = trainingData.workout_days || 3;
-      const selectedDays = trainingData.workout_days_selected || [];
+      let selectedDays = trainingData.workout_days_selected || [];
+      
+      // 🔧 FIX: Se selectedDays è vuoto, genera giorni di default basati su workoutDays
+      if (selectedDays.length === 0 && workoutDays > 0) {
+        const defaultDaysOrder = ['monday', 'wednesday', 'friday', 'tuesday', 'thursday', 'saturday', 'sunday'];
+        selectedDays = defaultDaysOrder.slice(0, workoutDays);
+        console.log(`⚠️ workout_days_selected era vuoto! Generati giorni di default: ${selectedDays.join(', ')}`);
+      }
 
       console.log(`✅ ${availableExercises.length} esercizi disponibili dal database di ${allExercises.length}`);
-      console.log(`📅 Giorni workout selezionati dall'utente: ${selectedDays.join(', ')}`);
+      console.log(`📅 Numero giorni workout richiesti: ${workoutDays}`);
+      console.log(`📅 Giorni workout selezionati dall'utente: ${selectedDays.join(', ') || 'NESSUNO'}`);
       console.log(`📅 Giorni riposo: ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ')}`);
 
       updateProgress(20, "Organizzazione esercizi per obiettivo...");
