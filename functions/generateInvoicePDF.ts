@@ -358,7 +358,7 @@ Deno.serve(async (req) => {
 <body>
     <div class="header">
         <div class="logo-section">
-            <img class="logo-icon" src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/39941f303_IconaMyWellness.png" alt="MyWellness">
+            <img class="logo-icon" src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/b898d4db9_MyWellnessIconaQuadrata.png" alt="MyWellness">
         </div>
         <div class="invoice-title">
             <h1>FATTURA</h1>
