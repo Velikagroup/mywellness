@@ -47,7 +47,7 @@ REGOLE CRITICHE:
 
 Restituisci i dati nel formato JSON richiesto.`;
 
-      const llmResponse = await base44.integrations.Core.InvokeLLM({
+      const llmResult = await base44.integrations.Core.InvokeLLM({
         prompt,
         response_json_schema: {
           type: "object",
@@ -76,6 +76,13 @@ Restituisci i dati nel formato JSON richiesto.`;
           required: ["name", "ingredients", "instructions"]
         }
       });
+
+      // Estrai la risposta (può essere in .data o direttamente nell'oggetto)
+      const llmResponse = llmResult?.data || llmResult;
+      
+      if (!llmResponse || !llmResponse.name || !llmResponse.ingredients) {
+        throw new Error('Risposta AI non valida');
+      }
 
       // Valida e processa ingredienti
       let validIngredients = llmResponse.ingredients.filter(ing => 

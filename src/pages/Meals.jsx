@@ -1760,23 +1760,21 @@ STRICT RULES:
                                 </div>
                               )}
                             </button>
-                            {/* Pulsante Sostituisci Pasto - sempre visibile */}
+                          </div>
+                            {/* Pulsante Sostituisci Pasto - icona a sinistra dei dati */}
                             <button
                               onClick={(e) => {
                                 e.stopPropagation();
                                 setReplaceMealTarget(meal);
                               }}
                               disabled={regeneratingMealId === meal.id}
-                              className="absolute top-1/2 -translate-y-1/2 right-2 md:right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#26847F] to-teal-500 text-white text-xs font-semibold shadow-md hover:shadow-lg hover:from-[#1f6b66] hover:to-teal-600 transition-all"
+                              className="absolute top-1/2 -translate-y-1/2 right-[85px] sm:right-[100px] w-8 h-8 flex items-center justify-center rounded-full bg-[#26847F] text-white shadow-md hover:shadow-lg hover:bg-[#1f6b66] transition-all"
                               title="Sostituisci questo pasto"
                             >
                               {regeneratingMealId === meal.id ? (
-                                <RotateCcw className="w-3.5 h-3.5 animate-spin" />
+                                <RotateCcw className="w-4 h-4 animate-spin" />
                               ) : (
-                                <>
-                                  <RotateCcw className="w-3.5 h-3.5" />
-                                  <span className="hidden sm:inline">Sostituisci</span>
-                                </>
+                                <RotateCcw className="w-4 h-4" />
                               )}
                             </button>
                           </div>
