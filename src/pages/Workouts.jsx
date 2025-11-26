@@ -588,7 +588,10 @@ ${trainingData.sport_specific_data ? `
 CRITICAL REQUIREMENTS:
 1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
 2. EVERY workout plan MUST have a "day_of_week" field with one of these exact values: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-3. ${selectedDays.length > 0 ? `The user wants to workout ONLY on these specific days: ${selectedDays.join(', ') || ''}. Create full workout plans for ONLY these days. For all other days, create rest plans.` : `The user wants ${workoutDays} workout days total. Distribute them logically across the week, avoiding consecutive training of the same major muscle groups.`}
+3. ${selectedDays.length > 0 ? `IMPORTANT: The user has EXPLICITLY selected these ${selectedDays.length} days for ACTIVE WORKOUTS: ${selectedDays.join(', ')}. 
+   - For EACH of these days (${selectedDays.join(', ')}): Create a FULL workout plan with exercises, warm-up, and cool-down.
+   - For days NOT in this list (${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ')}): Create REST day plans.
+   - DO NOT create rest days for ${selectedDays.join(', ')} - these MUST have full workouts!` : `The user wants ${workoutDays} workout days total. Distribute them logically across the week (e.g., Monday, Wednesday, Friday for 3 days), avoiding consecutive training of the same major muscle groups. The remaining days should be rest days.`}
 4. For workout days: provide 'plan_name' (in Italian), 'workout_type', 'warm_up' array (in Italian), 'exercises' array (in Italian), 'cool_down' array (in Italian), 'total_duration', 'calories_burned', 'difficulty_level'.
 5. For rest days: provide 'plan_name' (e.g., "Recupero Attivo"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
 6. Each exercise MUST have Italian names (e.g., "Squat con Manubri", "Flessioni", "Plank", "Affondi", "Curl Bicipiti") AND MUST be present in the provided Exercise Database. DO NOT invent exercises.
