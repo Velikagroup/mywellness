@@ -709,8 +709,52 @@ ${selectedDays.length > 0 ? `
 
       updateProgress(60, "Validazione esercizi selezionati dal database...");
 
-      if (!response.workout_plans || response.workout_plans.length !== 7) {
-        throw new Error(`L'AI ha generato ${response.workout_plans?.length || 0} piani invece di 7.`);
+      // Se l'AI non ha generato 7 piani, completiamo automaticamente i mancanti
+      if (!response.workout_plans || response.workout_plans.length < 7) {
+        console.warn(`⚠️ L'AI ha generato solo ${response.workout_plans?.length || 0} piani. Completamento automatico...`);
+
+        const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
+        const existingDays = (response.workout_plans || []).map(p => p.day_of_week);
+        const missingDays = allDays.filter(d => !existingDays.includes(d));
+
+        console.log(`📅 Giorni mancanti: ${missingDays.join(', ')}`);
+
+        // Trova un template workout esistente
+        const templateWorkout = response.workout_plans?.find(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
+
+        for (const day of missingDays) {
+          const isWorkoutDay = selectedDays.includes(day);
+
+          if (isWorkoutDay && templateWorkout) {
+            // Crea un workout basato sul template
+            response.workout_plans.push({
+              day_of_week: day,
+              plan_name: `Allenamento ${day.charAt(0).toUpperCase() + day.slice(1)}`,
+              workout_type: templateWorkout.workout_type,
+              exercises: [...templateWorkout.exercises],
+              warm_up: [...(templateWorkout.warm_up || [])],
+              cool_down: [...(templateWorkout.cool_down || [])],
+              total_duration: templateWorkout.total_duration,
+              calories_burned: templateWorkout.calories_burned,
+              difficulty_level: templateWorkout.difficulty_level
+            });
+            console.log(`✅ Aggiunto workout per ${day} (copiato da template)`);
+          } else {
+            // Crea un giorno di riposo
+            response.workout_plans.push({
+              day_of_week: day,
+              plan_name: 'Recupero Attivo',
+              workout_type: 'rest',
+              exercises: [],
+              warm_up: [],
+              cool_down: [],
+              total_duration: 0,
+              calories_burned: 0,
+              difficulty_level: 'easy'
+            });
+            console.log(`✅ Aggiunto riposo per ${day}`);
+          }
+        }
       }
 
       // Valida che i giorni selezionati abbiano workout e non riposo
