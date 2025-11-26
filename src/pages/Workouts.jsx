@@ -723,13 +723,24 @@ ${selectedDays.length > 0 ? `
                           reps: { type: "string" }, 
                           rest: { type: "string" },
                           description: { type: "string" },
+                          muscle_groups: {
+                            type: "array",
+                            items: { type: "string" },
+                            description: "Gruppi muscolari principali"
+                          },
+                          difficulty: {
+                            type: "string",
+                            enum: ["beginner", "intermediate", "advanced"]
+                          },
                           intensity_tips: {
                             type: "array",
                             items: { type: "string" },
-                            description: "2-4 consigli specifici sul carico/intensità (% massimale, RPE, o indicazioni pratiche)"
+                            minItems: 2,
+                            maxItems: 4,
+                            description: "OBBLIGATORIO: 2-4 consigli specifici sul carico/intensità in italiano (es: 'Usa il 70% del massimale', 'RPE 7-8')"
                           }
                         },
-                        required: ["name", "sets", "reps", "rest", "intensity_tips"]
+                        required: ["name", "sets", "reps", "rest", "intensity_tips", "muscle_groups", "difficulty"]
                       } 
                     },
                     warm_up: { 
