@@ -214,6 +214,12 @@ export default function Workouts() {
           return;
         }
 
+        // 🔧 DEBUG: Log i dati caricati dall'utente
+        console.log('📊 LOADED USER DATA:', {
+          workout_days: currentUser.workout_days,
+          workout_days_selected: currentUser.workout_days_selected
+        });
+        
         setTrainingData({
           user_id: currentUser.id,
           subscription_plan: currentUser.subscription_plan,
