@@ -1822,6 +1822,28 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           }}
         />
       )}
+      
+      {showAddExerciseModal && workoutForSelectedDay && (
+        <AddExerciseModal
+          isOpen={showAddExerciseModal}
+          onClose={() => setShowAddExerciseModal(false)}
+          workoutPlan={workoutForSelectedDay}
+          onExerciseAdded={() => {
+            queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
+            setShowAddExerciseModal(false);
+          }}
+        />
+      )}
+      
+      {deleteExerciseTarget && (
+        <DeleteExerciseDialog
+          isOpen={!!deleteExerciseTarget}
+          onClose={() => setDeleteExerciseTarget(null)}
+          exercise={deleteExerciseTarget.exercise}
+          onConfirm={confirmDeleteExercise}
+          isDeleting={isDeletingExercise}
+        />
+      )}
     </>
   );
 }
