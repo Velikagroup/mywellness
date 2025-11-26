@@ -627,25 +627,21 @@ ${trainingData.sport_specific_data ? `
 - For bodyweight exercises: If user gave max reps, adjust set/rep schemes accordingly.
 ` : ''}
 
-INTENSITY TIPS RULES (MANDATORY FOR EACH EXERCISE):
-1. For WEIGHTED exercises (bilanciere, manubri, macchine):
-   - Use % of 1RM: "Usa il 70-75% del tuo massimale" 
-   - Or RPE scale: "RPE 7-8: dovresti riuscire a fare altre 2-3 ripetizioni"
-   - Or practical test: "Scegli un peso che renda le ultime 2-3 ripetizioni impegnative ma con forma corretta"
-   
-2. For BODYWEIGHT exercises (flessioni, trazioni, plank):
-   - How to increase difficulty: "Se troppo facile, rallenta la discesa a 3 secondi"
-   - How to decrease: "Se troppo difficile, usa una banda elastica di assistenza"
-   - Target feel: "Dovresti sentire bruciore muscolare nelle ultime 3-4 ripetizioni"
+🚨🚨🚨 INTENSITY TIPS - ABSOLUTELY MANDATORY FOR EVERY SINGLE EXERCISE 🚨🚨🚨
 
-3. For CARDIO/HIIT exercises:
-   - Heart rate zones: "Mantieni la frequenza cardiaca al 70-80% della massima"
-   - Perceived exertion: "Dovresti riuscire a parlare ma non cantare"
-   - Pace guidelines based on user fitness level
+EVERY exercise object MUST contain an "intensity_tips" array with 2-3 strings in Italian.
+WITHOUT intensity_tips, the exercise is INVALID and will be rejected.
 
-4. For ISOMETRIC exercises (plank, wall sit):
-   - Duration progression: "Se riesci a tenere oltre 60 sec, aggiungi peso o variante più difficile"
-   - Form cues: "Quando inizi a tremare, hai raggiunto l'intensità giusta"
+Examples of valid intensity_tips arrays:
+- For Squat: ["Usa il 70-75% del tuo massimale", "RPE 7-8: dovresti riuscire a fare altre 2-3 ripetizioni", "Le ultime 2 ripetizioni devono essere impegnative"]
+- For Flessioni: ["Se troppo facile, rallenta la discesa a 3 secondi", "Dovresti sentire bruciore muscolare nelle ultime 3-4 ripetizioni"]  
+- For Plank: ["Quando inizi a tremare, hai raggiunto l'intensità giusta", "Se riesci a tenere oltre 60 sec, aggiungi peso sulla schiena"]
+
+RULES by exercise type:
+1. WEIGHTED (bilanciere, manubri, macchine): Use % of 1RM or RPE scale
+2. BODYWEIGHT (flessioni, trazioni): How to increase/decrease difficulty
+3. CARDIO/HIIT: Heart rate zones or perceived exertion
+4. ISOMETRIC (plank, wall sit): Duration progression and form cues
 
 CRITICAL REQUIREMENTS:
 1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
