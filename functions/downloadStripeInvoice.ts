@@ -57,29 +57,66 @@ Deno.serve(async (req) => {
 
     // Se non ha invoice_id, prova prima a ottenere la ricevuta dal payment intent
     if (transaction.stripe_payment_intent_id) {
+      console.log('🔍 Looking for receipt with payment_intent:', transaction.stripe_payment_intent_id);
+      
       try {
         const paymentIntent = await stripe.paymentIntents.retrieve(transaction.stripe_payment_intent_id, {
-          expand: ['latest_charge']
+          expand: ['latest_charge', 'invoice']
         });
         
-        // Prima prova receipt_url dal charge
-        if (paymentIntent.latest_charge?.receipt_url) {
-          return Response.json({ 
-            success: true,
-            pdfUrl: paymentIntent.latest_charge.receipt_url,
-            invoiceNumber: 'Ricevuta'
-          });
-        }
+        console.log('📦 PaymentIntent retrieved:', {
+          id: paymentIntent.id,
+          status: paymentIntent.status,
+          has_latest_charge: !!paymentIntent.latest_charge,
+          has_invoice: !!paymentIntent.invoice,
+          latest_charge_type: typeof paymentIntent.latest_charge
+        });
         
-        // Se il charge ha un ID, cerca direttamente il charge per la ricevuta
-        if (paymentIntent.latest_charge?.id) {
-          const charge = await stripe.charges.retrieve(paymentIntent.latest_charge.id);
-          if (charge.receipt_url) {
+        // Se c'è una invoice collegata
+        if (paymentIntent.invoice) {
+          const invoiceId = typeof paymentIntent.invoice === 'string' ? paymentIntent.invoice : paymentIntent.invoice.id;
+          const invoice = typeof paymentIntent.invoice === 'object' ? paymentIntent.invoice : await stripe.invoices.retrieve(invoiceId);
+          if (invoice.invoice_pdf) {
+            console.log('✅ Found invoice PDF from payment intent invoice');
             return Response.json({ 
               success: true,
-              pdfUrl: charge.receipt_url,
+              pdfUrl: invoice.invoice_pdf,
+              invoiceNumber: invoice.number
+            });
+          }
+        }
+        
+        // Prima prova receipt_url dal charge
+        const latestCharge = paymentIntent.latest_charge;
+        if (latestCharge) {
+          // Se è un oggetto espanso
+          if (typeof latestCharge === 'object' && latestCharge.receipt_url) {
+            console.log('✅ Found receipt from expanded charge');
+            return Response.json({ 
+              success: true,
+              pdfUrl: latestCharge.receipt_url,
               invoiceNumber: 'Ricevuta'
             });
+          }
+          
+          // Se è solo l'ID, recupera il charge
+          const chargeId = typeof latestCharge === 'string' ? latestCharge : latestCharge.id;
+          if (chargeId) {
+            console.log('🔍 Fetching charge:', chargeId);
+            const charge = await stripe.charges.retrieve(chargeId);
+            console.log('📦 Charge retrieved:', {
+              id: charge.id,
+              receipt_url: charge.receipt_url,
+              status: charge.status
+            });
+            if (charge.receipt_url) {
+              console.log('✅ Found receipt from charge');
+              return Response.json({ 
+                success: true,
+                pdfUrl: charge.receipt_url,
+                invoiceNumber: 'Ricevuta'
+              });
+            }
           }
         }
       } catch (e) {
