@@ -672,12 +672,13 @@ ${selectedDays.length > 0 ? `
 4. For workout days: provide 'plan_name' (in Italian), 'workout_type', 'warm_up' array (in Italian), 'exercises' array (in Italian), 'cool_down' array (in Italian), 'total_duration', 'calories_burned', 'difficulty_level'.
 5. For rest days: provide 'plan_name' (e.g., "Recupero Attivo"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
 6. Each exercise MUST have Italian names (e.g., "Squat con Manubri", "Flessioni", "Plank", "Affondi", "Curl Bicipiti") AND MUST be present in the provided Exercise Database. DO NOT invent exercises.
-7. 'reps' field must be in Italian format (e.g., "12 ripetizioni", "10-12 rip.", "30 secondi", "fino a cedimento"). INCLUDE WEIGHT GUIDANCE when user provided maxes.
+7. 'reps' field must be in Italian format (e.g., "12 ripetizioni", "10-12 rip.", "30 secondi", "fino a cedimento").
 8. 'rest' field must be in Italian (e.g., "60 secondi", "90 sec", "2 minuti").
 9. 'difficulty_level' must be one of: "beginner", "intermediate", "advanced" (in English).
-10. 'description' field for each exercise MUST include weight/intensity recommendations based on sport_specific_data when available (e.g., "Usa 75% del massimale - circa 90kg" or "Mantieni passo 1:50/500m").
-11. Don't train the same muscle groups on consecutive workout days.
-12. Ensure variety and progressive overload where appropriate for the user's fitness level and goal.
+10. 'description' field for each exercise should include execution tips.
+11. CRITICAL: 'intensity_tips' array is MANDATORY for EVERY exercise - provide 2-4 specific load/intensity recommendations following the INTENSITY TIPS RULES above.
+12. Don't train the same muscle groups on consecutive workout days.
+13. Ensure variety and progressive overload where appropriate for the user's fitness level and goal.
 `;
 
       updateProgress(40, "AI sta selezionando esercizi ottimali per te...");
