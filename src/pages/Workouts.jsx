@@ -1187,18 +1187,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     { id: 'sunday', label: 'Domenica' }
   ];
   
-  const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => {
-    const match = plan.day_of_week === selectedDay;
-    if (match) console.log('✅ Found workout for', selectedDay, ':', plan.plan_name, plan.workout_type);
-    return match;
-  });
-  
-  // Debug: mostra tutti i giorni disponibili
-  React.useEffect(() => {
-    if (workoutPlans.length > 0) {
-      console.log('📅 Available workout days:', workoutPlans.map(p => `${p.day_of_week}: ${p.workout_type}`));
-    }
-  }, [workoutPlans]);
+  const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.day_of_week === selectedDay);
   
   const getDayLabel = (dayId) => days.find(d => d.id === dayId)?.label || dayId;
 
