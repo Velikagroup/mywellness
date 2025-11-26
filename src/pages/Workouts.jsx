@@ -1054,7 +1054,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 20 ? 'text-[#26847F]' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Filtro per obiettivo: ${trainingData.fitness_goal}</span>
+                    <span className="text-gray-700">Filtro per obiettivo: {trainingData.fitness_goal}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 40 ? 'text-[#26847F]' : 'text-gray-300'}`} />
