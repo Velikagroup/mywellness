@@ -623,8 +623,23 @@ ${selectedDays.length > 0 ? `
 
       updateProgress(40, "AI sta selezionando esercizi ottimali per te...");
 
+      // Aggiungi istruzione finale al prompt per garantire 7 piani
+      const finalPrompt = workoutPlanPrompt + `
+
+      FINAL REMINDER - ABSOLUTELY CRITICAL:
+      You MUST return EXACTLY 7 workout plans in the "workout_plans" array, one for EACH day:
+      1. monday
+      2. tuesday  
+      3. wednesday
+      4. thursday
+      5. friday
+      6. saturday
+      7. sunday
+
+      DO NOT skip any day. Every single day must have a plan object.`;
+
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: workoutPlanPrompt,
+        prompt: finalPrompt,
         response_json_schema: {
           type: "object",
           properties: {
