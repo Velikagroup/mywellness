@@ -898,8 +898,6 @@ ${selectedDays.length > 0 ? `
       const allExerciseNamesFromDB = new Set(availableExercises.map(e => e.name.toLowerCase()));
       
       let invalidExercisesCount = 0;
-      let exercisesWithoutIntensityTips = 0;
-      
       for (const plan of response.workout_plans) {
         if (plan.exercises && Array.isArray(plan.exercises)) {
           for (const exercise of plan.exercises) {
@@ -907,68 +905,9 @@ ${selectedDays.length > 0 ? `
               console.warn(`⚠️ Esercizio "${exercise.name}" non trovato nel database o non è tra quelli disponibili. L'AI ha allucinazioni?`);
               invalidExercisesCount++;
             }
-            
-            // 🔧 POST-PROCESSING: Aggiungi intensity_tips se mancanti
-            if (!exercise.intensity_tips || !Array.isArray(exercise.intensity_tips) || exercise.intensity_tips.length === 0) {
-              exercisesWithoutIntensityTips++;
-              console.warn(`⚠️ Esercizio "${exercise.name}" senza intensity_tips - generazione automatica...`);
-              
-              // Genera intensity_tips di default basati sul tipo di esercizio
-              const isWeighted = ['bilanciere', 'manubri', 'manubrio', 'kettlebell', 'macchina', 'cable', 'cavo'].some(eq => 
-                (exercise.equipment || '').toLowerCase().includes(eq) ||
-                (exercise.name || '').toLowerCase().includes(eq)
-              );
-              const isBodyweight = !isWeighted && ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push', 'pull'].some(kw => 
-                (exercise.name || '').toLowerCase().includes(kw)
-              );
-              const isIsometric = ['plank', 'isometr', 'hold', 'tenuta'].some(kw => 
-                (exercise.name || '').toLowerCase().includes(kw)
-              );
-              
-              if (isWeighted) {
-                exercise.intensity_tips = [
-                  "Usa un carico pari al 70-75% del tuo massimale",
-                  "Le ultime 2-3 ripetizioni devono essere impegnative ma con forma corretta",
-                  "RPE 7-8: dovresti riuscire a fare altre 2-3 ripetizioni"
-                ];
-              } else if (isBodyweight) {
-                exercise.intensity_tips = [
-                  "Se troppo facile, rallenta la fase eccentrica (discesa) a 3 secondi",
-                  "Dovresti sentire bruciore muscolare nelle ultime 3-4 ripetizioni",
-                  "Se troppo difficile, riduci le ripetizioni mantenendo la forma perfetta"
-                ];
-              } else if (isIsometric) {
-                exercise.intensity_tips = [
-                  "Quando inizi a tremare, hai raggiunto l'intensità giusta",
-                  "Se riesci a tenere oltre 60 secondi facilmente, aggiungi peso o variante più difficile",
-                  "Mantieni la respirazione costante durante tutta la tenuta"
-                ];
-              } else {
-                exercise.intensity_tips = [
-                  "Scegli un carico che renda le ultime ripetizioni impegnative",
-                  "RPE 7-8: dovresti poter fare ancora 2-3 ripetizioni a fine serie",
-                  "Mantieni sempre una forma corretta, riducendo il carico se necessario"
-                ];
-              }
-            }
-            
-            // Assicurati che muscle_groups e difficulty siano presenti
-            if (!exercise.muscle_groups || !Array.isArray(exercise.muscle_groups)) {
-              exercise.muscle_groups = [];
-            }
-            if (!exercise.difficulty) {
-              exercise.difficulty = trainingData.fitness_experience || 'intermediate';
-            }
           }
         }
       }
-      
-      if (exercisesWithoutIntensityTips > 0) {
-        console.log(`🔧 Post-processing: aggiunti intensity_tips a ${exercisesWithoutIntensityTips} esercizi`);
-      }
-      
-      // Log per debug
-      console.log('📋 Esempio primo esercizio dopo post-processing:', JSON.stringify(response.workout_plans[0]?.exercises?.[0], null, 2));
 
       if (invalidExercisesCount > 0) {
         console.warn(`⚠️ L'AI ha suggerito ${invalidExercisesCount} esercizi che non erano nel database o non erano disponibili. Si consiglia di rigenerare il piano.`);
