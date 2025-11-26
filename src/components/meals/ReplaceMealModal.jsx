@@ -47,6 +47,8 @@ REGOLE CRITICHE:
 
 Restituisci i dati nel formato JSON richiesto.`;
 
+      console.log('🚀 Calling LLM for meal replacement...');
+      
       const llmResult = await base44.integrations.Core.InvokeLLM({
         prompt,
         response_json_schema: {
@@ -77,11 +79,16 @@ Restituisci i dati nel formato JSON richiesto.`;
         }
       });
 
-      // Estrai la risposta (può essere in .data o direttamente nell'oggetto)
-      const llmResponse = llmResult?.data || llmResult;
+      console.log('📦 LLM Result:', llmResult);
+
+      // L'integrazione InvokeLLM restituisce direttamente l'oggetto JSON quando response_json_schema è specificato
+      const llmResponse = llmResult;
+      
+      console.log('📋 Parsed response:', llmResponse);
       
       if (!llmResponse || !llmResponse.name || !llmResponse.ingredients) {
-        throw new Error('Risposta AI non valida');
+        console.error('❌ Invalid response structure:', llmResponse);
+        throw new Error('Risposta AI non valida - riprova');
       }
 
       // Valida e processa ingredienti
@@ -128,34 +135,51 @@ Restituisci i dati nel formato JSON richiesto.`;
         totalCalories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
       }
 
+      console.log('✅ Ingredients validated:', validIngredients.length);
+
+      // Ricalcola totali dopo bilanciamento
+      const finalTotalCalories = Math.round(validIngredients.reduce((sum, ing) => sum + ing.calories, 0));
+      const finalTotalProtein = Math.round(validIngredients.reduce((sum, ing) => sum + (ing.protein || 0), 0) * 10) / 10;
+      const finalTotalCarbs = Math.round(validIngredients.reduce((sum, ing) => sum + (ing.carbs || 0), 0) * 10) / 10;
+      const finalTotalFat = Math.round(validIngredients.reduce((sum, ing) => sum + (ing.fat || 0), 0) * 10) / 10;
+
+      console.log('📊 Final totals:', { finalTotalCalories, finalTotalProtein, finalTotalCarbs, finalTotalFat });
+
       // Genera immagine
       const ingredientsString = validIngredients.map(i => `${i.quantity}${i.unit} ${i.name}`).join(', ');
       const imagePrompt = `Professional food photography of "${llmResponse.name}". 
 Ingredients: ${ingredientsString}. 
 White ceramic plate, natural lighting, 45-degree angle, appetizing presentation.`;
 
-      const imageResponse = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
+      console.log('🎨 Generating image...');
+      const imageResult = await base44.integrations.Core.GenerateImage({ prompt: imagePrompt });
+      const imageUrl = imageResult?.url || imageResult?.data?.url || null;
+      console.log('🖼️ Image URL:', imageUrl);
 
       // Aggiorna il pasto
+      console.log('💾 Updating meal in database...');
       await base44.entities.MealPlan.update(meal.id, {
         name: llmResponse.name,
         ingredients: validIngredients,
         instructions: llmResponse.instructions || [],
-        total_calories: totalCalories,
-        total_protein: totalProtein,
-        total_carbs: totalCarbs,
-        total_fat: totalFat,
+        total_calories: finalTotalCalories,
+        total_protein: finalTotalProtein,
+        total_carbs: finalTotalCarbs,
+        total_fat: finalTotalFat,
         prep_time: llmResponse.prep_time || 15,
         difficulty: llmResponse.difficulty || 'easy',
-        image_url: imageResponse.url
+        image_url: imageUrl
       });
+      
+      console.log('✅ Meal replaced successfully!');
 
       onMealReplaced();
       onClose();
       
     } catch (err) {
-      console.error('Error replacing meal:', err);
-      setError('Errore nella sostituzione. Riprova.');
+      console.error('❌ Error replacing meal:', err);
+      console.error('Error details:', err.message, err.stack);
+      setError(`Errore: ${err.message || 'Riprova tra qualche secondo'}`);
     } finally {
       setIsReplacing(false);
     }
