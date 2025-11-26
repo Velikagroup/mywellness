@@ -715,17 +715,25 @@ ${selectedDays.length > 0 ? `
       updateProgress(75, "Rimozione piani precedenti...");
       
       // ✅ FIX: Fetch TUTTI i piani esistenti per l'utente e cancellali
-      const existingPlans = await base44.entities.WorkoutPlan.filter({ user_id: trainingData.user_id });
-      console.log(`🗑️ Found ${existingPlans.length} existing workout plans to delete`);
+      // Usa list() senza filtro e poi filtra client-side per evitare problemi RLS
+      const allPlans = await base44.entities.WorkoutPlan.list();
+      const existingPlans = allPlans.filter(p => p.user_id === trainingData.user_id);
+      console.log(`🗑️ Found ${existingPlans.length} existing workout plans to delete (from ${allPlans.length} total)`);
       
-      for (const plan of existingPlans) {
+      // Cancella tutti i piani esistenti per questo utente
+      const deletePromises = existingPlans.map(async (plan) => {
         try {
           await base44.entities.WorkoutPlan.delete(plan.id);
           console.log(`✅ Deleted workout plan ${plan.id} (${plan.day_of_week})`);
+          return true;
         } catch (deleteError) {
           console.warn(`⚠️ Could not delete workout plan ${plan.id}:`, deleteError);
+          return false;
         }
-      }
+      });
+      
+      await Promise.all(deletePromises);
+      console.log(`🧹 Cleanup complete, proceeding to create new plans...`);
 
       updateProgress(85, "Salvataggio nuovi workout...");
 
