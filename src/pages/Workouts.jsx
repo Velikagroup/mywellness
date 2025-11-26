@@ -1038,6 +1038,13 @@ ${selectedDays.length > 0 ? `
           console.error("Missing day_of_week in workout plan:", workoutData);
           continue;
         }
+        
+        // 🔧 DEBUG: Verifica che intensity_tips siano presenti prima del salvataggio
+        if (workoutData.exercises?.length > 0) {
+          console.log(`📦 Saving ${workoutData.day_of_week} with ${workoutData.exercises.length} exercises`);
+          console.log(`📦 First exercise intensity_tips:`, workoutData.exercises[0]?.intensity_tips);
+        }
+        
         await createWorkoutMutation.mutateAsync({ 
           user_id: trainingData.user_id, 
           ...workoutData 
