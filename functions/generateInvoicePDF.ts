@@ -321,6 +321,30 @@ Deno.serve(async (req) => {
                 padding: 40px !important;
                 max-width: none !important;
             }
+            .party, .items, .summary-table, .payment-details {
+                background: #f7f7f7 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .items th {
+                background: #f0f0f0 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .items td {
+                background: #f7f7f7 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
+            .paid-badge {
+                background: #222 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                color-adjust: exact !important;
+            }
         }
         @media (max-width: 600px) {
             body { padding: 20px; }
