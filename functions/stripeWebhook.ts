@@ -179,37 +179,50 @@ Deno.serve(async (req) => {
             }
 
             case 'invoice.created': {
-                    // 🔗 AFFILIATE: Applica credito affiliazione come sconto sulla fattura
+                    // 🔗 AFFILIATE: Applica credito affiliazione come sconto sulla fattura di rinnovo
                     const invoiceCreated = event.data.object;
                     console.log('📄 Invoice created:', invoiceCreated.id);
-                    
-                    // Solo per fatture di subscription (non one-time)
-                    if (!invoiceCreated.subscription || invoiceCreated.billing_reason === 'subscription_create') {
-                        console.log('⏭️ Skipping - not a renewal invoice');
+                    console.log('📋 Billing reason:', invoiceCreated.billing_reason);
+                    console.log('📋 Subscription:', invoiceCreated.subscription);
+
+                    // Solo per fatture di rinnovo subscription (non creazione iniziale)
+                    if (!invoiceCreated.subscription) {
+                        console.log('⏭️ Skipping - not a subscription invoice');
+                        break;
+                    }
+
+                    // Salta la prima fattura (creazione subscription)
+                    if (invoiceCreated.billing_reason === 'subscription_create') {
+                        console.log('⏭️ Skipping - initial subscription invoice');
                         break;
                     }
 
                     const invoiceCustomerId = invoiceCreated.customer;
+                    console.log('🔍 Looking for user with stripe_customer_id:', invoiceCustomerId);
+
                     const invoiceUsers = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: invoiceCustomerId });
+                    console.log('👥 Users found:', invoiceUsers.length);
 
                     if (invoiceUsers.length > 0) {
                         const invoiceUser = invoiceUsers[0];
-                        console.log('👤 User found:', invoiceUser.email);
+                        console.log('👤 User found:', invoiceUser.email, 'ID:', invoiceUser.id);
 
-                        // Cerca affiliate link dell'utente
+                        // Cerca affiliate link dell'utente (l'utente è un affiliato con crediti)
                         const userAffiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: invoiceUser.id });
+                        console.log('🔗 Affiliate links found:', userAffiliateLinks.length);
 
                         if (userAffiliateLinks.length > 0) {
                             const userAffiliateLink = userAffiliateLinks[0];
                             const availableBalance = userAffiliateLink.available_balance || 0;
+                            console.log(`💰 Available affiliate balance: €${availableBalance.toFixed(2)}`);
 
                             if (availableBalance > 0) {
-                                console.log(`💰 User has €${availableBalance.toFixed(2)} affiliate credit available`);
-
                                 // Calcola quanto sconto applicare (massimo = importo fattura)
                                 const invoiceAmount = invoiceCreated.amount_due / 100;
                                 const discountToApply = Math.min(availableBalance, invoiceAmount);
                                 const discountInCents = Math.round(discountToApply * 100);
+
+                                console.log(`📊 Invoice amount: €${invoiceAmount}, Discount to apply: €${discountToApply}`);
 
                                 if (discountInCents > 0) {
                                     try {
@@ -222,48 +235,56 @@ Deno.serve(async (req) => {
                                             description: `Credito Affiliazione MyWellness (-€${discountToApply.toFixed(2)})`
                                         });
 
-                                        console.log(`✅ Applied €${discountToApply.toFixed(2)} affiliate discount to invoice`);
+                                        console.log(`✅ Applied €${discountToApply.toFixed(2)} affiliate discount to invoice ${invoiceCreated.id}`);
 
                                         // Aggiorna il saldo disponibile
                                         const newBalance = availableBalance - discountToApply;
                                         await base44.asServiceRole.entities.AffiliateLink.update(userAffiliateLink.id, {
                                             available_balance: newBalance
                                         });
-                                        console.log(`✅ Updated affiliate balance: €${newBalance.toFixed(2)}`);
+                                        console.log(`✅ Updated affiliate balance: €${availableBalance.toFixed(2)} → €${newBalance.toFixed(2)}`);
 
                                         // Trova i crediti disponibili e marcali come usati
                                         const availableCredits = await base44.asServiceRole.entities.AffiliateCredit.filter({
                                             affiliate_user_id: invoiceUser.id,
                                             commission_status: 'available'
                                         });
+                                        console.log(`📋 Found ${availableCredits.length} available credits to mark as used`);
 
                                         let remainingToMark = discountToApply;
                                         for (const credit of availableCredits) {
                                             if (remainingToMark <= 0) break;
-                                            
+
                                             if (credit.commission_amount <= remainingToMark) {
                                                 await base44.asServiceRole.entities.AffiliateCredit.update(credit.id, {
                                                     commission_status: 'used_for_subscription'
                                                 });
                                                 remainingToMark -= credit.commission_amount;
+                                                console.log(`✅ Marked credit ${credit.id} (€${credit.commission_amount}) as used`);
                                             } else {
                                                 // Credito parzialmente usato - per semplicità lo marchiamo tutto come usato
                                                 await base44.asServiceRole.entities.AffiliateCredit.update(credit.id, {
                                                     commission_status: 'used_for_subscription'
                                                 });
                                                 remainingToMark = 0;
+                                                console.log(`✅ Marked credit ${credit.id} (€${credit.commission_amount}) as partially used`);
                                             }
                                         }
 
-                                        console.log(`✅ Marked affiliate credits as used for subscription`);
+                                        console.log(`✅ Affiliate credit applied successfully to renewal invoice`);
                                     } catch (discountError) {
                                         console.error('❌ Error applying affiliate discount:', discountError.message);
+                                        console.error('Stack:', discountError.stack);
                                     }
                                 }
                             } else {
-                                console.log('⏭️ No affiliate credit available');
+                                console.log('⏭️ No affiliate credit available (balance is 0)');
                             }
+                        } else {
+                            console.log('⏭️ User is not an affiliate (no AffiliateLink found)');
                         }
+                    } else {
+                        console.warn('⚠️ No user found with stripe_customer_id:', invoiceCustomerId);
                     }
                     break;
                 }
