@@ -711,11 +711,16 @@ ${selectedDays.length > 0 ? `
 
       updateProgress(75, "Rimozione piani precedenti...");
       
-      for (const plan of workoutPlans) {
+      // ✅ FIX: Fetch TUTTI i piani esistenti per l'utente e cancellali
+      const existingPlans = await base44.entities.WorkoutPlan.filter({ user_id: trainingData.user_id });
+      console.log(`🗑️ Found ${existingPlans.length} existing workout plans to delete`);
+      
+      for (const plan of existingPlans) {
         try {
-          await deleteWorkoutMutation.mutateAsync(plan.id);
+          await base44.entities.WorkoutPlan.delete(plan.id);
+          console.log(`✅ Deleted workout plan ${plan.id} (${plan.day_of_week})`);
         } catch (deleteError) {
-          console.warn(`Impossibile cancellare workout plan ${plan.id}:`, deleteError);
+          console.warn(`⚠️ Could not delete workout plan ${plan.id}:`, deleteError);
         }
       }
 
