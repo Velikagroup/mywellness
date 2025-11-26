@@ -500,6 +500,8 @@ export default function Workouts() {
       }
 
       console.log(`✅ ${availableExercises.length} esercizi disponibili dal database di ${allExercises.length}`);
+      console.log(`📅 Giorni workout selezionati dall'utente: ${selectedDays.join(', ')}`);
+      console.log(`📅 Giorni riposo: ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ')}`);
 
       const workoutDays = trainingData.workout_days || 3;
       const selectedDays = trainingData.workout_days_selected || [];
