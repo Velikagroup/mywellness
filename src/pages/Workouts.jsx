@@ -589,15 +589,22 @@ ${trainingData.sport_specific_data ? `
 CRITICAL REQUIREMENTS:
 1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
 2. EVERY workout plan MUST have a "day_of_week" field with one of these exact values: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
-3. USER'S WORKOUT SCHEDULE:
+3. USER'S WORKOUT SCHEDULE - THIS IS ABSOLUTELY CRITICAL:
 ${selectedDays.length > 0 ? `
-   ⚠️ MANDATORY ACTIVE WORKOUT DAYS: ${selectedDays.join(', ').toUpperCase()}
-   ⚠️ REST DAYS ONLY: ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ').toUpperCase() || 'NONE'}
+   🚨🚨🚨 CRITICAL REQUIREMENT 🚨🚨🚨
    
-   YOU MUST CREATE FULL WORKOUTS (with exercises, warm_up, cool_down) FOR: ${selectedDays.join(', ')}
-   YOU MUST CREATE REST PLANS (workout_type: "rest", empty exercises) ONLY FOR: ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ') || 'NO REST DAYS'}
+   THE USER HAS SELECTED EXACTLY ${selectedDays.length} WORKOUT DAYS: ${selectedDays.map(d => d.toUpperCase()).join(', ')}
    
-   ❌ DO NOT PUT ${selectedDays.join(', ')} AS REST DAYS - THEY ARE MANDATORY WORKOUT DAYS!
+   YOU MUST CREATE A FULL WORKOUT (with exercises, warm_up, cool_down, workout_type NOT "rest") FOR EACH OF THESE DAYS:
+   ${selectedDays.map(d => `- ${d.toUpperCase()}: MUST BE A FULL WORKOUT (NOT REST)`).join('\n   ')}
+   
+   REST DAYS (workout_type: "rest", empty exercises array) ARE ONLY FOR:
+   ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).map(d => `- ${d.toUpperCase()}: REST DAY`).join('\n   ') || '   - NONE (all days are workout days)'}
+   
+   ❌ FAILURE CONDITIONS - DO NOT DO THIS:
+   - DO NOT make ${selectedDays.map(d => d.toUpperCase()).join(' or ')} a rest day
+   - DO NOT skip any of the ${selectedDays.length} selected workout days
+   - The user MUST have exactly ${selectedDays.length} workout days with exercises
 ` : `
    The user wants ${workoutDays} workout days total. Choose ${workoutDays} days from Monday to Friday for workouts, keeping Saturday and Sunday as rest days if possible.
 `}
