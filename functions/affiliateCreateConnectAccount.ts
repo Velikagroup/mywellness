@@ -16,9 +16,9 @@ Deno.serve(async (req) => {
 
     console.log('✅ User authenticated:', user.id, user.email);
 
-    // Carica affiliate link
+    // Carica affiliate link - usa asServiceRole per bypassare RLS
     console.log('🔍 Fetching affiliate links for user:', user.id);
-    const affiliateLinks = await base44.entities.AffiliateLink.filter({ user_id: user.id });
+    const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({ user_id: user.id });
     
     if (affiliateLinks.length === 0) {
       console.error('❌ No affiliate link found for user:', user.id);
