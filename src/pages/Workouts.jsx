@@ -298,12 +298,10 @@ export default function Workouts() {
       }
 
       try {
-        const [allGenerations, extraCredits] = await Promise.all([
+        // ✅ FIX: Usa .list() e filtra localmente per evitare problemi RLS
+        const [allGenerations, allCredits] = await Promise.all([
           base44.entities.PlanGeneration.list(),
-          base44.entities.PlanGenerationCredit.filter({
-            user_id: trainingData.user_id,
-            plan_type: 'workout'
-          })
+          base44.entities.PlanGenerationCredit.list()
         ]);
         
         // Filtra localmente per user_id, plan_type e mese corrente
@@ -313,10 +311,18 @@ export default function Workouts() {
           g.generation_month === currentMonth
         );
 
+        // ✅ FIX: Filtra crediti localmente
+        const extraCredits = allCredits.filter(c => 
+          c.user_id === trainingData.user_id && 
+          c.plan_type === 'workout'
+        );
+
         // Calcola crediti extra disponibili
         const extraCreditsAvailable = extraCredits
           .filter(c => !c.expiration_month || c.expiration_month >= currentMonth)
           .reduce((sum, c) => sum + c.credits_amount, 0);
+        
+        console.log(`📊 Workout credits: limit=${limit}, used=${generations.length}, extra=${extraCreditsAvailable}`);
 
         const used = generations.length;
         const totalLimit = limit + extraCreditsAvailable;
