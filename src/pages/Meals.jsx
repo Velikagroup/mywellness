@@ -311,6 +311,8 @@ export default function MealsPage() {
       const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
       const limit = getGenerationLimit(user.subscription_plan, 'meal');
 
+      console.log(`📊 Checking generations for user ${user.id}, plan: ${user.subscription_plan}, limit: ${limit}`);
+
       if (limit === -1) {
         setRemainingGenerations(-1); // Illimitato
         setGenerationLimitReached(false);
@@ -318,13 +320,17 @@ export default function MealsPage() {
       }
 
       try {
-        // Fetch tutte le generazioni dell'utente e filtra localmente
+        // Fetch tutte le generazioni e filtra per user_id, plan_type e mese corrente
         const allGenerations = await base44.entities.PlanGeneration.list();
-        const generations = allGenerations.filter(g => 
-          g.user_id === user.id && 
-          g.plan_type === 'meal' && 
-          g.generation_month === currentMonth
-        );
+        console.log(`📊 All generations fetched:`, allGenerations.length);
+
+        const generations = allGenerations.filter(g => {
+          const matches = g.user_id === user.id && 
+                         g.plan_type === 'meal' && 
+                         g.generation_month === currentMonth;
+          if (matches) console.log(`📊 Match found:`, g);
+          return matches;
+        });
 
         const used = generations.length;
         const remaining = Math.max(0, limit - used);
