@@ -1,7 +1,7 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
-    console.log('📄 generateInvoicePDF - Start');
+    console.log('📄 generateInvoicePDF - Start v2');
     
     try {
         const base44 = createClientFromRequest(req);
