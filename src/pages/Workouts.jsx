@@ -298,17 +298,20 @@ export default function Workouts() {
       }
 
       try {
-        const [generations, extraCredits] = await Promise.all([
-          base44.entities.PlanGeneration.filter({
-            user_id: trainingData.user_id,
-            plan_type: 'workout',
-            generation_month: currentMonth
-          }),
+        const [allGenerations, extraCredits] = await Promise.all([
+          base44.entities.PlanGeneration.list(),
           base44.entities.PlanGenerationCredit.filter({
             user_id: trainingData.user_id,
             plan_type: 'workout'
           })
         ]);
+        
+        // Filtra localmente per user_id, plan_type e mese corrente
+        const generations = allGenerations.filter(g => 
+          g.user_id === trainingData.user_id && 
+          g.plan_type === 'workout' && 
+          g.generation_month === currentMonth
+        );
 
         // Calcola crediti extra disponibili
         const extraCreditsAvailable = extraCredits
@@ -733,11 +736,12 @@ CRITICAL REQUIREMENTS:
       // Aggiorna contatore generazioni
       const limit = getGenerationLimit(trainingData.subscription_plan, 'workout');
       if (limit !== -1 && limit !== 0) {
-        const generations = await base44.entities.PlanGeneration.filter({
-          user_id: trainingData.user_id,
-          plan_type: 'workout',
-          generation_month: currentMonth
-        });
+        const allGenerations = await base44.entities.PlanGeneration.list();
+        const generations = allGenerations.filter(g => 
+          g.user_id === trainingData.user_id && 
+          g.plan_type === 'workout' && 
+          g.generation_month === currentMonth
+        );
         const remaining = Math.max(0, limit - generations.length);
         setRemainingGenerations(remaining);
         setGenerationLimitReached(remaining === 0);
