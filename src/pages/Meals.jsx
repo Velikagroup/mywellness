@@ -18,6 +18,7 @@ import UpgradeModal from '../components/meals/UpgradeModal';
 import CheatMealStep from '../components/meals/CheatMealStep';
 import PantryModal from '../components/meals/PantryModal';
 import MealPlanWizard from '../components/meals/MealPlanWizard';
+import ReplaceMealModal from '../components/meals/ReplaceMealModal';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
@@ -187,6 +188,13 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
                 </li>
               </ul>
             </div>
+            
+            {/* Disclaimer */}
+            <div className="bg-amber-50/80 rounded-xl p-4 border border-amber-200/60">
+              <p className="text-xs text-amber-800 leading-relaxed">
+                <strong>⚠️ Avviso importante:</strong> Questo piano alimentare è generato automaticamente dall'AI e ha finalità esclusivamente informative. Non sostituisce in alcun modo il parere di un medico o di un nutrizionista. Se soffri di diabete, patologie metaboliche o altre condizioni mediche, consulta sempre un professionista qualificato prima di seguire qualsiasi indicazione.
+              </p>
+            </div>
           </CardContent>
         </Card>
       </div>
@@ -215,6 +223,7 @@ export default function MealsPage() {
   const [generationLimitReached, setGenerationLimitReached] = useState(false);
   const [showCheatMealStep, setShowCheatMealStep] = useState(false);
   const [cheatMealConfig, setCheatMealConfig] = useState([]);
+  const [replaceMealTarget, setReplaceMealTarget] = useState(null);
 
   const { data: user, isLoading: isLoadingUser, isError: isUserError, error: userError } = useQuery({
     queryKey: ['currentUser'],
@@ -1751,20 +1760,25 @@ STRICT RULES:
                                 </div>
                               )}
                             </button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => regenerateSingleMeal(meal)}
+                            {/* Pulsante Sostituisci Pasto - sempre visibile */}
+                            <button
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                setReplaceMealTarget(meal);
+                              }}
                               disabled={regeneratingMealId === meal.id}
-                              className="absolute top-1/2 -translate-y-1/2 right-3 md:right-4 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-opacity p-2 rounded-full text-gray-500 hover:text-[#26847F] hover:bg-gray-200/50"
-                              title="Rigenera questo pasto"
+                              className="absolute top-1/2 -translate-y-1/2 right-2 md:right-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-gradient-to-r from-[#26847F] to-teal-500 text-white text-xs font-semibold shadow-md hover:shadow-lg hover:from-[#1f6b66] hover:to-teal-600 transition-all"
+                              title="Sostituisci questo pasto"
                             >
                               {regeneratingMealId === meal.id ? (
-                                <RotateCcw className="w-4 h-4 animate-spin text-[#26847F]" />
+                                <RotateCcw className="w-3.5 h-3.5 animate-spin" />
                               ) : (
-                                <RotateCcw className="w-4 h-4" />
+                                <>
+                                  <RotateCcw className="w-3.5 h-3.5" />
+                                  <span className="hidden sm:inline">Sostituisci</span>
+                                </>
                               )}
-                            </Button>
+                            </button>
                           </div>
                         ) : null;
                       })}
@@ -1810,6 +1824,19 @@ STRICT RULES:
       )}
       {showUpgradeModal && (
         <UpgradeModal isOpen={showUpgradeModal} onClose={() => setShowUpgradeModal(false)} currentPlan={user?.subscription_plan || 'base'} />
+      )}
+      {replaceMealTarget && (
+        <ReplaceMealModal
+          isOpen={!!replaceMealTarget}
+          onClose={() => setReplaceMealTarget(null)}
+          meal={replaceMealTarget}
+          user={user}
+          nutritionData={nutritionData}
+          onMealReplaced={() => {
+            queryClient.invalidateQueries({ queryKey: ['mealPlans'] });
+            setReplaceMealTarget(null);
+          }}
+        />
       )}
     </>
   );
