@@ -1760,7 +1760,6 @@ STRICT RULES:
                                 </div>
                               )}
                             </button>
-                          </div>
                             {/* Pulsante Sostituisci Pasto - icona a sinistra dei dati */}
                             <button
                               onClick={(e) => {
