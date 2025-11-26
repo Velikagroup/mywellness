@@ -1696,7 +1696,7 @@ STRICT RULES:
                       </div>
 
                       {mealTypes.map((mealType) => {
-                        const meal = todaysMeals.find(m => m.meal_type === mealType);
+                        const meal = todaysMeals.find(m => normalizeMealType(m.meal_type) === mealType);
                         return meal ? (
                           <div key={meal.id} className={`relative w-full text-left rounded-lg p-3 border transition-colors group ${
                             meal.is_cheat_meal 
