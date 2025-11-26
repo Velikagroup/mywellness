@@ -1723,6 +1723,9 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                          saveWorkoutProgress(exerciseName, newSets, ex.sets);
                                        }}
                                        isToday={isToday}
+                                       onReplace={() => setReplaceExerciseTarget({ exercise: ex, workoutPlan: workoutForSelectedDay })}
+                                       onDelete={() => handleDeleteExercise(ex, workoutForSelectedDay)}
+                                       isDeleting={deletingExercise === ex.name}
                                      />
                                    );
                                  })}
