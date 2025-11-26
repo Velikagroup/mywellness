@@ -95,18 +95,21 @@ Deno.serve(async (req) => {
             padding: 0;
             box-sizing: border-box;
         }
+        @page {
+            size: A4;
+            margin: 0;
+        }
         body { 
             font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; 
-            padding: 40px; 
+            padding: 50px; 
             max-width: 800px;
             margin: 0 auto;
-            color: #111;
+            color: #222;
             background: #fff;
             line-height: 1.5;
         }
         .header { 
-            border-bottom: 1px solid #e0e0e0; 
-            padding-bottom: 25px; 
+            padding-bottom: 30px; 
             margin-bottom: 30px;
             display: flex;
             justify-content: space-between;
@@ -115,172 +118,186 @@ Deno.serve(async (req) => {
         .logo-section {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
         }
-        .logo-section img {
-            height: 32px;
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+        }
+        .logo-text {
+            font-size: 20px;
+            font-weight: 600;
+            color: #222;
+            letter-spacing: -0.3px;
+        }
+        .logo-text span {
+            color: #26847F;
         }
         .invoice-title {
             text-align: right;
         }
         .invoice-title h1 {
             margin: 0;
-            font-size: 28px;
-            color: #111;
+            font-size: 24px;
+            color: #222;
             font-weight: 600;
             letter-spacing: -0.5px;
         }
         .invoice-meta {
-            font-size: 13px;
+            font-size: 12px;
             color: #666;
-            margin-top: 8px;
+            margin-top: 6px;
         }
         .invoice-meta div {
-            margin: 3px 0;
+            margin: 2px 0;
         }
         .parties {
             display: flex;
             justify-content: space-between;
-            margin: 35px 0;
-            gap: 30px;
+            margin: 25px 0;
+            gap: 20px;
         }
         .party {
             flex: 1;
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 18px;
         }
         .party h3 {
-            margin: 0 0 12px 0;
+            margin: 0 0 10px 0;
             font-size: 10px;
-            color: #999;
+            color: #888;
             text-transform: uppercase;
             letter-spacing: 1.5px;
             font-weight: 600;
         }
         .party p {
-            margin: 3px 0;
-            font-size: 13px;
-            line-height: 1.6;
-            color: #333;
+            margin: 2px 0;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #444;
         }
         .party .name {
             font-weight: 600;
-            font-size: 14px;
-            color: #111;
+            font-size: 13px;
+            color: #222;
         }
         .items { 
-            margin: 35px 0; 
+            margin: 25px 0; 
+            background: #f7f7f7;
+            border-radius: 10px;
+            overflow: hidden;
         }
         .items table { 
             width: 100%; 
             border-collapse: collapse;
         }
         .items th { 
-            background: #fafafa;
-            color: #111;
-            padding: 14px 16px; 
+            background: #f0f0f0;
+            color: #222;
+            padding: 12px 16px; 
             text-align: left;
             font-weight: 600;
-            font-size: 11px;
+            font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
-            border-top: 1px solid #e0e0e0;
-            border-bottom: 1px solid #e0e0e0;
         }
         .items th:last-child {
             text-align: right;
         }
         .items td { 
-            padding: 16px; 
-            border-bottom: 1px solid #f0f0f0;
-            font-size: 13px;
-            color: #333;
+            padding: 14px 16px; 
+            font-size: 12px;
+            color: #444;
+            background: #f7f7f7;
         }
         .items td:last-child {
             text-align: right;
             font-weight: 500;
         }
-        .items tr:last-child td {
-            border-bottom: none;
-        }
         .summary {
-            margin-top: 30px;
+            margin-top: 25px;
             display: flex;
             justify-content: flex-end;
         }
         .summary-table {
-            min-width: 280px;
+            min-width: 260px;
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 18px;
         }
         .summary-row {
             display: flex;
             justify-content: space-between;
-            padding: 8px 0;
-            font-size: 13px;
+            padding: 6px 0;
+            font-size: 12px;
         }
         .summary-row.subtotal {
-            border-bottom: 1px solid #e0e0e0;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
+            margin-bottom: 6px;
+            border-bottom: 1px solid #e5e5e5;
         }
         .summary-row.tax {
             color: #666;
         }
         .summary-row.total {
-            border-top: 2px solid #111;
-            margin-top: 8px;
-            padding-top: 12px;
-            font-size: 16px;
+            margin-top: 6px;
+            padding-top: 10px;
+            border-top: 1px solid #e5e5e5;
+            font-size: 15px;
             font-weight: 700;
-            color: #111;
+            color: #222;
         }
         .summary-label {
             color: #666;
         }
         .summary-value {
             font-weight: 500;
-            color: #111;
+            color: #222;
         }
         .paid-badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            margin-top: 16px;
-            padding: 8px 16px;
-            background: #111;
+            gap: 5px;
+            margin-top: 12px;
+            padding: 6px 14px;
+            background: #222;
             color: white;
-            border-radius: 4px;
+            border-radius: 6px;
             font-weight: 600;
-            font-size: 12px;
+            font-size: 11px;
             letter-spacing: 0.5px;
         }
         .footer { 
-            margin-top: 50px; 
-            padding-top: 25px; 
-            border-top: 1px solid #e0e0e0; 
-            font-size: 11px; 
-            color: #888;
-            line-height: 1.8;
+            margin-top: 40px; 
         }
-        .footer-section {
-            margin-bottom: 15px;
-        }
-        .footer-title {
-            font-weight: 600;
+        .payment-details {
+            background: #f7f7f7;
+            border-radius: 10px;
+            padding: 16px;
+            font-size: 11px;
             color: #666;
-            margin-bottom: 5px;
+            line-height: 1.7;
+        }
+        .payment-details-title {
+            font-weight: 600;
+            color: #444;
+            margin-bottom: 8px;
             font-size: 10px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
         }
         .company-footer {
             margin-top: 30px;
-            padding-top: 20px;
-            border-top: 1px solid #f0f0f0;
             text-align: center;
             font-size: 10px;
             color: #999;
+            line-height: 1.6;
         }
         .company-footer .company-name {
             font-weight: 600;
             color: #666;
-            margin-bottom: 4px;
+            margin-bottom: 2px;
         }
         .print-btn {
             position: fixed;
@@ -303,14 +320,23 @@ Deno.serve(async (req) => {
             background: #1f6b66;
         }
         @media print {
-            .print-btn { display: none; }
-            body { padding: 20px; }
+            .print-btn { display: none !important; }
+            html, body { 
+                margin: 0 !important; 
+                padding: 0 !important;
+                width: 100% !important;
+                height: 100% !important;
+            }
+            body {
+                padding: 40px !important;
+                max-width: none !important;
+            }
         }
         @media (max-width: 600px) {
             body { padding: 20px; }
-            .header { flex-direction: column; gap: 20px; }
+            .header { flex-direction: column; gap: 15px; }
             .invoice-title { text-align: left; }
-            .parties { flex-direction: column; gap: 15px; }
+            .parties { flex-direction: column; gap: 12px; }
             .summary-table { min-width: 100%; }
         }
     </style>
@@ -318,13 +344,18 @@ Deno.serve(async (req) => {
 <body>
     <div class="header">
         <div class="logo-section">
-            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" alt="MyWellness">
+            <svg class="logo-icon" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="20" cy="20" r="18" fill="#26847F"/>
+                <path d="M12 20.5C12 16 15 13 20 13C25 13 28 16 28 20.5C28 25 25 28 20 28" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                <circle cx="20" cy="20" r="3" fill="white"/>
+            </svg>
+            <span class="logo-text">My<span>Wellness</span></span>
         </div>
         <div class="invoice-title">
             <h1>FATTURA</h1>
             <div class="invoice-meta">
-                <div><strong>N°</strong> ${invoiceNumber}</div>
-                <div><strong>Data</strong> ${invoiceDate}</div>
+                <div>N° ${invoiceNumber}</div>
+                <div>Data ${invoiceDate}</div>
             </div>
         </div>
     </div>
@@ -399,8 +430,8 @@ Deno.serve(async (req) => {
     </div>
 
     <div class="footer">
-        <div class="footer-section">
-            <div class="footer-title">Dettagli Pagamento</div>
+        <div class="payment-details">
+            <div class="payment-details-title">Dettagli Pagamento</div>
             <div>Metodo: ${transaction.metadata?.payment_method || 'Carta di Credito/Debito'}</div>
             <div>Processato tramite: Stripe Inc.</div>
             <div>ID: ${transaction.stripe_payment_intent_id || transaction.id}</div>
