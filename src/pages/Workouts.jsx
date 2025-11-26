@@ -726,9 +726,14 @@ ${selectedDays.length > 0 ? `
                           sets: { type: "number" }, 
                           reps: { type: "string" }, 
                           rest: { type: "string" },
-                          description: { type: "string" }
-                        },
-                        required: ["name", "sets", "reps", "rest"]
+                          description: { type: "string" },
+                          intensity_tips: {
+                            type: "array",
+                            items: { type: "string" },
+                            description: "2-4 consigli specifici sul carico/intensità (% massimale, RPE, o indicazioni pratiche)"
+                          }
+                          },
+                          required: ["name", "sets", "reps", "rest", "intensity_tips"]
                       } 
                     },
                     warm_up: { 
