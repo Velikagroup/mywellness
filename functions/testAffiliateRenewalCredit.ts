@@ -12,7 +12,31 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized - Admin only' }, { status: 401 });
         }
 
-        const { userId, dryRun = true } = await req.json();
+        const { userId, dryRun = true, deleteInvoice = null } = await req.json();
+
+        // Se viene passato un invoice ID da cancellare
+        if (deleteInvoice) {
+            try {
+                await stripe.invoices.del(deleteInvoice);
+                return Response.json({ 
+                    success: true, 
+                    message: `Invoice ${deleteInvoice} deleted successfully` 
+                });
+            } catch (delError) {
+                // Se la fattura non può essere cancellata, prova a voidarla
+                try {
+                    await stripe.invoices.voidInvoice(deleteInvoice);
+                    return Response.json({ 
+                        success: true, 
+                        message: `Invoice ${deleteInvoice} voided (could not delete)` 
+                    });
+                } catch (voidError) {
+                    return Response.json({ 
+                        error: `Could not delete or void invoice: ${voidError.message}` 
+                    }, { status: 400 });
+                }
+            }
+        }
 
         if (!userId) {
             return Response.json({ error: 'userId is required' }, { status: 400 });
