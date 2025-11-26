@@ -144,11 +144,6 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
   };
 
   const handleGrantCredits = async () => {
-    if (!creditReason.trim()) {
-      alert('⚠️ Inserisci un motivo per i crediti');
-      return;
-    }
-
     setIsProcessing(true);
     try {
       const adminUser = await base44.auth.me();
@@ -157,7 +152,7 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
         user_id: client.id,
         plan_type: creditType,
         credits_amount: creditAmount,
-        reason: creditReason,
+        reason: creditReason || 'Crediti extra concessi da admin',
         granted_by: adminUser.email,
         expiration_month: null
       });
@@ -723,17 +718,6 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
                 </div>
               </div>
 
-              <div>
-                <label className="text-sm font-semibold text-gray-700 mb-2 block">Motivo</label>
-                <textarea
-                  value={creditReason}
-                  onChange={(e) => setCreditReason(e.target.value)}
-                  placeholder="Es: Piano generato male, compensazione per problema tecnico..."
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-[var(--brand-primary)] focus:border-transparent"
-                  rows={3}
-                />
-              </div>
-
               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                 <p className="text-sm text-blue-800">
                   💡 Il cliente riceverà <strong>{creditAmount}</strong> {creditType === 'meal' ? 'generazioni nutrizionali' : 'generazioni allenamento'} extra che potrà utilizzare senza limiti di tempo.
@@ -750,7 +734,7 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
                 </Button>
                 <Button
                   onClick={handleGrantCredits}
-                  disabled={isProcessing || !creditReason.trim()}
+                  disabled={isProcessing}
                   className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   Conferma
