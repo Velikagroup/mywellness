@@ -709,36 +709,63 @@ ${selectedDays.length > 0 ? `
 
       updateProgress(60, "Validazione esercizi selezionati dal database...");
 
+      // Inizializza l'array se non esiste
+      if (!response.workout_plans) {
+        response.workout_plans = [];
+      }
+
       // Se l'AI non ha generato 7 piani, completiamo automaticamente i mancanti
-      if (!response.workout_plans || response.workout_plans.length < 7) {
-        console.warn(`⚠️ L'AI ha generato solo ${response.workout_plans?.length || 0} piani. Completamento automatico...`);
+      if (response.workout_plans.length < 7) {
+        console.warn(`⚠️ L'AI ha generato solo ${response.workout_plans.length} piani. Completamento automatico...`);
 
         const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
-        const existingDays = (response.workout_plans || []).map(p => p.day_of_week);
+        const existingDays = response.workout_plans.map(p => p.day_of_week);
         const missingDays = allDays.filter(d => !existingDays.includes(d));
 
         console.log(`📅 Giorni mancanti: ${missingDays.join(', ')}`);
 
         // Trova un template workout esistente
-        const templateWorkout = response.workout_plans?.find(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
+        const templateWorkout = response.workout_plans.find(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
+
+        // Se non c'è nessun template, creiamo un workout base
+        const defaultExercises = [
+          { name: "Flessioni", sets: 3, reps: "10-15 ripetizioni", rest: "60 secondi", description: "Esercizio per petto e tricipiti" },
+          { name: "Squat a Corpo Libero", sets: 3, reps: "15 ripetizioni", rest: "60 secondi", description: "Esercizio per gambe e glutei" },
+          { name: "Plank", sets: 3, reps: "30 secondi", rest: "45 secondi", description: "Esercizio per core" }
+        ];
 
         for (const day of missingDays) {
           const isWorkoutDay = selectedDays.includes(day);
 
-          if (isWorkoutDay && templateWorkout) {
-            // Crea un workout basato sul template
-            response.workout_plans.push({
-              day_of_week: day,
-              plan_name: `Allenamento ${day.charAt(0).toUpperCase() + day.slice(1)}`,
-              workout_type: templateWorkout.workout_type,
-              exercises: [...templateWorkout.exercises],
-              warm_up: [...(templateWorkout.warm_up || [])],
-              cool_down: [...(templateWorkout.cool_down || [])],
-              total_duration: templateWorkout.total_duration,
-              calories_burned: templateWorkout.calories_burned,
-              difficulty_level: templateWorkout.difficulty_level
-            });
-            console.log(`✅ Aggiunto workout per ${day} (copiato da template)`);
+          if (isWorkoutDay) {
+            if (templateWorkout) {
+              // Crea un workout basato sul template
+              response.workout_plans.push({
+                day_of_week: day,
+                plan_name: `Allenamento ${day.charAt(0).toUpperCase() + day.slice(1)}`,
+                workout_type: templateWorkout.workout_type,
+                exercises: [...templateWorkout.exercises],
+                warm_up: [...(templateWorkout.warm_up || [])],
+                cool_down: [...(templateWorkout.cool_down || [])],
+                total_duration: templateWorkout.total_duration,
+                calories_burned: templateWorkout.calories_burned,
+                difficulty_level: templateWorkout.difficulty_level
+              });
+            } else {
+              // Crea un workout base di fallback
+              response.workout_plans.push({
+                day_of_week: day,
+                plan_name: `Allenamento ${day.charAt(0).toUpperCase() + day.slice(1)}`,
+                workout_type: 'strength',
+                exercises: defaultExercises,
+                warm_up: [{ name: "Corsa sul posto", duration: "3 minuti", description: "Riscaldamento cardio" }],
+                cool_down: [{ name: "Stretching", duration: "5 minuti", description: "Defaticamento" }],
+                total_duration: 45,
+                calories_burned: 300,
+                difficulty_level: trainingData.fitness_experience || 'beginner'
+              });
+            }
+            console.log(`✅ Aggiunto workout per ${day}`);
           } else {
             // Crea un giorno di riposo
             response.workout_plans.push({
