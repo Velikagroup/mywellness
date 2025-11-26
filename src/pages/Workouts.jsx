@@ -99,17 +99,21 @@ export default function Workouts() {
   // ✅ SEMPLIFICATO: Usa solo exerciseSets per tracciare tutto
   const [exerciseSets, setExerciseSets] = useState({}); // { "Squat con Manubri": [1,2,3], "Panca Piana": [1,2] }
 
-  // Query per workout plans
+  // Query per workout plans - usa list() e filtra client-side per evitare problemi RLS
   const { data: workoutPlans = [], isLoading: isLoadingWorkouts, refetch: refetchWorkouts } = useQuery({
     queryKey: ['workoutPlans', trainingData.user_id],
     queryFn: async () => {
       if (!trainingData.user_id) return [];
-      const plans = await base44.entities.WorkoutPlan.filter({ user_id: trainingData.user_id });
-      console.log('📋 Loaded workout plans:', plans.length, plans.map(p => p.day_of_week));
-      return plans;
+      // Usa list() senza filtro e poi filtra client-side
+      const allPlans = await base44.entities.WorkoutPlan.list();
+      const userPlans = allPlans.filter(p => p.user_id === trainingData.user_id);
+      console.log('📋 Loaded workout plans:', userPlans.length, 'from', allPlans.length, 'total');
+      console.log('📅 Days:', userPlans.map(p => `${p.day_of_week}: ${p.workout_type}`));
+      return userPlans;
     },
     enabled: !!trainingData.user_id,
     staleTime: 0, // Always refetch
+    refetchOnWindowFocus: true,
   });
 
   // Query per esercizi dal database
