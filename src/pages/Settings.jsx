@@ -404,37 +404,34 @@ Sii conciso ma dettagliato (max 200 parole).`,
 
   const handleDownloadInvoice = async (transaction) => {
     try {
-      // Se c'è già l'URL salvato, usa un link diretto (funziona su iOS)
-      if (transaction.invoice_pdf_url) {
-        // Crea un link temporaneo e clicca - funziona meglio su iOS
-        const link = document.createElement('a');
-        link.href = transaction.invoice_pdf_url;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        return;
+      let pdfUrl = transaction.invoice_pdf_url;
+      
+      // Se non c'è l'URL salvato, recuperalo dal backend
+      if (!pdfUrl) {
+        const response = await base44.functions.invoke('downloadStripeInvoice', {
+          transactionId: transaction.id
+        });
+
+        const data = response.data || response;
+
+        if (data.success && data.pdfUrl) {
+          pdfUrl = data.pdfUrl;
+        } else {
+          alert(data.message || 'Fattura non disponibile per questa transazione');
+          return;
+        }
       }
 
-      // Altrimenti usa la funzione backend
-      const response = await base44.functions.invoke('downloadStripeInvoice', {
-        transactionId: transaction.id
-      });
-
-      const data = response.data || response;
-
-      if (data.success && data.pdfUrl) {
-        // Usa un link temporaneo invece di window.open (iOS compatible)
-        const link = document.createElement('a');
-        link.href = data.pdfUrl;
-        link.target = '_blank';
-        link.rel = 'noopener noreferrer';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
+      // Detect iOS
+      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      
+      if (isIOS) {
+        // iOS: usa redirect diretto - l'unico modo affidabile
+        window.location.href = pdfUrl;
       } else {
-        alert(data.message || 'Fattura non disponibile per questa transazione');
+        // Altri browser: apri in nuova tab
+        window.open(pdfUrl, '_blank', 'noopener,noreferrer');
       }
     } catch (error) {
       console.error('Error downloading invoice:', error);
