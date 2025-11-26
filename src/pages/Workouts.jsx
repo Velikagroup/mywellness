@@ -1730,8 +1730,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                        }}
                                        isToday={isToday}
                                        onReplace={() => setReplaceExerciseTarget({ exercise: ex, workoutPlan: workoutForSelectedDay })}
-                                       onDelete={() => handleDeleteExercise(ex, workoutForSelectedDay)}
-                                       isDeleting={deletingExercise === ex.name}
+                                       onDelete={() => setDeleteExerciseTarget({ exercise: ex, workoutPlan: workoutForSelectedDay })}
+                                       isDeleting={false}
                                      />
                                    );
                                  })}
