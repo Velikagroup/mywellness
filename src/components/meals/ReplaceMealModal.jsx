@@ -10,6 +10,18 @@ export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritio
   const [isReplacing, setIsReplacing] = useState(false);
   const [error, setError] = useState('');
 
+  // Debug: log meal info
+  React.useEffect(() => {
+    if (isOpen && meal) {
+      console.log('🍽️ ReplaceMealModal opened for meal:', {
+        id: meal.id,
+        name: meal.name,
+        user_id: meal.user_id,
+        current_user_id: user?.id
+      });
+    }
+  }, [isOpen, meal, user]);
+
   const handleReplace = async () => {
     if (!mealName.trim()) {
       setError('Inserisci il nome del piatto che vuoi mangiare');
@@ -157,8 +169,13 @@ White ceramic plate, natural lighting, 45-degree angle, appetizing presentation.
       console.log('🖼️ Image URL:', imageUrl);
 
       // Aggiorna il pasto
-      console.log('💾 Updating meal in database...');
-      await base44.entities.MealPlan.update(meal.id, {
+      console.log('💾 Updating meal in database...', {
+        meal_id: meal.id,
+        meal_user_id: meal.user_id,
+        current_user_id: user?.id
+      });
+      
+      const updateData = {
         name: llmResponse.name,
         ingredients: validIngredients,
         instructions: llmResponse.instructions || [],
@@ -169,9 +186,18 @@ White ceramic plate, natural lighting, 45-degree angle, appetizing presentation.
         prep_time: llmResponse.prep_time || 15,
         difficulty: llmResponse.difficulty || 'easy',
         image_url: imageUrl
-      });
+      };
       
-      console.log('✅ Meal replaced successfully!');
+      console.log('📝 Update data:', updateData);
+      
+      try {
+        const result = await base44.entities.MealPlan.update(meal.id, updateData);
+        console.log('✅ Meal replaced successfully!', result);
+      } catch (updateError) {
+        console.error('❌ Update failed:', updateError);
+        console.error('Error response:', updateError.response?.data);
+        throw new Error(`Aggiornamento fallito: ${updateError.message}`);
+      }
 
       onMealReplaced();
       onClose();

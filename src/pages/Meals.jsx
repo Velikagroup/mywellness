@@ -1727,55 +1727,59 @@ STRICT RULES:
                               ? 'bg-gradient-to-br from-orange-50 to-pink-50 border-orange-300/60 hover:bg-gradient-to-br hover:from-orange-100 hover:to-pink-100'
                               : 'bg-gray-50/80 border-gray-200/60 hover:bg-gray-100'
                           }`}>
-                            <button onClick={() => setSelectedMeal(meal)} className="w-full flex items-center justify-between">
-                              <div className="flex items-center gap-3 text-left">
-                                <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden">
-                                  {meal.is_cheat_meal ? (
-                                    <span className="text-3xl">🍕</span>
-                                  ) : meal.image_url ? (
-                                    <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
-                                  ) : (
-                                    <ImageIcon className="w-5 h-5 text-gray-400 animate-pulse"/>
-                                  )}
+                            <div className="flex items-center gap-2">
+                              {/* Pulsante Sostituisci Pasto - a sinistra */}
+                              <button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  setReplaceMealTarget(meal);
+                                }}
+                                disabled={regeneratingMealId === meal.id}
+                                className="flex-shrink-0 w-8 h-8 flex items-center justify-center rounded-lg bg-white border border-gray-200 text-gray-400 hover:text-[#26847F] hover:border-[#26847F] hover:bg-[#e9f6f5] shadow-sm hover:shadow-md transition-all duration-200"
+                                title="Sostituisci pasto"
+                              >
+                                {regeneratingMealId === meal.id ? (
+                                  <Loader2 className="w-4 h-4 animate-spin text-[#26847F]" />
+                                ) : (
+                                  <RotateCcw className="w-4 h-4" />
+                                )}
+                              </button>
+                              
+                              {/* Contenuto pasto cliccabile */}
+                              <button onClick={() => setSelectedMeal(meal)} className="flex-1 flex items-center justify-between min-w-0">
+                                <div className="flex items-center gap-3 text-left min-w-0">
+                                  <div className="w-14 h-11 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden flex-shrink-0">
+                                    {meal.is_cheat_meal ? (
+                                      <span className="text-2xl">🍕</span>
+                                    ) : meal.image_url ? (
+                                      <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
+                                    ) : (
+                                      <ImageIcon className="w-4 h-4 text-gray-400 animate-pulse"/>
+                                    )}
+                                  </div>
+                                  <div className="text-left min-w-0">
+                                    <p className="font-semibold text-gray-800 text-sm">{getMealTypeLabel(meal.meal_type)}</p>
+                                    <p className={`text-xs truncate max-w-[120px] sm:max-w-[200px] ${
+                                      meal.is_cheat_meal ? 'text-orange-600 font-bold' : 'text-gray-600'
+                                    }`}>
+                                      {meal.is_cheat_meal ? 'CHEAT MEAL' : meal.name}
+                                    </p>
+                                  </div>
                                 </div>
-                                <div className="text-left">
-                                  <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
-                                  <p className={`text-sm truncate max-w-[150px] sm:max-w-xs ${
-                                    meal.is_cheat_meal ? 'text-orange-600 font-bold' : 'text-gray-600'
-                                  }`}>
-                                    {meal.is_cheat_meal ? 'CHEAT MEAL PIANIFICATO' : meal.name}
-                                  </p>
-                                </div>
-                              </div>
-                              {!meal.is_cheat_meal && (
-                                <div className="text-right">
-                                  <p className="font-bold text-gray-800">{meal.total_calories} <span className="text-xs font-normal text-gray-500">kcal</span></p>
-                                  <p className="text-xs text-gray-600 mt-0.5">
-                                    <span className="text-red-600 font-semibold">{Math.round(meal.total_protein || 0)}P</span>
-                                    <span className="text-gray-400 mx-0.5">•</span>
-                                    <span className="text-blue-600 font-semibold">{Math.round(meal.total_carbs || 0)}C</span>
-                                    <span className="text-gray-400 mx-0.5">•</span>
-                                    <span className="text-yellow-600 font-semibold">{Math.round(meal.total_fat || 0)}G</span>
-                                  </p>
-                                </div>
-                              )}
-                            </button>
-                            {/* Pulsante Sostituisci Pasto */}
-                            <button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                setReplaceMealTarget(meal);
-                              }}
-                              disabled={regeneratingMealId === meal.id}
-                              className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 w-7 h-7 flex items-center justify-center rounded-lg bg-white/90 backdrop-blur-sm border border-gray-200 text-gray-500 hover:text-[#26847F] hover:border-[#26847F] hover:bg-[#e9f6f5] shadow-sm hover:shadow-md transition-all duration-200"
-                              title="Sostituisci pasto"
-                            >
-                              {regeneratingMealId === meal.id ? (
-                                <Loader2 className="w-3.5 h-3.5 animate-spin text-[#26847F]" />
-                              ) : (
-                                <RotateCcw className="w-3.5 h-3.5" />
-                              )}
-                            </button>
+                                {!meal.is_cheat_meal && (
+                                  <div className="text-right flex-shrink-0 ml-2">
+                                    <p className="font-bold text-gray-800 text-sm">{meal.total_calories} <span className="text-xs font-normal text-gray-500">kcal</span></p>
+                                    <p className="text-xs text-gray-600 mt-0.5">
+                                      <span className="text-red-600 font-semibold">{Math.round(meal.total_protein || 0)}P</span>
+                                      <span className="text-gray-400 mx-0.5">•</span>
+                                      <span className="text-blue-600 font-semibold">{Math.round(meal.total_carbs || 0)}C</span>
+                                      <span className="text-gray-400 mx-0.5">•</span>
+                                      <span className="text-yellow-600 font-semibold">{Math.round(meal.total_fat || 0)}G</span>
+                                    </p>
+                                  </div>
+                                )}
+                              </button>
+                            </div>
                           </div>
                         ) : null;
                       })}
