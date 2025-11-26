@@ -82,20 +82,24 @@ Restituisci i dati nel formato JSON richiesto.`;
         }
       });
 
-      // Crea il nuovo esercizio con tutti i dettagli
+      console.log('🏋️ LLM Result for new exercise:', JSON.stringify(llmResult, null, 2));
+
+      // Crea il nuovo esercizio con tutti i dettagli - assicurati che tutti i campi siano presenti
       const newExercise = {
-        name: llmResult.name,
+        name: llmResult.name || exerciseName,
         sets: sets,
         reps: reps,
         rest: rest,
-        description: llmResult.detailed_description,
-        detailed_description: llmResult.detailed_description,
-        form_tips: llmResult.form_tips,
-        target_muscles: llmResult.target_muscles,
-        muscle_groups: llmResult.muscle_groups,
-        equipment: llmResult.equipment,
-        difficulty: llmResult.difficulty
+        description: llmResult.detailed_description || '',
+        detailed_description: llmResult.detailed_description || '',
+        form_tips: Array.isArray(llmResult.form_tips) ? llmResult.form_tips : [],
+        target_muscles: Array.isArray(llmResult.target_muscles) ? llmResult.target_muscles : [],
+        muscle_groups: Array.isArray(llmResult.muscle_groups) ? llmResult.muscle_groups : [],
+        equipment: llmResult.equipment || 'corpo_libero',
+        difficulty: llmResult.difficulty || 'intermediate'
       };
+      
+      console.log('🏋️ New exercise object to save:', JSON.stringify(newExercise, null, 2));
 
       // Aggiungi l'esercizio al workout plan
       const updatedExercises = [...(workoutPlan.exercises || []), newExercise];
