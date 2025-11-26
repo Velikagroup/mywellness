@@ -925,63 +925,74 @@ ${selectedDays.length > 0 ? `
         console.log(`📋 Giorni di riposo: ${response.workout_plans.filter(p => p.workout_type === 'rest').map(p => p.day_of_week).join(', ')}`);
       }
 
-      // 🔧 POST-PROCESSING: Aggiungi intensity_tips PRIMA di salvare
+      // 🔧 POST-PROCESSING FINALE: Aggiungi intensity_tips a TUTTI gli esercizi PRIMA di salvare
+      console.log('🔧 POST-PROCESSING: Verifico intensity_tips per tutti gli esercizi...');
+      let tipsAdded = 0;
+      
       for (const plan of response.workout_plans) {
         if (plan.exercises && Array.isArray(plan.exercises)) {
           for (const exercise of plan.exercises) {
-            // Aggiungi intensity_tips se mancanti
+            // SEMPRE aggiungi intensity_tips se mancanti o vuoti
             if (!exercise.intensity_tips || !Array.isArray(exercise.intensity_tips) || exercise.intensity_tips.length === 0) {
-              console.warn(`⚠️ Esercizio "${exercise.name}" senza intensity_tips - generazione automatica...`);
-              
-              // Genera intensity_tips di default basati sul tipo di esercizio
+              tipsAdded++;
               const exerciseNameLower = (exercise.name || '').toLowerCase();
               const equipmentLower = (exercise.equipment || '').toLowerCase();
               
-              const isWeighted = ['bilanciere', 'manubri', 'manubrio', 'kettlebell', 'macchina', 'cable', 'cavo', 'press', 'curl', 'row'].some(eq => 
+              // Determina tipo esercizio
+              const isWeighted = ['bilanciere', 'manubri', 'manubrio', 'kettlebell', 'macchina', 'cable', 'cavo', 'press', 'curl', 'row', 'leg'].some(eq => 
                 exerciseNameLower.includes(eq) || equipmentLower.includes(eq)
               );
-              const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'affondi', 'squat'].some(kw => 
-                exerciseNameLower.includes(kw) && !exerciseNameLower.includes('manubri') && !exerciseNameLower.includes('bilanciere')
+              const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch', 'sit-up'].some(kw => 
+                exerciseNameLower.includes(kw)
               );
               const isIsometric = ['plank', 'isometr', 'hold', 'tenuta', 'wall sit'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
-              const isExplosive = ['jump', 'box', 'salto', 'thruster', 'clean', 'snatch', 'swing'].some(kw => 
+              const isExplosive = ['jump', 'box', 'salto', 'thruster', 'clean', 'snatch', 'swing', 'burpee'].some(kw => 
+                exerciseNameLower.includes(kw)
+              );
+              const isLunge = ['affond', 'lunge', 'camminat'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
               
+              // Assegna tips specifici
               if (isIsometric) {
                 exercise.intensity_tips = [
-                  "Quando inizi a tremare, hai raggiunto l'intensità giusta",
-                  "Se riesci a tenere oltre 60 secondi facilmente, aggiungi peso o variante più difficile",
-                  "Mantieni la respirazione costante durante tutta la tenuta"
+                  "💪 Quando inizi a tremare, hai raggiunto l'intensità giusta",
+                  "⬆️ Se riesci a tenere oltre 60 sec facilmente, aggiungi peso",
+                  "🌬️ Mantieni la respirazione costante"
                 ];
               } else if (isExplosive) {
                 exercise.intensity_tips = [
-                  "Concentrati sulla velocità e potenza del movimento",
-                  "Recupera completamente tra le serie per mantenere l'esplosività",
-                  "Se perdi velocità, riduci il carico o le ripetizioni"
+                  "⚡ Concentrati su velocità e potenza esplosiva",
+                  "😤 Recupera completamente tra le serie (90-120 sec)",
+                  "📉 Se perdi velocità, riduci le ripetizioni"
                 ];
               } else if (isWeighted) {
                 exercise.intensity_tips = [
-                  "Usa un carico pari al 70-75% del tuo massimale",
-                  "Le ultime 2-3 ripetizioni devono essere impegnative ma con forma corretta",
-                  "RPE 7-8: dovresti riuscire a fare altre 2-3 ripetizioni"
+                  "🏋️ Usa il 70-75% del tuo massimale stimato",
+                  "🔥 Le ultime 2-3 ripetizioni devono essere dure",
+                  "📊 RPE 7-8: dovresti poter fare ancora 2-3 reps"
                 ];
               } else if (isBodyweight) {
                 exercise.intensity_tips = [
-                  "Se troppo facile, rallenta la fase eccentrica (discesa) a 3 secondi",
-                  "Dovresti sentire bruciore muscolare nelle ultime 3-4 ripetizioni",
-                  "Se troppo difficile, riduci le ripetizioni mantenendo la forma perfetta"
+                  "⏱️ Se troppo facile, rallenta la discesa a 3 secondi",
+                  "🔥 Senti bruciore nelle ultime 3-4 ripetizioni",
+                  "✅ Mantieni forma perfetta, riduci reps se necessario"
+                ];
+              } else if (isLunge) {
+                exercise.intensity_tips = [
+                  "🏋️ Usa manubri da 8-12kg per lato (o il 30% del tuo peso)",
+                  "🦵 Le ginocchia devono piegarsi a 90 gradi",
+                  "⚖️ Mantieni il busto eretto durante tutto il movimento"
                 ];
               } else {
                 exercise.intensity_tips = [
-                  "Scegli un carico che renda le ultime ripetizioni impegnative",
-                  "RPE 7-8: dovresti poter fare ancora 2-3 ripetizioni a fine serie",
-                  "Mantieni sempre una forma corretta, riducendo il carico se necessario"
+                  "💪 Scegli un carico che renda le ultime reps impegnative",
+                  "📊 RPE 7-8: dovresti poter fare ancora 2-3 ripetizioni",
+                  "✅ Riduci il carico se la forma peggiora"
                 ];
               }
-              console.log(`✅ Aggiunti intensity_tips a "${exercise.name}":`, exercise.intensity_tips);
             }
             
             // Assicurati che muscle_groups e difficulty siano presenti
@@ -994,6 +1005,8 @@ ${selectedDays.length > 0 ? `
           }
         }
       }
+      
+      console.log(`✅ POST-PROCESSING COMPLETATO: Aggiunti intensity_tips a ${tipsAdded} esercizi`);
 
       updateProgress(75, "Rimozione piani precedenti...");
       
