@@ -22,7 +22,8 @@ Deno.serve(async (req) => {
 
         console.log(`✅ Generating invoice for transaction ${transactionId}`);
 
-        const transactions = await base44.entities.Transaction.filter({ id: transactionId });
+        // ✅ Usa asServiceRole per bypassare RLS
+        const transactions = await base44.asServiceRole.entities.Transaction.filter({ id: transactionId });
         
         if (!transactions || transactions.length === 0) {
             return Response.json({ 
