@@ -1792,6 +1792,19 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           currentPlan={trainingData.subscription_plan || 'base'} 
         />
       )}
+      
+      {replaceExerciseTarget && (
+        <ReplaceExerciseModal
+          isOpen={!!replaceExerciseTarget}
+          onClose={() => setReplaceExerciseTarget(null)}
+          exercise={replaceExerciseTarget.exercise}
+          workoutPlan={replaceExerciseTarget.workoutPlan}
+          onExerciseReplaced={() => {
+            queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
+            setReplaceExerciseTarget(null);
+          }}
+        />
+      )}
     </>
   );
 }
