@@ -24,6 +24,7 @@ import SportSpecificQuestionsStep from "../components/workouts/SportSpecificQues
 
 import { hasFeatureAccess, getGenerationLimit, PLANS } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from '../components/meals/UpgradeModal';
+import ReplaceExerciseModal from '../components/workouts/ReplaceExerciseModal';
 
 import { motion } from "framer-motion";
 
