@@ -259,27 +259,22 @@ export default function Workouts() {
           date: today 
         });
         
-        console.log('📥 LOADING LOGS FOR TODAY:', today, 'Found:', logs.length);
-        
         if (logs.length > 0 && logs[0].exercises_log) {
           const savedSets = {};
           logs[0].exercises_log.forEach(exLog => {
             savedSets[exLog.exercise_name] = exLog.completed_sets || [];
-            console.log('💾 Restored:', exLog.exercise_name, '→', exLog.completed_sets);
           });
-          console.log('✅ SETS LOADED:', savedSets);
           setExerciseSets(savedSets);
         } else {
-          console.log('⚠️ No logs found, starting fresh');
           setExerciseSets({});
         }
       } catch (error) {
-        console.error('❌ Error loading logs:', error);
+        console.error('Error loading logs:', error);
       }
     };
     
     loadWorkoutLogs();
-  }, [trainingData.user_id, workoutPlans]);
+  }, [trainingData.user_id]);
 
   const checkRemainingGenerations = useCallback(async () => {
     if (!trainingData.user_id || !trainingData.subscription_plan) return;
