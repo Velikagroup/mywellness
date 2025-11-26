@@ -107,12 +107,10 @@ export default function Workouts() {
       // Usa list() senza filtro e poi filtra client-side
       const allPlans = await base44.entities.WorkoutPlan.list();
       const userPlans = allPlans.filter(p => p.user_id === trainingData.user_id);
-      console.log('📋 Loaded workout plans:', userPlans.length, 'from', allPlans.length, 'total');
-      console.log('📅 Days:', userPlans.map(p => `${p.day_of_week}: ${p.workout_type}`));
       return userPlans;
     },
     enabled: !!trainingData.user_id,
-    staleTime: 0, // Always refetch
+    staleTime: 0,
     refetchOnWindowFocus: true,
   });
 
