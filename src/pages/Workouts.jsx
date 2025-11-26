@@ -858,6 +858,16 @@ ${selectedDays.length > 0 ? `
         console.log(`✅ Tutti gli esercizi provengono dal database!`);
       }
 
+      // 🔧 VALIDAZIONE FINALE: Assicuriamoci di avere esattamente 7 piani
+      if (response.workout_plans.length !== 7) {
+        console.error(`❌ ERRORE: Dopo il completamento abbiamo ${response.workout_plans.length} piani invece di 7!`);
+        console.log(`📋 Piani esistenti: ${response.workout_plans.map(p => p.day_of_week).join(', ')}`);
+      } else {
+        console.log(`✅ VALIDAZIONE OK: 7 piani generati correttamente`);
+        console.log(`📋 Giorni con workout: ${response.workout_plans.filter(p => p.workout_type !== 'rest').map(p => p.day_of_week).join(', ')}`);
+        console.log(`📋 Giorni di riposo: ${response.workout_plans.filter(p => p.workout_type === 'rest').map(p => p.day_of_week).join(', ')}`);
+      }
+
       updateProgress(75, "Rimozione piani precedenti...");
       
       // ✅ FIX: Fetch TUTTI i piani esistenti per l'utente e cancellali
