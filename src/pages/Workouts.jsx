@@ -125,10 +125,15 @@ export default function Workouts() {
   const enrichExerciseWithDetails = useCallback((exercise) => {
     if (!exercise || !exercise.name) return exercise;
     
-    // Cerca l'esercizio nel database per nome
-    const dbExercise = allExercises.find(e => 
-      e.name?.toLowerCase() === exercise.name?.toLowerCase()
-    );
+    // Cerca l'esercizio nel database per nome (match esatto o parziale)
+    const exerciseNameLower = exercise.name.toLowerCase().trim();
+    const dbExercise = allExercises.find(e => {
+      const dbNameLower = e.name?.toLowerCase().trim();
+      // Match esatto o parziale (contiene)
+      return dbNameLower === exerciseNameLower || 
+             dbNameLower?.includes(exerciseNameLower) || 
+             exerciseNameLower.includes(dbNameLower);
+    });
     
     if (dbExercise) {
       // Merge: mantieni i dati del workout plan (sets, reps, rest) e aggiungi i dettagli dal DB
@@ -144,6 +149,9 @@ export default function Workouts() {
       };
     }
     
+    // Se l'esercizio non è nel database, restituisci comunque con i dati disponibili
+    // L'utente vedrà solo le info base (sets, reps, rest) senza il pulsante "Dettagli"
+    console.warn(`⚠️ Esercizio "${exercise.name}" non trovato nel database. Verifica che sia stato aggiunto o rigenera il piano.`);
     return exercise;
   }, [allExercises]);
 
