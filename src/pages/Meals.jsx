@@ -1465,7 +1465,23 @@ STRICT RULES:
   const todaysMeals = mealPlans.filter(plan => plan.day_of_week === selectedDay);
   
   const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
+
+  // Mappa per normalizzare meal_type italiani in inglesi
+  const normalizeMealType = (type) => {
+    const map = {
+      'colazione': 'breakfast',
+      'spuntino1': 'snack1',
+      'pranzo': 'lunch',
+      'spuntino2': 'snack2',
+      'cena': 'dinner',
+      'spuntino3': 'snack3',
+      'spuntino4': 'snack4'
+    };
+    return map[type?.toLowerCase()] || type;
+  };
+
   const getMealTypeLabel = (type) => {
+    const normalized = normalizeMealType(type);
     const labels = { 
       breakfast: 'Colazione',
       snack1: 'Spuntino Mattina',
@@ -1475,7 +1491,7 @@ STRICT RULES:
       snack3: 'Spuntino Serale',
       snack4: 'Spuntino Notturno'
     };
-    return labels[type] || type;
+    return labels[normalized] || type;
   };
 
   const dailyTotals = todaysMeals.reduce((totals, meal) => ({
