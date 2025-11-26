@@ -307,32 +307,35 @@ export default function MealsPage() {
   useEffect(() => {
     const checkRemainingGenerations = async () => {
       if (!user?.id) return;
-      
+
       const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
       const limit = getGenerationLimit(user.subscription_plan, 'meal');
-      
+
       if (limit === -1) {
         setRemainingGenerations(-1); // Illimitato
         setGenerationLimitReached(false);
         return;
       }
-      
+
       try {
-        const generations = await base44.entities.PlanGeneration.filter({
-          user_id: user.id,
-          plan_type: 'meal',
-          generation_month: currentMonth
-        });
-        
+        // Fetch tutte le generazioni dell'utente e filtra localmente
+        const allGenerations = await base44.entities.PlanGeneration.list();
+        const generations = allGenerations.filter(g => 
+          g.user_id === user.id && 
+          g.plan_type === 'meal' && 
+          g.generation_month === currentMonth
+        );
+
         const used = generations.length;
         const remaining = Math.max(0, limit - used);
+        console.log(`📊 Generazioni meal usate: ${used}/${limit}, rimanenti: ${remaining}`);
         setRemainingGenerations(remaining);
         setGenerationLimitReached(remaining === 0);
       } catch (error) {
         console.error('Error checking generations:', error);
       }
     };
-    
+
     checkRemainingGenerations();
   }, [user]);
 
