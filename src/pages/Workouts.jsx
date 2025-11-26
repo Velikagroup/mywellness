@@ -698,6 +698,38 @@ ${selectedDays.length > 0 ? `
         throw new Error(`L'AI ha generato ${response.workout_plans?.length || 0} piani invece di 7.`);
       }
 
+      // Valida che i giorni selezionati abbiano workout e non riposo
+      const workoutDaysGenerated = response.workout_plans.filter(p => p.workout_type !== 'rest').map(p => p.day_of_week);
+      const restDaysGenerated = response.workout_plans.filter(p => p.workout_type === 'rest').map(p => p.day_of_week);
+      
+      console.log(`📋 AI ha generato workout per: ${workoutDaysGenerated.join(', ')}`);
+      console.log(`📋 AI ha generato riposo per: ${restDaysGenerated.join(', ')}`);
+      
+      // Verifica se l'AI ha rispettato i giorni selezionati
+      const missingWorkoutDays = selectedDays.filter(d => !workoutDaysGenerated.includes(d));
+      if (missingWorkoutDays.length > 0) {
+        console.warn(`⚠️ L'AI ha mancato questi giorni workout: ${missingWorkoutDays.join(', ')}. Correggo automaticamente...`);
+        
+        // Correggi automaticamente: per ogni giorno mancante, cambia il tipo da rest a workout
+        for (const plan of response.workout_plans) {
+          if (missingWorkoutDays.includes(plan.day_of_week) && plan.workout_type === 'rest') {
+            console.log(`🔧 Correzione: ${plan.day_of_week} da rest a workout`);
+            // Trova un workout esistente da copiare come template
+            const templateWorkout = response.workout_plans.find(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
+            if (templateWorkout) {
+              plan.workout_type = templateWorkout.workout_type;
+              plan.exercises = [...templateWorkout.exercises];
+              plan.warm_up = [...(templateWorkout.warm_up || [])];
+              plan.cool_down = [...(templateWorkout.cool_down || [])];
+              plan.total_duration = templateWorkout.total_duration;
+              plan.calories_burned = templateWorkout.calories_burned;
+              plan.difficulty_level = templateWorkout.difficulty_level;
+              plan.plan_name = `Allenamento ${plan.day_of_week.charAt(0).toUpperCase() + plan.day_of_week.slice(1)}`;
+            }
+          }
+        }
+      }
+
       const allExerciseNamesFromDB = new Set(availableExercises.map(e => e.name.toLowerCase()));
       
       let invalidExercisesCount = 0;
