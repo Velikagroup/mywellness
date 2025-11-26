@@ -986,6 +986,76 @@ ${selectedDays.length > 0 ? `
         console.log(`📋 Giorni di riposo: ${response.workout_plans.filter(p => p.workout_type === 'rest').map(p => p.day_of_week).join(', ')}`);
       }
 
+      // 🔧 POST-PROCESSING: Aggiungi intensity_tips PRIMA di salvare
+      for (const plan of response.workout_plans) {
+        if (plan.exercises && Array.isArray(plan.exercises)) {
+          for (const exercise of plan.exercises) {
+            // Aggiungi intensity_tips se mancanti
+            if (!exercise.intensity_tips || !Array.isArray(exercise.intensity_tips) || exercise.intensity_tips.length === 0) {
+              console.warn(`⚠️ Esercizio "${exercise.name}" senza intensity_tips - generazione automatica...`);
+              
+              // Genera intensity_tips di default basati sul tipo di esercizio
+              const exerciseNameLower = (exercise.name || '').toLowerCase();
+              const equipmentLower = (exercise.equipment || '').toLowerCase();
+              
+              const isWeighted = ['bilanciere', 'manubri', 'manubrio', 'kettlebell', 'macchina', 'cable', 'cavo', 'press', 'curl', 'row'].some(eq => 
+                exerciseNameLower.includes(eq) || equipmentLower.includes(eq)
+              );
+              const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'affondi', 'squat'].some(kw => 
+                exerciseNameLower.includes(kw) && !exerciseNameLower.includes('manubri') && !exerciseNameLower.includes('bilanciere')
+              );
+              const isIsometric = ['plank', 'isometr', 'hold', 'tenuta', 'wall sit'].some(kw => 
+                exerciseNameLower.includes(kw)
+              );
+              const isExplosive = ['jump', 'box', 'salto', 'thruster', 'clean', 'snatch', 'swing'].some(kw => 
+                exerciseNameLower.includes(kw)
+              );
+              
+              if (isIsometric) {
+                exercise.intensity_tips = [
+                  "Quando inizi a tremare, hai raggiunto l'intensità giusta",
+                  "Se riesci a tenere oltre 60 secondi facilmente, aggiungi peso o variante più difficile",
+                  "Mantieni la respirazione costante durante tutta la tenuta"
+                ];
+              } else if (isExplosive) {
+                exercise.intensity_tips = [
+                  "Concentrati sulla velocità e potenza del movimento",
+                  "Recupera completamente tra le serie per mantenere l'esplosività",
+                  "Se perdi velocità, riduci il carico o le ripetizioni"
+                ];
+              } else if (isWeighted) {
+                exercise.intensity_tips = [
+                  "Usa un carico pari al 70-75% del tuo massimale",
+                  "Le ultime 2-3 ripetizioni devono essere impegnative ma con forma corretta",
+                  "RPE 7-8: dovresti riuscire a fare altre 2-3 ripetizioni"
+                ];
+              } else if (isBodyweight) {
+                exercise.intensity_tips = [
+                  "Se troppo facile, rallenta la fase eccentrica (discesa) a 3 secondi",
+                  "Dovresti sentire bruciore muscolare nelle ultime 3-4 ripetizioni",
+                  "Se troppo difficile, riduci le ripetizioni mantenendo la forma perfetta"
+                ];
+              } else {
+                exercise.intensity_tips = [
+                  "Scegli un carico che renda le ultime ripetizioni impegnative",
+                  "RPE 7-8: dovresti poter fare ancora 2-3 ripetizioni a fine serie",
+                  "Mantieni sempre una forma corretta, riducendo il carico se necessario"
+                ];
+              }
+              console.log(`✅ Aggiunti intensity_tips a "${exercise.name}":`, exercise.intensity_tips);
+            }
+            
+            // Assicurati che muscle_groups e difficulty siano presenti
+            if (!exercise.muscle_groups || !Array.isArray(exercise.muscle_groups)) {
+              exercise.muscle_groups = [];
+            }
+            if (!exercise.difficulty) {
+              exercise.difficulty = trainingData.fitness_experience || 'intermediate';
+            }
+          }
+        }
+      }
+
       updateProgress(75, "Rimozione piani precedenti...");
       
       // ✅ FIX: Fetch TUTTI i piani esistenti per l'utente e cancellali
