@@ -404,39 +404,31 @@ Sii conciso ma dettagliato (max 200 parole).`,
 
   const handleDownloadInvoice = async (transaction) => {
     try {
-      let pdfUrl = transaction.invoice_pdf_url;
-      
-      // Se non c'è l'URL salvato, recuperalo dal backend
-      if (!pdfUrl) {
-        const response = await base44.functions.invoke('downloadStripeInvoice', {
-          transactionId: transaction.id
-        });
+      // Genera fattura personalizzata con dati utente e IVA
+      const response = await base44.functions.invoke('generateInvoicePDF', {
+        transactionId: transaction.id
+      });
 
-        const data = response.data || response;
+      const data = response.data || response;
 
-        if (data.success && data.pdfUrl) {
-          pdfUrl = data.pdfUrl;
+      if (data.success && data.invoiceHTML) {
+        // Apri la fattura HTML in una nuova finestra
+        const newWindow = window.open('', '_blank');
+        if (newWindow) {
+          newWindow.document.write(data.invoiceHTML);
+          newWindow.document.close();
         } else {
-          alert(data.message || 'Fattura non disponibile per questa transazione');
-          return;
+          // Fallback per iOS/Safari che blocca popup
+          const blob = new Blob([data.invoiceHTML], { type: 'text/html' });
+          const url = URL.createObjectURL(blob);
+          window.location.href = url;
         }
-      }
-
-      // Detect iOS
-      const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
-                    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-      
-      if (isIOS) {
-        // iOS: usa redirect diretto - l'unico modo affidabile
-        window.location.href = pdfUrl;
       } else {
-        // Altri browser: apri in nuova tab
-        window.open(pdfUrl, '_blank', 'noopener,noreferrer');
+        alert(data.error || 'Errore nella generazione della fattura');
       }
     } catch (error) {
-      console.error('Error downloading invoice:', error);
-      const errorMsg = error?.response?.data?.message || 'Errore nel scaricare la fattura';
-      alert(errorMsg);
+      console.error('Error generating invoice:', error);
+      alert('Errore nella generazione della fattura');
     }
   };
 
