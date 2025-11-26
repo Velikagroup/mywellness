@@ -109,6 +109,14 @@ export default function ExerciseCard({
               </div>
             )}
             
+            {/* Mostra intensity tips direttamente sulla card se presenti */}
+            {exercise.intensity_tips?.length > 0 && (
+              <div className="mb-3 bg-orange-50 border border-orange-200 rounded-lg p-2">
+                <p className="text-xs font-semibold text-orange-700 mb-1">💪 Carico consigliato:</p>
+                <p className="text-xs text-orange-800">{exercise.intensity_tips[0]}</p>
+              </div>
+            )}
+
             <div className="flex items-center gap-2 flex-wrap">
               {exercise.difficulty && (
                 <span className={`text-xs px-2 py-1 rounded border font-semibold ${difficultyColors[exercise.difficulty] || 'bg-gray-100 text-gray-700'}`}>
