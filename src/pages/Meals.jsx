@@ -1385,17 +1385,7 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesT
         setAddedDays([]);
         
         // Aggiorna contatore generazioni
-        const limit = getGenerationLimit(user.subscription_plan, 'meal');
-        if (limit !== -1) {
-          const generations = await base44.entities.PlanGeneration.filter({
-            user_id: user.id,
-            plan_type: 'meal',
-            generation_month: currentMonth
-          });
-          const remaining = Math.max(0, limit - generations.length);
-          setRemainingGenerations(remaining);
-          setGenerationLimitReached(remaining === 0);
-        }
+        await checkRemainingGenerations();
         
         alert(`✅ Piano nutrizionale generato con successo!`);
         

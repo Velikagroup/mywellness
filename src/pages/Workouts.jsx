@@ -276,67 +276,61 @@ export default function Workouts() {
     loadWorkoutLogs();
   }, [trainingData.user_id, workoutPlans]);
 
-  // Calcola generazioni rimanenti
-  useEffect(() => {
-    const checkRemainingGenerations = async () => {
-      if (!trainingData.user_id || !trainingData.subscription_plan) return;
+  const checkRemainingGenerations = useCallback(async () => {
+    if (!trainingData.user_id || !trainingData.subscription_plan) return;
 
-      const currentMonth = new Date().toISOString().slice(0, 7);
-      const limit = getGenerationLimit(trainingData.subscription_plan, 'workout');
+    const currentMonth = new Date().toISOString().slice(0, 7);
+    const limit = getGenerationLimit(trainingData.subscription_plan, 'workout');
 
-      if (limit === -1) { // Unlimited
-        setRemainingGenerations(-1);
-        setGenerationLimitReached(false);
-        return;
-      }
+    if (limit === -1) { // Unlimited
+      setRemainingGenerations(-1);
+      setGenerationLimitReached(false);
+      return;
+    }
 
-      if (limit === 0) // No access
-      {
-        setRemainingGenerations(0);
-        setGenerationLimitReached(true);
-        return;
-      }
+    if (limit === 0) { // No access
+      setRemainingGenerations(0);
+      setGenerationLimitReached(true);
+      return;
+    }
 
-      try {
-        // ✅ FIX: Usa .list() e filtra localmente per evitare problemi RLS
-        const [allGenerations, allCredits] = await Promise.all([
-          base44.entities.PlanGeneration.list(),
-          base44.entities.PlanGenerationCredit.list()
-        ]);
-        
-        // Filtra localmente per user_id, plan_type e mese corrente
-        const generations = allGenerations.filter(g => 
-          g.user_id === trainingData.user_id && 
-          g.plan_type === 'workout' && 
-          g.generation_month === currentMonth
-        );
+    try {
+      const [allGenerations, allCredits] = await Promise.all([
+        base44.entities.PlanGeneration.list(),
+        base44.entities.PlanGenerationCredit.list()
+      ]);
+      
+      const generations = allGenerations.filter(g => 
+        g.user_id === trainingData.user_id && 
+        g.plan_type === 'workout' && 
+        g.generation_month === currentMonth
+      );
 
-        // ✅ FIX: Filtra crediti localmente
-        const extraCredits = allCredits.filter(c => 
-          c.user_id === trainingData.user_id && 
-          c.plan_type === 'workout'
-        );
+      const extraCredits = allCredits.filter(c => 
+        c.user_id === trainingData.user_id && 
+        c.plan_type === 'workout'
+      );
 
-        // Calcola crediti extra disponibili
-        const extraCreditsAvailable = extraCredits
-          .filter(c => !c.expiration_month || c.expiration_month >= currentMonth)
-          .reduce((sum, c) => sum + c.credits_amount, 0);
-        
-        console.log(`📊 Workout credits: limit=${limit}, used=${generations.length}, extra=${extraCreditsAvailable}`);
+      const extraCreditsAvailable = extraCredits
+        .filter(c => !c.expiration_month || c.expiration_month >= currentMonth)
+        .reduce((sum, c) => sum + c.credits_amount, 0);
+      
+      console.log(`📊 Workout credits: limit=${limit}, used=${generations.length}, extra=${extraCreditsAvailable}`);
 
-        const used = generations.length;
-        const totalLimit = limit + extraCreditsAvailable;
-        const remaining = Math.max(0, totalLimit - used);
+      const used = generations.length;
+      const totalLimit = limit + extraCreditsAvailable;
+      const remaining = Math.max(0, totalLimit - used);
 
-        setRemainingGenerations(remaining);
-        setGenerationLimitReached(remaining === 0);
-      } catch (error) {
-        console.error('Error checking workout generations:', error);
-      }
-    };
-
-    checkRemainingGenerations();
+      setRemainingGenerations(remaining);
+      setGenerationLimitReached(remaining === 0);
+    } catch (error) {
+      console.error('Error checking workout generations:', error);
+    }
   }, [trainingData.user_id, trainingData.subscription_plan]);
+
+  useEffect(() => {
+    checkRemainingGenerations();
+  }, [checkRemainingGenerations]);
 
   useEffect(() => {
     setAdjustedWorkout(null);
@@ -550,6 +544,7 @@ CRITICAL RULES:
 3. PRIORITIZE "PRIMARI" exercises for user's goal: ${trainingData.fitness_goal}
 4. You can use "SECONDARI" exercises for variety, but focus on PRIMARI for the main lifts/movements.
 5. ADAPT the workout structure to match the preferred training style: ${trainingData.workout_style || 'standard'}
+6. MANDATORY WORKOUT DAYS: The user has selected ${selectedDays.join(', ')} as their workout days. YOU MUST create a full workout plan for these days. ALL OTHER DAYS must be rest days. Do NOT assign rest days on the user's selected workout days.
 
 EXERCISE DATABASE (${availableExercises.length} available):
 ${exerciseListForAI}
@@ -751,18 +746,7 @@ ${selectedDays.length > 0 ? `
       queryClient.invalidateQueries({ queryKey: ['workoutPlans'] });
       
       // Aggiorna contatore generazioni
-      const limit = getGenerationLimit(trainingData.subscription_plan, 'workout');
-      if (limit !== -1 && limit !== 0) {
-        const allGenerations = await base44.entities.PlanGeneration.list();
-        const generations = allGenerations.filter(g => 
-          g.user_id === trainingData.user_id && 
-          g.plan_type === 'workout' && 
-          g.generation_month === currentMonth
-        );
-        const remaining = Math.max(0, limit - generations.length);
-        setRemainingGenerations(remaining);
-        setGenerationLimitReached(remaining === 0);
-      }
+      await checkRemainingGenerations();
 
       setExerciseSets({});
 
