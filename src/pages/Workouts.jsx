@@ -100,13 +100,16 @@ export default function Workouts() {
   const [exerciseSets, setExerciseSets] = useState({}); // { "Squat con Manubri": [1,2,3], "Panca Piana": [1,2] }
 
   // Query per workout plans
-  const { data: workoutPlans = [], isLoading: isLoadingWorkouts } = useQuery({
+  const { data: workoutPlans = [], isLoading: isLoadingWorkouts, refetch: refetchWorkouts } = useQuery({
     queryKey: ['workoutPlans', trainingData.user_id],
     queryFn: async () => {
       if (!trainingData.user_id) return [];
-      return await base44.entities.WorkoutPlan.filter({ user_id: trainingData.user_id });
+      const plans = await base44.entities.WorkoutPlan.filter({ user_id: trainingData.user_id });
+      console.log('📋 Loaded workout plans:', plans.length, plans.map(p => p.day_of_week));
+      return plans;
     },
     enabled: !!trainingData.user_id,
+    staleTime: 0, // Always refetch
   });
 
   // Query per esercizi dal database
