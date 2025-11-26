@@ -734,6 +734,8 @@ ${selectedDays.length > 0 ? `
         response.workout_plans = [];
       }
 
+      console.log(`🔍 AI ha restituito ${response.workout_plans.length} piani. Giorni: ${response.workout_plans.map(p => p.day_of_week).join(', ')}`);
+
       // Se l'AI non ha generato 7 piani, completiamo automaticamente i mancanti
       if (response.workout_plans.length < 7) {
         console.warn(`⚠️ L'AI ha generato solo ${response.workout_plans.length} piani. Completamento automatico...`);
