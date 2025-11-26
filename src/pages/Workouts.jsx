@@ -732,8 +732,8 @@ ${selectedDays.length > 0 ? `
                             items: { type: "string" },
                             description: "2-4 consigli specifici sul carico/intensità (% massimale, RPE, o indicazioni pratiche)"
                           }
-                          },
-                          required: ["name", "sets", "reps", "rest", "intensity_tips"]
+                        },
+                        required: ["name", "sets", "reps", "rest", "intensity_tips"]
                       } 
                     },
                     warm_up: { 
