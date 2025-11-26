@@ -259,8 +259,9 @@ export default function MealsPage() {
     queryFn: async () => {
       if (!user?.id) return [];
       console.log('🔍 Fetching meal plans for user_id:', user.id);
-      const plans = await base44.entities.MealPlan.list();
-      console.log('📦 All meal plans fetched:', plans.length, plans.map(p => ({ id: p.id, user_id: p.user_id, name: p.name })));
+      // ✅ USA FILTER invece di LIST per matchare l'RLS rule
+      const plans = await base44.entities.MealPlan.filter({ user_id: user.id });
+      console.log('📦 Meal plans fetched:', plans.length);
       return plans;
     },
     enabled: !!user?.id,
