@@ -109,11 +109,18 @@ export default function ExerciseCard({
               </div>
             )}
             
-            {/* Mostra intensity tips direttamente sulla card se presenti */}
-            {exercise.intensity_tips?.length > 0 && (
-              <div className="mb-3 bg-orange-50 border border-orange-200 rounded-lg p-2">
-                <p className="text-xs font-semibold text-orange-700 mb-1">💪 Carico consigliato:</p>
-                <p className="text-xs text-orange-800">{exercise.intensity_tips[0]}</p>
+            {/* Mostra intensity tips direttamente sulla card - SEMPRE visibili */}
+            {exercise.intensity_tips && exercise.intensity_tips.length > 0 && (
+              <div className="mb-3 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-3">
+                <p className="text-xs font-bold text-orange-800 mb-2">🎯 Intensità consigliata:</p>
+                <ul className="space-y-1">
+                  {exercise.intensity_tips.slice(0, 2).map((tip, idx) => (
+                    <li key={idx} className="text-xs text-orange-700 flex items-start gap-1">
+                      <span className="flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
               </div>
             )}
 
