@@ -966,6 +966,9 @@ ${selectedDays.length > 0 ? `
       if (exercisesWithoutIntensityTips > 0) {
         console.log(`🔧 Post-processing: aggiunti intensity_tips a ${exercisesWithoutIntensityTips} esercizi`);
       }
+      
+      // Log per debug
+      console.log('📋 Esempio primo esercizio dopo post-processing:', JSON.stringify(response.workout_plans[0]?.exercises?.[0], null, 2));
 
       if (invalidExercisesCount > 0) {
         console.warn(`⚠️ L'AI ha suggerito ${invalidExercisesCount} esercizi che non erano nel database o non erano disponibili. Si consiglia di rigenerare il piano.`);
