@@ -686,7 +686,7 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
                   <Button
                     onClick={() => setCreditType('meal')}
                     variant={creditType === 'meal' ? 'default' : 'outline'}
-                    className={creditType === 'meal' ? 'bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]' : ''}
+                    className={creditType === 'meal' ? 'bg-[#26847F] hover:bg-[#1f6b66] text-white' : ''}
                   >
                     <Utensils className="w-4 h-4 mr-2" />
                     Nutrizionale
@@ -694,7 +694,7 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
                   <Button
                     onClick={() => setCreditType('workout')}
                     variant={creditType === 'workout' ? 'default' : 'outline'}
-                    className={creditType === 'workout' ? 'bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]' : ''}
+                    className={creditType === 'workout' ? 'bg-[#26847F] hover:bg-[#1f6b66] text-white' : ''}
                   >
                     <Dumbbell className="w-4 h-4 mr-2" />
                     Allenamento
