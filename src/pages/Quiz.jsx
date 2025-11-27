@@ -207,20 +207,15 @@ export default function Quiz() {
 
             console.log('✅ Setup completed');
 
-            // 📧 INVIA EMAIL DI BENVENUTO TRIAL
+            // 📧 INVIA EMAIL DI BENVENUTO STANDARD FREE
             try {
-              console.log('📧 Sending trial welcome email...');
-              await base44.functions.invoke('sendEmailUnified', {
+              console.log('📧 Sending Standard Free welcome email...');
+              await base44.functions.invoke('sendStandardFreeWelcome', {
                 userId: currentUser.id,
                 userEmail: currentUser.email,
-                templateId: 'trial_welcome',
-                variables: {
-                  user_name: currentUser.full_name || 'Utente'
-                },
-                language: 'it',
-                triggerSource: 'Quiz_completeSetupAfterLogin'
+                userName: currentUser.full_name || 'Utente'
               });
-              console.log('✅ Trial welcome email sent');
+              console.log('✅ Standard Free welcome email sent');
             } catch (emailError) {
               console.error('⚠️ Email error (non-critical):', emailError);
             }
@@ -641,20 +636,15 @@ export default function Quiz() {
           
           console.log('✅ Trial status set (7 days, dashboard only)');
           
-          // 📧 INVIA EMAIL DI BENVENUTO TRIAL
+          // 📧 INVIA EMAIL DI BENVENUTO STANDARD FREE
           try {
-            console.log('📧 Sending trial welcome email...');
-            await base44.functions.invoke('sendEmailUnified', {
+            console.log('📧 Sending Standard Free welcome email...');
+            await base44.functions.invoke('sendStandardFreeWelcome', {
               userId: user.id,
               userEmail: user.email,
-              templateId: 'trial_welcome',
-              variables: {
-                user_name: user.full_name || 'Utente'
-              },
-              language: 'it',
-              triggerSource: 'Quiz_handleRevealBodyFat'
+              userName: user.full_name || 'Utente'
             });
-            console.log('✅ Trial welcome email sent');
+            console.log('✅ Standard Free welcome email sent');
           } catch (emailError) {
             console.error('⚠️ Email error (non-critical):', emailError);
           }
