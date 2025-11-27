@@ -34,7 +34,7 @@ Deno.serve(async (req) => {
         }
 
         const template = templates[0];
-        const appUrl = 'https://app.projectmywellness.com';
+        const appUrl = 'https://projectmywellness.com';
 
         // Sostituisci le variabili nel template
         const greeting = template.greeting.replace('{user_name}', user.full_name || 'Utente');

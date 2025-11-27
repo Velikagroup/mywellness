@@ -203,7 +203,7 @@ function generateBroadcastEmail(broadcast, user) {
     const variables = {
         user_name: user.full_name || 'Utente',
         user_email: user.email,
-        app_url: Deno.env.get('APP_URL') || 'https://app.mywellness.it'
+        app_url: 'https://projectmywellness.com'
     };
 
     const replacedGreeting = replaceVars(broadcast.greeting, variables);
