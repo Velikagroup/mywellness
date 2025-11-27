@@ -1,13 +1,11 @@
-
 import React, { useState, useEffect, useRef } from 'react';
-import { BlogPost } from '@/entities/BlogPost';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Link, useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User } from '@/entities/User';
 import { Search, Clock, ArrowRight } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { base44 } from '@/api/base44Client';
 
 export default function Blog() {
   const navigate = useNavigate();
@@ -91,7 +89,7 @@ export default function Blog() {
 
   const loadPosts = async () => {
     try {
-      const fetchedPosts = await BlogPost.filter({ published: true }, '-created_date', 100);
+      const fetchedPosts = await base44.entities.BlogPost.filter({ published: true }, '-created_date', 100);
       setPosts(fetchedPosts);
       setFilteredPosts(fetchedPosts);
     } catch (error) {
@@ -130,7 +128,7 @@ export default function Blog() {
 
   const handleLogin = async () => {
     const quizUrl = window.location.origin + createPageUrl('Quiz');
-    await User.loginWithRedirect(quizUrl);
+    await base44.auth.redirectToLogin(quizUrl);
   };
 
   const handleArticleClick = (post) => {

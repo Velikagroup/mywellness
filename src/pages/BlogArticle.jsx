@@ -1,10 +1,7 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { BlogPost } from '@/entities/BlogPost';
 import { Button } from '@/components/ui/button';
 import { createPageUrl } from '@/utils';
-import { User } from '@/entities/User';
 import { ArrowLeft, Clock, Calendar } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import { base44 } from '@/api/base44Client';
@@ -30,10 +27,10 @@ export default function BlogArticle() {
         return;
       }
 
-      const articles = await BlogPost.filter({ slug, published: true });
+      const articles = await base44.entities.BlogPost.filter({ slug, published: true });
       if (articles.length > 0) {
         setArticle(articles[0]);
-        await BlogPost.update(articles[0].id, { views: (articles[0].views || 0) + 1 });
+        await base44.entities.BlogPost.update(articles[0].id, { views: (articles[0].views || 0) + 1 });
       } else {
         navigate(createPageUrl('Blog'));
       }
