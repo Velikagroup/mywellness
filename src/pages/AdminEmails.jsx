@@ -212,7 +212,7 @@ export default function AdminEmails() {
       const variables = {
         user_name: user.full_name || 'Mario Rossi',
         user_email: user.email,
-        app_url: window.location.origin
+        app_url: 'https://projectmywellness.com'
       };
 
       const replaceVars = (text, vars) => {
