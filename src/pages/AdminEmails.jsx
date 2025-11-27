@@ -1120,6 +1120,15 @@ ${ctaHtml}
                   </div>
 
                   <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">📧 Preview Email</Label>
+                    <div className="p-4 bg-white rounded-lg border-2 border-gray-200 max-h-64 overflow-y-auto">
+                      <div className="text-sm text-gray-900 whitespace-pre-wrap">
+                        {(editingContent.main_content || '').replace(/\{user_name\}/g, 'Mario Rossi').replace(/\{user_email\}/g, 'mario@example.com').replace(/\{app_url\}/g, 'https://app.projectmywellness.com')}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div>
                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA</Label>
                     <Input
                       value={editingContent.call_to_action_text || ''}
