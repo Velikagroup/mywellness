@@ -52,7 +52,7 @@ async function sendViaSendGrid(apiKey, emailData) {
 }
 
 function generateEmailHtml(template, variables) {
-    const appUrl = 'https://app.projectmywellness.com';
+    const appUrl = 'https://projectmywellness.com';
     
     // Sostituisci variabili
     let greeting = template.greeting || '';
@@ -215,7 +215,7 @@ Deno.serve(async (req) => {
         const { html, subject } = generateEmailHtml(template, {
             user_name: variables.user_name || 'Utente',
             user_email: userEmail,
-            app_url: 'https://app.projectmywellness.com',
+            app_url: 'https://projectmywellness.com',
             ...variables
         });
 
