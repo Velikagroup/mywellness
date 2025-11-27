@@ -1106,6 +1106,17 @@ ${ctaHtml}
                   </div>
 
                   <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Preview Text</Label>
+                    <Input
+                      value={editingContent.preview_text || ''}
+                      onChange={(e) => setEditingContent({...editingContent, preview_text: e.target.value})}
+                      placeholder="Testo visibile sotto l'oggetto nella inbox..."
+                      className="h-12"
+                    />
+                    <p className="text-xs text-gray-500 mt-1">Appare sotto l'oggetto prima di aprire l'email</p>
+                  </div>
+
+                  <div>
                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
                     <Textarea
                       value={editingContent.main_content || ''}
@@ -1181,6 +1192,12 @@ ${ctaHtml}
                         <p className="text-xs text-gray-500 mb-1">Oggetto:</p>
                         <p className="text-sm font-bold text-gray-900">{previewEmail.template.subject}</p>
                       </div>
+                      {previewEmail.template.preview_text && (
+                        <div className="pt-3 border-t border-gray-300">
+                          <p className="text-xs text-gray-500 mb-1">Preview Text:</p>
+                          <p className="text-sm text-gray-600 italic">{previewEmail.template.preview_text}</p>
+                        </div>
+                      )}
                       <div className="pt-3 border-t border-gray-300">
                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
                         <div className="text-sm text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
@@ -1484,6 +1501,17 @@ ${ctaHtml}
                 placeholder="Es: 🎉 Novità MyWellness - Nuove Funzionalità!"
                 className="h-12"
               />
+            </div>
+
+            <div>
+              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Preview Text</Label>
+              <Input
+                value={broadcastData.preview_text || ''}
+                onChange={(e) => setBroadcastData({...broadcastData, preview_text: e.target.value})}
+                placeholder="Testo visibile sotto l'oggetto nella inbox..."
+                className="h-12"
+              />
+              <p className="text-xs text-gray-500 mt-1">Appare sotto l'oggetto prima di aprire l'email</p>
             </div>
 
             <div>
