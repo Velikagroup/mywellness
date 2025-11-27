@@ -723,7 +723,7 @@ export default function AdminCoupons() {
                           </TableCell>
                           <TableCell className="text-sm">{coupon.expires_at ? format(new Date(coupon.expires_at), 'dd/MM/yyyy') : 'Mai'}</TableCell>
                           <TableCell className="text-right font-semibold text-blue-600">
-                            {stats.uses > 0 ? stats.uses : '-'}
+                            {coupon.used_by ? '1' : '-'}
                           </TableCell>
                           <TableCell className="text-right font-semibold text-green-600">
                             {stats.revenue > 0 ? `€${stats.revenue.toFixed(2)}` : '-'}
