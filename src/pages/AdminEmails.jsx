@@ -219,17 +219,17 @@ export default function AdminEmails() {
       };
 
       const replaceVars = (text, vars) => {
+        if (!text) return '';
         let result = text;
         Object.keys(vars).forEach(key => {
           const regex = new RegExp(`\\{${key}\\}`, 'g');
-          result = result.replace(regex, vars[key]);
+          result = result.replace(regex, vars[key] || '');
         });
         return result;
       };
 
-      const replacedGreeting = replaceVars(template.greeting, variables);
-      const replacedMainContent = replaceVars(template.main_content, variables);
-      const replacedSubject = replaceVars(template.subject, variables);
+      const replacedMainContent = replaceVars(template.main_content || '', variables);
+      const replacedSubject = replaceVars(template.subject || 'Email di Test', variables);
       const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
 
       const ctaHtml = template.call_to_action_text && template.call_to_action_url ? 
@@ -274,7 +274,6 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 </tr>
 <tr>
 <td class="content-cell">
-<p style="color: #111827; font-size: 16px;">${replacedGreeting}</p>
 <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
 ${ctaHtml}
 </td>
