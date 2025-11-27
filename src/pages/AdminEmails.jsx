@@ -73,6 +73,7 @@ export default function AdminEmails() {
   const [broadcasts, setBroadcasts] = useState([]);
   const [editingBroadcast, setEditingBroadcast] = useState(null);
   const [estimatedRecipients, setEstimatedRecipients] = useState(null);
+  const [testEmailAddress, setTestEmailAddress] = useState('');
 
   const loadEmailTemplates = async () => {
     try {
@@ -195,12 +196,14 @@ export default function AdminEmails() {
       return;
     }
 
-    if (!user?.email) {
-      alert('❌ Impossibile determinare l\'indirizzo email dell\'utente corrente per inviare il test.');
+    const targetEmail = testEmailAddress.trim() || user?.email;
+    
+    if (!targetEmail) {
+      alert('❌ Inserisci un indirizzo email per il test.');
       return;
     }
 
-    if (!confirm(`Inviare email di test a ${user.email}?`)) {
+    if (!confirm(`Inviare email di test a ${targetEmail}?`)) {
       return;
     }
 
@@ -210,8 +213,8 @@ export default function AdminEmails() {
       const replyToEmail = template.reply_to_email || 'no-reply@projectmywellness.com';
       
       const variables = {
-        user_name: user.full_name || 'Mario Rossi',
-        user_email: user.email,
+        user_name: user?.full_name || 'Mario Rossi',
+        user_email: targetEmail,
         app_url: 'https://projectmywellness.com'
       };
 
@@ -293,7 +296,7 @@ ${ctaHtml}
 </html>`;
 
       await base44.functions.invoke('sendTestEmailDirect', {
-        to: user.email,
+        to: targetEmail,
         from_email: fromEmail,
         from_name: 'MyWellness',
         reply_to: replyToEmail,
@@ -301,7 +304,7 @@ ${ctaHtml}
         html: htmlBody
       });
 
-      alert(`✅ Email di test inviata con successo a ${user.email}!`);
+      alert(`✅ Email di test inviata con successo a ${targetEmail}!`);
     } catch (error) {
       console.error('Error sending test email:', error);
       alert('❌ Errore durante l\'invio dell\'email di test: ' + error.message);
@@ -1222,10 +1225,20 @@ ${ctaHtml}
                     </div>
                   </div>
 
-                  <div className="flex gap-3 pt-4">
+                  <div className="space-y-3 pt-4">
+                    <div>
+                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">Email di Test</Label>
+                      <Input
+                        type="email"
+                        value={testEmailAddress}
+                        onChange={(e) => setTestEmailAddress(e.target.value)}
+                        placeholder={user?.email || 'Inserisci email...'}
+                        className="h-12"
+                      />
+                    </div>
                     <Button
                       onClick={handleSendTestEmail}
-                      className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                      className="w-full bg-blue-600 hover:bg-blue-700 text-white"
                     >
                       <Send className="w-4 h-4 mr-2" />
                       📧 Invia Email di Test
