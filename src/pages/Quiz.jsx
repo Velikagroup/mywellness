@@ -204,15 +204,35 @@ export default function Quiz() {
             }
             
             await base44.auth.updateMe(updateData);
-            
-            console.log('✅ Setup completed, redirecting to Dashboard...');
-            
+
+            console.log('✅ Setup completed');
+
+            // 📧 INVIA EMAIL DI BENVENUTO TRIAL
+            try {
+              console.log('📧 Sending trial welcome email...');
+              await base44.functions.invoke('sendEmailUnified', {
+                userId: currentUser.id,
+                userEmail: currentUser.email,
+                templateId: 'trial_welcome',
+                variables: {
+                  user_name: currentUser.full_name || 'Utente'
+                },
+                language: 'it',
+                triggerSource: 'Quiz_completeSetupAfterLogin'
+              });
+              console.log('✅ Trial welcome email sent');
+            } catch (emailError) {
+              console.error('⚠️ Email error (non-critical):', emailError);
+            }
+
+            console.log('🔄 Redirecting to Dashboard...');
+
             // Pulisci localStorage PRIMA del redirect
             localStorage.removeItem('quizDataToSave');
             localStorage.removeItem('needsTrialSetup');
             localStorage.removeItem('quizData');
             localStorage.removeItem('affiliateCode');
-            
+
             // Vai direttamente alla Dashboard
             navigate(createPageUrl('Dashboard'), { replace: true });
             return;
@@ -620,6 +640,24 @@ export default function Quiz() {
           await base44.auth.updateMe(updateData);
           
           console.log('✅ Trial status set (7 days, dashboard only)');
+          
+          // 📧 INVIA EMAIL DI BENVENUTO TRIAL
+          try {
+            console.log('📧 Sending trial welcome email...');
+            await base44.functions.invoke('sendEmailUnified', {
+              userId: user.id,
+              userEmail: user.email,
+              templateId: 'trial_welcome',
+              variables: {
+                user_name: user.full_name || 'Utente'
+              },
+              language: 'it',
+              triggerSource: 'Quiz_handleRevealBodyFat'
+            });
+            console.log('✅ Trial welcome email sent');
+          } catch (emailError) {
+            console.error('⚠️ Email error (non-critical):', emailError);
+          }
         } catch (error) {
           console.error('Error setting trial:', error);
         }
