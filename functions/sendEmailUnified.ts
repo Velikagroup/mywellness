@@ -100,7 +100,7 @@ function generateEmailHtml(template, variables) {
                     </tr>
                     <tr>
                         <td class="content" style="padding: 40px 30px;">
-                            <div style="color: #1a5753; line-height: 1.8; font-size: 16px; white-space: pre-line;">${mainContent}</div>
+                            <div style="color: #1f2937; line-height: 1.8; font-size: 16px; white-space: pre-line;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <div style="text-align: center; margin: 30px 0;">
                                 <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">

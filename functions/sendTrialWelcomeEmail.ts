@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
                         <td class="content" style="padding: 40px 30px;">
                             <div style="margin-bottom: 30px;">
                                 <h2 style="margin: 0 0 10px 0; color: #26847F; font-size: 20px;">${greeting}</h2>
-                                <p style="margin: 0; color: #1a5753; line-height: 1.8; white-space: pre-line;">
+                                <p style="margin: 0; color: #1f2937; line-height: 1.8; white-space: pre-line;">
                                     ${mainContent}
                                 </p>
                             </div>
