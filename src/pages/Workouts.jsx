@@ -21,6 +21,7 @@ import FitnessGoalStep from "../components/quiz/FitnessGoalStep";
 import PerformanceOrientedStep from "../components/quiz/PerformanceOrientedStep";
 import WorkoutStyleStep from "../components/workouts/WorkoutStyleStep";
 import SportSpecificQuestionsStep from "../components/workouts/SportSpecificQuestionsStep";
+import StrengthLevelStep from "../components/workouts/StrengthLevelStep";
 
 import { hasFeatureAccess, getGenerationLimit, PLANS } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from '../components/meals/UpgradeModal';
