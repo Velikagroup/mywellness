@@ -1102,19 +1102,38 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   <CardContent className="space-y-4">
                     {!affiliateStats.stats.onboarding_completed ? (
                       <div className="space-y-4">
-                        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                          <p className="text-sm text-amber-900 mb-3">
-                            ⚠️ Per prelevare i tuoi crediti, devi prima connettere il tuo account Stripe Connect.
-                          </p>
-                        </div>
-                        <Button
-                          onClick={handleConnectStripe}
-                          disabled={isLoadingAffiliate}
-                          className="w-full bg-[#635BFF] hover:bg-[#5248E6] text-white"
-                        >
-                          {isLoadingAffiliate ? 'Connessione...' : 'Connetti Stripe e Inizia a Prelevare'}
-                          <ExternalLink className="w-4 h-4 ml-2" />
-                        </Button>
+                        {affiliateStats.stats.total_earned < 100 ? (
+                          <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                            <p className="text-sm text-gray-700 mb-2">
+                              🔒 Per sbloccare i prelievi, devi raggiungere almeno <strong>€100</strong> di guadagni totali.
+                            </p>
+                            <div className="w-full bg-gray-200 rounded-full h-3 mt-3">
+                              <div 
+                                className="bg-gradient-to-r from-[#26847F] to-teal-500 h-3 rounded-full transition-all"
+                                style={{ width: `${Math.min(100, (affiliateStats.stats.total_earned / 100) * 100)}%` }}
+                              ></div>
+                            </div>
+                            <p className="text-xs text-gray-500 mt-2 text-center">
+                              €{affiliateStats.stats.total_earned.toFixed(2)} / €100.00
+                            </p>
+                          </div>
+                        ) : (
+                          <>
+                            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                              <p className="text-sm text-amber-900 mb-3">
+                                ⚠️ Per prelevare i tuoi crediti, devi prima connettere il tuo account Stripe Connect.
+                              </p>
+                            </div>
+                            <Button
+                              onClick={handleConnectStripe}
+                              disabled={isLoadingAffiliate}
+                              className="w-full bg-[#635BFF] hover:bg-[#5248E6] text-white"
+                            >
+                              {isLoadingAffiliate ? 'Connessione...' : 'Connetti Stripe e Inizia a Prelevare'}
+                              <ExternalLink className="w-4 h-4 ml-2" />
+                            </Button>
+                          </>
+                        )}
                       </div>
                     ) : (
                       <div className="space-y-4">
