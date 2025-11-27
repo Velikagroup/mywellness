@@ -1703,17 +1703,26 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: `Sei un assistente clienti professionale di MyWellness, un'app di fitness e nutrizione AI.
 
+CRITICAL RULE: You MUST detect the language of the original message and respond in THE EXACT SAME LANGUAGE.
+If the message is in Italian, respond in Italian.
+If the message is in English, respond in English.
+If the message is in Spanish, respond in Spanish.
+If the message is in French, respond in French.
+If the message is in German, respond in German.
+And so on for ANY language.
+
 Migliora il seguente messaggio di risposta al cliente rendendolo:
 - Formale ma cordiale e empatico
 - Educato e professionale
 - Conciso e chiaro
 - Strutturato bene con paragrafi se necessario
 - Mantieni TUTTE le informazioni tecniche e i dettagli del messaggio originale
+- RISPONDI NELLA STESSA LINGUA DEL MESSAGGIO ORIGINALE
 
 Messaggio originale da migliorare:
 "${chat.newMessage}"
 
-Rispondi SOLO con il messaggio migliorato, senza introduzioni o spiegazioni.`,
+Rispondi SOLO con il messaggio migliorato, senza introduzioni o spiegazioni. NELLA STESSA LINGUA DEL MESSAGGIO ORIGINALE.`,
         response_json_schema: {
           type: "object",
           properties: {
