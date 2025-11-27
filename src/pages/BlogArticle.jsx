@@ -30,7 +30,12 @@ export default function BlogArticle() {
       const articles = await base44.entities.BlogPost.filter({ slug, published: true });
       if (articles.length > 0) {
         setArticle(articles[0]);
-        await base44.entities.BlogPost.update(articles[0].id, { views: (articles[0].views || 0) + 1 });
+        // Views update requires admin - skip for public users
+        try {
+          await base44.entities.BlogPost.update(articles[0].id, { views: (articles[0].views || 0) + 1 });
+        } catch (viewsError) {
+          // Ignore views update error for non-admin users
+        }
       } else {
         navigate(createPageUrl('Blog'));
       }
