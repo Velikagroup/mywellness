@@ -566,28 +566,19 @@ Deno.serve(async (req) => {
             }
         }
 
-        // 📧 INVIA EMAIL DI BENVENUTO usando sendEmailUnified
+        // 📧 INVIA EMAIL DI BENVENUTO usando sendPlanWelcome
         try {
-            console.log('📧 Sending welcome email via sendEmailUnified...');
+            console.log('📧 Sending welcome email via sendPlanWelcome...');
             
-            // Determina quale template usare
-            const templateId = skipTrial ? 'standard_subscription_welcome' : 'trial_welcome';
-            
-            const emailResponse = await base44.functions.invoke('sendEmailUnified', {
+            const emailResponse = await base44.functions.invoke('sendPlanWelcome', {
                 userId: user.id,
                 userEmail: user.email,
-                templateId: templateId,
-                variables: {
-                    user_name: user.full_name || 'Utente',
-                    plan_type: planType,
-                    billing_period: billingPeriod
-                },
-                language: 'it',
-                triggerSource: 'stripeCreateTrialSubscription'
+                userName: user.full_name || 'Utente',
+                plan: planType // base, pro, premium
             });
             
             if (emailResponse.success) {
-                console.log('✅ Welcome email sent successfully');
+                console.log(`✅ ${planType} welcome email sent successfully`);
             } else {
                 console.error('❌ Welcome email failed:', emailResponse.error);
             }
