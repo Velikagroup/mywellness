@@ -607,17 +607,19 @@ ${ctaHtml}
 
   const emailCategories = {
     critical: {
-      name: 'Critical',
-      icon: AlertCircle,
-      color: 'red',
-      emails: [
-        { id: 'trial_welcome', name: 'Standard Plan - Benvenuto', trigger: 'Completamento Trial Setup', function: 'sendTrialWelcomeEmail' },
-        { id: 'landing_new_user', name: 'Landing Offer - Nuovo Utente', trigger: 'Acquisto Landing Offer (nuovo utente)', function: 'stripeCreateOneTimePayment' },
-        { id: 'landing_existing_user', name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' },
-        { id: 'standard_subscription_welcome', name: 'Benvenuto Abbonamento Standard', trigger: 'Acquisto abbonamento standard', function: 'stripeCreateTrialSubscription' },
-        { id: 'renewal_confirmation', name: 'Conferma Rinnovo Automatico', trigger: 'Rinnovo automatico abbonamento (Stripe webhook)', function: 'sendRenewalConfirmation' }
-      ]
-    },
+        name: 'Critical',
+        icon: AlertCircle,
+        color: 'red',
+        emails: [
+          { id: 'standard_free_welcome', name: 'Benvenuto Standard Free', trigger: 'Registrazione piano gratuito', function: 'sendStandardFreeWelcome' },
+          { id: 'base_welcome', name: 'Benvenuto Piano Base', trigger: 'Acquisto piano Base €19/mese', function: 'sendPlanWelcome' },
+          { id: 'pro_welcome', name: 'Benvenuto Piano Pro', trigger: 'Acquisto piano Pro €29/mese', function: 'sendPlanWelcome' },
+          { id: 'premium_welcome', name: 'Benvenuto Piano Premium', trigger: 'Acquisto piano Premium €39/mese', function: 'sendPlanWelcome' },
+          { id: 'landing_new_user', name: 'Landing Offer - Nuovo Utente', trigger: 'Acquisto Landing Offer (nuovo utente)', function: 'stripeCreateOneTimePayment' },
+          { id: 'landing_existing_user', name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' },
+          { id: 'renewal_confirmation', name: 'Conferma Rinnovo Automatico', trigger: 'Rinnovo automatico abbonamento (Stripe webhook)', function: 'sendRenewalConfirmation' }
+        ]
+      },
     renewal: {
       name: 'Renewal',
       icon: Clock,
@@ -633,8 +635,9 @@ ${ctaHtml}
       icon: Heart,
       color: 'pink',
       emails: [
-        { id: 'trial_expired_winback', name: 'Trial Scaduto Senza Conversione', trigger: 'Cron - Trial scaduto + nessun pagamento', function: 'sendTrialExpiredWinback' },
-        { id: 'subscription_expired', name: 'Abbonamento Scaduto', trigger: 'Cron - Subscription status = expired', function: 'sendSubscriptionExpired' }
+        { id: 'subscription_expired', name: 'Abbonamento Scaduto', trigger: 'Cron - Subscription status = expired', function: 'sendSubscriptionExpired' },
+        { id: 'standard_upgrade_invite', name: 'Invito Upgrade da Standard', trigger: 'Cron - Utente Standard Free da 7+ giorni', function: 'sendStandardUpgradeInvite' },
+        { id: 'standard_limits_reached', name: 'Limiti Piano Standard Raggiunti', trigger: 'Utente Standard raggiunge limiti funzionalità', function: 'sendStandardLimitsReached' }
       ]
     },
     engagement: {
@@ -684,7 +687,6 @@ ${ctaHtml}
       emails: [
         { id: 'quiz_started_abandoned', name: 'Quiz Iniziato ma Non Completato', trigger: 'Cron - 2h dopo quiz iniziato', function: 'sendQuizStartedAbandoned' },
         { id: 'quiz_completed_abandoned', name: 'Quiz Completato Senza Piano', trigger: 'Cron - 24h dopo quiz senza piano', function: 'sendQuizReminderNoPlan' },
-        { id: 'trial_setup_abandoned', name: 'Trial Setup Abbandonato', trigger: 'Cron - 1h dopo apertura senza pagamento', function: 'sendTrialSetupAbandoned' },
         { id: 'pricing_visited_abandoned', name: 'Pricing Visitato ma Non Acquistato', trigger: 'Cron - 24h dopo visita pricing', function: 'sendPricingVisitedAbandoned' },
         { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 3h dopo inizio checkout', function: 'sendCartCheckoutAbandoned' }
       ]
