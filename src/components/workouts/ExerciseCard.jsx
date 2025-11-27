@@ -205,7 +205,7 @@ export default function ExerciseCard({
                   </Button>
                 )}
                 
-                {(exercise.detailed_description || (exercise.form_tips && exercise.form_tips.length > 0) || (exercise.target_muscles && exercise.target_muscles.length > 0) || (exercise.intensity_tips && exercise.intensity_tips.length > 0)) && (
+                {(exercise.detailed_description || (exercise.form_tips && exercise.form_tips.length > 0) || (exercise.target_muscles && exercise.target_muscles.length > 0) || intensityTips.length > 0) && (
                   <Button
                     variant="ghost"
                     size="sm"
