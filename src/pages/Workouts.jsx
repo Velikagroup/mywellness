@@ -255,7 +255,9 @@ export default function Workouts() {
           sport_specific_data: currentUser.sport_specific_data || {},
           age: currentUser.age,
           gender: currentUser.gender,
-          current_weight: currentUser.current_weight
+          current_weight: currentUser.current_weight,
+          strength_level: currentUser.strength_level || 'moderate',
+          weight_guidance: currentUser.weight_guidance
         });
 
         await checkForCheats(currentUser.id);
