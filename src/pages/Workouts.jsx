@@ -940,6 +940,17 @@ ${selectedDays.length > 0 ? `
       // 🔧 POST-PROCESSING FINALE: Aggiungi intensity_tips a TUTTI gli esercizi PRIMA di salvare
       console.log('🔧 POST-PROCESSING: Verifico intensity_tips per tutti gli esercizi...');
       let tipsAdded = 0;
+      const strengthLevel = trainingData.strength_level || 'moderate';
+      
+      // Pesi consigliati in base al livello
+      const weightsByLevel = {
+        never_lifted: { dumbbell: '1-3kg', barbell: 'solo bilanciere scarico (10-15kg)', machine: 'carico minimo' },
+        light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+        moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+        intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+        advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+      };
+      const userWeights = weightsByLevel[strengthLevel] || weightsByLevel.moderate;
       
       for (const plan of response.workout_plans) {
         if (plan.exercises && Array.isArray(plan.exercises)) {
@@ -954,37 +965,52 @@ ${selectedDays.length > 0 ? `
               const isWeighted = ['bilanciere', 'manubri', 'manubrio', 'kettlebell', 'macchina', 'cable', 'cavo', 'press', 'curl', 'row', 'leg'].some(eq => 
                 exerciseNameLower.includes(eq) || equipmentLower.includes(eq)
               );
-              const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch', 'sit-up'].some(kw => 
+              const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch', 'sit-up', 'squat a corpo'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
               const isIsometric = ['plank', 'isometr', 'hold', 'tenuta', 'wall sit'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
-              const isExplosive = ['jump', 'box', 'salto', 'thruster', 'clean', 'snatch', 'swing', 'burpee'].some(kw => 
+              const isExplosive = ['jump', 'box', 'salto', 'thruster', 'clean', 'snatch', 'swing', 'burpee', 'corda', 'battle'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
               const isLunge = ['affond', 'lunge', 'camminat'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
+              const isDumbbell = exerciseNameLower.includes('manubr');
+              const isBarbell = exerciseNameLower.includes('bilanciere');
+              const isMachine = exerciseNameLower.includes('macchina') || exerciseNameLower.includes('leg press') || exerciseNameLower.includes('cable');
               
-              // Assegna tips specifici
+              // Assegna tips specifici CON PESI CONCRETI
               if (isIsometric) {
                 exercise.intensity_tips = [
-                  "💪 Quando inizi a tremare, hai raggiunto l'intensità giusta",
-                  "⬆️ Se riesci a tenere oltre 60 sec facilmente, aggiungi peso",
-                  "🌬️ Mantieni la respirazione costante"
+                  "⏱️ Tieni per 30-45 secondi per serie",
+                  "💪 Quando inizi a tremare, l'intensità è giusta",
+                  "⬆️ Se troppo facile, aggiungi peso sulla schiena"
                 ];
               } else if (isExplosive) {
                 exercise.intensity_tips = [
                   "⚡ Concentrati su velocità e potenza esplosiva",
-                  "😤 Recupera completamente tra le serie (90-120 sec)",
+                  "😤 Recupera 90-120 sec tra le serie",
                   "📉 Se perdi velocità, riduci le ripetizioni"
                 ];
-              } else if (isWeighted) {
+              } else if (isDumbbell) {
                 exercise.intensity_tips = [
-                  "🏋️ Usa il 70-75% del tuo massimale stimato",
-                  "🔥 Le ultime 2-3 ripetizioni devono essere dure",
+                  `🏋️ Usa manubri da ${userWeights.dumbbell} per lato`,
+                  "🔥 Le ultime 2-3 reps devono essere impegnative",
+                  "📊 RPE 7-8: potresti fare ancora 2-3 reps"
+                ];
+              } else if (isBarbell) {
+                exercise.intensity_tips = [
+                  `🏋️ Carica il bilanciere con ${userWeights.barbell} totali`,
+                  "🔥 Le ultime 2-3 reps devono essere dure",
                   "📊 RPE 7-8: dovresti poter fare ancora 2-3 reps"
+                ];
+              } else if (isMachine) {
+                exercise.intensity_tips = [
+                  `🏋️ Imposta la macchina su ${userWeights.machine}`,
+                  "🔥 Le ultime 2-3 reps devono essere impegnative",
+                  "⚙️ Regola il sedile per la tua altezza"
                 ];
               } else if (isBodyweight) {
                 exercise.intensity_tips = [
@@ -994,14 +1020,14 @@ ${selectedDays.length > 0 ? `
                 ];
               } else if (isLunge) {
                 exercise.intensity_tips = [
-                  "🏋️ Usa manubri da 8-12kg per lato (o il 30% del tuo peso)",
-                  "🦵 Le ginocchia devono piegarsi a 90 gradi",
-                  "⚖️ Mantieni il busto eretto durante tutto il movimento"
+                  `🏋️ Usa manubri da ${userWeights.dumbbell} per lato`,
+                  "🦵 Piega entrambe le ginocchia a 90 gradi",
+                  "⚖️ Mantieni il busto eretto"
                 ];
               } else {
                 exercise.intensity_tips = [
-                  "💪 Scegli un carico che renda le ultime reps impegnative",
-                  "📊 RPE 7-8: dovresti poter fare ancora 2-3 ripetizioni",
+                  "💪 Scegli un carico che renda le ultime reps dure",
+                  "📊 RPE 7-8: dovresti poter fare ancora 2-3 reps",
                   "✅ Riduci il carico se la forma peggiora"
                 ];
               }
@@ -1018,7 +1044,7 @@ ${selectedDays.length > 0 ? `
         }
       }
       
-      console.log(`✅ POST-PROCESSING COMPLETATO: Aggiunti intensity_tips a ${tipsAdded} esercizi`);
+      console.log(`✅ POST-PROCESSING COMPLETATO: Aggiunti intensity_tips a ${tipsAdded} esercizi con pesi per livello ${strengthLevel}`);
 
       updateProgress(75, "Rimozione piani precedenti...");
       
