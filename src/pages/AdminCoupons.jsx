@@ -224,15 +224,18 @@ export default function AdminCoupons() {
       if (isUsed && inPeriod) {
         couponUsage[coupon.code].uses++;
         
-        // Stima basata sul tipo di piano (media €25/mese)
-        const avgPlanPrice = 25;
+        // Prezzi reali dei piani mensili
+        const planPrices = { base: 19, pro: 29, premium: 39 };
+        const planPrice = planPrices[coupon.assigned_plan] || 39; // Default premium
+        
         if (coupon.discount_type === 'lifetime_free') {
-          couponUsage[coupon.code].discounts += avgPlanPrice;
+          couponUsage[coupon.code].discounts += planPrice;
+          totalDiscounts += planPrice;
         } else if (coupon.discount_type === 'percentage' && coupon.discount_value) {
-          const discount = avgPlanPrice * (coupon.discount_value / 100);
+          const discount = planPrice * (coupon.discount_value / 100);
           couponUsage[coupon.code].discounts += discount;
-          couponUsage[coupon.code].revenue += avgPlanPrice - discount;
-          totalRevenue += avgPlanPrice - discount;
+          couponUsage[coupon.code].revenue += planPrice - discount;
+          totalRevenue += planPrice - discount;
           totalDiscounts += discount;
         }
       }
@@ -258,13 +261,14 @@ export default function AdminCoupons() {
       const key = format(date, 'MMM yyyy');
       if (monthlyStats[key]) {
         monthlyStats[key].purchases++;
-        const avgPlanPrice = 25;
+        const planPrices = { base: 19, pro: 29, premium: 39 };
+        const planPrice = planPrices[coupon.assigned_plan] || 39;
         if (coupon.discount_type === 'percentage' && coupon.discount_value) {
-          const discount = avgPlanPrice * (coupon.discount_value / 100);
+          const discount = planPrice * (coupon.discount_value / 100);
           monthlyStats[key].discounts += discount;
-          monthlyStats[key].revenue += avgPlanPrice - discount;
+          monthlyStats[key].revenue += planPrice - discount;
         } else if (coupon.discount_type === 'lifetime_free') {
-          monthlyStats[key].discounts += avgPlanPrice;
+          monthlyStats[key].discounts += planPrice;
         }
       }
     });
