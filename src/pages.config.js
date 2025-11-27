@@ -25,6 +25,7 @@ import AdminClients from './pages/AdminClients';
 import Settings from './pages/Settings';
 import AdminSupportTickets from './pages/AdminSupportTickets';
 import AdminFeedback from './pages/AdminFeedback';
+import AdminAppIcon from './pages/AdminAppIcon';
 import __Layout from './Layout.jsx';
 
 
@@ -56,6 +57,7 @@ export const PAGES = {
     "Settings": Settings,
     "AdminSupportTickets": AdminSupportTickets,
     "AdminFeedback": AdminFeedback,
+    "AdminAppIcon": AdminAppIcon,
 }
 
 export const pagesConfig = {
