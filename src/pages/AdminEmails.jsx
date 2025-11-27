@@ -611,7 +611,7 @@ ${ctaHtml}
       icon: AlertCircle,
       color: 'red',
       emails: [
-        { id: 'trial_welcome', name: 'Trial Setup - Benvenuto', trigger: 'Completamento Trial Setup', function: 'sendTrialWelcomeEmail' },
+        { id: 'trial_welcome', name: 'Standard Plan - Benvenuto', trigger: 'Completamento Trial Setup', function: 'sendTrialWelcomeEmail' },
         { id: 'landing_new_user', name: 'Landing Offer - Nuovo Utente', trigger: 'Acquisto Landing Offer (nuovo utente)', function: 'stripeCreateOneTimePayment' },
         { id: 'landing_existing_user', name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' },
         { id: 'standard_subscription_welcome', name: 'Benvenuto Abbonamento Standard', trigger: 'Acquisto abbonamento standard', function: 'stripeCreateTrialSubscription' },
