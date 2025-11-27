@@ -1102,19 +1102,19 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   <CardContent className="space-y-4">
                     {!affiliateStats.stats.onboarding_completed ? (
                       <div className="space-y-4">
-                        {affiliateStats.stats.total_earned < 100 ? (
+                        {affiliateStats.stats.available_balance < 100 ? (
                           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                             <p className="text-sm text-gray-700 mb-2">
-                              🔒 Per sbloccare i prelievi, devi raggiungere almeno <strong>€100</strong> di guadagni totali.
+                              🔒 Per sbloccare i prelievi, devi raggiungere almeno <strong>€100</strong> di credito disponibile.
                             </p>
                             <div className="w-full bg-gray-200 rounded-full h-3 mt-3">
                               <div 
                                 className="bg-gradient-to-r from-[#26847F] to-teal-500 h-3 rounded-full transition-all"
-                                style={{ width: `${Math.min(100, (affiliateStats.stats.total_earned / 100) * 100)}%` }}
+                                style={{ width: `${Math.min(100, (affiliateStats.stats.available_balance / 100) * 100)}%` }}
                               ></div>
                             </div>
                             <p className="text-xs text-gray-500 mt-2 text-center">
-                              €{affiliateStats.stats.total_earned.toFixed(2)} / €100.00
+                              €{affiliateStats.stats.available_balance.toFixed(2)} / €100.00
                             </p>
                           </div>
                         ) : (
