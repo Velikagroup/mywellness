@@ -253,7 +253,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <tr>
 <td class="content-cell">
 <p style="color: #111827; font-size: 16px;">${replacedGreeting}</p>
-<div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
+<div style="color: #1f2937; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
 ${ctaHtml}
 ${broadcast.footer_text ? `<p style="color: #6b7280; font-size: 14px; text-align: center; margin-top: 30px; font-style: italic;">${broadcast.footer_text}</p>` : ''}
 </td>
