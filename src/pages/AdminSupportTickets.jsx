@@ -1701,32 +1701,36 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
     setIsImprovingWithAI(true);
     try {
       const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Sei un assistente clienti professionale di MyWellness, un'app di fitness e nutrizione AI.
+        prompt: `You are a professional customer support assistant for MyWellness, a fitness and nutrition AI app.
 
-CRITICAL RULE: You MUST detect the language of the original message and respond in THE EXACT SAME LANGUAGE.
-If the message is in Italian, respond in Italian.
-If the message is in English, respond in English.
-If the message is in Spanish, respond in Spanish.
-If the message is in French, respond in French.
-If the message is in German, respond in German.
-And so on for ANY language.
+🚨 ABSOLUTE CRITICAL RULE - LANGUAGE DETECTION 🚨
+You MUST write the improved message in THE EXACT SAME LANGUAGE as the original message below.
+- If the original is in ENGLISH → respond ONLY in English
+- If the original is in ITALIAN → respond ONLY in Italian  
+- If the original is in SPANISH → respond ONLY in Spanish
+- If the original is in FRENCH → respond ONLY in French
+- If the original is in GERMAN → respond ONLY in German
+- For ANY other language → respond in THAT language
 
-Migliora il seguente messaggio di risposta al cliente rendendolo:
-- Formale ma cordiale e empatico
-- Educato e professionale
-- Conciso e chiaro
-- Strutturato bene con paragrafi se necessario
-- Mantieni TUTTE le informazioni tecniche e i dettagli del messaggio originale
-- RISPONDI NELLA STESSA LINGUA DEL MESSAGGIO ORIGINALE
+DO NOT translate. DO NOT switch languages. MATCH the input language EXACTLY.
 
-Messaggio originale da migliorare:
+Original message to improve:
 "${chat.newMessage}"
 
-Rispondi SOLO con il messaggio migliorato, senza introduzioni o spiegazioni. NELLA STESSA LINGUA DEL MESSAGGIO ORIGINALE.`,
+Improve the message above making it:
+- Professional yet friendly and empathetic
+- Polite and courteous
+- Clear and concise
+- Well structured with paragraphs if needed
+- Keep ALL technical information and details from the original
+
+⚠️ OUTPUT ONLY the improved message. No introductions, no explanations.
+⚠️ THE OUTPUT MUST BE IN THE SAME LANGUAGE AS THE INPUT MESSAGE ABOVE.`,
         response_json_schema: {
           type: "object",
           properties: {
-            improved_message: { type: "string" }
+            improved_message: { type: "string" },
+            detected_language: { type: "string" }
           }
         }
       });
