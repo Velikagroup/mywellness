@@ -1906,6 +1906,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                        onReplace={() => setReplaceExerciseTarget({ exercise: ex, workoutPlan: workoutForSelectedDay })}
                                        onDelete={() => setDeleteExerciseTarget({ exercise: ex, workoutPlan: workoutForSelectedDay })}
                                        isDeleting={false}
+                                       userStrengthLevel={trainingData.strength_level || 'moderate'}
                                      />
                                    );
                                  })}
