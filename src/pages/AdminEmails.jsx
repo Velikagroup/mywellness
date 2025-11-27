@@ -38,8 +38,10 @@ import {
   FileText,
   X,
   Globe,
-  Filter
+  Filter,
+  Activity
 } from 'lucide-react';
+import EmailLogsPanel from '@/components/admin/EmailLogsPanel';
 
 export default function AdminEmails() {
   const navigate = useNavigate();
@@ -779,7 +781,7 @@ ${ctaHtml}
         </div>
 
         <Tabs defaultValue="system" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="system" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Email di Sistema
@@ -787,6 +789,10 @@ ${ctaHtml}
             <TabsTrigger value="broadcast" className="flex items-center gap-2">
               <Send className="w-4 h-4" />
               Broadcast Campagne
+            </TabsTrigger>
+            <TabsTrigger value="logs" className="flex items-center gap-2">
+              <Activity className="w-4 h-4" />
+              Log Invii
             </TabsTrigger>
           </TabsList>
 
@@ -998,6 +1004,10 @@ ${ctaHtml}
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="logs" className="space-y-6">
+            <EmailLogsPanel />
           </TabsContent>
         </Tabs>
       </div>
