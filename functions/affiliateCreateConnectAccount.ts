@@ -47,18 +47,29 @@ Deno.serve(async (req) => {
 
     // Crea nuovo Stripe Connect Account
     console.log('🆕 Creazione nuovo account Stripe Connect per:', user.email);
-    const account = await stripe.accounts.create({
-      type: 'express',
-      country: 'IT',
-      email: user.email,
-      capabilities: {
-        transfers: { requested: true },
-      },
-      metadata: {
-        user_id: user.id,
-        affiliate_code: affiliateLink.affiliate_code
-      }
-    });
+    
+    try {
+      const account = await stripe.accounts.create({
+        type: 'express',
+        country: 'IT',
+        email: user.email,
+        capabilities: {
+          transfers: { requested: true },
+        },
+        metadata: {
+          user_id: user.id,
+          affiliate_code: affiliateLink.affiliate_code
+        }
+      });
+      console.log('✅ Account Stripe Connect creato:', account.id);
+    } catch (stripeError) {
+      console.error('❌ Stripe account creation failed:', stripeError.message);
+      console.error('❌ Stripe error type:', stripeError.type);
+      console.error('❌ Stripe error code:', stripeError.code);
+      throw stripeError;
+    }
+    
+    const account = { id: affiliateLink.stripe_connect_account_id };
 
     console.log('✅ Account Stripe Connect creato:', account.id);
 
