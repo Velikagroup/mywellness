@@ -618,8 +618,16 @@ ${trainingData.fitness_goal === 'mobilita' ? '- Focus: Dynamic stretching, mobil
 ${trainingData.fitness_goal === 'tonificazione' ? '- Focus: 10-15 reps, moderate weight, focus on form and muscle activation, incorporate supersets for higher intensity.' : ''}
 
 WEIGHT/INTENSITY GUIDELINES (CRITICAL - MUST INCLUDE FOR EVERY EXERCISE):
-- FOR EVERY EXERCISE you MUST provide 'intensity_tips' array with 2-4 specific load/intensity recommendations
+- FOR EVERY EXERCISE you MUST provide 'intensity_tips' array with 2-4 specific load/intensity recommendations IN ITALIAN
 - User weight: ${trainingData.current_weight || 'unknown'}kg - use this to estimate appropriate loads where relevant
+- User strength level: ${trainingData.strength_level || 'moderate'} - ${trainingData.weight_guidance || 'Use moderate weights'}
+
+STRENGTH LEVEL WEIGHT RECOMMENDATIONS:
+${trainingData.strength_level === 'never_lifted' ? '- User is a COMPLETE BEGINNER: Suggest bodyweight only or very light weights (1-3kg dumbbells max). Focus on form over weight.' : ''}
+${trainingData.strength_level === 'light' ? '- User lifts LIGHT weights: Suggest 4-8kg dumbbells, 10-25kg barbells. Emphasize controlled movements.' : ''}
+${trainingData.strength_level === 'moderate' ? '- User lifts MODERATE weights: Suggest 8-15kg dumbbells, 30-50kg barbells, machine weights accordingly.' : ''}
+${trainingData.strength_level === 'intermediate' ? '- User is INTERMEDIATE: Can handle significant weights. Suggest 70-75% of typical maxes. Squat ~60-80kg, Bench ~50-70kg.' : ''}
+${trainingData.strength_level === 'advanced' ? '- User is ADVANCED: Calculate weights as percentages of 1RM. They know their maxes. Suggest RPE-based loading.' : ''}
 
 ${trainingData.sport_specific_data ? `
 - If user provided MAX LIFTS (squat_max, deadlift_max, bench_max, etc.): Calculate working weights as percentages. Example: if squat_max=100kg, use 80kg for 5x5 strength work (80%), 65kg for 3x12 hypertrophy (65%), etc.
