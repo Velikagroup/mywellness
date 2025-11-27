@@ -1549,6 +1549,8 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
   const [newResponseContent, setNewResponseContent] = useState('');
   const [newResponseCategory, setNewResponseCategory] = useState('generale');
   const [isImprovingWithAI, setIsImprovingWithAI] = useState(false);
+  const [isTranslating, setIsTranslating] = useState(false);
+  const [translatedMessages, setTranslatedMessages] = useState({});
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -1690,6 +1692,53 @@ Rispondi SOLO con un JSON array, nessun altro testo.`,
 
   const removeAttachment = (url) => {
     setAttachedFiles(prev => prev.filter(f => f.url !== url));
+  };
+
+  const handleTranslateMessage = async (messageContent, messageIndex, targetLang = 'it') => {
+    setIsTranslating(true);
+    try {
+      const langNames = {
+        'it': 'Italian',
+        'en': 'English', 
+        'es': 'Spanish',
+        'fr': 'French',
+        'de': 'German',
+        'pt': 'Portuguese',
+        'nl': 'Dutch',
+        'pl': 'Polish',
+        'ru': 'Russian',
+        'zh': 'Chinese',
+        'ja': 'Japanese',
+        'ar': 'Arabic'
+      };
+      
+      const response = await base44.integrations.Core.InvokeLLM({
+        prompt: `Translate the following customer support message to ${langNames[targetLang] || targetLang}.
+        
+Original message:
+"${messageContent}"
+
+Output ONLY the translated text, nothing else.`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            translated_text: { type: "string" }
+          }
+        }
+      });
+
+      const translated = response?.translated_text || response?.data?.translated_text;
+      if (translated) {
+        setTranslatedMessages(prev => ({
+          ...prev,
+          [messageIndex]: { text: translated, lang: targetLang }
+        }));
+      }
+    } catch (error) {
+      console.error('Error translating message:', error);
+      alert('❌ Errore nella traduzione');
+    }
+    setIsTranslating(false);
   };
 
   const handleImproveWithAI = async () => {
@@ -1963,7 +2012,44 @@ Improve the message above making it:
                     {idx === 0 && (
                       <p className="text-xs opacity-75 mb-1.5 font-medium">Cliente - {new Date(chat.created_date).toLocaleString('it-IT')}</p>
                     )}
-                    <AdminMessageContent content={msg.content} onImageClick={onImageClick} isUserMessage={true} />
+                    <AdminMessageContent content={translatedMessages[idx]?.text || msg.content} onImageClick={onImageClick} isUserMessage={true} />
+                    
+                    {/* Translate buttons */}
+                    <div className="flex items-center gap-1 mt-2 pt-2 border-t border-blue-200/50">
+                      <span className="text-xs opacity-60 mr-1">🌍</span>
+                      {['it', 'en', 'es', 'fr', 'de'].map(lang => (
+                        <button
+                          key={lang}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleTranslateMessage(msg.content, idx, lang);
+                          }}
+                          disabled={isTranslating}
+                          className={`px-2 py-0.5 text-xs rounded-full transition-all ${
+                            translatedMessages[idx]?.lang === lang 
+                              ? 'bg-blue-600 text-white' 
+                              : 'bg-white/50 text-blue-800 hover:bg-white/80'
+                          }`}
+                        >
+                          {lang.toUpperCase()}
+                        </button>
+                      ))}
+                      {translatedMessages[idx] && (
+                        <button
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setTranslatedMessages(prev => {
+                              const newState = {...prev};
+                              delete newState[idx];
+                              return newState;
+                            });
+                          }}
+                          className="px-2 py-0.5 text-xs rounded-full bg-red-100 text-red-700 hover:bg-red-200 ml-1"
+                        >
+                          ✕
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
               );
