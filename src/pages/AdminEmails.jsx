@@ -1106,16 +1106,6 @@ ${ctaHtml}
                   </div>
 
                   <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Saluto</Label>
-                    <Input
-                      value={editingContent.greeting || ''}
-                      onChange={(e) => setEditingContent({...editingContent, greeting: e.target.value})}
-                      placeholder="Ciao {user_name},"
-                      className="h-12"
-                    />
-                  </div>
-
-                  <div>
                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
                     <Textarea
                       value={editingContent.main_content || ''}
@@ -1190,10 +1180,6 @@ ${ctaHtml}
                       <div className="pt-3 border-t border-gray-300">
                         <p className="text-xs text-gray-500 mb-1">Oggetto:</p>
                         <p className="text-sm font-bold text-gray-900">{previewEmail.template.subject}</p>
-                      </div>
-                      <div className="pt-3 border-t border-gray-300">
-                        <p className="text-xs text-gray-500 mb-2">Saluto:</p>
-                        <p className="text-sm text-gray-900">{previewEmail.template.greeting}</p>
                       </div>
                       <div className="pt-3 border-t border-gray-300">
                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
@@ -1496,16 +1482,6 @@ ${ctaHtml}
                 value={broadcastData.subject}
                 onChange={(e) => setBroadcastData({...broadcastData, subject: e.target.value})}
                 placeholder="Es: 🎉 Novità MyWellness - Nuove Funzionalità!"
-                className="h-12"
-              />
-            </div>
-
-            <div>
-              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Saluto Iniziale</Label>
-              <Input
-                value={broadcastData.greeting}
-                onChange={(e) => setBroadcastData({...broadcastData, greeting: e.target.value})}
-                placeholder="Ciao {user_name},"
                 className="h-12"
               />
             </div>
