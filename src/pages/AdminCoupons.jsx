@@ -156,55 +156,86 @@ export default function AdminCoupons() {
     }
   };
 
-  // Calcola statistiche coupon
+  // Calcola statistiche coupon basandosi sui coupon usati (used_by e used_at)
   const couponStats = useMemo(() => {
-    // Filtra transazioni con coupon applicato
-    const transactionsWithCoupon = transactions.filter(t => 
-      t.metadata?.coupon_code || t.metadata?.original_amount
-    );
-
+    // Conta utilizzi direttamente dai coupon
+    const usedCoupons = coupons.filter(c => c.used_by || c.used_at);
+    
     // Filtra per periodo
-    let filteredTransactions = transactionsWithCoupon;
+    let filteredCoupons = usedCoupons;
     if (selectedPeriod === 'month') {
       const start = startOfMonth(new Date(selectedYear, selectedMonth));
       const end = endOfMonth(new Date(selectedYear, selectedMonth));
-      filteredTransactions = transactionsWithCoupon.filter(t => {
-        const date = new Date(t.payment_date);
+      filteredCoupons = usedCoupons.filter(c => {
+        if (!c.used_at) return false;
+        const date = new Date(c.used_at);
         return date >= start && date <= end;
       });
     } else if (selectedPeriod === 'year') {
       const start = startOfYear(new Date(selectedYear, 0));
       const end = endOfYear(new Date(selectedYear, 0));
-      filteredTransactions = transactionsWithCoupon.filter(t => {
-        const date = new Date(t.payment_date);
+      filteredCoupons = usedCoupons.filter(c => {
+        if (!c.used_at) return false;
+        const date = new Date(c.used_at);
         return date >= start && date <= end;
       });
     }
 
-    // Calcola totali
-    const totalPurchases = filteredTransactions.length;
-    const totalRevenue = filteredTransactions.reduce((sum, t) => sum + (t.amount / 100), 0);
-    const totalDiscounts = filteredTransactions.reduce((sum, t) => {
-      const originalAmount = t.metadata?.original_amount || t.amount;
-      return sum + ((originalAmount - t.amount) / 100);
-    }, 0);
-
+    // Calcola totali dai coupon usati
+    const totalPurchases = filteredCoupons.length;
+    
+    // Stima revenue/sconti basandosi sul tipo di coupon
+    let totalRevenue = 0;
+    let totalDiscounts = 0;
+    
     // Statistiche per coupon
     const couponUsage = {};
-    filteredTransactions.forEach(t => {
-      const code = t.metadata?.coupon_code || 'UNKNOWN';
-      if (!couponUsage[code]) {
-        couponUsage[code] = {
-          code,
+    
+    // Prima aggiungiamo tutti i coupon con i loro utilizzi
+    coupons.forEach(coupon => {
+      const isUsed = coupon.used_by || coupon.used_at;
+      
+      // Check periodo per coupon usati
+      let inPeriod = true;
+      if (isUsed && coupon.used_at) {
+        const usedDate = new Date(coupon.used_at);
+        if (selectedPeriod === 'month') {
+          const start = startOfMonth(new Date(selectedYear, selectedMonth));
+          const end = endOfMonth(new Date(selectedYear, selectedMonth));
+          inPeriod = usedDate >= start && usedDate <= end;
+        } else if (selectedPeriod === 'year') {
+          const start = startOfYear(new Date(selectedYear, 0));
+          const end = endOfYear(new Date(selectedYear, 0));
+          inPeriod = usedDate >= start && usedDate <= end;
+        }
+      }
+      
+      if (!couponUsage[coupon.code]) {
+        couponUsage[coupon.code] = {
+          code: coupon.code,
           uses: 0,
           revenue: 0,
-          discounts: 0
+          discounts: 0,
+          type: coupon.discount_type,
+          discount_value: coupon.discount_value
         };
       }
-      couponUsage[code].uses++;
-      couponUsage[code].revenue += t.amount / 100;
-      const originalAmount = t.metadata?.original_amount || t.amount;
-      couponUsage[code].discounts += (originalAmount - t.amount) / 100;
+      
+      if (isUsed && inPeriod) {
+        couponUsage[coupon.code].uses++;
+        
+        // Stima basata sul tipo di piano (media €25/mese)
+        const avgPlanPrice = 25;
+        if (coupon.discount_type === 'lifetime_free') {
+          couponUsage[coupon.code].discounts += avgPlanPrice;
+        } else if (coupon.discount_type === 'percentage' && coupon.discount_value) {
+          const discount = avgPlanPrice * (coupon.discount_value / 100);
+          couponUsage[coupon.code].discounts += discount;
+          couponUsage[coupon.code].revenue += avgPlanPrice - discount;
+          totalRevenue += avgPlanPrice - discount;
+          totalDiscounts += discount;
+        }
+      }
     });
 
     // Statistiche mensili (ultimi 12 mesi)
@@ -221,19 +252,26 @@ export default function AdminCoupons() {
       };
     }
 
-    transactionsWithCoupon.forEach(t => {
-      const date = new Date(t.payment_date);
+    usedCoupons.forEach(coupon => {
+      if (!coupon.used_at) return;
+      const date = new Date(coupon.used_at);
       const key = format(date, 'MMM yyyy');
       if (monthlyStats[key]) {
         monthlyStats[key].purchases++;
-        monthlyStats[key].revenue += t.amount / 100;
-        const originalAmount = t.metadata?.original_amount || t.amount;
-        monthlyStats[key].discounts += (originalAmount - t.amount) / 100;
+        const avgPlanPrice = 25;
+        if (coupon.discount_type === 'percentage' && coupon.discount_value) {
+          const discount = avgPlanPrice * (coupon.discount_value / 100);
+          monthlyStats[key].discounts += discount;
+          monthlyStats[key].revenue += avgPlanPrice - discount;
+        } else if (coupon.discount_type === 'lifetime_free') {
+          monthlyStats[key].discounts += avgPlanPrice;
+        }
       }
     });
 
     // Coupon più usati
     const topCoupons = Object.values(couponUsage)
+      .filter(c => c.uses > 0)
       .sort((a, b) => b.uses - a.uses)
       .slice(0, 10);
 
@@ -246,7 +284,7 @@ export default function AdminCoupons() {
       monthlyStats: Object.values(monthlyStats),
       topCoupons
     };
-  }, [transactions, selectedPeriod, selectedYear, selectedMonth]);
+  }, [coupons, transactions, selectedPeriod, selectedYear, selectedMonth]);
 
   const COLORS = ['#26847F', '#1f6b66', '#3b9b95', '#56b2ab', '#71c9c1'];
 
