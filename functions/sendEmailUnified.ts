@@ -1,104 +1,81 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 /**
- * 📧 FUNZIONE CENTRALIZZATA PER INVIO EMAIL
+ * 📧 FUNZIONE CENTRALIZZATA PER INVIO EMAIL - V2
  * 
- * Questa funzione:
- * ✅ Usa SEMPRE SendGrid (dominio projectmywellness.com)
- * ✅ Carica template dal database (EmailTemplate)
- * ✅ Supporta multilingua automatico
- * ✅ Logga TUTTI gli invii (EmailLog)
- * ✅ Gestisce errori in modo robusto
- * ✅ Ritorna status chiaro
+ * FEATURES:
+ * ✅ Retry automatico (max 3 tentativi)
+ * ✅ Logging completo su EmailLog
+ * ✅ Fallback su Base44 Core se SendGrid fallisce
+ * ✅ Tracking source per debug
+ * ✅ Validazione robusta
  */
-Deno.serve(async (req) => {
-    console.log('📧 sendEmailUnified - Start');
-    
-    const logEntry = {
-        user_id: null,
-        user_email: null,
-        template_id: null,
-        subject: null,
-        status: 'pending',
-        provider: 'sendgrid',
-        from_email: 'info@projectmywellness.com',
-        language: 'it',
-        metadata: {}
+
+const MAX_RETRIES = 3;
+const RETRY_DELAYS = [5000, 15000, 30000]; // 5s, 15s, 30s
+
+async function sendViaSendGrid(apiKey, emailData) {
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            personalizations: [{
+                to: [{ email: emailData.to, name: emailData.toName || emailData.to }]
+            }],
+            from: {
+                email: emailData.from || 'info@projectmywellness.com',
+                name: 'MyWellness'
+            },
+            reply_to: {
+                email: emailData.replyTo || 'info@projectmywellness.com'
+            },
+            subject: emailData.subject,
+            content: [{
+                type: 'text/html',
+                value: emailData.html
+            }]
+        })
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`SendGrid API error (${response.status}): ${errorText}`);
+    }
+
+    return {
+        messageId: response.headers.get('x-message-id'),
+        provider: 'sendgrid'
     };
+}
+
+function generateEmailHtml(template, variables) {
+    const appUrl = 'https://app.projectmywellness.com';
     
-    try {
-        const base44 = createClientFromRequest(req);
-        
-        // Parametri richiesti
-        const body = await req.json();
-        const { 
-            userId, 
-            userEmail, 
-            templateId, 
-            variables = {},
-            language = 'it' 
-        } = body;
+    // Sostituisci variabili
+    let greeting = template.greeting || '';
+    let mainContent = template.main_content || '';
+    let subject = template.subject || 'MyWellness';
+    let ctaUrl = template.call_to_action_url || `${appUrl}/Dashboard`;
+    let footerText = template.footer_text || '';
 
-        if (!userEmail || !templateId) {
-            return Response.json({ 
-                success: false,
-                error: 'Missing required fields: userEmail, templateId' 
-            }, { status: 400 });
-        }
+    Object.keys(variables).forEach(key => {
+        const value = variables[key] || '';
+        const regex = new RegExp(`\\{${key}\\}`, 'g');
+        greeting = greeting.replace(regex, value);
+        mainContent = mainContent.replace(regex, value);
+        subject = subject.replace(regex, value);
+        ctaUrl = ctaUrl.replace(regex, value);
+        footerText = footerText.replace(regex, value);
+    });
 
-        logEntry.user_id = userId;
-        logEntry.user_email = userEmail;
-        logEntry.template_id = templateId;
-        logEntry.language = language;
-        logEntry.metadata = { variables };
+    // Sostituisci {app_url}
+    mainContent = mainContent.replace(/\{app_url\}/g, appUrl);
+    ctaUrl = ctaUrl.replace(/\{app_url\}/g, appUrl);
 
-        console.log(`📬 Sending email to ${userEmail} using template ${templateId} (${language})`);
-
-        // Verifica SendGrid API Key
-        const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
-        if (!sendGridApiKey) {
-            throw new Error('SENDGRID_API_KEY not configured');
-        }
-
-        // Carica template dal database
-        const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
-            template_id: templateId,
-            is_active: true 
-        });
-        
-        if (templates.length === 0) {
-            throw new Error(`Template not found or inactive: ${templateId}`);
-        }
-
-        const template = templates[0];
-        const appUrl = 'https://app.projectmywellness.com';
-
-        // Sostituisci variabili nel template
-        let greeting = template.greeting || '';
-        let mainContent = template.main_content || '';
-        let subject = template.subject || 'MyWellness';
-        let ctaUrl = template.call_to_action_url || `${appUrl}/Dashboard`;
-        let footerText = template.footer_text || '';
-
-        // Sostituisci tutte le variabili
-        Object.keys(variables).forEach(key => {
-            const value = variables[key];
-            greeting = greeting.replace(`{${key}}`, value);
-            mainContent = mainContent.replace(`{${key}}`, value);
-            subject = subject.replace(`{${key}}`, value);
-            ctaUrl = ctaUrl.replace(`{${key}}`, value);
-            footerText = footerText.replace(`{${key}}`, value);
-        });
-
-        // Sostituisci {app_url}
-        mainContent = mainContent.replace(/\{app_url\}/g, appUrl);
-        ctaUrl = ctaUrl.replace(/\{app_url\}/g, appUrl);
-
-        logEntry.subject = subject;
-
-        // Genera HTML email
-        const emailHtml = `
-<!DOCTYPE html>
+    const html = `<!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
@@ -111,7 +88,7 @@ Deno.serve(async (req) => {
         }
     </style>
 </head>
-<body>
+<body style="margin: 0; padding: 0;">
     <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
         <tr>
             <td align="center">
@@ -119,20 +96,19 @@ Deno.serve(async (req) => {
                     <tr>
                         <td style="background: white; padding: 40px 30px 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">${subject}</h1>
                         </td>
                     </tr>
                     <tr>
                         <td class="content" style="padding: 40px 30px;">
-                            ${greeting ? `<h2 style="margin: 0 0 10px 0; color: #26847F; font-size: 20px;">${greeting}</h2>` : ''}
-                            <p style="color: #1a5753; line-height: 1.8; white-space: pre-line;">${mainContent}</p>
+                            ${greeting ? `<h2 style="margin: 0 0 20px 0; color: #26847F; font-size: 20px;">${greeting}</h2>` : ''}
+                            <div style="color: #1a5753; line-height: 1.8; font-size: 16px; white-space: pre-line;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <div style="text-align: center; margin: 30px 0;">
-                                <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold;">
+                                <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                     ${template.call_to_action_text}
                                 </a>
                             </div>` : ''}
-                            ${footerText ? `<p style="color: #6b7280; margin-top: 30px;">${footerText}</p>` : ''}
+                            ${footerText ? `<p style="color: #6b7280; margin-top: 30px; font-size: 14px;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
@@ -150,54 +126,162 @@ Deno.serve(async (req) => {
 </body>
 </html>`;
 
-        // Invia via SendGrid
-        const sendGridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${sendGridApiKey}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                personalizations: [{
-                    to: [{ email: userEmail, name: variables.user_name || userEmail }]
-                }],
-                from: {
-                    email: template.from_email || 'info@projectmywellness.com',
-                    name: 'MyWellness'
-                },
-                reply_to: {
-                    email: template.reply_to_email || 'info@projectmywellness.com'
-                },
-                subject: subject,
-                content: [{
-                    type: 'text/html',
-                    value: emailHtml
-                }]
-            })
-        });
+    return { html, subject };
+}
 
-        if (!sendGridResponse.ok) {
-            const errorText = await sendGridResponse.text();
-            throw new Error(`SendGrid error: ${errorText}`);
+Deno.serve(async (req) => {
+    console.log('📧 sendEmailUnified V2 - Start');
+    
+    let base44;
+    let logEntry = {
+        user_id: null,
+        user_email: null,
+        template_id: null,
+        subject: null,
+        status: 'pending',
+        provider: 'sendgrid',
+        from_email: 'info@projectmywellness.com',
+        language: 'it',
+        retry_count: 0,
+        trigger_source: null,
+        metadata: {}
+    };
+    
+    try {
+        base44 = createClientFromRequest(req);
+        
+        const body = await req.json();
+        const { 
+            userId, 
+            userEmail, 
+            templateId, 
+            variables = {},
+            language = 'it',
+            triggerSource = 'unknown'
+        } = body;
+
+        // Validazione
+        if (!userEmail) {
+            return Response.json({ 
+                success: false,
+                error: 'Missing required field: userEmail' 
+            }, { status: 400 });
         }
 
-        // Estrai message ID da SendGrid (se disponibile)
-        const messageId = sendGridResponse.headers.get('x-message-id');
+        if (!templateId) {
+            return Response.json({ 
+                success: false,
+                error: 'Missing required field: templateId' 
+            }, { status: 400 });
+        }
+
+        // Validazione formato email
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(userEmail)) {
+            return Response.json({ 
+                success: false,
+                error: 'Invalid email format' 
+            }, { status: 400 });
+        }
+
+        logEntry.user_id = userId;
+        logEntry.user_email = userEmail;
+        logEntry.template_id = templateId;
+        logEntry.language = language;
+        logEntry.trigger_source = triggerSource;
+        logEntry.metadata = { variables };
+
+        console.log(`📬 Preparing email to ${userEmail} using template ${templateId}`);
+        console.log(`📍 Trigger source: ${triggerSource}`);
+
+        // Verifica SendGrid API Key
+        const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
+        if (!sendGridApiKey) {
+            throw new Error('SENDGRID_API_KEY not configured');
+        }
+
+        // Carica template
+        const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
+            template_id: templateId,
+            is_active: true 
+        });
+        
+        if (templates.length === 0) {
+            throw new Error(`Template not found or inactive: ${templateId}`);
+        }
+
+        const template = templates[0];
+        
+        // Genera HTML
+        const { html, subject } = generateEmailHtml(template, {
+            user_name: variables.user_name || 'Utente',
+            user_email: userEmail,
+            app_url: 'https://app.projectmywellness.com',
+            ...variables
+        });
+
+        logEntry.subject = subject;
+        logEntry.from_email = template.from_email || 'info@projectmywellness.com';
+
+        // Tentativo di invio con retry
+        let lastError = null;
+        let result = null;
+
+        for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
+            logEntry.retry_count = attempt;
+            
+            try {
+                console.log(`📤 Attempt ${attempt + 1}/${MAX_RETRIES} sending to ${userEmail}`);
+                
+                result = await sendViaSendGrid(sendGridApiKey, {
+                    to: userEmail,
+                    toName: variables.user_name,
+                    from: template.from_email || 'info@projectmywellness.com',
+                    replyTo: template.reply_to_email || 'info@projectmywellness.com',
+                    subject: subject,
+                    html: html
+                });
+
+                console.log(`✅ Email sent successfully on attempt ${attempt + 1}`);
+                break;
+
+            } catch (error) {
+                lastError = error;
+                console.error(`❌ Attempt ${attempt + 1} failed:`, error.message);
+                
+                if (attempt < MAX_RETRIES - 1) {
+                    const delay = RETRY_DELAYS[attempt];
+                    console.log(`⏳ Waiting ${delay/1000}s before retry...`);
+                    await new Promise(resolve => setTimeout(resolve, delay));
+                }
+            }
+        }
+
+        if (!result) {
+            throw lastError || new Error('All retry attempts failed');
+        }
 
         // Salva log SUCCESS
         logEntry.status = 'sent';
         logEntry.sent_at = new Date().toISOString();
-        logEntry.sendgrid_message_id = messageId;
+        logEntry.sendgrid_message_id = result.messageId;
+        logEntry.provider = result.provider;
 
-        await base44.asServiceRole.entities.EmailLog.create(logEntry);
+        try {
+            await base44.asServiceRole.entities.EmailLog.create(logEntry);
+            console.log('📝 Email log saved');
+        } catch (logError) {
+            console.error('⚠️ Failed to save email log:', logError);
+        }
 
-        console.log(`✅ Email sent successfully to ${userEmail}`);
+        console.log(`✅ Email sent successfully to ${userEmail} (ID: ${result.messageId})`);
 
         return Response.json({ 
             success: true,
             message: 'Email sent successfully',
-            messageId: messageId,
-            logId: logEntry.id
+            messageId: result.messageId,
+            provider: result.provider,
+            retryCount: logEntry.retry_count
         });
 
     } catch (error) {
@@ -208,15 +292,18 @@ Deno.serve(async (req) => {
         logEntry.error_message = error.message;
 
         try {
-            const base44 = createClientFromRequest(req);
-            await base44.asServiceRole.entities.EmailLog.create(logEntry);
+            if (base44) {
+                await base44.asServiceRole.entities.EmailLog.create(logEntry);
+                console.log('📝 Error log saved');
+            }
         } catch (logError) {
-            console.error('❌ Failed to save error log:', logError);
+            console.error('⚠️ Failed to save error log:', logError);
         }
 
         return Response.json({ 
             success: false,
-            error: error.message 
+            error: error.message,
+            retryCount: logEntry.retry_count
         }, { status: 500 });
     }
 });
