@@ -100,7 +100,6 @@ function generateEmailHtml(template, variables) {
                     </tr>
                     <tr>
                         <td class="content" style="padding: 40px 30px;">
-                            ${greeting ? `<h2 style="margin: 0 0 20px 0; color: #26847F; font-size: 20px;">${greeting}</h2>` : ''}
                             <div style="color: #1a5753; line-height: 1.8; font-size: 16px; white-space: pre-line;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <div style="text-align: center; margin: 30px 0;">
