@@ -732,11 +732,18 @@ export default function AdminCoupons() {
                             {stats.discounts > 0 ? `€${stats.discounts.toFixed(2)}` : '-'}
                           </TableCell>
                           <TableCell>
-                            <Switch
-                              checked={coupon.is_active}
-                              onCheckedChange={() => handleToggleActive(coupon)}
-                              aria-label="Attiva/Disattiva"
-                            />
+                            <div className="flex items-center gap-2">
+                              <Switch
+                                checked={coupon.is_active}
+                                onCheckedChange={() => handleToggleActive(coupon)}
+                                aria-label="Attiva/Disattiva"
+                              />
+                              {coupon.used_at && (
+                                <span className="text-xs text-green-600">
+                                  Usato {format(new Date(coupon.used_at), 'dd/MM/yy')}
+                                </span>
+                              )}
+                            </div>
                           </TableCell>
                           <TableCell className="text-right">
                             <Button variant="ghost" size="icon" onClick={() => handleDeleteCoupon(coupon.id)}>
