@@ -44,6 +44,7 @@ const getAllTrainingSteps = (isPerformanceOriented, workoutStyle) => {
   
   steps.push(
     { id: 'fitness_experience', title: 'Esperienza', component: FitnessExperienceStep, autoAdvance: true },
+    { id: 'strength_level', title: 'Livello Forza', component: StrengthLevelStep, autoAdvance: true },
     { id: 'workout_days', title: 'Frequenza Allenamenti', component: WorkoutDaysStep },
     { id: 'session_duration', title: 'Durata Sessione', autoAdvance: true, component: SessionDurationStep },
     { id: 'workout_location', title: 'Luogo Allenamento', autoAdvance: true, component: WorkoutLocationStep },
