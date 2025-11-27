@@ -108,164 +108,136 @@ export default function AdminAppIcon() {
     ctx.translate(centerX, centerY);
     ctx.scale(scale, scale);
     
-    // ===== FOGLIA SINISTRA (scura, dietro) =====
+    // ===== CODA CURVA (sotto tutto) =====
     ctx.save();
-    ctx.translate(-45, 20);
-    ctx.rotate(-0.15);
+    ctx.beginPath();
+    ctx.arc(0, 30, 140, 0.6, 2.5, false);
+    ctx.strokeStyle = iconColor1;
+    ctx.lineWidth = 22;
+    ctx.lineCap = 'round';
+    ctx.stroke();
     
-    // Forma foglia sinistra - più allungata e appuntita
+    // Highlight sulla coda
+    ctx.beginPath();
+    ctx.arc(0, 30, 140, 0.7, 2.3, false);
+    ctx.strokeStyle = 'rgba(80, 180, 180, 0.4)';
+    ctx.lineWidth = 8;
+    ctx.stroke();
+    ctx.restore();
+    
+    // ===== FOGLIA SINISTRA (scura, forma a goccia) =====
+    ctx.save();
+    ctx.translate(-50, 0);
+    
     const drawLeftLeaf = () => {
       ctx.beginPath();
-      ctx.moveTo(0, 90); // punta inferiore
-      ctx.bezierCurveTo(-25, 70, -75, 30, -85, -30); // curva sinistra
-      ctx.bezierCurveTo(-90, -80, -70, -130, -30, -145); // curva superiore sinistra
-      ctx.bezierCurveTo(5, -155, 25, -140, 30, -120); // punta superiore
-      ctx.bezierCurveTo(35, -80, 25, 0, 15, 50); // curva destra interna
-      ctx.bezierCurveTo(10, 70, 5, 85, 0, 90); // chiusura
+      // Forma a goccia: punta in alto, tonda in basso
+      ctx.moveTo(0, -120); // punta superiore
+      ctx.bezierCurveTo(50, -100, 75, -50, 75, 10); // curva destra superiore
+      ctx.bezierCurveTo(75, 70, 45, 110, 0, 120); // curva destra inferiore
+      ctx.bezierCurveTo(-45, 110, -75, 70, -75, 10); // curva sinistra inferiore
+      ctx.bezierCurveTo(-75, -50, -50, -100, 0, -120); // curva sinistra superiore
       ctx.closePath();
     };
     
-    // Gradiente 3D foglia sinistra
-    const leftGrad = ctx.createLinearGradient(-80, -100, 30, 60);
-    leftGrad.addColorStop(0, '#1a6b66');
-    leftGrad.addColorStop(0.3, iconColor1);
-    leftGrad.addColorStop(0.7, '#1f7a75');
-    leftGrad.addColorStop(1, '#155550');
+    // Gradiente foglia sinistra
+    const leftGrad = ctx.createLinearGradient(-60, -80, 60, 80);
+    leftGrad.addColorStop(0, '#267a75');
+    leftGrad.addColorStop(0.4, iconColor1);
+    leftGrad.addColorStop(0.7, '#1f6b66');
+    leftGrad.addColorStop(1, '#185855');
     
     drawLeftLeaf();
     ctx.fillStyle = leftGrad;
     ctx.fill();
     
-    // Ombra interna per profondità
-    const leftShadow = ctx.createLinearGradient(-60, 60, 20, -80);
-    leftShadow.addColorStop(0, 'rgba(0, 50, 50, 0.4)');
-    leftShadow.addColorStop(0.5, 'rgba(0, 50, 50, 0)');
-    leftShadow.addColorStop(1, 'rgba(0, 50, 50, 0)');
-    
+    // Bordo esterno
     drawLeftLeaf();
-    ctx.fillStyle = leftShadow;
-    ctx.fill();
-    
-    // Riflesso luminoso principale (effetto 3D glass)
-    ctx.beginPath();
-    ctx.moveTo(-15, 40);
-    ctx.bezierCurveTo(-35, 20, -65, -20, -70, -60);
-    ctx.bezierCurveTo(-72, -90, -55, -115, -30, -125);
-    ctx.bezierCurveTo(-45, -100, -55, -60, -50, -20);
-    ctx.bezierCurveTo(-45, 10, -30, 30, -15, 40);
-    ctx.closePath();
-    
-    const leftHighlight = ctx.createLinearGradient(-70, -100, -20, 0);
-    leftHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.5)');
-    leftHighlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.2)');
-    leftHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    ctx.fillStyle = leftHighlight;
-    ctx.fill();
-    
-    // Bordo luminoso esterno
-    drawLeftLeaf();
-    ctx.strokeStyle = 'rgba(80, 200, 200, 0.6)';
-    ctx.lineWidth = 4;
+    ctx.strokeStyle = '#3a9590';
+    ctx.lineWidth = 5;
     ctx.stroke();
     
-    // Linea interna curva (stelo stilizzato)
+    // Highlight interno (effetto 3D glass)
     ctx.beginPath();
-    ctx.moveTo(-5, 70);
-    ctx.bezierCurveTo(-20, 40, -45, -10, -50, -70);
-    ctx.strokeStyle = 'rgba(60, 180, 180, 0.5)';
-    ctx.lineWidth = 6;
+    ctx.moveTo(-15, -90);
+    ctx.bezierCurveTo(-55, -60, -55, 20, -35, 70);
+    ctx.strokeStyle = 'rgba(100, 200, 200, 0.6)';
+    ctx.lineWidth = 8;
     ctx.lineCap = 'round';
     ctx.stroke();
     
+    // Riflesso luminoso superiore
+    ctx.beginPath();
+    ctx.ellipse(-25, -50, 20, 40, -0.3, 0, Math.PI * 2);
+    const leftHighlight = ctx.createRadialGradient(-25, -50, 0, -25, -50, 40);
+    leftHighlight.addColorStop(0, 'rgba(150, 220, 220, 0.5)');
+    leftHighlight.addColorStop(1, 'rgba(150, 220, 220, 0)');
+    ctx.fillStyle = leftHighlight;
+    ctx.fill();
+    
     ctx.restore();
     
-    // ===== FOGLIA DESTRA (chiara, davanti) =====
+    // ===== FOGLIA DESTRA (chiara, forma allungata appuntita) =====
     ctx.save();
-    ctx.translate(50, -25);
-    ctx.rotate(0.25);
+    ctx.translate(55, -30);
+    ctx.rotate(0.15);
     
-    // Forma foglia destra - più grande e prominente
     const drawRightLeaf = () => {
       ctx.beginPath();
-      ctx.moveTo(15, 120); // punta inferiore (coda curva)
-      ctx.bezierCurveTo(-15, 100, -70, 50, -95, -10); // curva sinistra
-      ctx.bezierCurveTo(-115, -70, -100, -140, -50, -170); // curva superiore
-      ctx.bezierCurveTo(-10, -190, 40, -175, 55, -140); // punta superiore appuntita
-      ctx.bezierCurveTo(70, -100, 60, -30, 50, 30); // curva destra
-      ctx.bezierCurveTo(40, 70, 30, 100, 15, 120); // coda
+      // Forma allungata con punta in alto e coda in basso
+      ctx.moveTo(0, -140); // punta superiore appuntita
+      ctx.bezierCurveTo(35, -120, 55, -70, 55, -20); // curva destra superiore
+      ctx.bezierCurveTo(55, 40, 40, 90, 15, 130); // curva destra con coda
+      ctx.bezierCurveTo(5, 145, -5, 145, -15, 130); // punta coda
+      ctx.bezierCurveTo(-35, 90, -50, 40, -55, -20); // curva sinistra inferiore
+      ctx.bezierCurveTo(-55, -70, -35, -120, 0, -140); // curva sinistra superiore
       ctx.closePath();
     };
     
-    // Gradiente 3D foglia destra
-    const rightGrad = ctx.createLinearGradient(-90, -120, 60, 80);
-    rightGrad.addColorStop(0, '#4eeee5');
-    rightGrad.addColorStop(0.25, iconColor2);
-    rightGrad.addColorStop(0.5, '#35d4cb');
-    rightGrad.addColorStop(0.75, '#28b8b0');
-    rightGrad.addColorStop(1, iconColor1);
+    // Gradiente foglia destra (chiara cyan)
+    const rightGrad = ctx.createLinearGradient(-50, -100, 50, 100);
+    rightGrad.addColorStop(0, '#5eeee8');
+    rightGrad.addColorStop(0.3, iconColor2);
+    rightGrad.addColorStop(0.6, '#3dd9d0');
+    rightGrad.addColorStop(1, '#30c5bd');
     
     drawRightLeaf();
     ctx.fillStyle = rightGrad;
     ctx.fill();
     
-    // Ombra per profondità 3D
-    const rightShadow = ctx.createLinearGradient(40, 100, -40, -60);
-    rightShadow.addColorStop(0, 'rgba(0, 80, 80, 0.35)');
-    rightShadow.addColorStop(0.4, 'rgba(0, 80, 80, 0)');
-    rightShadow.addColorStop(1, 'rgba(0, 80, 80, 0)');
-    
+    // Bordo esterno
     drawRightLeaf();
-    ctx.fillStyle = rightShadow;
-    ctx.fill();
-    
-    // Grande riflesso luminoso (effetto liquid glass)
-    ctx.beginPath();
-    ctx.moveTo(-20, 60);
-    ctx.bezierCurveTo(-50, 30, -80, -30, -85, -80);
-    ctx.bezierCurveTo(-88, -120, -65, -155, -35, -165);
-    ctx.bezierCurveTo(-55, -130, -65, -80, -60, -30);
-    ctx.bezierCurveTo(-55, 10, -40, 40, -20, 60);
-    ctx.closePath();
-    
-    const rightHighlight = ctx.createLinearGradient(-85, -140, -10, 20);
-    rightHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
-    rightHighlight.addColorStop(0.4, 'rgba(255, 255, 255, 0.3)');
-    rightHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    ctx.fillStyle = rightHighlight;
-    ctx.fill();
-    
-    // Riflesso secondario più piccolo in alto
-    ctx.beginPath();
-    ctx.ellipse(-45, -130, 25, 35, -0.5, 0, Math.PI * 2);
-    const topHighlight = ctx.createRadialGradient(-45, -130, 0, -45, -130, 35);
-    topHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.6)');
-    topHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
-    ctx.fillStyle = topHighlight;
-    ctx.fill();
-    
-    // Bordo luminoso esterno
-    drawRightLeaf();
-    ctx.strokeStyle = 'rgba(120, 255, 255, 0.7)';
+    ctx.strokeStyle = '#50ddd5';
     ctx.lineWidth = 5;
     ctx.stroke();
     
-    // Bordo interno sottile
-    ctx.save();
-    ctx.scale(0.92, 0.92);
-    drawRightLeaf();
-    ctx.strokeStyle = 'rgba(150, 255, 255, 0.4)';
-    ctx.lineWidth = 3;
-    ctx.stroke();
-    ctx.restore();
-    
-    // Linea curva interna (stelo)
+    // Grande riflesso interno (effetto liquid glass)
     ctx.beginPath();
-    ctx.moveTo(5, 95);
-    ctx.bezierCurveTo(-25, 50, -55, -20, -60, -100);
-    ctx.strokeStyle = 'rgba(100, 220, 220, 0.5)';
-    ctx.lineWidth = 7;
+    ctx.moveTo(-20, -110);
+    ctx.bezierCurveTo(-45, -70, -45, 0, -30, 60);
+    ctx.strokeStyle = 'rgba(200, 255, 255, 0.7)';
+    ctx.lineWidth = 12;
     ctx.lineCap = 'round';
     ctx.stroke();
+    
+    // Riflesso luminoso secondario
+    ctx.beginPath();
+    ctx.moveTo(-10, 70);
+    ctx.bezierCurveTo(-25, 90, -15, 110, 0, 115);
+    ctx.strokeStyle = 'rgba(180, 255, 255, 0.5)';
+    ctx.lineWidth = 6;
+    ctx.lineCap = 'round';
+    ctx.stroke();
+    
+    // Riflesso luminoso superiore (bolla)
+    ctx.beginPath();
+    ctx.ellipse(-20, -70, 18, 35, -0.2, 0, Math.PI * 2);
+    const rightHighlight = ctx.createRadialGradient(-20, -70, 0, -20, -70, 35);
+    rightHighlight.addColorStop(0, 'rgba(255, 255, 255, 0.7)');
+    rightHighlight.addColorStop(0.5, 'rgba(255, 255, 255, 0.3)');
+    rightHighlight.addColorStop(1, 'rgba(255, 255, 255, 0)');
+    ctx.fillStyle = rightHighlight;
+    ctx.fill();
     
     ctx.restore();
     
