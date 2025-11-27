@@ -14,9 +14,51 @@ export default function ExerciseCard({
   isToday = true,
   onReplace,
   onDelete,
-  isDeleting = false
+  isDeleting = false,
+  userStrengthLevel = 'moderate'
 }) {
   const [showDetails, setShowDetails] = useState(false);
+  
+  // Genera intensity_tips se mancanti basati sul livello utente
+  const getIntensityTips = () => {
+    if (exercise.intensity_tips && exercise.intensity_tips.length > 0) {
+      return exercise.intensity_tips;
+    }
+    
+    // Genera tips di fallback basati sul tipo di esercizio e livello
+    const exerciseNameLower = (exercise.name || '').toLowerCase();
+    
+    const weightsByLevel = {
+      never_lifted: { dumbbell: '1-3kg', barbell: 'solo bilanciere (10-15kg)', machine: 'carico minimo' },
+      light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+      moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+      intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+      advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+    };
+    const weights = weightsByLevel[userStrengthLevel] || weightsByLevel.moderate;
+    
+    const isIsometric = ['plank', 'isometr', 'hold', 'tenuta'].some(kw => exerciseNameLower.includes(kw));
+    const isDumbbell = exerciseNameLower.includes('manubr');
+    const isBarbell = exerciseNameLower.includes('bilanciere');
+    const isMachine = ['macchina', 'leg press', 'cable', 'cavo'].some(kw => exerciseNameLower.includes(kw));
+    const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch'].some(kw => exerciseNameLower.includes(kw));
+    
+    if (isIsometric) {
+      return ["⏱️ Tieni per 30-45 secondi per serie", "💪 Quando tremi, l'intensità è giusta"];
+    } else if (isDumbbell) {
+      return [`🏋️ Usa manubri da ${weights.dumbbell} per lato`, "🔥 Le ultime 2-3 reps devono essere dure"];
+    } else if (isBarbell) {
+      return [`🏋️ Carica il bilanciere con ${weights.barbell}`, "📊 RPE 7-8: potresti fare ancora 2-3 reps"];
+    } else if (isMachine) {
+      return [`🏋️ Imposta la macchina su ${weights.machine}`, "🔥 Le ultime reps devono essere impegnative"];
+    } else if (isBodyweight) {
+      return ["⏱️ Rallenta la discesa a 3 secondi se troppo facile", "✅ Mantieni forma perfetta"];
+    } else {
+      return ["💪 Scegli un carico che renda le ultime reps dure", "📊 RPE 7-8"];
+    }
+  };
+  
+  const intensityTips = getIntensityTips();
   
   const toggleSet = (setNumber) => {
     const newCompleted = completedSets.includes(setNumber)
