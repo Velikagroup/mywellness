@@ -73,6 +73,7 @@ Deno.serve(async (req) => {
       country: 'IT',
       email: user.email,
       capabilities: {
+        card_payments: { requested: true },
         transfers: { requested: true },
       },
       metadata: {
