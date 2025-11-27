@@ -152,11 +152,11 @@ export default function ExerciseCard({
             )}
             
             {/* Mostra intensity tips direttamente sulla card - SEMPRE visibili */}
-            {exercise.intensity_tips && exercise.intensity_tips.length > 0 && (
+            {intensityTips && intensityTips.length > 0 && (
               <div className="mb-3 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-orange-800 mb-2">🎯 Intensità consigliata:</p>
+                <p className="text-xs font-bold text-orange-800 mb-2">🎯 Carico consigliato:</p>
                 <ul className="space-y-1">
-                  {exercise.intensity_tips.slice(0, 2).map((tip, idx) => (
+                  {intensityTips.slice(0, 2).map((tip, idx) => (
                     <li key={idx} className="text-xs text-orange-700 flex items-start gap-1">
                       <span className="flex-shrink-0">•</span>
                       <span>{tip}</span>
