@@ -89,7 +89,9 @@ Deno.serve(async (req) => {
                         traffic_source: trafficSource,
                         metadata: {
                             ...metadata,
-                            payment_method: session.payment_method_types?.[0] || 'card'
+                            payment_method: session.payment_method_types?.[0] || 'card',
+                            coupon_code: user.applied_coupon_code || metadata.coupon_code || null,
+                            original_amount: session.amount_total + (session.total_details?.amount_discount || 0)
                         }
                     });
 
@@ -331,7 +333,9 @@ Deno.serve(async (req) => {
                         metadata: {
                             ...invoice.metadata,
                             payment_method: 'card',
-                            invoice_number: invoice.number
+                            invoice_number: invoice.number,
+                            coupon_code: user.applied_coupon_code || invoice.metadata?.coupon_code || null,
+                            original_amount: invoice.total + (invoice.discount?.coupon?.amount_off || 0)
                         }
                     });
 
@@ -633,7 +637,8 @@ Deno.serve(async (req) => {
                         traffic_source: trafficSource,
                         metadata: {
                             ...metadata,
-                            payment_method: paymentIntent.payment_method_types?.[0] || 'card'
+                            payment_method: paymentIntent.payment_method_types?.[0] || 'card',
+                            coupon_code: user.applied_coupon_code || metadata.coupon_code || null
                         }
                     });
 
