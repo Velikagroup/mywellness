@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Smartphone } from "lucide-react";
+import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 
@@ -119,8 +119,7 @@ export default function Layout({ children }) {
     { name: 'Email', icon: Mail, path: 'AdminEmails' },
     { name: 'Analytics', icon: BarChart3, path: 'AdminAnalytics' },
     { name: 'Marketing', icon: Target, path: 'AdminMarketing' },
-    { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' },
-    { name: 'App', icon: Smartphone, path: 'AdminAppIcon' }
+    { name: 'Sales Tax', icon: Activity, path: 'AdminSalesTax' }
   ] : [];
 
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
