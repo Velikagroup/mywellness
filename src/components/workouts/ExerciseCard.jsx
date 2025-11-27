@@ -289,14 +289,14 @@ export default function ExerciseCard({
                 </div>
               )}
 
-              {exercise.intensity_tips?.length > 0 && (
+              {intensityTips?.length > 0 && (
                 <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <Dumbbell className="w-4 h-4 text-orange-600" />
                     Carico e Intensità
                   </h4>
                   <ul className="space-y-2">
-                    {exercise.intensity_tips.map((tip, idx) => (
+                    {intensityTips.map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                         <span className="text-orange-600 font-bold flex-shrink-0">•</span>
                         <span>{tip}</span>
