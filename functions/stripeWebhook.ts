@@ -560,13 +560,14 @@ Deno.serve(async (req) => {
                 const charge = event.data.object;
                 console.log('💸 Refund processed:', charge.id);
                 console.log('📊 Charge amount:', charge.amount / 100, 'Refunded:', charge.amount_refunded / 100);
+                console.log('📋 Charge metadata:', JSON.stringify(charge.metadata));
 
                 const customerId = charge.customer;
                 const refundAmount = charge.amount_refunded / 100;
                 const originalAmount = charge.amount / 100;
                 const isFullRefund = charge.refunded === true || charge.amount_refunded >= charge.amount;
 
-                console.log(`💰 Full refund: ${isFullRefund}`);
+                console.log(`💰 Full refund of THIS charge: ${isFullRefund}`);
 
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
 
@@ -574,23 +575,12 @@ Deno.serve(async (req) => {
                     const user = users[0];
                     console.log(`👤 User found: ${user.email}, current plan: ${user.subscription_plan}`);
 
-                    // Cerca la transazione originale per capire il piano precedente
-                    let previousPlan = null;
-                    let billingPeriod = 'monthly';
+                    // Controlla se è un rimborso di un UPGRADE (ha metadata upgrade_from)
+                    const isUpgradeRefund = charge.metadata?.type === 'upgrade_proration' || charge.metadata?.upgrade_from;
+                    const upgradeFrom = charge.metadata?.upgrade_from;
+                    const upgradeTo = charge.metadata?.upgrade_to;
                     
-                    if (charge.payment_intent) {
-                        const originalTransactions = await base44.asServiceRole.entities.Transaction.filter({
-                            stripe_payment_intent_id: charge.payment_intent,
-                            status: 'succeeded'
-                        });
-                        
-                        if (originalTransactions.length > 0) {
-                            const origTx = originalTransactions[0];
-                            previousPlan = origTx.plan;
-                            billingPeriod = origTx.billing_period || 'monthly';
-                            console.log(`📋 Found original transaction: plan=${previousPlan}, period=${billingPeriod}`);
-                        }
-                    }
+                    console.log(`🔄 Is upgrade refund: ${isUpgradeRefund}, from: ${upgradeFrom}, to: ${upgradeTo}`);
 
                     // Create refund transaction
                     await base44.asServiceRole.entities.Transaction.create({
@@ -602,34 +592,67 @@ Deno.serve(async (req) => {
                         type: 'refund',
                         plan: user.subscription_plan,
                         payment_date: new Date().toISOString(),
-                        description: isFullRefund ? 'Rimborso completo' : 'Rimborso parziale',
+                        description: isUpgradeRefund 
+                            ? `Rimborso upgrade da ${upgradeFrom} a ${upgradeTo}` 
+                            : (isFullRefund ? 'Rimborso completo' : 'Rimborso parziale'),
                         metadata: {
                             original_amount: originalAmount,
                             refund_amount: refundAmount,
                             is_full_refund: isFullRefund,
-                            previous_plan: previousPlan
+                            is_upgrade_refund: isUpgradeRefund,
+                            upgrade_from: upgradeFrom,
+                            upgrade_to: upgradeTo
                         }
                     });
 
                     console.log(`✅ Refund transaction recorded for user ${user.id}: €${refundAmount}`);
 
-                    // 🔄 GESTIONE DOWNGRADE/CANCELLAZIONE BASATA SUL RIMBORSO
+                    // 🔄 GESTIONE DOWNGRADE BASATA SUL TIPO DI RIMBORSO
                     const currentPlan = user.subscription_plan;
-                    
-                    // Prezzi dei piani (in centesimi per Stripe)
-                    const planPrices = {
-                        base: { monthly: 19, yearly: 182.40 },
-                        pro: { monthly: 29, yearly: 278.40 },
-                        premium: { monthly: 39, yearly: 374.40 }
-                    };
-
-                    // Gerarchia piani
                     const planHierarchy = { free: 0, base: 1, pro: 2, premium: 3 };
-                    const planByHierarchy = ['free', 'base', 'pro', 'premium'];
 
-                    if (isFullRefund) {
-                        // RIMBORSO TOTALE: Cancella abbonamento e porta a free
-                        console.log('🚫 Full refund - cancelling subscription and setting to free');
+                    // CASO 1: Rimborso di un UPGRADE → Torna al piano precedente
+                    if (isUpgradeRefund && upgradeFrom && isFullRefund) {
+                        console.log(`⬇️ UPGRADE REFUND: Reverting from ${currentPlan} back to ${upgradeFrom}`);
+                        
+                        // Aggiorna subscription su Stripe al piano precedente
+                        if (user.stripe_subscription_id && upgradeFrom !== 'free') {
+                            try {
+                                const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
+                                const currentItemId = subscription.items.data[0]?.id;
+                                const interval = subscription.items.data[0]?.price?.recurring?.interval;
+                                const period = interval === 'year' ? 'yearly' : 'monthly';
+
+                                const priceMap = {
+                                    base: { monthly: 'price_1SXADj2OXBs6ZYwlY8id3Yhy', yearly: 'price_1SXADj2OXBs6ZYwlywQCp6oR' },
+                                    pro: { monthly: 'price_1SXADj2OXBs6ZYwlqdFI6aUU', yearly: 'price_1SXADk2OXBs6ZYwl0zZsxETJ' },
+                                    premium: { monthly: 'price_1SXADk2OXBs6ZYwlxiqqQqVA', yearly: 'price_1SXADl2OXBs6ZYwl0PlnAeX9' }
+                                };
+
+                                if (currentItemId && priceMap[upgradeFrom]) {
+                                    await stripe.subscriptions.update(user.stripe_subscription_id, {
+                                        items: [{
+                                            id: currentItemId,
+                                            price: priceMap[upgradeFrom][period]
+                                        }],
+                                        proration_behavior: 'none'
+                                    });
+                                    console.log(`✅ Stripe subscription reverted to ${upgradeFrom} (${period})`);
+                                }
+                            } catch (updateError) {
+                                console.error('⚠️ Error updating Stripe subscription:', updateError.message);
+                            }
+                        }
+
+                        await base44.asServiceRole.entities.User.update(user.id, {
+                            subscription_plan: upgradeFrom
+                        });
+
+                        console.log(`✅ User ${user.id} reverted from ${currentPlan} to ${upgradeFrom} due to upgrade refund`);
+                    }
+                    // CASO 2: Rimborso TOTALE di un pagamento normale → Cancella abbonamento
+                    else if (isFullRefund && !isUpgradeRefund) {
+                        console.log('🚫 Full refund of subscription payment - cancelling and setting to free');
                         
                         if (user.stripe_subscription_id) {
                             try {
@@ -648,62 +671,54 @@ Deno.serve(async (req) => {
                         });
 
                         console.log(`✅ User ${user.id} downgraded to FREE due to full refund`);
-
-                    } else {
-                        // RIMBORSO PARZIALE: Determina piano in base alla differenza di prezzo rimborsata
+                    }
+                    // CASO 3: Rimborso PARZIALE → Calcola piano basato sull'importo rimanente
+                    else if (!isFullRefund) {
                         console.log(`💵 Partial refund: €${refundAmount.toFixed(2)} of €${originalAmount.toFixed(2)}`);
                         
-                        // Logica: se rimborsi la differenza tra due piani, fai downgrade di un livello
-                        // Es: Pro (29) -> Base (19) = differenza 10€
-                        // Es: Premium (39) -> Pro (29) = differenza 10€
-                        // Es: Premium (39) -> Base (19) = differenza 20€
+                        const paidAmount = originalAmount - refundAmount;
+                        const planPrices = {
+                            base: { monthly: 19, yearly: 182.40 },
+                            pro: { monthly: 29, yearly: 278.40 },
+                            premium: { monthly: 39, yearly: 374.40 }
+                        };
                         
-                        const currentLevel = planHierarchy[currentPlan] || 0;
-                        let newLevel = currentLevel;
-                        
-                        // Calcola quanti livelli scendere in base al rimborso
-                        const period = billingPeriod === 'yearly' ? 'yearly' : 'monthly';
-                        
-                        if (currentPlan === 'premium') {
-                            const diffToPro = planPrices.premium[period] - planPrices.pro[period];
-                            const diffToBase = planPrices.premium[period] - planPrices.base[period];
-                            
-                            if (refundAmount >= diffToBase - 1) {
-                                newLevel = 1; // base
-                            } else if (refundAmount >= diffToPro - 1) {
-                                newLevel = 2; // pro
-                            }
-                        } else if (currentPlan === 'pro') {
-                            const diffToBase = planPrices.pro[period] - planPrices.base[period];
-                            
-                            if (refundAmount >= diffToBase - 1) {
-                                newLevel = 1; // base
-                            }
+                        // Determina il periodo
+                        let period = 'monthly';
+                        if (user.stripe_subscription_id) {
+                            try {
+                                const sub = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
+                                period = sub.items.data[0]?.price?.recurring?.interval === 'year' ? 'yearly' : 'monthly';
+                            } catch (e) {}
                         }
-                        
-                        const newPlan = planByHierarchy[newLevel];
-                        console.log(`📊 Refund €${refundAmount} → downgrade from ${currentPlan} (level ${currentLevel}) to ${newPlan} (level ${newLevel})`);
 
-                        if (newLevel < currentLevel) {
+                        // Trova il piano massimo che può permettersi
+                        let newPlan = 'free';
+                        if (paidAmount >= planPrices.premium[period] - 1) newPlan = 'premium';
+                        else if (paidAmount >= planPrices.pro[period] - 1) newPlan = 'pro';
+                        else if (paidAmount >= planPrices.base[period] - 1) newPlan = 'base';
+
+                        console.log(`📊 Paid amount €${paidAmount.toFixed(2)} → eligible for plan: ${newPlan}`);
+
+                        if (planHierarchy[newPlan] < planHierarchy[currentPlan]) {
                             console.log(`⬇️ Downgrading from ${currentPlan} to ${newPlan}`);
 
-                            // Aggiorna subscription su Stripe al nuovo piano
                             if (user.stripe_subscription_id && newPlan !== 'free') {
                                 try {
                                     const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
                                     const currentItemId = subscription.items.data[0]?.id;
 
                                     const priceMap = {
-                                        base: period === 'monthly' ? 'price_1SXADj2OXBs6ZYwlY8id3Yhy' : 'price_1SXADj2OXBs6ZYwlywQCp6oR',
-                                        pro: period === 'monthly' ? 'price_1SXADj2OXBs6ZYwlqdFI6aUU' : 'price_1SXADk2OXBs6ZYwl0zZsxETJ',
-                                        premium: period === 'monthly' ? 'price_1SXADk2OXBs6ZYwlxiqqQqVA' : 'price_1SXADl2OXBs6ZYwl0PlnAeX9'
+                                        base: { monthly: 'price_1SXADj2OXBs6ZYwlY8id3Yhy', yearly: 'price_1SXADj2OXBs6ZYwlywQCp6oR' },
+                                        pro: { monthly: 'price_1SXADj2OXBs6ZYwlqdFI6aUU', yearly: 'price_1SXADk2OXBs6ZYwl0zZsxETJ' },
+                                        premium: { monthly: 'price_1SXADk2OXBs6ZYwlxiqqQqVA', yearly: 'price_1SXADl2OXBs6ZYwl0PlnAeX9' }
                                     };
 
                                     if (currentItemId && priceMap[newPlan]) {
                                         await stripe.subscriptions.update(user.stripe_subscription_id, {
                                             items: [{
                                                 id: currentItemId,
-                                                price: priceMap[newPlan]
+                                                price: priceMap[newPlan][period]
                                             }],
                                             proration_behavior: 'none'
                                         });
@@ -712,15 +727,24 @@ Deno.serve(async (req) => {
                                 } catch (updateError) {
                                     console.error('⚠️ Error updating Stripe subscription:', updateError.message);
                                 }
+                            } else if (newPlan === 'free' && user.stripe_subscription_id) {
+                                try {
+                                    await stripe.subscriptions.cancel(user.stripe_subscription_id);
+                                } catch (e) {}
+                                
+                                await base44.asServiceRole.entities.User.update(user.id, {
+                                    subscription_plan: 'free',
+                                    subscription_status: 'cancelled',
+                                    stripe_subscription_id: null
+                                });
+                                break;
                             }
 
                             await base44.asServiceRole.entities.User.update(user.id, {
                                 subscription_plan: newPlan
                             });
 
-                            console.log(`✅ User ${user.id} downgraded from ${currentPlan} to ${newPlan} due to partial refund of €${refundAmount}`);
-                        } else {
-                            console.log(`ℹ️ No downgrade needed - refund amount €${refundAmount} doesn't match plan difference`);
+                            console.log(`✅ User ${user.id} downgraded to ${newPlan} due to partial refund`);
                         }
                     }
                 }
