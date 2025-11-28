@@ -97,19 +97,30 @@ Deno.serve(async (req) => {
         });
 
         const targetActivities = activities.filter(a => {
-                        const activityDate = new Date(a.created_date);
-                        return activityDate <= thirtyMinutesAgo;
-                    });
+            const activityDate = new Date(a.created_date);
+            return activityDate <= thirtyMinutesAgo;
+        });
 
         console.log(`👥 Found ${targetActivities.length} abandoned checkouts`);
 
-        const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+        // Group by user_id to avoid duplicates - keep only the most recent activity per user
+        const userActivitiesMap = new Map();
+        for (const activity of targetActivities) {
+            const existing = userActivitiesMap.get(activity.user_id);
+            if (!existing || new Date(activity.created_date) > new Date(existing.created_date)) {
+                userActivitiesMap.set(activity.user_id, activity);
+            }
+        }
+        
+        const uniqueActivities = Array.from(userActivitiesMap.values());
+        console.log(`👥 Unique users to process: ${uniqueActivities.length}`);
+
         const appUrl = Deno.env.get('APP_URL') || 'https://projectmywellness.com';
 
         let sentCount = 0;
         const results = [];
 
-        for (const activity of targetActivities) {
+        for (const activity of uniqueActivities) {
             try {
                 const users = await base44.asServiceRole.entities.User.filter({
                     email: activity.user_id
@@ -117,17 +128,34 @@ Deno.serve(async (req) => {
 
                 if (users.length === 0) {
                     console.log(`⚠️ User not found for ${activity.user_id}`);
+                    // Mark all activities for this user as completed to avoid future attempts
+                    const userActivities = targetActivities.filter(a => a.user_id === activity.user_id);
+                    for (const ua of userActivities) {
+                        await base44.asServiceRole.entities.UserActivity.update(ua.id, {
+                            completed: true,
+                            completed_at: new Date().toISOString()
+                        });
+                    }
                     continue;
                 }
 
                 const user = users[0];
 
-                if (user.subscription_status === 'active') {
-                    await base44.asServiceRole.entities.UserActivity.update(activity.id, {
-                        completed: true,
-                        completed_at: new Date().toISOString()
-                    });
-                    console.log(`✅ User ${user.email} completed purchase, marked as done`);
+                // Check if user has already purchased (active subscription or any paid plan)
+                const hasPurchased = user.subscription_status === 'active' || 
+                                     user.subscription_status === 'trialing' ||
+                                     (user.subscription_plan && user.subscription_plan !== 'standard' && user.subscription_plan !== 'trial');
+
+                if (hasPurchased) {
+                    // Mark ALL activities for this user as completed
+                    const userActivities = targetActivities.filter(a => a.user_id === activity.user_id);
+                    for (const ua of userActivities) {
+                        await base44.asServiceRole.entities.UserActivity.update(ua.id, {
+                            completed: true,
+                            completed_at: new Date().toISOString()
+                        });
+                    }
+                    console.log(`✅ User ${user.email} already purchased, marked ${userActivities.length} activities as done`);
                     continue;
                 }
 
@@ -142,8 +170,17 @@ Deno.serve(async (req) => {
                     template?.reply_to_email || 'no-reply@projectmywellness.com'
                 );
 
+                // Mark ALL activities for this user as completed after sending
+                const userActivities = targetActivities.filter(a => a.user_id === activity.user_id);
+                for (const ua of userActivities) {
+                    await base44.asServiceRole.entities.UserActivity.update(ua.id, {
+                        completed: true,
+                        completed_at: new Date().toISOString()
+                    });
+                }
+
                 sentCount++;
-                console.log(`✅ Cart abandoned email sent to ${user.email}`);
+                console.log(`✅ Cart abandoned email sent to ${user.email}, marked ${userActivities.length} activities as done`);
                 
                 results.push({
                     user_id: user.id,
