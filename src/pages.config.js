@@ -25,6 +25,7 @@ import AdminClients from './pages/AdminClients';
 import Settings from './pages/Settings';
 import AdminSupportTickets from './pages/AdminSupportTickets';
 import AdminFeedback from './pages/AdminFeedback';
+import Checkout from './pages/Checkout';
 import __Layout from './Layout.jsx';
 
 
@@ -56,6 +57,7 @@ export const PAGES = {
     "Settings": Settings,
     "AdminSupportTickets": AdminSupportTickets,
     "AdminFeedback": AdminFeedback,
+    "Checkout": Checkout,
 }
 
 export const pagesConfig = {
