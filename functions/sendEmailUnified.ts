@@ -58,7 +58,7 @@ function generateEmailHtml(template, variables) {
     let greeting = template.greeting || '';
     let mainContent = template.main_content || '';
     let subject = template.subject || 'MyWellness';
-    let ctaUrl = template.call_to_action_url || `${appUrl}/Dashboard`;
+    let ctaUrl = template.call_to_action_url || `${appUrl}/Login`;
     let footerText = template.footer_text || '';
 
     Object.keys(variables).forEach(key => {

@@ -142,7 +142,7 @@ Deno.serve(async (req) => {
                             </table>
 
                             <div style="text-align: center; margin: 30px 0 10px 0;">
-                                <a href="${Deno.env.get('APP_URL') || 'https://app.projectmywellness.com'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                <a href="${Deno.env.get('APP_URL') || 'https://app.projectmywellness.com'}/Login" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                     🎯 Vai alla Dashboard
                                 </a>
                             </div>
