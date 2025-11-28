@@ -211,11 +211,12 @@ export default function AdminEmails() {
       const template = previewEmail.template;
       const fromEmail = template.from_email || 'info@projectmywellness.com';
       const replyToEmail = template.reply_to_email || 'no-reply@projectmywellness.com';
+      const appUrl = 'https://projectmywellness.com';
       
       const variables = {
         user_name: user?.full_name || 'Mario Rossi',
         user_email: targetEmail,
-        app_url: 'https://projectmywellness.com'
+        app_url: appUrl
       };
 
       const replaceVars = (text, vars) => {
@@ -228,22 +229,33 @@ export default function AdminEmails() {
         return result;
       };
 
-      const replacedMainContent = replaceVars(template.main_content || '', variables);
       const replacedSubject = replaceVars(template.subject || 'Email di Test', variables);
-      const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
+      
+      // Check if this is a cart abandoned email type
+      const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(previewEmail.id);
+      
+      let htmlBody;
+      
+      if (isCartAbandonedEmail) {
+        // Generate full cart abandoned email HTML
+        htmlBody = generateCartAbandonedTestEmail(template, variables, appUrl, previewEmail.id);
+      } else {
+        // Standard email generation
+        const replacedMainContent = replaceVars(template.main_content || '', variables);
+        const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
 
-      const ctaHtml = template.call_to_action_text && template.call_to_action_url ? 
-        `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-            <tr>
-                <td align="center">
-                    <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                        ${template.call_to_action_text}
-                    </a>
-                </td>
-            </tr>
-        </table>` : '';
+        const ctaHtml = template.call_to_action_text && template.call_to_action_url ? 
+          `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+              <tr>
+                  <td align="center">
+                      <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                          ${template.call_to_action_text}
+                      </a>
+                  </td>
+              </tr>
+          </table>` : '';
 
-      const htmlBody = `<!DOCTYPE html>
+        htmlBody = `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="UTF-8">
@@ -293,6 +305,7 @@ ${ctaHtml}
 </table>
 </body>
 </html>`;
+      }
 
       await base44.functions.invoke('sendTestEmailDirect', {
         to: targetEmail,
@@ -308,6 +321,182 @@ ${ctaHtml}
       console.error('Error sending test email:', error);
       alert('❌ Errore durante l\'invio dell\'email di test: ' + error.message);
     }
+  };
+
+  // Generate full cart abandoned email HTML for testing
+  const generateCartAbandonedTestEmail = (template, variables, appUrl, emailType) => {
+    const userName = variables.user_name || 'Utente';
+    const greeting = (template.greeting || 'Ciao {user_name},').replace('{user_name}', userName);
+    const introText = template.intro_text || 'Hai fatto il primo passo verso la versione migliore di te stesso...';
+    const secondParagraph = template.second_paragraph || 'Ogni giorno che passa è un giorno in meno verso i tuoi obiettivi.';
+
+    const showFeatures = template.show_features_section !== false;
+    const featuresTitle = template.features_section_title || '❌ Ecco cosa ti stai perdendo:';
+    const feature1Emoji = template.feature_1_emoji || '🍽️';
+    const feature1Title = template.feature_1_title || 'Piano Nutrizionale AI';
+    const feature1Subtitle = template.feature_1_subtitle || 'Pasti personalizzati ogni giorno';
+    const feature2Emoji = template.feature_2_emoji || '📊';
+    const feature2Title = template.feature_2_title || 'Dashboard Scientifica';
+    const feature2Subtitle = template.feature_2_subtitle || 'Monitora ogni progresso';
+    const feature3Emoji = template.feature_3_emoji || '📸';
+    const feature3Title = template.feature_3_title || 'Analisi Foto AI';
+    const feature3Subtitle = template.feature_3_subtitle || 'Vedi la trasformazione';
+    const feature4Emoji = template.feature_4_emoji || '🛒';
+    const feature4Title = template.feature_4_title || 'Lista Spesa Smart';
+    const feature4Subtitle = template.feature_4_subtitle || 'Mai più dubbi al supermercato';
+
+    const closingText = template.closing_text || 'Il momento perfetto non esiste, ma il momento giusto è ADESSO.';
+
+    const showUrgency = template.show_urgency_box !== false;
+    const urgencyTitle = template.urgency_title || '⏰ Il momento è ADESSO';
+    const urgencySubtitle = template.urgency_subtitle || 'Non rimandare a domani quello che può cambiarti la vita oggi.';
+
+    const showTrustBadges = template.show_trust_badges !== false;
+    const ctaText = template.call_to_action_text || '🚀 Riprendi il Tuo Percorso Ora';
+    const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace('{app_url}', appUrl);
+    const footerQuote = template.footer_quote || '"Il miglior momento per iniziare era ieri. Il secondo miglior momento è adesso."';
+
+    // Determine colors based on email type
+    let boxBg, boxBorder, boxTextColor, boxSubtitleColor, buttonGradient;
+    if (emailType === 'cart_abandoned_72h') {
+      boxBg = '#fef2f2';
+      boxBorder = '#fecaca';
+      boxTextColor = '#991b1b';
+      boxSubtitleColor = '#b91c1c';
+      buttonGradient = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+    } else if (emailType === 'cart_abandoned_24h') {
+      boxBg = '#fffbeb';
+      boxBorder = '#fcd34d';
+      boxTextColor = '#92400e';
+      boxSubtitleColor = '#b45309';
+      buttonGradient = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+    } else {
+      boxBg = '#fef2f2';
+      boxBorder = '#fecaca';
+      boxTextColor = '#991b1b';
+      boxSubtitleColor = '#b91c1c';
+      buttonGradient = 'linear-gradient(135deg, #26847F 0%, #1f6b66 100%)';
+    }
+
+    const featuresHtml = showFeatures ? `
+      <h3 style="color: ${boxTextColor}; margin: 25px 0 15px 0; font-size: 18px;">${featuresTitle}</h3>
+      <table width="100%" cellpadding="0" cellspacing="6" border="0" style="table-layout: fixed; margin-bottom: 25px;">
+        <tr>
+          <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+            <p style="margin: 0; font-size: 28px;">${feature1Emoji}</p>
+            <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${feature1Title}</p>
+            <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${feature1Subtitle}</p>
+          </td>
+          <td width="4%"></td>
+          <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+            <p style="margin: 0; font-size: 28px;">${feature2Emoji}</p>
+            <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${feature2Title}</p>
+            <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${feature2Subtitle}</p>
+          </td>
+        </tr>
+        <tr><td colspan="3" style="height: 6px;"></td></tr>
+        <tr>
+          <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+            <p style="margin: 0; font-size: 28px;">${feature3Emoji}</p>
+            <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${feature3Title}</p>
+            <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${feature3Subtitle}</p>
+          </td>
+          <td width="4%"></td>
+          <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+            <p style="margin: 0; font-size: 28px;">${feature4Emoji}</p>
+            <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${feature4Title}</p>
+            <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${feature4Subtitle}</p>
+          </td>
+        </tr>
+      </table>
+    ` : '';
+
+    const urgencyHtml = showUrgency ? `
+      <div style="background: linear-gradient(135deg, ${boxBg} 0%, ${boxBorder} 100%); border: 2px solid ${boxTextColor}; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+        <p style="color: ${boxTextColor}; font-size: 18px; margin: 0; font-weight: bold;">${urgencyTitle}</p>
+        <p style="color: ${boxSubtitleColor}; font-size: 14px; margin: 10px 0 0 0; line-height: 1.5;">${urgencySubtitle}</p>
+      </div>
+    ` : '';
+
+    const trustBadgesHtml = showTrustBadges ? `
+      <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+        <tr>
+          <td align="center">
+            <table cellpadding="0" cellspacing="15" border="0">
+              <tr>
+                <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🔒</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Pagamento<br>Sicuro</p></td>
+                <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">✅</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Garanzia<br>100%</p></td>
+                <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🚀</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Attivazione<br>Istantanea</p></td>
+              </tr>
+            </table>
+          </td>
+        </tr>
+      </table>
+    ` : '';
+
+    return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+.logo-cell { padding: 60px 30px 24px 30px; }
+.content-cell { padding: 40px 30px; }
+@media only screen and (min-width: 600px) {
+.logo-cell { padding: 60px 60px 24px 60px !important; }
+.content-cell { padding: 60px 60px 40px 60px !important; }
+}
+@media only screen and (max-width: 600px) {
+.container { width: 100% !important; border-radius: 0 !important; }
+.outer-wrapper { padding: 0 !important; }
+}
+</style>
+</head>
+<body style="margin: 0; padding: 0;">
+<table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+<tr>
+<td align="center">
+<table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+<tr>
+<td class="logo-cell">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+</td>
+</tr>
+<tr>
+<td class="content-cell">
+<p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>
+<p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 20px 0;">${introText}</p>
+<p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 20px 0;">${secondParagraph}</p>
+${featuresHtml}
+<p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 25px 0;">${closingText}</p>
+${urgencyHtml}
+${trustBadgesHtml}
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
+<tr>
+<td align="center">
+<a href="${ctaUrl}" style="display: inline-block; background: ${buttonGradient}; color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">${ctaText}</a>
+</td>
+</tr>
+</table>
+<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>
+</td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+<tr>
+<td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
+<p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+<p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>`;
   };
 
   const handleNewBroadcast = () => {
