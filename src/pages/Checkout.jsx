@@ -128,18 +128,16 @@ export default function Checkout() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
-        // Track checkout opened - use email as user_id per RLS rules
+        // Track checkout opened - use backend function to bypass RLS
         if (!checkoutTracked && currentUser && currentUser.email) {
           try {
             console.log('📊 Attempting to track checkout_started for:', currentUser.email);
-            await base44.entities.UserActivity.create({
-              user_id: currentUser.email,
+            await base44.functions.invoke('trackUserActivity', {
               event_type: 'checkout_started',
               event_data: { 
                 plan: selectedPlan,
                 amount: planPrices[selectedPlan]?.[selectedBillingPeriod === 'yearly' ? 'yearly' : 'monthly'] * 100 || 0
-              },
-              completed: false
+              }
             });
             console.log('✅ Checkout started tracked successfully');
             setCheckoutTracked(true);
