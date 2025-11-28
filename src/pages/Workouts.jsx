@@ -103,6 +103,8 @@ export default function Workouts() {
 
   // ✅ SEMPLIFICATO: Usa solo exerciseSets per tracciare tutto
   const [exerciseSets, setExerciseSets] = useState({}); // { "Squat con Manubri": [1,2,3], "Panca Piana": [1,2] }
+  const [workoutCompleted, setWorkoutCompleted] = useState(false); // Se l'allenamento di OGGI è stato completato
+  const [isCompletingWorkout, setIsCompletingWorkout] = useState(false);
   
   // Stati per sostituzione/eliminazione/aggiunta esercizi
   const [replaceExerciseTarget, setReplaceExerciseTarget] = useState(null);
