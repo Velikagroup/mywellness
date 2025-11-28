@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X } from "lucide-react";
+import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, Briefcase, Tag, X, ChevronDown } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -70,8 +70,7 @@ export default function TrialSetup() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
-  const [phoneDialogOpen, setPhoneDialogOpen] = useState(false);
-  const [countryDialogOpen, setCountryDialogOpen] = useState(false);
+  
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -850,22 +849,30 @@ export default function TrialSetup() {
                   Numero di Telefono
                 </Label>
                 <div className="flex items-center gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPhoneDialogOpen(true)}
-                    className="h-12 px-3 rounded-md border border-gray-200 bg-white text-base min-w-[120px] flex items-center justify-between gap-2"
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="text-lg">{countryCodeToFlag(selectedCountry?.code || 'IT')}</span>
-                      <span>{selectedCountry?.dial_code || '+39'}</span>
-                    </span>
-                    <ChevronsUpDown className="h-4 w-4 opacity-50" />
-                  </button>
+                  <div className="relative">
+                    <select
+                      value={selectedCountry?.code || 'IT'}
+                      onChange={(e) => {
+                        const country = countries.find(c => c.code === e.target.value);
+                        if (country) setSelectedCountry(country);
+                      }}
+                      className="h-12 pl-3 pr-8 rounded-md border border-gray-200 bg-white text-base appearance-none cursor-pointer min-w-[115px]"
+                      style={{ fontSize: '16px' }}
+                    >
+                      {countries.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {countryCodeToFlag(country.code)} {country.dial_code}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                  </div>
                   <Input
                     id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
                     value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
                     className="h-12 text-base bg-white"
                     autoComplete="tel-national"
+                    style={{ fontSize: '16px' }}
                   />
                 </div>
               </div>
@@ -893,14 +900,22 @@ export default function TrialSetup() {
               </div>
               <div>
                 <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
-                <button
-                  type="button"
-                  onClick={() => setCountryDialogOpen(true)}
-                  className="w-full h-12 px-3 rounded-md border border-gray-200 bg-white text-base flex items-center justify-between"
-                >
-                  <span>{countries.find(c => c.code === billingInfo.country)?.name || 'Seleziona paese...'}</span>
-                  <ChevronsUpDown className="h-4 w-4 opacity-50" />
-                </button>
+                <div className="relative">
+                  <select
+                    id="country"
+                    value={billingInfo.country}
+                    onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
+                    className="w-full h-12 pl-3 pr-10 rounded-md border border-gray-200 bg-white text-base appearance-none cursor-pointer"
+                    style={{ fontSize: '16px' }}
+                  >
+                    {countries.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
+                </div>
               </div>
 
               <div className="pt-4 space-y-4">
@@ -1178,102 +1193,6 @@ export default function TrialSetup() {
           </CardContent>
         </Card>
       </div>
-
-      {/* Bottom Sheet per Prefisso Telefono */}
-      {phoneDialogOpen && (
-        <div className="fixed inset-0 z-[9999]" style={{ touchAction: 'none' }}>
-          <div 
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setPhoneDialogOpen(false)}
-          />
-          <div 
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[60vh] overflow-hidden"
-            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-          >
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Seleziona Prefisso</h3>
-              <button 
-                type="button"
-                onClick={() => setPhoneDialogOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="overflow-y-auto max-h-[calc(60vh-60px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
-              {countries.map((country) => (
-                <button
-                  key={country.code}
-                  type="button"
-                  onClick={() => {
-                    setSelectedCountry(country);
-                    setPhoneDialogOpen(false);
-                  }}
-                  className={`w-full p-4 flex items-center gap-3 text-left border-b border-gray-100 active:bg-gray-100 ${
-                    selectedCountry?.code === country.code 
-                      ? 'bg-[var(--brand-primary-light)]' 
-                      : ''
-                  }`}
-                >
-                  <span className="text-2xl">{countryCodeToFlag(country.code)}</span>
-                  <span className="flex-1 text-base">{country.name}</span>
-                  <span className="text-gray-500">{country.dial_code}</span>
-                  {selectedCountry?.code === country.code && (
-                    <Check className="h-5 w-5 text-[var(--brand-primary)]" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Bottom Sheet per Paese */}
-      {countryDialogOpen && (
-        <div className="fixed inset-0 z-[9999]" style={{ touchAction: 'none' }}>
-          <div 
-            className="absolute inset-0 bg-black/50"
-            onClick={() => setCountryDialogOpen(false)}
-          />
-          <div 
-            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[60vh] overflow-hidden"
-            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
-          >
-            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold">Seleziona Paese</h3>
-              <button 
-                type="button"
-                onClick={() => setCountryDialogOpen(false)}
-                className="p-2 hover:bg-gray-100 rounded-full"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-            <div className="overflow-y-auto max-h-[calc(60vh-60px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
-              {countries.map((country) => (
-                <button
-                  key={country.code}
-                  type="button"
-                  onClick={() => {
-                    handleBillingInfoChange({ target: { name: 'country', value: country.code }});
-                    setCountryDialogOpen(false);
-                  }}
-                  className={`w-full p-4 flex items-center gap-3 text-left border-b border-gray-100 active:bg-gray-100 ${
-                    billingInfo.country === country.code 
-                      ? 'bg-[var(--brand-primary-light)]' 
-                      : ''
-                  }`}
-                >
-                  <span className="flex-1 text-base">{country.name}</span>
-                  {billingInfo.country === country.code && (
-                    <Check className="h-5 w-5 text-[var(--brand-primary)]" />
-                  )}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
 
       <footer className="py-12 px-6 mt-8">
         <div className="max-w-6xl mx-auto">
