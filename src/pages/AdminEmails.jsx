@@ -1311,7 +1311,7 @@ ${ctaHtml}
                                       )}
 
                                       {/* Sezione Funzionalità - Per cart_checkout_abandoned e simili */}
-                                      {previewEmail?.id === 'cart_checkout_abandoned' && (
+                                      {(previewEmail?.id === 'cart_checkout_abandoned' || previewEmail?.id === 'cart_abandoned_24h' || previewEmail?.id === 'cart_abandoned_72h') && (
                                       <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-4">
                                       <h4 className="font-semibold text-amber-900 flex items-center gap-2">
                                         🛒 Configurazione Email Carrello Abbandonato
