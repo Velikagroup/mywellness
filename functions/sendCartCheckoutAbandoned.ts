@@ -317,99 +317,38 @@ function generateCartAbandonedEmail(user, appUrl, template) {
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
+                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting.replace('{user_name}', user.full_name || 'Utente')}</p>
 
                             <p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 20px 0;">
-                                Hai fatto il primo passo verso la versione migliore di te stesso... ma poi ti sei fermato.
+                                ${introText}
                             </p>
 
                             <p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 20px 0;">
-                                <strong>Ogni giorno che passa è un giorno in meno verso i tuoi obiettivi.</strong> Mentre leggi questa email, potresti già avere un piano alimentare personalizzato pronto per te, creato dall'intelligenza artificiale in base al TUO corpo, ai TUOI gusti e ai TUOI obiettivi.
+                                ${secondParagraph}
                             </p>
 
-                            <!-- Cosa ti stai perdendo -->
-                            <h3 style="color: #dc2626; margin: 25px 0 15px 0; font-size: 18px;">❌ Ecco cosa ti stai perdendo:</h3>
-
-                            <table width="100%" cellpadding="0" cellspacing="6" border="0" style="table-layout: fixed; margin-bottom: 25px;">
-                                <tr>
-                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
-                                        <p style="margin: 0; font-size: 28px;">🍽️</p>
-                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">Piano Nutrizionale AI</p>
-                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">Pasti personalizzati ogni giorno</p>
-                                    </td>
-                                    <td width="4%"></td>
-                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
-                                        <p style="margin: 0; font-size: 28px;">📊</p>
-                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">Dashboard Scientifica</p>
-                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">Monitora ogni progresso</p>
-                                    </td>
-                                </tr>
-                                <tr><td colspan="3" style="height: 6px;"></td></tr>
-                                <tr>
-                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
-                                        <p style="margin: 0; font-size: 28px;">📸</p>
-                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">Analisi Foto AI</p>
-                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">Vedi la trasformazione</p>
-                                    </td>
-                                    <td width="4%"></td>
-                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
-                                        <p style="margin: 0; font-size: 28px;">🛒</p>
-                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">Lista Spesa Smart</p>
-                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">Mai più dubbi al supermercato</p>
-                                    </td>
-                                </tr>
-                            </table>
+                            ${featuresHtml}
 
                             <p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 25px 0;">
-                                <strong>Immagina tra 30 giorni:</strong> guardarti allo specchio e vedere finalmente i risultati. Sentirti energico, motivato, orgoglioso di te stesso. Questo può essere il TUO futuro... ma solo se agisci adesso.
+                                ${closingText}
                             </p>
 
-                            <!-- Urgency Box -->
-                            <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border: 2px solid #ef4444; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
-                                <p style="color: #dc2626; font-size: 18px; margin: 0; font-weight: bold;">
-                                    ⏰ Il momento è ADESSO
-                                </p>
-                                <p style="color: #b91c1c; font-size: 14px; margin: 10px 0 0 0; line-height: 1.5;">
-                                    Non rimandare a domani quello che può cambiarti la vita oggi.<br>Il tuo piano personalizzato è pronto e ti aspetta.
-                                </p>
-                            </div>
+                            ${urgencyHtml}
 
-                            <!-- Trust badges -->
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
-                                <tr>
-                                    <td align="center">
-                                        <table cellpadding="0" cellspacing="15" border="0">
-                                            <tr>
-                                                <td style="text-align: center;">
-                                                    <p style="font-size: 20px; margin: 0;">🔒</p>
-                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Pagamento<br>Sicuro</p>
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <p style="font-size: 20px; margin: 0;">✅</p>
-                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Garanzia<br>100%</p>
-                                                </td>
-                                                <td style="text-align: center;">
-                                                    <p style="font-size: 20px; margin: 0;">🚀</p>
-                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Attivazione<br>Istantanea</p>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                    </td>
-                                </tr>
-                            </table>
+                            ${trustBadgesHtml}
 
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${appUrl}/TrialSetup" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            🚀 Riprendi il Tuo Percorso Ora
+                                        <a href="${ctaUrl.replace('{app_url}', appUrl)}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            ${ctaText}
                                         </a>
                                     </td>
                                 </tr>
                             </table>
 
                             <p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">
-                                "Il miglior momento per iniziare era ieri. Il secondo miglior momento è adesso."
+                                ${footerQuote}
                             </p>
                         </td>
                     </tr>
