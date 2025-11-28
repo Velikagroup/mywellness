@@ -682,14 +682,14 @@ ${ctaHtml}
       ]
     },
     abandonment: {
-      name: 'Abbandono',
-      icon: ShoppingCart,
-      color: 'amber',
-      emails: [
-        { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
-        { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned' }
-      ]
-    }
+        name: 'Abbandono',
+        icon: ShoppingCart,
+        color: 'amber',
+        emails: [
+          { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
+          { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true }
+        ]
+      }
   };
 
   const getCategoryColor = (color) => {

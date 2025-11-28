@@ -197,13 +197,6 @@ function generateCartAbandonedEmail(user, amount, appUrl) {
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            <!-- Hero Card Emozionale -->
-                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 16px; padding: 25px; text-align: center; margin-bottom: 25px;">
-                                <p style="font-size: 48px; margin: 0 0 10px 0;">💔</p>
-                                <h1 style="color: #92400e; margin: 0 0 10px 0; font-size: 24px;">Il tuo percorso ti sta aspettando...</h1>
-                                <p style="color: #92400e; margin: 0; font-size: 16px;">Non lasciare che i tuoi obiettivi restino solo sogni</p>
-                            </div>
-
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
 
                             <p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 20px 0;">
