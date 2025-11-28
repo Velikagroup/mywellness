@@ -1,5 +1,31 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
+const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY');
+
+async function sendEmailViaSendGrid(to, subject, htmlBody, fromEmail, replyToEmail) {
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            personalizations: [{ to: [{ email: to }] }],
+            from: { email: fromEmail || 'info@projectmywellness.com', name: 'MyWellness' },
+            reply_to: { email: replyToEmail || 'no-reply@projectmywellness.com', name: 'MyWellness' },
+            subject: subject,
+            content: [{ type: 'text/html', value: htmlBody }]
+        })
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`SendGrid error: ${response.status} - ${errorText}`);
+    }
+
+    return true;
+}
+
 Deno.serve(async (req) => {
     console.log('🛒 sendCartCheckoutAbandoned CRON - Start');
     
