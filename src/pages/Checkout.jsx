@@ -128,16 +128,18 @@ export default function Checkout() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
-        // Track checkout opened - use backend function to bypass RLS
+        // Track checkout opened - RLS now allows any authenticated user to create
         if (!checkoutTracked && currentUser && currentUser.email) {
           try {
             console.log('📊 Attempting to track checkout_started for:', currentUser.email);
-            await base44.functions.invoke('trackUserActivity', {
+            await base44.entities.UserActivity.create({
+              user_id: currentUser.email,
               event_type: 'checkout_started',
               event_data: { 
                 plan: selectedPlan,
                 amount: planPrices[selectedPlan]?.[selectedBillingPeriod === 'yearly' ? 'yearly' : 'monthly'] * 100 || 0
-              }
+              },
+              completed: false
             });
             console.log('✅ Checkout started tracked successfully');
             setCheckoutTracked(true);
