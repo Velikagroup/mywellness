@@ -555,6 +555,7 @@ Deno.serve(async (req) => {
                 break;
             }
 
+            case 'refund.created':
             case 'charge.refunded': {
                 const charge = event.data.object;
                 console.log('💸 Refund processed:', charge.id);
