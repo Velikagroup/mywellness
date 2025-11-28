@@ -558,14 +558,20 @@ Deno.serve(async (req) => {
             case 'charge.refunded': {
                 const charge = event.data.object;
                 console.log('💸 Refund processed:', charge.id);
+                console.log('📊 Charge amount:', charge.amount / 100, 'Refunded:', charge.amount_refunded / 100);
 
                 const customerId = charge.customer;
                 const refundAmount = charge.amount_refunded / 100;
+                const originalAmount = charge.amount / 100;
+                const isFullRefund = charge.refunded === true || charge.amount_refunded >= charge.amount;
+
+                console.log(`💰 Full refund: ${isFullRefund}`);
 
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
 
                 if (users.length > 0) {
                     const user = users[0];
+                    console.log(`👤 User found: ${user.email}, current plan: ${user.subscription_plan}`);
 
                     // Create refund transaction
                     await base44.asServiceRole.entities.Transaction.create({
@@ -575,12 +581,146 @@ Deno.serve(async (req) => {
                         currency: charge.currency || 'eur',
                         status: 'refunded',
                         type: 'refund',
-                        payment_date: new Date(charge.created * 1000).toISOString(),
-                        description: 'Rimborso',
-                        metadata: charge.metadata
+                        payment_date: new Date().toISOString(),
+                        description: isFullRefund ? 'Rimborso completo' : 'Rimborso parziale',
+                        metadata: {
+                            ...charge.metadata,
+                            original_amount: originalAmount,
+                            refund_amount: refundAmount,
+                            is_full_refund: isFullRefund
+                        }
                     });
 
-                    console.log(`✅ Refund recorded for user ${user.id}: €${refundAmount}`);
+                    console.log(`✅ Refund transaction recorded for user ${user.id}: €${refundAmount}`);
+
+                    // 🔄 GESTIONE DOWNGRADE/CANCELLAZIONE BASATA SUL RIMBORSO
+                    const currentPlan = user.subscription_plan;
+                    const planPrices = {
+                        base: { monthly: 19, yearly: 182.40 },
+                        pro: { monthly: 29, yearly: 278.40 },
+                        premium: { monthly: 39, yearly: 374.40 }
+                    };
+
+                    // Determina il periodo di fatturazione dall'importo
+                    const billingPeriod = originalAmount > 50 ? 'yearly' : 'monthly';
+                    console.log(`📅 Detected billing period: ${billingPeriod}`);
+
+                    if (isFullRefund) {
+                        // RIMBORSO TOTALE: Cancella abbonamento e porta a free
+                        console.log('🚫 Full refund - cancelling subscription and setting to free');
+                        
+                        // Cancella subscription su Stripe se esiste
+                        if (user.stripe_subscription_id) {
+                            try {
+                                await stripe.subscriptions.cancel(user.stripe_subscription_id);
+                                console.log(`✅ Stripe subscription ${user.stripe_subscription_id} cancelled`);
+                            } catch (cancelError) {
+                                console.error('⚠️ Error cancelling Stripe subscription:', cancelError.message);
+                            }
+                        }
+
+                        await base44.asServiceRole.entities.User.update(user.id, {
+                            subscription_plan: 'free',
+                            subscription_status: 'cancelled',
+                            stripe_subscription_id: null,
+                            subscription_period_end: null
+                        });
+
+                        console.log(`✅ User ${user.id} downgraded to FREE due to full refund`);
+
+                    } else {
+                        // RIMBORSO PARZIALE: Calcola il piano appropriato in base all'importo rimanente
+                        const paidAmount = originalAmount - refundAmount;
+                        console.log(`💵 Amount paid after refund: €${paidAmount.toFixed(2)}`);
+
+                        let newPlan = 'free';
+                        
+                        if (billingPeriod === 'monthly') {
+                            if (paidAmount >= planPrices.premium.monthly - 0.5) {
+                                newPlan = 'premium';
+                            } else if (paidAmount >= planPrices.pro.monthly - 0.5) {
+                                newPlan = 'pro';
+                            } else if (paidAmount >= planPrices.base.monthly - 0.5) {
+                                newPlan = 'base';
+                            }
+                        } else {
+                            // Yearly - converti in equivalente mensile per il confronto
+                            if (paidAmount >= planPrices.premium.yearly - 5) {
+                                newPlan = 'premium';
+                            } else if (paidAmount >= planPrices.pro.yearly - 5) {
+                                newPlan = 'pro';
+                            } else if (paidAmount >= planPrices.base.yearly - 5) {
+                                newPlan = 'base';
+                            }
+                        }
+
+                        console.log(`📊 Calculated new plan based on €${paidAmount.toFixed(2)}: ${newPlan}`);
+
+                        if (newPlan !== currentPlan) {
+                            // Se il nuovo piano è inferiore, fai downgrade
+                            const planHierarchy = { free: 0, base: 1, pro: 2, premium: 3 };
+                            
+                            if (planHierarchy[newPlan] < planHierarchy[currentPlan]) {
+                                console.log(`⬇️ Downgrading from ${currentPlan} to ${newPlan}`);
+
+                                // Se downgrade a free, cancella subscription
+                                if (newPlan === 'free' && user.stripe_subscription_id) {
+                                    try {
+                                        await stripe.subscriptions.cancel(user.stripe_subscription_id);
+                                        console.log(`✅ Stripe subscription cancelled for downgrade to free`);
+                                    } catch (cancelError) {
+                                        console.error('⚠️ Error cancelling subscription:', cancelError.message);
+                                    }
+
+                                    await base44.asServiceRole.entities.User.update(user.id, {
+                                        subscription_plan: 'free',
+                                        subscription_status: 'cancelled',
+                                        stripe_subscription_id: null,
+                                        subscription_period_end: null
+                                    });
+                                } else {
+                                    // Downgrade a un piano inferiore (ma non free)
+                                    // Aggiorna subscription su Stripe al nuovo piano
+                                    if (user.stripe_subscription_id) {
+                                        try {
+                                            const subscription = await stripe.subscriptions.retrieve(user.stripe_subscription_id);
+                                            const currentItemId = subscription.items.data[0]?.id;
+
+                                            // Mappa piano -> price_id
+                                            const priceMap = {
+                                                base: billingPeriod === 'monthly' ? 'price_1SXADj2OXBs6ZYwlY8id3Yhy' : 'price_1SXADj2OXBs6ZYwlywQCp6oR',
+                                                pro: billingPeriod === 'monthly' ? 'price_1SXADj2OXBs6ZYwlqdFI6aUU' : 'price_1SXADk2OXBs6ZYwl0zZsxETJ',
+                                                premium: billingPeriod === 'monthly' ? 'price_1SXADk2OXBs6ZYwlxiqqQqVA' : 'price_1SXADl2OXBs6ZYwl0PlnAeX9'
+                                            };
+
+                                            if (currentItemId && priceMap[newPlan]) {
+                                                await stripe.subscriptions.update(user.stripe_subscription_id, {
+                                                    items: [{
+                                                        id: currentItemId,
+                                                        price: priceMap[newPlan]
+                                                    }],
+                                                    proration_behavior: 'none' // Nessun prorata dato che è un rimborso
+                                                });
+                                                console.log(`✅ Stripe subscription updated to ${newPlan}`);
+                                            }
+                                        } catch (updateError) {
+                                            console.error('⚠️ Error updating Stripe subscription:', updateError.message);
+                                        }
+                                    }
+
+                                    await base44.asServiceRole.entities.User.update(user.id, {
+                                        subscription_plan: newPlan
+                                    });
+                                }
+
+                                console.log(`✅ User ${user.id} downgraded from ${currentPlan} to ${newPlan} due to partial refund`);
+                            } else {
+                                console.log(`ℹ️ No downgrade needed - new plan ${newPlan} is same or higher than current ${currentPlan}`);
+                            }
+                        } else {
+                            console.log(`ℹ️ Plan remains ${currentPlan} after partial refund calculation`);
+                        }
+                    }
                 }
                 break;
             }
