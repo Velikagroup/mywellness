@@ -686,9 +686,7 @@ ${ctaHtml}
       icon: ShoppingCart,
       color: 'amber',
       emails: [
-        { id: 'quiz_started_abandoned', name: 'Quiz Iniziato ma Non Completato', trigger: 'Cron - 2h dopo quiz iniziato', function: 'sendQuizStartedAbandoned' },
-        { id: 'quiz_completed_abandoned', name: 'Quiz Completato Senza Piano', trigger: 'Cron - 24h dopo quiz senza piano', function: 'sendQuizReminderNoPlan' },
-        { id: 'pricing_visited_abandoned', name: 'Pricing Visitato ma Non Acquistato', trigger: 'Cron - 24h dopo visita pricing', function: 'sendPricingVisitedAbandoned' },
+        { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
         { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 3h dopo inizio checkout', function: 'sendCartCheckoutAbandoned' }
       ]
     }
