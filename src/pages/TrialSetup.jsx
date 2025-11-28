@@ -849,21 +849,33 @@ export default function TrialSetup() {
                   Numero di Telefono
                 </Label>
                 <div className="flex items-center gap-2">
-                  <select
-                    value={selectedCountry?.code || 'IT'}
-                    onChange={(e) => {
-                      const country = countries.find(c => c.code === e.target.value);
-                      if (country) setSelectedCountry(country);
-                    }}
-                    className="h-12 px-3 rounded-md border border-gray-200 bg-white min-w-[115px]"
-                    style={{ fontSize: '16px', WebkitAppearance: 'menulist' }}
-                  >
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {countryCodeToFlag(country.code)} {country.dial_code}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="shrink-0">
+                    <select
+                      id="phonePrefix"
+                      value={selectedCountry?.code || 'IT'}
+                      onChange={(e) => {
+                        e.stopPropagation();
+                        const country = countries.find(c => c.code === e.target.value);
+                        if (country) setSelectedCountry(country);
+                      }}
+                      onTouchStart={(e) => e.stopPropagation()}
+                      style={{ 
+                        height: '48px',
+                        padding: '0 12px',
+                        fontSize: '16px',
+                        border: '1px solid #e5e7eb',
+                        borderRadius: '6px',
+                        backgroundColor: 'white',
+                        minWidth: '115px'
+                      }}
+                    >
+                      {countries.map((country) => (
+                        <option key={country.code} value={country.code}>
+                          {countryCodeToFlag(country.code)} {country.dial_code}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                   <Input
                     id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
                     value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
@@ -896,13 +908,24 @@ export default function TrialSetup() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
+                <Label htmlFor="countrySelect" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
                 <select
-                  id="country"
+                  id="countrySelect"
                   value={billingInfo.country}
-                  onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
-                  className="w-full h-12 px-3 rounded-md border border-gray-200 bg-white"
-                  style={{ fontSize: '16px', WebkitAppearance: 'menulist' }}
+                  onChange={(e) => {
+                    e.stopPropagation();
+                    handleBillingInfoChange({ target: { name: 'country', value: e.target.value }});
+                  }}
+                  onTouchStart={(e) => e.stopPropagation()}
+                  style={{ 
+                    width: '100%',
+                    height: '48px',
+                    padding: '0 12px',
+                    fontSize: '16px',
+                    border: '1px solid #e5e7eb',
+                    borderRadius: '6px',
+                    backgroundColor: 'white'
+                  }}
                 >
                   {countries.map((country) => (
                     <option key={country.code} value={country.code}>
