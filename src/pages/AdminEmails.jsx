@@ -1305,11 +1305,209 @@ ${ctaHtml}
                                         />
                                         <Label htmlFor="show_motivational_message" className="font-medium cursor-pointer">💡 Messaggio Motivazionale Automatico</Label>
                                       </div>
-                                    </div>
-                                  )}
+                                      </div>
+                                      )}
 
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA</Label>
+                                      {/* Sezione Funzionalità - Per cart_checkout_abandoned e simili */}
+                                      {previewEmail?.id === 'cart_checkout_abandoned' && (
+                                      <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-4">
+                                      <h4 className="font-semibold text-amber-900 flex items-center gap-2">
+                                        🛒 Configurazione Email Carrello Abbandonato
+                                      </h4>
+
+                                      {/* Intro Text */}
+                                      <div>
+                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Introduttivo</Label>
+                                        <Textarea
+                                          value={editingContent.intro_text || ''}
+                                          onChange={(e) => setEditingContent({...editingContent, intro_text: e.target.value})}
+                                          placeholder="Hai fatto il primo passo verso la versione migliore di te stesso..."
+                                          rows={2}
+                                        />
+                                      </div>
+
+                                      <div>
+                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Secondo Paragrafo</Label>
+                                        <Textarea
+                                          value={editingContent.second_paragraph || ''}
+                                          onChange={(e) => setEditingContent({...editingContent, second_paragraph: e.target.value})}
+                                          placeholder="Ogni giorno che passa è un giorno in meno..."
+                                          rows={3}
+                                        />
+                                      </div>
+
+                                      {/* Sezione Features */}
+                                      <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                                        <Checkbox
+                                          id="show_features_section"
+                                          checked={editingContent.show_features_section !== false}
+                                          onCheckedChange={(checked) => setEditingContent({...editingContent, show_features_section: checked})}
+                                        />
+                                        <Label htmlFor="show_features_section" className="font-medium cursor-pointer">Mostra Sezione Funzionalità (4 box)</Label>
+                                      </div>
+
+                                      {editingContent.show_features_section !== false && (
+                                        <div className="ml-4 space-y-3">
+                                          <Input
+                                            value={editingContent.features_section_title || ''}
+                                            onChange={(e) => setEditingContent({...editingContent, features_section_title: e.target.value})}
+                                            placeholder="❌ Ecco cosa ti stai perdendo:"
+                                            className="h-10"
+                                          />
+
+                                          {/* Feature 1 */}
+                                          <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg">
+                                            <Input
+                                              value={editingContent.feature_1_emoji || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_1_emoji: e.target.value})}
+                                              placeholder="🍽️"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_1_title || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_1_title: e.target.value})}
+                                              placeholder="Piano Nutrizionale AI"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_1_subtitle || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_1_subtitle: e.target.value})}
+                                              placeholder="Pasti personalizzati"
+                                              className="h-9"
+                                            />
+                                          </div>
+
+                                          {/* Feature 2 */}
+                                          <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg">
+                                            <Input
+                                              value={editingContent.feature_2_emoji || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_2_emoji: e.target.value})}
+                                              placeholder="📊"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_2_title || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_2_title: e.target.value})}
+                                              placeholder="Dashboard Scientifica"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_2_subtitle || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_2_subtitle: e.target.value})}
+                                              placeholder="Monitora ogni progresso"
+                                              className="h-9"
+                                            />
+                                          </div>
+
+                                          {/* Feature 3 */}
+                                          <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg">
+                                            <Input
+                                              value={editingContent.feature_3_emoji || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_3_emoji: e.target.value})}
+                                              placeholder="📸"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_3_title || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_3_title: e.target.value})}
+                                              placeholder="Analisi Foto AI"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_3_subtitle || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_3_subtitle: e.target.value})}
+                                              placeholder="Vedi la trasformazione"
+                                              className="h-9"
+                                            />
+                                          </div>
+
+                                          {/* Feature 4 */}
+                                          <div className="grid grid-cols-3 gap-2 p-3 bg-gray-50 rounded-lg">
+                                            <Input
+                                              value={editingContent.feature_4_emoji || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_4_emoji: e.target.value})}
+                                              placeholder="🛒"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_4_title || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_4_title: e.target.value})}
+                                              placeholder="Lista Spesa Smart"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.feature_4_subtitle || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, feature_4_subtitle: e.target.value})}
+                                              placeholder="Mai più dubbi al supermercato"
+                                              className="h-9"
+                                            />
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Closing Text */}
+                                      <div>
+                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo di Chiusura</Label>
+                                        <Textarea
+                                          value={editingContent.closing_text || ''}
+                                          onChange={(e) => setEditingContent({...editingContent, closing_text: e.target.value})}
+                                          placeholder="Immagina tra 30 giorni: guardarti allo specchio..."
+                                          rows={3}
+                                        />
+                                      </div>
+
+                                      {/* Urgency Box */}
+                                      <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                                        <Checkbox
+                                          id="show_urgency_box"
+                                          checked={editingContent.show_urgency_box !== false}
+                                          onCheckedChange={(checked) => setEditingContent({...editingContent, show_urgency_box: checked})}
+                                        />
+                                        <Label htmlFor="show_urgency_box" className="font-medium cursor-pointer">Mostra Box Urgenza</Label>
+                                      </div>
+
+                                      {editingContent.show_urgency_box !== false && (
+                                        <div className="ml-4 space-y-2">
+                                          <Input
+                                            value={editingContent.urgency_title || ''}
+                                            onChange={(e) => setEditingContent({...editingContent, urgency_title: e.target.value})}
+                                            placeholder="⏰ Il momento è ADESSO"
+                                            className="h-10"
+                                          />
+                                          <Textarea
+                                            value={editingContent.urgency_subtitle || ''}
+                                            onChange={(e) => setEditingContent({...editingContent, urgency_subtitle: e.target.value})}
+                                            placeholder="Non rimandare a domani quello che può cambiarti la vita oggi."
+                                            rows={2}
+                                          />
+                                        </div>
+                                      )}
+
+                                      {/* Trust Badges */}
+                                      <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                                        <Checkbox
+                                          id="show_trust_badges"
+                                          checked={editingContent.show_trust_badges !== false}
+                                          onCheckedChange={(checked) => setEditingContent({...editingContent, show_trust_badges: checked})}
+                                        />
+                                        <Label htmlFor="show_trust_badges" className="font-medium cursor-pointer">Mostra Badge Fiducia (Pagamento Sicuro, Garanzia, Attivazione)</Label>
+                                      </div>
+
+                                      {/* Footer Quote */}
+                                      <div>
+                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Citazione Finale (in corsivo)</Label>
+                                        <Input
+                                          value={editingContent.footer_quote || ''}
+                                          onChange={(e) => setEditingContent({...editingContent, footer_quote: e.target.value})}
+                                          placeholder="Il miglior momento per iniziare era ieri. Il secondo miglior momento è adesso."
+                                          className="h-10"
+                                        />
+                                      </div>
+                                      </div>
+                                      )}
+
+                                      <div>
+                                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA</Label>
                     <Input
                       value={editingContent.call_to_action_text || ''}
                       onChange={(e) => setEditingContent({...editingContent, call_to_action_text: e.target.value})}
