@@ -288,14 +288,20 @@ export default function Workouts() {
           date: today 
         });
         
-        if (logs.length > 0 && logs[0].exercises_log) {
-          const savedSets = {};
-          logs[0].exercises_log.forEach(exLog => {
-            savedSets[exLog.exercise_name] = exLog.completed_sets || [];
-          });
-          setExerciseSets(savedSets);
+        if (logs.length > 0) {
+          // Carica lo stato di completamento
+          setWorkoutCompleted(logs[0].completed === true);
+          
+          if (logs[0].exercises_log) {
+            const savedSets = {};
+            logs[0].exercises_log.forEach(exLog => {
+              savedSets[exLog.exercise_name] = exLog.completed_sets || [];
+            });
+            setExerciseSets(savedSets);
+          }
         } else {
           setExerciseSets({});
+          setWorkoutCompleted(false);
         }
       } catch (error) {
         console.error('Error loading logs:', error);
