@@ -11,7 +11,7 @@ async function sendEmailViaSendGrid(to, subject, htmlBody, fromEmail, replyToEma
         },
         body: JSON.stringify({
             personalizations: [{ to: [{ email: to }] }],
-            from: { email: fromEmail || 'info@projectmywellness.com', name: 'MyWellness Team' },
+            from: { email: fromEmail || 'info@projectmywellness.com', name: 'MyWellness' },
             reply_to: { email: replyToEmail || 'no-reply@projectmywellness.com', name: 'MyWellness' },
             subject: subject,
             content: [{ type: 'text/html', value: htmlBody }]
@@ -360,7 +360,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         if (statsRows.length > 0) {
             statsHtml = `
                 <h3 style="color: #111827; margin: 30px 0 15px 0;">${statsSectionTitle}</h3>
-                <table class="stat-table" width="100%" cellpadding="0" cellspacing="8" border="0" style="table-layout: fixed;">
+                <table class="stat-table" width="100%" cellpadding="0" cellspacing="6" border="0" style="table-layout: fixed;">
                     ${statsRows.join('')}
                 </table>
             `;
