@@ -1120,18 +1120,50 @@ ${ctaHtml}
                   </div>
 
                   <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
-                    <Textarea
-                      value={editingContent.main_content || ''}
-                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
-                      rows={15}
-                      className="text-sm"
-                      placeholder="Contenuto email..."
-                    />
-                    <p className="text-xs text-gray-500 mt-2">
-                      Variabili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
-                    </p>
-                  </div>
+                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Titolo Header (nell'email)</Label>
+                                    <Input
+                                      value={editingContent.header_title || ''}
+                                      onChange={(e) => setEditingContent({...editingContent, header_title: e.target.value})}
+                                      placeholder="Es: 📊 Report Settimanale"
+                                      className="h-12"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">Titolo grande visibile sotto il logo</p>
+                                  </div>
+
+                                  <div>
+                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Sottotitolo Header</Label>
+                                    <Input
+                                      value={editingContent.header_subtitle || ''}
+                                      onChange={(e) => setEditingContent({...editingContent, header_subtitle: e.target.value})}
+                                      placeholder="Es: {week_range}"
+                                      className="h-12"
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">Sottotitolo sotto il titolo principale</p>
+                                  </div>
+
+                                  <div>
+                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Saluto Iniziale</Label>
+                                    <Input
+                                      value={editingContent.greeting || ''}
+                                      onChange={(e) => setEditingContent({...editingContent, greeting: e.target.value})}
+                                      placeholder="Es: Ciao {user_name},"
+                                      className="h-12"
+                                    />
+                                  </div>
+
+                                  <div>
+                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
+                                    <Textarea
+                                      value={editingContent.main_content || ''}
+                                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
+                                      rows={15}
+                                      className="text-sm"
+                                      placeholder="Contenuto email..."
+                                    />
+                                    <p className="text-xs text-gray-500 mt-2">
+                                      Variabili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}, {'{'}week_range{'}'}, {'{'}weight_change{'}'}, {'{'}current_weight{'}'}, {'{'}target_weight{'}'}, {'{'}avg_calories{'}'}, {'{'}workouts_completed{'}'}, {'{'}planned_workouts{'}'}, {'{'}adherence{'}'}, {'{'}progress{'}'}, {'{'}distance_remaining{'}'}
+                                    </p>
+                                  </div>
 
                   <div>
                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA</Label>
@@ -1180,33 +1212,51 @@ ${ctaHtml}
                   </div>
                 </div>
               ) : previewEmail?.template ? (
-                <div className="space-y-4">
-                  <div className="p-6 bg-gray-50 rounded-lg border-2 border-gray-200">
-                    <div className="space-y-4">
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">Da:</p>
-                        <p className="text-sm font-semibold text-gray-900">{previewEmail.template.from_email}</p>
-                      </div>
-                      <div>
-                        <p className="text-xs text-gray-500 mb-1">Reply-To:</p>
-                        <p className="text-sm font-semibold text-gray-900">{previewEmail.template.reply_to_email}</p>
-                      </div>
-                      <div className="pt-3 border-t border-gray-300">
-                        <p className="text-xs text-gray-500 mb-1">Oggetto:</p>
-                        <p className="text-sm font-bold text-gray-900">{previewEmail.template.subject}</p>
-                      </div>
-                      {previewEmail.template.preview_text && (
-                        <div className="pt-3 border-t border-gray-300">
-                          <p className="text-xs text-gray-500 mb-1">Preview Text:</p>
-                          <p className="text-sm text-gray-600 italic">{previewEmail.template.preview_text}</p>
-                        </div>
-                      )}
-                      <div className="pt-3 border-t border-gray-300">
-                        <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
-                        <div className="text-sm text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
-                          {previewEmail.template.main_content}
-                        </div>
-                      </div>
+                                <div className="space-y-4">
+                                  <div className="p-6 bg-gray-50 rounded-lg border-2 border-gray-200">
+                                    <div className="space-y-4">
+                                      <div>
+                                        <p className="text-xs text-gray-500 mb-1">Da:</p>
+                                        <p className="text-sm font-semibold text-gray-900">{previewEmail.template.from_email}</p>
+                                      </div>
+                                      <div>
+                                        <p className="text-xs text-gray-500 mb-1">Reply-To:</p>
+                                        <p className="text-sm font-semibold text-gray-900">{previewEmail.template.reply_to_email}</p>
+                                      </div>
+                                      <div className="pt-3 border-t border-gray-300">
+                                        <p className="text-xs text-gray-500 mb-1">Oggetto:</p>
+                                        <p className="text-sm font-bold text-gray-900">{previewEmail.template.subject}</p>
+                                      </div>
+                                      {previewEmail.template.preview_text && (
+                                        <div className="pt-3 border-t border-gray-300">
+                                          <p className="text-xs text-gray-500 mb-1">Preview Text:</p>
+                                          <p className="text-sm text-gray-600 italic">{previewEmail.template.preview_text}</p>
+                                        </div>
+                                      )}
+                                      {previewEmail.template.header_title && (
+                                        <div className="pt-3 border-t border-gray-300">
+                                          <p className="text-xs text-gray-500 mb-1">Titolo Header:</p>
+                                          <p className="text-sm font-bold text-[var(--brand-primary)]">{previewEmail.template.header_title}</p>
+                                        </div>
+                                      )}
+                                      {previewEmail.template.header_subtitle && (
+                                        <div className="pt-3 border-t border-gray-300">
+                                          <p className="text-xs text-gray-500 mb-1">Sottotitolo Header:</p>
+                                          <p className="text-sm text-gray-600">{previewEmail.template.header_subtitle}</p>
+                                        </div>
+                                      )}
+                                      {previewEmail.template.greeting && (
+                                        <div className="pt-3 border-t border-gray-300">
+                                          <p className="text-xs text-gray-500 mb-1">Saluto:</p>
+                                          <p className="text-sm text-gray-900">{previewEmail.template.greeting}</p>
+                                        </div>
+                                      )}
+                                      <div className="pt-3 border-t border-gray-300">
+                                        <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
+                                        <div className="text-sm text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
+                                          {previewEmail.template.main_content}
+                                        </div>
+                                      </div>
                       {previewEmail.template.call_to_action_text && (
                         <div className="pt-3 border-t border-gray-300">
                           <p className="text-xs text-gray-500 mb-2">Pulsante CTA:</p>
