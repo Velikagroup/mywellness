@@ -1151,19 +1151,162 @@ ${ctaHtml}
                                     />
                                   </div>
 
-                                  <div>
-                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
-                                    <Textarea
-                                      value={editingContent.main_content || ''}
-                                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
-                                      rows={15}
-                                      className="text-sm"
-                                      placeholder="Contenuto email..."
-                                    />
-                                    <p className="text-xs text-gray-500 mt-2">
-                                      Variabili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}, {'{'}week_range{'}'}, {'{'}weight_change{'}'}, {'{'}current_weight{'}'}, {'{'}target_weight{'}'}, {'{'}avg_calories{'}'}, {'{'}workouts_completed{'}'}, {'{'}planned_workouts{'}'}, {'{'}adherence{'}'}, {'{'}progress{'}'}, {'{'}distance_remaining{'}'}
-                                    </p>
-                                  </div>
+                                  {/* Sezione Grafici/Statistiche - Solo per weekly_report */}
+                                  {previewEmail?.id === 'weekly_report' && (
+                                    <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 space-y-4">
+                                      <h4 className="font-semibold text-blue-900 flex items-center gap-2">
+                                        📊 Configurazione Grafici Email
+                                      </h4>
+                                      
+                                      {/* Card Peso */}
+                                      <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                                        <div className="flex items-center gap-3">
+                                          <Checkbox
+                                            id="show_weight_card"
+                                            checked={editingContent.show_weight_card !== false}
+                                            onCheckedChange={(checked) => setEditingContent({...editingContent, show_weight_card: checked})}
+                                          />
+                                          <Label htmlFor="show_weight_card" className="font-medium cursor-pointer">Card Variazione Peso</Label>
+                                        </div>
+                                        <Input
+                                          value={editingContent.weight_card_title || ''}
+                                          onChange={(e) => setEditingContent({...editingContent, weight_card_title: e.target.value})}
+                                          placeholder="Variazione Peso"
+                                          className="w-48 h-9"
+                                          disabled={editingContent.show_weight_card === false}
+                                        />
+                                      </div>
+
+                                      {/* Sezione Statistiche */}
+                                      <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                                        <div className="flex items-center gap-3">
+                                          <Checkbox
+                                            id="show_stats_section"
+                                            checked={editingContent.show_stats_section !== false}
+                                            onCheckedChange={(checked) => setEditingContent({...editingContent, show_stats_section: checked})}
+                                          />
+                                          <Label htmlFor="show_stats_section" className="font-medium cursor-pointer">Sezione Statistiche</Label>
+                                        </div>
+                                        <Input
+                                          value={editingContent.stats_section_title || ''}
+                                          onChange={(e) => setEditingContent({...editingContent, stats_section_title: e.target.value})}
+                                          placeholder="📈 Le tue statistiche"
+                                          className="w-48 h-9"
+                                          disabled={editingContent.show_stats_section === false}
+                                        />
+                                      </div>
+
+                                      {/* Statistiche individuali */}
+                                      {editingContent.show_stats_section !== false && (
+                                        <div className="ml-6 space-y-2">
+                                          <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                            <div className="flex items-center gap-2">
+                                              <Checkbox
+                                                id="show_calories_stat"
+                                                checked={editingContent.show_calories_stat !== false}
+                                                onCheckedChange={(checked) => setEditingContent({...editingContent, show_calories_stat: checked})}
+                                              />
+                                              <Label htmlFor="show_calories_stat" className="text-sm cursor-pointer">🍽️ Calorie</Label>
+                                            </div>
+                                            <Input
+                                              value={editingContent.calories_stat_label || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, calories_stat_label: e.target.value})}
+                                              placeholder="Calorie medie/giorno"
+                                              className="w-40 h-8 text-xs"
+                                            />
+                                          </div>
+                                          <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                            <div className="flex items-center gap-2">
+                                              <Checkbox
+                                                id="show_workouts_stat"
+                                                checked={editingContent.show_workouts_stat !== false}
+                                                onCheckedChange={(checked) => setEditingContent({...editingContent, show_workouts_stat: checked})}
+                                              />
+                                              <Label htmlFor="show_workouts_stat" className="text-sm cursor-pointer">💪 Allenamenti</Label>
+                                            </div>
+                                            <Input
+                                              value={editingContent.workouts_stat_label || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, workouts_stat_label: e.target.value})}
+                                              placeholder="Allenamenti completati"
+                                              className="w-40 h-8 text-xs"
+                                            />
+                                          </div>
+                                          <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                            <div className="flex items-center gap-2">
+                                              <Checkbox
+                                                id="show_adherence_stat"
+                                                checked={editingContent.show_adherence_stat !== false}
+                                                onCheckedChange={(checked) => setEditingContent({...editingContent, show_adherence_stat: checked})}
+                                              />
+                                              <Label htmlFor="show_adherence_stat" className="text-sm cursor-pointer">✓ Aderenza</Label>
+                                            </div>
+                                            <Input
+                                              value={editingContent.adherence_stat_label || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, adherence_stat_label: e.target.value})}
+                                              placeholder="Aderenza al piano"
+                                              className="w-40 h-8 text-xs"
+                                            />
+                                          </div>
+                                          <div className="flex items-center justify-between p-2 bg-gray-50 rounded">
+                                            <div className="flex items-center gap-2">
+                                              <Checkbox
+                                                id="show_progress_stat"
+                                                checked={editingContent.show_progress_stat !== false}
+                                                onCheckedChange={(checked) => setEditingContent({...editingContent, show_progress_stat: checked})}
+                                              />
+                                              <Label htmlFor="show_progress_stat" className="text-sm cursor-pointer">🎯 Progresso</Label>
+                                            </div>
+                                            <Input
+                                              value={editingContent.progress_stat_label || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, progress_stat_label: e.target.value})}
+                                              placeholder="Progresso obiettivo"
+                                              className="w-40 h-8 text-xs"
+                                            />
+                                          </div>
+                                        </div>
+                                      )}
+
+                                      {/* Barra Progresso */}
+                                      <div className="space-y-2">
+                                        <div className="flex items-center justify-between p-3 bg-white rounded-lg border">
+                                          <div className="flex items-center gap-3">
+                                            <Checkbox
+                                              id="show_progress_bar"
+                                              checked={editingContent.show_progress_bar !== false}
+                                              onCheckedChange={(checked) => setEditingContent({...editingContent, show_progress_bar: checked})}
+                                            />
+                                            <Label htmlFor="show_progress_bar" className="font-medium cursor-pointer">Barra Progresso Obiettivo</Label>
+                                          </div>
+                                        </div>
+                                        {editingContent.show_progress_bar !== false && (
+                                          <div className="ml-6 space-y-2">
+                                            <Input
+                                              value={editingContent.progress_bar_title || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, progress_bar_title: e.target.value})}
+                                              placeholder="🎯 Progresso verso l'obiettivo"
+                                              className="h-9"
+                                            />
+                                            <Input
+                                              value={editingContent.progress_bar_subtitle || ''}
+                                              onChange={(e) => setEditingContent({...editingContent, progress_bar_subtitle: e.target.value})}
+                                              placeholder="Rimangono {distance_remaining} kg al tuo obiettivo!"
+                                              className="h-9"
+                                            />
+                                          </div>
+                                        )}
+                                      </div>
+
+                                      {/* Messaggio Motivazionale */}
+                                      <div className="flex items-center gap-3 p-3 bg-white rounded-lg border">
+                                        <Checkbox
+                                          id="show_motivational_message"
+                                          checked={editingContent.show_motivational_message !== false}
+                                          onCheckedChange={(checked) => setEditingContent({...editingContent, show_motivational_message: checked})}
+                                        />
+                                        <Label htmlFor="show_motivational_message" className="font-medium cursor-pointer">💡 Messaggio Motivazionale Automatico</Label>
+                                      </div>
+                                    </div>
+                                  )}
 
                   <div>
                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA</Label>
