@@ -180,7 +180,111 @@ Deno.serve(async (req) => {
     }
 });
 
-function generateCartAbandonedEmail(user, amount, appUrl) {
+function generateCartAbandonedEmail(user, appUrl, template) {
+    // Default values
+    const greeting = template?.greeting || `Ciao ${user.full_name || 'Utente'},`;
+    const introText = template?.intro_text || 'Hai fatto il primo passo verso la versione migliore di te stesso... ma poi ti sei fermato.';
+    const secondParagraph = template?.second_paragraph || '<strong>Ogni giorno che passa è un giorno in meno verso i tuoi obiettivi.</strong> Mentre leggi questa email, potresti già avere un piano alimentare personalizzato pronto per te, creato dall\'intelligenza artificiale in base al TUO corpo, ai TUOI gusti e ai TUOI obiettivi.';
+    
+    const showFeatures = template?.show_features_section !== false;
+    const featuresTitle = template?.features_section_title || '❌ Ecco cosa ti stai perdendo:';
+    const feature1Emoji = template?.feature_1_emoji || '🍽️';
+    const feature1Title = template?.feature_1_title || 'Piano Nutrizionale AI';
+    const feature1Subtitle = template?.feature_1_subtitle || 'Pasti personalizzati ogni giorno';
+    const feature2Emoji = template?.feature_2_emoji || '📊';
+    const feature2Title = template?.feature_2_title || 'Dashboard Scientifica';
+    const feature2Subtitle = template?.feature_2_subtitle || 'Monitora ogni progresso';
+    const feature3Emoji = template?.feature_3_emoji || '📸';
+    const feature3Title = template?.feature_3_title || 'Analisi Foto AI';
+    const feature3Subtitle = template?.feature_3_subtitle || 'Vedi la trasformazione';
+    const feature4Emoji = template?.feature_4_emoji || '🛒';
+    const feature4Title = template?.feature_4_title || 'Lista Spesa Smart';
+    const feature4Subtitle = template?.feature_4_subtitle || 'Mai più dubbi al supermercato';
+    
+    const closingText = template?.closing_text || '<strong>Immagina tra 30 giorni:</strong> guardarti allo specchio e vedere finalmente i risultati. Sentirti energico, motivato, orgoglioso di te stesso. Questo può essere il TUO futuro... ma solo se agisci adesso.';
+    
+    const showUrgency = template?.show_urgency_box !== false;
+    const urgencyTitle = template?.urgency_title || '⏰ Il momento è ADESSO';
+    const urgencySubtitle = template?.urgency_subtitle || 'Non rimandare a domani quello che può cambiarti la vita oggi.<br>Il tuo piano personalizzato è pronto e ti aspetta.';
+    
+    const showTrustBadges = template?.show_trust_badges !== false;
+    const ctaText = template?.call_to_action_text || '🚀 Riprendi il Tuo Percorso Ora';
+    const ctaUrl = template?.call_to_action_url || `${appUrl}/TrialSetup`;
+    const footerQuote = template?.footer_quote || '"Il miglior momento per iniziare era ieri. Il secondo miglior momento è adesso."';
+
+    // Build features HTML
+    const featuresHtml = showFeatures ? `
+                            <h3 style="color: #dc2626; margin: 25px 0 15px 0; font-size: 18px;">${featuresTitle}</h3>
+                            
+                            <table width="100%" cellpadding="0" cellspacing="6" border="0" style="table-layout: fixed; margin-bottom: 25px;">
+                                <tr>
+                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
+                                        <p style="margin: 0; font-size: 28px;">${feature1Emoji}</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">${feature1Title}</p>
+                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">${feature1Subtitle}</p>
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
+                                        <p style="margin: 0; font-size: 28px;">${feature2Emoji}</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">${feature2Title}</p>
+                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">${feature2Subtitle}</p>
+                                    </td>
+                                </tr>
+                                <tr><td colspan="3" style="height: 6px;"></td></tr>
+                                <tr>
+                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
+                                        <p style="margin: 0; font-size: 28px;">${feature3Emoji}</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">${feature3Title}</p>
+                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">${feature3Subtitle}</p>
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td width="48%" style="background: #fef2f2; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid #fecaca; vertical-align: top;">
+                                        <p style="margin: 0; font-size: 28px;">${feature4Emoji}</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #991b1b; margin: 8px 0 4px 0;">${feature4Title}</p>
+                                        <p style="font-size: 11px; color: #b91c1c; margin: 0;">${feature4Subtitle}</p>
+                                    </td>
+                                </tr>
+                            </table>
+    ` : '';
+
+    // Build urgency box HTML
+    const urgencyHtml = showUrgency ? `
+                            <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border: 2px solid #ef4444; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                                <p style="color: #dc2626; font-size: 18px; margin: 0; font-weight: bold;">
+                                    ${urgencyTitle}
+                                </p>
+                                <p style="color: #b91c1c; font-size: 14px; margin: 10px 0 0 0; line-height: 1.5;">
+                                    ${urgencySubtitle}
+                                </p>
+                            </div>
+    ` : '';
+
+    // Build trust badges HTML
+    const trustBadgesHtml = showTrustBadges ? `
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+                                <tr>
+                                    <td align="center">
+                                        <table cellpadding="0" cellspacing="15" border="0">
+                                            <tr>
+                                                <td style="text-align: center;">
+                                                    <p style="font-size: 20px; margin: 0;">🔒</p>
+                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Pagamento<br>Sicuro</p>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <p style="font-size: 20px; margin: 0;">✅</p>
+                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Garanzia<br>100%</p>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <p style="font-size: 20px; margin: 0;">🚀</p>
+                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Attivazione<br>Istantanea</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+    ` : '';
+
     return `
 <!DOCTYPE html>
 <html>
