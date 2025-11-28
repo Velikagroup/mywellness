@@ -7,10 +7,11 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, Briefcase, Tag, X } from "lucide-react";
+import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -70,7 +71,8 @@ export default function TrialSetup() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
-  
+  const [popoverOpen, setPopoverOpen] = useState(false);
+  const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -666,7 +668,7 @@ export default function TrialSetup() {
   }
 
   return (
-    <div className="min-h-screen animated-gradient-bg overflow-x-hidden" style={{ position: 'relative', zIndex: 0 }}>
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -725,7 +727,7 @@ export default function TrialSetup() {
         }
       `}</style>
 
-      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-10 px-4 w-full max-w-[300px]">
+      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-[300px]">
         <div className="water-glass-effect rounded-full px-6 py-3 flex justify-center">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -736,7 +738,7 @@ export default function TrialSetup() {
       </div>
 
       <div className="flex items-center justify-center min-h-screen pt-28 pb-12 px-4">
-        <Card className="max-w-2xl w-full water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl" style={{ overflow: 'visible', position: 'relative', zIndex: 1 }}>
+        <Card className="max-w-2xl w-full water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl overflow-hidden">
           <CardHeader className="text-center pb-6 pt-8">
             <div className="w-20 h-20 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <Sparkles className="w-10 h-10 text-white" />
@@ -845,34 +847,65 @@ export default function TrialSetup() {
                 />
               </div>
               <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+                <Label htmlFor="phoneNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
                   Numero di Telefono
                 </Label>
-                <div className="flex gap-2">
-                  <select
-                    value={selectedCountry?.code || 'IT'}
-                    onChange={(e) => {
-                      const country = countries.find(c => c.code === e.target.value);
-                      if (country) setSelectedCountry(country);
-                    }}
-                    className="h-12 px-3 border border-gray-200 rounded-md bg-white shrink-0"
-                    style={{ fontSize: '16px', minWidth: '115px' }}
-                  >
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {countryCodeToFlag(country.code)} {country.dial_code}
-                      </option>
-                    ))}
-                  </select>
-                  <input
-                    type="tel"
-                    inputMode="tel"
-                    placeholder="333 1234567"
-                    value={phoneNumber}
-                    onChange={(e) => setPhoneNumber(e.target.value)}
+                <div className="flex items-center gap-2">
+                  <Popover open={popoverOpen} onOpenChange={setPopoverOpen}>
+                    <PopoverTrigger asChild>
+                      <Button
+                        variant="outline"
+                        role="combobox"
+                        aria-expanded={popoverOpen}
+                        className="w-[130px] justify-start h-12 bg-white"
+                      >
+                        {selectedCountry ? (
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{countryCodeToFlag(selectedCountry.code)}</span>
+                            <span>{selectedCountry.dial_code}</span>
+                          </div>
+                        ) : (
+                          "Prefisso"
+                        )}
+                        <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                      </Button>
+                    </PopoverTrigger>
+                    <PopoverContent className="w-[300px] p-0">
+                      <Command>
+                        <CommandInput placeholder="Cerca paese..." />
+                        <CommandList>
+                          <CommandEmpty>Nessun paese trovato.</CommandEmpty>
+                          <CommandGroup>
+                            {countries.map((country) => (
+                              <CommandItem
+                                key={country.code}
+                                value={`${country.name} ${country.dial_code}`}
+                                onSelect={() => {
+                                  setSelectedCountry(country);
+                                  setPopoverOpen(false);
+                                }}
+                              >
+                                <Check
+                                  className={cn(
+                                    "mr-2 h-4 w-4",
+                                    selectedCountry?.code === country.code ? "opacity-100" : "opacity-0"
+                                  )}
+                                />
+                                <span className="mr-2 text-lg">{countryCodeToFlag(country.code)}</span>
+                                <span>{country.name}</span>
+                                <span className="ml-auto text-gray-500">{country.dial_code}</span>
+                              </CommandItem>
+                            ))}
+                          </CommandGroup>
+                        </CommandList>
+                      </Command>
+                    </PopoverContent>
+                  </Popover>
+                  <Input
+                    id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
+                    value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
+                    className="h-12 text-base bg-white"
                     autoComplete="tel-national"
-                    className="flex-1 h-12 px-3 border border-gray-200 rounded-md bg-white"
-                    style={{ fontSize: '16px' }}
                   />
                 </div>
               </div>
@@ -899,19 +932,50 @@ export default function TrialSetup() {
                 </div>
               </div>
               <div>
-                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
-                <select
-                  value={billingInfo.country}
-                  onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
-                  className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white"
-                  style={{ fontSize: '16px' }}
-                >
-                  {countries.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
+                <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
+                <Popover open={countryPopoverOpen} onOpenChange={setCountryPopoverOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      aria-expanded={countryPopoverOpen}
+                      className="w-full justify-between h-12 text-base font-normal bg-white"
+                    >
+                      {billingInfo.country
+                        ? countries.find((country) => country.code === billingInfo.country)?.name
+                        : "Seleziona paese..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-[--radix-popover-trigger-width] p-0">
+                    <Command>
+                      <CommandInput placeholder="Cerca paese..." />
+                      <CommandList>
+                        <CommandEmpty>Nessun paese trovato.</CommandEmpty>
+                        <CommandGroup>
+                          {countries.map((country) => (
+                            <CommandItem
+                              key={country.code}
+                              value={`${country.name} ${country.code}`}
+                              onSelect={() => {
+                                handleBillingInfoChange({ target: { name: 'country', value: country.code }});
+                                setCountryPopoverOpen(false);
+                              }}
+                            >
+                              <Check
+                                className={cn(
+                                  "mr-2 h-4 w-4",
+                                  billingInfo.country === country.code ? "opacity-100" : "opacity-0"
+                                )}
+                              />
+                              <span>{country.name}</span>
+                            </CommandItem>
+                          ))}
+                        </CommandGroup>
+                      </CommandList>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
               </div>
 
               <div className="pt-4 space-y-4">
