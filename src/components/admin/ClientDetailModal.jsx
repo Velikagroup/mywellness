@@ -145,6 +145,30 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
     setIsProcessing(false);
   };
 
+  const handleChangePlan = async () => {
+    if (!newPlan) return;
+    
+    setIsProcessing(true);
+    try {
+      const response = await base44.functions.invoke('adminUpdateUserPlan', {
+        userEmail: client.email,
+        newPlan: newPlan
+      });
+
+      if (response.data?.success || response.success) {
+        alert(`✅ Piano aggiornato a ${newPlan}!`);
+        setShowPlanDialog(false);
+        await onUpdate();
+      } else {
+        alert('❌ Errore: ' + (response.data?.error || response.error));
+      }
+    } catch (error) {
+      console.error('Error changing plan:', error);
+      alert('❌ Errore: ' + error.message);
+    }
+    setIsProcessing(false);
+  };
+
   const handleGrantCredits = async () => {
     setIsProcessing(true);
     try {
