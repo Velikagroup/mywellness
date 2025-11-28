@@ -336,19 +336,21 @@ export default function PricingPage() {
           currentUser.subscription_status === 'active') {
         navigate(createPageUrl('Dashboard'));
       } else {
+        const billingParam = isAnnual ? '&billing=yearly' : '&billing=monthly';
         const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
-        navigate(createPageUrl('TrialSetup') + `?plan=${planType}${couponParam}`);
+        navigate(createPageUrl('Checkout') + `?plan=${planType}${billingParam}${couponParam}`);
       }
     } catch (error) {
+      const billingParam = isAnnual ? '&billing=yearly' : '&billing=monthly';
       const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
-      const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + `?plan=${planType}${couponParam}`;
-      await base44.auth.redirectToLogin(trialSetupUrl);
+      const checkoutUrl = window.location.origin + createPageUrl('Checkout') + `?plan=${planType}${billingParam}${couponParam}`;
+      await base44.auth.redirectToLogin(checkoutUrl);
     }
   };
 
   const handleLogin = async () => {
-    const trialSetupUrl = window.location.origin + createPageUrl('TrialSetup') + '?plan=base';
-    await base44.auth.redirectToLogin(trialSetupUrl);
+    const checkoutUrl = window.location.origin + createPageUrl('Checkout') + '?plan=base';
+    await base44.auth.redirectToLogin(checkoutUrl);
   };
 
   const getPrice = (plan) => {

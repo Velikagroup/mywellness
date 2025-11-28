@@ -68,6 +68,7 @@ export default function Layout({ children }) {
     createPageUrl('Landing'),
     createPageUrl('pricing'),
     createPageUrl('TrialSetup'),
+    createPageUrl('Checkout'),
     createPageUrl('LandingCheckout'),
     createPageUrl('ThankYou'),
     createPageUrl('ResetPassword'),
