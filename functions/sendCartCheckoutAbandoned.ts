@@ -58,13 +58,14 @@ Deno.serve(async (req) => {
             const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
             const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
             const emailBody = generateCartAbandonedEmail(user, 1900, appUrl);
-            
-            await base44.asServiceRole.integrations.Core.SendEmail({
-                to: user.email,
-                from_name: `MyWellness <${fromEmail}>`,
-                subject: '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
-                body: emailBody
-            });
+
+                            await sendEmailViaSendGrid(
+                                user.email,
+                                '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
+                                emailBody,
+                                'info@projectmywellness.com',
+                                'no-reply@projectmywellness.com'
+                            );
             
             return Response.json({ success: true, message: `Test email sent to ${testEmail}` });
         }
