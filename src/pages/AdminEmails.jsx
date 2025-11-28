@@ -1123,12 +1123,19 @@ ${ctaHtml}
 
                   <div>
                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
-                    <Textarea
+                    <ReactQuill
+                      theme="snow"
                       value={editingContent.main_content || ''}
-                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
-                      rows={15}
-                      className="text-sm"
-                      placeholder="Contenuto email..."
+                      onChange={(value) => setEditingContent({...editingContent, main_content: value})}
+                      modules={{
+                        toolbar: [
+                          ['bold', 'italic', 'underline', 'strike'],
+                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                          ['link'],
+                          ['clean']
+                        ]
+                      }}
+                      style={{ minHeight: '300px', marginBottom: '40px' }}
                     />
                     <p className="text-xs text-gray-500 mt-2">
                       Variabili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
