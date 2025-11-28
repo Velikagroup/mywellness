@@ -255,20 +255,132 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
     // Valori dal template admin o fallback
     const headerTitle = template?.header_title 
         ? replaceVariables(template.header_title, variables) 
-        : '📊 Report Settimanale';
+        : 'Report Settimanale';
     const headerSubtitle = template?.header_subtitle 
         ? replaceVariables(template.header_subtitle, variables) 
         : stats.weekRange;
     const greeting = template?.greeting 
         ? replaceVariables(template.greeting, variables) 
         : `Ciao ${user.full_name || 'Utente'},`;
-    const mainContent = template?.main_content 
-        ? replaceVariables(template.main_content, variables) 
-        : 'Ecco il riassunto dei tuoi progressi questa settimana! 💪';
     const ctaText = template?.call_to_action_text || '📊 Vedi Dashboard Completa';
     const ctaUrl = template?.call_to_action_url 
         ? replaceVariables(template.call_to_action_url, variables) 
         : (Deno.env.get('APP_URL') || 'https://projectmywellness.com') + '/Dashboard';
+    const footerText = template?.footer_text 
+        ? replaceVariables(template.footer_text, variables)
+        : 'Continua così! La costanza è la chiave del successo 🌟';
+
+    // Configurazione grafici/sezioni dall'admin
+    const showWeightCard = template?.show_weight_card !== false;
+    const weightCardTitle = template?.weight_card_title || 'Variazione Peso';
+    const showStatsSection = template?.show_stats_section !== false;
+    const statsSectionTitle = template?.stats_section_title || '📈 Le tue statistiche';
+    const showCaloriesStat = template?.show_calories_stat !== false;
+    const caloriesStatLabel = template?.calories_stat_label || 'Calorie medie/giorno';
+    const showWorkoutsStat = template?.show_workouts_stat !== false;
+    const workoutsStatLabel = template?.workouts_stat_label || 'Allenamenti completati';
+    const showAdherenceStat = template?.show_adherence_stat !== false;
+    const adherenceStatLabel = template?.adherence_stat_label || 'Aderenza al piano';
+    const showProgressStat = template?.show_progress_stat !== false;
+    const progressStatLabel = template?.progress_stat_label || 'Progresso obiettivo';
+    const showProgressBar = template?.show_progress_bar !== false;
+    const progressBarTitle = template?.progress_bar_title || '🎯 Progresso verso l\'obiettivo';
+    const progressBarSubtitle = template?.progress_bar_subtitle 
+        ? replaceVariables(template.progress_bar_subtitle, variables)
+        : `Rimangono ${stats.distanceRemaining} kg al tuo obiettivo!`;
+    const showMotivationalMessage = template?.show_motivational_message !== false;
+
+    // Costruisci HTML per card peso
+    const weightCardHtml = showWeightCard ? `
+        <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+            <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} ${weightCardTitle}</h2>
+            <p style="margin: 0; font-size: 36px; font-weight: bold; color: ${weightColor};">
+                ${stats.weightChange > 0 ? '+' : ''}${stats.weightChange} kg
+            </p>
+            <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
+                Peso attuale: ${stats.currentWeight} kg · Target: ${stats.targetWeight} kg
+            </p>
+        </div>
+    ` : '';
+
+    // Costruisci HTML per statistiche
+    let statsHtml = '';
+    if (showStatsSection) {
+        const statsRows = [];
+        
+        // Prima riga: calorie + allenamenti
+        const row1Stats = [];
+        if (showCaloriesStat) {
+            row1Stats.push(`
+                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                    <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🍽️</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.avgCalories}</p>
+                    <p style="margin: 0; color: #6b7280; font-size: 14px;">${caloriesStatLabel}</p>
+                </td>
+            `);
+        }
+        if (showWorkoutsStat) {
+            row1Stats.push(`
+                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                    <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">💪</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.workoutsCompleted}/${stats.plannedWorkouts}</p>
+                    <p style="margin: 0; color: #6b7280; font-size: 14px;">${workoutsStatLabel}</p>
+                </td>
+            `);
+        }
+        if (row1Stats.length > 0) {
+            statsRows.push(`<tr>${row1Stats.join('')}</tr>`);
+        }
+
+        // Seconda riga: aderenza + progresso
+        const row2Stats = [];
+        if (showAdherenceStat) {
+            row2Stats.push(`
+                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                    <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: ${adherenceColor};">✓</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.adherence}%</p>
+                    <p style="margin: 0; color: #6b7280; font-size: 14px;">${adherenceStatLabel}</p>
+                </td>
+            `);
+        }
+        if (showProgressStat) {
+            row2Stats.push(`
+                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                    <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🎯</p>
+                    <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.progressPercentage}%</p>
+                    <p style="margin: 0; color: #6b7280; font-size: 14px;">${progressStatLabel}</p>
+                </td>
+            `);
+        }
+        if (row2Stats.length > 0) {
+            statsRows.push(`<tr>${row2Stats.join('')}</tr>`);
+        }
+
+        if (statsRows.length > 0) {
+            statsHtml = `
+                <h3 style="color: #111827; margin: 30px 0 15px 0;">${statsSectionTitle}</h3>
+                <table class="stat-table" width="100%" cellpadding="0" cellspacing="15" border="0">
+                    ${statsRows.join('')}
+                </table>
+            `;
+        }
+    }
+
+    // Costruisci HTML per barra progresso
+    const progressBarHtml = showProgressBar ? `
+        <h3 style="color: #111827; margin: 30px 0 10px 0;">${progressBarTitle}</h3>
+        <div style="background: #e5e7eb; height: 24px; border-radius: 12px; overflow: hidden; margin: 10px 0;">
+            <div style="background: linear-gradient(90deg, #26847F 0%, #1f6b66 100%); height: 100%; width: ${Math.min(stats.progressPercentage, 100)}%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+                ${stats.progressPercentage}%
+            </div>
+        </div>
+        <p style="text-align: center; color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">
+            ${progressBarSubtitle}
+        </p>
+    ` : '';
+
+    // Messaggio motivazionale
+    const motivationalHtml = showMotivationalMessage ? getMotivationalMessage(stats) : '';
 
     return `
 <!DOCTYPE html>
@@ -302,73 +414,26 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
                         <td class="content" style="padding: 40px 30px;">
                             <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>
 
-                                <p style="color: #374151; line-height: 1.6;">
-                                    ${mainContent}
-                                </p>
+                            ${weightCardHtml}
 
-                            <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
-                                <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} Variazione Peso</h2>
-                                <p style="margin: 0; font-size: 36px; font-weight: bold; color: ${weightColor};">
-                                    ${stats.weightChange > 0 ? '+' : ''}${stats.weightChange} kg
-                                </p>
-                                <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
-                                    Peso attuale: ${stats.currentWeight} kg · Target: ${stats.targetWeight} kg
-                                </p>
-                            </div>
+                            ${statsHtml}
 
-                            <h3 style="color: #111827; margin: 30px 0 15px 0;">📈 Le tue statistiche</h3>
-                            
-                            <table class="stat-table" width="100%" cellpadding="0" cellspacing="15" border="0">
+                            ${progressBarHtml}
+
+                            ${motivationalHtml}
+
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
-                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
-                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🍽️</p>
-                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.avgCalories}</p>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Calorie medie/giorno</p>
-                                    </td>
-                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
-                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">💪</p>
-                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.workoutsCompleted}/${stats.plannedWorkouts}</p>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Allenamenti completati</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
-                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: ${adherenceColor};">✓</p>
-                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.adherence}%</p>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Aderenza al piano</p>
-                                    </td>
-                                    <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
-                                        <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🎯</p>
-                                        <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.progressPercentage}%</p>
-                                        <p style="margin: 0; color: #6b7280; font-size: 14px;">Progresso obiettivo</p>
+                                    <td align="center">
+                                        <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            ${ctaText}
+                                        </a>
                                     </td>
                                 </tr>
                             </table>
 
-                            <h3 style="color: #111827; margin: 30px 0 10px 0;">🎯 Progresso verso l'obiettivo</h3>
-                            <div style="background: #e5e7eb; height: 24px; border-radius: 12px; overflow: hidden; margin: 10px 0;">
-                                <div style="background: linear-gradient(90deg, #26847F 0%, #1f6b66 100%); height: 100%; width: ${Math.min(stats.progressPercentage, 100)}%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
-                                    ${stats.progressPercentage}%
-                                </div>
-                            </div>
-                            <p style="text-align: center; color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">
-                                Rimangono ${stats.distanceRemaining} kg al tuo obiettivo!
-                            </p>
-
-                            ${getMotivationalMessage(stats)}
-
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-                                    <tr>
-                                        <td align="center">
-                                            <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                                ${ctaText}
-                                            </a>
-                                        </td>
-                                    </tr>
-                                </table>
-
                             <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
-                                Continua così! La costanza è la chiave del successo 🌟
+                                ${footerText}
                             </p>
                         </td>
                     </tr>
