@@ -701,7 +701,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                       <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                     </Button>
                   </PopoverTrigger>
-                  <PopoverContent className="w-[300px] p-0 z-[200]">
+                  <PopoverContent className="w-[300px] p-0 z-[400]">
                     <Command>
                       <CommandInput placeholder="Cerca paese..." />
                       <CommandList>
@@ -778,7 +778,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
-                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[200]">
+                <PopoverContent className="w-[--radix-popover-trigger-width] p-0 z-[400]">
                   <Command>
                     <CommandInput placeholder="Cerca paese..." />
                     <CommandList>
