@@ -44,9 +44,9 @@ Deno.serve(async (req) => {
         }
 
         const now = new Date();
-        const threeHoursAgo = new Date(now.getTime() - (3 * 60 * 60 * 1000));
+                    const thirtyMinutesAgo = new Date(now.getTime() - (30 * 60 * 1000));
 
-        console.log(`📅 Checking for checkout started between ${threeHoursAgo.toISOString()} and ${now.toISOString()}`);
+                    console.log(`📅 Checking for checkout started more than 30 minutes ago`);
 
         const activities = await base44.asServiceRole.entities.UserActivity.filter({
             event_type: 'checkout_started',
