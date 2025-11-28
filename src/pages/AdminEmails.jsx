@@ -7,7 +7,6 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
-import ReactQuill from 'react-quill';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -1123,19 +1122,12 @@ ${ctaHtml}
 
                   <div>
                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto Principale</Label>
-                    <ReactQuill
-                      theme="snow"
+                    <Textarea
                       value={editingContent.main_content || ''}
-                      onChange={(value) => setEditingContent({...editingContent, main_content: value})}
-                      modules={{
-                        toolbar: [
-                          ['bold', 'italic', 'underline', 'strike'],
-                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                          ['link'],
-                          ['clean']
-                        ]
-                      }}
-                      style={{ minHeight: '300px', marginBottom: '40px' }}
+                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
+                      rows={15}
+                      className="text-sm"
+                      placeholder="Contenuto email..."
                     />
                     <p className="text-xs text-gray-500 mt-2">
                       Variabili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
@@ -1540,19 +1532,12 @@ ${ctaHtml}
               <Label className="text-sm font-semibold text-gray-700 mb-2 block">
                 Contenuto Principale <span className="text-red-500">*</span>
               </Label>
-              <ReactQuill
-                theme="snow"
+              <Textarea
                 value={broadcastData.main_content}
-                onChange={(value) => setBroadcastData({...broadcastData, main_content: value})}
-                modules={{
-                  toolbar: [
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    ['link'],
-                    ['clean']
-                  ]
-                }}
-                style={{ minHeight: '250px', marginBottom: '40px' }}
+                onChange={(e) => setBroadcastData({...broadcastData, main_content: e.target.value})}
+                rows={12}
+                placeholder="Scrivi il contenuto dell'email qui..."
+                className="text-sm"
               />
               <p className="text-xs text-gray-500 mt-2">
                 Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
