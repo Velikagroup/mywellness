@@ -67,24 +67,7 @@ export default function Home() {
     return () => clearTimeout(timer);
   }, []);
 
-  useEffect(() => {
-    const checkQuizStatus = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-
-        if (currentUser && !currentUser.quiz_completed) {
-          console.log('🔄 User logged in but quiz not completed, redirecting to Quiz...');
-          navigate(createPageUrl('Quiz'), { replace: true });
-        }
-      } catch (error) {
-        if (error?.response?.status !== 401 && !error?.message?.includes('401')) {
-          console.error("Error checking quiz status:", error);
-        }
-      }
-    };
-
-    checkQuizStatus();
-  }, [navigate]);
+  // Removed automatic redirect to Quiz - let users browse the Home page freely
 
   useEffect(() => {
     const referenceDate = new Date('2025-11-06T00:00:00Z').getTime();
