@@ -703,6 +703,60 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
           </Tabs>
         </div>
 
+        {/* Dialog Cambia Piano */}
+        <Dialog open={showPlanDialog} onOpenChange={setShowPlanDialog}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle className="flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-amber-600" />
+                Cambia Piano Abbonamento
+              </DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4 py-4">
+              <div>
+                <label className="text-sm font-semibold text-gray-700 mb-2 block">Seleziona Nuovo Piano</label>
+                <div className="grid grid-cols-2 gap-2">
+                  {['free', 'base', 'pro', 'premium'].map(plan => (
+                    <Button
+                      key={plan}
+                      onClick={() => setNewPlan(plan)}
+                      variant={newPlan === plan ? 'default' : 'outline'}
+                      className={newPlan === plan ? 'bg-[#26847F] hover:bg-[#1f6b66] text-white' : ''}
+                    >
+                      {plan.charAt(0).toUpperCase() + plan.slice(1)}
+                    </Button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-3">
+                <p className="text-sm text-amber-800">
+                  ⚠️ Questo cambierà immediatamente il piano dell'utente da <strong>{client.subscription_plan}</strong> a <strong>{newPlan}</strong>.
+                  <br />
+                  <span className="text-xs">Nota: Non modifica la subscription Stripe, solo il database.</span>
+                </p>
+              </div>
+
+              <div className="flex gap-2">
+                <Button
+                  onClick={() => setShowPlanDialog(false)}
+                  variant="outline"
+                  className="flex-1"
+                >
+                  Annulla
+                </Button>
+                <Button
+                  onClick={handleChangePlan}
+                  disabled={isProcessing || newPlan === client.subscription_plan}
+                  className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                >
+                  Conferma Cambio
+                </Button>
+              </div>
+            </div>
+          </DialogContent>
+        </Dialog>
+
         {/* Dialog Crediti */}
         <Dialog open={showCreditDialog} onOpenChange={setShowCreditDialog}>
           <DialogContent className="max-w-md">
