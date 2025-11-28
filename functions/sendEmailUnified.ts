@@ -117,9 +117,9 @@ function generateEmailHtml(template, variables) {
                         </td>
                     </tr>
                 </table>
-                <table width="100%" style="max-width: 600px; margin-top: 20px;">
+                <table width="100%" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
                     <tr>
-                        <td align="center" style="padding: 20px; color: #999999;">
+                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
                             <p style="margin: 5px 0; font-size: 12px;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St, Sheridan, WY 82801, United States</p>
                         </td>
