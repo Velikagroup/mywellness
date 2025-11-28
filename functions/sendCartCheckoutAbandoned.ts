@@ -64,7 +64,7 @@ Deno.serve(async (req) => {
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
-                    from_name: `MyWellness Team <${fromEmail}>`,
+                    from_name: `MyWellness <${fromEmail}>`,
                     subject: '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
                     body: emailBody
                 });
@@ -116,11 +116,10 @@ function generateCartAbandonedEmail(user, amount, appUrl) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        .logo-cell { padding: 60px 30px 24px 30px; }
-        .content-cell { padding: 40px 30px; }
-        @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 24px 60px !important; }
-            .content-cell { padding: 60px 60px 40px 60px !important; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+            .outer-wrapper { padding: 0 !important; }
+            .feature-table td { display: block !important; width: 100% !important; margin-bottom: 10px !important; }
         }
     </style>
 </head>
@@ -130,63 +129,97 @@ function generateCartAbandonedEmail(user, amount, appUrl) {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td class="logo-cell">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+                        <td style="background: white; padding: 40px 30px 10px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
-                        <td class="content-cell">
-                            <p style="color: #111827; font-size: 16px;">Ciao ${user.full_name || 'Utente'},</p>
+                        <td style="padding: 20px 30px 40px 30px;">
+                            <!-- Hero Card - Carrello Abbandonato -->
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 16px; padding: 25px; text-align: center; margin-bottom: 25px;">
+                                <p style="font-size: 48px; margin: 0 0 10px 0;">🛒</p>
+                                <h1 style="color: #92400e; margin: 0 0 10px 0; font-size: 24px;">Carrello in Attesa!</h1>
+                                <p style="color: #92400e; margin: 0; font-size: 16px;">Il tuo piano è ancora disponibile</p>
+                                ${amount > 0 ? `<p style="color: #92400e; font-size: 28px; font-weight: bold; margin: 15px 0 0 0;">€${(amount / 100).toFixed(2)}</p>` : ''}
+                            </div>
+
+                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
                             
-                            <h2 style="color: #111827; margin: 0 0 15px 0; font-size: 24px;">🛒 Il Tuo Carrello Ti Aspetta!</h2>
-                            
-                            <p style="color: #374151; line-height: 1.6;">
-                                Hai lasciato il processo di pagamento a metà. Il tuo piano personalizzato è pronto e ti sta aspettando!
+                            <p style="color: #374151; line-height: 1.6; font-size: 15px; margin: 0 0 25px 0;">
+                                Hai lasciato il checkout a metà! Il tuo piano personalizzato è pronto e ti sta aspettando.
                             </p>
 
-                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 12px; padding: 25px; text-align: center; margin: 30px 0;">
-                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 28px;">⏰ OFFERTA VALIDA ANCORA PER POCO</h2>
-                                ${amount > 0 ? `<p style="color: #92400e; font-size: 20px; margin: 0;">Totale: €${(amount / 100).toFixed(2)}</p>` : ''}
-                                <p style="color: #92400e; font-size: 16px; margin: 10px 0 0 0;">3 Giorni Gratis + Cancellazione istantanea</p>
-                            </div>
+                            <!-- Features nel carrello -->
+                            <h3 style="color: #111827; margin: 0 0 15px 0; font-size: 16px;">✨ Nel Tuo Carrello:</h3>
+                            <table class="feature-table" width="100%" cellpadding="0" cellspacing="8" border="0" style="table-layout: fixed; margin-bottom: 25px;">
+                                <tr>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 18px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 24px;">🍽️</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Piano Nutrizionale AI</p>
+                                    </td>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 18px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 24px;">📊</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Dashboard Avanzata</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 18px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 24px;">📸</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Tracking AI Foto</p>
+                                    </td>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 18px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 24px;">🛒</p>
+                                        <p style="font-size: 13px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Lista Spesa Auto</p>
+                                    </td>
+                                </tr>
+                            </table>
 
-                            <h3 style="color: #111827; margin: 20px 0 10px 0;">✨ Nel Tuo Carrello:</h3>
-                            
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Piano nutrizionale personalizzato completo
-                            </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Dashboard scientifica avanzata
-                            </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Tracking automatico con AI fotografica
-                            </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Accesso immediato a tutte le funzionalità
-                            </div>
-
-                            <div style="background: #dbeafe; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
-                                <p style="color: #1e40af; font-size: 16px; margin: 0; font-weight: bold;">
-                                    🔒 Pagamento Sicuro • ✅ Garanzia 100% • 🚀 Attivazione Istantanea
+                            <!-- Timer/Urgency -->
+                            <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: center;">
+                                <p style="color: #dc2626; font-size: 16px; margin: 0; font-weight: bold;">
+                                    ⏰ Offerta valida ancora per poco!
+                                </p>
+                                <p style="color: #dc2626; font-size: 14px; margin: 8px 0 0 0;">
+                                    3 Giorni Gratis + Cancellazione istantanea
                                 </p>
                             </div>
 
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0;">
+                            <!-- Trust badges -->
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${appUrl}/TrialSetup" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                        <table cellpadding="0" cellspacing="15" border="0">
+                                            <tr>
+                                                <td style="text-align: center;">
+                                                    <p style="font-size: 20px; margin: 0;">🔒</p>
+                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Pagamento<br>Sicuro</p>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <p style="font-size: 20px; margin: 0;">✅</p>
+                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Garanzia<br>100%</p>
+                                                </td>
+                                                <td style="text-align: center;">
+                                                    <p style="font-size: 20px; margin: 0;">🚀</p>
+                                                    <p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Attivazione<br>Istantanea</p>
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </td>
+                                </tr>
+                            </table>
+
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${appUrl}/TrialSetup" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                             🚀 Completa L'Acquisto Ora
                                         </a>
                                     </td>
                                 </tr>
                             </table>
 
-                            <p style="color: #ef4444; font-size: 14px; text-align: center; margin: 20px 0; font-weight: bold;">
-                                ⚠️ I posti sono limitati - Completa ora prima che scada l'offerta!
+                            <p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0;">
+                                Non perdere l'offerta - il tuo piano ti aspetta!
                             </p>
                         </td>
                     </tr>
