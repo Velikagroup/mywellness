@@ -26,12 +26,28 @@ async function sendEmailViaSendGrid(to, subject, htmlBody, fromEmail, replyToEma
     return true;
 }
 
+async function loadEmailTemplate(base44, templateId) {
+    try {
+        const templates = await base44.asServiceRole.entities.EmailTemplate.filter({
+            template_id: templateId,
+            is_active: true
+        });
+        return templates.length > 0 ? templates[0] : null;
+    } catch (error) {
+        console.error('Error loading template:', error);
+        return null;
+    }
+}
+
 Deno.serve(async (req) => {
     console.log('🛒 sendCartCheckoutAbandoned CRON - Start');
-    
+
     try {
         const base44 = createClientFromRequest(req);
-        
+
+        // Load template from admin
+        const template = await loadEmailTemplate(base44, 'cart_checkout_abandoned');
+
         // Check for test mode - send immediately to specific email
         let body = {};
         try {
@@ -39,34 +55,34 @@ Deno.serve(async (req) => {
         } catch (e) {
             // No body, that's ok for CRON
         }
-        
+
         const testEmail = body.test_email;
         const forceTest = body.force_test === true;
-        
+
         if (testEmail && forceTest) {
             console.log(`🧪 TEST MODE: Sending to ${testEmail}`);
-            
+
             const users = await base44.asServiceRole.entities.User.filter({
                 email: testEmail
             });
-            
+
             if (users.length === 0) {
                 return Response.json({ error: `User not found: ${testEmail}` }, { status: 404 });
             }
-            
+
             const user = users[0];
             const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
-            const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-            const emailBody = generateCartAbandonedEmail(user, 1900, appUrl);
+            const emailBody = generateCartAbandonedEmail(user, appUrl, template);
+            const subject = template?.subject || '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta';
 
-                            await sendEmailViaSendGrid(
-                                user.email,
-                                '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
-                                emailBody,
-                                'info@projectmywellness.com',
-                                'no-reply@projectmywellness.com'
-                            );
-            
+            await sendEmailViaSendGrid(
+                user.email,
+                subject,
+                emailBody,
+                template?.from_email || 'info@projectmywellness.com',
+                template?.reply_to_email || 'no-reply@projectmywellness.com'
+            );
+
             return Response.json({ success: true, message: `Test email sent to ${testEmail}` });
         }
 
