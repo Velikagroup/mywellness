@@ -723,19 +723,9 @@ export default function TrialSetup() {
         #card-element-container iframe {
           min-height: 28px !important;
         }
-        
-        /* Fix z-index per select picker su iOS */
-        select {
-          position: relative;
-          z-index: 99999 !important;
-        }
-        
-        select:focus {
-          z-index: 999999 !important;
-        }
       `}</style>
 
-      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-[300px]">
+      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] px-4 w-full max-w-[300px]">
         <div className="water-glass-effect rounded-full px-6 py-3 flex justify-center">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -745,8 +735,8 @@ export default function TrialSetup() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center min-h-screen pt-28 pb-12 px-4">
-        <Card className="max-w-2xl w-full water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl overflow-hidden">
+      <div className="flex items-center justify-center min-h-screen pt-28 pb-12 px-4 relative z-[1]">
+        <Card className="max-w-2xl w-full water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl overflow-visible">
           <CardHeader className="text-center pb-6 pt-8">
             <div className="w-20 h-20 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <Sparkles className="w-10 h-10 text-white" />
@@ -854,28 +844,26 @@ export default function TrialSetup() {
                   autoComplete="email"
                 />
               </div>
-              <div>
+              <div className="relative" style={{ zIndex: 9999 }}>
                 <Label className="text-sm font-semibold text-gray-700 mb-2 block">
                   Numero di Telefono
                 </Label>
                 <div className="flex gap-2">
-                  <label className="shrink-0 block">
-                    <select
-                      value={selectedCountry?.code || 'IT'}
-                      onChange={(e) => {
-                        const country = countries.find(c => c.code === e.target.value);
-                        if (country) setSelectedCountry(country);
-                      }}
-                      className="h-12 px-3 border border-gray-200 rounded-md bg-white"
-                      style={{ fontSize: '16px', minWidth: '115px' }}
-                    >
-                      {countries.map((country) => (
-                        <option key={country.code} value={country.code}>
-                          {countryCodeToFlag(country.code)} {country.dial_code}
-                        </option>
-                      ))}
-                    </select>
-                  </label>
+                  <select
+                    value={selectedCountry?.code || 'IT'}
+                    onChange={(e) => {
+                      const country = countries.find(c => c.code === e.target.value);
+                      if (country) setSelectedCountry(country);
+                    }}
+                    className="h-12 px-3 border border-gray-200 rounded-md bg-white shrink-0"
+                    style={{ fontSize: '16px', minWidth: '115px', position: 'relative', zIndex: 9999 }}
+                  >
+                    {countries.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {countryCodeToFlag(country.code)} {country.dial_code}
+                      </option>
+                    ))}
+                  </select>
                   <input
                     type="tel"
                     inputMode="tel"
@@ -910,22 +898,20 @@ export default function TrialSetup() {
                     className="h-12 text-base bg-white" autoComplete="postal-code" />
                 </div>
               </div>
-              <div>
+              <div className="relative" style={{ zIndex: 9998 }}>
                 <Label className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
-                <label className="block">
-                  <select
-                    value={billingInfo.country}
-                    onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
-                    className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white"
-                    style={{ fontSize: '16px' }}
-                  >
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.name}
-                      </option>
-                    ))}
-                  </select>
-                </label>
+                <select
+                  value={billingInfo.country}
+                  onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
+                  className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white"
+                  style={{ fontSize: '16px', position: 'relative', zIndex: 9998 }}
+                >
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="pt-4 space-y-4">
