@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, Briefcase, Tag, X, ChevronDown } from "lucide-react";
+import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, Briefcase, Tag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
@@ -849,28 +849,25 @@ export default function TrialSetup() {
                   Numero di Telefono
                 </Label>
                 <div className="flex items-center gap-2">
-                  <div className="relative">
-                    <select
-                      value={selectedCountry?.code || 'IT'}
-                      onChange={(e) => {
-                        const country = countries.find(c => c.code === e.target.value);
-                        if (country) setSelectedCountry(country);
-                      }}
-                      className="h-12 pl-3 pr-8 rounded-md border border-gray-200 bg-white text-base appearance-none cursor-pointer min-w-[115px]"
-                      style={{ fontSize: '16px' }}
-                    >
-                      {countries.map((country) => (
-                        <option key={country.code} value={country.code}>
-                          {countryCodeToFlag(country.code)} {country.dial_code}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                  </div>
+                  <select
+                    value={selectedCountry?.code || 'IT'}
+                    onChange={(e) => {
+                      const country = countries.find(c => c.code === e.target.value);
+                      if (country) setSelectedCountry(country);
+                    }}
+                    className="h-12 px-3 rounded-md border border-gray-200 bg-white min-w-[115px]"
+                    style={{ fontSize: '16px', WebkitAppearance: 'menulist' }}
+                  >
+                    {countries.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {countryCodeToFlag(country.code)} {country.dial_code}
+                      </option>
+                    ))}
+                  </select>
                   <Input
                     id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
                     value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="h-12 text-base bg-white"
+                    className="h-12 text-base bg-white flex-1"
                     autoComplete="tel-national"
                     style={{ fontSize: '16px' }}
                   />
@@ -900,22 +897,19 @@ export default function TrialSetup() {
               </div>
               <div>
                 <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
-                <div className="relative">
-                  <select
-                    id="country"
-                    value={billingInfo.country}
-                    onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
-                    className="w-full h-12 pl-3 pr-10 rounded-md border border-gray-200 bg-white text-base appearance-none cursor-pointer"
-                    style={{ fontSize: '16px' }}
-                  >
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {country.name}
-                      </option>
-                    ))}
-                  </select>
-                  <ChevronDown className="absolute right-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400 pointer-events-none" />
-                </div>
+                <select
+                  id="country"
+                  value={billingInfo.country}
+                  onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
+                  className="w-full h-12 px-3 rounded-md border border-gray-200 bg-white"
+                  style={{ fontSize: '16px', WebkitAppearance: 'menulist' }}
+                >
+                  {countries.map((country) => (
+                    <option key={country.code} value={country.code}>
+                      {country.name}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <div className="pt-4 space-y-4">
