@@ -204,14 +204,14 @@ function generateCartAbandonedEmail(user, amount, appUrl) {
                             </table>
 
                             <!-- Timer/Urgency -->
-                            <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: center;">
-                                <p style="color: #dc2626; font-size: 16px; margin: 0; font-weight: bold;">
-                                    ⏰ Offerta valida ancora per poco!
-                                </p>
-                                <p style="color: #dc2626; font-size: 14px; margin: 8px 0 0 0;">
-                                    3 Giorni Gratis + Cancellazione istantanea
-                                </p>
-                            </div>
+                                                              <div style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); border: 2px solid #ef4444; border-radius: 12px; padding: 15px; margin-bottom: 25px; text-align: center;">
+                                                                  <p style="color: #dc2626; font-size: 16px; margin: 0; font-weight: bold;">
+                                                                      ⏰ Non perdere questa occasione!
+                                                                  </p>
+                                                                  <p style="color: #dc2626; font-size: 14px; margin: 8px 0 0 0;">
+                                                                      Completa ora e inizia subito il tuo percorso
+                                                                  </p>
+                                                              </div>
 
                             <!-- Trust badges -->
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
