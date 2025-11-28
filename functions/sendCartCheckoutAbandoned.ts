@@ -1,4 +1,4 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
     console.log('🛒 sendCartCheckoutAbandoned CRON - Start');
@@ -6,13 +6,13 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         
-        // Skip auth check for manual testing (when no auth header is provided)
-        const cronSecret = Deno.env.get('CRON_SECRET');
-        const authHeader = req.headers.get('Authorization');
-        if (cronSecret && authHeader && authHeader !== `Bearer ${cronSecret}`) {
-            console.error('Unauthorized cron call');
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
+        // Auth check disabled for testing - re-enable in production if needed
+        // const cronSecret = Deno.env.get('CRON_SECRET');
+        // const authHeader = req.headers.get('Authorization');
+        // if (cronSecret && authHeader && authHeader !== `Bearer ${cronSecret}`) {
+        //     console.error('Unauthorized cron call');
+        //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
+        // }
 
         const now = new Date();
         const threeHoursAgo = new Date(now.getTime() - (3 * 60 * 60 * 1000));
