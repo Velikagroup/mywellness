@@ -141,8 +141,8 @@ function calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, startD
     const totalCalories = weekMeals.reduce((sum, m) => sum + (m.actual_calories || 0), 0);
     const avgCalories = weekMeals.length > 0 ? Math.round(totalCalories / weekMeals.length) : 0;
 
-    // Conta allenamenti
-    const workoutsCompleted = weekWorkouts.filter(w => w.completed).length;
+    // Conta allenamenti completati (con completed: true)
+    const workoutsCompleted = weekWorkouts.filter(w => w.completed === true).length;
 
     // Calcola aderenza al piano
     const totalDays = 7;
