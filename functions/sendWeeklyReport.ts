@@ -2,7 +2,7 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY');
 
-async function sendEmailViaSendGrid(to, subject, htmlBody) {
+async function sendEmailViaSendGrid(to, subject, htmlBody, fromEmail, replyToEmail) {
     const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
@@ -11,8 +11,8 @@ async function sendEmailViaSendGrid(to, subject, htmlBody) {
         },
         body: JSON.stringify({
             personalizations: [{ to: [{ email: to }] }],
-            from: { email: 'info@projectmywellness.com', name: 'MyWellness Team' },
-            reply_to: { email: 'no-reply@projectmywellness.com', name: 'MyWellness' },
+            from: { email: fromEmail || 'info@projectmywellness.com', name: 'MyWellness Team' },
+            reply_to: { email: replyToEmail || 'no-reply@projectmywellness.com', name: 'MyWellness' },
             subject: subject,
             content: [{ type: 'text/html', value: htmlBody }]
         })
@@ -24,6 +24,29 @@ async function sendEmailViaSendGrid(to, subject, htmlBody) {
     }
 
     return true;
+}
+
+async function loadEmailTemplate(base44, templateId) {
+    try {
+        const templates = await base44.asServiceRole.entities.EmailTemplate.filter({
+            template_id: templateId,
+            is_active: true
+        });
+        return templates.length > 0 ? templates[0] : null;
+    } catch (error) {
+        console.error('Error loading template:', error);
+        return null;
+    }
+}
+
+function replaceVariables(text, variables) {
+    if (!text) return '';
+    let result = text;
+    Object.keys(variables).forEach(key => {
+        const regex = new RegExp(`\\{${key}\\}`, 'g');
+        result = result.replace(regex, variables[key] || '');
+    });
+    return result;
 }
 
 Deno.serve(async (req) => {
@@ -55,6 +78,9 @@ Deno.serve(async (req) => {
 
         console.log(`👥 Found ${activeUsers.length} active users to send reports`);
 
+        // Carica template dall'admin
+        const template = await loadEmailTemplate(base44, 'weekly_report');
+        
         let sentCount = 0;
         const results = [];
 
@@ -82,12 +108,37 @@ Deno.serve(async (req) => {
                 // Calcola statistiche
                 const stats = calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, oneWeekAgo, today);
 
-                const emailBody = getWeeklyReportTemplate(user, stats);
+                // Prepara variabili per il template
+                const variables = {
+                    user_name: user.full_name || 'Utente',
+                    week_range: stats.weekRange,
+                    weight_change: stats.weightChange,
+                    current_weight: stats.currentWeight,
+                    target_weight: stats.targetWeight,
+                    avg_calories: stats.avgCalories,
+                    workouts_completed: stats.workoutsCompleted,
+                    planned_workouts: stats.plannedWorkouts,
+                    adherence: stats.adherence,
+                    progress: stats.progressPercentage,
+                    distance_remaining: stats.distanceRemaining,
+                    app_url: Deno.env.get('APP_URL') || 'https://projectmywellness.com'
+                };
+
+                const emailBody = getWeeklyReportTemplate(user, stats, template, variables);
+                
+                // Usa valori dal template se disponibili
+                const fromEmail = template?.from_email || 'info@projectmywellness.com';
+                const replyToEmail = template?.reply_to_email || 'no-reply@projectmywellness.com';
+                const subject = template?.subject 
+                    ? replaceVariables(template.subject, variables)
+                    : `📊 Il tuo Report Settimanale MyWellness - ${stats.weekRange}`;
 
                 await sendEmailViaSendGrid(
                     user.email,
-                    `📊 Il tuo Report Settimanale MyWellness - ${stats.weekRange}`,
-                    emailBody
+                    subject,
+                    emailBody,
+                    fromEmail,
+                    replyToEmail
                 );
 
                 sentCount++;
@@ -196,10 +247,28 @@ function calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, startD
     };
 }
 
-function getWeeklyReportTemplate(user, stats) {
+function getWeeklyReportTemplate(user, stats, template, variables) {
     const weightEmoji = stats.weightTrend === 'down' ? '📉' : stats.weightTrend === 'up' ? '📈' : '➡️';
     const weightColor = stats.weightTrend === 'down' ? '#10b981' : stats.weightTrend === 'up' ? '#ef4444' : '#6b7280';
     const adherenceColor = stats.adherence >= 80 ? '#10b981' : stats.adherence >= 50 ? '#f59e0b' : '#ef4444';
+
+    // Valori dal template admin o fallback
+    const headerTitle = template?.header_title 
+        ? replaceVariables(template.header_title, variables) 
+        : '📊 Report Settimanale';
+    const headerSubtitle = template?.header_subtitle 
+        ? replaceVariables(template.header_subtitle, variables) 
+        : stats.weekRange;
+    const greeting = template?.greeting 
+        ? replaceVariables(template.greeting, variables) 
+        : `Ciao ${user.full_name || 'Utente'},`;
+    const mainContent = template?.main_content 
+        ? replaceVariables(template.main_content, variables) 
+        : 'Ecco il riassunto dei tuoi progressi questa settimana! 💪';
+    const ctaText = template?.call_to_action_text || '📊 Vedi Dashboard Completa';
+    const ctaUrl = template?.call_to_action_url 
+        ? replaceVariables(template.call_to_action_url, variables) 
+        : (Deno.env.get('APP_URL') || 'https://projectmywellness.com') + '/Dashboard';
 
     return `
 <!DOCTYPE html>
@@ -225,17 +294,17 @@ function getWeeklyReportTemplate(user, stats) {
                     <tr>
                         <td style="background: white; padding: 40px 30px 24px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">📊 Report Settimanale</h1>
-                            <p style="color: #6b7280; margin: 0; font-size: 16px;">${stats.weekRange}</p>
+                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">${headerTitle}</h1>
+                            <p style="color: #6b7280; margin: 0; font-size: 16px;">${headerSubtitle}</p>
                         </td>
                     </tr>
                     <tr>
                         <td class="content" style="padding: 40px 30px;">
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
-                            
-                            <p style="color: #374151; line-height: 1.6;">
-                                Ecco il riassunto dei tuoi progressi questa settimana! 💪
-                            </p>
+                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>
+
+                                <p style="color: #374151; line-height: 1.6;">
+                                    ${mainContent}
+                                </p>
 
                             <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
                                 <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} Variazione Peso</h2>
@@ -289,14 +358,14 @@ function getWeeklyReportTemplate(user, stats) {
                             ${getMotivationalMessage(stats)}
 
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="${Deno.env.get('APP_URL') || 'https://app.mywellness.it'}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            📊 Vedi Dashboard Completa
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
+                                    <tr>
+                                        <td align="center">
+                                            <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                                ${ctaText}
+                                            </a>
+                                        </td>
+                                    </tr>
+                                </table>
 
                             <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
                                 Continua così! La costanza è la chiave del successo 🌟
