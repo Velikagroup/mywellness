@@ -36,6 +36,8 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
   const [creditAmount, setCreditAmount] = useState(1);
   const [creditReason, setCreditReason] = useState('');
   const [extraCredits, setExtraCredits] = useState({ meal: 0, workout: 0 });
+  const [showPlanDialog, setShowPlanDialog] = useState(false);
+  const [newPlan, setNewPlan] = useState('');
 
   useEffect(() => {
     if (client && isOpen) {
