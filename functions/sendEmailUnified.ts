@@ -95,7 +95,7 @@ function generateEmailHtml(template, variables) {
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
                         <td style="padding: 0;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/5adb0608b_ImmagineWelcome.png" alt="Welcome to MyWellness" style="width: 100%; height: auto; display: block;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/13f8dafa2_ImmagineWelcome.png" alt="Welcome to MyWellness" style="width: 100%; height: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
