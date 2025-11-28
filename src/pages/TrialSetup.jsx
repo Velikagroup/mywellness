@@ -845,29 +845,19 @@ export default function TrialSetup() {
                 />
               </div>
               <div>
-                <Label htmlFor="phoneNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">
                   Numero di Telefono
                 </Label>
-                <div className="flex items-center gap-2">
-                  <div className="shrink-0">
+                <div className="flex gap-2">
+                  <label className="shrink-0 block">
                     <select
-                      id="phonePrefix"
                       value={selectedCountry?.code || 'IT'}
                       onChange={(e) => {
-                        e.stopPropagation();
                         const country = countries.find(c => c.code === e.target.value);
                         if (country) setSelectedCountry(country);
                       }}
-                      onTouchStart={(e) => e.stopPropagation()}
-                      style={{ 
-                        height: '48px',
-                        padding: '0 12px',
-                        fontSize: '16px',
-                        border: '1px solid #e5e7eb',
-                        borderRadius: '6px',
-                        backgroundColor: 'white',
-                        minWidth: '115px'
-                      }}
+                      className="h-12 px-3 border border-gray-200 rounded-md bg-white"
+                      style={{ fontSize: '16px', minWidth: '115px' }}
                     >
                       {countries.map((country) => (
                         <option key={country.code} value={country.code}>
@@ -875,12 +865,15 @@ export default function TrialSetup() {
                         </option>
                       ))}
                     </select>
-                  </div>
-                  <Input
-                    id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
-                    value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
-                    className="h-12 text-base bg-white flex-1"
+                  </label>
+                  <input
+                    type="tel"
+                    inputMode="tel"
+                    placeholder="333 1234567"
+                    value={phoneNumber}
+                    onChange={(e) => setPhoneNumber(e.target.value)}
                     autoComplete="tel-national"
+                    className="flex-1 h-12 px-3 border border-gray-200 rounded-md bg-white"
                     style={{ fontSize: '16px' }}
                   />
                 </div>
@@ -908,31 +901,21 @@ export default function TrialSetup() {
                 </div>
               </div>
               <div>
-                <Label htmlFor="countrySelect" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
-                <select
-                  id="countrySelect"
-                  value={billingInfo.country}
-                  onChange={(e) => {
-                    e.stopPropagation();
-                    handleBillingInfoChange({ target: { name: 'country', value: e.target.value }});
-                  }}
-                  onTouchStart={(e) => e.stopPropagation()}
-                  style={{ 
-                    width: '100%',
-                    height: '48px',
-                    padding: '0 12px',
-                    fontSize: '16px',
-                    border: '1px solid #e5e7eb',
-                    borderRadius: '6px',
-                    backgroundColor: 'white'
-                  }}
-                >
-                  {countries.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
+                <label className="block">
+                  <select
+                    value={billingInfo.country}
+                    onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
+                    className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white"
+                    style={{ fontSize: '16px' }}
+                  >
+                    {countries.map((country) => (
+                      <option key={country.code} value={country.code}>
+                        {country.name}
+                      </option>
+                    ))}
+                  </select>
+                </label>
               </div>
 
               <div className="pt-4 space-y-4">
