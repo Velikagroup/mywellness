@@ -669,7 +669,8 @@ ${ctaHtml}
       emails: [
         { id: 'password_reset_confirmed', name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
         { id: 'plan_upgrade', name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
-        { id: 'plan_downgrade', name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' }
+        { id: 'plan_downgrade', name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },
+        { id: 'cancellation_confirmation', name: 'Conferma Cancellazione', trigger: 'Utente cancella abbonamento', function: 'sendCancellationConfirmation' }
       ]
     },
     reporting: {
