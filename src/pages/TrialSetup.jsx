@@ -723,6 +723,16 @@ export default function TrialSetup() {
         #card-element-container iframe {
           min-height: 28px !important;
         }
+        
+        /* Fix z-index per select picker su iOS */
+        select {
+          position: relative;
+          z-index: 99999 !important;
+        }
+        
+        select:focus {
+          z-index: 999999 !important;
+        }
       `}</style>
 
       <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 px-4 w-full max-w-[300px]">
