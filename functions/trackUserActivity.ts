@@ -1,51 +1,47 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
+    console.log('🚀 trackUserActivity called');
+    
     try {
         const base44 = createClientFromRequest(req);
+        console.log('✅ SDK initialized');
         
-        let user;
-        try {
-            user = await base44.auth.me();
-        } catch (authError) {
-            console.error('Auth error:', authError);
+        const user = await base44.auth.me();
+        console.log('✅ User:', user?.email);
+
+        if (!user || !user.email) {
+            console.log('❌ No user');
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        if (!user || !user.email) {
-            return Response.json({ error: 'User not found' }, { status: 401 });
-        }
-
-        let body;
-        try {
-            body = await req.json();
-        } catch (parseError) {
-            console.error('JSON parse error:', parseError);
-            return Response.json({ error: 'Invalid JSON body' }, { status: 400 });
-        }
-
+        const body = await req.json();
+        console.log('✅ Body:', JSON.stringify(body));
+        
         const { event_type, event_data } = body;
 
         if (!event_type) {
             return Response.json({ error: 'event_type is required' }, { status: 400 });
         }
 
-        console.log(`📊 Creating activity: ${event_type} for ${user.email}`);
+        console.log(`📊 Creating: ${event_type} for ${user.email}`);
 
         // Use service role to bypass RLS
-        const result = await base44.asServiceRole.entities.UserActivity.create({
+        await base44.asServiceRole.entities.UserActivity.create({
             user_id: user.email,
             event_type: event_type,
             event_data: event_data || {},
             completed: false
         });
 
-        console.log(`✅ Activity tracked: ${event_type} for ${user.email}`, result);
-
-        return Response.json({ success: true, id: result?.id });
+        console.log(`✅ Done`);
+        return Response.json({ success: true });
 
     } catch (error) {
-        console.error('❌ Error tracking activity:', error.message, error.stack);
-        return Response.json({ error: error.message }, { status: 500 });
+        console.error('❌ ERROR:', error);
+        return Response.json({ 
+            error: error.message || 'Unknown error',
+            stack: error.stack 
+        }, { status: 500 });
     }
 });
