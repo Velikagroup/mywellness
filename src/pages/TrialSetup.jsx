@@ -10,7 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -868,38 +868,6 @@ export default function TrialSetup() {
                     autoComplete="tel-national"
                   />
                 </div>
-                
-                <Dialog open={phoneDialogOpen} onOpenChange={setPhoneDialogOpen}>
-                  <DialogContent className="max-w-sm max-h-[70vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>Seleziona Prefisso</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-1 mt-4">
-                      {countries.map((country) => (
-                        <button
-                          key={country.code}
-                          type="button"
-                          onClick={() => {
-                            setSelectedCountry(country);
-                            setPhoneDialogOpen(false);
-                          }}
-                          className={`w-full p-3 rounded-lg flex items-center gap-3 text-left transition-colors ${
-                            selectedCountry?.code === country.code 
-                              ? 'bg-[var(--brand-primary-light)] text-[var(--brand-primary)]' 
-                              : 'hover:bg-gray-100'
-                          }`}
-                        >
-                          <span className="text-xl">{countryCodeToFlag(country.code)}</span>
-                          <span className="flex-1">{country.name}</span>
-                          <span className="text-gray-500">{country.dial_code}</span>
-                          {selectedCountry?.code === country.code && (
-                            <Check className="h-4 w-4 text-[var(--brand-primary)]" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </DialogContent>
-                </Dialog>
               </div>
 
               <div>
@@ -933,36 +901,6 @@ export default function TrialSetup() {
                   <span>{countries.find(c => c.code === billingInfo.country)?.name || 'Seleziona paese...'}</span>
                   <ChevronsUpDown className="h-4 w-4 opacity-50" />
                 </button>
-                
-                <Dialog open={countryDialogOpen} onOpenChange={setCountryDialogOpen}>
-                  <DialogContent className="max-w-sm max-h-[70vh] overflow-y-auto">
-                    <DialogHeader>
-                      <DialogTitle>Seleziona Paese</DialogTitle>
-                    </DialogHeader>
-                    <div className="space-y-1 mt-4">
-                      {countries.map((country) => (
-                        <button
-                          key={country.code}
-                          type="button"
-                          onClick={() => {
-                            handleBillingInfoChange({ target: { name: 'country', value: country.code }});
-                            setCountryDialogOpen(false);
-                          }}
-                          className={`w-full p-3 rounded-lg flex items-center gap-3 text-left transition-colors ${
-                            billingInfo.country === country.code 
-                              ? 'bg-[var(--brand-primary-light)] text-[var(--brand-primary)]' 
-                              : 'hover:bg-gray-100'
-                          }`}
-                        >
-                          <span className="flex-1">{country.name}</span>
-                          {billingInfo.country === country.code && (
-                            <Check className="h-4 w-4 text-[var(--brand-primary)]" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </DialogContent>
-                </Dialog>
               </div>
 
               <div className="pt-4 space-y-4">
@@ -1240,6 +1178,102 @@ export default function TrialSetup() {
           </CardContent>
         </Card>
       </div>
+
+      {/* Bottom Sheet per Prefisso Telefono */}
+      {phoneDialogOpen && (
+        <div className="fixed inset-0 z-[9999]" style={{ touchAction: 'none' }}>
+          <div 
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setPhoneDialogOpen(false)}
+          />
+          <div 
+            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[60vh] overflow-hidden"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+          >
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Seleziona Prefisso</h3>
+              <button 
+                type="button"
+                onClick={() => setPhoneDialogOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="overflow-y-auto max-h-[calc(60vh-60px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
+              {countries.map((country) => (
+                <button
+                  key={country.code}
+                  type="button"
+                  onClick={() => {
+                    setSelectedCountry(country);
+                    setPhoneDialogOpen(false);
+                  }}
+                  className={`w-full p-4 flex items-center gap-3 text-left border-b border-gray-100 active:bg-gray-100 ${
+                    selectedCountry?.code === country.code 
+                      ? 'bg-[var(--brand-primary-light)]' 
+                      : ''
+                  }`}
+                >
+                  <span className="text-2xl">{countryCodeToFlag(country.code)}</span>
+                  <span className="flex-1 text-base">{country.name}</span>
+                  <span className="text-gray-500">{country.dial_code}</span>
+                  {selectedCountry?.code === country.code && (
+                    <Check className="h-5 w-5 text-[var(--brand-primary)]" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Bottom Sheet per Paese */}
+      {countryDialogOpen && (
+        <div className="fixed inset-0 z-[9999]" style={{ touchAction: 'none' }}>
+          <div 
+            className="absolute inset-0 bg-black/50"
+            onClick={() => setCountryDialogOpen(false)}
+          />
+          <div 
+            className="absolute bottom-0 left-0 right-0 bg-white rounded-t-2xl max-h-[60vh] overflow-hidden"
+            style={{ paddingBottom: 'env(safe-area-inset-bottom)' }}
+          >
+            <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <h3 className="text-lg font-semibold">Seleziona Paese</h3>
+              <button 
+                type="button"
+                onClick={() => setCountryDialogOpen(false)}
+                className="p-2 hover:bg-gray-100 rounded-full"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+            <div className="overflow-y-auto max-h-[calc(60vh-60px)]" style={{ WebkitOverflowScrolling: 'touch' }}>
+              {countries.map((country) => (
+                <button
+                  key={country.code}
+                  type="button"
+                  onClick={() => {
+                    handleBillingInfoChange({ target: { name: 'country', value: country.code }});
+                    setCountryDialogOpen(false);
+                  }}
+                  className={`w-full p-4 flex items-center gap-3 text-left border-b border-gray-100 active:bg-gray-100 ${
+                    billingInfo.country === country.code 
+                      ? 'bg-[var(--brand-primary-light)]' 
+                      : ''
+                  }`}
+                >
+                  <span className="flex-1 text-base">{country.name}</span>
+                  {billingInfo.country === country.code && (
+                    <Check className="h-5 w-5 text-[var(--brand-primary)]" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
 
       <footer className="py-12 px-6 mt-8">
         <div className="max-w-6xl mx-auto">
