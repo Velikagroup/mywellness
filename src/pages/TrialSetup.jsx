@@ -10,8 +10,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
-import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -71,8 +70,8 @@ export default function TrialSetup() {
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [privacyAccepted, setPrivacyAccepted] = useState(false);
   const [marketingConsent, setMarketingConsent] = useState(false);
-  const [popoverOpen, setPopoverOpen] = useState(false);
-  const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
+  const [phoneDialogOpen, setPhoneDialogOpen] = useState(false);
+  const [countryDialogOpen, setCountryDialogOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countries.find(c => c.code === 'IT'));
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -851,21 +850,17 @@ export default function TrialSetup() {
                   Numero di Telefono
                 </Label>
                 <div className="flex items-center gap-2">
-                  <select
-                    value={selectedCountry?.code || 'IT'}
-                    onChange={(e) => {
-                      const country = countries.find(c => c.code === e.target.value);
-                      if (country) setSelectedCountry(country);
-                    }}
-                    className="h-12 px-3 rounded-md border border-gray-200 bg-white text-base min-w-[120px] appearance-none cursor-pointer"
-                    style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 8px center', backgroundRepeat: 'no-repeat', backgroundSize: '16px', paddingRight: '32px' }}
+                  <button
+                    type="button"
+                    onClick={() => setPhoneDialogOpen(true)}
+                    className="h-12 px-3 rounded-md border border-gray-200 bg-white text-base min-w-[120px] flex items-center justify-between gap-2"
                   >
-                    {countries.map((country) => (
-                      <option key={country.code} value={country.code}>
-                        {countryCodeToFlag(country.code)} {country.dial_code}
-                      </option>
-                    ))}
-                  </select>
+                    <span className="flex items-center gap-2">
+                      <span className="text-lg">{countryCodeToFlag(selectedCountry?.code || 'IT')}</span>
+                      <span>{selectedCountry?.dial_code || '+39'}</span>
+                    </span>
+                    <ChevronsUpDown className="h-4 w-4 opacity-50" />
+                  </button>
                   <Input
                     id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
                     value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
@@ -873,6 +868,38 @@ export default function TrialSetup() {
                     autoComplete="tel-national"
                   />
                 </div>
+                
+                <Dialog open={phoneDialogOpen} onOpenChange={setPhoneDialogOpen}>
+                  <DialogContent className="max-w-sm max-h-[70vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Seleziona Prefisso</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-1 mt-4">
+                      {countries.map((country) => (
+                        <button
+                          key={country.code}
+                          type="button"
+                          onClick={() => {
+                            setSelectedCountry(country);
+                            setPhoneDialogOpen(false);
+                          }}
+                          className={`w-full p-3 rounded-lg flex items-center gap-3 text-left transition-colors ${
+                            selectedCountry?.code === country.code 
+                              ? 'bg-[var(--brand-primary-light)] text-[var(--brand-primary)]' 
+                              : 'hover:bg-gray-100'
+                          }`}
+                        >
+                          <span className="text-xl">{countryCodeToFlag(country.code)}</span>
+                          <span className="flex-1">{country.name}</span>
+                          <span className="text-gray-500">{country.dial_code}</span>
+                          {selectedCountry?.code === country.code && (
+                            <Check className="h-4 w-4 text-[var(--brand-primary)]" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <div>
@@ -898,19 +925,44 @@ export default function TrialSetup() {
               </div>
               <div>
                 <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
-                <select
-                  id="country"
-                  value={billingInfo.country}
-                  onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
-                  className="w-full h-12 px-3 rounded-md border border-gray-200 bg-white text-base appearance-none cursor-pointer"
-                  style={{ backgroundImage: `url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e")`, backgroundPosition: 'right 12px center', backgroundRepeat: 'no-repeat', backgroundSize: '16px', paddingRight: '40px' }}
+                <button
+                  type="button"
+                  onClick={() => setCountryDialogOpen(true)}
+                  className="w-full h-12 px-3 rounded-md border border-gray-200 bg-white text-base flex items-center justify-between"
                 >
-                  {countries.map((country) => (
-                    <option key={country.code} value={country.code}>
-                      {country.name}
-                    </option>
-                  ))}
-                </select>
+                  <span>{countries.find(c => c.code === billingInfo.country)?.name || 'Seleziona paese...'}</span>
+                  <ChevronsUpDown className="h-4 w-4 opacity-50" />
+                </button>
+                
+                <Dialog open={countryDialogOpen} onOpenChange={setCountryDialogOpen}>
+                  <DialogContent className="max-w-sm max-h-[70vh] overflow-y-auto">
+                    <DialogHeader>
+                      <DialogTitle>Seleziona Paese</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-1 mt-4">
+                      {countries.map((country) => (
+                        <button
+                          key={country.code}
+                          type="button"
+                          onClick={() => {
+                            handleBillingInfoChange({ target: { name: 'country', value: country.code }});
+                            setCountryDialogOpen(false);
+                          }}
+                          className={`w-full p-3 rounded-lg flex items-center gap-3 text-left transition-colors ${
+                            billingInfo.country === country.code 
+                              ? 'bg-[var(--brand-primary-light)] text-[var(--brand-primary)]' 
+                              : 'hover:bg-gray-100'
+                          }`}
+                        >
+                          <span className="flex-1">{country.name}</span>
+                          {billingInfo.country === country.code && (
+                            <Check className="h-4 w-4 text-[var(--brand-primary)]" />
+                          )}
+                        </button>
+                      ))}
+                    </div>
+                  </DialogContent>
+                </Dialog>
               </div>
 
               <div className="pt-4 space-y-4">
