@@ -313,7 +313,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         const row1Stats = [];
         if (showCaloriesStat) {
             row1Stats.push(`
-                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                     <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🍽️</p>
                     <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.avgCalories}</p>
                     <p style="margin: 0; color: #6b7280; font-size: 14px;">${caloriesStatLabel}</p>
@@ -322,7 +322,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         }
         if (showWorkoutsStat) {
             row1Stats.push(`
-                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                     <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">💪</p>
                     <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.workoutsCompleted}/${stats.plannedWorkouts}</p>
                     <p style="margin: 0; color: #6b7280; font-size: 14px;">${workoutsStatLabel}</p>
@@ -337,7 +337,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         const row2Stats = [];
         if (showAdherenceStat) {
             row2Stats.push(`
-                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                     <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: ${adherenceColor};">✓</p>
                     <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.adherence}%</p>
                     <p style="margin: 0; color: #6b7280; font-size: 14px;">${adherenceStatLabel}</p>
@@ -346,7 +346,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         }
         if (showProgressStat) {
             row2Stats.push(`
-                <td width="50%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                     <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🎯</p>
                     <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.progressPercentage}%</p>
                     <p style="margin: 0; color: #6b7280; font-size: 14px;">${progressStatLabel}</p>
@@ -360,7 +360,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         if (statsRows.length > 0) {
             statsHtml = `
                 <h3 style="color: #111827; margin: 30px 0 15px 0;">${statsSectionTitle}</h3>
-                <table class="stat-table" width="100%" cellpadding="0" cellspacing="15" border="0">
+                <table class="stat-table" width="100%" cellpadding="0" cellspacing="8" border="0" style="table-layout: fixed;">
                     ${statsRows.join('')}
                 </table>
             `;
