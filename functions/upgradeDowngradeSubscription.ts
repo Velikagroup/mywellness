@@ -182,6 +182,20 @@ Deno.serve(async (req) => {
                     }
                 }
                 
+                // 📧 Invia email di benvenuto piano
+                try {
+                    console.log('📧 Sending plan welcome email...');
+                    await base44.functions.invoke('sendPlanWelcome', {
+                        userId: user.id,
+                        userEmail: user.email,
+                        userName: user.full_name || 'Utente',
+                        plan: newPlan
+                    });
+                    console.log('✅ Plan welcome email sent');
+                } catch (emailError) {
+                    console.error('⚠️ Email error (non-critical):', emailError.message);
+                }
+
                 return Response.json({
                     success: true,
                     isDowngrade: false,
@@ -494,6 +508,20 @@ Deno.serve(async (req) => {
         }
 
         console.log('✅ Upgrade completed with immediate billing');
+
+        // 📧 Invia email di benvenuto piano
+        try {
+            console.log('📧 Sending plan welcome email...');
+            await base44.functions.invoke('sendPlanWelcome', {
+                userId: user.id,
+                userEmail: user.email,
+                userName: user.full_name || 'Utente',
+                plan: newPlan
+            });
+            console.log('✅ Plan welcome email sent');
+        } catch (emailError) {
+            console.error('⚠️ Email error (non-critical):', emailError.message);
+        }
 
         return Response.json({
             success: true,
