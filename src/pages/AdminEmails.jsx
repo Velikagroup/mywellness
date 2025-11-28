@@ -1540,12 +1540,19 @@ ${ctaHtml}
               <Label className="text-sm font-semibold text-gray-700 mb-2 block">
                 Contenuto Principale <span className="text-red-500">*</span>
               </Label>
-              <Textarea
+              <ReactQuill
+                theme="snow"
                 value={broadcastData.main_content}
-                onChange={(e) => setBroadcastData({...broadcastData, main_content: e.target.value})}
-                rows={12}
-                placeholder="Scrivi il contenuto dell'email qui..."
-                className="text-sm"
+                onChange={(value) => setBroadcastData({...broadcastData, main_content: value})}
+                modules={{
+                  toolbar: [
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    ['link'],
+                    ['clean']
+                  ]
+                }}
+                style={{ minHeight: '250px', marginBottom: '40px' }}
               />
               <p className="text-xs text-gray-500 mt-2">
                 Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
