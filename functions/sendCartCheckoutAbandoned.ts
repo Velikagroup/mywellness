@@ -131,15 +131,15 @@ Deno.serve(async (req) => {
                     continue;
                 }
 
-                const amount = activity.event_data?.amount || 0;
-                const emailBody = generateCartAbandonedEmail(user, amount, appUrl);
+                const emailBody = generateCartAbandonedEmail(user, appUrl, template);
+                const subject = template?.subject || '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta';
 
                 await sendEmailViaSendGrid(
                     user.email,
-                    '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
+                    subject,
                     emailBody,
-                    'info@projectmywellness.com',
-                    'no-reply@projectmywellness.com'
+                    template?.from_email || 'info@projectmywellness.com',
+                    template?.reply_to_email || 'no-reply@projectmywellness.com'
                 );
 
                 sentCount++;
