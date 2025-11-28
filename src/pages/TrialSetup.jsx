@@ -666,7 +666,7 @@ export default function TrialSetup() {
   }
 
   return (
-    <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
+    <div className="min-h-screen animated-gradient-bg overflow-x-hidden" style={{ position: 'relative', zIndex: 0 }}>
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
 
@@ -725,7 +725,7 @@ export default function TrialSetup() {
         }
       `}</style>
 
-      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-[100] px-4 w-full max-w-[300px]">
+      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-10 px-4 w-full max-w-[300px]">
         <div className="water-glass-effect rounded-full px-6 py-3 flex justify-center">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -735,8 +735,8 @@ export default function TrialSetup() {
         </div>
       </div>
 
-      <div className="flex items-center justify-center min-h-screen pt-28 pb-12 px-4 relative z-[1]">
-        <Card className="max-w-2xl w-full water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl overflow-visible">
+      <div className="flex items-center justify-center min-h-screen pt-28 pb-12 px-4">
+        <Card className="max-w-2xl w-full water-glass-effect border-gray-200/30 shadow-2xl rounded-2xl" style={{ overflow: 'visible', position: 'relative', zIndex: 1 }}>
           <CardHeader className="text-center pb-6 pt-8">
             <div className="w-20 h-20 bg-gradient-to-br from-[var(--brand-primary)] to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
               <Sparkles className="w-10 h-10 text-white" />
@@ -844,7 +844,7 @@ export default function TrialSetup() {
                   autoComplete="email"
                 />
               </div>
-              <div className="relative" style={{ zIndex: 9999 }}>
+              <div>
                 <Label className="text-sm font-semibold text-gray-700 mb-2 block">
                   Numero di Telefono
                 </Label>
@@ -856,7 +856,7 @@ export default function TrialSetup() {
                       if (country) setSelectedCountry(country);
                     }}
                     className="h-12 px-3 border border-gray-200 rounded-md bg-white shrink-0"
-                    style={{ fontSize: '16px', minWidth: '115px', position: 'relative', zIndex: 9999 }}
+                    style={{ fontSize: '16px', minWidth: '115px' }}
                   >
                     {countries.map((country) => (
                       <option key={country.code} value={country.code}>
@@ -898,13 +898,13 @@ export default function TrialSetup() {
                     className="h-12 text-base bg-white" autoComplete="postal-code" />
                 </div>
               </div>
-              <div className="relative" style={{ zIndex: 9998 }}>
+              <div>
                 <Label className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
                 <select
                   value={billingInfo.country}
                   onChange={(e) => handleBillingInfoChange({ target: { name: 'country', value: e.target.value }})}
                   className="w-full h-12 px-3 border border-gray-200 rounded-md bg-white"
-                  style={{ fontSize: '16px', position: 'relative', zIndex: 9998 }}
+                  style={{ fontSize: '16px' }}
                 >
                   {countries.map((country) => (
                     <option key={country.code} value={country.code}>
