@@ -54,9 +54,9 @@ Deno.serve(async (req) => {
         });
 
         const targetActivities = activities.filter(a => {
-            const activityDate = new Date(a.created_date);
-            return activityDate <= threeHoursAgo;
-        });
+                        const activityDate = new Date(a.created_date);
+                        return activityDate <= thirtyMinutesAgo;
+                    });
 
         console.log(`👥 Found ${targetActivities.length} abandoned checkouts`);
 
