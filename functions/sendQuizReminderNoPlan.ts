@@ -19,25 +19,39 @@ Deno.serve(async (req) => {
 
         console.log(`📅 Checking users with quiz completed on ${yesterday.toISOString().split('T')[0]}`);
 
+        // Carica template dal database
+        let emailTemplate = null;
+        try {
+            const templates = await base44.asServiceRole.entities.EmailTemplate.filter({
+                template_id: 'quiz_completed_abandoned'
+            });
+            if (templates.length > 0) {
+                emailTemplate = templates[0];
+                console.log('📧 Template loaded from database');
+            }
+        } catch (e) {
+            console.log('⚠️ Could not load template, using fallback');
+        }
+
         const allUsers = await base44.asServiceRole.entities.User.list();
         const usersWithQuizNoPlan = [];
 
         for (const user of allUsers) {
             if (!user.quiz_completed) continue;
             if (!user.updated_date) continue;
+            
+            // Salta utenti che hanno già un piano a pagamento
+            if (user.subscription_plan && user.subscription_plan !== 'free' && user.subscription_plan !== 'standard') continue;
 
             const quizDate = new Date(user.updated_date);
             const hoursSinceQuiz = (today - quizDate) / (1000 * 60 * 60);
 
             if (hoursSinceQuiz >= 24 && hoursSinceQuiz < 48) {
-                const mealPlans = await base44.asServiceRole.entities.MealPlan.filter({ user_id: user.id });
-                if (mealPlans.length === 0) {
-                    usersWithQuizNoPlan.push(user);
-                }
+                usersWithQuizNoPlan.push(user);
             }
         }
 
-        console.log(`👥 Found ${usersWithQuizNoPlan.length} users with quiz completed but no plan generated`);
+        console.log(`👥 Found ${usersWithQuizNoPlan.length} users with quiz completed but no paid plan`);
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
         const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
@@ -47,17 +61,18 @@ Deno.serve(async (req) => {
 
         for (const user of usersWithQuizNoPlan) {
             try {
-                const emailBody = generateQuizReminderEmail(user, appUrl);
+                const emailSubject = emailTemplate?.subject || '🎯 Il tuo piano personalizzato ti aspetta! Attivalo ora';
+                const emailBody = generateQuizReminderEmail(user, appUrl, emailTemplate);
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
                     from_name: `MyWellness Team <${fromEmail}>`,
-                    subject: '⏰ Hai dimenticato qualcosa... Il tuo piano ti aspetta!',
+                    subject: emailSubject.replace('{user_name}', user.full_name || 'Utente'),
                     body: emailBody
                 });
 
                 sentCount++;
-                console.log(`✅ Quiz reminder sent to ${user.email}`);
+                console.log(`✅ Promo email sent to ${user.email}`);
                 
                 results.push({
                     user_id: user.id,
@@ -78,7 +93,7 @@ Deno.serve(async (req) => {
             }
         }
 
-        console.log(`🎉 Quiz reminders sent: ${sentCount}/${usersWithQuizNoPlan.length}`);
+        console.log(`🎉 Promo emails sent: ${sentCount}/${usersWithQuizNoPlan.length}`);
 
         return Response.json({
             success: true,
@@ -93,7 +108,42 @@ Deno.serve(async (req) => {
     }
 });
 
-function generateQuizReminderEmail(user, appUrl) {
+function generateQuizReminderEmail(user, appUrl, template) {
+    const userName = user.full_name || 'Utente';
+    
+    // Usa contenuto dal template se disponibile, altrimenti fallback
+    const mainContent = template?.main_content 
+        ? template.main_content
+            .replace(/{user_name}/g, userName)
+            .replace(/{user_email}/g, user.email || '')
+            .replace(/{app_url}/g, appUrl)
+        : `Complimenti per aver completato il quiz MyWellness! 🎉
+
+Abbiamo analizzato le tue risposte e il tuo piano personalizzato è pronto per essere generato.
+
+📊 Ecco cosa abbiamo calcolato per te:
+• Il tuo fabbisogno calorico giornaliero
+• I macronutrienti ottimali per il tuo obiettivo
+• Le ricette più adatte alle tue preferenze
+
+💡 Con il Piano Base a soli €19/mese avrai:
+
+✅ Piano nutrizionale AI personalizzato
+✅ Ricette settimanali con lista della spesa
+✅ Dashboard con tracciamento progressi
+✅ Ricalcolo automatico del piano
+
+🔥 Non lasciare che il tuo impegno vada sprecato - hai già fatto il passo più importante completando il quiz!
+
+Attiva ora il tuo piano e inizia subito il tuo percorso verso gli obiettivi che ti sei prefissato.`;
+
+    const ctaText = template?.call_to_action_text || 'Attiva Piano Base - €19/mese';
+    const ctaUrl = (template?.call_to_action_url || '{app_url}/pricing').replace(/{app_url}/g, appUrl);
+    const footerText = template?.footer_text || 'Il tuo piano personalizzato ti aspetta';
+
+    // Converti newlines in <br> per HTML
+    const htmlContent = mainContent.replace(/\n/g, '<br>');
+
     return `
 <!DOCTYPE html>
 <html>
@@ -126,80 +176,24 @@ function generateQuizReminderEmail(user, appUrl) {
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${user.full_name || 'Utente'},</p>
+                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
                             
-                            <p style="color: #374151; line-height: 1.6;">
-                                Hai completato il quiz personalizzato ieri, ma non hai ancora generato il tuo piano!
-                            </p>
-
-                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 3px solid #f59e0b; border-radius: 16px; padding: 30px; text-align: center; margin: 30px 0;">
-                                <h2 style="color: #92400e; margin: 0 0 15px 0; font-size: 28px;">🎯 Sei a un solo click!</h2>
-                                <p style="margin: 0; color: #78350f; font-size: 16px;">
-                                    Il tuo piano personalizzato ti aspetta
-                                </p>
-                            </div>
-
-                            <h3 style="color: #111827; margin: 30px 0 15px 0;">✨ Cosa avrai:</h3>
-                            
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #374151;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Piano nutrizionale personalizzato AI
-                            </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #374151;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Programma allenamenti su misura
-                            </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #374151;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Ricette con foto e ingredienti esatti
-                            </div>
-                            <div style="margin: 15px 0; padding-left: 30px; position: relative; color: #374151;">
-                                <span style="position: absolute; left: 0; color: #26847F; font-weight: bold; font-size: 18px;">✓</span>
-                                Lista spesa automatica
-                            </div>
-
-                            <div style="background: #ecfdf5; border: 2px solid #10b981; border-radius: 12px; padding: 20px; margin: 30px 0;">
-                                <h3 style="color: #065f46; margin: 0 0 10px 0;">⚡ Bastano 2 minuti!</h3>
-                                <p style="margin: 0; color: #047857; line-height: 1.6;">
-                                    L'AI ha già analizzato:
-                                </p>
-                                <div style="margin: 10px 0; padding-left: 25px; position: relative; color: #065f46;">
-                                    <span style="position: absolute; left: 0; color: #10b981;">•</span>
-                                    Il tuo metabolismo: ${user.bmr || 1500} kcal/giorno
-                                </div>
-                                <div style="margin: 10px 0; padding-left: 25px; position: relative; color: #065f46;">
-                                    <span style="position: absolute; left: 0; color: #10b981;">•</span>
-                                    Il tuo obiettivo: ${user.target_weight ? user.target_weight + ' kg' : 'il tuo peso ideale'}
-                                </div>
-                                <div style="margin: 10px 0; padding-left: 25px; position: relative; color: #065f46;">
-                                    <span style="position: absolute; left: 0; color: #10b981;">•</span>
-                                    Le tue preferenze alimentari
-                                </div>
-                                <div style="margin: 10px 0; padding-left: 25px; position: relative; color: #065f46;">
-                                    <span style="position: absolute; left: 0; color: #10b981;">•</span>
-                                    Il tuo livello fitness
-                                </div>
-                            </div>
-
-                            <div style="background: #fffbeb; border: 2px solid #fbbf24; border-radius: 12px; padding: 20px; margin: 30px 0; text-align: center;">
-                                <h3 style="color: #92400e; margin: 0 0 10px 0;">💡 FUN FACT:</h3>
-                                <p style="margin: 0; color: #78350f; font-size: 14px; line-height: 1.6;">
-                                    Gli utenti che generano il piano entro 24h dal quiz hanno <strong style="font-size: 18px;">5x più probabilità</strong> di raggiungere i loro obiettivi!
-                                </p>
+                            <div style="color: #374151; line-height: 1.8; font-size: 15px;">
+                                ${htmlContent}
                             </div>
 
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                            ✨ Genera Piano Ora
+                                        <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            ${ctaText}
                                         </a>
                                     </td>
                                 </tr>
                             </table>
 
                             <p style="color: #26847F; text-align: center; font-size: 14px; margin: 20px 0;">
-                                🚀 Cosa aspetti? Il tuo piano perfetto è pronto!
+                                ${footerText}
                             </p>
                         </td>
                     </tr>
