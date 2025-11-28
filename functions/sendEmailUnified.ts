@@ -85,11 +85,12 @@ function generateEmailHtml(template, variables) {
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
             .content { padding: 30px 20px !important; }
+            .outer-table { padding: 0 !important; }
         }
     </style>
 </head>
 <body style="margin: 0; padding: 0;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+    <table class="outer-table" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
         <tr>
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
