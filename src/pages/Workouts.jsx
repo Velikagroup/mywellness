@@ -517,6 +517,65 @@ export default function Workouts() {
     }
   }, [trainingData.user_id, workoutPlans, selectedDay]);
 
+  // ✅ COMPLETA ALLENAMENTO - Salva con completed: true
+  const handleCompleteWorkout = async () => {
+    if (!trainingData.user_id) return;
+    
+    const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+    const today = new Date().toISOString().split('T')[0];
+    const workoutPlan = workoutPlans.find(p => p.day_of_week === todayOfWeek);
+    
+    if (!workoutPlan || workoutPlan.workout_type === 'rest') return;
+    
+    setIsCompletingWorkout(true);
+    
+    try {
+      const logs = await base44.entities.WorkoutLog.filter({ 
+        user_id: trainingData.user_id, 
+        date: today 
+      });
+      
+      // Costruisci l'array completo di esercizi
+      const exercisesLog = workoutPlan.exercises.map(ex => ({
+        exercise_name: ex.name,
+        exercise_key: ex.name,
+        completed_sets: exerciseSets[ex.name] || Array.from({ length: ex.sets }, (_, i) => i + 1),
+        total_sets: ex.sets,
+        is_completed: true
+      }));
+      
+      if (logs.length === 0) {
+        await base44.entities.WorkoutLog.create({
+          user_id: trainingData.user_id,
+          workout_plan_id: workoutPlan.id,
+          date: today,
+          completed: true,
+          exercises_log: exercisesLog
+        });
+      } else {
+        await base44.entities.WorkoutLog.update(logs[0].id, { 
+          completed: true,
+          exercises_log: exercisesLog
+        });
+      }
+      
+      setWorkoutCompleted(true);
+      
+      // Segna tutti gli esercizi come completati nella UI
+      const allSets = {};
+      workoutPlan.exercises.forEach(ex => {
+        allSets[ex.name] = Array.from({ length: ex.sets }, (_, i) => i + 1);
+      });
+      setExerciseSets(allSets);
+      
+      alert('🎉 Allenamento completato! Ottimo lavoro!');
+    } catch (error) {
+      console.error('Error completing workout:', error);
+      alert('Errore nel salvare il completamento. Riprova.');
+    }
+    
+    setIsCompletingWorkout(false);
+  };
 
   const generateWorkoutPlan = async () => {
     if (!trainingData.user_id) return;
