@@ -62,7 +62,7 @@ Deno.serve(async (req) => {
 
                 await base44.asServiceRole.integrations.Core.SendEmail({
                     to: user.email,
-                    from_name: `MyWellness Team <${fromEmail}>`,
+                    from_name: 'MyWellness Team',
                     subject: `📊 Il tuo Report Settimanale MyWellness - ${stats.weekRange}`,
                     body: emailBody
                 });
