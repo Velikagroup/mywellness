@@ -91,14 +91,20 @@ Deno.serve(async (req) => {
 
                     console.log(`📅 Checking for checkout started more than 30 minutes ago`);
 
+        // Get only checkout activities that are NOT completed (not yet processed)
         const activities = await base44.asServiceRole.entities.UserActivity.filter({
             event_type: 'checkout_started',
             completed: false
         });
 
+        // Filter only activities older than 30 minutes AND created in the last 24 hours
+        // This prevents sending emails for very old abandoned checkouts
+        const twentyFourHoursAgo = new Date(now.getTime() - (24 * 60 * 60 * 1000));
+        
         const targetActivities = activities.filter(a => {
             const activityDate = new Date(a.created_date);
-            return activityDate <= thirtyMinutesAgo;
+            // Must be older than 30 min but NOT older than 24 hours
+            return activityDate <= thirtyMinutesAgo && activityDate >= twentyFourHoursAgo;
         });
 
         console.log(`👥 Found ${targetActivities.length} abandoned checkouts`);
