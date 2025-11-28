@@ -293,7 +293,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
 
     // Costruisci HTML per card peso
     const weightCardHtml = showWeightCard ? `
-        <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 20px 0; text-align: center;">
+        <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 10px 0 20px 0; text-align: center;">
             <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} ${weightCardTitle}</h2>
             <p style="margin: 0; font-size: 36px; font-weight: bold; color: ${weightColor};">
                 ${stats.weightChange > 0 ? '+' : ''}${stats.weightChange} kg
@@ -405,15 +405,15 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="background: white; padding: 40px 30px 24px 30px;">
+                        <td style="background: white; padding: 40px 30px 10px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h1 style="color: #26847F; margin: 20px 0 10px 0; font-size: 28px;">${headerTitle}</h1>
+                            <h1 style="color: #26847F; margin: 20px 0 5px 0; font-size: 28px;">${headerTitle}</h1>
                             <p style="color: #6b7280; margin: 0; font-size: 16px;">${headerSubtitle}</p>
                         </td>
                     </tr>
                     <tr>
-                        <td class="content" style="padding: 40px 30px;">
-                            ${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>` : ''}
+                        <td class="content" style="padding: 20px 30px 40px 30px;">
+                            ${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 15px 0;">${greeting}</p>` : ''}
 
                             ${weightCardHtml}
 
