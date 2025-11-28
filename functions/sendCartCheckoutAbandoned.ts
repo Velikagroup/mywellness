@@ -71,7 +71,7 @@ Deno.serve(async (req) => {
             }
 
             const user = users[0];
-            const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+            const appUrl = Deno.env.get('APP_URL') || 'https://projectmywellness.com';
             const emailBody = generateCartAbandonedEmail(user, appUrl, template);
             const subject = template?.subject || '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta';
 
@@ -104,7 +104,7 @@ Deno.serve(async (req) => {
         console.log(`👥 Found ${targetActivities.length} abandoned checkouts`);
 
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-        const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+        const appUrl = Deno.env.get('APP_URL') || 'https://projectmywellness.com';
 
         let sentCount = 0;
         const results = [];
