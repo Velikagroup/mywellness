@@ -245,6 +245,18 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
             </Button>
             
             <Button
+              onClick={() => {
+                setNewPlan(client.subscription_plan || 'base');
+                setShowPlanDialog(true);
+              }}
+              variant="outline"
+              className="border-amber-200 text-amber-600 hover:bg-amber-50"
+            >
+              <TrendingUp className="w-4 h-4 mr-2" />
+              Cambia Piano
+            </Button>
+            
+            <Button
               onClick={() => setShowCreditDialog(true)}
               variant="outline"
               className="border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)]"
