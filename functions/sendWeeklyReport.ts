@@ -360,7 +360,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         if (statsRows.length > 0) {
             statsHtml = `
                 <h3 style="color: #111827; margin: 30px 0 15px 0;">${statsSectionTitle}</h3>
-                <table class="stat-table" width="100%" cellpadding="0" cellspacing="6" border="0" style="table-layout: fixed;">
+                <table class="stat-table" width="100%" cellpadding="0" cellspacing="4" border="0" style="table-layout: fixed;">
                     ${statsRows.join('')}
                 </table>
             `;
