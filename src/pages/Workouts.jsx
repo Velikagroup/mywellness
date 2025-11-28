@@ -1993,6 +1993,45 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                               </div>
                             </div>
                           )}
+                          
+                          {/* ✅ PULSANTE COMPLETA ALLENAMENTO - Solo per oggi */}
+                          {(() => {
+                            const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
+                            const isToday = selectedDay === todayOfWeek;
+                            
+                            if (!isToday) return null;
+                            
+                            return (
+                              <div className="pt-6 border-t border-gray-200/50">
+                                {workoutCompleted ? (
+                                  <div className="flex items-center justify-center gap-3 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
+                                    <CheckCircle className="w-6 h-6 text-green-600" />
+                                    <span className="text-green-800 font-semibold text-lg">
+                                      ✅ Allenamento completato oggi!
+                                    </span>
+                                  </div>
+                                ) : (
+                                  <Button
+                                    onClick={handleCompleteWorkout}
+                                    disabled={isCompletingWorkout}
+                                    className="w-full bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-600 hover:to-emerald-700 text-white py-6 text-lg font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
+                                  >
+                                    {isCompletingWorkout ? (
+                                      <>
+                                        <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
+                                        Salvataggio...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <CheckCircle className="w-6 h-6 mr-2" />
+                                        Completa Allenamento
+                                      </>
+                                    )}
+                                  </Button>
+                                )}
+                              </div>
+                            );
+                          })()}
                         </CardContent>
                       </Card>
                     ) : (
