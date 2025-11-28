@@ -6,13 +6,42 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         
-        // Auth check disabled for testing - re-enable in production if needed
-        // const cronSecret = Deno.env.get('CRON_SECRET');
-        // const authHeader = req.headers.get('Authorization');
-        // if (cronSecret && authHeader && authHeader !== `Bearer ${cronSecret}`) {
-        //     console.error('Unauthorized cron call');
-        //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        // }
+        // Check for test mode - send immediately to specific email
+        let body = {};
+        try {
+            body = await req.json();
+        } catch (e) {
+            // No body, that's ok for CRON
+        }
+        
+        const testEmail = body.test_email;
+        const forceTest = body.force_test === true;
+        
+        if (testEmail && forceTest) {
+            console.log(`🧪 TEST MODE: Sending to ${testEmail}`);
+            
+            const users = await base44.asServiceRole.entities.User.filter({
+                email: testEmail
+            });
+            
+            if (users.length === 0) {
+                return Response.json({ error: `User not found: ${testEmail}` }, { status: 404 });
+            }
+            
+            const user = users[0];
+            const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+            const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
+            const emailBody = generateCartAbandonedEmail(user, 1900, appUrl);
+            
+            await base44.asServiceRole.integrations.Core.SendEmail({
+                to: user.email,
+                from_name: `MyWellness <${fromEmail}>`,
+                subject: '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
+                body: emailBody
+            });
+            
+            return Response.json({ success: true, message: `Test email sent to ${testEmail}` });
+        }
 
         const now = new Date();
         const threeHoursAgo = new Date(now.getTime() - (3 * 60 * 60 * 1000));
