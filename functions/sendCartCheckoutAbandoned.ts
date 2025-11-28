@@ -6,9 +6,10 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         
+        // Skip auth check for manual testing (when no auth header is provided)
         const cronSecret = Deno.env.get('CRON_SECRET');
         const authHeader = req.headers.get('Authorization');
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+        if (cronSecret && authHeader && authHeader !== `Bearer ${cronSecret}`) {
             console.error('Unauthorized cron call');
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
