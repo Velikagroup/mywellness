@@ -259,7 +259,8 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
     const headerSubtitle = template?.header_subtitle 
         ? replaceVariables(template.header_subtitle, variables) 
         : stats.weekRange;
-    const greeting = template?.greeting 
+    // Se greeting è stringa vuota o non definita, non mostrare nulla
+    const greeting = template?.greeting !== undefined && template?.greeting !== null
         ? replaceVariables(template.greeting, variables) 
         : `Ciao ${user.full_name || 'Utente'},`;
     const ctaText = template?.call_to_action_text || '📊 Vedi Dashboard Completa';
@@ -412,7 +413,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
                     </tr>
                     <tr>
                         <td class="content" style="padding: 40px 30px;">
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>
+                            ${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>` : ''}
 
                             ${weightCardHtml}
 
