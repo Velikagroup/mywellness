@@ -687,7 +687,9 @@ ${ctaHtml}
         color: 'amber',
         emails: [
           { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
-          { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true }
+          { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
+          { id: 'cart_abandoned_24h', name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
+          { id: 'cart_abandoned_72h', name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
         ]
       }
   };
