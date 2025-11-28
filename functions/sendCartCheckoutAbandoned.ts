@@ -117,12 +117,13 @@ Deno.serve(async (req) => {
                 const amount = activity.event_data?.amount || 0;
                 const emailBody = generateCartAbandonedEmail(user, amount, appUrl);
 
-                await base44.asServiceRole.integrations.Core.SendEmail({
-                    to: user.email,
-                    from_name: `MyWellness <${fromEmail}>`,
-                    subject: '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
-                    body: emailBody
-                });
+                await sendEmailViaSendGrid(
+                    user.email,
+                    '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta',
+                    emailBody,
+                    'info@projectmywellness.com',
+                    'no-reply@projectmywellness.com'
+                );
 
                 sentCount++;
                 console.log(`✅ Cart abandoned email sent to ${user.email}`);
