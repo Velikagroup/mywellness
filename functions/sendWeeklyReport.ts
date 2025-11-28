@@ -1,5 +1,31 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
+const SENDGRID_API_KEY = Deno.env.get('SENDGRID_API_KEY');
+
+async function sendEmailViaSendGrid(to, subject, htmlBody) {
+    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
+        method: 'POST',
+        headers: {
+            'Authorization': `Bearer ${SENDGRID_API_KEY}`,
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            personalizations: [{ to: [{ email: to }] }],
+            from: { email: 'info@projectmywellness.com', name: 'MyWellness Team' },
+            reply_to: { email: 'no-reply@projectmywellness.com', name: 'MyWellness' },
+            subject: subject,
+            content: [{ type: 'text/html', value: htmlBody }]
+        })
+    });
+
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(`SendGrid error: ${response.status} - ${errorText}`);
+    }
+
+    return true;
+}
+
 Deno.serve(async (req) => {
     console.log('📊 sendWeeklyReport CRON - Start');
     
@@ -28,8 +54,6 @@ Deno.serve(async (req) => {
         );
 
         console.log(`👥 Found ${activeUsers.length} active users to send reports`);
-
-        const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
 
         let sentCount = 0;
         const results = [];
@@ -60,12 +84,11 @@ Deno.serve(async (req) => {
 
                 const emailBody = getWeeklyReportTemplate(user, stats);
 
-                await base44.asServiceRole.integrations.Core.SendEmail({
-                    to: user.email,
-                    from_name: 'MyWellness Team',
-                    subject: `📊 Il tuo Report Settimanale MyWellness - ${stats.weekRange}`,
-                    body: emailBody
-                });
+                await sendEmailViaSendGrid(
+                    user.email,
+                    `📊 Il tuo Report Settimanale MyWellness - ${stats.weekRange}`,
+                    emailBody
+                );
 
                 sentCount++;
                 console.log(`✅ Weekly report sent to ${user.email}`);
