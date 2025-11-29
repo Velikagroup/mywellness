@@ -127,7 +127,10 @@ Deno.serve(async (req) => {
                     continue;
                 }
 
-                const emailBody = generateEmail(user, appUrl, template);
+                // Build CTA URL with UTM params from activity
+                const ctaUrlWithUtm = buildCtaUrlWithUtm(appUrl, activity.utm_params, template?.call_to_action_url);
+                
+                const emailBody = generateEmail(user, appUrl, template, ctaUrlWithUtm);
                 const subject = template?.subject || '🚨 ULTIMA OCCASIONE: Il tuo percorso sta per scadere...';
 
                 await sendEmailViaSendGrid(
