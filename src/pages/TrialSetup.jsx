@@ -113,21 +113,46 @@ export default function TrialSetup() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
+        const queryParams = new URLSearchParams(location.search);
+        
+        // Capture UTM params for tracking
+        const utmParams = {};
+        if (queryParams.get('utm_source')) utmParams.utm_source = queryParams.get('utm_source');
+        if (queryParams.get('utm_medium')) utmParams.utm_medium = queryParams.get('utm_medium');
+        if (queryParams.get('utm_campaign')) utmParams.utm_campaign = queryParams.get('utm_campaign');
+        if (queryParams.get('utm_term')) utmParams.utm_term = queryParams.get('utm_term');
+        if (queryParams.get('utm_content')) utmParams.utm_content = queryParams.get('utm_content');
+        if (queryParams.get('ref')) utmParams.ref = queryParams.get('ref');
+        
+        // Also check localStorage for UTM params saved from earlier visits
+        const storedUtm = localStorage.getItem('utm_params');
+        if (storedUtm && Object.keys(utmParams).length === 0) {
+          try {
+            const parsedUtm = JSON.parse(storedUtm);
+            Object.assign(utmParams, parsedUtm);
+          } catch (e) {}
+        }
+        
+        // Save current UTM params to localStorage for future use
+        if (Object.keys(utmParams).length > 0) {
+          localStorage.setItem('utm_params', JSON.stringify(utmParams));
+        }
+
         if (!trialSetupTracked && currentUser) {
           try {
-            await base44.entities.UserActivity.create({
-              user_id: currentUser.id,
-              event_type: 'trial_setup_opened',
-              event_data: { plan: selectedPlan }
-            });
             console.log('📊 Trial setup opened tracked');
+            console.log('📈 UTM params:', utmParams);
+            await base44.entities.UserActivity.create({
+              user_id: currentUser.email,
+              event_type: 'trial_setup_opened',
+              event_data: { plan: selectedPlan },
+              utm_params: utmParams
+            });
             setTrialSetupTracked(true);
           } catch (error) {
             console.error('Error tracking trial setup:', error);
           }
         }
-
-        const queryParams = new URLSearchParams(location.search);
         const refSource = queryParams.get('ref');
         const storedSource = localStorage.getItem('trafficSource');
         

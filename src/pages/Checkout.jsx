@@ -128,10 +128,36 @@ export default function Checkout() {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
 
+        const queryParams = new URLSearchParams(location.search);
+        
+        // Capture UTM params for tracking
+        const utmParams = {};
+        if (queryParams.get('utm_source')) utmParams.utm_source = queryParams.get('utm_source');
+        if (queryParams.get('utm_medium')) utmParams.utm_medium = queryParams.get('utm_medium');
+        if (queryParams.get('utm_campaign')) utmParams.utm_campaign = queryParams.get('utm_campaign');
+        if (queryParams.get('utm_term')) utmParams.utm_term = queryParams.get('utm_term');
+        if (queryParams.get('utm_content')) utmParams.utm_content = queryParams.get('utm_content');
+        if (queryParams.get('ref')) utmParams.ref = queryParams.get('ref');
+        
+        // Also check localStorage for UTM params saved from earlier visits
+        const storedUtm = localStorage.getItem('utm_params');
+        if (storedUtm && Object.keys(utmParams).length === 0) {
+          try {
+            const parsedUtm = JSON.parse(storedUtm);
+            Object.assign(utmParams, parsedUtm);
+          } catch (e) {}
+        }
+        
+        // Save current UTM params to localStorage for future use
+        if (Object.keys(utmParams).length > 0) {
+          localStorage.setItem('utm_params', JSON.stringify(utmParams));
+        }
+
         // Track checkout opened - RLS now allows any authenticated user to create
         if (!checkoutTracked && currentUser && currentUser.email) {
           try {
             console.log('📊 Attempting to track checkout_started for:', currentUser.email);
+            console.log('📈 UTM params:', utmParams);
             await base44.entities.UserActivity.create({
               user_id: currentUser.email,
               event_type: 'checkout_started',
@@ -139,6 +165,7 @@ export default function Checkout() {
                 plan: selectedPlan,
                 amount: planPrices[selectedPlan]?.[selectedBillingPeriod === 'yearly' ? 'yearly' : 'monthly'] * 100 || 0
               },
+              utm_params: utmParams,
               completed: false
             });
             console.log('✅ Checkout started tracked successfully');
@@ -149,8 +176,6 @@ export default function Checkout() {
             setCheckoutTracked(true);
           }
         }
-
-        const queryParams = new URLSearchParams(location.search);
         const planParam = queryParams.get('plan');
         const billingParam = queryParams.get('billing');
         const refSource = queryParams.get('ref');
