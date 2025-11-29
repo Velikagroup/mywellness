@@ -39,6 +39,27 @@ async function loadEmailTemplate(base44, templateId) {
     }
 }
 
+// Build CTA URL preserving UTM params from the original visit
+function buildCtaUrlWithUtm(appUrl, utmParams, templateCtaUrl) {
+    const baseUrl = templateCtaUrl || `${appUrl}/TrialSetup`;
+    const finalUrl = baseUrl.replace('{app_url}', appUrl);
+    
+    if (!utmParams || Object.keys(utmParams).length === 0) {
+        return finalUrl;
+    }
+    
+    const url = new URL(finalUrl, appUrl);
+    
+    if (utmParams.utm_source) url.searchParams.set('utm_source', utmParams.utm_source);
+    if (utmParams.utm_medium) url.searchParams.set('utm_medium', utmParams.utm_medium);
+    if (utmParams.utm_campaign) url.searchParams.set('utm_campaign', utmParams.utm_campaign);
+    if (utmParams.utm_term) url.searchParams.set('utm_term', utmParams.utm_term);
+    if (utmParams.utm_content) url.searchParams.set('utm_content', utmParams.utm_content);
+    if (utmParams.ref) url.searchParams.set('ref', utmParams.ref);
+    
+    return url.toString();
+}
+
 Deno.serve(async (req) => {
     console.log('🛒 sendCartAbandoned24h CRON - Start');
 
