@@ -182,7 +182,7 @@ Deno.serve(async (req) => {
     }
 });
 
-function generateEmail(user, appUrl, template) {
+function generateEmail(user, appUrl, template, ctaUrlWithUtm) {
     const greeting = template?.greeting || `Ciao ${user.full_name || 'Utente'},`;
     const introText = template?.intro_text || 'Sono passate 24 ore da quando hai iniziato il tuo percorso con MyWellness...';
     const secondParagraph = template?.second_paragraph || 'In queste 24 ore, <strong>centinaia di persone</strong> hanno già iniziato a trasformare il loro corpo e la loro vita. E tu? Sei ancora qui a pensarci.';

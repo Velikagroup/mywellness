@@ -182,7 +182,7 @@ Deno.serve(async (req) => {
     }
 });
 
-function generateEmail(user, appUrl, template) {
+function generateEmail(user, appUrl, template, ctaUrlWithUtm) {
     const greeting = template?.greeting || `${user.full_name || 'Utente'},`;
     const introText = template?.intro_text || 'Questa è la nostra <strong>ultima comunicazione</strong>.';
     const secondParagraph = template?.second_paragraph || 'Sono passati 3 giorni. Tre giorni in cui avresti potuto già vedere i primi risultati. Tre giorni che non torneranno più.';
