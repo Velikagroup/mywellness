@@ -210,7 +210,8 @@ function generateEmail(user, appUrl, template, ctaUrlWithUtm) {
 
     const showTrustBadges = template?.show_trust_badges !== false;
     const ctaText = template?.call_to_action_text || '🔥 Inizia Adesso - Non Rimandare';
-    const ctaUrl = template?.call_to_action_url || `${appUrl}/TrialSetup`;
+    // Use pre-built URL with UTM params
+    const ctaUrl = ctaUrlWithUtm || template?.call_to_action_url || `${appUrl}/TrialSetup`;
     const footerQuote = template?.footer_quote || '"Il successo è la somma di piccoli sforzi ripetuti giorno dopo giorno."';
 
     const featuresHtml = showFeatures ? `
@@ -338,7 +339,7 @@ function generateEmail(user, appUrl, template, ctaUrlWithUtm) {
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${ctaUrl.replace('{app_url}', appUrl)}" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                        <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">
                                             ${ctaText}
                                         </a>
                                     </td>
