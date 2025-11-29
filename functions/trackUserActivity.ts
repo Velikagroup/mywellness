@@ -18,19 +18,23 @@ Deno.serve(async (req) => {
         const body = await req.json();
         console.log('✅ Body:', JSON.stringify(body));
         
-        const { event_type, event_data } = body;
+        const { event_type, event_data, utm_params } = body;
 
         if (!event_type) {
             return Response.json({ error: 'event_type is required' }, { status: 400 });
         }
 
         console.log(`📊 Creating: ${event_type} for ${user.email}`);
+        if (utm_params) {
+            console.log(`📈 UTM params:`, JSON.stringify(utm_params));
+        }
 
         // Use service role to bypass RLS
         await base44.asServiceRole.entities.UserActivity.create({
             user_id: user.email,
             event_type: event_type,
             event_data: event_data || {},
+            utm_params: utm_params || {},
             completed: false
         });
 

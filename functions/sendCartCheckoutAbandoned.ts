@@ -165,7 +165,10 @@ Deno.serve(async (req) => {
                     continue;
                 }
 
-                const emailBody = generateCartAbandonedEmail(user, appUrl, template);
+                // Build CTA URL with UTM params from activity
+                const ctaUrlWithUtm = buildCtaUrlWithUtm(appUrl, activity.utm_params, template?.call_to_action_url);
+                
+                const emailBody = generateCartAbandonedEmail(user, appUrl, template, ctaUrlWithUtm);
                 const subject = template?.subject || '🛒 Il tuo carrello ti aspetta! Non perdere l\'offerta';
 
                 await sendEmailViaSendGrid(
