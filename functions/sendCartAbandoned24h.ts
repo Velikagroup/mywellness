@@ -291,7 +291,7 @@ function generateEmail(user, appUrl, template) {
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">${greeting.replace('{user_name}', user.full_name || 'Utente')}</p>
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${greeting.replace('{user_name}', user.full_name || 'Utente')}</p>
 
                             <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 20px 0;">
                                 ${introText}

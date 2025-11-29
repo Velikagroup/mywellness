@@ -150,7 +150,7 @@ function generateQuizReminderEmail(user, appUrl, template) {
                                 <p style="color: #374151; margin: 0; font-size: 16px;">Il tuo piano personalizzato è pronto</p>
                             </div>
 
-                            <p style="color: #111827; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
                             
                             <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 0 0 25px 0;">
                                 Complimenti per aver completato il quiz! 🎉 Abbiamo analizzato le tue risposte e calcolato il tuo profilo metabolico completo.
