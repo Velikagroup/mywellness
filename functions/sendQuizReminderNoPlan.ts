@@ -157,26 +157,26 @@ function generateQuizReminderEmail(user, appUrl, template) {
                             </p>
 
                             <!-- Stats Cards -->
-                            <h3 style="color: #111827; margin: 0 0 15px 0; font-size: 16px;">📊 Cosa abbiamo calcolato per te:</h3>
+                            <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📊 Cosa abbiamo calcolato per te:</h3>
                             <table class="feature-table" width="100%" cellpadding="0" cellspacing="8" border="0" style="table-layout: fixed; margin-bottom: 25px;">
                                 <tr>
                                     <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                                         <p style="margin: 0; font-size: 28px;">🔥</p>
-                                        <p style="font-size: 14px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Fabbisogno Calorico</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Fabbisogno Calorico</p>
                                     </td>
                                     <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                                         <p style="margin: 0; font-size: 28px;">⚖️</p>
-                                        <p style="font-size: 14px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Macro Ottimali</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Macro Ottimali</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                                         <p style="margin: 0; font-size: 28px;">🍽️</p>
-                                        <p style="font-size: 14px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Ricette Personalizzate</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Ricette Personalizzate</p>
                                     </td>
                                     <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
                                         <p style="margin: 0; font-size: 28px;">📈</p>
-                                        <p style="font-size: 14px; font-weight: bold; color: #111827; margin: 8px 0 0 0;">Proiezione Obiettivo</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Proiezione Obiettivo</p>
                                     </td>
                                 </tr>
                             </table>
@@ -186,12 +186,12 @@ function generateQuizReminderEmail(user, appUrl, template) {
                                 <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px; text-align: center;">💡 Piano Base - Solo €19/mese</h3>
                                 <table width="100%" cellpadding="0" cellspacing="8" border="0">
                                     <tr>
-                                        <td width="50%" style="color: #92400e; font-size: 14px;"><span style="color: #10b981; font-weight: bold;">✓</span> Piano nutrizionale AI</td>
-                                        <td width="50%" style="color: #92400e; font-size: 14px;"><span style="color: #10b981; font-weight: bold;">✓</span> Ricette settimanali</td>
+                                        <td width="50%" style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Piano nutrizionale AI</td>
+                                        <td width="50%" style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Ricette settimanali</td>
                                     </tr>
                                     <tr>
-                                        <td style="color: #92400e; font-size: 14px;"><span style="color: #10b981; font-weight: bold;">✓</span> Lista della spesa</td>
-                                        <td style="color: #92400e; font-size: 14px;"><span style="color: #10b981; font-weight: bold;">✓</span> Dashboard progressi</td>
+                                        <td style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Lista della spesa</td>
+                                        <td style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Dashboard progressi</td>
                                     </tr>
                                 </table>
                             </div>
@@ -206,7 +206,7 @@ function generateQuizReminderEmail(user, appUrl, template) {
                                 </tr>
                             </table>
 
-                            <p style="color: #26847F; text-align: center; font-size: 14px; margin: 15px 0 0 0;">
+                            <p style="color: #26847F; text-align: center; font-size: 16px; margin: 15px 0 0 0;">
                                 ${footerText}
                             </p>
                         </td>
