@@ -233,12 +233,16 @@ export default function AdminEmails() {
       
       // Check if this is a cart abandoned email type
       const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(previewEmail.id);
+      const isQuizCompletedEmail = previewEmail.id === 'quiz_completed_abandoned';
       
       let htmlBody;
       
       if (isCartAbandonedEmail) {
         // Generate full cart abandoned email HTML
         htmlBody = generateCartAbandonedTestEmail(template, variables, appUrl, previewEmail.id);
+      } else if (isQuizCompletedEmail) {
+        // Generate quiz completed abandoned email HTML
+        htmlBody = generateQuizCompletedTestEmail(template, variables, appUrl);
       } else {
         // Standard email generation
         const replacedMainContent = replaceVars(template.main_content || '', variables);
