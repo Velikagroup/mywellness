@@ -469,7 +469,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 20px 0;">${introText}</p>
 <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 20px 0;">${secondParagraph}</p>
 ${featuresHtml}
-<p style="color: #374151; line-height: 1.7; font-size: 15px; margin: 0 0 25px 0;">${closingText}</p>
+<p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 25px 0;">${closingText}</p>
 ${urgencyHtml}
 ${trustBadgesHtml}
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
