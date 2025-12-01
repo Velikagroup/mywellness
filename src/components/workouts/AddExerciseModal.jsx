@@ -139,8 +139,8 @@ Output the JSON in ${targetLanguage}.`;
       // Reset form
       setExerciseName('');
       setSets(3);
-      setReps('10-12 ripetizioni');
-      setRest('60 secondi');
+      setReps(defaults.reps);
+      setRest(defaults.rest);
       
       onExerciseAdded();
       onClose();
