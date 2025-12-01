@@ -162,8 +162,14 @@ export default function Settings() {
         setTransactions([]);
       }
 
-      const userTickets = await base44.entities.SupportTicket.filter({ user_id: currentUser.id }, '-created_date');
-      setSupportTickets(userTickets);
+      try {
+        const userTickets = await base44.entities.SupportTicket.filter({ user_id: currentUser.id }, '-created_date');
+        console.log('🎫 Loaded tickets:', userTickets);
+        setSupportTickets(userTickets || []);
+      } catch (ticketError) {
+        console.error('❌ Error loading tickets:', ticketError);
+        setSupportTickets([]);
+      }
 
     } catch (error) {
       console.error('Error loading user data:', error);
