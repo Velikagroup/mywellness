@@ -6,9 +6,10 @@ import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
 
-export default function Layout({ children }) {
+function LayoutContent({ children }) {
   const location = useLocation();
   const navigate = useNavigate();
+  const { language, t } = useLanguage();
   const [user, setUser] = React.useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
 
