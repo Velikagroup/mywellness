@@ -1,36 +1,40 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Circle } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
-const EQUIPMENT_CATEGORIES = [
+export default function EquipmentStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
+  
+  const EQUIPMENT_CATEGORIES = [
   {
     id: 'corpo_libero',
-    label: '💪 Corpo Libero',
-    description: 'Nessuna attrezzatura, solo il tuo corpo',
+    label: t('workouts.eqBodyweight'),
+    description: t('workouts.eqBodyweightDesc'),
     items: ['corpo_libero']
   },
   {
     id: 'casa_base',
-    label: '🏠 Casa - Base',
-    description: 'Attrezzatura minima per casa',
+    label: t('workouts.eqHomeBasic'),
+    description: t('workouts.eqHomeBasicDesc'),
     items: ['tappetino', 'elastici', 'panca', 'sbarra_trazioni']
   },
   {
     id: 'casa_completa',
-    label: '🏠 Casa - Completa',
-    description: 'Home gym completo',
+    label: t('workouts.eqHomeFull'),
+    description: t('workouts.eqHomeFullDesc'),
     items: ['manubri', 'kettlebell', 'panca', 'sbarra', 'trx', 'elastici', 'corda', 'medicine_ball', 'ab_wheel']
   },
   {
     id: 'palestra_base',
-    label: '🏋️ Palestra - Base',
-    description: 'Pesi liberi e macchine essenziali',
+    label: t('workouts.eqGymBasic'),
+    description: t('workouts.eqGymBasicDesc'),
     items: ['bilanciere', 'manubri', 'panca', 'sbarra', 'parallele', 'lat_machine', 'cable_machine', 'leg_press', 'chest_press']
   },
   {
     id: 'palestra_completa',
-    label: '🏋️ Palestra - Completa',
-    description: 'Accesso a tutte le attrezzature',
+    label: t('workouts.eqGymFull'),
+    description: t('workouts.eqGymFullDesc'),
     items: [
       'bilanciere', 'manubri', 'kettlebell', 'panca', 'sbarra', 'parallele',
       'lat_machine', 'cable_machine', 'leg_press', 'leg_extension', 'leg_curl',
@@ -43,8 +47,8 @@ const EQUIPMENT_CATEGORIES = [
   },
   {
     id: 'crossfit',
-    label: '⚡ CrossFit / Functional',
-    description: 'Box CrossFit con tutte le attrezzature funzionali',
+    label: t('workouts.eqCrossfit'),
+    description: t('workouts.eqCrossfitDesc'),
     items: [
       'bilanciere', 'bumper_plates', 'manubri', 'kettlebell', 'panca', 'sbarra',
       'parallele', 'anelli', 'box', 'battle_ropes', 'sled', 'corda', 'rowing_machine',
@@ -53,14 +57,14 @@ const EQUIPMENT_CATEGORIES = [
   },
   {
     id: 'outdoor',
-    label: '🌳 All\'Aperto',
-    description: 'Allenamento outdoor senza attrezzature',
+    label: t('workouts.eqOutdoor'),
+    description: t('workouts.eqOutdoorDesc'),
     items: ['corpo_libero', 'area_aperta', 'panchina_parco', 'gradini']
   },
   {
     id: 'personalizzato',
-    label: '⚙️ Personalizzato',
-    description: 'Seleziona singolarmente le attrezzature',
+    label: t('workouts.eqCustom'),
+    description: t('workouts.eqCustomDesc'),
     items: []
   }
 ];
@@ -115,8 +119,7 @@ const ALL_EQUIPMENT = [
   { id: 'gradini', label: '🪜 Gradini / Scale', category: 'outdoor' }
 ];
 
-export default function EquipmentStep({ data, onDataChange, nextStep }) {
-  const [selectedCategory, setSelectedCategory] = useState(
+const [selectedCategory, setSelectedCategory] = useState(
     data.equipment_category || null
   );
   const [customEquipment, setCustomEquipment] = useState(
@@ -178,10 +181,10 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
     <div className="space-y-6">
       <div>
         <h3 className="text-xl font-bold text-gray-900 mb-2">
-          A quali attrezzature hai accesso?
+          {t('workouts.equipmentTitle')}
         </h3>
         <p className="text-sm text-gray-600">
-          Seleziona una categoria rapida o personalizza la selezione
+          {t('workouts.equipmentSubtitle')}
         </p>
       </div>
 
@@ -216,7 +219,7 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
       {selectedCategory === 'personalizzato' && (
         <div className="space-y-4 bg-gray-50 p-6 rounded-xl border-2 border-gray-200">
           <h4 className="font-bold text-gray-900 text-lg mb-4">
-            Seleziona singolarmente le attrezzature:
+            {t('workouts.eqCustomTitle')}
           </h4>
           
           {Object.entries(groupedEquipment).map(([categoryKey, items]) => (
@@ -254,7 +257,7 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
       {selectedCategory && selectedCategory !== 'personalizzato' && (
         <div className="bg-[#e9f6f5] p-4 rounded-xl border-2 border-[#26847F]/30">
           <p className="text-sm text-[#1a5753] font-semibold">
-            ✅ Categoria selezionata: {EQUIPMENT_CATEGORIES.find(c => c.id === selectedCategory)?.label}
+            ✅ {t('workouts.categorySelected')} {EQUIPMENT_CATEGORIES.find(c => c.id === selectedCategory)?.label}
           </p>
         </div>
       )}
@@ -262,7 +265,7 @@ export default function EquipmentStep({ data, onDataChange, nextStep }) {
       {selectedCategory === 'personalizzato' && customEquipment.length > 0 && (
         <div className="bg-[#e9f6f5] p-4 rounded-xl border-2 border-[#26847F]/30">
           <p className="text-sm text-[#1a5753] font-semibold mb-2">
-            ✅ {customEquipment.length} attrezzature selezionate
+            ✅ {t('workouts.equipmentSelected', { count: customEquipment.length })}
           </p>
           <div className="flex flex-wrap gap-2">
             {customEquipment.map(eqId => {

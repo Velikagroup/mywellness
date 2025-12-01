@@ -1,12 +1,14 @@
 import React from 'react';
-
-const LOCATIONS = [
-  { id: 'gym', label: 'Palestra', icon: '🏋️', description: 'Accesso completo ad attrezzature' },
-  { id: 'home', label: 'Casa', icon: '🏠', description: 'Attrezzatura limitata' },
-  { id: 'outdoors', label: 'All\'aperto', icon: '🌳', description: 'Parchi, piste da corsa' }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function WorkoutLocationStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
+  
+  const LOCATIONS = [
+    { id: 'gym', label: t('workouts.locationGym'), icon: '🏋️', description: t('workouts.locationGymDesc') },
+    { id: 'home', label: t('workouts.locationHome'), icon: '🏠', description: t('workouts.locationHomeDesc') },
+    { id: 'outdoors', label: t('workouts.locationOutdoor'), icon: '🌳', description: t('workouts.locationOutdoorDesc') }
+  ];
   const handleSelection = (location) => {
     onDataChange({ workout_location: location });
     setTimeout(() => nextStep(), 300);
@@ -18,8 +20,8 @@ export default function WorkoutLocationStep({ data, onDataChange, nextStep }) {
         <div className="w-16 h-16 bg-[#26847F] rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_4px_20px_rgba(38,132,127,0.3)]">
           <span className="text-2xl">📍</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Dove preferisci allenarti?</h2>
-        <p className="text-gray-600">Scegli il tuo ambiente preferito per l'esercizio</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('workouts.locationTitle')}</h2>
+        <p className="text-gray-600">{t('workouts.locationSubtitle')}</p>
       </div>
 
       <div className="grid md:grid-cols-3 gap-6 max-w-3xl mx-auto">

@@ -1,14 +1,16 @@
 import React from 'react';
 import { Target, TrendingDown, Zap, Shield } from 'lucide-react';
-
-const GOALS = [
-  { id: 'tone', label: 'Tonificare', icon: <Target/> },
-  { id: 'lose_weight', label: 'Perdere Peso', icon: <TrendingDown/> },
-  { id: 'gain_muscle', label: 'Aumentare Massa', icon: <Zap/> },
-  { id: 'mobility', label: 'Mobilità', icon: <Shield/> }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function FitnessGoalStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
+  
+  const GOALS = [
+    { id: 'tone', label: t('workouts.goalTone'), icon: <Target/> },
+    { id: 'lose_weight', label: t('workouts.goalLoseWeight'), icon: <TrendingDown/> },
+    { id: 'gain_muscle', label: t('workouts.goalGainMuscle'), icon: <Zap/> },
+    { id: 'mobility', label: t('workouts.goalMobility'), icon: <Shield/> }
+  ];
   const handleSelection = (goal) => {
     onDataChange({ fitness_goal: goal });
     setTimeout(() => nextStep(), 300);
@@ -20,8 +22,8 @@ export default function FitnessGoalStep({ data, onDataChange, nextStep }) {
         <div className="w-16 h-16 bg-[#26847F] rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_4px_20px_rgba(38,132,127,0.3)]">
           <Target className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Qual è il tuo obiettivo fitness principale?</h2>
-        <p className="text-gray-600">Scegli cosa vuoi ottenere</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('workouts.fitnessGoalTitle')}</h2>
+        <p className="text-gray-600">{t('workouts.fitnessGoalSubtitle')}</p>
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-2xl mx-auto">

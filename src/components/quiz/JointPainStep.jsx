@@ -1,19 +1,21 @@
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Circle } from 'lucide-react';
-
-const JOINT_PAIN_OPTIONS = [
-  { id: 'ginocchia', label: '🦵 Ginocchia', description: 'Dolore o fastidio alle ginocchia' },
-  { id: 'schiena', label: '🧍 Schiena (Lombare)', description: 'Dolore lombare o schiena bassa' },
-  { id: 'spalle', label: '💪 Spalle', description: 'Dolore o limitazioni alle spalle' },
-  { id: 'gomiti', label: '💪 Gomiti', description: 'Dolore ai gomiti' },
-  { id: 'polsi', label: '🤲 Polsi', description: 'Dolore o debolezza ai polsi' },
-  { id: 'anche', label: '🦴 Anche', description: 'Dolore o rigidità alle anche' },
-  { id: 'caviglie', label: '🦶 Caviglie', description: 'Dolore o instabilità alle caviglie' },
-  { id: 'nessuno', label: '✅ Nessun Dolore', description: 'Non ho dolori articolari' }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function JointPainStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
+  
+  const JOINT_PAIN_OPTIONS = [
+    { id: 'ginocchia', label: t('workouts.painKnees'), description: t('workouts.painKneesDesc') },
+    { id: 'schiena', label: t('workouts.painBack'), description: t('workouts.painBackDesc') },
+    { id: 'spalle', label: t('workouts.painShoulders'), description: t('workouts.painShouldersDesc') },
+    { id: 'gomiti', label: t('workouts.painElbows'), description: t('workouts.painElbowsDesc') },
+    { id: 'polsi', label: t('workouts.painWrists'), description: t('workouts.painWristsDesc') },
+    { id: 'anche', label: t('workouts.painHips'), description: t('workouts.painHipsDesc') },
+    { id: 'caviglie', label: t('workouts.painAnkles'), description: t('workouts.painAnklesDesc') },
+    { id: 'nessuno', label: t('workouts.noPain'), description: t('workouts.noPainDesc') }
+  ];
   const [selectedPains, setSelectedPains] = useState(data.joint_pain || []);
 
   const handleToggle = (painId) => {
@@ -43,8 +45,8 @@ export default function JointPainStep({ data, onDataChange, nextStep }) {
         <div className="w-16 h-16 bg-[#26847F] rounded-lg flex items-center justify-center mx-auto mb-4 shadow-[0_4px_20px_rgba(38,132,127,0.3)]">
           <span className="text-2xl">🩺</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Hai dolori o limitazioni articolari?</h2>
-        <p className="text-gray-600">L'AI eviterà esercizi che sollecitano queste zone</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('workouts.jointPainTitle')}</h2>
+        <p className="text-gray-600">{t('workouts.jointPainSubtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-w-3xl mx-auto">
@@ -84,7 +86,7 @@ export default function JointPainStep({ data, onDataChange, nextStep }) {
           onClick={handleContinue}
           className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-8 shadow-[0_4px_16px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_20px_rgba(38,132,127,0.4)]"
         >
-          Continua
+          {t('workouts.continue')}
         </Button>
       </div>
     </div>
