@@ -621,17 +621,21 @@ export default function Workouts() {
 
       updateProgress(20, t('workouts.genFilter', { goal: trainingData.fitness_goal }));
 
-      // CREA LISTA ESERCIZI FORMATTATA PER L'AI
+      // CREA LISTA ESERCIZI FORMATTATA PER L'AI (con nomi nella lingua corretta)
       const exercisesByMuscleGroup = availableExercises.reduce((acc, ex) => {
         ex.muscle_groups.forEach(mg => {
           if (!acc[mg]) acc[mg] = [];
           const isPrimary = !ex._is_secondary_for_goal;
+          // Usa la traduzione nella lingua corrente se disponibile
+          const exerciseName = ex.name_translations?.[language] || ex.name;
           acc[mg].push({
-            name: ex.name,
+            name: exerciseName,
+            original_name: ex.name, // mantieni anche nome originale per riferimento
             equipment: ex.equipment,
             difficulty: ex.difficulty,
             primary_for_goal: isPrimary,
-            description: ex.description 
+            description: ex.description,
+            name_translations: ex.name_translations
           });
         });
         return acc;
