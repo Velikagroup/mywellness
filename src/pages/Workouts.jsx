@@ -652,8 +652,6 @@ export default function Workouts() {
         })
         .join('\n\n');
       
-      console.log(`🌍 Generating workout plan in ${targetLanguage} (language code: ${language})`);
-
       // Determina la lingua target per la generazione
       const langNames = {
         'it': 'Italian',
@@ -664,6 +662,8 @@ export default function Workouts() {
         'fr': 'French'
       };
       const targetLanguage = langNames[language] || 'Italian';
+      
+      console.log(`🌍 Generating workout plan in ${targetLanguage} (language code: ${language})`);
       
       // Traduzioni per nomi giorni della settimana
       const dayTranslations = {
