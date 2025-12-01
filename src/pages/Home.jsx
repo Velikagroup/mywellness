@@ -954,6 +954,62 @@ export default function Home() {
           </motion.div>
         </motion.div>
 
+          {/* Step 8.5 - Sport Quiz */}
+          <motion.div
+            className="grid md:grid-cols-2 gap-12 items-center mb-32"
+            initial={{ opacity: 0, y: 60 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-100px" }}
+            transition={{ duration: 0.7, ease: "easeOut" }}>
+            <motion.div
+              className="order-1 md:order-2"
+              initial={{ opacity: 0, x: -40 }}
+              whileInView={{ opacity: 1, x: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.2 }}>
+              <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
+                <div className="step-badge px-4 py-2 rounded-full">
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🏆 Sport-Specific Training</span>
+                </div>
+              </div>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">
+                Allenamento per il Tuo Sport
+              </h3>
+              <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
+                Pratichi calcio, tennis, basket o qualsiasi altro sport? Il quiz ti chiede quale sport pratichi e crea un <strong>programma di allenamento specifico</strong> per migliorare le tue prestazioni in campo.
+              </p>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">⚽</span>
+                  <p className="text-gray-600 text-sm"><strong>Calcio:</strong> Esplosività, resistenza, cambi di direzione</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">🎾</span>
+                  <p className="text-gray-600 text-sm"><strong>Tennis:</strong> Potenza del braccio, agilità, core stability</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">🏀</span>
+                  <p className="text-gray-600 text-sm"><strong>Basket:</strong> Salto, velocità, resistenza aerobica</p>
+                </div>
+              </div>
+              <div className="flex flex-wrap gap-3 justify-center md:justify-start">
+                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">🎯 +20 Sport Supportati</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">💪 Palestra Inclusa</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📈 Periodizzazione</span>
+              </div>
+            </motion.div>
+            <motion.div
+              className="order-2 md:order-1"
+              initial={{ opacity: 0, scale: 0.9 }}
+              whileInView={{ opacity: 1, scale: 1 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.7, delay: 0.3 }}>
+              <div className="max-w-md mx-auto">
+                <SportQuizPreviewDemo />
+              </div>
+            </motion.div>
+          </motion.div>
+
           {/* Step 9 - Workout */}
           <motion.div
             className="grid md:grid-cols-2 gap-12 items-center mb-24"
