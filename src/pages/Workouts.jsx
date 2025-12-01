@@ -2319,15 +2319,12 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                             <div>
                               <h5 className="font-semibold text-gray-800 mb-2">{t('workouts.cooldown')}</h5>
                               <div className="grid gap-2">
-                                {workoutForSelectedDay.cool_down.map((ex, idx) => {
-                                  const translated = translateWarmupCooldown(ex.name, ex.duration);
-                                  return (
-                                    <div key={idx} className="bg-purple-50/50 border border-purple-200/60 rounded-lg p-3 text-sm">
-                                      <span className="font-medium text-purple-900">{translated.name}</span>{" "}
-                                      <span className="text-purple-700">({translated.duration})</span>
-                                    </div>
-                                  );
-                                })}
+                                {workoutForSelectedDay.cool_down.map((ex, idx) => (
+                                  <div key={idx} className="bg-purple-50/50 border border-purple-200/60 rounded-lg p-3 text-sm">
+                                    <span className="font-medium text-purple-900">{ex.name}</span>{" "}
+                                    <span className="text-purple-700">({ex.duration})</span>
+                                  </div>
+                                ))}
                               </div>
                             </div>
                           )}
