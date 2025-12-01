@@ -28,6 +28,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const [isSaving, setIsSaving] = useState(false);
 
   const lineData = useMemo(() => {
+    console.log('📈 lineData calculation - weightHistory:', weightHistory?.length, 'entries');
+    console.log('📈 First entry structure:', JSON.stringify(weightHistory?.[0]));
+    
     if (!weightHistory || weightHistory.length === 0) return [];
     
     // weightHistory arriva già ordinato per data decrescente, quindi lo invertiamo per il grafico
