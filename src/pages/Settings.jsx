@@ -28,19 +28,20 @@ import {
   DollarSign,
   Copy,
   ExternalLink,
-  Globe
+  Globe,
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import UpgradeModal from '../components/meals/UpgradeModal';
 import TicketChatWidget from '../components/support/TicketChatWidget';
-import LanguageSelector from '../components/i18n/LanguageSelector';
-import { useLanguage } from '../components/i18n/LanguageContext';
+import { useLanguage, SUPPORTED_LANGUAGES } from '../components/i18n/LanguageContext';
 
 export default function Settings() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language, setLanguage } = useLanguage();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
@@ -93,6 +94,7 @@ export default function Settings() {
   const [wouldRecommend, setWouldRecommend] = useState(null);
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [selectedTicketForChat, setSelectedTicketForChat] = useState(null);
+  const [showLanguageDialog, setShowLanguageDialog] = useState(false);
 
   // Affiliazione
   const [affiliateStats, setAffiliateStats] = useState(null);
@@ -579,8 +581,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
     <div className="min-h-screen pb-20 overflow-x-hidden">
       <div className="max-w-5xl mx-auto p-4 sm:p-6 space-y-6">
         <div className="mb-6 sm:mb-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Impostazioni Account</h1>
-          <p className="text-sm sm:text-base text-gray-600">Gestisci il tuo profilo e preferenze</p>
+          <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">{t('settings.title')}</h1>
+          <p className="text-sm sm:text-base text-gray-600">{t('settings.subtitle')}</p>
         </div>
 
         <Tabs defaultValue="account" className="w-full" onValueChange={(value) => {
@@ -601,13 +603,36 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
           {/* ACCOUNT */}
           <TabsContent value="account" className="space-y-6">
+            {/* Language Settings */}
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>Informazioni Personali</CardTitle>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="w-5 h-5" />
+                  {t('settings.language')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <Button
+                  onClick={() => setShowLanguageDialog(true)}
+                  variant="outline"
+                  className="w-full justify-between h-12"
+                >
+                  <div className="flex items-center gap-3">
+                    <Globe className="w-4 h-4" />
+                    <span>{t('settings.changeLanguage')}</span>
+                  </div>
+                  <ChevronDown className="w-4 h-4 text-gray-500" />
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardHeader>
+                <CardTitle>{t('settings.personalInfo')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div>
-                  <Label htmlFor="fullName">Nome e Cognome</Label>
+                  <Label htmlFor="fullName">{t('settings.fullName')}</Label>
                   <Input
                     id="fullName"
                     value={fullName}
@@ -616,7 +641,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   />
                 </div>
                 <div>
-                  <Label htmlFor="email">Email (non modificabile)</Label>
+                  <Label htmlFor="email">{t('settings.email')}</Label>
                   <Input
                     id="email"
                     value={user?.email}
@@ -625,7 +650,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   />
                 </div>
                 <div>
-                  <Label htmlFor="phone">Telefono</Label>
+                  <Label htmlFor="phone">{t('settings.phone')}</Label>
                   <Input
                     id="phone"
                     value={phoneNumber}
@@ -638,7 +663,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   disabled={isSaving}
                   className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
-                  {isSaving ? 'Salvataggio...' : 'Salva Modifiche'}
+                  {isSaving ? t('settings.saving') : t('settings.saveChanges')}
                 </Button>
               </CardContent>
             </Card>
@@ -649,7 +674,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   <div className="flex items-center gap-3">
                     <CheckCircle className="w-5 h-5 text-blue-600" />
                     <p className="text-blue-900">
-                      Stai usando Google OAuth. La password è gestita da Google.
+                      {t('settings.googleOAuth')}
                     </p>
                   </div>
                 </CardContent>
@@ -657,11 +682,11 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
             ) : (
               <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
-                  <CardTitle>Cambio Password</CardTitle>
+                  <CardTitle>{t('settings.changePassword')}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div>
-                    <Label htmlFor="currentPassword">Password Attuale</Label>
+                    <Label htmlFor="currentPassword">{t('settings.currentPassword')}</Label>
                     <Input
                       id="currentPassword"
                       type="password"
@@ -671,7 +696,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     />
                   </div>
                   <div>
-                    <Label htmlFor="newPassword">Nuova Password</Label>
+                    <Label htmlFor="newPassword">{t('settings.newPassword')}</Label>
                     <Input
                       id="newPassword"
                       type="password"
@@ -681,7 +706,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     />
                   </div>
                   <div>
-                    <Label htmlFor="confirmPassword">Conferma Nuova Password</Label>
+                    <Label htmlFor="confirmPassword">{t('settings.confirmPassword')}</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
@@ -695,7 +720,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     disabled={isSaving}
                     variant="outline"
                   >
-                    {isSaving ? 'Salvataggio...' : 'Cambia Password'}
+                    {isSaving ? t('settings.saving') : t('settings.changePassword')}
                   </Button>
                 </CardContent>
               </Card>
@@ -709,7 +734,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   className="w-full"
                 >
                   <LogOut className="w-4 h-4 mr-2" />
-                  Esci dall'App
+                  {t('settings.logout')}
                 </Button>
               </CardContent>
             </Card>
@@ -916,28 +941,15 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
           {/* NOTIFICATIONS */}
           <TabsContent value="notifications" className="space-y-6">
-            {/* Language Settings */}
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Globe className="w-5 h-5" />
-                  {t('settings.language')}
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <LanguageSelector variant="settings" showLabel={false} />
-              </CardContent>
-            </Card>
-
-            <Card className="water-glass-effect border-gray-200/30">
-              <CardHeader>
-                <CardTitle>Preferenze Email</CardTitle>
+                <CardTitle>{t('settings.emailPreferences')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Marketing e Promozioni</p>
-                    <p className="text-sm text-gray-500">Ricevi offerte e novità</p>
+                    <p className="font-medium">{t('settings.marketing')}</p>
+                    <p className="text-sm text-gray-500">{t('settings.marketingDesc')}</p>
                   </div>
                   <Switch
                     checked={emailNotifications.marketing}
@@ -946,8 +958,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Aggiornamenti Prodotto</p>
-                    <p className="text-sm text-gray-500">Nuove funzionalità e miglioramenti</p>
+                    <p className="font-medium">{t('settings.productUpdates')}</p>
+                    <p className="text-sm text-gray-500">{t('settings.productUpdatesDesc')}</p>
                   </div>
                   <Switch
                     checked={emailNotifications.product_updates}
@@ -956,8 +968,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Promemoria Rinnovo</p>
-                    <p className="text-sm text-gray-500">Notifiche prima del rinnovo abbonamento</p>
+                    <p className="font-medium">{t('settings.renewalReminders')}</p>
+                    <p className="text-sm text-gray-500">{t('settings.renewalRemindersDesc')}</p>
                   </div>
                   <Switch
                     checked={emailNotifications.renewal_reminders}
@@ -966,8 +978,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </div>
                 <div className="flex items-center justify-between">
                   <div>
-                    <p className="font-medium">Promemoria Allenamento</p>
-                    <p className="text-sm text-gray-500">Motivazione per restare attivo</p>
+                    <p className="font-medium">{t('settings.workoutReminders')}</p>
+                    <p className="text-sm text-gray-500">{t('settings.workoutRemindersDesc')}</p>
                   </div>
                   <Switch
                     checked={emailNotifications.workout_reminders}
@@ -979,7 +991,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   disabled={isSaving}
                   className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
-                  {isSaving ? 'Salvataggio...' : 'Salva Preferenze'}
+                  {isSaving ? t('settings.saving') : t('settings.savePreferences')}
                 </Button>
               </CardContent>
             </Card>
@@ -1603,6 +1615,46 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
           onUpdate={loadUserData}
         />
       )}
+
+      {/* Language Selection Dialog */}
+      <Dialog open={showLanguageDialog} onOpenChange={setShowLanguageDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+              <Globe className="w-6 h-6 text-[#26847F]" />
+              {t('settings.selectLanguage')}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="py-4">
+            <div className="grid grid-cols-1 gap-3">
+              {SUPPORTED_LANGUAGES.map((lang) => (
+                <button
+                  key={lang.code}
+                  onClick={() => {
+                    setLanguage(lang.code);
+                    setShowLanguageDialog(false);
+                  }}
+                  className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${
+                    language === lang.code
+                      ? 'border-[#26847F] bg-[#e9f6f5]'
+                      : 'border-gray-200 hover:border-gray-300 bg-white'
+                  }`}
+                >
+                  <span className="text-3xl">{lang.flag}</span>
+                  <span className={`font-semibold text-lg flex-1 text-left ${
+                    language === lang.code ? 'text-[#26847F]' : 'text-gray-700'
+                  }`}>
+                    {lang.name}
+                  </span>
+                  {language === lang.code && (
+                    <Check className="w-5 h-5 text-[#26847F]" />
+                  )}
+                </button>
+              ))}
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
