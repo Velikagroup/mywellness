@@ -195,7 +195,18 @@ export const translations = {
       aiAutoResponse: "Risposta automatica",
       wasHelpful: "Questa risposta ti è stata utile?",
       problemResolved: "Problema Risolto",
-      needMoreHelp: "Serve Ancora Aiuto"
+      needMoreHelp: "Serve Ancora Aiuto",
+      // Chat Widget
+      attachFile: "Allega file",
+      writeYourReply: "Scrivi la tua risposta...",
+      open: "Aperto",
+      inProgress: "In Lavorazione",
+      resolved: "Risolto",
+      closed: "Chiuso",
+      send: "Invia",
+      you: "Tu",
+      support: "Supporto",
+      aiAssistantShort: "Assistente AI"
     }
   },
   en: {
@@ -394,7 +405,18 @@ export const translations = {
       aiAutoResponse: "Automatic response",
       wasHelpful: "Was this response helpful?",
       problemResolved: "Problem Resolved",
-      needMoreHelp: "Need More Help"
+      needMoreHelp: "Need More Help",
+      // Chat Widget
+      attachFile: "Attach file",
+      writeYourReply: "Write your reply...",
+      open: "Open",
+      inProgress: "In Progress",
+      resolved: "Resolved",
+      closed: "Closed",
+      send: "Send",
+      you: "You",
+      support: "Support",
+      aiAssistantShort: "AI Assistant"
     }
   },
   es: {
@@ -593,7 +615,18 @@ export const translations = {
       aiAutoResponse: "Respuesta automática",
       wasHelpful: "¿Te fue útil esta respuesta?",
       problemResolved: "Problema Resuelto",
-      needMoreHelp: "Necesito Más Ayuda"
+      needMoreHelp: "Necesito Más Ayuda",
+      // Chat Widget
+      attachFile: "Adjuntar archivo",
+      writeYourReply: "Escribe tu respuesta...",
+      open: "Abierto",
+      inProgress: "En Proceso",
+      resolved: "Resuelto",
+      closed: "Cerrado",
+      send: "Enviar",
+      you: "Tú",
+      support: "Soporte",
+      aiAssistantShort: "Asistente IA"
     }
   },
   pt: {
@@ -792,7 +825,18 @@ export const translations = {
       aiAutoResponse: "Resposta automática",
       wasHelpful: "Esta resposta foi útil?",
       problemResolved: "Problema Resolvido",
-      needMoreHelp: "Preciso de Mais Ajuda"
+      needMoreHelp: "Preciso de Mais Ajuda",
+      // Chat Widget
+      attachFile: "Anexar arquivo",
+      writeYourReply: "Escreva sua resposta...",
+      open: "Aberto",
+      inProgress: "Em Andamento",
+      resolved: "Resolvido",
+      closed: "Fechado",
+      send: "Enviar",
+      you: "Você",
+      support: "Suporte",
+      aiAssistantShort: "Assistente IA"
     }
   },
   de: {
@@ -991,7 +1035,18 @@ export const translations = {
       aiAutoResponse: "Automatische Antwort",
       wasHelpful: "War diese Antwort hilfreich?",
       problemResolved: "Problem Gelöst",
-      needMoreHelp: "Brauche Weitere Hilfe"
+      needMoreHelp: "Brauche Weitere Hilfe",
+      // Chat Widget
+      attachFile: "Datei anhängen",
+      writeYourReply: "Schreiben Sie Ihre Antwort...",
+      open: "Offen",
+      inProgress: "In Bearbeitung",
+      resolved: "Gelöst",
+      closed: "Geschlossen",
+      send: "Senden",
+      you: "Sie",
+      support: "Support",
+      aiAssistantShort: "KI-Assistent"
     }
   },
   fr: {
@@ -1190,7 +1245,18 @@ export const translations = {
       aiAutoResponse: "Réponse automatique",
       wasHelpful: "Cette réponse vous a-t-elle été utile ?",
       problemResolved: "Problème Résolu",
-      needMoreHelp: "Besoin de Plus d'Aide"
+      needMoreHelp: "Besoin de Plus d'Aide",
+      // Chat Widget
+      attachFile: "Joindre un fichier",
+      writeYourReply: "Écrivez votre réponse...",
+      open: "Ouvert",
+      inProgress: "En Cours",
+      resolved: "Résolu",
+      closed: "Fermé",
+      send: "Envoyer",
+      you: "Vous",
+      support: "Support",
+      aiAssistantShort: "Assistant IA"
     }
   }
 };
