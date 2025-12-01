@@ -24,6 +24,53 @@ export default function ExerciseCard({
   const [translatedExercise, setTranslatedExercise] = useState(null);
   const [isTranslating, setIsTranslating] = useState(false);
   
+  // Genera intensity tips una volta per evitare loop infiniti
+  const intensityTipsRef = React.useRef(null);
+  
+  const getIntensityTipsStable = React.useCallback(() => {
+    if (intensityTipsRef.current) return intensityTipsRef.current;
+    
+    if (exercise.intensity_tips && exercise.intensity_tips.length > 0) {
+      intensityTipsRef.current = exercise.intensity_tips;
+      return exercise.intensity_tips;
+    }
+    
+    const exerciseNameLower = (exercise.name || '').toLowerCase();
+    
+    const weightsByLevel = {
+      never_lifted: { dumbbell: '1-3kg', barbell: 'solo bilanciere (10-15kg)', machine: 'carico minimo' },
+      light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+      moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+      intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+      advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+    };
+    const weights = weightsByLevel[userStrengthLevel] || weightsByLevel.moderate;
+    
+    const isIsometric = ['plank', 'isometr', 'hold', 'tenuta'].some(kw => exerciseNameLower.includes(kw));
+    const isDumbbell = exerciseNameLower.includes('manubr') || exerciseNameLower.includes('dumbbell');
+    const isBarbell = exerciseNameLower.includes('bilanciere') || exerciseNameLower.includes('barbell');
+    const isMachine = ['macchina', 'leg press', 'cable', 'cavo', 'machine'].some(kw => exerciseNameLower.includes(kw));
+    const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch'].some(kw => exerciseNameLower.includes(kw));
+    
+    let tips;
+    if (isIsometric) {
+      tips = ["⏱️ Hold for 30-45 seconds per set", "💪 When you start shaking, intensity is right"];
+    } else if (isDumbbell) {
+      tips = [`🏋️ Use ${weights.dumbbell} dumbbells per side`, "🔥 Last 2-3 reps should be hard"];
+    } else if (isBarbell) {
+      tips = [`🏋️ Load barbell with ${weights.barbell}`, "📊 RPE 7-8: you should be able to do 2-3 more reps"];
+    } else if (isMachine) {
+      tips = [`🏋️ Set machine to ${weights.machine}`, "🔥 Last reps should be challenging"];
+    } else if (isBodyweight) {
+      tips = ["⏱️ Slow down descent to 3 seconds if too easy", "✅ Maintain perfect form"];
+    } else {
+      tips = ["💪 Choose a load that makes last reps hard", "📊 RPE 7-8"];
+    }
+    
+    intensityTipsRef.current = tips;
+    return tips;
+  }, [exercise.name, exercise.intensity_tips, userStrengthLevel]);
+  
   // Traduci esercizio quando cambia lingua
   React.useEffect(() => {
     if (language === 'it') {
@@ -48,6 +95,8 @@ export default function ExerciseCard({
           'de': 'German', 'fr': 'French'
         };
         
+        const stableIntensityTips = getIntensityTipsStable();
+        
         const response = await base44.integrations.Core.InvokeLLM({
           prompt: `Translate this workout exercise to ${langNames[language] || language}.
 
@@ -58,7 +107,7 @@ Exercise data (in Italian):
 - Form tips: ${exercise.form_tips?.join(' | ') || ''}
 - Target muscles: ${exercise.target_muscles?.join(', ') || ''}
 - Muscle groups: ${exercise.muscle_groups?.join(', ') || ''}
-- Intensity tips: ${exercise.intensity_tips?.join(' | ') || getIntensityTips().join(' | ')}
+- Intensity tips: ${exercise.intensity_tips?.join(' | ') || stableIntensityTips.join(' | ')}
 
 Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON object with translated fields.`,
           response_json_schema: {
@@ -84,51 +133,11 @@ Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON
     };
     
     translateExercise();
-  }, [language, exercise.name]);
+  }, [language, exercise.name, getIntensityTipsStable]);
   
   const displayExercise = translatedExercise || exercise;
   
-  // Genera intensity_tips se mancanti basati sul livello utente
-  const getIntensityTips = () => {
-    if (exercise.intensity_tips && exercise.intensity_tips.length > 0) {
-      return exercise.intensity_tips;
-    }
-    
-    // Genera tips di fallback basati sul tipo di esercizio e livello
-    const exerciseNameLower = (exercise.name || '').toLowerCase();
-    
-    const weightsByLevel = {
-      never_lifted: { dumbbell: '1-3kg', barbell: 'solo bilanciere (10-15kg)', machine: 'carico minimo' },
-      light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
-      moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
-      intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
-      advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
-    };
-    const weights = weightsByLevel[userStrengthLevel] || weightsByLevel.moderate;
-    
-    const isIsometric = ['plank', 'isometr', 'hold', 'tenuta'].some(kw => exerciseNameLower.includes(kw));
-    const isDumbbell = exerciseNameLower.includes('manubr') || exerciseNameLower.includes('dumbbell');
-    const isBarbell = exerciseNameLower.includes('bilanciere') || exerciseNameLower.includes('barbell');
-    const isMachine = ['macchina', 'leg press', 'cable', 'cavo', 'machine'].some(kw => exerciseNameLower.includes(kw));
-    const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch'].some(kw => exerciseNameLower.includes(kw));
-    
-    // Return generic tips - will be overridden by translation
-    if (isIsometric) {
-      return ["⏱️ Hold for 30-45 seconds per set", "💪 When you start shaking, intensity is right"];
-    } else if (isDumbbell) {
-      return [`🏋️ Use ${weights.dumbbell} dumbbells per side`, "🔥 Last 2-3 reps should be hard"];
-    } else if (isBarbell) {
-      return [`🏋️ Load barbell with ${weights.barbell}`, "📊 RPE 7-8: you should be able to do 2-3 more reps"];
-    } else if (isMachine) {
-      return [`🏋️ Set machine to ${weights.machine}`, "🔥 Last reps should be challenging"];
-    } else if (isBodyweight) {
-      return ["⏱️ Slow down descent to 3 seconds if too easy", "✅ Maintain perfect form"];
-    } else {
-      return ["💪 Choose a load that makes last reps hard", "📊 RPE 7-8"];
-    }
-  };
-  
-  const intensityTips = displayExercise.intensity_tips || getIntensityTips();
+  const intensityTips = displayExercise.intensity_tips || getIntensityTipsStable();
   
   const toggleSet = (setNumber) => {
     const newCompleted = completedSets.includes(setNumber)
