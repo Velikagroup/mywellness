@@ -5,7 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Dumbbell, Info, Zap, Eye, Check, RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { motion } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
-import { base44 } from '@/api/base44Client';
+// base44 non più necessario per traduzioni real-time
 
 export default function ExerciseCard({ 
   exercise, 
