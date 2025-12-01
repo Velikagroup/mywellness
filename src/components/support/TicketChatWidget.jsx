@@ -152,17 +152,26 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
   }, [localTicket.message]);
 
   // 🔥 POLLING REAL-TIME per nuovi messaggi admin ogni 2 secondi
+  const localTicketRef = useRef(localTicket);
+  
+  // Mantieni il ref aggiornato
+  useEffect(() => {
+    localTicketRef.current = localTicket;
+  }, [localTicket]);
+  
   useEffect(() => {
     const pollTicket = async () => {
       try {
         const updated = await base44.entities.SupportTicket.filter({ id: ticket.id });
         if (updated && updated.length > 0) {
           const freshTicket = updated[0];
+          const currentTicket = localTicketRef.current;
+          
           // Aggiorna solo se il messaggio è cambiato
-          if (freshTicket.message !== localTicket.message || 
-              freshTicket.status !== localTicket.status ||
-              freshTicket.admin_response !== localTicket.admin_response) {
-            console.log('🔄 Ticket aggiornato in real-time:', freshTicket);
+          if (freshTicket.message !== currentTicket.message || 
+              freshTicket.status !== currentTicket.status ||
+              freshTicket.admin_response !== currentTicket.admin_response) {
+            console.log('🔄 Ticket aggiornato in real-time (user widget):', freshTicket.id);
             setLocalTicket(freshTicket);
             scrollToBottom();
           }
