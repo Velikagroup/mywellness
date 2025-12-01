@@ -1,4 +1,3 @@
-
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -119,7 +118,33 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Condivisione dei Dati</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">5. Accesso tramite Google (Google Sign-In)</h2>
+              <p className="mb-3">
+                Se scegli di accedere a MyWellness utilizzando il tuo account Google ("Accedi con Google"), raccogliamo le seguenti informazioni dal tuo profilo Google:
+              </p>
+              <ul className="list-disc pl-6 space-y-2 mb-4">
+                <li><strong>Nome completo:</strong> per personalizzare la tua esperienza</li>
+                <li><strong>Indirizzo email:</strong> per identificare il tuo account e inviarti comunicazioni importanti</li>
+                <li><strong>Foto profilo:</strong> per visualizzarla nel tuo account (opzionale)</li>
+              </ul>
+              <p className="mb-3">
+                <strong>Come utilizziamo questi dati:</strong>
+              </p>
+              <ul className="list-disc pl-6 space-y-2 mb-4">
+                <li>Per creare e gestire il tuo account MyWellness</li>
+                <li>Per autenticarti in modo sicuro senza dover creare una nuova password</li>
+                <li>Per personalizzare la tua esperienza all'interno dell'app</li>
+              </ul>
+              <p className="mb-3">
+                <strong>NON</strong> accediamo ai tuoi contatti Google, alla tua cronologia di navigazione, ai tuoi file Google Drive o ad altri dati del tuo account Google. L'accesso è limitato esclusivamente alle informazioni di profilo di base necessarie per l'autenticazione.
+              </p>
+              <p>
+                Puoi revocare l'accesso di MyWellness al tuo account Google in qualsiasi momento dalle impostazioni di sicurezza del tuo account Google all'indirizzo: <a href="https://myaccount.google.com/permissions" className="text-[var(--brand-primary)] underline" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a>
+              </p>
+            </section>
+
+            <section>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Condivisione dei Dati</h2>
               <p className="mb-3">Potremmo condividere i tuoi dati con:</p>
               
               <h3 className="text-xl font-semibold text-gray-900 mb-3 mt-4">5.1 Fornitori di Servizi</h3>
@@ -140,7 +165,7 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">6. Sicurezza dei Dati</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Sicurezza dei Dati</h2>
               <p className="mb-3">Implementiamo misure di sicurezza tecniche e organizzative per proteggere i tuoi dati:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li>Crittografia SSL/TLS per tutte le trasmissioni</li>
@@ -155,7 +180,7 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">7. Conservazione dei Dati</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">8. Conservazione dei Dati</h2>
               <p className="mb-3">
                 Conserviamo i tuoi dati personali per il tempo necessario a fornire il Servizio e per rispettare obblighi legali:
               </p>
@@ -168,7 +193,7 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">8. I Tuoi Diritti</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">9. I Tuoi Diritti</h2>
               <p className="mb-3">In conformità al GDPR e altre leggi sulla privacy, hai i seguenti diritti:</p>
               <ul className="list-disc pl-6 space-y-2">
                 <li><strong>Accesso:</strong> richiedere una copia dei tuoi dati personali</li>
@@ -186,7 +211,7 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">9. Cookie</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Cookie</h2>
               <p className="mb-3">
                 Utilizziamo cookie e tecnologie simili per:
               </p>
@@ -201,28 +226,28 @@ export default function Privacy() {
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">10. Privacy dei Minori</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Privacy dei Minori</h2>
               <p>
                 Il Servizio non è destinato a minori di 18 anni. Non raccogliamo consapevolmente dati personali da minori di 18 anni. Se scopriamo di aver raccolto dati da un minore, li cancelleremo immediatamente.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Trasferimenti Internazionali</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">12. Trasferimenti Internazionali</h2>
               <p>
                 I tuoi dati possono essere trasferiti e archiviati su server negli Stati Uniti e in altri paesi. Implementiamo salvaguardie appropriate per garantire che i tuoi dati siano protetti in conformità a questa Privacy Policy e alle leggi applicabili.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">12. Modifiche alla Privacy Policy</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">13. Modifiche alla Privacy Policy</h2>
               <p>
                 Potremmo aggiornare questa Privacy Policy periodicamente. Ti informeremo di modifiche sostanziali tramite email o notifica nel Servizio. L'uso continuato del Servizio dopo le modifiche costituisce accettazione della nuova Privacy Policy.
               </p>
             </section>
 
             <section>
-              <h2 className="text-2xl font-bold text-gray-900 mb-4">13. Contatti</h2>
+              <h2 className="text-2xl font-bold text-gray-900 mb-4">14. Contatti</h2>
               <p className="mb-4">
                 Per domande sulla privacy o per esercitare i tuoi diritti, contattaci:
               </p>

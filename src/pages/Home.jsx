@@ -1105,7 +1105,19 @@ export default function Home() {
 
       <footer className="py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center space-y-2">
+          <div className="text-center space-y-4">
+            <div className="flex items-center justify-center gap-6 mb-4">
+              <button
+                onClick={() => navigate(createPageUrl('Privacy'))}
+                className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
+                Privacy Policy
+              </button>
+              <button
+                onClick={() => navigate(createPageUrl('Terms'))}
+                className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
+                Termini e Condizioni
+              </button>
+            </div>
             <p className="text-sm font-semibold text-gray-700">
               © VELIKA GROUP LLC. All Rights Reserved.
             </p>
