@@ -26,7 +26,6 @@ import Settings from './pages/Settings';
 import AdminSupportTickets from './pages/AdminSupportTickets';
 import AdminFeedback from './pages/AdminFeedback';
 import Checkout from './pages/Checkout';
-import AdminExerciseTranslations from './pages/AdminExerciseTranslations';
 import __Layout from './Layout.jsx';
 
 
@@ -59,7 +58,6 @@ export const PAGES = {
     "AdminSupportTickets": AdminSupportTickets,
     "AdminFeedback": AdminFeedback,
     "Checkout": Checkout,
-    "AdminExerciseTranslations": AdminExerciseTranslations,
 }
 
 export const pagesConfig = {
