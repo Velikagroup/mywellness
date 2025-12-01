@@ -5,6 +5,7 @@ import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
 import { ChevronRight } from "lucide-react";
+import { useLanguage } from '../i18n/LanguageContext';
 
 // Configurazione domande per ogni sport
 const SPORT_QUESTIONS = {
@@ -416,6 +417,7 @@ const SPORT_QUESTIONS = {
 };
 
 export default function SportSpecificQuestionsStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
   const workoutStyle = data?.workout_style;
   const sportConfig = SPORT_QUESTIONS[workoutStyle];
   
@@ -465,7 +467,7 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
           {sportConfig.title}
         </h3>
         <p className="text-gray-600">
-          Dati specifici per creare il tuo piano perfetto
+          {t('workouts.sportSpecificSubtitle')}
         </p>
       </div>
 
@@ -502,7 +504,7 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
                 onChange={(e) => handleAnswerChange(question.id, e.target.value)}
                 className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-[#26847F] focus:outline-none"
               >
-                <option value="">Seleziona...</option>
+                <option value="">{t('workouts.selectOption')}</option>
                 {question.options.map((opt) => (
                   <option key={opt} value={opt}>{opt}</option>
                 ))}
@@ -515,7 +517,7 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
                   checked={answers[question.id] || false}
                   onCheckedChange={(checked) => handleAnswerChange(question.id, checked)}
                 />
-                <span className="text-sm text-gray-700">Sì</span>
+                <span className="text-sm text-gray-700">{t('common.yes')}</span>
               </div>
             )}
 
@@ -571,7 +573,7 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
         disabled={!isFormComplete()}
         className="w-full bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white py-6 text-base font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
       >
-        Continua
+        {t('workouts.continue')}
         <ChevronRight className="w-5 h-5 ml-2" />
       </Button>
     </div>
