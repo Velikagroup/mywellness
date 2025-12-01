@@ -1,46 +1,48 @@
 import React from 'react';
 import { Button } from "@/components/ui/button";
 import { Dumbbell, Scale, Target, TrendingUp } from "lucide-react";
-
-const STRENGTH_LEVELS = [
-  { 
-    id: 'never_lifted', 
-    label: 'Mai sollevato pesi',
-    description: 'Non ho mai fatto esercizi con pesi o resistenza',
-    icon: Target,
-    weight_guidance: 'Inizia sempre senza pesi o con pesi molto leggeri (1-2kg)'
-  },
-  { 
-    id: 'light', 
-    label: 'Pesi leggeri',
-    description: 'Uso manubri da 2-8kg, macchine con carichi bassi',
-    icon: Dumbbell,
-    weight_guidance: 'Manubri 4-8kg, bilanciere scarico o 10-20kg totali'
-  },
-  { 
-    id: 'moderate', 
-    label: 'Pesi moderati',
-    description: 'Manubri 8-15kg, squat/stacco con 40-60kg',
-    icon: Scale,
-    weight_guidance: 'Manubri 8-15kg, bilanciere 30-50kg'
-  },
-  { 
-    id: 'intermediate', 
-    label: 'Intermedio',
-    description: 'Squat 60-100kg, stacco 80-120kg, panca 50-80kg',
-    icon: TrendingUp,
-    weight_guidance: 'Usa il 70-75% dei massimali indicati'
-  },
-  { 
-    id: 'advanced', 
-    label: 'Avanzato',
-    description: 'Squat >100kg, stacco >120kg, panca >80kg',
-    icon: TrendingUp,
-    weight_guidance: 'Calcola i carichi come % del tuo 1RM'
-  }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function StrengthLevelStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
+  
+  const STRENGTH_LEVELS = [
+    { 
+      id: 'never_lifted', 
+      label: t('workouts.strengthNever'),
+      description: t('workouts.strengthNeverDesc'),
+      icon: Target,
+      weight_guidance: 'Inizia sempre senza pesi o con pesi molto leggeri (1-2kg)'
+    },
+    { 
+      id: 'light', 
+      label: t('workouts.strengthLight'),
+      description: t('workouts.strengthLightDesc'),
+      icon: Dumbbell,
+      weight_guidance: 'Manubri 4-8kg, bilanciere scarico o 10-20kg totali'
+    },
+    { 
+      id: 'moderate', 
+      label: t('workouts.strengthModerate'),
+      description: t('workouts.strengthModerateDesc'),
+      icon: Scale,
+      weight_guidance: 'Manubri 8-15kg, bilanciere 30-50kg'
+    },
+    { 
+      id: 'intermediate', 
+      label: t('workouts.strengthIntermediate'),
+      description: t('workouts.strengthIntermediateDesc'),
+      icon: TrendingUp,
+      weight_guidance: 'Usa il 70-75% dei massimali indicati'
+    },
+    { 
+      id: 'advanced', 
+      label: t('workouts.strengthAdvanced'),
+      description: t('workouts.strengthAdvancedDesc'),
+      icon: TrendingUp,
+      weight_guidance: 'Calcola i carichi come % del tuo 1RM'
+    }
+  ];
   const handleSelect = (level) => {
     const selectedLevel = STRENGTH_LEVELS.find(l => l.id === level);
     onDataChange({ 
@@ -55,10 +57,10 @@ export default function StrengthLevelStep({ data, onDataChange, nextStep }) {
       <div className="text-center">
         <Dumbbell className="w-12 h-12 text-[#26847F] mx-auto mb-3" />
         <h3 className="text-xl font-bold text-gray-900">
-          Qual è il tuo livello di forza attuale?
+          {t('workouts.strengthLevelTitle')}
         </h3>
         <p className="text-gray-600 mt-2">
-          Questo ci aiuta a suggerirti i pesi corretti per ogni esercizio
+          {t('workouts.strengthLevelSubtitle')}
         </p>
       </div>
 

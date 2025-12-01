@@ -369,7 +369,42 @@ export const translations = {
       eqCustomDesc: "Seleziona singolarmente le attrezzature",
       eqCustomTitle: "Seleziona singolarmente le attrezzature:",
       categorySelected: "Categoria selezionata:",
-      equipmentSelected: "{count} attrezzature selezionate"
+      equipmentSelected: "{count} attrezzature selezionate",
+      // Performance Oriented Step
+      goalTypeTitle: "Tipo di Obiettivo",
+      goalTypeSubtitle: "Il tuo obiettivo è orientato alla prestazione sportiva?",
+      yesPerformance: "Sì, prestazionale",
+      yesPerformanceDesc: "Voglio migliorare in uno sport specifico, competere, o seguire una metodologia di allenamento precisa (es: CrossFit, Powerlifting, Bodybuilding)",
+      noWellbeing: "No, benessere generale",
+      noWellbeingDesc: "Voglio stare in forma, sentirmi bene, dimagrire o tonificare senza seguire metodologie sportive specifiche",
+      goalTypeHint: "Questa scelta determinerà il tipo di allenamento che l'AI creerà per te",
+      // Workout Style Step
+      workoutStyleTitle: "Stile di Allenamento",
+      workoutStyleSubtitle: "Scegli lo stile che preferisci o che vuoi provare",
+      workoutStyleHint: "L'AI adatterà gli esercizi e la struttura dell'allenamento al tuo stile preferito",
+      // Categories
+      catStrengthHypertrophy: "🏋️ Forza & Ipertrofia",
+      catHighIntensity: "🔥 Alta Intensità",
+      catConditioning: "🏃 Condizionamento & Performance",
+      catMobilityBodyweight: "🤸 Mobilità & Corpo Libero",
+      catDance: "💃 Coreografati / Musicali",
+      catMindBody: "🧘 Mind & Body",
+      catCombat: "🥊 Sport da Combattimento",
+      catEquipment: "🚴 Attrezzi Specifici",
+      catBranded: "🌪️ Programmi Brandizzati",
+      // Strength Level Step
+      strengthLevelTitle: "Qual è il tuo livello di forza attuale?",
+      strengthLevelSubtitle: "Questo ci aiuta a suggerirti i pesi corretti per ogni esercizio",
+      strengthNever: "Mai sollevato pesi",
+      strengthNeverDesc: "Non ho mai fatto esercizi con pesi o resistenza",
+      strengthLight: "Pesi leggeri",
+      strengthLightDesc: "Uso manubri da 2-8kg, macchine con carichi bassi",
+      strengthModerate: "Pesi moderati",
+      strengthModerateDesc: "Manubri 8-15kg, squat/stacco con 40-60kg",
+      strengthIntermediate: "Intermedio",
+      strengthIntermediateDesc: "Squat 60-100kg, stacco 80-120kg, panca 50-80kg",
+      strengthAdvanced: "Avanzato",
+      strengthAdvancedDesc: "Squat >100kg, stacco >120kg, panca >80kg"
     }
   },
   en: {
@@ -742,7 +777,42 @@ export const translations = {
       eqCustomDesc: "Select equipment individually",
       eqCustomTitle: "Select equipment individually:",
       categorySelected: "Category selected:",
-      equipmentSelected: "{count} equipment selected"
+      equipmentSelected: "{count} equipment selected",
+      // Performance Oriented Step
+      goalTypeTitle: "Goal Type",
+      goalTypeSubtitle: "Is your goal performance-oriented?",
+      yesPerformance: "Yes, performance",
+      yesPerformanceDesc: "I want to improve in a specific sport, compete, or follow a precise training methodology (e.g., CrossFit, Powerlifting, Bodybuilding)",
+      noWellbeing: "No, general wellness",
+      noWellbeingDesc: "I want to stay fit, feel good, lose weight or tone up without following specific sport methodologies",
+      goalTypeHint: "This choice will determine the type of training the AI will create for you",
+      // Workout Style Step
+      workoutStyleTitle: "Workout Style",
+      workoutStyleSubtitle: "Choose the style you prefer or want to try",
+      workoutStyleHint: "The AI will adapt exercises and workout structure to your preferred style",
+      // Categories
+      catStrengthHypertrophy: "🏋️ Strength & Hypertrophy",
+      catHighIntensity: "🔥 High Intensity",
+      catConditioning: "🏃 Conditioning & Performance",
+      catMobilityBodyweight: "🤸 Mobility & Bodyweight",
+      catDance: "💃 Dance / Choreographed",
+      catMindBody: "🧘 Mind & Body",
+      catCombat: "🥊 Combat Sports",
+      catEquipment: "🚴 Equipment-Specific",
+      catBranded: "🌪️ Branded Programs",
+      // Strength Level Step
+      strengthLevelTitle: "What is your current strength level?",
+      strengthLevelSubtitle: "This helps us suggest the right weights for each exercise",
+      strengthNever: "Never lifted weights",
+      strengthNeverDesc: "I've never done exercises with weights or resistance",
+      strengthLight: "Light weights",
+      strengthLightDesc: "I use 2-8kg dumbbells, machines with low loads",
+      strengthModerate: "Moderate weights",
+      strengthModerateDesc: "8-15kg dumbbells, squat/deadlift 40-60kg",
+      strengthIntermediate: "Intermediate",
+      strengthIntermediateDesc: "Squat 60-100kg, deadlift 80-120kg, bench 50-80kg",
+      strengthAdvanced: "Advanced",
+      strengthAdvancedDesc: "Squat >100kg, deadlift >120kg, bench >80kg"
     }
   },
   es: {

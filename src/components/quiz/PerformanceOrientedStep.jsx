@@ -2,8 +2,10 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
 import { Target, TrendingUp } from "lucide-react";
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function PerformanceOrientedStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
   const [selected, setSelected] = useState(data?.is_performance_oriented ?? null);
 
   const handleSelect = (value) => {
@@ -15,8 +17,8 @@ export default function PerformanceOrientedStep({ data, onDataChange, nextStep }
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">🎯 Tipo di Obiettivo</h3>
-        <p className="text-gray-600">Il tuo obiettivo è orientato alla prestazione sportiva?</p>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">🎯 {t('workouts.goalTypeTitle')}</h3>
+        <p className="text-gray-600">{t('workouts.goalTypeSubtitle')}</p>
       </div>
 
       <div className="grid gap-4">
@@ -35,9 +37,9 @@ export default function PerformanceOrientedStep({ data, onDataChange, nextStep }
               <TrendingUp className={`w-6 h-6 ${selected === true ? 'text-white' : 'text-gray-400'}`} />
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-gray-900 mb-2">Sì, prestazionale</h4>
+              <h4 className="font-bold text-gray-900 mb-2">{t('workouts.yesPerformance')}</h4>
               <p className="text-sm text-gray-600">
-                Voglio migliorare in uno sport specifico, competere, o seguire una metodologia di allenamento precisa (es: CrossFit, Powerlifting, Bodybuilding)
+                {t('workouts.yesPerformanceDesc')}
               </p>
             </div>
           </div>
@@ -58,9 +60,9 @@ export default function PerformanceOrientedStep({ data, onDataChange, nextStep }
               <Target className={`w-6 h-6 ${selected === false ? 'text-white' : 'text-gray-400'}`} />
             </div>
             <div className="flex-1">
-              <h4 className="font-bold text-gray-900 mb-2">No, benessere generale</h4>
+              <h4 className="font-bold text-gray-900 mb-2">{t('workouts.noWellbeing')}</h4>
               <p className="text-sm text-gray-600">
-                Voglio stare in forma, sentirmi bene, dimagrire o tonificare senza seguire metodologie sportive specifiche
+                {t('workouts.noWellbeingDesc')}
               </p>
             </div>
           </div>
@@ -69,7 +71,7 @@ export default function PerformanceOrientedStep({ data, onDataChange, nextStep }
 
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mt-6">
         <p className="text-sm text-blue-900 text-center">
-          💡 Questa scelta determinerà il tipo di allenamento che l'AI creerà per te
+          💡 {t('workouts.goalTypeHint')}
         </p>
       </div>
     </div>

@@ -2,10 +2,16 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ChevronDown, ChevronUp } from "lucide-react";
+import { useLanguage } from '../i18n/LanguageContext';
 
-const WORKOUT_STYLES = [
+export default function WorkoutStyleStep({ data, onDataChange, nextStep }) {
+  const { t } = useLanguage();
+  const [expandedCategories, setExpandedCategories] = useState([0]);
+  const [selected, setSelected] = useState(data?.workout_style || null);
+
+  const WORKOUT_STYLES = [
   {
-    category: '🏋️ Forza & Ipertrofia',
+    category: t('workouts.catStrengthHypertrophy'),
     styles: [
       { id: 'bodybuilding', label: 'Bodybuilding' },
       { id: 'powerlifting', label: 'Powerlifting' },
@@ -17,7 +23,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '🔥 Alta Intensità',
+    category: t('workouts.catHighIntensity'),
     styles: [
       { id: 'hiit', label: 'HIIT (High Intensity Interval Training)' },
       { id: 'crossfit', label: 'CrossFit' },
@@ -27,7 +33,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '🏃 Condizionamento & Performance',
+    category: t('workouts.catConditioning'),
     styles: [
       { id: 'athletic_training', label: 'Athletic Training' },
       { id: 'plyometrics', label: 'Plyometrics' },
@@ -37,7 +43,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '🤸 Mobilità & Corpo Libero',
+    category: t('workouts.catMobilityBodyweight'),
     styles: [
       { id: 'ginnastica', label: 'Ginnastica artistica / corpo libero' },
       { id: 'animal_flow', label: 'Animal Flow' },
@@ -47,7 +53,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '💃 Coreografati / Musicali',
+    category: t('workouts.catDance'),
     styles: [
       { id: 'zumba', label: 'Zumba' },
       { id: 'dance_fitness', label: 'Dance Fitness' },
@@ -58,7 +64,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '🧘 Mind & Body',
+    category: t('workouts.catMindBody'),
     styles: [
       { id: 'yoga', label: 'Yoga (Hatha, Vinyasa, Yin, Power)' },
       { id: 'pilates_mindful', label: 'Pilates' },
@@ -68,7 +74,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '🥊 Sport da Combattimento',
+    category: t('workouts.catCombat'),
     styles: [
       { id: 'kickboxing', label: 'Kickboxing Fitness' },
       { id: 'boxing', label: 'Boxe / Functional Boxing' },
@@ -78,7 +84,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '🚴 Attrezzi Specifici',
+    category: t('workouts.catEquipment'),
     styles: [
       { id: 'spinning', label: 'Spinning / Indoor Cycling' },
       { id: 'ellittica', label: 'Ellittica Training' },
@@ -89,7 +95,7 @@ const WORKOUT_STYLES = [
     ]
   },
   {
-    category: '🌪️ Programmi Brandizzati',
+    category: t('workouts.catBranded'),
     styles: [
       { id: 'bodypump', label: 'BodyPump' },
       { id: 'bodycombat', label: 'BodyCombat' },
@@ -102,11 +108,7 @@ const WORKOUT_STYLES = [
   }
 ];
 
-export default function WorkoutStyleStep({ data, onDataChange, nextStep }) {
-  const [expandedCategories, setExpandedCategories] = useState([0]); // Prima categoria aperta di default
-  const [selected, setSelected] = useState(data?.workout_style || null);
-
-  const toggleCategory = (index) => {
+const toggleCategory = (index) => {
     setExpandedCategories(prev => 
       prev.includes(index) 
         ? prev.filter(i => i !== index)
@@ -123,8 +125,8 @@ export default function WorkoutStyleStep({ data, onDataChange, nextStep }) {
   return (
     <div className="space-y-4">
       <div className="text-center mb-6">
-        <h3 className="text-2xl font-bold text-gray-900 mb-2">💪 Stile di Allenamento</h3>
-        <p className="text-gray-600">Scegli lo stile che preferisci o che vuoi provare</p>
+        <h3 className="text-2xl font-bold text-gray-900 mb-2">💪 {t('workouts.workoutStyleTitle')}</h3>
+        <p className="text-gray-600">{t('workouts.workoutStyleSubtitle')}</p>
       </div>
 
       <div className="space-y-3 max-h-[60vh] overflow-y-auto pr-2">
@@ -165,7 +167,7 @@ export default function WorkoutStyleStep({ data, onDataChange, nextStep }) {
 
       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-4 mt-4">
         <p className="text-sm text-blue-900 text-center">
-          💡 L'AI adatterà gli esercizi e la struttura dell'allenamento al tuo stile preferito
+          💡 {t('workouts.workoutStyleHint')}
         </p>
       </div>
     </div>
