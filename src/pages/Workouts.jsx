@@ -651,11 +651,44 @@ export default function Workouts() {
         })
         .join('\n\n');
 
+      // Determina la lingua target per la generazione
+      const langNames = {
+        'it': 'Italian',
+        'en': 'English', 
+        'es': 'Spanish', 
+        'pt': 'Portuguese', 
+        'de': 'German', 
+        'fr': 'French'
+      };
+      const targetLanguage = langNames[language] || 'Italian';
+      
+      // Traduzioni per nomi giorni della settimana
+      const dayTranslations = {
+        it: { monday: 'Lunedì', tuesday: 'Martedì', wednesday: 'Mercoledì', thursday: 'Giovedì', friday: 'Venerdì', saturday: 'Sabato', sunday: 'Domenica' },
+        en: { monday: 'Monday', tuesday: 'Tuesday', wednesday: 'Wednesday', thursday: 'Thursday', friday: 'Friday', saturday: 'Saturday', sunday: 'Sunday' },
+        es: { monday: 'Lunes', tuesday: 'Martes', wednesday: 'Miércoles', thursday: 'Jueves', friday: 'Viernes', saturday: 'Sábado', sunday: 'Domingo' },
+        pt: { monday: 'Segunda', tuesday: 'Terça', wednesday: 'Quarta', thursday: 'Quinta', friday: 'Sexta', saturday: 'Sábado', sunday: 'Domingo' },
+        de: { monday: 'Montag', tuesday: 'Dienstag', wednesday: 'Mittwoch', thursday: 'Donnerstag', friday: 'Freitag', saturday: 'Samstag', sunday: 'Sonntag' },
+        fr: { monday: 'Lundi', tuesday: 'Mardi', wednesday: 'Mercredi', thursday: 'Jeudi', friday: 'Vendredi', saturday: 'Samedi', sunday: 'Dimanche' }
+      };
+      
+      // Termini comuni tradotti
+      const termTranslations = {
+        it: { warmup: 'Riscaldamento', cooldown: 'Defaticamento', rest: 'Recupero Attivo', sets: 'serie', reps: 'ripetizioni', seconds: 'secondi', minutes: 'minuti', lightJog: 'Corsa Leggera', dynamicStretch: 'Stretching Dinamico', staticStretch: 'Stretching Statico', finalRelax: 'Rilassamento Finale', mobilityWork: 'Mobilità Articolare' },
+        en: { warmup: 'Warm-up', cooldown: 'Cool-down', rest: 'Active Recovery', sets: 'sets', reps: 'reps', seconds: 'seconds', minutes: 'minutes', lightJog: 'Light Jogging', dynamicStretch: 'Dynamic Stretching', staticStretch: 'Static Stretching', finalRelax: 'Final Relaxation', mobilityWork: 'Joint Mobility' },
+        es: { warmup: 'Calentamiento', cooldown: 'Enfriamiento', rest: 'Recuperación Activa', sets: 'series', reps: 'repeticiones', seconds: 'segundos', minutes: 'minutos', lightJog: 'Trote Ligero', dynamicStretch: 'Estiramiento Dinámico', staticStretch: 'Estiramiento Estático', finalRelax: 'Relajación Final', mobilityWork: 'Movilidad Articular' },
+        pt: { warmup: 'Aquecimento', cooldown: 'Resfriamento', rest: 'Recuperação Ativa', sets: 'séries', reps: 'repetições', seconds: 'segundos', minutes: 'minutos', lightJog: 'Corrida Leve', dynamicStretch: 'Alongamento Dinâmico', staticStretch: 'Alongamento Estático', finalRelax: 'Relaxamento Final', mobilityWork: 'Mobilidade Articular' },
+        de: { warmup: 'Aufwärmen', cooldown: 'Abkühlen', rest: 'Aktive Erholung', sets: 'Sätze', reps: 'Wiederholungen', seconds: 'Sekunden', minutes: 'Minuten', lightJog: 'Leichtes Joggen', dynamicStretch: 'Dynamisches Dehnen', staticStretch: 'Statisches Dehnen', finalRelax: 'Abschlussentspannung', mobilityWork: 'Gelenksmobilität' },
+        fr: { warmup: 'Échauffement', cooldown: 'Récupération', rest: 'Récupération Active', sets: 'séries', reps: 'répétitions', seconds: 'secondes', minutes: 'minutes', lightJog: 'Jogging Léger', dynamicStretch: 'Étirement Dynamique', staticStretch: 'Étirement Statique', finalRelax: 'Relaxation Finale', mobilityWork: 'Mobilité Articulaire' }
+      };
+      
+      const terms = termTranslations[language] || termTranslations.it;
+
       const workoutPlanPrompt = `You are a world-class AI personal trainer, physical therapist, and motivational coach. Create a hyper-personalized, 7-day weekly workout plan. You MUST select exercises ONLY from the provided database.
 
 CRITICAL RULES:
-1. Generate ALL content in ITALIAN language. Exercise names, descriptions, and all text MUST be in Italian.
-2. ONLY use exercise names from this database - DO NOT invent new names
+1. Generate ALL content in ${targetLanguage.toUpperCase()} language. ALL text including plan names, warm-up names, cool-down names, descriptions, reps format, rest format MUST be in ${targetLanguage}.
+2. ONLY use exercise names from this database - DO NOT invent new names. Use the name_translations.${language} field if available for exercise names in ${targetLanguage}.
 3. PRIORITIZE "PRIMARI" exercises for user's goal: ${trainingData.fitness_goal}
 4. You can use "SECONDARI" exercises for variety, but focus on PRIMARI for the main lifts/movements.
 5. ADAPT the workout structure to match the preferred training style: ${trainingData.workout_style || 'standard'}
