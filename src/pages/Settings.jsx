@@ -592,12 +592,12 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
         }}>
           <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
             <TabsList className="inline-flex w-max min-w-full sm:grid sm:w-full sm:grid-cols-3 lg:grid-cols-6 gap-2 bg-gray-100/80 p-1 rounded-lg">
-              <TabsTrigger value="account" className="text-xs sm:text-sm whitespace-nowrap">Account</TabsTrigger>
-              <TabsTrigger value="subscription" className="text-xs sm:text-sm whitespace-nowrap">Abbonamento</TabsTrigger>
-              <TabsTrigger value="billing" className="text-xs sm:text-sm whitespace-nowrap">Fatturazione</TabsTrigger>
-              <TabsTrigger value="notifications" className="text-xs sm:text-sm whitespace-nowrap">Notifiche</TabsTrigger>
-              <TabsTrigger value="affiliate" className="text-xs sm:text-sm whitespace-nowrap">Affiliazione</TabsTrigger>
-              <TabsTrigger value="help" className="text-xs sm:text-sm whitespace-nowrap">Supporto</TabsTrigger>
+              <TabsTrigger value="account" className="text-xs sm:text-sm whitespace-nowrap">{t('settings.tabAccount')}</TabsTrigger>
+              <TabsTrigger value="subscription" className="text-xs sm:text-sm whitespace-nowrap">{t('settings.tabSubscription')}</TabsTrigger>
+              <TabsTrigger value="billing" className="text-xs sm:text-sm whitespace-nowrap">{t('settings.tabBilling')}</TabsTrigger>
+              <TabsTrigger value="notifications" className="text-xs sm:text-sm whitespace-nowrap">{t('settings.tabNotifications')}</TabsTrigger>
+              <TabsTrigger value="affiliate" className="text-xs sm:text-sm whitespace-nowrap">{t('settings.tabAffiliate')}</TabsTrigger>
+              <TabsTrigger value="help" className="text-xs sm:text-sm whitespace-nowrap">{t('settings.tabSupport')}</TabsTrigger>
             </TabsList>
           </div>
 
@@ -744,15 +744,15 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
           <TabsContent value="subscription" className="space-y-6">
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>Il Tuo Piano</CardTitle>
+                <CardTitle>{t('settings.yourPlan')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[#E0F2F0] to-teal-50 rounded-xl">
                   <div>
-                    <p className="text-sm text-gray-600">Piano Attuale</p>
+                    <p className="text-sm text-gray-600">{t('settings.currentPlan')}</p>
                     <p className="text-2xl font-bold text-gray-900">{planLabels[user?.subscription_plan] || 'N/D'}</p>
                     <p className="text-sm text-gray-600 mt-1">
-                      Stato: <span className="font-semibold">{statusLabels[user?.subscription_status] || 'N/D'}</span>
+                      {t('settings.status')}: <span className="font-semibold">{statusLabels[user?.subscription_status] || 'N/D'}</span>
                     </p>
                   </div>
                   <Crown className="w-12 h-12 text-[#26847F]" />
@@ -760,7 +760,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
                 {user?.subscription_status === 'active' && user?.subscription_period_end && (
                   <p className="text-sm text-gray-600">
-                    Prossimo rinnovo: <strong>{new Date(user.subscription_period_end).toLocaleDateString('it-IT')}</strong>
+                    {t('settings.nextRenewal')}: <strong>{new Date(user.subscription_period_end).toLocaleDateString(language === 'it' ? 'it-IT' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-BR' : 'en-US')}</strong>
                   </p>
                 )}
 
@@ -769,7 +769,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     onClick={handleUpgradePlan}
                     className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                   >
-                    {user?.subscription_plan === 'premium' ? 'Cambia Piano' : 'Upgrade Piano'}
+                    {user?.subscription_plan === 'premium' ? t('settings.changePlan') : t('settings.upgradePlan')}
                   </Button>
 
                   {(user?.subscription_status === 'active' || user?.subscription_status === 'trial') && !user?.cancellation_at_period_end && (
@@ -779,7 +779,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       className="flex-1 border-red-300 text-red-600 hover:bg-red-50"
                     >
                       <Trash2 className="w-4 h-4 mr-2" />
-                      Cancella Abbonamento
+                      {t('settings.cancelSubscription')}
                     </Button>
                   )}
                 </div>
@@ -790,8 +790,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       <AlertCircle className="w-5 h-5 text-orange-600" />
                       <p className="text-sm text-orange-900">
                         {user.subscription_status === 'trial' 
-                          ? `Il tuo trial è stato cancellato e terminerà il ${new Date(user.subscription_period_end).toLocaleDateString('it-IT')}`
-                          : `Il tuo abbonamento è stato cancellato e terminerà il ${new Date(user.subscription_period_end).toLocaleDateString('it-IT')}`
+                          ? `${t('settings.trialCancelled')} ${new Date(user.subscription_period_end).toLocaleDateString(language === 'it' ? 'it-IT' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-BR' : 'en-US')}`
+                          : `${t('settings.subscriptionCancelled')} ${new Date(user.subscription_period_end).toLocaleDateString(language === 'it' ? 'it-IT' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-BR' : 'en-US')}`
                         }
                       </p>
                     </div>
@@ -805,7 +805,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
           <TabsContent value="billing" className="space-y-6">
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>Dati di Fatturazione</CardTitle>
+                <CardTitle>{t('settings.billingData')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <RadioGroup
@@ -815,17 +815,17 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 >
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="private" id="billing-private" />
-                    <Label htmlFor="billing-private">Privato</Label>
+                    <Label htmlFor="billing-private">{t('settings.private')}</Label>
                   </div>
                   <div className="flex items-center space-x-2">
                     <RadioGroupItem value="company" id="billing-company" />
-                    <Label htmlFor="billing-company">Azienda</Label>
+                    <Label htmlFor="billing-company">{t('settings.company')}</Label>
                   </div>
                 </RadioGroup>
 
                 {billingInfo.billingType === 'company' && (
                   <div>
-                    <Label>Nome Azienda</Label>
+                    <Label>{t('settings.companyName')}</Label>
                     <Input
                       value={billingInfo.companyName}
                       onChange={(e) => setBillingInfo({...billingInfo, companyName: e.target.value})}
@@ -835,7 +835,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 )}
 
                 <div>
-                  <Label>{billingInfo.billingType === 'company' ? 'Partita IVA' : 'Codice Fiscale'}</Label>
+                  <Label>{billingInfo.billingType === 'company' ? t('settings.taxId') : t('settings.fiscalCode')}</Label>
                   <Input
                     value={billingInfo.taxId}
                     onChange={(e) => setBillingInfo({...billingInfo, taxId: e.target.value})}
@@ -845,7 +845,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
                 {billingInfo.billingType === 'company' && (
                   <div>
-                    <Label>PEC / Codice SDI</Label>
+                    <Label>{t('settings.pecSdi')}</Label>
                     <Input
                       value={billingInfo.pecSdi}
                       onChange={(e) => setBillingInfo({...billingInfo, pecSdi: e.target.value})}
@@ -855,7 +855,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 )}
 
                 <div>
-                  <Label>Indirizzo</Label>
+                  <Label>{t('settings.address')}</Label>
                   <Input
                     value={billingInfo.address}
                     onChange={(e) => setBillingInfo({...billingInfo, address: e.target.value})}
@@ -865,7 +865,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
                 <div className="grid grid-cols-2 gap-4">
                   <div>
-                    <Label>Città</Label>
+                    <Label>{t('settings.city')}</Label>
                     <Input
                       value={billingInfo.city}
                       onChange={(e) => setBillingInfo({...billingInfo, city: e.target.value})}
@@ -873,7 +873,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     />
                   </div>
                   <div>
-                    <Label>CAP</Label>
+                    <Label>{t('settings.zip')}</Label>
                     <Input
                       value={billingInfo.zip}
                       onChange={(e) => setBillingInfo({...billingInfo, zip: e.target.value})}
@@ -887,49 +887,38 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   disabled={isSaving}
                   className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
-                  {isSaving ? 'Salvataggio...' : 'Salva Dati Fatturazione'}
+                  {isSaving ? t('settings.saving') : t('settings.saveBilling')}
                 </Button>
               </CardContent>
             </Card>
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>Storico Transazioni</CardTitle>
+                <CardTitle>{t('settings.transactionHistory')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {transactions.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">Nessuna transazione</p>
+                  <p className="text-gray-500 text-center py-8">{t('settings.noTransactions')}</p>
                 ) : (
                   <div className="space-y-3">
-                    {transactions.map((t) => (
-                      <div key={t.id} className="flex items-center justify-between p-4 border rounded-lg bg-white">
+                    {transactions.map((tx) => (
+                      <div key={tx.id} className="flex items-center justify-between p-4 border rounded-lg bg-white">
                         <div>
-                          <p className="font-semibold">{t.description || 'Pagamento MyWellness'}</p>
+                          <p className="font-semibold">{tx.description || t('settings.paymentDescription')}</p>
                           <p className="text-sm text-gray-600">
-                            {new Date(t.payment_date).toLocaleDateString('it-IT')} - {t.plan} ({t.billing_period})
+                            {new Date(tx.payment_date).toLocaleDateString(language === 'it' ? 'it-IT' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-BR' : 'en-US')} - {tx.plan} ({tx.billing_period})
                           </p>
                         </div>
                         <div className="flex items-center gap-3">
-                          <p className="text-lg font-bold text-[#26847F]">€{t.amount.toFixed(2)}</p>
-                          {t.invoice_pdf_url ? (
-                            <Button
-                              onClick={() => handleDownloadInvoice(t)}
-                              size="sm"
-                              variant="outline"
-                            >
-                              <Download className="w-4 h-4 mr-2" />
-                              Fattura
-                            </Button>
-                          ) : (
-                            <Button
-                              onClick={() => handleDownloadInvoice(t)}
-                              size="sm"
-                              variant="outline"
-                            >
-                              <Download className="w-4 h-4 mr-2" />
-                              Fattura
-                            </Button>
-                          )}
+                          <p className="text-lg font-bold text-[#26847F]">€{tx.amount.toFixed(2)}</p>
+                          <Button
+                            onClick={() => handleDownloadInvoice(tx)}
+                            size="sm"
+                            variant="outline"
+                          >
+                            <Download className="w-4 h-4 mr-2" />
+                            {t('settings.invoice')}
+                          </Button>
                         </div>
                       </div>
                     ))}
@@ -1004,25 +993,25 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 <CardHeader>
                   <CardTitle className="flex items-center gap-2">
                     <Users className="w-6 h-6 text-purple-600" />
-                    Programma Affiliazione
+                    {t('settings.affiliateProgram')}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <p className="text-gray-700">
-                    🎉 <strong>Guadagna il 10%</strong> su ogni pagamento degli utenti che inviti!
+                    🎉 <strong>{t('settings.affiliateDescription')}</strong>
                   </p>
                   <ul className="space-y-2 text-sm text-gray-700">
-                    <li>✅ <strong>10% di commissione</strong> su tutti i pagamenti dei tuoi affiliati</li>
-                    <li>✅ <strong>20% di sconto</strong> per chi si iscrive col tuo link</li>
-                    <li>✅ <strong>Prelievi automatici</strong> su conto bancario tramite Stripe</li>
-                    <li>✅ <strong>Usa i crediti</strong> per pagare la tua subscription</li>
+                    <li>✅ <strong>{t('settings.affiliateCommission')}</strong></li>
+                    <li>✅ <strong>{t('settings.affiliateDiscount')}</strong></li>
+                    <li>✅ <strong>{t('settings.affiliateWithdrawals')}</strong></li>
+                    <li>✅ <strong>{t('settings.affiliateCredits')}</strong></li>
                   </ul>
                   <Button
                     onClick={handleGenerateAffiliateLink}
                     disabled={isLoadingAffiliate}
                     className="w-full bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white"
                   >
-                    {isLoadingAffiliate ? 'Generazione...' : 'Genera il Tuo Link di Affiliazione'}
+                    {isLoadingAffiliate ? t('settings.generating') : t('settings.generateLink')}
                   </Button>
                 </CardContent>
               </Card>
@@ -1034,12 +1023,12 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-gray-600">Credito Disponibile</p>
+                          <p className="text-sm text-gray-600">{t('settings.availableCredit')}</p>
                           <p className="text-3xl font-bold text-green-700">
                             €{affiliateStats.stats.available_balance.toFixed(2)}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            Scalato automaticamente al rinnovo
+                            {t('settings.autoDeducted')}
                           </p>
                         </div>
                         <DollarSign className="w-10 h-10 text-green-600" />
@@ -1051,12 +1040,12 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-gray-600">Totale Guadagnato</p>
+                          <p className="text-sm text-gray-600">{t('settings.totalEarned')}</p>
                           <p className="text-3xl font-bold text-blue-700">
                             €{affiliateStats.stats.total_earned.toFixed(2)}
                           </p>
                           <p className="text-xs text-gray-500 mt-1">
-                            Storico commissioni
+                            {t('settings.commissionHistory')}
                           </p>
                         </div>
                         <Crown className="w-10 h-10 text-blue-600" />
@@ -1068,7 +1057,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-gray-600">Affiliati Paganti</p>
+                          <p className="text-sm text-gray-600">{t('settings.payingAffiliates')}</p>
                           <p className="text-3xl font-bold text-purple-700">
                             {affiliateStats.stats.total_referrals}
                           </p>
@@ -1082,7 +1071,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     <CardContent className="pt-6">
                       <div className="flex items-center justify-between">
                         <div>
-                          <p className="text-sm text-gray-600">Login con Link</p>
+                          <p className="text-sm text-gray-600">{t('settings.linkClicks')}</p>
                           <p className="text-3xl font-bold text-orange-700">
                             {affiliateStats.stats.total_link_clicks || 0}
                           </p>
@@ -1098,7 +1087,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   <CardHeader>
                     <CardTitle className="flex items-center gap-2">
                       <Share2 className="w-5 h-5" />
-                      Il Tuo Link di Affiliazione
+                      {t('settings.yourAffiliateLink')}
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -1117,7 +1106,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     </div>
                     <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
                       <p className="text-sm text-blue-900">
-                        <strong>Come funziona:</strong> Condividi questo link. Chi si iscrive riceve <strong>20% di sconto</strong> sul primo mese, tu guadagni <strong>10% su ogni loro pagamento</strong>!
+                        <strong>{t('settings.howItWorks')}</strong> {t('settings.howItWorksDesc')}
                       </p>
                     </div>
                   </CardContent>
@@ -1126,7 +1115,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 {/* Prelievi */}
                 <Card className="water-glass-effect border-gray-200/30">
                   <CardHeader>
-                    <CardTitle>Preleva Crediti</CardTitle>
+                    <CardTitle>{t('settings.withdrawCredits')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
                     {!affiliateStats.stats.onboarding_completed ? (
@@ -1134,7 +1123,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                         {affiliateStats.stats.available_balance < 100 ? (
                           <div className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                             <p className="text-sm text-gray-700 mb-2">
-                              🔒 Per sbloccare i prelievi, devi raggiungere almeno <strong>€100</strong> di credito disponibile.
+                              🔒 {t('settings.unlockWithdrawals')}
                             </p>
                             <div className="w-full bg-gray-200 rounded-full h-3 mt-3">
                               <div 
@@ -1150,7 +1139,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                           <>
                             <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
                               <p className="text-sm text-amber-900 mb-3">
-                                ⚠️ Per prelevare i tuoi crediti, devi prima connettere il tuo account Stripe Connect.
+                                ⚠️ {t('settings.connectStripeNotice')}
                               </p>
                             </div>
                             <Button
@@ -1158,7 +1147,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                               disabled={isLoadingAffiliate}
                               className="w-full bg-[#635BFF] hover:bg-[#5248E6] text-white"
                             >
-                              {isLoadingAffiliate ? 'Connessione...' : 'Connetti Stripe e Inizia a Prelevare'}
+                              {isLoadingAffiliate ? t('settings.connecting') : t('settings.connectStripe')}
                               <ExternalLink className="w-4 h-4 ml-2" />
                             </Button>
                           </>
@@ -1168,10 +1157,10 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       <div className="space-y-4">
                         <div className="flex items-center gap-2 text-green-700">
                           <CheckCircle className="w-5 h-5" />
-                          <span className="font-semibold">Stripe Connect Attivo</span>
+                          <span className="font-semibold">{t('settings.stripeConnected')}</span>
                         </div>
                         <div>
-                          <Label>Importo da Prelevare (min. €10)</Label>
+                          <Label>{t('settings.withdrawAmount')}</Label>
                           <div className="flex gap-2 mt-2">
                             <Input
                               type="number"
@@ -1187,12 +1176,12 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                               disabled={isWithdrawing || !withdrawAmount}
                               className="bg-green-600 hover:bg-green-700 text-white"
                             >
-                              {isWithdrawing ? 'Prelievo...' : 'Preleva'}
+                              {isWithdrawing ? t('settings.withdrawing') : t('settings.withdraw')}
                             </Button>
                           </div>
                         </div>
                         <p className="text-xs text-gray-600">
-                          💡 I soldi arriveranno sul tuo conto bancario in 2-7 giorni lavorativi
+                          💡 {t('settings.withdrawalNote')}
                         </p>
                       </div>
                     )}
@@ -1203,7 +1192,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 {affiliateStats.affiliate_transactions?.length > 0 && (
                   <Card className="water-glass-effect border-gray-200/30">
                     <CardHeader>
-                      <CardTitle>Transazioni Affiliati</CardTitle>
+                      <CardTitle>{t('settings.affiliateTransactions')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3">
@@ -1212,7 +1201,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                             <div>
                               <p className="font-semibold text-sm">{tx.referred_user_email}</p>
                               <p className="text-xs text-gray-600">
-                                {new Date(tx.payment_date).toLocaleDateString('it-IT')} • Pagato: €{tx.amount_paid.toFixed(2)}
+                                {new Date(tx.payment_date).toLocaleDateString(language === 'it' ? 'it-IT' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-BR' : 'en-US')} • {t('settings.paid')}: €{tx.amount_paid.toFixed(2)}
                               </p>
                             </div>
                             <div className="text-right">
@@ -1222,8 +1211,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                                 tx.commission_status === 'withdrawn' ? 'bg-gray-100 text-gray-700' :
                                 'bg-blue-100 text-blue-700'
                               }`}>
-                                {tx.commission_status === 'available' ? 'Disponibile' :
-                                 tx.commission_status === 'withdrawn' ? 'Prelevato' : 'Usato'}
+                                {tx.commission_status === 'available' ? t('settings.available') :
+                                 tx.commission_status === 'withdrawn' ? t('settings.withdrawn') : t('settings.used')}
                               </span>
                             </div>
                           </div>
@@ -1238,7 +1227,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   variant="outline"
                   className="w-full"
                 >
-                  Aggiorna Statistiche
+                  {t('settings.refreshStats')}
                 </Button>
               </>
             )}
@@ -1252,8 +1241,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   <div className="flex items-center gap-3">
                     <Crown className="w-6 h-6 text-purple-600" />
                     <div>
-                      <p className="font-bold text-purple-900">Supporto Prioritario Attivo</p>
-                      <p className="text-sm text-purple-700">I tuoi ticket riceveranno risposta con priorità massima</p>
+                      <p className="font-bold text-purple-900">{t('settings.prioritySupport')}</p>
+                      <p className="text-sm text-purple-700">{t('settings.prioritySupportDesc')}</p>
                     </div>
                   </div>
                 </CardContent>
@@ -1262,17 +1251,17 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>Invia un Ticket di Supporto</CardTitle>
+                <CardTitle>{t('settings.submitTicket')}</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                {supportTickets.some(t => t.status !== 'risolto' && t.status !== 'chiuso' && !t.ai_resolved) ? (
+                {supportTickets.some(tkt => tkt.status !== 'risolto' && tkt.status !== 'chiuso' && !tkt.ai_resolved) ? (
                   <div className="p-4 bg-amber-50 border border-amber-200 rounded-xl">
                     <div className="flex items-start gap-3">
                       <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="font-semibold text-amber-900 mb-1">Hai già un ticket aperto</p>
+                        <p className="font-semibold text-amber-900 mb-1">{t('settings.openTicketWarning')}</p>
                         <p className="text-sm text-amber-700">
-                          Puoi inviare un nuovo ticket solo dopo che il precedente è stato chiuso. Controlla i tuoi ticket aperti qui sotto.
+                          {t('settings.openTicketWarningDesc')}
                         </p>
                       </div>
                     </div>
@@ -1280,37 +1269,37 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 ) : (
                   <>
                     <div>
-                      <Label>Categoria</Label>
+                      <Label>{t('settings.category')}</Label>
                       <Select value={ticketCategory} onValueChange={setTicketCategory}>
                         <SelectTrigger className="bg-white">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="tecnico">Problema Tecnico</SelectItem>
-                          <SelectItem value="fatturazione">Fatturazione</SelectItem>
-                          <SelectItem value="abbonamento">Abbonamento</SelectItem>
-                          <SelectItem value="funzionalita">Richiesta Funzionalità</SelectItem>
-                          <SelectItem value="altro">Altro</SelectItem>
+                          <SelectItem value="tecnico">{t('settings.categoryTechnical')}</SelectItem>
+                          <SelectItem value="fatturazione">{t('settings.categoryBilling')}</SelectItem>
+                          <SelectItem value="abbonamento">{t('settings.categorySubscription')}</SelectItem>
+                          <SelectItem value="funzionalita">{t('settings.categoryFeature')}</SelectItem>
+                          <SelectItem value="altro">{t('settings.categoryOther')}</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
 
                     <div>
-                      <Label>Oggetto</Label>
+                      <Label>{t('settings.subject')}</Label>
                       <Input
                         value={ticketSubject}
                         onChange={(e) => setTicketSubject(e.target.value)}
-                        placeholder="Descrivi il problema in poche parole"
+                        placeholder={t('settings.subjectPlaceholder')}
                         className="bg-white"
                       />
                     </div>
 
                     <div>
-                      <Label>Messaggio</Label>
+                      <Label>{t('settings.message')}</Label>
                       <Textarea
                         value={ticketMessage}
                         onChange={(e) => setTicketMessage(e.target.value)}
-                        placeholder="Descrivi il problema in dettaglio..."
+                        placeholder={t('settings.messagePlaceholder')}
                         className="bg-white h-32"
                       />
                     </div>
@@ -1320,7 +1309,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       disabled={isSaving}
                       className="bg-[#26847F] hover:bg-[#1f6b66] text-white w-full"
                     >
-                      {isSaving ? 'Invio...' : 'Invia Ticket'}
+                      {isSaving ? t('settings.sending') : t('settings.sendTicket')}
                     </Button>
                   </>
                 )}
@@ -1329,11 +1318,11 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>I Tuoi Ticket</CardTitle>
+                <CardTitle>{t('settings.yourTickets')}</CardTitle>
               </CardHeader>
               <CardContent>
                 {supportTickets.length === 0 ? (
-                  <p className="text-gray-500 text-center py-8">Nessun ticket aperto</p>
+                  <p className="text-gray-500 text-center py-8">{t('settings.noTickets')}</p>
                 ) : (
                   <div className="space-y-3">
                     {supportTickets.map((ticket) => (
@@ -1350,12 +1339,12 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                                 <Crown className="w-4 h-4 text-purple-600" />
                               )}
                               {ticket.ai_resolved && (
-                                <Badge className="bg-green-100 text-green-700 text-xs">🤖 Risolto AI</Badge>
+                                <Badge className="bg-green-100 text-green-700 text-xs">🤖 {t('settings.resolvedAI')}</Badge>
                               )}
                             </div>
                             <p className="text-sm text-gray-600 line-clamp-2">{ticket.message.split('\n\n---')[0]}</p>
                             <p className="text-xs text-gray-500 mt-2">
-                              {new Date(ticket.created_date).toLocaleDateString('it-IT')} - {ticket.category}
+                              {new Date(ticket.created_date).toLocaleDateString(language === 'it' ? 'it-IT' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-BR' : 'en-US')} - {ticket.category}
                             </p>
                           </div>
                           <div className={`px-3 py-1 rounded-full text-xs font-semibold whitespace-nowrap ${
@@ -1369,8 +1358,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                         </div>
                         {(ticket.admin_response || ticket.ai_response) && (
                           <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
-                            {ticket.admin_response && <span>💬 Risposta ricevuta</span>}
-                            {ticket.ai_response && !ticket.admin_response && <span>🤖 Risposta AI disponibile</span>}
+                            {ticket.admin_response && <span>💬 {t('settings.responseReceived')}</span>}
+                            {ticket.ai_response && !ticket.admin_response && <span>🤖 {t('settings.aiResponseAvailable')}</span>}
                           </div>
                         )}
                       </div>
