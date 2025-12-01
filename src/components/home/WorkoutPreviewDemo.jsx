@@ -181,26 +181,46 @@ export default function WorkoutPreviewDemo() {
                         <span className="text-xs text-gray-500">Riposo {exercise.rest}</span>
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex gap-0.5">
-                        {[...Array(parseInt(exercise.sets))].map((_, i) => (
-                          <div 
-                            key={i} 
-                            className={`w-2 h-2 rounded-full ${i === 0 ? 'bg-green-500' : 'bg-gray-200'}`}
-                          />
-                        ))}
-                      </div>
-                      <ChevronDown 
-                        className={`w-4 h-4 text-gray-400 transition-transform ${
-                          expandedExercise === exercise.id ? 'rotate-180' : ''
-                        }`}
-                      />
-                    </div>
+                    <ChevronDown 
+                      className={`w-4 h-4 text-gray-400 transition-transform ${
+                        expandedExercise === exercise.id ? 'rotate-180' : ''
+                      }`}
+                    />
                   </button>
 
                   {expandedExercise === exercise.id && (
                     <div className="px-3 pb-3 border-t border-gray-100 expand-animation">
                       <div className="pt-2.5 space-y-2.5">
+                        {/* Set Tracking Boxes */}
+                        <div>
+                          <p className="text-xs font-semibold text-gray-700 mb-2">Serie completate</p>
+                          <div className="grid grid-cols-4 gap-2">
+                            {[...Array(parseInt(exercise.sets))].map((_, i) => (
+                              <div 
+                                key={i}
+                                className={`py-2.5 rounded-lg border-2 flex flex-col items-center justify-center cursor-pointer transition-all ${
+                                  i === 0 
+                                    ? 'bg-green-50 border-green-500' 
+                                    : 'bg-gray-50 border-gray-200 hover:border-gray-300'
+                                }`}
+                              >
+                                <span className={`text-xs font-bold ${i === 0 ? 'text-green-700' : 'text-gray-500'}`}>
+                                  Set {i + 1}
+                                </span>
+                                <div className={`w-5 h-5 mt-1 rounded-full flex items-center justify-center ${
+                                  i === 0 ? 'bg-green-500' : 'border-2 border-gray-300'
+                                }`}>
+                                  {i === 0 && (
+                                    <svg className="w-3 h-3 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                    </svg>
+                                  )}
+                                </div>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+
                         {/* Muscle Tags */}
                         <div className="flex flex-wrap gap-1">
                           {exercise.muscles.map((muscle, idx) => (

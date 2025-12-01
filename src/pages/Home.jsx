@@ -993,7 +993,7 @@ export default function Home() {
                 </div>
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">🎯 +20 Sport Supportati</span>
+                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">🎯 60+ Sport Supportati</span>
                 <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">💪 Palestra Inclusa</span>
                 <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📈 Periodizzazione</span>
               </div>
