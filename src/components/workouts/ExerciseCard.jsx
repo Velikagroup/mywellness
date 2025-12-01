@@ -31,6 +31,15 @@ export default function ExerciseCard({
       return;
     }
     
+    const cacheKey = `ex_${exercise.name}_${language}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        setTranslatedExercise(JSON.parse(cached));
+        return;
+      } catch (e) {}
+    }
+    
     const translateExercise = async () => {
       setIsTranslating(true);
       try {
@@ -46,12 +55,12 @@ Exercise data (in Italian):
 - Name: ${exercise.name}
 - Description: ${exercise.description || ''}
 - Detailed description: ${exercise.detailed_description || ''}
-- Form tips: ${exercise.form_tips?.join(', ') || ''}
+- Form tips: ${exercise.form_tips?.join(' | ') || ''}
 - Target muscles: ${exercise.target_muscles?.join(', ') || ''}
 - Muscle groups: ${exercise.muscle_groups?.join(', ') || ''}
-- Intensity tips: ${exercise.intensity_tips?.join(', ') || getIntensityTips().join(', ')}
+- Intensity tips: ${exercise.intensity_tips?.join(' | ') || getIntensityTips().join(' | ')}
 
-Translate ALL fields to ${langNames[language] || language}. Keep the same structure and meaning.`,
+Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON object with translated fields.`,
           response_json_schema: {
             type: "object",
             properties: {
@@ -67,6 +76,7 @@ Translate ALL fields to ${langNames[language] || language}. Keep the same struct
         });
         
         setTranslatedExercise(response);
+        sessionStorage.setItem(cacheKey, JSON.stringify(response));
       } catch (error) {
         console.error('Translation error:', error);
       }
