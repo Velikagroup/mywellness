@@ -310,6 +310,13 @@ Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON
     if (language === 'it') return exercise.name;
     
     const originalName = exercise.name;
+    
+    // PRIORITÀ 1: Usa traduzioni dal database (name_translations salvate nell'entità Exercise)
+    if (exercise.name_translations && exercise.name_translations[language]) {
+      return exercise.name_translations[language];
+    }
+    
+    // PRIORITÀ 2: Usa traduzioni statiche definite qui
     const langTranslations = staticExerciseTranslations[language] || {};
     
     // Match esatto
@@ -325,7 +332,7 @@ Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON
       }
     }
     
-    // Se c'è traduzione AI, usala
+    // PRIORITÀ 3: Se c'è traduzione AI, usala
     if (translatedExercise?.name && 
         translatedExercise.name.toLowerCase() !== 'response' && 
         !translatedExercise.name.toLowerCase().includes('object')) {
