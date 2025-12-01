@@ -27,13 +27,16 @@ import {
   Share2,
   DollarSign,
   Copy,
-  ExternalLink
+  ExternalLink,
+  Globe
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import UpgradeModal from '../components/meals/UpgradeModal';
 import TicketChatWidget from '../components/support/TicketChatWidget';
+import LanguageSelector from '../components/i18n/LanguageSelector';
+import { useLanguage } from '../components/i18n/LanguageContext';
 
 export default function Settings() {
   const navigate = useNavigate();
