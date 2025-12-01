@@ -1018,7 +1018,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7, ease: "easeOut" }}>
             <motion.div
-              className="order-1 md:order-2"
+              className="order-1 md:order-1"
               initial={{ opacity: 0, x: -40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -1040,7 +1040,7 @@ export default function Home() {
               </div>
             </motion.div>
             <motion.div
-              className="order-2 md:order-1"
+              className="order-2 md:order-2"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
@@ -1059,7 +1059,7 @@ export default function Home() {
             viewport={{ once: true, margin: "-100px" }}
             transition={{ duration: 0.7, ease: "easeOut" }}>
             <motion.div
-              className="order-1 md:order-1"
+              className="order-1 md:order-2"
               initial={{ opacity: 0, x: 40 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -1080,7 +1080,7 @@ export default function Home() {
               </div>
             </motion.div>
             <motion.div
-              className="order-2 md:order-2"
+              className="order-2 md:order-1"
               initial={{ opacity: 0, scale: 0.9 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}

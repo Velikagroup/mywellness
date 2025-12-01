@@ -16,18 +16,18 @@ export default function SportQuizPreviewDemo() {
   ];
 
   const sports = [
-    { id: 'calcio', label: 'Calcio', icon: '⚽' },
-    { id: 'basket', label: 'Basket', icon: '🏀' },
-    { id: 'tennis', label: 'Tennis', icon: '🎾' },
-    { id: 'nuoto', label: 'Nuoto', icon: '🏊' },
-    { id: 'ciclismo', label: 'Ciclismo', icon: '🚴' },
-    { id: 'corsa', label: 'Corsa', icon: '🏃' },
-    { id: 'boxe', label: 'Boxe/MMA', icon: '🥊' },
-    { id: 'pallavolo', label: 'Pallavolo', icon: '🏐' },
-    { id: 'rugby', label: 'Rugby', icon: '🏉' },
-    { id: 'sci', label: 'Sci/Snowboard', icon: '⛷️' },
-    { id: 'arrampicata', label: 'Arrampicata', icon: '🧗' },
-    { id: 'altro', label: 'Altro Sport', icon: '🎯' }
+    { id: 'bodybuilding', label: 'Bodybuilding', icon: '💪' },
+    { id: 'powerlifting', label: 'Powerlifting', icon: '🏋️' },
+    { id: 'crossfit', label: 'CrossFit', icon: '🔥' },
+    { id: 'hiit', label: 'HIIT', icon: '⚡' },
+    { id: 'calisthenics', label: 'Calisthenics', icon: '🤸' },
+    { id: 'yoga', label: 'Yoga', icon: '🧘' },
+    { id: 'pilates', label: 'Pilates', icon: '🎯' },
+    { id: 'kickboxing', label: 'Kickboxing', icon: '🥊' },
+    { id: 'mma', label: 'MMA', icon: '👊' },
+    { id: 'spinning', label: 'Spinning', icon: '🚴' },
+    { id: 'zumba', label: 'Zumba', icon: '💃' },
+    { id: 'altro', label: '60+ Altri...', icon: '➕' }
   ];
 
   useEffect(() => {
