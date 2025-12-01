@@ -1494,6 +1494,106 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     sessionStorage.setItem(cacheKey, translated);
     return translated;
   };
+  
+  // Traduci il nome dell'esercizio di riscaldamento/defaticamento
+  const translateWarmupCooldown = (name, duration) => {
+    if (!name) return { name, duration };
+    const lang = t('common.lang') || 'it';
+    if (lang === 'it') return { name, duration };
+    
+    const cacheKey = `warmup_${name}_${duration}_${lang}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      const parsed = JSON.parse(cached);
+      return parsed;
+    }
+    
+    // Traduzioni comuni per riscaldamento/defaticamento
+    const nameTranslations = {
+      en: {
+        'Corsa Leggera': 'Light Jogging',
+        'Corsa sul posto': 'Jogging in Place',
+        'Stretching Dinamico': 'Dynamic Stretching',
+        'Stretching statico': 'Static Stretching',
+        'Stretching': 'Stretching',
+        'Mobilità articolare': 'Joint Mobility',
+        'Jumping Jacks': 'Jumping Jacks',
+        'Camminata veloce': 'Brisk Walking',
+        'Riscaldamento cardio': 'Cardio Warmup',
+        'Defaticamento': 'Cool Down'
+      },
+      es: {
+        'Corsa Leggera': 'Trote Ligero',
+        'Corsa sul posto': 'Trote en el Lugar',
+        'Stretching Dinamico': 'Estiramiento Dinámico',
+        'Stretching statico': 'Estiramiento Estático',
+        'Stretching': 'Estiramiento',
+        'Mobilità articolare': 'Movilidad Articular',
+        'Jumping Jacks': 'Saltos de Tijera',
+        'Camminata veloce': 'Caminata Rápida',
+        'Riscaldamento cardio': 'Calentamiento Cardio',
+        'Defaticamento': 'Enfriamiento'
+      },
+      pt: {
+        'Corsa Leggera': 'Corrida Leve',
+        'Corsa sul posto': 'Corrida no Lugar',
+        'Stretching Dinamico': 'Alongamento Dinâmico',
+        'Stretching statico': 'Alongamento Estático',
+        'Stretching': 'Alongamento',
+        'Mobilità articolare': 'Mobilidade Articular',
+        'Jumping Jacks': 'Polichinelos',
+        'Camminata veloce': 'Caminhada Rápida',
+        'Riscaldamento cardio': 'Aquecimento Cardio',
+        'Defaticamento': 'Resfriamento'
+      },
+      de: {
+        'Corsa Leggera': 'Leichtes Joggen',
+        'Corsa sul posto': 'Joggen auf der Stelle',
+        'Stretching Dinamico': 'Dynamisches Dehnen',
+        'Stretching statico': 'Statisches Dehnen',
+        'Stretching': 'Dehnen',
+        'Mobilità articolare': 'Gelenksmobilität',
+        'Jumping Jacks': 'Hampelmänner',
+        'Camminata veloce': 'Schnelles Gehen',
+        'Riscaldamento cardio': 'Cardio Aufwärmen',
+        'Defaticamento': 'Abkühlen'
+      },
+      fr: {
+        'Corsa Leggera': 'Jogging Léger',
+        'Corsa sul posto': 'Course sur Place',
+        'Stretching Dinamico': 'Étirement Dynamique',
+        'Stretching statico': 'Étirement Statique',
+        'Stretching': 'Étirement',
+        'Mobilità articolare': 'Mobilité Articulaire',
+        'Jumping Jacks': 'Sauts Étoile',
+        'Camminata veloce': 'Marche Rapide',
+        'Riscaldamento cardio': 'Échauffement Cardio',
+        'Defaticamento': 'Récupération'
+      }
+    };
+    
+    // Traduzioni durata
+    const durationTranslations = {
+      en: { 'minuti': 'minutes', 'minuto': 'minute', 'secondi': 'seconds' },
+      es: { 'minuti': 'minutos', 'minuto': 'minuto', 'secondi': 'segundos' },
+      pt: { 'minuti': 'minutos', 'minuto': 'minuto', 'secondi': 'segundos' },
+      de: { 'minuti': 'Minuten', 'minuto': 'Minute', 'secondi': 'Sekunden' },
+      fr: { 'minuti': 'minutes', 'minuto': 'minute', 'secondi': 'secondes' }
+    };
+    
+    let translatedName = nameTranslations[lang]?.[name] || name;
+    let translatedDuration = duration || '';
+    
+    if (duration && durationTranslations[lang]) {
+      Object.entries(durationTranslations[lang]).forEach(([it, translated]) => {
+        translatedDuration = translatedDuration.replace(new RegExp(it, 'gi'), translated);
+      });
+    }
+    
+    const result = { name: translatedName, duration: translatedDuration };
+    sessionStorage.setItem(cacheKey, JSON.stringify(result));
+    return result;
+  };
 
 
   if (isGenerating) {
@@ -2052,12 +2152,15 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                             <div>
                               <h5 className="font-semibold text-gray-800 mb-2">{t('workouts.warmup')}</h5>
                               <div className="grid gap-2">
-                                {workoutForSelectedDay.warm_up.map((ex, idx) => (
-                                  <div key={idx} className="bg-blue-50/50 border border-blue-200/60 rounded-lg p-3 text-sm">
-                                    <span className="font-medium text-blue-900">{ex.name}</span>{" "}
-                                    <span className="text-blue-700">({ex.duration})</span>
-                                  </div>
-                                ))}
+                                {workoutForSelectedDay.warm_up.map((ex, idx) => {
+                                  const translated = translateWarmupCooldown(ex.name, ex.duration);
+                                  return (
+                                    <div key={idx} className="bg-blue-50/50 border border-blue-200/60 rounded-lg p-3 text-sm">
+                                      <span className="font-medium text-blue-900">{translated.name}</span>{" "}
+                                      <span className="text-blue-700">({translated.duration})</span>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           )}
@@ -2118,12 +2221,15 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                             <div>
                               <h5 className="font-semibold text-gray-800 mb-2">{t('workouts.cooldown')}</h5>
                               <div className="grid gap-2">
-                                {workoutForSelectedDay.cool_down.map((ex, idx) => (
-                                  <div key={idx} className="bg-purple-50/50 border border-purple-200/60 rounded-lg p-3 text-sm">
-                                    <span className="font-medium text-purple-900">{ex.name}</span>{" "}
-                                    <span className="text-purple-700">({ex.duration})</span>
-                                  </div>
-                                ))}
+                                {workoutForSelectedDay.cool_down.map((ex, idx) => {
+                                  const translated = translateWarmupCooldown(ex.name, ex.duration);
+                                  return (
+                                    <div key={idx} className="bg-purple-50/50 border border-purple-200/60 rounded-lg p-3 text-sm">
+                                      <span className="font-medium text-purple-900">{translated.name}</span>{" "}
+                                      <span className="text-purple-700">({translated.duration})</span>
+                                    </div>
+                                  );
+                                })}
                               </div>
                             </div>
                           )}
