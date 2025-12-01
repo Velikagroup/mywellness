@@ -30,10 +30,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const lineData = useMemo(() => {
     if (!weightHistory || weightHistory.length === 0) return [];
     
+    // weightHistory arriva già ordinato per data decrescente, quindi lo invertiamo per il grafico
     const reversedHistory = [...weightHistory].reverse(); 
 
     const entriesByDay = reversedHistory.reduce((acc, entry) => {
-        const dayKey = new Date(entry.created_date).toISOString().substring(0, 10);
+        // Usa il campo 'date' (la data del peso) invece di 'created_date'
+        const dayKey = entry.date || new Date(entry.created_date).toISOString().substring(0, 10);
         if (!acc[dayKey]) {
             acc[dayKey] = [];
         }
@@ -42,12 +44,15 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     }, {});
 
     return reversedHistory.map(entry => {
-        const dayKey = new Date(entry.created_date).toISOString().substring(0, 10);
+        const dayKey = entry.date || new Date(entry.created_date).toISOString().substring(0, 10);
         const entriesForDay = entriesByDay[dayKey];
         
+        // Usa entry.date per il parsing della data
+        const dateToFormat = entry.date ? new Date(entry.date + 'T12:00:00') : new Date(entry.created_date);
+        
         const label = entriesForDay.length > 1 
-            ? format(new Date(entry.created_date), 'dd MMM HH:mm') 
-            : format(new Date(entry.created_date), 'dd MMM'); 
+            ? format(dateToFormat, 'dd MMM HH:mm') 
+            : format(dateToFormat, 'dd MMM'); 
         
         return {
             name: label,
