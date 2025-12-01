@@ -916,6 +916,19 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
           {/* NOTIFICATIONS */}
           <TabsContent value="notifications" className="space-y-6">
+            {/* Language Settings */}
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Globe className="w-5 h-5" />
+                  {t('settings.language')}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <LanguageSelector variant="settings" showLabel={false} />
+              </CardContent>
+            </Card>
+
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>Preferenze Email</CardTitle>
