@@ -113,7 +113,7 @@ export default function ExerciseCard({
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <CardTitle className="text-base font-bold text-gray-900 mb-1">
-                  {isTranslating ? `${exercise.name}...` : exerciseName}
+                  {exerciseName}
                 </CardTitle>
                 <div className="flex flex-wrap items-center gap-2 text-xs mb-3">
                   <span className="bg-[#26847F] text-white px-2 py-1 rounded font-semibold">
