@@ -430,7 +430,9 @@ export const translations = {
       deleteExerciseDesc: "Sei sicuro di voler eliminare questo esercizio dal tuo piano di allenamento?",
       deleteWarning: "Questa azione non può essere annullata. Puoi sempre aggiungere un nuovo esercizio in seguito.",
       deleting: "Eliminazione...",
-      enterExerciseName: "Inserisci il nome dell'esercizio"
+      enterExerciseName: "Inserisci il nome dell'esercizio",
+      // Modify session button
+      modifySession: "Modifica Sessione"
     }
   },
   en: {
@@ -864,7 +866,9 @@ export const translations = {
       deleteExerciseDesc: "Are you sure you want to delete this exercise from your workout plan?",
       deleteWarning: "This action cannot be undone. You can always add a new exercise later.",
       deleting: "Deleting...",
-      enterExerciseName: "Enter exercise name"
+      enterExerciseName: "Enter exercise name",
+      // Modify session button
+      modifySession: "Modify Session"
     }
   },
   es: {
@@ -1294,7 +1298,9 @@ export const translations = {
       deleteExerciseDesc: "¿Estás seguro de querer eliminar este ejercicio de tu plan de entrenamiento?",
       deleteWarning: "Esta acción no se puede deshacer. Siempre puedes agregar un nuevo ejercicio más tarde.",
       deleting: "Eliminando...",
-      enterExerciseName: "Ingresa el nombre del ejercicio"
+      enterExerciseName: "Ingresa el nombre del ejercicio",
+      // Modify session button
+      modifySession: "Modificar Sesión"
     }
   },
   pt: {
@@ -1724,7 +1730,9 @@ export const translations = {
       deleteExerciseDesc: "Tem certeza de que deseja excluir este exercício do seu plano de treino?",
       deleteWarning: "Esta ação não pode ser desfeita. Você sempre pode adicionar um novo exercício mais tarde.",
       deleting: "Excluindo...",
-      enterExerciseName: "Digite o nome do exercício"
+      enterExerciseName: "Digite o nome do exercício",
+      // Modify session button
+      modifySession: "Modificar Sessão"
     }
   },
   de: {
@@ -2154,7 +2162,9 @@ export const translations = {
       deleteExerciseDesc: "Sind Sie sicher, dass Sie diese Übung aus Ihrem Trainingsplan löschen möchten?",
       deleteWarning: "Diese Aktion kann nicht rückgängig gemacht werden. Sie können später jederzeit eine neue Übung hinzufügen.",
       deleting: "Löschen...",
-      enterExerciseName: "Übungsnamen eingeben"
+      enterExerciseName: "Übungsnamen eingeben",
+      // Modify session button
+      modifySession: "Sitzung Ändern"
     }
   },
   fr: {
@@ -2584,7 +2594,9 @@ export const translations = {
       deleteExerciseDesc: "Êtes-vous sûr de vouloir supprimer cet exercice de votre plan d'entraînement?",
       deleteWarning: "Cette action ne peut pas être annulée. Vous pouvez toujours ajouter un nouvel exercice plus tard.",
       deleting: "Suppression...",
-      enterExerciseName: "Entrez le nom de l'exercice"
+      enterExerciseName: "Entrez le nom de l'exercice",
+      // Modify session button
+      modifySession: "Modifier la Séance"
     }
   }
 };

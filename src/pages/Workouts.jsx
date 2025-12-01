@@ -1486,11 +1486,108 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
         'Resistenza': 'Endurance',
         'Forza': 'Force',
         'Potenza': 'Puissance',
-        'Mobilità': 'Mobilité'
+        'Mobilità': 'Mobilité',
+        'Giorno della Resistenza': 'Jour de l\'Endurance'
       }
     };
     
-    const translated = translations[lang]?.[planName] || planName;
+    // Aggiungi traduzioni per nomi workout comuni
+    const additionalTranslations = {
+      en: {
+        'Giorno della Resistenza': 'Endurance Day',
+        'Giorno della Forza': 'Strength Day',
+        'Giorno della Potenza': 'Power Day',
+        'Giorno del Cardio': 'Cardio Day',
+        'Giorno della Mobilità': 'Mobility Day',
+        'Giorno delle Gambe': 'Leg Day',
+        'Giorno del Petto': 'Chest Day',
+        'Giorno della Schiena': 'Back Day',
+        'Giorno delle Spalle': 'Shoulder Day',
+        'Giorno delle Braccia': 'Arm Day',
+        'Full Body': 'Full Body',
+        'Upper Body': 'Upper Body',
+        'Lower Body': 'Lower Body',
+        'Push Day': 'Push Day',
+        'Pull Day': 'Pull Day'
+      },
+      es: {
+        'Giorno della Resistenza': 'Día de Resistencia',
+        'Giorno della Forza': 'Día de Fuerza',
+        'Giorno della Potenza': 'Día de Potencia',
+        'Giorno del Cardio': 'Día de Cardio',
+        'Giorno della Mobilità': 'Día de Movilidad',
+        'Giorno delle Gambe': 'Día de Piernas',
+        'Giorno del Petto': 'Día de Pecho',
+        'Giorno della Schiena': 'Día de Espalda',
+        'Giorno delle Spalle': 'Día de Hombros',
+        'Giorno delle Braccia': 'Día de Brazos',
+        'Full Body': 'Cuerpo Completo',
+        'Upper Body': 'Tren Superior',
+        'Lower Body': 'Tren Inferior',
+        'Push Day': 'Día de Empuje',
+        'Pull Day': 'Día de Tirón'
+      },
+      pt: {
+        'Giorno della Resistenza': 'Dia de Resistência',
+        'Giorno della Forza': 'Dia de Força',
+        'Giorno della Potenza': 'Dia de Potência',
+        'Giorno del Cardio': 'Dia de Cardio',
+        'Giorno della Mobilità': 'Dia de Mobilidade',
+        'Giorno delle Gambe': 'Dia de Pernas',
+        'Giorno del Petto': 'Dia de Peito',
+        'Giorno della Schiena': 'Dia de Costas',
+        'Giorno delle Spalle': 'Dia de Ombros',
+        'Giorno delle Braccia': 'Dia de Braços',
+        'Full Body': 'Corpo Inteiro',
+        'Upper Body': 'Superior',
+        'Lower Body': 'Inferior',
+        'Push Day': 'Dia de Empurrar',
+        'Pull Day': 'Dia de Puxar'
+      },
+      de: {
+        'Giorno della Resistenza': 'Ausdauertag',
+        'Giorno della Forza': 'Krafttag',
+        'Giorno della Potenza': 'Powertag',
+        'Giorno del Cardio': 'Kardiotag',
+        'Giorno della Mobilità': 'Mobilitätstag',
+        'Giorno delle Gambe': 'Beintag',
+        'Giorno del Petto': 'Brusttag',
+        'Giorno della Schiena': 'Rückentag',
+        'Giorno delle Spalle': 'Schultertag',
+        'Giorno delle Braccia': 'Armtag',
+        'Full Body': 'Ganzkörper',
+        'Upper Body': 'Oberkörper',
+        'Lower Body': 'Unterkörper',
+        'Push Day': 'Drücktag',
+        'Pull Day': 'Zugtag'
+      },
+      fr: {
+        'Giorno della Resistenza': 'Jour d\'Endurance',
+        'Giorno della Forza': 'Jour de Force',
+        'Giorno della Potenza': 'Jour de Puissance',
+        'Giorno del Cardio': 'Jour Cardio',
+        'Giorno della Mobilità': 'Jour de Mobilité',
+        'Giorno delle Gambe': 'Jour des Jambes',
+        'Giorno del Petto': 'Jour Pectoraux',
+        'Giorno della Schiena': 'Jour Dos',
+        'Giorno delle Spalle': 'Jour Épaules',
+        'Giorno delle Braccia': 'Jour Bras',
+        'Full Body': 'Corps Entier',
+        'Upper Body': 'Haut du Corps',
+        'Lower Body': 'Bas du Corps',
+        'Push Day': 'Jour Poussée',
+        'Pull Day': 'Jour Tirage'
+      }
+    };
+    
+    // Cerca prima nelle traduzioni specifiche, poi nelle addizionali
+    let translated = translations[lang]?.[planName];
+    if (!translated) {
+      translated = additionalTranslations[lang]?.[planName];
+    }
+    if (!translated) {
+      translated = planName;
+    }
     sessionStorage.setItem(cacheKey, translated);
     return translated;
   };
@@ -1515,60 +1612,76 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
         'Corsa sul posto': 'Jogging in Place',
         'Stretching Dinamico': 'Dynamic Stretching',
         'Stretching statico': 'Static Stretching',
+        'Stretching Veloce': 'Quick Stretching',
         'Stretching': 'Stretching',
+        'Rilassamento Finale': 'Final Relaxation',
         'Mobilità articolare': 'Joint Mobility',
         'Jumping Jacks': 'Jumping Jacks',
         'Camminata veloce': 'Brisk Walking',
         'Riscaldamento cardio': 'Cardio Warmup',
-        'Defaticamento': 'Cool Down'
+        'Defaticamento': 'Cool Down',
+        'Trote Ligero': 'Light Jogging',
+        'Rilassamento muscolare': 'Muscle Relaxation'
       },
       es: {
         'Corsa Leggera': 'Trote Ligero',
         'Corsa sul posto': 'Trote en el Lugar',
         'Stretching Dinamico': 'Estiramiento Dinámico',
         'Stretching statico': 'Estiramiento Estático',
+        'Stretching Veloce': 'Estiramiento Rápido',
         'Stretching': 'Estiramiento',
+        'Rilassamento Finale': 'Relajación Final',
         'Mobilità articolare': 'Movilidad Articular',
         'Jumping Jacks': 'Saltos de Tijera',
         'Camminata veloce': 'Caminata Rápida',
         'Riscaldamento cardio': 'Calentamiento Cardio',
-        'Defaticamento': 'Enfriamiento'
+        'Defaticamento': 'Enfriamiento',
+        'Rilassamento muscolare': 'Relajación Muscular'
       },
       pt: {
         'Corsa Leggera': 'Corrida Leve',
         'Corsa sul posto': 'Corrida no Lugar',
         'Stretching Dinamico': 'Alongamento Dinâmico',
         'Stretching statico': 'Alongamento Estático',
+        'Stretching Veloce': 'Alongamento Rápido',
         'Stretching': 'Alongamento',
+        'Rilassamento Finale': 'Relaxamento Final',
         'Mobilità articolare': 'Mobilidade Articular',
         'Jumping Jacks': 'Polichinelos',
         'Camminata veloce': 'Caminhada Rápida',
         'Riscaldamento cardio': 'Aquecimento Cardio',
-        'Defaticamento': 'Resfriamento'
+        'Defaticamento': 'Resfriamento',
+        'Rilassamento muscolare': 'Relaxamento Muscular'
       },
       de: {
         'Corsa Leggera': 'Leichtes Joggen',
         'Corsa sul posto': 'Joggen auf der Stelle',
         'Stretching Dinamico': 'Dynamisches Dehnen',
         'Stretching statico': 'Statisches Dehnen',
+        'Stretching Veloce': 'Schnelles Dehnen',
         'Stretching': 'Dehnen',
+        'Rilassamento Finale': 'Abschlussentspannung',
         'Mobilità articolare': 'Gelenksmobilität',
         'Jumping Jacks': 'Hampelmänner',
         'Camminata veloce': 'Schnelles Gehen',
         'Riscaldamento cardio': 'Cardio Aufwärmen',
-        'Defaticamento': 'Abkühlen'
+        'Defaticamento': 'Abkühlen',
+        'Rilassamento muscolare': 'Muskelentspannung'
       },
       fr: {
         'Corsa Leggera': 'Jogging Léger',
         'Corsa sul posto': 'Course sur Place',
         'Stretching Dinamico': 'Étirement Dynamique',
         'Stretching statico': 'Étirement Statique',
+        'Stretching Veloce': 'Étirement Rapide',
         'Stretching': 'Étirement',
+        'Rilassamento Finale': 'Relaxation Finale',
         'Mobilità articolare': 'Mobilité Articulaire',
         'Jumping Jacks': 'Sauts Étoile',
         'Camminata veloce': 'Marche Rapide',
         'Riscaldamento cardio': 'Échauffement Cardio',
-        'Defaticamento': 'Récupération'
+        'Defaticamento': 'Récupération',
+        'Rilassamento muscolare': 'Relaxation Musculaire'
       }
     };
     
