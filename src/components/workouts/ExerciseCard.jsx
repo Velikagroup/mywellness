@@ -139,12 +139,204 @@ Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON
   
   const intensityTips = displayExercise.intensity_tips || getIntensityTipsStable();
   
-  // Fix: se il nome è "response" o simile, usa il nome originale
-  const exerciseName = (displayExercise.name && 
-    displayExercise.name.toLowerCase() !== 'response' && 
-    !displayExercise.name.toLowerCase().includes('object')) 
-    ? displayExercise.name 
-    : exercise.name;
+  // Traduzioni statiche immediate per nomi esercizi comuni
+  const staticExerciseTranslations = {
+    en: {
+      'Squat con Bilanciere': 'Barbell Squat',
+      'Squat con Manubri': 'Dumbbell Squat',
+      'Squat': 'Squat',
+      'Panca Piana': 'Bench Press',
+      'Panca Piana con Bilanciere': 'Barbell Bench Press',
+      'Panca Piana con Manubri': 'Dumbbell Bench Press',
+      'Panca Inclinata': 'Incline Bench Press',
+      'Stacco da Terra': 'Deadlift',
+      'Stacco Rumeno': 'Romanian Deadlift',
+      'Affondi': 'Lunges',
+      'Affondi con Manubri': 'Dumbbell Lunges',
+      'Affondi Camminati con Manubri': 'Walking Dumbbell Lunges',
+      'Flessioni': 'Push-ups',
+      'Trazioni': 'Pull-ups',
+      'Plank': 'Plank',
+      'Crunch': 'Crunch',
+      'Curl Bicipiti': 'Bicep Curls',
+      'Curl con Manubri': 'Dumbbell Curls',
+      'Tricipiti ai Cavi': 'Cable Triceps',
+      'Shoulder Press': 'Shoulder Press',
+      'Military Press': 'Military Press',
+      'Rematore': 'Row',
+      'Rematore con Bilanciere': 'Barbell Row',
+      'Rematore con Manubrio': 'Dumbbell Row',
+      'Lat Machine': 'Lat Pulldown',
+      'Leg Press': 'Leg Press',
+      'Leg Curl': 'Leg Curl',
+      'Leg Extension': 'Leg Extension',
+      'Calf Raise': 'Calf Raise',
+      'Dip': 'Dips',
+      'Hip Thrust': 'Hip Thrust',
+      'Bulgarian Split Squat': 'Bulgarian Split Squat',
+      'Plank Laterale': 'Side Plank',
+      'Mountain Climbers': 'Mountain Climbers',
+      'Burpees': 'Burpees',
+      'Jumping Jacks': 'Jumping Jacks',
+      'Box Jump': 'Box Jump',
+      'Kettlebell Swing': 'Kettlebell Swing',
+      'Face Pull': 'Face Pull',
+      'Alzate Laterali': 'Lateral Raises',
+      'Alzate Frontali': 'Front Raises',
+      'French Press': 'Skull Crushers',
+      'Pressa per Petto': 'Chest Press',
+      'Chest Fly': 'Chest Fly',
+      'Croci ai Cavi': 'Cable Crossover',
+      'Addominali': 'Abs',
+      'Sit-up': 'Sit-ups',
+      'Russian Twist': 'Russian Twist',
+      'Hollow Hold': 'Hollow Hold',
+      'Superman': 'Superman',
+      'Good Morning': 'Good Morning',
+      'Sumo Squat': 'Sumo Squat',
+      'Goblet Squat': 'Goblet Squat',
+      'Front Squat': 'Front Squat',
+      'Overhead Press': 'Overhead Press',
+      'Arnold Press': 'Arnold Press',
+      'Pull-over': 'Pullover',
+      'Hammer Curl': 'Hammer Curl',
+      'Preacher Curl': 'Preacher Curl',
+      'Concentration Curl': 'Concentration Curl',
+      'Tricep Kickback': 'Tricep Kickback',
+      'Close Grip Bench Press': 'Close Grip Bench Press',
+      'Diamond Push-ups': 'Diamond Push-ups',
+      'Incline Dumbbell Fly': 'Incline Dumbbell Fly',
+      'Decline Bench Press': 'Decline Bench Press',
+      'T-Bar Row': 'T-Bar Row',
+      'Seated Row': 'Seated Row',
+      'Cable Row': 'Cable Row',
+      'Shrug': 'Shrugs',
+      'Upright Row': 'Upright Row',
+      'Reverse Fly': 'Reverse Fly',
+      'Rear Delt Fly': 'Rear Delt Fly',
+      'Planke': 'Plank',
+      'Kniebeugen mit Langhantel': 'Barbell Squat',
+      'Affeuernde Wanderungen mit Kurzhanteln': 'Walking Lunges with Dumbbells'
+    },
+    es: {
+      'Squat con Bilanciere': 'Sentadilla con Barra',
+      'Squat con Manubri': 'Sentadilla con Mancuernas',
+      'Squat': 'Sentadilla',
+      'Panca Piana': 'Press de Banca',
+      'Panca Piana con Bilanciere': 'Press de Banca con Barra',
+      'Panca Piana con Manubri': 'Press de Banca con Mancuernas',
+      'Stacco da Terra': 'Peso Muerto',
+      'Affondi': 'Zancadas',
+      'Affondi con Manubri': 'Zancadas con Mancuernas',
+      'Affondi Camminati con Manubri': 'Zancadas Caminando con Mancuernas',
+      'Flessioni': 'Flexiones',
+      'Trazioni': 'Dominadas',
+      'Plank': 'Plancha',
+      'Crunch': 'Crunch',
+      'Curl Bicipiti': 'Curl de Bíceps',
+      'Rematore': 'Remo',
+      'Leg Press': 'Prensa de Piernas',
+      'Hip Thrust': 'Empuje de Cadera',
+      'Alzate Laterali': 'Elevaciones Laterales',
+      'Planke': 'Plancha'
+    },
+    pt: {
+      'Squat con Bilanciere': 'Agachamento com Barra',
+      'Squat con Manubri': 'Agachamento com Halteres',
+      'Squat': 'Agachamento',
+      'Panca Piana': 'Supino',
+      'Panca Piana con Bilanciere': 'Supino com Barra',
+      'Stacco da Terra': 'Levantamento Terra',
+      'Affondi': 'Avanço',
+      'Affondi con Manubri': 'Avanço com Halteres',
+      'Affondi Camminati con Manubri': 'Avanço Caminhando com Halteres',
+      'Flessioni': 'Flexões',
+      'Trazioni': 'Barra Fixa',
+      'Plank': 'Prancha',
+      'Crunch': 'Abdominal',
+      'Curl Bicipiti': 'Rosca Bíceps',
+      'Rematore': 'Remada',
+      'Leg Press': 'Leg Press',
+      'Hip Thrust': 'Elevação de Quadril',
+      'Alzate Laterali': 'Elevação Lateral',
+      'Planke': 'Prancha'
+    },
+    de: {
+      'Squat con Bilanciere': 'Kniebeugen mit Langhantel',
+      'Squat con Manubri': 'Kniebeugen mit Kurzhanteln',
+      'Squat': 'Kniebeugen',
+      'Panca Piana': 'Bankdrücken',
+      'Panca Piana con Bilanciere': 'Bankdrücken mit Langhantel',
+      'Stacco da Terra': 'Kreuzheben',
+      'Affondi': 'Ausfallschritte',
+      'Affondi con Manubri': 'Ausfallschritte mit Kurzhanteln',
+      'Affondi Camminati con Manubri': 'Gehende Ausfallschritte mit Kurzhanteln',
+      'Flessioni': 'Liegestütze',
+      'Trazioni': 'Klimmzüge',
+      'Plank': 'Unterarmstütz',
+      'Planke': 'Unterarmstütz',
+      'Crunch': 'Bauchpressen',
+      'Curl Bicipiti': 'Bizeps-Curls',
+      'Rematore': 'Rudern',
+      'Leg Press': 'Beinpresse',
+      'Hip Thrust': 'Hüftheben',
+      'Alzate Laterali': 'Seitheben'
+    },
+    fr: {
+      'Squat con Bilanciere': 'Squat avec Barre',
+      'Squat con Manubri': 'Squat avec Haltères',
+      'Squat': 'Squat',
+      'Panca Piana': 'Développé Couché',
+      'Panca Piana con Bilanciere': 'Développé Couché avec Barre',
+      'Stacco da Terra': 'Soulevé de Terre',
+      'Affondi': 'Fentes',
+      'Affondi con Manubri': 'Fentes avec Haltères',
+      'Affondi Camminati con Manubri': 'Fentes Marchées avec Haltères',
+      'Flessioni': 'Pompes',
+      'Trazioni': 'Tractions',
+      'Plank': 'Gainage',
+      'Planke': 'Gainage',
+      'Crunch': 'Crunch',
+      'Curl Bicipiti': 'Curl Biceps',
+      'Rematore': 'Rowing',
+      'Leg Press': 'Presse à Cuisses',
+      'Hip Thrust': 'Hip Thrust',
+      'Alzate Laterali': 'Élévations Latérales'
+    }
+  };
+  
+  // Ottieni traduzione statica immediata se disponibile
+  const getStaticExerciseName = () => {
+    if (language === 'it') return exercise.name;
+    
+    const originalName = exercise.name;
+    const langTranslations = staticExerciseTranslations[language] || {};
+    
+    // Match esatto
+    if (langTranslations[originalName]) {
+      return langTranslations[originalName];
+    }
+    
+    // Match parziale per esercizi con variazioni
+    for (const [itName, translatedName] of Object.entries(langTranslations)) {
+      if (originalName?.toLowerCase().includes(itName.toLowerCase()) || 
+          itName.toLowerCase().includes(originalName?.toLowerCase())) {
+        return translatedName;
+      }
+    }
+    
+    // Se c'è traduzione AI, usala
+    if (translatedExercise?.name && 
+        translatedExercise.name.toLowerCase() !== 'response' && 
+        !translatedExercise.name.toLowerCase().includes('object')) {
+      return translatedExercise.name;
+    }
+    
+    // Altrimenti nome originale
+    return exercise.name;
+  };
+  
+  const exerciseName = getStaticExerciseName();
   
   const toggleSet = (setNumber) => {
     const newCompleted = completedSets.includes(setNumber)
