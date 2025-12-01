@@ -4,6 +4,7 @@ import { createPageUrl } from "@/utils";
 import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
+import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
 
 export default function Layout({ children }) {
   const location = useLocation();
