@@ -29,15 +29,18 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
   const lineData = useMemo(() => {
     console.log('📈 lineData calculation - weightHistory:', weightHistory?.length, 'entries');
-    console.log('📈 First entry structure:', JSON.stringify(weightHistory?.[0]));
     
-    if (!weightHistory || weightHistory.length === 0) return [];
+    if (!weightHistory || weightHistory.length === 0) {
+      console.log('📈 No weight history data');
+      return [];
+    }
+    
+    console.log('📈 First entry:', JSON.stringify(weightHistory[0]));
     
     // weightHistory arriva già ordinato per data decrescente, quindi lo invertiamo per il grafico
     const reversedHistory = [...weightHistory].reverse(); 
 
     const entriesByDay = reversedHistory.reduce((acc, entry) => {
-        // Usa il campo 'date' (la data del peso) invece di 'created_date'
         const dayKey = entry.date || new Date(entry.created_date).toISOString().substring(0, 10);
         if (!acc[dayKey]) {
             acc[dayKey] = [];
@@ -46,11 +49,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         return acc;
     }, {});
 
-    return reversedHistory.map(entry => {
+    const result = reversedHistory.map(entry => {
         const dayKey = entry.date || new Date(entry.created_date).toISOString().substring(0, 10);
         const entriesForDay = entriesByDay[dayKey];
         
-        // Usa entry.date per il parsing della data
         const dateToFormat = entry.date ? new Date(entry.date + 'T12:00:00') : new Date(entry.created_date);
         
         const label = entriesForDay.length > 1 
@@ -62,6 +64,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             weight: entry.weight
         };
     });
+    
+    console.log('📈 lineData result:', result);
+    return result;
   }, [weightHistory]);
 
   const handleSaveWeight = async () => {
