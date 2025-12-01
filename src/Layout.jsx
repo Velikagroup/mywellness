@@ -81,7 +81,24 @@ function LayoutContent({ children }) {
     createPageUrl('Privacy'),
     createPageUrl('ApplePayVerification'),
     createPageUrl('NotFound'),
-    '/'
+    '/',
+    // Add localized versions
+    ...['it', 'en', 'es', 'pt', 'de', 'fr'].flatMap(lang => [
+      `/${lang}`,
+      `/${lang}/quiz`,
+      `/${lang}/landing`,
+      `/${lang}/pricing`,
+      `/${lang}/trial-setup`,
+      `/${lang}/checkout`,
+      `/${lang}/landing-checkout`,
+      `/${lang}/thank-you`,
+      `/${lang}/reset-password`,
+      `/${lang}/blog`,
+      `/${lang}/one-time-offer`,
+      `/${lang}/terms`,
+      `/${lang}/privacy`,
+      `/${lang}/404`
+    ])
   ];
 
   // Se è una pagina senza layout, renderizza solo children
