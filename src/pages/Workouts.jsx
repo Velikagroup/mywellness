@@ -927,12 +927,40 @@ ${selectedDays.length > 0 ? `
         // Trova un template workout esistente
         const templateWorkout = response.workout_plans.find(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
 
-        // Se non c'è nessun template, creiamo un workout base
-        const defaultExercises = [
-          { name: "Flessioni", sets: 3, reps: "10-15 ripetizioni", rest: "60 secondi", description: "Esercizio per petto e tricipiti" },
-          { name: "Squat a Corpo Libero", sets: 3, reps: "15 ripetizioni", rest: "60 secondi", description: "Esercizio per gambe e glutei" },
-          { name: "Plank", sets: 3, reps: "30 secondi", rest: "45 secondi", description: "Esercizio per core" }
-        ];
+        // Se non c'è nessun template, creiamo un workout base nella lingua corretta
+        const defaultExercisesTranslations = {
+          it: [
+            { name: "Flessioni", sets: 3, reps: "10-15 ripetizioni", rest: "60 secondi", description: "Esercizio per petto e tricipiti" },
+            { name: "Squat a Corpo Libero", sets: 3, reps: "15 ripetizioni", rest: "60 secondi", description: "Esercizio per gambe e glutei" },
+            { name: "Plank", sets: 3, reps: "30 secondi", rest: "45 secondi", description: "Esercizio per core" }
+          ],
+          en: [
+            { name: "Push-ups", sets: 3, reps: "10-15 reps", rest: "60 seconds", description: "Exercise for chest and triceps" },
+            { name: "Bodyweight Squat", sets: 3, reps: "15 reps", rest: "60 seconds", description: "Exercise for legs and glutes" },
+            { name: "Plank", sets: 3, reps: "30 seconds", rest: "45 seconds", description: "Core exercise" }
+          ],
+          es: [
+            { name: "Flexiones", sets: 3, reps: "10-15 repeticiones", rest: "60 segundos", description: "Ejercicio para pecho y tríceps" },
+            { name: "Sentadilla", sets: 3, reps: "15 repeticiones", rest: "60 segundos", description: "Ejercicio para piernas y glúteos" },
+            { name: "Plancha", sets: 3, reps: "30 segundos", rest: "45 segundos", description: "Ejercicio para core" }
+          ],
+          pt: [
+            { name: "Flexões", sets: 3, reps: "10-15 repetições", rest: "60 segundos", description: "Exercício para peito e tríceps" },
+            { name: "Agachamento", sets: 3, reps: "15 repetições", rest: "60 segundos", description: "Exercício para pernas e glúteos" },
+            { name: "Prancha", sets: 3, reps: "30 segundos", rest: "45 segundos", description: "Exercício para core" }
+          ],
+          de: [
+            { name: "Liegestütze", sets: 3, reps: "10-15 Wiederholungen", rest: "60 Sekunden", description: "Übung für Brust und Trizeps" },
+            { name: "Kniebeugen", sets: 3, reps: "15 Wiederholungen", rest: "60 Sekunden", description: "Übung für Beine und Gesäß" },
+            { name: "Unterarmstütz", sets: 3, reps: "30 Sekunden", rest: "45 Sekunden", description: "Core-Übung" }
+          ],
+          fr: [
+            { name: "Pompes", sets: 3, reps: "10-15 répétitions", rest: "60 secondes", description: "Exercice pour pectoraux et triceps" },
+            { name: "Squat", sets: 3, reps: "15 répétitions", rest: "60 secondes", description: "Exercice pour jambes et fessiers" },
+            { name: "Gainage", sets: 3, reps: "30 secondes", rest: "45 secondes", description: "Exercice pour le core" }
+          ]
+        };
+        const defaultExercises = defaultExercisesTranslations[language] || defaultExercisesTranslations.it;
 
         for (const day of missingDays) {
           const isWorkoutDay = selectedDays.includes(day);
