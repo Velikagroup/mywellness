@@ -1,11 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Card } from "@/components/ui/card";
-import { ChevronRight } from "lucide-react";
+import { ChevronRight, Loader2 } from "lucide-react";
 import { useLanguage } from '../i18n/LanguageContext';
+import { base44 } from '@/api/base44Client';
 
 // Configurazione domande per ogni sport
 const SPORT_QUESTIONS = {
@@ -417,11 +418,119 @@ const SPORT_QUESTIONS = {
 };
 
 export default function SportSpecificQuestionsStep({ data, onDataChange, nextStep }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const workoutStyle = data?.workout_style;
   const sportConfig = SPORT_QUESTIONS[workoutStyle];
   
   const [answers, setAnswers] = useState(data?.sport_specific_data || {});
+  const [translatedConfig, setTranslatedConfig] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+
+  // Traduci le domande quando la lingua non è italiana
+  useEffect(() => {
+    if (!sportConfig) return;
+    
+    if (language === 'it') {
+      setTranslatedConfig(sportConfig);
+      return;
+    }
+    
+    // Check cache
+    const cacheKey = `sport_q_${workoutStyle}_${language}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) {
+      try {
+        setTranslatedConfig(JSON.parse(cached));
+        return;
+      } catch (e) {}
+    }
+    
+    const translateQuestions = async () => {
+      setIsTranslating(true);
+      try {
+        const langNames = {
+          'en': 'English', 'es': 'Spanish', 'pt': 'Portuguese', 
+          'de': 'German', 'fr': 'French'
+        };
+        
+        const questionsToTranslate = sportConfig.questions.map(q => ({
+          id: q.id,
+          label: q.label,
+          placeholder: q.placeholder || '',
+          options: q.options || [],
+          fields: q.fields || []
+        }));
+        
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Translate these workout quiz questions from Italian to ${langNames[language] || language}.
+
+Title: ${sportConfig.title}
+
+Questions:
+${JSON.stringify(questionsToTranslate, null, 2)}
+
+Translate ALL labels, options, placeholders and field labels to ${langNames[language] || language}. Keep the same structure. Output ONLY the JSON object.`,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              title: { type: "string" },
+              questions: {
+                type: "array",
+                items: {
+                  type: "object",
+                  properties: {
+                    id: { type: "string" },
+                    label: { type: "string" },
+                    placeholder: { type: "string" },
+                    options: { type: "array", items: { type: "string" } },
+                    fields: { 
+                      type: "array", 
+                      items: { 
+                        type: "object",
+                        properties: {
+                          id: { type: "string" },
+                          label: { type: "string" },
+                          placeholder: { type: "string" }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        });
+        
+        // Merge traduzione con config originale
+        const mergedConfig = {
+          title: response.title || sportConfig.title,
+          questions: sportConfig.questions.map((origQ, idx) => {
+            const transQ = response.questions?.[idx] || {};
+            return {
+              ...origQ,
+              label: transQ.label || origQ.label,
+              placeholder: transQ.placeholder || origQ.placeholder,
+              options: transQ.options?.length > 0 ? transQ.options : origQ.options,
+              fields: origQ.fields?.map((origF, fIdx) => ({
+                ...origF,
+                label: transQ.fields?.[fIdx]?.label || origF.label,
+                placeholder: transQ.fields?.[fIdx]?.placeholder || origF.placeholder
+              }))
+            };
+          })
+        };
+        
+        setTranslatedConfig(mergedConfig);
+        sessionStorage.setItem(cacheKey, JSON.stringify(mergedConfig));
+      } catch (error) {
+        console.error('Translation error:', error);
+        setTranslatedConfig(sportConfig);
+      }
+      setIsTranslating(false);
+    };
+    
+    translateQuestions();
+  }, [language, workoutStyle, sportConfig]);
 
   if (!sportConfig) {
     // Se non ci sono domande specifiche, salta questo step
@@ -430,6 +539,9 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
     }, []);
     return null;
   }
+  
+  // Mostra loading durante traduzione
+  const displayConfig = translatedConfig || sportConfig;
 
   const handleAnswerChange = (questionId, value) => {
     setAnswers(prev => ({ ...prev, [questionId]: value }));
@@ -464,7 +576,8 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
     <div className="space-y-6">
       <div className="text-center mb-6">
         <h3 className="text-2xl font-bold text-gray-900 mb-2">
-          {sportConfig.title}
+          {displayConfig.title}
+          {isTranslating && <Loader2 className="inline w-5 h-5 ml-2 animate-spin text-[#26847F]" />}
         </h3>
         <p className="text-gray-600">
           {t('workouts.sportSpecificSubtitle')}
@@ -472,105 +585,114 @@ export default function SportSpecificQuestionsStep({ data, onDataChange, nextSte
       </div>
 
       <div className="space-y-5 max-h-[55vh] overflow-y-auto pr-2">
-        {sportConfig.questions.map((question) => (
-          <Card key={question.id} className="p-4 bg-white/80">
-            <Label className="text-sm font-semibold text-gray-900 mb-3 block">
-              {question.label}
-            </Label>
-            
-            {question.type === 'number' && (
-              <Input
-                type="number"
-                placeholder={question.placeholder}
-                value={answers[question.id] || ''}
-                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                className="w-full"
-              />
-            )}
-
-            {question.type === 'text' && (
-              <Input
-                type="text"
-                placeholder={question.placeholder}
-                value={answers[question.id] || ''}
-                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                className="w-full"
-              />
-            )}
-
-            {question.type === 'select' && (
-              <select
-                value={answers[question.id] || ''}
-                onChange={(e) => handleAnswerChange(question.id, e.target.value)}
-                className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-[#26847F] focus:outline-none"
-              >
-                <option value="">{t('workouts.selectOption')}</option>
-                {question.options.map((opt) => (
-                  <option key={opt} value={opt}>{opt}</option>
-                ))}
-              </select>
-            )}
-
-            {question.type === 'boolean' && (
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={answers[question.id] || false}
-                  onCheckedChange={(checked) => handleAnswerChange(question.id, checked)}
+        {displayConfig.questions.map((question, qIdx) => {
+          const origQuestion = sportConfig.questions[qIdx];
+          return (
+            <Card key={question.id} className="p-4 bg-white/80">
+              <Label className="text-sm font-semibold text-gray-900 mb-3 block">
+                {question.label}
+              </Label>
+              
+              {origQuestion.type === 'number' && (
+                <Input
+                  type="number"
+                  placeholder={question.placeholder}
+                  value={answers[question.id] || ''}
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  className="w-full"
                 />
-                <span className="text-sm text-gray-700">{t('common.yes')}</span>
-              </div>
-            )}
+              )}
 
-            {question.type === 'multiselect' && (
-              <div className="grid grid-cols-2 gap-2">
-                {question.options.map((opt) => (
-                  <button
-                    key={opt}
-                    onClick={() => handleMultiSelectToggle(question.id, opt)}
-                    className={`px-3 py-2 rounded-lg border-2 text-sm transition-all ${
-                      (answers[question.id] || []).includes(opt)
-                        ? 'border-[#26847F] bg-[#E0F2F1] text-[#26847F] font-medium'
-                        : 'border-gray-200 hover:border-[#26847F]/50 text-gray-700'
-                    }`}
-                  >
-                    {opt}
-                  </button>
-                ))}
-              </div>
-            )}
+              {origQuestion.type === 'text' && (
+                <Input
+                  type="text"
+                  placeholder={question.placeholder}
+                  value={answers[question.id] || ''}
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  className="w-full"
+                />
+              )}
 
-            {question.type === 'object' && (
-              <div className="grid grid-cols-2 gap-3">
-                {question.fields.map((field) => (
-                  <div key={field.id}>
-                    <Label className="text-xs text-gray-600 mb-1 block">{field.label}</Label>
-                    <Input
-                      type="number"
-                      placeholder={field.placeholder}
-                      value={answers[question.id]?.[field.id] || ''}
-                      onChange={(e) => {
-                        const newValue = e.target.value;
-                        setAnswers(prev => ({
-                          ...prev,
-                          [question.id]: {
-                            ...(prev[question.id] || {}),
-                            [field.id]: newValue
-                          }
-                        }));
-                      }}
-                      className="w-full"
-                    />
-                  </div>
-                ))}
-              </div>
-            )}
-          </Card>
-        ))}
+              {origQuestion.type === 'select' && (
+                <select
+                  value={answers[question.id] || ''}
+                  onChange={(e) => handleAnswerChange(question.id, e.target.value)}
+                  className="w-full px-3 py-2 border-2 border-gray-200 rounded-lg focus:border-[#26847F] focus:outline-none"
+                >
+                  <option value="">{t('workouts.selectOption')}</option>
+                  {(question.options || origQuestion.options || []).map((opt, optIdx) => (
+                    <option key={optIdx} value={origQuestion.options?.[optIdx] || opt}>{opt}</option>
+                  ))}
+                </select>
+              )}
+
+              {origQuestion.type === 'boolean' && (
+                <div className="flex items-center gap-2">
+                  <Checkbox
+                    checked={answers[question.id] || false}
+                    onCheckedChange={(checked) => handleAnswerChange(question.id, checked)}
+                  />
+                  <span className="text-sm text-gray-700">{t('common.yes')}</span>
+                </div>
+              )}
+
+              {origQuestion.type === 'multiselect' && (
+                <div className="grid grid-cols-2 gap-2">
+                  {(question.options || origQuestion.options || []).map((opt, optIdx) => {
+                    const origOpt = origQuestion.options?.[optIdx] || opt;
+                    return (
+                      <button
+                        key={optIdx}
+                        onClick={() => handleMultiSelectToggle(question.id, origOpt)}
+                        className={`px-3 py-2 rounded-lg border-2 text-sm transition-all ${
+                          (answers[question.id] || []).includes(origOpt)
+                            ? 'border-[#26847F] bg-[#E0F2F1] text-[#26847F] font-medium'
+                            : 'border-gray-200 hover:border-[#26847F]/50 text-gray-700'
+                        }`}
+                      >
+                        {opt}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
+
+              {origQuestion.type === 'object' && (
+                <div className="grid grid-cols-2 gap-3">
+                  {(question.fields || origQuestion.fields || []).map((field, fIdx) => {
+                    const origField = origQuestion.fields?.[fIdx] || field;
+                    return (
+                      <div key={origField.id}>
+                        <Label className="text-xs text-gray-600 mb-1 block">{field.label}</Label>
+                        <Input
+                          type="number"
+                          placeholder={field.placeholder}
+                          value={answers[question.id]?.[origField.id] || ''}
+                          onChange={(e) => {
+                            const newValue = e.target.value;
+                            setAnswers(prev => ({
+                              ...prev,
+                              [question.id]: {
+                                ...(prev[question.id] || {}),
+                                [origField.id]: newValue
+                              }
+                            }));
+                          }}
+                          className="w-full"
+                        />
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </Card>
+          );
+        })}
       </div>
 
       <Button
         onClick={handleSubmit}
-        disabled={!isFormComplete()}
+        disabled={!isFormComplete() || isTranslating}
         className="w-full bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white py-6 text-base font-semibold rounded-xl disabled:opacity-50 disabled:cursor-not-allowed"
       >
         {t('workouts.continue')}
