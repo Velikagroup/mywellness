@@ -965,12 +965,32 @@ ${selectedDays.length > 0 ? `
         for (const day of missingDays) {
           const isWorkoutDay = selectedDays.includes(day);
 
+          // Nomi giorni e termini nella lingua corretta
+          const dayName = dayTranslations[language]?.[day] || day;
+          const workoutLabel = { it: 'Allenamento', en: 'Workout', es: 'Entrenamiento', pt: 'Treino', de: 'Training', fr: 'Entraînement' }[language] || 'Allenamento';
+          const warmupItems = {
+            it: [{ name: "Corsa sul posto", duration: "3 minuti", description: "Riscaldamento cardio" }],
+            en: [{ name: "Jogging in Place", duration: "3 minutes", description: "Cardio warmup" }],
+            es: [{ name: "Trote en el Lugar", duration: "3 minutos", description: "Calentamiento cardio" }],
+            pt: [{ name: "Corrida no Lugar", duration: "3 minutos", description: "Aquecimento cardio" }],
+            de: [{ name: "Joggen auf der Stelle", duration: "3 Minuten", description: "Cardio Aufwärmen" }],
+            fr: [{ name: "Course sur Place", duration: "3 minutes", description: "Échauffement cardio" }]
+          };
+          const cooldownItems = {
+            it: [{ name: "Stretching", duration: "5 minuti", description: "Defaticamento" }],
+            en: [{ name: "Stretching", duration: "5 minutes", description: "Cool down" }],
+            es: [{ name: "Estiramiento", duration: "5 minutos", description: "Enfriamiento" }],
+            pt: [{ name: "Alongamento", duration: "5 minutos", description: "Resfriamento" }],
+            de: [{ name: "Dehnen", duration: "5 Minuten", description: "Abkühlen" }],
+            fr: [{ name: "Étirement", duration: "5 minutes", description: "Récupération" }]
+          };
+          
           if (isWorkoutDay) {
             if (templateWorkout) {
               // Crea un workout basato sul template
               response.workout_plans.push({
                 day_of_week: day,
-                plan_name: `Allenamento ${day.charAt(0).toUpperCase() + day.slice(1)}`,
+                plan_name: `${workoutLabel} ${dayName}`,
                 workout_type: templateWorkout.workout_type,
                 exercises: [...templateWorkout.exercises],
                 warm_up: [...(templateWorkout.warm_up || [])],
@@ -983,11 +1003,11 @@ ${selectedDays.length > 0 ? `
               // Crea un workout base di fallback
               response.workout_plans.push({
                 day_of_week: day,
-                plan_name: `Allenamento ${day.charAt(0).toUpperCase() + day.slice(1)}`,
+                plan_name: `${workoutLabel} ${dayName}`,
                 workout_type: 'strength',
                 exercises: defaultExercises,
-                warm_up: [{ name: "Corsa sul posto", duration: "3 minuti", description: "Riscaldamento cardio" }],
-                cool_down: [{ name: "Stretching", duration: "5 minuti", description: "Defaticamento" }],
+                warm_up: warmupItems[language] || warmupItems.it,
+                cool_down: cooldownItems[language] || cooldownItems.it,
                 total_duration: 45,
                 calories_burned: 300,
                 difficulty_level: trainingData.fitness_experience || 'beginner'
@@ -998,7 +1018,7 @@ ${selectedDays.length > 0 ? `
             // Crea un giorno di riposo
             response.workout_plans.push({
               day_of_week: day,
-              plan_name: 'Recupero Attivo',
+              plan_name: terms.rest,
               workout_type: 'rest',
               exercises: [],
               warm_up: [],
