@@ -37,6 +37,7 @@ import PantryPreviewDemo from "../components/home/PantryPreviewDemo";
 import MealTrackingPreviewDemo from "../components/home/MealTrackingPreviewDemo";
 import ProgressPhotoPreviewDemo from "../components/home/ProgressPhotoPreviewDemo";
 import AppDemoFlow from "../components/home/AppDemoFlow";
+import SportQuizPreviewDemo from "../components/home/SportQuizPreviewDemo";
 
 export default function Home() {
   const navigate = useNavigate();
