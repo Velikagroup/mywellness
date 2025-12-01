@@ -25,7 +25,9 @@ export const translations = {
       minutes: "minuti",
       days: "giorni",
       weeks: "settimane",
-      months: "mesi"
+      months: "mesi",
+      lang: "it",
+      goal: "Obiettivo"
     },
     nav: {
       dashboard: "Dashboard",
@@ -435,7 +437,9 @@ export const translations = {
       minutes: "minutes",
       days: "days",
       weeks: "weeks",
-      months: "months"
+      months: "months",
+      lang: "en",
+      goal: "Goal"
     },
     nav: {
       dashboard: "Dashboard",
@@ -845,7 +849,9 @@ export const translations = {
       minutes: "minutos",
       days: "días",
       weeks: "semanas",
-      months: "meses"
+      months: "meses",
+      lang: "es",
+      goal: "Objetivo"
     },
     nav: {
       dashboard: "Panel",
@@ -1251,7 +1257,9 @@ export const translations = {
       minutes: "minutos",
       days: "dias",
       weeks: "semanas",
-      months: "meses"
+      months: "meses",
+      lang: "pt",
+      goal: "Meta"
     },
     nav: {
       dashboard: "Painel",
@@ -1657,7 +1665,9 @@ export const translations = {
       minutes: "Minuten",
       days: "Tage",
       weeks: "Wochen",
-      months: "Monate"
+      months: "Monate",
+      lang: "de",
+      goal: "Ziel"
     },
     nav: {
       dashboard: "Dashboard",
@@ -2063,7 +2073,9 @@ export const translations = {
       minutes: "minutes",
       days: "jours",
       weeks: "semaines",
-      months: "mois"
+      months: "mois",
+      lang: "fr",
+      goal: "Objectif"
     },
     nav: {
       dashboard: "Tableau de bord",

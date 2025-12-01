@@ -1607,19 +1607,78 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     );
   }
 
+const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.day_of_week === selectedDay);
+  
+  const getDayLabel = (dayId) => {
+    const dayLabels = {
+      it: {
+        monday: 'Lunedì',
+        tuesday: 'Martedì',
+        wednesday: 'Mercoledì',
+        thursday: 'Giovedì',
+        friday: 'Venerdì',
+        saturday: 'Sabato',
+        sunday: 'Domenica'
+      },
+      en: {
+        monday: 'Monday',
+        tuesday: 'Tuesday',
+        wednesday: 'Wednesday',
+        thursday: 'Thursday',
+        friday: 'Friday',
+        saturday: 'Saturday',
+        sunday: 'Sunday'
+      },
+      es: {
+        monday: 'Lunes',
+        tuesday: 'Martes',
+        wednesday: 'Miércoles',
+        thursday: 'Jueves',
+        friday: 'Viernes',
+        saturday: 'Sábado',
+        sunday: 'Domingo'
+      },
+      pt: {
+        monday: 'Segunda',
+        tuesday: 'Terça',
+        wednesday: 'Quarta',
+        thursday: 'Quinta',
+        friday: 'Sexta',
+        saturday: 'Sábado',
+        sunday: 'Domingo'
+      },
+      de: {
+        monday: 'Montag',
+        tuesday: 'Dienstag',
+        wednesday: 'Mittwoch',
+        thursday: 'Donnerstag',
+        friday: 'Freitag',
+        saturday: 'Samstag',
+        sunday: 'Sonntag'
+      },
+      fr: {
+        monday: 'Lundi',
+        tuesday: 'Mardi',
+        wednesday: 'Mercredi',
+        thursday: 'Jeudi',
+        friday: 'Vendredi',
+        saturday: 'Samedi',
+        sunday: 'Dimanche'
+      }
+    };
+    
+    return dayLabels[t('common.lang') || 'it']?.[dayId] || dayId;
+  };
+
   const days = [
-    { id: 'monday', label: 'Lunedì' },
-    { id: 'tuesday', label: 'Martedì' },
-    { id: 'wednesday', label: 'Mercoledì' },
-    { id: 'thursday', label: 'Giovedì' },
-    { id: 'friday', label: 'Venerdì' },
-    { id: 'saturday', label: 'Sabato' },
-    { id: 'sunday', label: 'Domenica' }
+    { id: 'monday', label: getDayLabel('monday') },
+    { id: 'tuesday', label: getDayLabel('tuesday') },
+    { id: 'wednesday', label: getDayLabel('wednesday') },
+    { id: 'thursday', label: getDayLabel('thursday') },
+    { id: 'friday', label: getDayLabel('friday') },
+    { id: 'saturday', label: getDayLabel('saturday') },
+    { id: 'sunday', label: getDayLabel('sunday') }
   ];
-  
-  const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.day_of_week === selectedDay);
-  
-  const getDayLabel = (dayId) => days.find(d => d.id === dayId)?.label || dayId;
 
   return (
     <>
@@ -1753,7 +1812,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                           : 'text-gray-500 border-transparent hover:text-[#26847F] hover:border-[#26847F]/50 hover:bg-[#e9f6f5]/30'
                       }`}
                     >
-                      {day.label.substring(0,3)}
+                      {day.label}
                     </button>
                   ))}
                 </div>
