@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Dumbbell, Info, Zap, Eye, Check, RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { motion } from 'framer-motion';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ExerciseCard({ 
   exercise, 
@@ -18,6 +19,7 @@ export default function ExerciseCard({
   userStrengthLevel = 'moderate'
 }) {
   const [showDetails, setShowDetails] = useState(false);
+  const { t } = useLanguage();
   
   // Genera intensity_tips se mancanti basati sul livello utente
   const getIntensityTips = () => {
@@ -38,23 +40,24 @@ export default function ExerciseCard({
     const weights = weightsByLevel[userStrengthLevel] || weightsByLevel.moderate;
     
     const isIsometric = ['plank', 'isometr', 'hold', 'tenuta'].some(kw => exerciseNameLower.includes(kw));
-    const isDumbbell = exerciseNameLower.includes('manubr');
-    const isBarbell = exerciseNameLower.includes('bilanciere');
-    const isMachine = ['macchina', 'leg press', 'cable', 'cavo'].some(kw => exerciseNameLower.includes(kw));
+    const isDumbbell = exerciseNameLower.includes('manubr') || exerciseNameLower.includes('dumbbell');
+    const isBarbell = exerciseNameLower.includes('bilanciere') || exerciseNameLower.includes('barbell');
+    const isMachine = ['macchina', 'leg press', 'cable', 'cavo', 'machine'].some(kw => exerciseNameLower.includes(kw));
     const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch'].some(kw => exerciseNameLower.includes(kw));
     
+    // Return generic tips - will be overridden by translation
     if (isIsometric) {
-      return ["⏱️ Tieni per 30-45 secondi per serie", "💪 Quando tremi, l'intensità è giusta"];
+      return ["⏱️ Hold for 30-45 seconds per set", "💪 When you start shaking, intensity is right"];
     } else if (isDumbbell) {
-      return [`🏋️ Usa manubri da ${weights.dumbbell} per lato`, "🔥 Le ultime 2-3 reps devono essere dure"];
+      return [`🏋️ Use ${weights.dumbbell} dumbbells per side`, "🔥 Last 2-3 reps should be hard"];
     } else if (isBarbell) {
-      return [`🏋️ Carica il bilanciere con ${weights.barbell}`, "📊 RPE 7-8: potresti fare ancora 2-3 reps"];
+      return [`🏋️ Load barbell with ${weights.barbell}`, "📊 RPE 7-8: you should be able to do 2-3 more reps"];
     } else if (isMachine) {
-      return [`🏋️ Imposta la macchina su ${weights.machine}`, "🔥 Le ultime reps devono essere impegnative"];
+      return [`🏋️ Set machine to ${weights.machine}`, "🔥 Last reps should be challenging"];
     } else if (isBodyweight) {
-      return ["⏱️ Rallenta la discesa a 3 secondi se troppo facile", "✅ Mantieni forma perfetta"];
+      return ["⏱️ Slow down descent to 3 seconds if too easy", "✅ Maintain perfect form"];
     } else {
-      return ["💪 Scegli un carico che renda le ultime reps dure", "📊 RPE 7-8"];
+      return ["💪 Choose a load that makes last reps hard", "📊 RPE 7-8"];
     }
   };
   
@@ -74,9 +77,9 @@ export default function ExerciseCard({
   };
 
   const difficultyLabels = {
-    beginner: 'Principiante',
-    intermediate: 'Intermedio',
-    advanced: 'Avanzato'
+    beginner: t('workouts.beginner'),
+    intermediate: t('workouts.intermediate'),
+    advanced: t('workouts.advanced')
   };
 
   return (
@@ -97,7 +100,7 @@ export default function ExerciseCard({
                 <CardTitle className="text-base font-bold text-gray-900 mb-1">{exercise.name}</CardTitle>
                 <div className="flex flex-wrap items-center gap-2 text-xs mb-3">
                   <span className="bg-[#26847F] text-white px-2 py-1 rounded font-semibold">
-                    {exercise.sets} × {exercise.reps}
+                    {exercise.sets} {t('workouts.sets')} × {exercise.reps}
                   </span>
                   <span className="text-gray-600">• {exercise.rest}</span>
                 </div>
@@ -123,7 +126,7 @@ export default function ExerciseCard({
                               : 'text-gray-700 hover:border-[#26847F] hover:bg-gray-50'
                           }`}
                         >
-                          <span className="text-sm font-bold">Set {setNum}</span>
+                          <span className="text-sm font-bold">{t('workouts.set')} {setNum}</span>
                           {isSetCompleted && (
                             <Check className="w-3 h-3" />
                           )}
@@ -134,7 +137,7 @@ export default function ExerciseCard({
                 )}
 
                 {!isToday && (
-                  <p className="text-xs text-gray-500 italic">Visualizzazione programma - tracking disponibile solo per oggi</p>
+                  <p className="text-xs text-gray-500 italic">{t('workouts.viewingProgram')}</p>
                 )}
               </div>
             </div>
@@ -154,7 +157,7 @@ export default function ExerciseCard({
             {/* Mostra intensity tips direttamente sulla card - SEMPRE visibili */}
             {intensityTips && intensityTips.length > 0 && (
               <div className="mb-3 bg-gradient-to-r from-orange-50 to-amber-50 border border-orange-200 rounded-lg p-3">
-                <p className="text-xs font-bold text-orange-800 mb-2">🎯 Carico consigliato:</p>
+                <p className="text-xs font-bold text-orange-800 mb-2">🎯 {t('workouts.intensityTipsSuggested')}</p>
                 <ul className="space-y-1">
                   {intensityTips.slice(0, 2).map((tip, idx) => (
                     <li key={idx} className="text-xs text-orange-700 flex items-start gap-1">
@@ -181,7 +184,7 @@ export default function ExerciseCard({
                     size="sm"
                     onClick={onReplace}
                     className="text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5] p-2"
-                    title="Sostituisci esercizio"
+                    title={t('workouts.replace')}
                   >
                     <RotateCcw className="w-4 h-4" />
                   </Button>
@@ -195,7 +198,7 @@ export default function ExerciseCard({
                     onClick={onDelete}
                     disabled={isDeleting}
                     className="text-gray-400 hover:text-red-500 hover:bg-red-50 p-2"
-                    title="Elimina esercizio"
+                    title={t('workouts.deleteExercise')}
                   >
                     {isDeleting ? (
                       <Loader2 className="w-4 h-4 animate-spin" />
@@ -213,7 +216,7 @@ export default function ExerciseCard({
                     className="text-[#26847F] hover:text-[#1f6b66] hover:bg-[#e9f6f5]"
                   >
                     <Eye className="w-4 h-4 mr-1" />
-                    Dettagli
+                    {t('workouts.details')}
                   </Button>
                 )}
               </div>
@@ -228,7 +231,7 @@ export default function ExerciseCard({
             >
               <div className="bg-green-500 text-white text-xs px-2 py-1 rounded-full font-bold flex items-center gap-1">
                 <Check className="w-3 h-3" />
-                Fatto
+                {t('workouts.done')}
               </div>
             </motion.div>
           )}
@@ -244,14 +247,14 @@ export default function ExerciseCard({
                 {exercise.name}
               </DialogTitle>
               <DialogDescription className="text-sm text-gray-600">
-                {exercise.sets} serie × {exercise.reps} • {exercise.rest} di riposo
+                {exercise.sets} {t('workouts.sets')} × {exercise.reps} • {exercise.rest}
               </DialogDescription>
             </DialogHeader>
 
             <div className="space-y-6 py-4">
               {exercise.target_muscles?.length > 0 && (
                 <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">🎯 Muscoli Specifici:</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">🎯 {t('workouts.targetMuscles')}</h4>
                   <div className="flex flex-wrap gap-2">
                     {exercise.target_muscles.map((muscle, idx) => (
                       <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm border border-blue-200">
@@ -266,7 +269,7 @@ export default function ExerciseCard({
                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
                   <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                     <Info className="w-4 h-4 text-blue-600" />
-                    Descrizione Dettagliata
+                    {t('workouts.detailedDescription')}
                   </h4>
                   <p className="text-sm text-gray-700 leading-relaxed">{exercise.detailed_description}</p>
                 </div>
@@ -276,7 +279,7 @@ export default function ExerciseCard({
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <Zap className="w-4 h-4 text-green-600" />
-                    Consigli sulla Forma
+                    {t('workouts.formTips')}
                   </h4>
                   <ul className="space-y-2">
                     {exercise.form_tips.map((tip, idx) => (
@@ -293,7 +296,7 @@ export default function ExerciseCard({
                 <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <Dumbbell className="w-4 h-4 text-orange-600" />
-                    Carico e Intensità
+                    {t('workouts.loadIntensity')}
                   </h4>
                   <ul className="space-y-2">
                     {intensityTips.map((tip, idx) => (
@@ -308,7 +311,7 @@ export default function ExerciseCard({
 
               {exercise.description && !exercise.detailed_description && (
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <h4 className="font-semibold text-gray-900 mb-2">📋 Esecuzione</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2">📋 {t('workouts.execution')}</h4>
                   <p className="text-sm text-gray-700">{exercise.description}</p>
                 </div>
               )}
@@ -318,7 +321,7 @@ export default function ExerciseCard({
               onClick={() => setShowDetails(false)}
               className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
             >
-              Chiudi
+              {t('common.close')}
             </Button>
           </DialogContent>
         </Dialog>

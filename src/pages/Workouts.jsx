@@ -1669,8 +1669,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('workouts.title')}</h1>
               <p className="text-gray-600">
                 {workoutPlans.length > 0 
-                  ? `${totalExercisesInWeeklyPlan} esercizi in scheda • Obiettivo: ${formatFitnessGoal(trainingData.fitness_goal)}`
-                  : `Nessuna scheda generata • Obiettivo: ${trainingData.fitness_goal ? formatFitnessGoal(trainingData.fitness_goal) : 'non impostato'}`
+                  ? `${t('workouts.exerciseCount', { count: totalExercisesInWeeklyPlan })} • ${t('common.goal')}: ${formatFitnessGoal(trainingData.fitness_goal)}`
+                  : `${t('workouts.noPlanGenerated')} • ${t('common.goal')}: ${trainingData.fitness_goal ? formatFitnessGoal(trainingData.fitness_goal) : t('common.notSet')}`
                 }
               </p>
               {remainingGenerations !== null && remainingGenerations !== -1 && remainingGenerations !== 0 && (

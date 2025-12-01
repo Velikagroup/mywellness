@@ -263,7 +263,27 @@ export const translations = {
       cheatLessDesc: "L'AI può ridurre leggermente l'intensità del workout per adattarsi al tuo intake calorico ridotto. Vuoi adattare il workout?",
       cheatKeepNormal: "Mantieni Workout Normale",
       cheatAdapt: "Adatta Workout",
-      cheatProcessing: "Elaborazione..."
+      cheatProcessing: "Elaborazione...",
+      // Exercise card
+      sets: "serie",
+      done: "Fatto",
+      set: "Set",
+      viewingProgram: "Visualizzazione programma - tracking disponibile solo per oggi",
+      targetMuscles: "Muscoli Specifici:",
+      detailedDescription: "Descrizione Dettagliata",
+      formTips: "Consigli sulla Forma",
+      loadIntensity: "Carico e Intensità",
+      execution: "Esecuzione",
+      details: "Dettagli",
+      replace: "Sostituisci esercizio",
+      deleteExercise: "Elimina esercizio",
+      // Difficulty levels
+      beginner: "Principiante",
+      intermediate: "Intermedio",
+      advanced: "Avanzato",
+      // Intensity tips fallbacks
+      intensityTipsSuggested: "Carico consigliato:",
+      exerciseCount: "{count} esercizi in scheda"
     }
   },
   en: {
@@ -530,7 +550,27 @@ export const translations = {
       cheatLessDesc: "AI can slightly reduce workout intensity to match your reduced calorie intake. Want to adapt the workout?",
       cheatKeepNormal: "Keep Normal Workout",
       cheatAdapt: "Adapt Workout",
-      cheatProcessing: "Processing..."
+      cheatProcessing: "Processing...",
+      // Exercise card
+      sets: "sets",
+      done: "Done",
+      set: "Set",
+      viewingProgram: "Viewing program - tracking available only for today",
+      targetMuscles: "Target Muscles:",
+      detailedDescription: "Detailed Description",
+      formTips: "Form Tips",
+      loadIntensity: "Load and Intensity",
+      execution: "Execution",
+      details: "Details",
+      replace: "Replace exercise",
+      deleteExercise: "Delete exercise",
+      // Difficulty levels
+      beginner: "Beginner",
+      intermediate: "Intermediate",
+      advanced: "Advanced",
+      // Intensity tips fallbacks
+      intensityTipsSuggested: "Suggested load:",
+      exerciseCount: "{count} exercises in plan"
     }
   },
   es: {
@@ -797,7 +837,27 @@ export const translations = {
       cheatLessDesc: "La IA puede reducir ligeramente la intensidad del entrenamiento para adaptarse a tu ingesta calórica reducida. ¿Quieres adaptar el entrenamiento?",
       cheatKeepNormal: "Mantener Entrenamiento Normal",
       cheatAdapt: "Adaptar Entrenamiento",
-      cheatProcessing: "Procesando..."
+      cheatProcessing: "Procesando...",
+      // Exercise card
+      sets: "series",
+      done: "Hecho",
+      set: "Serie",
+      viewingProgram: "Visualización de programa - seguimiento disponible solo para hoy",
+      targetMuscles: "Músculos Específicos:",
+      detailedDescription: "Descripción Detallada",
+      formTips: "Consejos de Forma",
+      loadIntensity: "Carga e Intensidad",
+      execution: "Ejecución",
+      details: "Detalles",
+      replace: "Reemplazar ejercicio",
+      deleteExercise: "Eliminar ejercicio",
+      // Difficulty levels
+      beginner: "Principiante",
+      intermediate: "Intermedio",
+      advanced: "Avanzado",
+      // Intensity tips fallbacks
+      intensityTipsSuggested: "Carga sugerida:",
+      exerciseCount: "{count} ejercicios en plan"
     }
   },
   pt: {
@@ -1064,7 +1124,27 @@ export const translations = {
       cheatLessDesc: "A IA pode reduzir levemente a intensidade do treino para se adequar à sua ingestão calórica reduzida. Quer adaptar o treino?",
       cheatKeepNormal: "Manter Treino Normal",
       cheatAdapt: "Adaptar Treino",
-      cheatProcessing: "Processando..."
+      cheatProcessing: "Processando...",
+      // Exercise card
+      sets: "séries",
+      done: "Feito",
+      set: "Série",
+      viewingProgram: "Visualização de programa - rastreamento disponível apenas para hoje",
+      targetMuscles: "Músculos Específicos:",
+      detailedDescription: "Descrição Detalhada",
+      formTips: "Dicas de Forma",
+      loadIntensity: "Carga e Intensidade",
+      execution: "Execução",
+      details: "Detalhes",
+      replace: "Substituir exercício",
+      deleteExercise: "Excluir exercício",
+      // Difficulty levels
+      beginner: "Iniciante",
+      intermediate: "Intermediário",
+      advanced: "Avançado",
+      // Intensity tips fallbacks
+      intensityTipsSuggested: "Carga sugerida:",
+      exerciseCount: "{count} exercícios no plano"
     }
   },
   de: {
@@ -1331,7 +1411,27 @@ export const translations = {
       cheatLessDesc: "KI kann die Trainingsintensität leicht reduzieren, um Ihrer reduzierten Kalorienaufnahme zu entsprechen. Training anpassen?",
       cheatKeepNormal: "Normales Training Beibehalten",
       cheatAdapt: "Training Anpassen",
-      cheatProcessing: "Verarbeitung..."
+      cheatProcessing: "Verarbeitung...",
+      // Exercise card
+      sets: "Sätze",
+      done: "Fertig",
+      set: "Satz",
+      viewingProgram: "Programmansicht - Tracking nur für heute verfügbar",
+      targetMuscles: "Zielmuskeln:",
+      detailedDescription: "Detaillierte Beschreibung",
+      formTips: "Form-Tipps",
+      loadIntensity: "Last und Intensität",
+      execution: "Ausführung",
+      details: "Details",
+      replace: "Übung ersetzen",
+      deleteExercise: "Übung löschen",
+      // Difficulty levels
+      beginner: "Anfänger",
+      intermediate: "Fortgeschritten",
+      advanced: "Profi",
+      // Intensity tips fallbacks
+      intensityTipsSuggested: "Empfohlene Last:",
+      exerciseCount: "{count} Übungen im Plan"
     }
   },
   fr: {
@@ -1598,7 +1698,27 @@ export const translations = {
       cheatLessDesc: "L'IA peut légèrement réduire l'intensité de l'entraînement pour s'adapter à votre apport calorique réduit. Voulez-vous adapter l'entraînement ?",
       cheatKeepNormal: "Garder l'Entraînement Normal",
       cheatAdapt: "Adapter l'Entraînement",
-      cheatProcessing: "Traitement..."
+      cheatProcessing: "Traitement...",
+      // Exercise card
+      sets: "séries",
+      done: "Terminé",
+      set: "Série",
+      viewingProgram: "Visualisation du programme - suivi disponible uniquement pour aujourd'hui",
+      targetMuscles: "Muscles Ciblés:",
+      detailedDescription: "Description Détaillée",
+      formTips: "Conseils de Forme",
+      loadIntensity: "Charge et Intensité",
+      execution: "Exécution",
+      details: "Détails",
+      replace: "Remplacer l'exercice",
+      deleteExercise: "Supprimer l'exercice",
+      // Difficulty levels
+      beginner: "Débutant",
+      intermediate: "Intermédiaire",
+      advanced: "Avancé",
+      // Intensity tips fallbacks
+      intensityTipsSuggested: "Charge suggérée:",
+      exerciseCount: "{count} exercices dans le plan"
     }
   }
 };
