@@ -139,6 +139,13 @@ Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON
   
   const intensityTips = displayExercise.intensity_tips || getIntensityTipsStable();
   
+  // Fix: se il nome è "response" o simile, usa il nome originale
+  const exerciseName = (displayExercise.name && 
+    displayExercise.name.toLowerCase() !== 'response' && 
+    !displayExercise.name.toLowerCase().includes('object')) 
+    ? displayExercise.name 
+    : exercise.name;
+  
   const toggleSet = (setNumber) => {
     const newCompleted = completedSets.includes(setNumber)
       ? completedSets.filter(s => s !== setNumber)
@@ -174,7 +181,7 @@ Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
                 <CardTitle className="text-base font-bold text-gray-900 mb-1">
-                  {isTranslating ? `${exercise.name}...` : displayExercise.name}
+                  {isTranslating ? `${exercise.name}...` : exerciseName}
                 </CardTitle>
                 <div className="flex flex-wrap items-center gap-2 text-xs mb-3">
                   <span className="bg-[#26847F] text-white px-2 py-1 rounded font-semibold">
@@ -322,7 +329,7 @@ Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 <Dumbbell className="w-6 h-6 text-[#26847F]" />
-                {displayExercise.name}
+                {exerciseName}
               </DialogTitle>
               <DialogDescription className="text-sm text-gray-600">
                 {exercise.sets} {t('workouts.sets')} × {exercise.reps} • {exercise.rest}

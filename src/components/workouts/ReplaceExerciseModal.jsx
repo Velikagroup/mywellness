@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Sparkles, Dumbbell } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ReplaceExerciseModal({ 
   isOpen, 
@@ -12,13 +13,14 @@ export default function ReplaceExerciseModal({
   workoutPlan,
   onExerciseReplaced 
 }) {
+  const { t } = useLanguage();
   const [exerciseName, setExerciseName] = useState('');
   const [isReplacing, setIsReplacing] = useState(false);
   const [error, setError] = useState('');
 
   const handleReplace = async () => {
     if (!exerciseName.trim()) {
-      setError('Inserisci il nome dell\'esercizio');
+      setError(t('workouts.enterExerciseName'));
       return;
     }
 
@@ -139,26 +141,26 @@ Restituisci i dati nel formato JSON richiesto.`;
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Dumbbell className="w-6 h-6 text-[#26847F]" />
-            Sostituisci Esercizio
+            {t('workouts.replaceExercise')}
           </DialogTitle>
           <DialogDescription>
-            Scrivi il nome dell'esercizio che vuoi fare e l'AI creerà tutti i dettagli
+            {t('workouts.replaceExerciseDesc')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="bg-gray-50 rounded-lg p-3 border">
-            <p className="text-xs text-gray-500 mb-1">Esercizio attuale:</p>
+            <p className="text-xs text-gray-500 mb-1">{t('workouts.currentExercise')}:</p>
             <p className="font-semibold text-gray-800">{exercise?.name}</p>
             <p className="text-sm text-gray-600">{exercise?.sets} × {exercise?.reps}</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nuovo esercizio:
+              {t('workouts.newExercise')}:
             </label>
             <Input
-              placeholder="Es: Panca inclinata, Squat bulgaro, Rematore..."
+              placeholder={t('workouts.newExercisePlaceholder')}
               value={exerciseName}
               onChange={(e) => {
                 setExerciseName(e.target.value);
@@ -168,7 +170,7 @@ Restituisci i dati nel formato JSON richiesto.`;
               disabled={isReplacing}
             />
             <p className="text-xs text-gray-500 mt-1">
-              L'AI genererà automaticamente nome corretto, descrizione e consigli sulla forma
+              {t('workouts.aiWillGenerate')}
             </p>
           </div>
 
@@ -185,7 +187,7 @@ Restituisci i dati nel formato JSON richiesto.`;
               disabled={isReplacing}
               className="flex-1"
             >
-              Annulla
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleReplace}
@@ -195,12 +197,12 @@ Restituisci i dati nel formato JSON richiesto.`;
               {isReplacing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generazione...
+                  {t('workouts.generating')}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Sostituisci
+                  {t('workouts.replaceButton')}
                 </>
               )}
             </Button>

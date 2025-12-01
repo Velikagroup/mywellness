@@ -408,7 +408,29 @@ export const translations = {
       strengthAdvanced: "Avanzato",
       strengthAdvancedDesc: "Squat >100kg, stacco >120kg, panca >80kg",
       sportSpecificSubtitle: "Dati specifici per creare il tuo piano perfetto",
-      selectOption: "Seleziona..."
+      selectOption: "Seleziona...",
+      // Exercise modals
+      replaceExercise: "Sostituisci Esercizio",
+      replaceExerciseDesc: "Scrivi il nome dell'esercizio che vuoi fare e l'AI creerà tutti i dettagli",
+      currentExercise: "Esercizio attuale",
+      newExercise: "Nuovo esercizio",
+      newExercisePlaceholder: "Es: Panca inclinata, Squat bulgaro, Rematore...",
+      aiWillGenerate: "L'AI genererà automaticamente nome corretto, descrizione e consigli",
+      replaceButton: "Sostituisci",
+      generating: "Generazione...",
+      addExerciseTitle: "Aggiungi Esercizio",
+      addExerciseDesc: "Scrivi il nome dell'esercizio e l'AI creerà tutti i dettagli automaticamente",
+      exerciseName: "Nome esercizio",
+      exerciseNamePlaceholder: "Es: Panca piana, Squat, Trazioni, Curl bicipiti...",
+      setsLabel: "Serie",
+      repsLabel: "Ripetizioni",
+      restLabel: "Riposo",
+      addButton: "Aggiungi",
+      deleteExerciseTitle: "Elimina Esercizio",
+      deleteExerciseDesc: "Sei sicuro di voler eliminare questo esercizio dal tuo piano di allenamento?",
+      deleteWarning: "Questa azione non può essere annullata. Puoi sempre aggiungere un nuovo esercizio in seguito.",
+      deleting: "Eliminazione...",
+      enterExerciseName: "Inserisci il nome dell'esercizio"
     }
   },
   en: {
@@ -820,7 +842,29 @@ export const translations = {
       strengthAdvanced: "Advanced",
       strengthAdvancedDesc: "Squat >100kg, deadlift >120kg, bench >80kg",
       sportSpecificSubtitle: "Specific data to create your perfect plan",
-      selectOption: "Select..."
+      selectOption: "Select...",
+      // Exercise modals
+      replaceExercise: "Replace Exercise",
+      replaceExerciseDesc: "Write the exercise name you want to do and AI will create all details",
+      currentExercise: "Current exercise",
+      newExercise: "New exercise",
+      newExercisePlaceholder: "E.g.: Incline press, Bulgarian squat, Row...",
+      aiWillGenerate: "AI will automatically generate correct name, description and tips",
+      replaceButton: "Replace",
+      generating: "Generating...",
+      addExerciseTitle: "Add Exercise",
+      addExerciseDesc: "Write the exercise name and AI will create all details automatically",
+      exerciseName: "Exercise name",
+      exerciseNamePlaceholder: "E.g.: Bench press, Squat, Pull-ups, Bicep curl...",
+      setsLabel: "Sets",
+      repsLabel: "Reps",
+      restLabel: "Rest",
+      addButton: "Add",
+      deleteExerciseTitle: "Delete Exercise",
+      deleteExerciseDesc: "Are you sure you want to delete this exercise from your workout plan?",
+      deleteWarning: "This action cannot be undone. You can always add a new exercise later.",
+      deleting: "Deleting...",
+      enterExerciseName: "Enter exercise name"
     }
   },
   es: {
@@ -1228,7 +1272,29 @@ export const translations = {
       strengthAdvanced: "Avanzado",
       strengthAdvancedDesc: "Sentadilla >100kg, peso muerto >120kg, press >80kg",
       sportSpecificSubtitle: "Datos específicos para crear tu plan perfecto",
-      selectOption: "Seleccionar..."
+      selectOption: "Seleccionar...",
+      // Exercise modals
+      replaceExercise: "Reemplazar Ejercicio",
+      replaceExerciseDesc: "Escribe el nombre del ejercicio que quieres hacer y la IA creará todos los detalles",
+      currentExercise: "Ejercicio actual",
+      newExercise: "Nuevo ejercicio",
+      newExercisePlaceholder: "Ej: Press inclinado, Sentadilla búlgara, Remo...",
+      aiWillGenerate: "La IA generará automáticamente nombre correcto, descripción y consejos",
+      replaceButton: "Reemplazar",
+      generating: "Generando...",
+      addExerciseTitle: "Agregar Ejercicio",
+      addExerciseDesc: "Escribe el nombre del ejercicio y la IA creará todos los detalles automáticamente",
+      exerciseName: "Nombre del ejercicio",
+      exerciseNamePlaceholder: "Ej: Press banca, Sentadilla, Dominadas, Curl bíceps...",
+      setsLabel: "Series",
+      repsLabel: "Repeticiones",
+      restLabel: "Descanso",
+      addButton: "Agregar",
+      deleteExerciseTitle: "Eliminar Ejercicio",
+      deleteExerciseDesc: "¿Estás seguro de querer eliminar este ejercicio de tu plan de entrenamiento?",
+      deleteWarning: "Esta acción no se puede deshacer. Siempre puedes agregar un nuevo ejercicio más tarde.",
+      deleting: "Eliminando...",
+      enterExerciseName: "Ingresa el nombre del ejercicio"
     }
   },
   pt: {
@@ -1636,7 +1702,29 @@ export const translations = {
       strengthAdvanced: "Avançado",
       strengthAdvancedDesc: "Agachamento >100kg, levantamento >120kg, supino >80kg",
       sportSpecificSubtitle: "Dados específicos para criar seu plano perfeito",
-      selectOption: "Selecionar..."
+      selectOption: "Selecionar...",
+      // Exercise modals
+      replaceExercise: "Substituir Exercício",
+      replaceExerciseDesc: "Escreva o nome do exercício que você quer fazer e a IA criará todos os detalhes",
+      currentExercise: "Exercício atual",
+      newExercise: "Novo exercício",
+      newExercisePlaceholder: "Ex: Supino inclinado, Agachamento búlgaro, Remada...",
+      aiWillGenerate: "A IA gerará automaticamente nome correto, descrição e dicas",
+      replaceButton: "Substituir",
+      generating: "Gerando...",
+      addExerciseTitle: "Adicionar Exercício",
+      addExerciseDesc: "Escreva o nome do exercício e a IA criará todos os detalhes automaticamente",
+      exerciseName: "Nome do exercício",
+      exerciseNamePlaceholder: "Ex: Supino, Agachamento, Barra fixa, Rosca bíceps...",
+      setsLabel: "Séries",
+      repsLabel: "Repetições",
+      restLabel: "Descanso",
+      addButton: "Adicionar",
+      deleteExerciseTitle: "Excluir Exercício",
+      deleteExerciseDesc: "Tem certeza de que deseja excluir este exercício do seu plano de treino?",
+      deleteWarning: "Esta ação não pode ser desfeita. Você sempre pode adicionar um novo exercício mais tarde.",
+      deleting: "Excluindo...",
+      enterExerciseName: "Digite o nome do exercício"
     }
   },
   de: {
@@ -2044,7 +2132,29 @@ export const translations = {
       strengthAdvanced: "Profi",
       strengthAdvancedDesc: "Kniebeuge >100kg, Kreuzheben >120kg, Bankdrücken >80kg",
       sportSpecificSubtitle: "Spezifische Daten um Ihren perfekten Plan zu erstellen",
-      selectOption: "Auswählen..."
+      selectOption: "Auswählen...",
+      // Exercise modals
+      replaceExercise: "Übung Ersetzen",
+      replaceExerciseDesc: "Schreiben Sie den Übungsnamen und die KI erstellt alle Details",
+      currentExercise: "Aktuelle Übung",
+      newExercise: "Neue Übung",
+      newExercisePlaceholder: "Z.B.: Schrägbankdrücken, Bulgarische Kniebeugen, Rudern...",
+      aiWillGenerate: "KI generiert automatisch korrekten Namen, Beschreibung und Tipps",
+      replaceButton: "Ersetzen",
+      generating: "Generierung...",
+      addExerciseTitle: "Übung Hinzufügen",
+      addExerciseDesc: "Schreiben Sie den Übungsnamen und die KI erstellt alle Details automatisch",
+      exerciseName: "Übungsname",
+      exerciseNamePlaceholder: "Z.B.: Bankdrücken, Kniebeuge, Klimmzüge, Bizeps-Curls...",
+      setsLabel: "Sätze",
+      repsLabel: "Wiederholungen",
+      restLabel: "Pause",
+      addButton: "Hinzufügen",
+      deleteExerciseTitle: "Übung Löschen",
+      deleteExerciseDesc: "Sind Sie sicher, dass Sie diese Übung aus Ihrem Trainingsplan löschen möchten?",
+      deleteWarning: "Diese Aktion kann nicht rückgängig gemacht werden. Sie können später jederzeit eine neue Übung hinzufügen.",
+      deleting: "Löschen...",
+      enterExerciseName: "Übungsnamen eingeben"
     }
   },
   fr: {
@@ -2452,7 +2562,29 @@ export const translations = {
       strengthAdvanced: "Avancé",
       strengthAdvancedDesc: "Squat >100kg, soulevé >120kg, développé >80kg",
       sportSpecificSubtitle: "Données spécifiques pour créer votre plan parfait",
-      selectOption: "Sélectionner..."
+      selectOption: "Sélectionner...",
+      // Exercise modals
+      replaceExercise: "Remplacer l'Exercice",
+      replaceExerciseDesc: "Écrivez le nom de l'exercice que vous voulez faire et l'IA créera tous les détails",
+      currentExercise: "Exercice actuel",
+      newExercise: "Nouvel exercice",
+      newExercisePlaceholder: "Ex: Développé incliné, Squat bulgare, Rowing...",
+      aiWillGenerate: "L'IA générera automatiquement nom correct, description et conseils",
+      replaceButton: "Remplacer",
+      generating: "Génération...",
+      addExerciseTitle: "Ajouter un Exercice",
+      addExerciseDesc: "Écrivez le nom de l'exercice et l'IA créera tous les détails automatiquement",
+      exerciseName: "Nom de l'exercice",
+      exerciseNamePlaceholder: "Ex: Développé couché, Squat, Tractions, Curl biceps...",
+      setsLabel: "Séries",
+      repsLabel: "Répétitions",
+      restLabel: "Repos",
+      addButton: "Ajouter",
+      deleteExerciseTitle: "Supprimer l'Exercice",
+      deleteExerciseDesc: "Êtes-vous sûr de vouloir supprimer cet exercice de votre plan d'entraînement?",
+      deleteWarning: "Cette action ne peut pas être annulée. Vous pouvez toujours ajouter un nouvel exercice plus tard.",
+      deleting: "Suppression...",
+      enterExerciseName: "Entrez le nom de l'exercice"
     }
   }
 };

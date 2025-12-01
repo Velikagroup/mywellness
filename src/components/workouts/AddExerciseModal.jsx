@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Sparkles, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function AddExerciseModal({ 
   isOpen, 
@@ -11,6 +12,7 @@ export default function AddExerciseModal({
   workoutPlan,
   onExerciseAdded 
 }) {
+  const { t } = useLanguage();
   const [exerciseName, setExerciseName] = useState('');
   const [sets, setSets] = useState(3);
   const [reps, setReps] = useState('10-12 ripetizioni');
@@ -20,7 +22,7 @@ export default function AddExerciseModal({
 
   const handleAdd = async () => {
     if (!exerciseName.trim()) {
-      setError('Inserisci il nome dell\'esercizio');
+      setError(t('workouts.enterExerciseName'));
       return;
     }
 
@@ -143,20 +145,20 @@ Restituisci i dati nel formato JSON richiesto.`;
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <Plus className="w-6 h-6 text-[#26847F]" />
-            Aggiungi Esercizio
+            {t('workouts.addExerciseTitle')}
           </DialogTitle>
           <DialogDescription>
-            Scrivi il nome dell'esercizio e l'AI creerà tutti i dettagli automaticamente
+            {t('workouts.addExerciseDesc')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Nome esercizio:
+              {t('workouts.exerciseName')}:
             </label>
             <Input
-              placeholder="Es: Panca piana, Squat, Trazioni, Curl bicipiti..."
+              placeholder={t('workouts.exerciseNamePlaceholder')}
               value={exerciseName}
               onChange={(e) => {
                 setExerciseName(e.target.value);
@@ -169,7 +171,7 @@ Restituisci i dati nel formato JSON richiesto.`;
 
           <div className="grid grid-cols-3 gap-3">
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Serie</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t('workouts.setsLabel')}</label>
               <Input
                 type="number"
                 min={1}
@@ -181,16 +183,16 @@ Restituisci i dati nel formato JSON richiesto.`;
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Ripetizioni</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t('workouts.repsLabel')}</label>
               <Input
                 value={reps}
                 onChange={(e) => setReps(e.target.value)}
-                placeholder="10-12 rip."
+                placeholder="10-12"
                 disabled={isAdding}
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-gray-600 mb-1">Riposo</label>
+              <label className="block text-xs font-medium text-gray-600 mb-1">{t('workouts.restLabel')}</label>
               <Input
                 value={rest}
                 onChange={(e) => setRest(e.target.value)}
@@ -201,7 +203,7 @@ Restituisci i dati nel formato JSON richiesto.`;
           </div>
 
           <p className="text-xs text-gray-500">
-            L'AI genererà automaticamente: nome corretto italiano, descrizione dettagliata, consigli sulla forma, muscoli coinvolti e difficoltà
+            {t('workouts.aiWillGenerate')}
           </p>
 
           {error && (
@@ -217,7 +219,7 @@ Restituisci i dati nel formato JSON richiesto.`;
               disabled={isAdding}
               className="flex-1"
             >
-              Annulla
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleAdd}
@@ -227,12 +229,12 @@ Restituisci i dati nel formato JSON richiesto.`;
               {isAdding ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Generazione...
+                  {t('workouts.generating')}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Aggiungi
+                  {t('workouts.addButton')}
                 </>
               )}
             </Button>
