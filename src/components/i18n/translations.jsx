@@ -283,7 +283,10 @@ export const translations = {
       advanced: "Avanzato",
       // Intensity tips fallbacks
       intensityTipsSuggested: "Carico consigliato:",
-      exerciseCount: "{count} esercizi in scheda"
+      exerciseCount: "{count} esercizi in scheda",
+      noPlanGenerated: "Nessuna scheda generata",
+      notSet: "non impostato",
+      goal: "Obiettivo"
     }
   },
   en: {
@@ -570,7 +573,10 @@ export const translations = {
       advanced: "Advanced",
       // Intensity tips fallbacks
       intensityTipsSuggested: "Suggested load:",
-      exerciseCount: "{count} exercises in plan"
+      exerciseCount: "{count} exercises in plan",
+      noPlanGenerated: "No plan generated",
+      notSet: "not set",
+      goal: "Goal"
     }
   },
   es: {
@@ -857,7 +863,10 @@ export const translations = {
       advanced: "Avanzado",
       // Intensity tips fallbacks
       intensityTipsSuggested: "Carga sugerida:",
-      exerciseCount: "{count} ejercicios en plan"
+      exerciseCount: "{count} ejercicios en plan",
+      noPlanGenerated: "Ningún plan generado",
+      notSet: "no establecido",
+      goal: "Objetivo"
     }
   },
   pt: {
@@ -1144,7 +1153,10 @@ export const translations = {
       advanced: "Avançado",
       // Intensity tips fallbacks
       intensityTipsSuggested: "Carga sugerida:",
-      exerciseCount: "{count} exercícios no plano"
+      exerciseCount: "{count} exercícios no plano",
+      noPlanGenerated: "Nenhum plano gerado",
+      notSet: "não definido",
+      goal: "Meta"
     }
   },
   de: {
@@ -1431,7 +1443,10 @@ export const translations = {
       advanced: "Profi",
       // Intensity tips fallbacks
       intensityTipsSuggested: "Empfohlene Last:",
-      exerciseCount: "{count} Übungen im Plan"
+      exerciseCount: "{count} Übungen im Plan",
+      noPlanGenerated: "Kein Plan erstellt",
+      notSet: "nicht festgelegt",
+      goal: "Ziel"
     }
   },
   fr: {
@@ -1718,7 +1733,10 @@ export const translations = {
       advanced: "Avancé",
       // Intensity tips fallbacks
       intensityTipsSuggested: "Charge suggérée:",
-      exerciseCount: "{count} exercices dans le plan"
+      exerciseCount: "{count} exercices dans le plan",
+      noPlanGenerated: "Aucun plan généré",
+      notSet: "non défini",
+      goal: "Objectif"
     }
   }
 };
