@@ -107,10 +107,10 @@ function LayoutContent({ children }) {
   }
 
   const mainNavItems = [
-    { name: 'Dashboard', icon: Home, path: 'Dashboard' },
-    { name: 'Nutrizione', icon: Utensils, path: 'Meals', requiresFeature: 'meal_plan' },
-    { name: 'Allenamento', icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' },
-    { name: 'Impostazioni', icon: SettingsIcon, path: 'Settings' }
+    { name: t('nav.dashboard'), icon: Home, path: 'Dashboard' },
+    { name: t('nav.nutrition'), icon: Utensils, path: 'Meals', requiresFeature: 'meal_plan' },
+    { name: t('nav.workouts'), icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' },
+    { name: t('nav.settings'), icon: SettingsIcon, path: 'Settings' }
   ].filter(item => {
     if (item.requiresFeature && user) {
       return hasFeatureAccess(user.subscription_plan, item.requiresFeature);
