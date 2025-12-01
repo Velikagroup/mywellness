@@ -976,26 +976,26 @@ export default function Home() {
                 Allenamento per il Tuo Sport
               </h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Pratichi calcio, tennis, basket o qualsiasi altro sport? Il quiz ti chiede quale sport pratichi e crea un <strong>programma di allenamento specifico</strong> per migliorare le tue prestazioni in campo.
+                Che tu faccia Bodybuilding, CrossFit, HIIT o qualsiasi altro stile di allenamento, il quiz identifica le tue preferenze e crea un <strong>programma su misura</strong> per i tuoi obiettivi specifici.
               </p>
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">⚽</span>
-                  <p className="text-gray-600 text-sm"><strong>Calcio:</strong> Esplosività, resistenza, cambi di direzione</p>
+                  <span className="text-xl">💪</span>
+                  <p className="text-gray-600 text-sm"><strong>Bodybuilding:</strong> Ipertrofia, definizione, simmetria muscolare</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">🎾</span>
-                  <p className="text-gray-600 text-sm"><strong>Tennis:</strong> Potenza del braccio, agilità, core stability</p>
+                  <span className="text-xl">🔥</span>
+                  <p className="text-gray-600 text-sm"><strong>CrossFit:</strong> Forza funzionale, resistenza, WOD personalizzati</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">🏀</span>
-                  <p className="text-gray-600 text-sm"><strong>Basket:</strong> Salto, velocità, resistenza aerobica</p>
+                  <span className="text-xl">⚡</span>
+                  <p className="text-gray-600 text-sm"><strong>HIIT:</strong> Brucia grassi, metabolismo, intensità massima</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">🎯 60+ Sport Supportati</span>
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">💪 Palestra Inclusa</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📈 Periodizzazione</span>
+                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">🎯 60+ Stili Supportati</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🧘 Yoga & Pilates</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🥊 Combat Sports</span>
               </div>
             </motion.div>
             <motion.div
