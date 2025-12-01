@@ -94,6 +94,9 @@ export default function Dashboard() {
       const [fetchedWeightHistory, fetchedTodayMeals, fetchedMealLogs, fetchedWorkoutPlans] = 
         await Promise.all([...basePromises, workoutPlanPromise]);
 
+      console.log('⚖️ Raw weight history:', fetchedWeightHistory.length, 'records');
+      console.log('⚖️ Raw first entry:', JSON.stringify(fetchedWeightHistory[0]));
+      
       // Sort weight history client-side by date descending, then by created_date descending
       const sortedWeightHistory = fetchedWeightHistory.sort((a, b) => {
         const dateComparison = new Date(b.date) - new Date(a.date);
@@ -101,9 +104,8 @@ export default function Dashboard() {
         return new Date(b.created_date) - new Date(a.created_date);
       }).slice(0, 30); // Keep only last 30 entries
 
-      console.log('⚖️ Weight history fetched:', sortedWeightHistory.length, 'records');
-      console.log('📊 Latest weights:', sortedWeightHistory.slice(0, 3).map(w => ({ date: w.date, weight: w.weight, created: w.created_date })));
-      console.log('📊 Full first entry:', JSON.stringify(sortedWeightHistory[0]));
+      console.log('⚖️ Sorted weight history:', sortedWeightHistory.length, 'records');
+      console.log('📊 Sorted first entry:', JSON.stringify(sortedWeightHistory[0]));
       
       setWeightHistory(sortedWeightHistory); // Use sorted and sliced history
       setTodayMeals(fetchedTodayMeals);
