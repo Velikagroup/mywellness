@@ -72,24 +72,24 @@ Output the JSON in ${targetLanguage}.`;
         response_json_schema: {
           type: "object",
           properties: {
-            name: { type: "string", description: "Nome italiano corretto dell'esercizio" },
-            detailed_description: { type: "string", description: "Descrizione dettagliata di 2-3 frasi su come eseguire l'esercizio" },
+            name: { type: "string", description: `Exercise name in ${langNames[language] || 'Italian'}` },
+            detailed_description: { type: "string", description: `Detailed description in ${langNames[language] || 'Italian'}` },
             form_tips: { 
               type: "array", 
               items: { type: "string" },
-              description: "6-8 consigli dettagliati sulla forma corretta"
+              description: `6-8 detailed form tips in ${langNames[language] || 'Italian'}`
             },
             target_muscles: {
               type: "array",
               items: { type: "string" },
-              description: "Muscoli specifici coinvolti in italiano"
+              description: `Target muscles in ${langNames[language] || 'Italian'}`
             },
             muscle_groups: { 
               type: "array", 
               items: { type: "string" },
-              description: "Gruppi muscolari principali"
+              description: `Main muscle groups in ${langNames[language] || 'Italian'}`
             },
-            equipment: { type: "string", description: "Attrezzatura necessaria" },
+            equipment: { type: "string", description: `Required equipment in ${langNames[language] || 'Italian'}` },
             difficulty: { 
               type: "string",
               enum: ["beginner", "intermediate", "advanced"]
