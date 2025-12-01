@@ -21,8 +21,6 @@ export default function ExerciseCard({
 }) {
   const [showDetails, setShowDetails] = useState(false);
   const { t, language } = useLanguage();
-  const [translatedExercise, setTranslatedExercise] = useState(null);
-  const [isTranslating, setIsTranslating] = useState(false);
   
   // Genera intensity tips una volta per evitare loop infiniti
   const intensityTipsRef = React.useRef(null);
@@ -46,11 +44,11 @@ export default function ExerciseCard({
     };
     const weights = weightsByLevel[userStrengthLevel] || weightsByLevel.moderate;
     
-    const isIsometric = ['plank', 'isometr', 'hold', 'tenuta'].some(kw => exerciseNameLower.includes(kw));
-    const isDumbbell = exerciseNameLower.includes('manubr') || exerciseNameLower.includes('dumbbell');
-    const isBarbell = exerciseNameLower.includes('bilanciere') || exerciseNameLower.includes('barbell');
-    const isMachine = ['macchina', 'leg press', 'cable', 'cavo', 'machine'].some(kw => exerciseNameLower.includes(kw));
-    const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch'].some(kw => exerciseNameLower.includes(kw));
+    const isIsometric = ['plank', 'isometr', 'hold', 'tenuta', 'plancha', 'prancha', 'unterarm', 'gainage'].some(kw => exerciseNameLower.includes(kw));
+    const isDumbbell = exerciseNameLower.includes('manubr') || exerciseNameLower.includes('dumbbell') || exerciseNameLower.includes('mancuerna') || exerciseNameLower.includes('haltere') || exerciseNameLower.includes('kurzhantel');
+    const isBarbell = exerciseNameLower.includes('bilanciere') || exerciseNameLower.includes('barbell') || exerciseNameLower.includes('barra') || exerciseNameLower.includes('langhantel');
+    const isMachine = ['macchina', 'leg press', 'cable', 'cavo', 'machine', 'polia', 'polea', 'maschine'].some(kw => exerciseNameLower.includes(kw));
+    const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch', 'flexiones', 'pompes', 'liegestütz', 'flexões'].some(kw => exerciseNameLower.includes(kw));
     
     let tips;
     if (isIsometric) {
@@ -71,71 +69,8 @@ export default function ExerciseCard({
     return tips;
   }, [exercise.name, exercise.intensity_tips, userStrengthLevel]);
   
-  // Traduci esercizio quando cambia lingua
-  React.useEffect(() => {
-    if (language === 'it') {
-      setTranslatedExercise(null);
-      return;
-    }
-    
-    const cacheKey = `ex_${exercise.name}_${language}`;
-    const cached = sessionStorage.getItem(cacheKey);
-    if (cached) {
-      try {
-        setTranslatedExercise(JSON.parse(cached));
-        return;
-      } catch (e) {}
-    }
-    
-    const translateExercise = async () => {
-      setIsTranslating(true);
-      try {
-        const langNames = {
-          'en': 'English', 'es': 'Spanish', 'pt': 'Portuguese', 
-          'de': 'German', 'fr': 'French'
-        };
-        
-        const stableIntensityTips = getIntensityTipsStable();
-        
-        const response = await base44.integrations.Core.InvokeLLM({
-          prompt: `Translate this workout exercise to ${langNames[language] || language}.
-
-Exercise data (in Italian):
-- Name: ${exercise.name}
-- Description: ${exercise.description || ''}
-- Detailed description: ${exercise.detailed_description || ''}
-- Form tips: ${exercise.form_tips?.join(' | ') || ''}
-- Target muscles: ${exercise.target_muscles?.join(', ') || ''}
-- Muscle groups: ${exercise.muscle_groups?.join(', ') || ''}
-- Intensity tips: ${exercise.intensity_tips?.join(' | ') || stableIntensityTips.join(' | ')}
-
-Translate ALL fields to ${langNames[language] || language}. Output ONLY the JSON object with translated fields.`,
-          response_json_schema: {
-            type: "object",
-            properties: {
-              name: { type: "string" },
-              description: { type: "string" },
-              detailed_description: { type: "string" },
-              form_tips: { type: "array", items: { type: "string" } },
-              target_muscles: { type: "array", items: { type: "string" } },
-              muscle_groups: { type: "array", items: { type: "string" } },
-              intensity_tips: { type: "array", items: { type: "string" } }
-            }
-          }
-        });
-        
-        setTranslatedExercise(response);
-        sessionStorage.setItem(cacheKey, JSON.stringify(response));
-      } catch (error) {
-        console.error('Translation error:', error);
-      }
-      setIsTranslating(false);
-    };
-    
-    translateExercise();
-  }, [language, exercise.name, getIntensityTipsStable]);
-  
-  const displayExercise = translatedExercise || exercise;
+  // NO REAL-TIME TRANSLATION - il piano viene generato già nella lingua corretta
+  const displayExercise = exercise;
   
   const intensityTips = displayExercise.intensity_tips || getIntensityTipsStable();
   
