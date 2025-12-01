@@ -319,7 +319,7 @@ function LayoutContent({ children }) {
                   }`}
                 >
                   {mobileMenuOpen ? <X className="w-5 h-5" /> : <MenuIcon className="w-5 h-5" />}
-                  <span className="text-xs font-medium">Menu</span>
+                  <span className="text-xs font-medium">{t('nav.menu')}</span>
                 </button>
               )}
             </div>
@@ -327,5 +327,13 @@ function LayoutContent({ children }) {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function Layout({ children }) {
+  return (
+    <LanguageProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </LanguageProvider>
   );
 }
