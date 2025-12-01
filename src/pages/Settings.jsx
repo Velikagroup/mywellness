@@ -1526,7 +1526,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold flex items-center gap-2">
-              💬 Analizzando la tua richiesta
+              💬 {t('settings.aiAnalyzing')}
             </DialogTitle>
           </DialogHeader>
 
@@ -1546,9 +1546,9 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               <div className="p-6 bg-gradient-to-br from-[var(--brand-primary-light)] to-blue-50 rounded-xl border-2 border-[var(--brand-primary)]/20">
                 <div className="flex items-center gap-3 mb-3">
                   <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[var(--brand-primary)]"></div>
-                  <p className="font-bold text-gray-900">L'AI sta analizzando la tua richiesta...</p>
+                  <p className="font-bold text-gray-900">{t('settings.aiAnalyzingDesc')}</p>
                 </div>
-                <p className="text-sm text-gray-600">Sto generando una risposta personalizzata per te</p>
+                <p className="text-sm text-gray-600">{t('settings.aiGenerating')}</p>
               </div>
             ) : aiResponse ? (
               <div className="space-y-4">
@@ -1558,8 +1558,8 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       <span className="text-white text-xl">🤖</span>
                     </div>
                     <div>
-                      <p className="font-bold text-gray-900">Assistente AI MyWellness</p>
-                      <p className="text-xs text-gray-500">Risposta automatica</p>
+                      <p className="font-bold text-gray-900">{t('settings.aiAssistant')}</p>
+                      <p className="text-xs text-gray-500">{t('settings.aiAutoResponse')}</p>
                     </div>
                   </div>
                   <p className="text-gray-700 leading-relaxed whitespace-pre-wrap">{aiResponse}</p>
@@ -1568,7 +1568,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 {/* Action Buttons */}
                 <div className="bg-white rounded-xl border border-gray-200 p-4">
                   <p className="text-sm text-gray-700 mb-3 text-center">
-                    Questa risposta ti è stata utile?
+                    {t('settings.wasHelpful')}
                   </p>
                   
                   <div className="flex items-center justify-center gap-2">
@@ -1577,7 +1577,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       size="sm"
                       className="bg-green-600 hover:bg-green-700 text-white text-xs px-3 py-1.5 h-auto"
                     >
-                      Problema Risolto
+                      {t('settings.problemResolved')}
                     </Button>
                     
                     <Button
@@ -1586,7 +1586,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       variant="outline"
                       className="border border-gray-300 text-gray-700 hover:bg-gray-50 text-xs px-3 py-1.5 h-auto"
                     >
-                      Serve Ancora Aiuto
+                      {t('settings.needMoreHelp')}
                     </Button>
                   </div>
                 </div>

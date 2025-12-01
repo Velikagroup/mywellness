@@ -186,7 +186,16 @@ export const translations = {
       noTickets: "Nessun ticket aperto",
       resolvedAI: "Risolto AI",
       responseReceived: "Risposta ricevuta",
-      aiResponseAvailable: "Risposta AI disponibile"
+      aiResponseAvailable: "Risposta AI disponibile",
+      // AI Dialog
+      aiAnalyzing: "Analizzando la tua richiesta",
+      aiAnalyzingDesc: "L'AI sta analizzando la tua richiesta...",
+      aiGenerating: "Sto generando una risposta personalizzata per te",
+      aiAssistant: "Assistente AI MyWellness",
+      aiAutoResponse: "Risposta automatica",
+      wasHelpful: "Questa risposta ti è stata utile?",
+      problemResolved: "Problema Risolto",
+      needMoreHelp: "Serve Ancora Aiuto"
     }
   },
   en: {
@@ -376,7 +385,16 @@ export const translations = {
       noTickets: "No open tickets",
       resolvedAI: "Resolved by AI",
       responseReceived: "Response received",
-      aiResponseAvailable: "AI response available"
+      aiResponseAvailable: "AI response available",
+      // AI Dialog
+      aiAnalyzing: "Analyzing your request",
+      aiAnalyzingDesc: "AI is analyzing your request...",
+      aiGenerating: "Generating a personalized response for you",
+      aiAssistant: "MyWellness AI Assistant",
+      aiAutoResponse: "Automatic response",
+      wasHelpful: "Was this response helpful?",
+      problemResolved: "Problem Resolved",
+      needMoreHelp: "Need More Help"
     }
   },
   es: {
@@ -566,7 +584,16 @@ export const translations = {
       noTickets: "No hay tickets abiertos",
       resolvedAI: "Resuelto por IA",
       responseReceived: "Respuesta recibida",
-      aiResponseAvailable: "Respuesta IA disponible"
+      aiResponseAvailable: "Respuesta IA disponible",
+      // AI Dialog
+      aiAnalyzing: "Analizando tu solicitud",
+      aiAnalyzingDesc: "La IA está analizando tu solicitud...",
+      aiGenerating: "Generando una respuesta personalizada para ti",
+      aiAssistant: "Asistente IA MyWellness",
+      aiAutoResponse: "Respuesta automática",
+      wasHelpful: "¿Te fue útil esta respuesta?",
+      problemResolved: "Problema Resuelto",
+      needMoreHelp: "Necesito Más Ayuda"
     }
   },
   pt: {
@@ -756,7 +783,16 @@ export const translations = {
       noTickets: "Nenhum ticket aberto",
       resolvedAI: "Resolvido por IA",
       responseReceived: "Resposta recebida",
-      aiResponseAvailable: "Resposta IA disponível"
+      aiResponseAvailable: "Resposta IA disponível",
+      // AI Dialog
+      aiAnalyzing: "Analisando sua solicitação",
+      aiAnalyzingDesc: "A IA está analisando sua solicitação...",
+      aiGenerating: "Gerando uma resposta personalizada para você",
+      aiAssistant: "Assistente IA MyWellness",
+      aiAutoResponse: "Resposta automática",
+      wasHelpful: "Esta resposta foi útil?",
+      problemResolved: "Problema Resolvido",
+      needMoreHelp: "Preciso de Mais Ajuda"
     }
   },
   de: {
@@ -946,7 +982,16 @@ export const translations = {
       noTickets: "Keine offenen Tickets",
       resolvedAI: "Von KI gelöst",
       responseReceived: "Antwort erhalten",
-      aiResponseAvailable: "KI-Antwort verfügbar"
+      aiResponseAvailable: "KI-Antwort verfügbar",
+      // AI Dialog
+      aiAnalyzing: "Analysiere Ihre Anfrage",
+      aiAnalyzingDesc: "KI analysiert Ihre Anfrage...",
+      aiGenerating: "Erstelle eine personalisierte Antwort für Sie",
+      aiAssistant: "MyWellness KI-Assistent",
+      aiAutoResponse: "Automatische Antwort",
+      wasHelpful: "War diese Antwort hilfreich?",
+      problemResolved: "Problem Gelöst",
+      needMoreHelp: "Brauche Weitere Hilfe"
     }
   },
   fr: {
@@ -1136,7 +1181,16 @@ export const translations = {
       noTickets: "Aucun ticket ouvert",
       resolvedAI: "Résolu par IA",
       responseReceived: "Réponse reçue",
-      aiResponseAvailable: "Réponse IA disponible"
+      aiResponseAvailable: "Réponse IA disponible",
+      // AI Dialog
+      aiAnalyzing: "Analyse de votre demande",
+      aiAnalyzingDesc: "L'IA analyse votre demande...",
+      aiGenerating: "Génération d'une réponse personnalisée pour vous",
+      aiAssistant: "Assistant IA MyWellness",
+      aiAutoResponse: "Réponse automatique",
+      wasHelpful: "Cette réponse vous a-t-elle été utile ?",
+      problemResolved: "Problème Résolu",
+      needMoreHelp: "Besoin de Plus d'Aide"
     }
   }
 };
