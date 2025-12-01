@@ -28,6 +28,7 @@ import UpgradeModal from '../components/meals/UpgradeModal';
 import ReplaceExerciseModal from '../components/workouts/ReplaceExerciseModal';
 import AddExerciseModal from '../components/workouts/AddExerciseModal';
 import DeleteExerciseDialog from '../components/workouts/DeleteExerciseDialog';
+import { useLanguage } from '../components/i18n/LanguageContext';
 
 import { motion } from "framer-motion";
 
@@ -69,6 +70,7 @@ const JOINT_PAIN_RESTRICTIONS = {
 export default function Workouts() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { t } = useLanguage();
   
   // ✅ Imposta il giorno corrente come default
   const getCurrentDay = () => {
@@ -582,7 +584,7 @@ export default function Workouts() {
 
     setIsGenerating(true);
     setGenerationProgress(0);
-    setGenerationStatus(`Avvio protocollo AI Allenamento per obiettivo: ${trainingData.fitness_goal}...`);
+    setGenerationStatus(t('workouts.genFilter', { goal: trainingData.fitness_goal }));
 
     try {
       const updateProgress = (progress, status) => {
@@ -590,7 +592,7 @@ export default function Workouts() {
         setGenerationStatus(status);
       };
 
-      updateProgress(10, `Caricamento database ${allExercises.length} esercizi...`);
+      updateProgress(10, t('workouts.genDatabase', { count: allExercises.length }));
 
       // PESCA ESERCIZI DAL DATABASE
       const availableExercises = getAvailableExercises();
@@ -614,7 +616,7 @@ export default function Workouts() {
       console.log(`📅 Giorni workout selezionati dall'utente: ${selectedDays.join(', ') || 'NESSUNO'}`);
       console.log(`📅 Giorni riposo: ${['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'].filter(d => !selectedDays.includes(d)).join(', ')}`);
 
-      updateProgress(20, "Organizzazione esercizi per obiettivo...");
+      updateProgress(20, t('workouts.genFilter', { goal: trainingData.fitness_goal }));
 
       // CREA LISTA ESERCIZI FORMATTATA PER L'AI
       const exercisesByMuscleGroup = availableExercises.reduce((acc, ex) => {
@@ -756,7 +758,7 @@ ${selectedDays.length > 0 ? `
 13. Ensure variety and progressive overload where appropriate for the user's fitness level and goal.
 `;
 
-      updateProgress(40, "AI sta selezionando esercizi ottimali per te...");
+      updateProgress(40, t('workouts.genSelection'));
 
       // Aggiungi istruzione finale al prompt per garantire 7 piani
       const finalPrompt = workoutPlanPrompt + `
@@ -863,7 +865,7 @@ ${selectedDays.length > 0 ? `
         response = { workout_plans: [] };
       }
 
-      updateProgress(60, "Validazione esercizi selezionati dal database...");
+      updateProgress(60, t('workouts.genValidation'));
 
       // Inizializza l'array se non esiste
       if (!response.workout_plans) {
@@ -1113,7 +1115,7 @@ ${selectedDays.length > 0 ? `
       
       console.log(`✅ POST-PROCESSING COMPLETATO: Aggiunti intensity_tips a ${tipsAdded} esercizi con pesi per livello ${strengthLevel}`);
 
-      updateProgress(75, "Rimozione piani precedenti...");
+      updateProgress(75, t('workouts.genBuilding'));
       
       // ✅ FIX: Fetch TUTTI i piani esistenti per l'utente e cancellali
       // Usa list() senza filtro e poi filtra client-side per evitare problemi RLS
@@ -1136,7 +1138,7 @@ ${selectedDays.length > 0 ? `
       await Promise.all(deletePromises);
       console.log(`🧹 Cleanup complete, proceeding to create new plans...`);
 
-      updateProgress(85, "Salvataggio nuovi workout...");
+      updateProgress(85, t('workouts.genBuilding'));
 
       for (const workoutData of response.workout_plans) {
         if (!workoutData.day_of_week) {
@@ -1156,7 +1158,7 @@ ${selectedDays.length > 0 ? `
         });
       }
 
-      updateProgress(100, "Protocollo di allenamento generato!");
+      updateProgress(100, t('workouts.loadingTitle'));
       
       // Registra la generazione
       const currentMonth = new Date().toISOString().slice(0, 7);
@@ -1458,10 +1460,10 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 <Dumbbell className="w-8 h-8 text-white animated-dumbbell" strokeWidth={2.5} />
               </div>
               <CardTitle className="text-xl font-bold text-gray-900 text-center">
-                Creazione Protocollo Allenamento AI
+                {t('workouts.loadingTitle')}
               </CardTitle>
               <p className="text-sm text-gray-600 text-center mt-2">
-                L'AI sta selezionando esercizi dal database di {allExercises.length} esercizi per il tuo obiettivo: {trainingData.fitness_goal}
+                {t('workouts.loadingDesc', { count: allExercises.length, goal: trainingData.fitness_goal })}
               </p>
             </CardHeader>
             
@@ -1474,27 +1476,27 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               </div>
               
               <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/60">
-                <h4 className="font-semibold text-gray-800 text-sm mb-3">Protocollo AI:</h4>
+                <h4 className="font-semibold text-gray-800 text-sm mb-3">{t('workouts.genProtocol')}</h4>
                 <ul className="space-y-2 text-xs">
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 10 ? 'text-[#26847F]' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Database: {allExercises.length} esercizi totali</span>
+                    <span className="text-gray-700">{t('workouts.genDatabase', { count: allExercises.length })}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 20 ? 'text-[#26847F]' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Filtro per obiettivo: {trainingData.fitness_goal}</span>
+                    <span className="text-gray-700">{t('workouts.genFilter', { goal: trainingData.fitness_goal })}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 40 ? 'text-[#26847F]' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Selezione esercizi ottimali per te</span>
+                    <span className="text-gray-700">{t('workouts.genSelection')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 60 ? 'text-[#26847F]' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Validazione esercizi dal database</span>
+                    <span className="text-gray-700">{t('workouts.genValidation')}</span>
                   </li>
                   <li className="flex items-center">
                     <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 85 ? 'text-[#26847F]' : 'text-gray-300'}`} />
-                    <span className="text-gray-700">Costruzione piano settimanale</span>
+                    <span className="text-gray-700">{t('workouts.genBuilding')}</span>
                   </li>
                 </ul>
               </div>
@@ -1512,8 +1514,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           <div className="w-16 h-16 bg-[#26847F] rounded-lg flex items-center justify-center mx-auto mb-4 shadow-lg">
             <BrainCircuit className="w-8 h-8 text-white animate-bounce" />
           </div>
-          <CardTitle className="text-xl font-bold text-gray-900">Caricamento...</CardTitle>
-          <p className="text-gray-600 mt-2">Attendere mentre recuperiamo i tuoi dati.</p>
+          <CardTitle className="text-xl font-bold text-gray-900">{t('common.loading')}</CardTitle>
+          <p className="text-gray-600 mt-2">{t('workouts.loadingWait')}</p>
         </Card>
       </div>
     );
@@ -1528,7 +1530,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
             className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
           >
             <Crown className="w-5 h-5 mr-2" />
-            Upgrade per Accedere al Piano Allenamento
+            {t('workouts.upgradeAccess')}
           </Button>
         </div>
       </div>
@@ -1550,9 +1552,9 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           <Card className="water-glass-effect rounded-xl shadow-lg border-[#26847F]/10">
             <CardHeader>
               <CardTitle className="text-2xl font-bold text-gray-900 text-center">
-                Configura il tuo Piano di Allenamento
+                {t('workouts.configureWorkout')}
               </CardTitle>
-              <p className="text-gray-600 text-center">Passo {currentStep + 1} di {TRAINING_STEPS.length}</p>
+              <p className="text-gray-600 text-center">{t('workouts.stepOf', { current: currentStep + 1, total: TRAINING_STEPS.length })}</p>
             </CardHeader>
             <CardContent className="p-6">
               <CurrentStepComponent data={trainingData} onDataChange={handleStepData} nextStep={nextStep} />
@@ -1573,7 +1575,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 className="text-gray-700 hover:text-gray-900 hover:bg-white/50 font-semibold px-6 py-3 rounded-full disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <ArrowLeft className="w-4 h-4 mr-2" /> 
-                Indietro
+                {t('common.back')}
               </Button>
             </div>
 
@@ -1583,7 +1585,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                   onClick={nextStep} 
                   className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-semibold rounded-full shadow-[0_4px_20px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_25px_rgba(38,132,127,0.4)]"
                 >
-                  Avanti 
+                  {t('common.next')} 
                   <ArrowRight className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -1594,7 +1596,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                   className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-semibold rounded-full shadow-[0_4px_20px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_25px_rgba(38,132,127,0.4)]"
                   disabled={generationLimitReached && remainingGenerations === 0}
                 >
-                  Genera Piano 
+                  {t('workouts.generateWithAI')} 
                   <BrainCircuit className="w-4 h-4 ml-2" />
                 </Button>
               </div>
@@ -1625,17 +1627,17 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
         <Dialog open={true} onOpenChange={(open) => !open && handleCloseCheatCompensation()}>
           <DialogContent className="bg-white/80 backdrop-blur-sm">
             <DialogHeader>
-              <DialogTitle>🔥 Workout Adattivo AI</DialogTitle>
+              <DialogTitle>🔥 {t('workouts.cheatTitle')}</DialogTitle>
               <DialogDescription>
-                Hai registrato pasti con una differenza di <strong>{cheatData.totalDelta > 0 ? '+' : ''}{cheatData.totalDelta} kcal</strong> rispetto al piano di oggi.
+                {t('workouts.cheatDesc', { delta: `${cheatData.totalDelta > 0 ? '+' : ''}${cheatData.totalDelta}` })}
               </DialogDescription>
             </DialogHeader>
             <div className="py-4">
               <div className="bg-[#e9f6f5] p-4 rounded-lg border border-[#26847F]/30">
                 <p className="text-sm text-gray-700">
                   {cheatData.totalDelta > 0 
-                    ? `💪 L'AI può intensificare il tuo workout di oggi per bruciare queste calorie extra e mantenerti in linea con i tuoi obiettivi. Vuoi adattare il workout?`
-                    : `😌 L'AI può ridurre leggermente l'intensità del workout per adattarsi al tuo intake calorico ridotto. Vuoi adattare il workout?`
+                    ? `💪 ${t('workouts.cheatExtraDesc')}`
+                    : `😌 ${t('workouts.cheatLessDesc')}`
                   }
                 </p>
               </div>
@@ -1646,14 +1648,14 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 onClick={handleCloseCheatCompensation}
                 disabled={isCompensating}
               >
-                Mantieni Workout Normale
+                {t('workouts.cheatKeepNormal')}
               </Button>
               <Button
                 onClick={compensateWithWorkout}
                 className="bg-[#26847F] hover:bg-[#1f6b66] shadow-[0_4px_16px_rgba(38,132,127,0.3)] hover:shadow-[0_6px_20px_rgba(38,132,127,0.4)]"
                 disabled={isCompensating}
               >
-                {isCompensating ? "Elaborazione..." : "Adatta Workout"}
+                {isCompensating ? t('workouts.cheatProcessing') : t('workouts.cheatAdapt')}
               </Button>
             </DialogFooter>
           </DialogContent>
@@ -1664,7 +1666,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Protocollo di Allenamento</h1>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('workouts.title')}</h1>
               <p className="text-gray-600">
                 {workoutPlans.length > 0 
                   ? `${totalExercisesInWeeklyPlan} esercizi in scheda • Obiettivo: ${formatFitnessGoal(trainingData.fitness_goal)}`
@@ -1676,7 +1678,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                   <div className="flex items-center gap-1 text-sm">
                     <BrainCircuit className="w-4 h-4 text-[#26847F]" />
                     <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[#26847F]'}`}>
-                      {remainingGenerations} generazioni rimaste questo mese
+                      {t('workouts.generationsRemaining', { count: remainingGenerations })}
                     </span>
                   </div>
                 </div>
@@ -1694,7 +1696,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               disabled={!hasFeatureAccess(trainingData.subscription_plan, 'workout_plan') && remainingGenerations === 0}
             >
               <BrainCircuit className="w-5 h-5" /> 
-              Rigenera Piano con AI
+              {t('workouts.generateWithAI')}
               {generationLimitReached && remainingGenerations === 0 && (
                 <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
               )}
@@ -1712,13 +1714,13 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                   </div>
                   <div className="flex-1 text-center md:text-left">
                     <h3 className="text-xl font-bold text-amber-900 mb-2">
-                      🚫 Limite Generazioni Raggiunto
+                      🚫 {t('workouts.limitReached')}
                     </h3>
                     <p className="text-amber-800 mb-1">
-                      Hai utilizzato tutte le <strong>4 generazioni</strong> disponibili questo mese con il piano <strong className="capitalize">{trainingData.subscription_plan || 'Pro'}</strong>.
+                      {t('workouts.limitReachedDesc')}
                     </p>
                     <p className="text-sm text-amber-700">
-                      💡 Fai l'upgrade al piano Premium per generazioni illimitate!
+                      💡 {t('workouts.upgradeUnlimited')}
                     </p>
                   </div>
                   <div className="flex-shrink-0">
@@ -1726,7 +1728,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                       onClick={() => setShowUpgradeModal(true)}
                       className="bg-gradient-to-r from-purple-600 to-purple-500 hover:from-purple-700 hover:to-purple-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
-                      ⬆️ Upgrade a Premium
+                      ⬆️ {t('workouts.upgradeUnlimited')}
                     </Button>
                   </div>
                 </div>
@@ -1737,7 +1739,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
           {workoutPlans.length > 0 ? (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
               <CardHeader className="border-b border-gray-200/30">
-                  <CardTitle>Programmazione Settimanale</CardTitle>
+                  <CardTitle>{t('workouts.weeklySchedule')}</CardTitle>
               </CardHeader>
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200/80">
@@ -1777,7 +1779,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative whitespace-nowrap cursor-pointer"
                                   onClick={() => setShowUpgradeModal(true)}
                                 >
-                                  <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
+                                  <ShieldAlert className="w-4 h-4 mr-2"/> {t('workouts.modifySession')}
                                   <span 
                                     className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
                                     onClick={(e) => {
@@ -1796,26 +1798,26 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                       size="sm"
                                       className="bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative whitespace-nowrap"
                                     >
-                                      <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
+                                      <ShieldAlert className="w-4 h-4 mr-2"/> {t('workouts.modifySession')}
                                     </Button>
                                   </DialogTrigger>
                                   <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm">
                                     <DialogHeader>
-                                      <DialogTitle>Consulenza AI per la sessione di oggi</DialogTitle>
+                                      <DialogTitle>{t('workouts.adjustTitle')}</DialogTitle>
                                     </DialogHeader>
                                     {!adjustmentResult ? (
                                       <div className="space-y-4 py-4">
-                                        <p className="text-sm text-gray-600">Descrivi un dolore, un affaticamento o qualsiasi problema tu stia riscontrando oggi. L'AI modificherà l'allenamento odierno per te, selezionando esercizi alternativi dal database.</p>
-                                        <Textarea placeholder="Es: 'Oggi sento un leggero dolore al ginocchio destro quando piego la gamba' oppure 'Sono molto stanco, preferirei una sessione più leggera'." value={adjustmentProblem} onChange={(e) => setAdjustmentProblem(e.target.value)} />
+                                        <p className="text-sm text-gray-600">{t('workouts.adjustDesc')}</p>
+                                        <Textarea placeholder={t('workouts.adjustPlaceholder')} value={adjustmentProblem} onChange={(e) => setAdjustmentProblem(e.target.value)} />
                                       </div>
                                     ) : (
                                       <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
                                         <div>
-                                          <h4 className="font-semibold text-gray-800">Consiglio dell'Esperto AI</h4>
+                                          <h4 className="font-semibold text-gray-800">{t('workouts.adjustExpert')}</h4>
                                           <div className="text-sm text-gray-600 mt-2 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg prose-sm" dangerouslySetInnerHTML={{ __html: adjustmentResult.consiglio_esperto.replace(/\n/g, '<br />') }} />
                                         </div>
                                         <div>
-                                          <h4 className="font-semibold text-gray-800">Spiegazione Modifiche</h4>
+                                          <h4 className="font-semibold text-gray-800">{t('workouts.adjustExplanation')}</h4>
                                           <p className="text-sm text-gray-600 mt-2">{adjustmentResult.spiegazione_modifiche}</p>
                                         </div>
                                       </div>
@@ -1827,10 +1829,12 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                           disabled={isAdjusting || !adjustmentProblem}
                                           className="bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-[0_4px_16px_rgba(38,132,127,0.3)]"
                                         >
-                                          {isAdjusting ? "L'AI sta pensando..." : "Richiedi Modifica"}
+                                          {isAdjusting ? t('workouts.adjustThinking') : t('workouts.adjustRequest')}
                                         </Button>
                                       ) : (
-                                        <Button onClick={() => {setShowAdjustmentDialog(false); setAdjustmentResult(null); setAdjustmentProblem('');}}>Chiudi</Button>
+                                        <Button onClick={() => {setShowAdjustmentDialog(false); setAdjustmentResult(null); setAdjustmentProblem('');}}>
+                                          {t('common.close')}
+                                        </Button>
                                       )}
                                     </DialogFooter>
                                   </DialogContent>
@@ -1848,7 +1852,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                 className="w-full bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative cursor-pointer"
                                 onClick={() => setShowUpgradeModal(true)}
                               >
-                                <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
+                                <ShieldAlert className="w-4 h-4 mr-2"/> {t('workouts.modifySession')}
                                 <span 
                                   className="absolute -top-2 -right-2 bg-purple-500 text-white text-xs px-2 py-0.5 rounded-full font-bold cursor-pointer hover:bg-purple-600 transition-colors"
                                   onClick={(e) => {
@@ -1866,26 +1870,26 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                     variant="secondary" 
                                     className="w-full bg-amber-100 text-amber-800 hover:bg-amber-200 border-amber-300 relative"
                                   >
-                                    <ShieldAlert className="w-4 h-4 mr-2"/> Modifica Sessione
+                                    <ShieldAlert className="w-4 h-4 mr-2"/> {t('workouts.modifySession')}
                                   </Button>
                                 </DialogTrigger>
                                 <DialogContent className="sm:max-w-[425px] bg-white/90 backdrop-blur-sm">
                                   <DialogHeader>
-                                    <DialogTitle>Consulenza AI per la sessione di oggi</DialogTitle>
+                                    <DialogTitle>{t('workouts.adjustTitle')}</DialogTitle>
                                   </DialogHeader>
                                   {!adjustmentResult ? (
                                     <div className="space-y-4 py-4">
-                                      <p className="text-sm text-gray-600">Descrivi un dolore, un affaticamento o qualsiasi problema tu stia riscontrando oggi. L'AI modificherà l'allenamento odierno per te, selezionando esercizi alternativi dal database.</p>
-                                      <Textarea placeholder="Es: 'Oggi sento un leggero dolore al ginocchio destro quando piego la gamba' oppure 'Sono molto stanco, preferirei una sessione più leggera'." value={adjustmentProblem} onChange={(e) => setAdjustmentProblem(e.target.value)} />
+                                      <p className="text-sm text-gray-600">{t('workouts.adjustDesc')}</p>
+                                      <Textarea placeholder={t('workouts.adjustPlaceholder')} value={adjustmentProblem} onChange={(e) => setAdjustmentProblem(e.target.value)} />
                                     </div>
                                   ) : (
                                     <div className="space-y-4 py-4 max-h-[60vh] overflow-y-auto">
                                       <div>
-                                        <h4 className="font-semibold text-gray-800">Consiglio dell'Esperto AI</h4>
+                                        <h4 className="font-semibold text-gray-800">{t('workouts.adjustExpert')}</h4>
                                         <div className="text-sm text-gray-600 mt-2 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg prose-sm" dangerouslySetInnerHTML={{ __html: adjustmentResult.consiglio_esperto.replace(/\n/g, '<br />') }} />
                                       </div>
                                       <div>
-                                        <h4 className="font-semibold text-gray-800">Spiegazione Modifiche</h4>
+                                        <h4 className="font-semibold text-gray-800">{t('workouts.adjustExplanation')}</h4>
                                         <p className="text-sm text-gray-600 mt-2">{adjustmentResult.spiegazione_modifiche}</p>
                                       </div>
                                     </div>
@@ -1897,10 +1901,12 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                         disabled={isAdjusting || !adjustmentProblem}
                                         className="bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-[0_4px_16px_rgba(38,132,127,0.3)]"
                                       >
-                                        {isAdjusting ? "L'AI sta pensando..." : "Richiedi Modifica"}
+                                        {isAdjusting ? t('workouts.adjustThinking') : t('workouts.adjustRequest')}
                                       </Button>
                                     ) : (
-                                      <Button onClick={() => {setShowAdjustmentDialog(false); setAdjustmentResult(null); setAdjustmentProblem('');}}>Chiudi</Button>
+                                      <Button onClick={() => {setShowAdjustmentDialog(false); setAdjustmentResult(null); setAdjustmentProblem('');}}>
+                                        {t('common.close')}
+                                      </Button>
                                     )}
                                   </DialogFooter>
                                 </DialogContent>
@@ -1910,13 +1916,13 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
 
                           {adjustedWorkout && (
                             <div className="p-4 bg-amber-50 border border-amber-200 rounded-lg">
-                              <p className="text-amber-800 font-semibold text-sm flex items-center gap-2"><ShieldAlert className="w-4 h-4"/> Allenamento modificato dall'AI per la giornata odierna.</p>
+                              <p className="text-amber-800 font-semibold text-sm flex items-center gap-2"><ShieldAlert className="w-4 h-4"/> {t('workouts.adjustModified')}</p>
                             </div>
                           )}
                           
                           {workoutForSelectedDay.warm_up?.length > 0 && (
                             <div>
-                              <h5 className="font-semibold text-gray-800 mb-2">Riscaldamento</h5>
+                              <h5 className="font-semibold text-gray-800 mb-2">{t('workouts.warmup')}</h5>
                               <div className="grid gap-2">
                                 {workoutForSelectedDay.warm_up.map((ex, idx) => (
                                   <div key={idx} className="bg-blue-50/50 border border-blue-200/60 rounded-lg p-3 text-sm">
@@ -1930,7 +1936,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                           {workoutForSelectedDay.exercises?.length > 0 && (
                             <div>
                               <div className="flex items-center justify-between mb-2">
-                                <h5 className="font-semibold text-gray-800">Esercizi Principali</h5>
+                                <h5 className="font-semibold text-gray-800">{t('workouts.mainExercises')}</h5>
                                 <Button
                                   variant="outline"
                                   size="sm"
@@ -1938,7 +1944,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   className="text-[#26847F] border-[#26847F] hover:bg-[#e9f6f5]"
                                 >
                                   <Plus className="w-4 h-4 mr-1" />
-                                  Aggiungi
+                                  {t('workouts.addExercise')}
                                 </Button>
                               </div>
                               <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -1982,7 +1988,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                           )}
                           {workoutForSelectedDay.cool_down?.length > 0 && (
                             <div>
-                              <h5 className="font-semibold text-gray-800 mb-2">Defaticamento</h5>
+                              <h5 className="font-semibold text-gray-800 mb-2">{t('workouts.cooldown')}</h5>
                               <div className="grid gap-2">
                                 {workoutForSelectedDay.cool_down.map((ex, idx) => (
                                   <div key={idx} className="bg-purple-50/50 border border-purple-200/60 rounded-lg p-3 text-sm">
@@ -2007,10 +2013,10 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                   <div className="flex items-center justify-center gap-3 p-4 bg-green-50 border-2 border-green-200 rounded-xl">
                                     <CheckCircle className="w-6 h-6 text-green-600" />
                                     <span className="text-green-800 font-semibold text-lg">
-                                      ✅ Allenamento completato oggi!
+                                      ✅ {t('workouts.workoutCompleted')}
                                     </span>
                                   </div>
-                                ) : (
+                                  ) : (
                                   <Button
                                     onClick={handleCompleteWorkout}
                                     disabled={isCompletingWorkout}
@@ -2019,12 +2025,12 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                                     {isCompletingWorkout ? (
                                       <>
                                         <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
-                                        Salvataggio...
+                                        {t('settings.saving')}
                                       </>
                                     ) : (
                                       <>
                                         <CheckCircle className="w-6 h-6 mr-2" />
-                                        Completa Allenamento
+                                        {t('workouts.completeWorkout')}
                                       </>
                                     )}
                                   </Button>
@@ -2039,8 +2045,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                           <div className="w-16 h-16 bg-[#26847F]/10 rounded-full flex items-center justify-center mx-auto mb-4 shadow-sm">
                             <Target className="w-8 h-8 text-[#26847F]" />
                           </div>
-                          <p className="text-gray-600 font-semibold text-lg">Giorno di Riposo Attivo</p>
-                          <p className="text-sm text-gray-500 mt-1">Focus su recupero e mobilità.</p>
+                          <p className="text-gray-600 font-semibold text-lg">{t('workouts.restDay')}</p>
+                          <p className="text-sm text-gray-500 mt-1">{t('workouts.restDayDesc')}</p>
                       </div>
                     )
                   ) : (
@@ -2048,8 +2054,8 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                       <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-4">
                         <Database className="w-8 h-8 text-gray-400" />
                       </div>
-                      <p className="text-gray-600 font-semibold text-lg">Nessun allenamento per {getDayLabel(selectedDay)}</p>
-                      <p className="text-sm text-gray-500 mt-1">Rigenera il piano per creare un programma completo.</p>
+                      <p className="text-gray-600 font-semibold text-lg">{t('workouts.noWorkout')} {getDayLabel(selectedDay)}</p>
+                      <p className="text-sm text-gray-500 mt-1">{t('workouts.regeneratePrompt')}</p>
                     </div>
                   )}
                 </div>
