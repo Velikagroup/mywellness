@@ -105,7 +105,7 @@ export default function Dashboard() {
       console.log('⚖️ Filtered for current user:', userWeightHistory.length, 'records');
       console.log('📊 User first entry:', JSON.stringify(userWeightHistory[0]));
       
-      setWeightHistory(sortedWeightHistory); // Use sorted and sliced history
+      setWeightHistory(userWeightHistory);
       setTodayMeals(fetchedTodayMeals);
       setMealLogs(fetchedMealLogs);
       setTodayWorkout(fetchedWorkoutPlans?.[0] || null);
