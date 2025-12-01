@@ -13,7 +13,7 @@ export default function ReplaceExerciseModal({
   workoutPlan,
   onExerciseReplaced 
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [exerciseName, setExerciseName] = useState('');
   const [isReplacing, setIsReplacing] = useState(false);
   const [error, setError] = useState('');
@@ -32,34 +32,39 @@ export default function ReplaceExerciseModal({
       const originalSets = exercise.sets;
       const originalReps = exercise.reps;
       const originalRest = exercise.rest;
+      
+      // Lingua target
+      const langNames = {
+        'it': 'Italian',
+        'en': 'English', 
+        'es': 'Spanish', 
+        'pt': 'Portuguese', 
+        'de': 'German', 
+        'fr': 'French'
+      };
+      const targetLanguage = langNames[language] || 'Italian';
 
-      const prompt = `Sei un personal trainer esperto e fisioterapista. L'utente vuole fare l'esercizio: "${exerciseName}"
+      const prompt = `You are an expert personal trainer and physiotherapist. The user wants to do the exercise: "${exerciseName}"
 
-CREA i dettagli COMPLETI per questo esercizio, come se fossi un istruttore che spiega l'esercizio a un principiante.
+CREATE COMPLETE details for this exercise, as if you were an instructor explaining the exercise to a beginner.
 
-REGOLE CRITICHE:
-1. Crea un TITOLO ITALIANO corretto per l'esercizio (es: se l'utente scrive "push up" → "Flessioni", "squat" → "Squat", "bench press" → "Panca Piana")
-2. Mantieni: ${originalSets} serie, ${originalReps}, riposo ${originalRest}
-3. GENERA una descrizione dettagliata di 2-3 frasi su come eseguire l'esercizio correttamente
-4. GENERA 6-8 consigli specifici sulla forma corretta (form_tips) - devono essere pratici e dettagliati
-5. IDENTIFICA i muscoli specifici coinvolti in italiano (target_muscles)
-6. IDENTIFICA i gruppi muscolari principali (muscle_groups)
-7. IDENTIFICA l'attrezzatura necessaria (equipment)
-8. IDENTIFICA il livello di difficoltà
-9. CRITICO - GENERA indicazioni sul CARICO/INTENSITÀ (intensity_tips):
-   - Per esercizi con pesi: indica la percentuale del massimale (es: "70-80% del tuo massimale") o RPE (es: "RPE 7-8, dovresti riuscire a fare 2-3 ripetizioni in più")
-   - Per esercizi a corpo libero: indica come regolare la difficoltà (es: "Se troppo facile, rallenta la fase eccentrica a 3 secondi")
-   - Per esercizi cardio/resistenza: indica frequenza cardiaca o percezione dello sforzo
-   - Dai SEMPRE un riferimento pratico che l'utente può usare per capire se sta usando il carico giusto
+CRITICAL: ALL OUTPUT MUST BE IN ${targetLanguage.toUpperCase()}. 
 
-ESEMPIO DI OUTPUT ATTESO:
-- name: "Panca Piana con Bilanciere"
-- detailed_description: "Esercizio fondamentale per lo sviluppo del petto..."
-- form_tips: ["Mantieni le scapole retratte...", ...]
-- target_muscles: ["Grande pettorale", "Deltoide anteriore", "Tricipite brachiale"]
-- intensity_tips: ["Usa un carico pari al 70-75% del tuo massimale", "Dovresti arrivare a fine serie con 2-3 ripetizioni di riserva (RPE 7-8)"]
+CRITICAL RULES:
+1. Create a correct ${targetLanguage} TITLE for the exercise
+2. Keep: ${originalSets} sets, ${originalReps}, rest ${originalRest}
+3. GENERATE a detailed description of 2-3 sentences on how to perform the exercise correctly - IN ${targetLanguage}
+4. GENERATE 6-8 specific tips on correct form (form_tips) - must be practical and detailed - IN ${targetLanguage}
+5. IDENTIFY specific muscles involved - IN ${targetLanguage} (target_muscles)
+6. IDENTIFY main muscle groups - IN ${targetLanguage} (muscle_groups)
+7. IDENTIFY required equipment - IN ${targetLanguage} (equipment)
+8. IDENTIFY difficulty level
+9. CRITICAL - GENERATE LOAD/INTENSITY tips (intensity_tips) IN ${targetLanguage}:
+   - For weighted exercises: indicate percentage of max (e.g. "70-80% of your max") or RPE
+   - For bodyweight: how to adjust difficulty
+   - Always give a practical reference
 
-Restituisci i dati nel formato JSON richiesto.`;
+Output the JSON in ${targetLanguage}.`;
 
       const llmResult = await base44.integrations.Core.InvokeLLM({
         prompt,
