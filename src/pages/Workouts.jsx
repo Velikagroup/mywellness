@@ -579,9 +579,6 @@ export default function Workouts() {
     setIsCompletingWorkout(false);
   };
 
-  // Ottieni la lingua corrente
-  const { language } = useLanguage();
-  
   const generateWorkoutPlan = async () => {
     if (!trainingData.user_id) return;
 
