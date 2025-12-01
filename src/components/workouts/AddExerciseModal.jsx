@@ -12,11 +12,23 @@ export default function AddExerciseModal({
   workoutPlan,
   onExerciseAdded 
 }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  // Formati default in base alla lingua
+  const defaultFormats = {
+    it: { reps: '10-12 ripetizioni', rest: '60 secondi' },
+    en: { reps: '10-12 reps', rest: '60 seconds' },
+    es: { reps: '10-12 repeticiones', rest: '60 segundos' },
+    pt: { reps: '10-12 repetições', rest: '60 segundos' },
+    de: { reps: '10-12 Wiederholungen', rest: '60 Sekunden' },
+    fr: { reps: '10-12 répétitions', rest: '60 secondes' }
+  };
+  const defaults = defaultFormats[language] || defaultFormats.it;
+  
   const [exerciseName, setExerciseName] = useState('');
   const [sets, setSets] = useState(3);
-  const [reps, setReps] = useState('10-12 ripetizioni');
-  const [rest, setRest] = useState('60 secondi');
+  const [reps, setReps] = useState(defaults.reps);
+  const [rest, setRest] = useState(defaults.rest);
   const [isAdding, setIsAdding] = useState(false);
   const [error, setError] = useState('');
 
@@ -30,32 +42,34 @@ export default function AddExerciseModal({
     setError('');
 
     try {
-      const prompt = `Sei un personal trainer esperto e fisioterapista. L'utente vuole aggiungere l'esercizio: "${exerciseName}"
+      // Lingua target
+      const langNames = {
+        'it': 'Italian',
+        'en': 'English', 
+        'es': 'Spanish', 
+        'pt': 'Portuguese', 
+        'de': 'German', 
+        'fr': 'French'
+      };
+      const targetLanguage = langNames[language] || 'Italian';
 
-CREA i dettagli COMPLETI per questo esercizio, come se fossi un istruttore che spiega l'esercizio a un principiante.
+      const prompt = `You are an expert personal trainer and physiotherapist. The user wants to add the exercise: "${exerciseName}"
 
-REGOLE CRITICHE:
-1. Crea un TITOLO ITALIANO corretto per l'esercizio (es: se l'utente scrive "push up" → "Flessioni", "squat" → "Squat", "bench press" → "Panca Piana")
-2. GENERA una descrizione dettagliata di 2-3 frasi su come eseguire l'esercizio correttamente
-3. GENERA 6-8 consigli specifici sulla forma corretta (form_tips) - devono essere pratici e dettagliati
-4. IDENTIFICA i muscoli specifici coinvolti in italiano (target_muscles)
-5. IDENTIFICA i gruppi muscolari principali (muscle_groups)
-6. IDENTIFICA l'attrezzatura necessaria (equipment)
-7. IDENTIFICA il livello di difficoltà
-8. CRITICO - GENERA indicazioni sul CARICO/INTENSITÀ (intensity_tips):
-   - Per esercizi con pesi: indica la percentuale del massimale (es: "70-80% del tuo massimale") o RPE (es: "RPE 7-8, dovresti riuscire a fare 2-3 ripetizioni in più")
-   - Per esercizi a corpo libero: indica come regolare la difficoltà (es: "Se troppo facile, rallenta la fase eccentrica a 3 secondi")
-   - Per esercizi cardio/resistenza: indica frequenza cardiaca o percezione dello sforzo
-   - Dai SEMPRE un riferimento pratico che l'utente può usare per capire se sta usando il carico giusto
+CREATE COMPLETE details for this exercise, as if you were an instructor explaining the exercise to a beginner.
 
-ESEMPIO DI OUTPUT ATTESO:
-- name: "Panca Piana con Bilanciere"
-- detailed_description: "Esercizio fondamentale per lo sviluppo del petto. Sdraiati sulla panca con i piedi ben piantati a terra, afferra il bilanciere con una presa leggermente più larga delle spalle..."
-- form_tips: ["Mantieni le scapole retratte e depresse durante tutto il movimento", "I gomiti devono formare un angolo di 45° rispetto al busto", ...]
-- target_muscles: ["Grande pettorale", "Deltoide anteriore", "Tricipite brachiale"]
-- intensity_tips: ["Usa un carico pari al 70-75% del tuo massimale per l'ipertrofia", "Dovresti arrivare a fine serie con 2-3 ripetizioni di riserva (RPE 7-8)", "Se non conosci il tuo massimale, scegli un peso che ti permetta di completare tutte le ripetizioni con forma perfetta, ma le ultime 2 devono essere impegnative"]
+CRITICAL: ALL OUTPUT MUST BE IN ${targetLanguage.toUpperCase()}.
 
-Restituisci i dati nel formato JSON richiesto.`;
+CRITICAL RULES:
+1. Create a correct ${targetLanguage} TITLE for the exercise
+2. GENERATE a detailed description of 2-3 sentences on how to perform the exercise correctly - IN ${targetLanguage}
+3. GENERATE 6-8 specific tips on correct form (form_tips) - must be practical and detailed - IN ${targetLanguage}
+4. IDENTIFY specific muscles involved - IN ${targetLanguage} (target_muscles)
+5. IDENTIFY main muscle groups - IN ${targetLanguage} (muscle_groups)
+6. IDENTIFY required equipment - IN ${targetLanguage} (equipment)
+7. IDENTIFY difficulty level
+8. CRITICAL - GENERATE LOAD/INTENSITY tips (intensity_tips) IN ${targetLanguage}
+
+Output the JSON in ${targetLanguage}.`;
 
       const llmResult = await base44.integrations.Core.InvokeLLM({
         prompt,
