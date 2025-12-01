@@ -70,7 +70,7 @@ const JOINT_PAIN_RESTRICTIONS = {
 export default function Workouts() {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   
   // ✅ Imposta il giorno corrente come default
   const getCurrentDay = () => {
