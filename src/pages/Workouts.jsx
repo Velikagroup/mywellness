@@ -1197,21 +1197,34 @@ ${selectedDays.length > 0 ? `
       const primaryExercises = availableExercises.filter(e => !e._is_secondary_for_goal);
       const exerciseNames = primaryExercises.map(e => `"${e.name}"`).join(', ');
 
+      // Determina la lingua dell'utente
+      const userLang = t('common.lang') || 'it';
+      const langNames = {
+        'it': 'Italian',
+        'en': 'English', 
+        'es': 'Spanish', 
+        'pt': 'Portuguese', 
+        'de': 'German', 
+        'fr': 'French'
+      };
+      const targetLanguage = langNames[userLang] || 'Italian';
+
       const adjustmentPrompt = `You are an expert AI personal trainer and physical therapist. A user needs an immediate adjustment to their workout for today due to a specific issue.
 
-CRITICAL: Generate ALL content in ITALIAN. Exercise names MUST come ONLY from this database of primary exercises for the user's goal:
+CRITICAL: Generate ALL content in ${targetLanguage}. Exercise names MUST come ONLY from this database of primary exercises for the user's goal:
 ${exerciseNames}
 
 User Profile: Age ${trainingData.age}, ${trainingData.gender}, Fitness Experience: ${trainingData.fitness_experience}, Fitness Goal: ${trainingData.fitness_goal}
 Today's Original Workout Plan: ${JSON.stringify(selectedDayWorkout)}
 
-User's Reported Problem TODAY (in Italian): "${adjustmentProblem}"
+User's Reported Problem TODAY: "${adjustmentProblem}"
 
 Your Task:
-1. Provide empathetic and actionable advice in Italian in a 'consiglio_esperto' field (string, markdown format).
-2. Analyze the original workout and the user's problem. Create a NEW, modified list of 'esercizi_modificati' with Italian exercise names. Use your knowledge of exercises, ensuring they are safe and adhere to the user's available equipment: ${trainingData.equipment?.join(', ') || 'corpo libero'}. These exercises should work around the user's problem and MUST be selected ONLY from the provided database. For each exercise, provide Italian name, sets, reps (in Italian like "10 ripetizioni"), and rest (in Italian like "60 secondi"). If a safe exercise exists, you can keep it. If no safe alternative exists for a muscle group, omit it. DO NOT invent new exercises.
-3. Provide a brief 'spiegazione_modifiche' (string, in Italian) explaining why you made the changes.
-4. Return ONLY a JSON object with 'consiglio_esperto', 'spiegazione_modifiche', and 'esercizi_modificati'.`;
+1. Provide empathetic and actionable advice in ${targetLanguage} in a 'consiglio_esperto' field (string, markdown format).
+2. Analyze the original workout and the user's problem. Create a NEW, modified list of 'esercizi_modificati' with exercise names. Use your knowledge of exercises, ensuring they are safe and adhere to the user's available equipment: ${trainingData.equipment?.join(', ') || 'bodyweight'}. These exercises should work around the user's problem and MUST be selected ONLY from the provided database. For each exercise, provide name, sets, reps (in ${targetLanguage} like "10 repetitions" or "10 ripetizioni"), and rest (in ${targetLanguage} like "60 seconds" or "60 secondi"). If a safe exercise exists, you can keep it. If no safe alternative exists for a muscle group, omit it. DO NOT invent new exercises.
+3. Provide a brief 'spiegazione_modifiche' (string, in ${targetLanguage}) explaining why you made the changes.
+4. Return ONLY a JSON object with 'consiglio_esperto', 'spiegazione_modifiche', and 'esercizi_modificati'.
+5. ALL TEXT MUST BE IN ${targetLanguage.toUpperCase()}.`;
 
       const response = await base44.integrations.Core.InvokeLLM({
         prompt: adjustmentPrompt,
