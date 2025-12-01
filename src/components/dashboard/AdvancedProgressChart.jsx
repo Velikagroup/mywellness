@@ -37,10 +37,16 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     
     console.log('📈 First entry:', JSON.stringify(weightHistory[0]));
     
-    // weightHistory arriva già ordinato per data decrescente, quindi lo invertiamo per il grafico
-    const reversedHistory = [...weightHistory].reverse(); 
+    // Ordina per data crescente (più vecchio a sinistra, più recente a destra)
+    const sortedHistory = [...weightHistory].sort((a, b) => {
+      const dateA = a.date || new Date(a.created_date).toISOString().substring(0, 10);
+      const dateB = b.date || new Date(b.created_date).toISOString().substring(0, 10);
+      if (dateA !== dateB) return dateA.localeCompare(dateB);
+      // Se stessa data, ordina per created_date
+      return new Date(a.created_date) - new Date(b.created_date);
+    });
 
-    const entriesByDay = reversedHistory.reduce((acc, entry) => {
+    const entriesByDay = sortedHistory.reduce((acc, entry) => {
         const dayKey = entry.date || new Date(entry.created_date).toISOString().substring(0, 10);
         if (!acc[dayKey]) {
             acc[dayKey] = [];
@@ -49,7 +55,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         return acc;
     }, {});
 
-    const result = reversedHistory.map(entry => {
+    const result = sortedHistory.map(entry => {
         const dayKey = entry.date || new Date(entry.created_date).toISOString().substring(0, 10);
         const entriesForDay = entriesByDay[dayKey];
         
