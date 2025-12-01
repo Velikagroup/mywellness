@@ -102,7 +102,8 @@ export default function Dashboard() {
       }).slice(0, 30); // Keep only last 30 entries
 
       console.log('⚖️ Weight history fetched:', sortedWeightHistory.length, 'records');
-      console.log('📊 Latest weights:', sortedWeightHistory.slice(0, 3).map(w => ({ date: w.date, weight: w.weight })));
+      console.log('📊 Latest weights:', sortedWeightHistory.slice(0, 3).map(w => ({ date: w.date, weight: w.weight, created: w.created_date })));
+      console.log('📊 Full first entry:', JSON.stringify(sortedWeightHistory[0]));
       
       setWeightHistory(sortedWeightHistory); // Use sorted and sliced history
       setTodayMeals(fetchedTodayMeals);
