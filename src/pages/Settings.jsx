@@ -40,6 +40,7 @@ import { useLanguage } from '../components/i18n/LanguageContext';
 
 export default function Settings() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
