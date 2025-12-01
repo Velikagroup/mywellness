@@ -4,6 +4,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { X, Send, Minimize2, Maximize2, Paperclip } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '../i18n/LanguageContext';
 
 // Component per renderizzare i messaggi con immagini inline
 function MessageContent({ content, isAI = false, isAdmin = false, onImageClick }) {
@@ -131,6 +132,7 @@ function MessageContent({ content, isAI = false, isAdmin = false, onImageClick }
 }
 
 export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
+  const { t, language } = useLanguage();
   const [newMessage, setNewMessage] = useState('');
   const [isSending, setIsSending] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -461,7 +463,9 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                     localTicket.status === 'in_lavorazione' ? 'bg-gradient-to-r from-yellow-500 to-amber-500 text-white border-0' :
                     'bg-gradient-to-r from-green-500 to-emerald-600 text-white border-0'
                   }`}>
-                    {localTicket.status}
+                    {localTicket.status === 'aperto' ? t('settings.open') :
+                     localTicket.status === 'in_lavorazione' ? t('settings.inProgress') :
+                     localTicket.status === 'risolto' ? t('settings.resolved') : t('settings.closed')}
                   </Badge>
                 </div>
               </div>
@@ -511,7 +515,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                 <div key={idx} className="flex justify-end">
                   <div className="message-bubble user-message max-w-[85%] text-white rounded-3xl rounded-tr-md px-5 py-3.5">
                     {idx === 0 && (
-                      <p className="text-xs opacity-75 mb-1.5 font-medium">Tu - {new Date(localTicket.created_date).toLocaleString('it-IT')}</p>
+                      <p className="text-xs opacity-75 mb-1.5 font-medium">{t('settings.you')} - {new Date(localTicket.created_date).toLocaleString(language === 'it' ? 'it-IT' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-BR' : 'en-US')}</p>
                     )}
                     <MessageContent content={msg.content} onImageClick={setFullscreenImage} />
                   </div>
@@ -526,7 +530,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                         <span className="text-white text-base">🤖</span>
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-gray-900">AI</p>
+                        <p className="text-xs font-bold text-gray-900">{t('settings.aiAssistantShort')}</p>
                       </div>
                     </div>
                     <p className="text-sm text-gray-800 leading-relaxed whitespace-pre-wrap font-medium">{msg.content}</p>
@@ -542,8 +546,8 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                         <span className="text-white text-base">👨‍💼</span>
                       </div>
                       <div>
-                        <p className="text-xs font-bold text-gray-900">Team MyWellness</p>
-                        <p className="text-xs text-gray-500 font-medium">Risposta ufficiale</p>
+                        <p className="text-xs font-bold text-gray-900">{t('settings.support')}</p>
+                        <p className="text-xs text-gray-500 font-medium">{t('settings.aiAutoResponse')}</p>
                       </div>
                     </div>
                     <MessageContent content={msg.content} isAdmin onImageClick={setFullscreenImage} />
@@ -611,7 +615,7 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                       handleSendMessage();
                     }
                   }}
-                  placeholder="Scrivi la tua risposta..."
+                  placeholder={t('settings.writeYourReply')}
                   className="chat-input w-full resize-none h-20 rounded-2xl border-2 px-4 py-3 text-sm font-medium placeholder:text-gray-400"
                 />
                 <input
@@ -632,12 +636,12 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
                   {uploadingFile ? (
                     <div className="flex items-center gap-2">
                       <div className="animate-spin rounded-full h-3 w-3 border-2 border-gray-600 border-t-transparent"></div>
-                      Caricamento...
+                      {t('settings.sending')}
                     </div>
                   ) : (
                     <div className="flex items-center gap-2">
                       <Paperclip className="w-3.5 h-3.5" />
-                      Allega file
+                      {t('settings.attachFile')}
                     </div>
                   )}
                 </Button>

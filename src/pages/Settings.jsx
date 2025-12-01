@@ -271,20 +271,32 @@ export default function Settings() {
       setCurrentTicket(newTicket);
       setShowTicketChat(true);
 
-      // Genera risposta AI
+      // Genera risposta AI nella lingua dell'utente
+      const languageNames = {
+        it: 'italiano',
+        en: 'English',
+        es: 'español',
+        pt: 'português',
+        de: 'Deutsch',
+        fr: 'français'
+      };
+      const responseLang = languageNames[language] || 'italiano';
+      
       const aiResponseData = await base44.integrations.Core.InvokeLLM({
-        prompt: `Sei un assistente virtuale di MyWellness, un'app di fitness e nutrizione con piani personalizzati AI.
+        prompt: `You are a virtual assistant for MyWellness, a fitness and nutrition app with AI personalized plans.
 
-L'utente ha aperto un ticket di supporto con le seguenti informazioni:
-- Piano: ${user.subscription_plan || 'base'}
-- Categoria: ${ticketCategory}
-- Oggetto: ${ticketSubject}
-- Messaggio: ${ticketMessage}
+The user has opened a support ticket with the following information:
+- Plan: ${user.subscription_plan || 'base'}
+- Category: ${ticketCategory}
+- Subject: ${ticketSubject}
+- Message: ${ticketMessage}
 
-Fornisci una risposta utile, professionale e completa in italiano. 
-Se non puoi risolvere completamente il problema, fornisci comunque informazioni utili.
-NON menzionare email o contatti diretti. Se serve supporto umano, di' all'utente di cliccare il pulsante "Serve Ancora Aiuto" qui sotto.
-Sii conciso ma dettagliato (max 200 parole).`,
+IMPORTANT: Respond ONLY in ${responseLang} language.
+
+Provide a helpful, professional and complete response.
+If you cannot fully resolve the issue, still provide useful information.
+Do NOT mention email or direct contacts. If human support is needed, tell the user to click the "Need More Help" button below.
+Be concise but detailed (max 200 words).`,
         add_context_from_internet: false
       });
 
