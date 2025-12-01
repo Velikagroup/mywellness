@@ -5,6 +5,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Dumbbell, Info, Zap, Eye, Check, RotateCcw, Trash2, Loader2 } from "lucide-react";
 import { motion } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
+import { base44 } from '@/api/base44Client';
 
 export default function ExerciseCard({ 
   exercise, 
@@ -19,7 +20,63 @@ export default function ExerciseCard({
   userStrengthLevel = 'moderate'
 }) {
   const [showDetails, setShowDetails] = useState(false);
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const [translatedExercise, setTranslatedExercise] = useState(null);
+  const [isTranslating, setIsTranslating] = useState(false);
+  
+  // Traduci esercizio quando cambia lingua
+  React.useEffect(() => {
+    if (language === 'it') {
+      setTranslatedExercise(null);
+      return;
+    }
+    
+    const translateExercise = async () => {
+      setIsTranslating(true);
+      try {
+        const langNames = {
+          'en': 'English', 'es': 'Spanish', 'pt': 'Portuguese', 
+          'de': 'German', 'fr': 'French'
+        };
+        
+        const response = await base44.integrations.Core.InvokeLLM({
+          prompt: `Translate this workout exercise to ${langNames[language] || language}.
+
+Exercise data (in Italian):
+- Name: ${exercise.name}
+- Description: ${exercise.description || ''}
+- Detailed description: ${exercise.detailed_description || ''}
+- Form tips: ${exercise.form_tips?.join(', ') || ''}
+- Target muscles: ${exercise.target_muscles?.join(', ') || ''}
+- Muscle groups: ${exercise.muscle_groups?.join(', ') || ''}
+- Intensity tips: ${exercise.intensity_tips?.join(', ') || getIntensityTips().join(', ')}
+
+Translate ALL fields to ${langNames[language] || language}. Keep the same structure and meaning.`,
+          response_json_schema: {
+            type: "object",
+            properties: {
+              name: { type: "string" },
+              description: { type: "string" },
+              detailed_description: { type: "string" },
+              form_tips: { type: "array", items: { type: "string" } },
+              target_muscles: { type: "array", items: { type: "string" } },
+              muscle_groups: { type: "array", items: { type: "string" } },
+              intensity_tips: { type: "array", items: { type: "string" } }
+            }
+          }
+        });
+        
+        setTranslatedExercise(response);
+      } catch (error) {
+        console.error('Translation error:', error);
+      }
+      setIsTranslating(false);
+    };
+    
+    translateExercise();
+  }, [language, exercise.name]);
+  
+  const displayExercise = translatedExercise || exercise;
   
   // Genera intensity_tips se mancanti basati sul livello utente
   const getIntensityTips = () => {
@@ -61,7 +118,7 @@ export default function ExerciseCard({
     }
   };
   
-  const intensityTips = getIntensityTips();
+  const intensityTips = displayExercise.intensity_tips || getIntensityTips();
   
   const toggleSet = (setNumber) => {
     const newCompleted = completedSets.includes(setNumber)
@@ -97,7 +154,9 @@ export default function ExerciseCard({
           <CardHeader className="pb-3">
             <div className="flex items-start justify-between gap-2">
               <div className="flex-1 min-w-0">
-                <CardTitle className="text-base font-bold text-gray-900 mb-1">{exercise.name}</CardTitle>
+                <CardTitle className="text-base font-bold text-gray-900 mb-1">
+                  {isTranslating ? `${exercise.name}...` : displayExercise.name}
+                </CardTitle>
                 <div className="flex flex-wrap items-center gap-2 text-xs mb-3">
                   <span className="bg-[#26847F] text-white px-2 py-1 rounded font-semibold">
                     {exercise.sets} {t('workouts.sets')} × {exercise.reps}
@@ -144,9 +203,9 @@ export default function ExerciseCard({
           </CardHeader>
 
           <CardContent className="pt-0 pb-3">
-            {exercise.muscle_groups?.length > 0 && (
+            {(displayExercise.muscle_groups || exercise.muscle_groups)?.length > 0 && (
               <div className="flex flex-wrap gap-1 mb-3">
-                {exercise.muscle_groups.slice(0, 3).map((mg, idx) => (
+                {(displayExercise.muscle_groups || exercise.muscle_groups).slice(0, 3).map((mg, idx) => (
                   <span key={idx} className="bg-blue-50 text-blue-700 text-xs px-2 py-1 rounded border border-blue-200">
                     {mg}
                   </span>
@@ -244,7 +303,7 @@ export default function ExerciseCard({
             <DialogHeader>
               <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
                 <Dumbbell className="w-6 h-6 text-[#26847F]" />
-                {exercise.name}
+                {displayExercise.name}
               </DialogTitle>
               <DialogDescription className="text-sm text-gray-600">
                 {exercise.sets} {t('workouts.sets')} × {exercise.reps} • {exercise.rest}
@@ -252,11 +311,11 @@ export default function ExerciseCard({
             </DialogHeader>
 
             <div className="space-y-6 py-4">
-              {exercise.target_muscles?.length > 0 && (
+              {(displayExercise.target_muscles || exercise.target_muscles)?.length > 0 && (
                 <div>
                   <h4 className="font-semibold text-gray-900 mb-2">🎯 {t('workouts.targetMuscles')}</h4>
                   <div className="flex flex-wrap gap-2">
-                    {exercise.target_muscles.map((muscle, idx) => (
+                    {(displayExercise.target_muscles || exercise.target_muscles).map((muscle, idx) => (
                       <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm border border-blue-200">
                         {muscle}
                       </span>
@@ -265,24 +324,24 @@ export default function ExerciseCard({
                 </div>
               )}
 
-              {exercise.detailed_description && (
+              {(displayExercise.detailed_description || exercise.detailed_description) && (
                 <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
                   <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
                     <Info className="w-4 h-4 text-blue-600" />
                     {t('workouts.detailedDescription')}
                   </h4>
-                  <p className="text-sm text-gray-700 leading-relaxed">{exercise.detailed_description}</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">{displayExercise.detailed_description || exercise.detailed_description}</p>
                 </div>
               )}
 
-              {exercise.form_tips?.length > 0 && (
+              {(displayExercise.form_tips || exercise.form_tips)?.length > 0 && (
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
                     <Zap className="w-4 h-4 text-green-600" />
                     {t('workouts.formTips')}
                   </h4>
                   <ul className="space-y-2">
-                    {exercise.form_tips.map((tip, idx) => (
+                    {(displayExercise.form_tips || exercise.form_tips).map((tip, idx) => (
                       <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
                         <span className="text-green-600 font-bold flex-shrink-0">•</span>
                         <span>{tip}</span>
@@ -309,10 +368,10 @@ export default function ExerciseCard({
                 </div>
               )}
 
-              {exercise.description && !exercise.detailed_description && (
+              {(displayExercise.description || exercise.description) && !(displayExercise.detailed_description || exercise.detailed_description) && (
                 <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
                   <h4 className="font-semibold text-gray-900 mb-2">📋 {t('workouts.execution')}</h4>
-                  <p className="text-sm text-gray-700">{exercise.description}</p>
+                  <p className="text-sm text-gray-700">{displayExercise.description || exercise.description}</p>
                 </div>
               )}
             </div>
