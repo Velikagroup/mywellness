@@ -206,7 +206,13 @@ export const translations = {
       send: "Invia",
       you: "Tu",
       support: "Supporto",
-      aiAssistantShort: "Assistente AI"
+      aiAssistantShort: "Assistente AI",
+      // Categories
+      catTechnical: "Tecnico",
+      catBilling: "Fatturazione",
+      catSubscription: "Abbonamento",
+      catFeature: "Funzionalità",
+      catOther: "Altro"
     }
   },
   en: {
@@ -416,7 +422,13 @@ export const translations = {
       send: "Send",
       you: "You",
       support: "Support",
-      aiAssistantShort: "AI Assistant"
+      aiAssistantShort: "AI Assistant",
+      // Categories
+      catTechnical: "Technical",
+      catBilling: "Billing",
+      catSubscription: "Subscription",
+      catFeature: "Feature",
+      catOther: "Other"
     }
   },
   es: {
@@ -626,7 +638,13 @@ export const translations = {
       send: "Enviar",
       you: "Tú",
       support: "Soporte",
-      aiAssistantShort: "Asistente IA"
+      aiAssistantShort: "Asistente IA",
+      // Categories
+      catTechnical: "Técnico",
+      catBilling: "Facturación",
+      catSubscription: "Suscripción",
+      catFeature: "Funcionalidad",
+      catOther: "Otro"
     }
   },
   pt: {
@@ -836,7 +854,13 @@ export const translations = {
       send: "Enviar",
       you: "Você",
       support: "Suporte",
-      aiAssistantShort: "Assistente IA"
+      aiAssistantShort: "Assistente IA",
+      // Categories
+      catTechnical: "Técnico",
+      catBilling: "Faturamento",
+      catSubscription: "Assinatura",
+      catFeature: "Funcionalidade",
+      catOther: "Outro"
     }
   },
   de: {
@@ -1046,7 +1070,13 @@ export const translations = {
       send: "Senden",
       you: "Sie",
       support: "Support",
-      aiAssistantShort: "KI-Assistent"
+      aiAssistantShort: "KI-Assistent",
+      // Categories
+      catTechnical: "Technisch",
+      catBilling: "Rechnungsstellung",
+      catSubscription: "Abonnement",
+      catFeature: "Funktion",
+      catOther: "Sonstiges"
     }
   },
   fr: {
@@ -1256,7 +1286,13 @@ export const translations = {
       send: "Envoyer",
       you: "Vous",
       support: "Support",
-      aiAssistantShort: "Assistant IA"
+      aiAssistantShort: "Assistant IA",
+      // Categories
+      catTechnical: "Technique",
+      catBilling: "Facturation",
+      catSubscription: "Abonnement",
+      catFeature: "Fonctionnalité",
+      catOther: "Autre"
     }
   }
 };

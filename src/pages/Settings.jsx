@@ -1548,7 +1548,13 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               <p className="font-semibold text-gray-900 mb-2">{currentTicket?.subject}</p>
               <p className="text-sm text-gray-600 mb-3">{currentTicket?.message}</p>
               <div className="flex items-center gap-2">
-                <Badge variant="outline" className="text-xs">{currentTicket?.category}</Badge>
+                <Badge variant="outline" className="text-xs">
+                {currentTicket?.category === 'tecnico' ? t('settings.catTechnical') :
+                 currentTicket?.category === 'fatturazione' ? t('settings.catBilling') :
+                 currentTicket?.category === 'abbonamento' ? t('settings.catSubscription') :
+                 currentTicket?.category === 'funzionalita' ? t('settings.catFeature') :
+                 t('settings.catOther')}
+              </Badge>
                 <Badge className="bg-purple-100 text-purple-700 text-xs">{user?.subscription_plan}</Badge>
               </div>
             </div>

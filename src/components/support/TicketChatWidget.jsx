@@ -456,7 +456,13 @@ export default function TicketChatWidget({ ticket, onClose, onUpdate }) {
               <div className="flex-1 min-w-0">
                 <p className="font-bold text-base text-gray-900 truncate mb-0.5">{localTicket.subject}</p>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs font-medium text-gray-600">{localTicket.category}</span>
+                  <span className="text-xs font-medium text-gray-600">
+                  {localTicket.category === 'tecnico' ? t('settings.catTechnical') :
+                   localTicket.category === 'fatturazione' ? t('settings.catBilling') :
+                   localTicket.category === 'abbonamento' ? t('settings.catSubscription') :
+                   localTicket.category === 'funzionalita' ? t('settings.catFeature') :
+                   t('settings.catOther')}
+                </span>
                   <span className="text-xs text-gray-300">•</span>
                   <Badge className={`text-xs px-2.5 py-0.5 font-semibold shadow-sm ${
                     localTicket.status === 'aperto' ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white border-0' :
