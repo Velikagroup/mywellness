@@ -80,8 +80,10 @@ export default function Dashboard() {
       const todayOfWeek = new Date().toLocaleDateString('en-US', { weekday: 'long' }).toLowerCase();
       const todayDate = new Date().toISOString().split('T')[0];
 
+      console.log('🔍 Fetching weight history for user_id:', currentUser.id);
+      
       const basePromises = [
-        base44.entities.WeightHistory.filter({ user_id: currentUser.id }), // Changed: Fetch all, then sort/slice client-side
+        base44.entities.WeightHistory.list('-date', 30), // Use list() - RLS will filter by user
         base44.entities.MealPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek }),
         base44.entities.MealLog.filter({ user_id: currentUser.id, date: todayDate })
       ];
