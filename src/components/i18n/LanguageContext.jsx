@@ -62,28 +62,13 @@ export function LanguageProvider({ children }) {
     }
   }, [location.pathname, language]);
 
-  // Change language and update URL
+  // Change language (without URL changes for now)
   const setLanguage = useCallback((newLang) => {
     if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
     
     setLanguageState(newLang);
     localStorage.setItem('preferred_language', newLang);
-    
-    // Update URL with new language prefix
-    const currentPath = location.pathname;
-    const currentLang = getLanguageFromPath(currentPath);
-    
-    let newPath;
-    if (currentLang) {
-      // Replace existing language prefix
-      newPath = currentPath.replace(`/${currentLang}`, `/${newLang}`);
-    } else {
-      // Add language prefix
-      newPath = `/${newLang}${currentPath}`;
-    }
-    
-    navigate(newPath + location.search, { replace: true });
-  }, [location, navigate]);
+  }, []);
 
   // Translation function
   const t = useCallback((key, params = {}) => {
