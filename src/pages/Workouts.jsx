@@ -1410,7 +1410,7 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
     }, 0);
   }, [workoutPlans]);
 
-  // Formatta l'obiettivo fitness per display
+// Formatta l'obiettivo fitness per display
   const formatFitnessGoal = (goal) => {
     const goalLabels = {
       'forza_massimale': 'Forza Massimale',
@@ -1424,6 +1424,75 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
       'riabilitazione': 'Riabilitazione'
     };
     return goalLabels[goal] || goal;
+  };
+  
+  // Traduci il nome del workout plan
+  const translateWorkoutName = (planName) => {
+    if (!planName) return '';
+    const lang = t('common.lang') || 'it';
+    if (lang === 'it') return planName;
+    
+    const cacheKey = `workout_name_${planName}_${lang}`;
+    const cached = sessionStorage.getItem(cacheKey);
+    if (cached) return cached;
+    
+    // Traduzioni immediate per pattern comuni
+    const translations = {
+      en: {
+        'Sfrutta la Tua Velocità': 'Leverage Your Speed',
+        'Allenamento': 'Workout',
+        'Recupero Attivo': 'Active Recovery',
+        'Sprint di Lavoro Finale': 'Final Work Sprint',
+        'Resistenza': 'Endurance',
+        'Forza': 'Strength',
+        'Potenza': 'Power',
+        'Mobilità': 'Mobility'
+      },
+      es: {
+        'Sfrutta la Tua Velocità': 'Aprovecha Tu Velocidad',
+        'Allenamento': 'Entrenamiento',
+        'Recupero Attivo': 'Recuperación Activa',
+        'Sprint di Lavoro Finale': 'Sprint de Trabajo Final',
+        'Resistenza': 'Resistencia',
+        'Forza': 'Fuerza',
+        'Potenza': 'Potencia',
+        'Mobilità': 'Movilidad'
+      },
+      pt: {
+        'Sfrutta la Tua Velocità': 'Aproveite Sua Velocidade',
+        'Allenamento': 'Treino',
+        'Recupero Attivo': 'Recuperação Ativa',
+        'Sprint di Lavoro Finale': 'Sprint de Trabalho Final',
+        'Resistenza': 'Resistência',
+        'Forza': 'Força',
+        'Potenza': 'Potência',
+        'Mobilità': 'Mobilidade'
+      },
+      de: {
+        'Sfrutta la Tua Velocità': 'Nutzen Sie Ihre Geschwindigkeit',
+        'Allenamento': 'Training',
+        'Recupero Attivo': 'Aktive Erholung',
+        'Sprint di Lavoro Finale': 'Finaler Arbeitssprint',
+        'Resistenza': 'Ausdauer',
+        'Forza': 'Kraft',
+        'Potenza': 'Power',
+        'Mobilità': 'Mobilität'
+      },
+      fr: {
+        'Sfrutta la Tua Velocità': 'Exploitez Votre Vitesse',
+        'Allenamento': 'Entraînement',
+        'Recupero Attivo': 'Récupération Active',
+        'Sprint di Lavoro Finale': 'Sprint de Travail Final',
+        'Resistenza': 'Endurance',
+        'Forza': 'Force',
+        'Potenza': 'Puissance',
+        'Mobilità': 'Mobilité'
+      }
+    };
+    
+    const translated = translations[lang]?.[planName] || planName;
+    sessionStorage.setItem(cacheKey, translated);
+    return translated;
   };
 
 
@@ -1823,7 +1892,7 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                         <CardHeader className="border-b border-gray-200/30">
                           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                             <div>
-                              <CardTitle className="text-xl font-bold text-gray-900 mb-1">{workoutForSelectedDay.plan_name}</CardTitle>
+                              <CardTitle className="text-xl font-bold text-gray-900 mb-1">{translateWorkoutName(workoutForSelectedDay.plan_name)}</CardTitle>
                               <p className="text-sm text-gray-500">
                                 {getDayLabel(selectedDay)} • {workoutForSelectedDay.total_duration || 0} min • {workoutForSelectedDay.calories_burned || 0} kcal
                               </p>
