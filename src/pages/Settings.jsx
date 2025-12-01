@@ -347,13 +347,18 @@ Be concise but detailed (max 200 words).`,
 
   const handleNeedMoreHelp = async () => {
     try {
+      // NON cambiare lo stato - rimane "aperto" finché l'admin non risponde
+      
       // Chiudi il dialog AI
       setShowTicketChat(false);
       setAiResponse('');
       
-      // Apri la chat widget SENZA aggiungere la risposta AI al messaggio
-      // L'utente vedrà solo il suo messaggio originale
-      setSelectedTicketForChat(currentTicket);
+      // Apri la chat widget con messaggio che riceverà risposta entro 24h
+      const updatedTicket = {
+        ...currentTicket,
+        message: currentTicket.message + '\n\n--- Risposta AI ---\n✅ Richiesta inoltrata al team! Riceverai risposta via chat entro 24 ore. Continua pure a scrivere qui sotto se hai altre informazioni da aggiungere.'
+      };
+      setSelectedTicketForChat(updatedTicket);
       setCurrentTicket(null);
       
       await loadUserData();

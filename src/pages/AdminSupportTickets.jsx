@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip, Search, BarChart3, TrendingUp, Zap, Plus, Edit2, Trash2, RefreshCw, Languages } from 'lucide-react';
+import { HelpCircle, Crown, Clock, CheckCircle, Send, X, Minimize2, Maximize2, Paperclip, Search, BarChart3, TrendingUp, Zap, Plus, Edit2, Trash2, RefreshCw } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
@@ -94,9 +94,6 @@ export default function AdminSupportTickets() {
   const [assignedToFilter, setAssignedToFilter] = useState('all');
   const [showAssignModal, setShowAssignModal] = useState(false);
   const [ticketToAssign, setTicketToAssign] = useState(null);
-  const [showTranslateDialog, setShowTranslateDialog] = useState(false);
-  const [messageToTranslate, setMessageToTranslate] = useState('');
-  const [translatingForTicket, setTranslatingForTicket] = useState(null);
   const ticketsPerPage = 20;
 
   useEffect(() => {
@@ -456,48 +453,6 @@ export default function AdminSupportTickets() {
   const openAssignModal = (ticket) => {
     setTicketToAssign(ticket);
     setShowAssignModal(true);
-  };
-
-  const handleTranslateMyMessage = async (ticketId, targetLang) => {
-    const chat = openChats.find(c => c.id === ticketId);
-    if (!chat || !chat.newMessage.trim()) {
-      alert('❌ Scrivi prima un messaggio da tradurre');
-      return;
-    }
-
-    try {
-      const langNames = {
-        'it': 'Italian',
-        'en': 'English', 
-        'es': 'Spanish',
-        'fr': 'French',
-        'de': 'German',
-        'pt': 'Portuguese'
-      };
-      
-      const response = await base44.integrations.Core.InvokeLLM({
-        prompt: `Translate the following customer support message to ${langNames[targetLang] || targetLang}.
-        
-Original message:
-"${chat.newMessage}"
-
-Output ONLY the translated text, nothing else.`,
-        response_json_schema: {
-          type: "object",
-          properties: {
-            translated_text: { type: "string" }
-          }
-        }
-      });
-
-      const translated = response?.translated_text || response?.data?.translated_text;
-      if (translated) {
-        updateChatMessage(ticketId, translated);
-      }
-    } catch (error) {
-      console.error('Error translating:', error);
-      alert('❌ Errore nella traduzione');
-    }
   };
 
   if (isLoading) {
@@ -2185,7 +2140,7 @@ Improve the message above making it:
                   onChange={handleFileSelect}
                   className="hidden"
                 />
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-3 gap-2">
                   <Button
                     type="button"
                     onClick={() => fileInputRef.current?.click()}
@@ -2216,19 +2171,6 @@ Improve the message above making it:
                     ) : (
                       <>✨ AI</>
                     )}
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => {
-                      setMessageToTranslate(chat.newMessage);
-                      setTranslatingForTicket(chat.id);
-                      setShowTranslateDialog(true);
-                    }}
-                    disabled={!chat.newMessage.trim()}
-                    variant="outline"
-                    className="rounded-xl text-xs h-8 bg-green-50 hover:bg-green-100 border-green-200"
-                  >
-                    <Languages className="w-3 h-3" />
                   </Button>
                 </div>
               </div>
@@ -2351,44 +2293,6 @@ Improve the message above making it:
           </div>
         </div>
       )}
-
-      {/* Dialog Traduzione */}
-      <Dialog open={showTranslateDialog} onOpenChange={setShowTranslateDialog}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle className="flex items-center gap-2">
-              <Languages className="w-5 h-5 text-green-600" />
-              Traduci la Tua Risposta
-            </DialogTitle>
-          </DialogHeader>
-          <div className="py-4">
-            <p className="text-sm text-gray-600 mb-4">Seleziona la lingua in cui tradurre il messaggio:</p>
-            <div className="grid grid-cols-2 gap-3">
-              {[
-                { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-                { code: 'en', name: 'English', flag: '🇬🇧' },
-                { code: 'es', name: 'Español', flag: '🇪🇸' },
-                { code: 'pt', name: 'Português', flag: '🇧🇷' },
-                { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-                { code: 'fr', name: 'Français', flag: '🇫🇷' }
-              ].map((lang) => (
-                <Button
-                  key={lang.code}
-                  onClick={async () => {
-                    await handleTranslateMyMessage(translatingForTicket, lang.code);
-                    setShowTranslateDialog(false);
-                  }}
-                  variant="outline"
-                  className="h-auto py-3 flex items-center gap-3 justify-start hover:bg-gray-50"
-                >
-                  <span className="text-2xl">{lang.flag}</span>
-                  <span className="font-medium text-sm">{lang.name}</span>
-                </Button>
-              ))}
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
 
       {/* Dialog Gestione Risposta Veloce */}
       <Dialog open={showManageDialog} onOpenChange={setShowManageDialog}>
