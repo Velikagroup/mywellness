@@ -782,11 +782,11 @@ ${selectedDays.length > 0 ? `
 ` : `
    The user wants ${workoutDays} workout days total. Choose ${workoutDays} days from Monday to Friday for workouts, keeping Saturday and Sunday as rest days if possible.
 `}
-4. For workout days: provide 'plan_name' (in Italian), 'workout_type', 'warm_up' array (in Italian), 'exercises' array (in Italian), 'cool_down' array (in Italian), 'total_duration', 'calories_burned', 'difficulty_level'.
-5. For rest days: provide 'plan_name' (e.g., "Recupero Attivo"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
-6. Each exercise MUST have Italian names (e.g., "Squat con Manubri", "Flessioni", "Plank", "Affondi", "Curl Bicipiti") AND MUST be present in the provided Exercise Database. DO NOT invent exercises.
-7. 'reps' field must be in Italian format (e.g., "12 ripetizioni", "10-12 rip.", "30 secondi", "fino a cedimento").
-8. 'rest' field must be in Italian (e.g., "60 secondi", "90 sec", "2 minuti").
+4. For workout days: provide 'plan_name' (in ${targetLanguage}), 'workout_type', 'warm_up' array (in ${targetLanguage}), 'exercises' array (in ${targetLanguage}), 'cool_down' array (in ${targetLanguage}), 'total_duration', 'calories_burned', 'difficulty_level'.
+5. For rest days: provide 'plan_name' (e.g., "${terms.rest}"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
+6. Each exercise name MUST be in ${targetLanguage}. Use the name_translations.${language} field from the database when available. DO NOT invent exercises.
+7. 'reps' field must be in ${targetLanguage} format (e.g., "12 ${terms.reps}", "10-12 ${terms.reps}", "30 ${terms.seconds}").
+8. 'rest' field must be in ${targetLanguage} (e.g., "60 ${terms.seconds}", "90 ${terms.seconds}", "2 ${terms.minutes}").
 9. 'difficulty_level' must be one of: "beginner", "intermediate", "advanced" (in English).
 10. 'description' field for each exercise should include execution tips.
 11. CRITICAL: 'intensity_tips' array is MANDATORY for EVERY exercise - provide 2-4 specific load/intensity recommendations following the INTENSITY TIPS RULES above.
