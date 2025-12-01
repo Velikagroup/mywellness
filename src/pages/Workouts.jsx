@@ -641,7 +641,7 @@ export default function Workouts() {
         return acc;
       }, {});
 
-      // Priorità esercizi primari
+      // Priorità esercizi primari - usa nomi già tradotti
       const exerciseListForAI = Object.entries(exercisesByMuscleGroup)
         .map(([muscleGroup, exercises]) => {
           const primaryExs = exercises.filter(e => e.primary_for_goal).map(e => `"${e.name}"`).slice(0, 15);
@@ -654,6 +654,8 @@ export default function Workouts() {
           return list;
         })
         .join('\n\n');
+      
+      console.log(`🌍 Generating workout plan in ${targetLanguage} (language code: ${language})`);
 
       // Determina la lingua target per la generazione
       const langNames = {
