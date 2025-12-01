@@ -114,6 +114,8 @@ export default function AdminSupportTickets() {
   };
 
   // 🔥 POLLING REAL-TIME per aggiornamenti ticket ogni 2 secondi
+  const ticketsRef = useRef([]);
+  
   useEffect(() => {
     if (!user) return;
 
@@ -121,9 +123,12 @@ export default function AdminSupportTickets() {
       try {
         const updatedTickets = await base44.entities.SupportTicket.list('-created_date', 100);
         
+        // Usa il ref per confrontare con lo stato precedente (evita problemi di closure)
+        const previousTickets = ticketsRef.current;
+        
         // Identifica ticket con nuove risposte utente
         updatedTickets.forEach(ticket => {
-          const oldTicket = tickets.find(t => t.id === ticket.id);
+          const oldTicket = previousTickets.find(t => t.id === ticket.id);
           
           if (oldTicket && ticket.message !== oldTicket.message) {
             // Marca come nuova risposta se è in lavorazione
@@ -131,7 +136,15 @@ export default function AdminSupportTickets() {
               setNewResponseTickets(prev => new Set([...prev, ticket.id]));
             }
             
-            // 🔥 AGGIORNA ANCHE LE CHAT APERTE IN REAL-TIME
+            console.log('🔄 Ticket aggiornato in real-time (admin):', ticket.id);
+          }
+          
+          // 🔥 AGGIORNA SEMPRE LE CHAT APERTE se ci sono modifiche
+          if (oldTicket && (
+            ticket.message !== oldTicket.message || 
+            ticket.status !== oldTicket.status ||
+            ticket.admin_response !== oldTicket.admin_response
+          )) {
             setOpenChats(prevChats => 
               prevChats.map(chat => 
                 chat.id === ticket.id 
@@ -144,11 +157,11 @@ export default function AdminSupportTickets() {
                   : chat
               )
             );
-            
-            console.log('🔄 Ticket aggiornato in real-time (admin):', ticket.id);
           }
         });
         
+        // Aggiorna il ref e lo stato
+        ticketsRef.current = updatedTickets;
         setTickets(updatedTickets);
       } catch (error) {
         console.error('Error polling tickets:', error);
