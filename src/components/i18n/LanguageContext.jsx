@@ -1,22 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-
-// Import translations
-import itTranslations from './translations/it.json';
-import enTranslations from './translations/en.json';
-import esTranslations from './translations/es.json';
-import ptTranslations from './translations/pt.json';
-import deTranslations from './translations/de.json';
-import frTranslations from './translations/fr.json';
-
-const translations = {
-  it: itTranslations,
-  en: enTranslations,
-  es: esTranslations,
-  pt: ptTranslations,
-  de: deTranslations,
-  fr: frTranslations
-};
+import { translations } from './translations';
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'it', name: 'Italiano', flag: '🇮🇹' },
