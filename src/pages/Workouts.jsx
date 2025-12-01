@@ -1930,7 +1930,7 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                         <CardHeader className="border-b border-gray-200/30">
                           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                             <div>
-                              <CardTitle className="text-xl font-bold text-gray-900 mb-1">{translateWorkoutName(workoutForSelectedDay.plan_name)}</CardTitle>
+                              <CardTitle className="text-xl font-bold text-gray-900 mb-1">{workoutForSelectedDay.plan_name}</CardTitle>
                               <p className="text-sm text-gray-500">
                                 {getDayLabel(selectedDay)} • {workoutForSelectedDay.total_duration || 0} min • {workoutForSelectedDay.calories_burned || 0} kcal
                               </p>
