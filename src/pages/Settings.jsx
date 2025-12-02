@@ -36,6 +36,7 @@ import {
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import UpgradeModal from '../components/meals/UpgradeModal';
 import TicketChatWidget from '../components/support/TicketChatWidget';
 import { useLanguage, SUPPORTED_LANGUAGES } from '../components/i18n/LanguageContext';
