@@ -730,6 +730,11 @@ export const translations = {
       noPlanGenerated: "No plan generated",
       notSet: "not set",
       goal: "Goal",
+      // Fallback details
+      noDescriptionAvailable: "Perform this exercise with controlled movement and proper form.",
+      defaultFormTip1: "Keep your back straight throughout the movement",
+      defaultFormTip2: "Engage your core to stabilize your body",
+      defaultFormTip3: "Perform the movement slowly and controlled",
       // Quiz steps
       fitnessGoalTitle: "What is your main fitness goal?",
       fitnessGoalSubtitle: "Choose what you want to achieve",
