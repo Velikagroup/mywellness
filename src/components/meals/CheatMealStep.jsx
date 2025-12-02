@@ -2,24 +2,26 @@ import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Pizza, Cake, IceCream, Check, AlertCircle, Info } from 'lucide-react';
-
-const DAYS = [
-  { id: 'monday', label: 'Lunedì', short: 'Lun' },
-  { id: 'tuesday', label: 'Martedì', short: 'Mar' },
-  { id: 'wednesday', label: 'Mercoledì', short: 'Mer' },
-  { id: 'thursday', label: 'Giovedì', short: 'Gio' },
-  { id: 'friday', label: 'Venerdì', short: 'Ven' },
-  { id: 'saturday', label: 'Sabato', short: 'Sab' },
-  { id: 'sunday', label: 'Domenica', short: 'Dom' }
-];
-
-const MEAL_TYPES = [
-  { id: 'lunch', label: 'Pranzo', icon: '🍝' },
-  { id: 'dinner', label: 'Cena', icon: '🍖' }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
+  const { t } = useLanguage();
   const [selectedCheatMeals, setSelectedCheatMeals] = useState([]);
+
+  const DAYS = [
+    { id: 'monday', label: t('meals.monday'), short: t('meals.monday').substring(0, 3) },
+    { id: 'tuesday', label: t('meals.tuesday'), short: t('meals.tuesday').substring(0, 3) },
+    { id: 'wednesday', label: t('meals.wednesday'), short: t('meals.wednesday').substring(0, 3) },
+    { id: 'thursday', label: t('meals.thursday'), short: t('meals.thursday').substring(0, 3) },
+    { id: 'friday', label: t('meals.friday'), short: t('meals.friday').substring(0, 3) },
+    { id: 'saturday', label: t('meals.saturday'), short: t('meals.saturday').substring(0, 3) },
+    { id: 'sunday', label: t('meals.sunday'), short: t('meals.sunday').substring(0, 3) }
+  ];
+
+  const MEAL_TYPES = [
+    { id: 'lunch', label: t('meals.lunch'), icon: '🍝' },
+    { id: 'dinner', label: t('meals.dinner'), icon: '🍖' }
+  ];
   
   // Determina quanti cheat meal sono consigliati
   const getRecommendedCheatMeals = () => {
@@ -57,13 +59,6 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
     onComplete(cheatMealConfig);
   };
 
-  const getSpeedLabel = () => {
-    if (weightLossSpeed === 'very_fast') return 'Molto Veloce';
-    if (weightLossSpeed === 'moderate') return 'Moderata';
-    if (weightLossSpeed === 'slow') return 'Graduale';
-    return 'Personalizzata';
-  };
-
   return (
     <div className="space-y-6">
       <div className="text-center">
@@ -71,44 +66,18 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
           <Pizza className="w-10 h-10 text-white" />
         </div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          Pianifica i tuoi Cheat Meal
+          {t('meals.cheatMealTitle')}
         </h2>
         <p className="text-gray-600">
-          Equilibrio è la chiave! Scegli quando goderti i tuoi pasti preferiti.
+          {t('meals.cheatMealSubtitle')}
         </p>
       </div>
-
-      {/* Info Card */}
-      <Card className="bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-200">
-        <CardContent className="p-4">
-          <div className="flex items-start gap-3">
-            <Info className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
-            <div className="space-y-2">
-              <p className="text-sm text-blue-900 font-semibold">
-                Basato sul tuo ritmo: <span className="underline">{getSpeedLabel()}</span>
-              </p>
-              <p className="text-sm text-blue-800">
-                {weightLossSpeed === 'very_fast' ? (
-                  <>✅ <strong>1 cheat meal</strong> consigliato per mantenere deficit calorico elevato</>
-                ) : weightLossSpeed === 'moderate' ? (
-                  <>✅ <strong>1 cheat meal</strong> consigliato per un buon equilibrio</>
-                ) : (
-                  <>✅ <strong>Fino a 2 cheat meal</strong> per un approccio sostenibile</>
-                )}
-              </p>
-              <p className="text-xs text-blue-700">
-                💡 I cheat meal sono calcolati nel tuo piano, non rovinano i progressi!
-              </p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
 
       {/* Selezione Giorni e Pasti */}
       <div>
         <div className="flex items-center justify-between mb-4">
           <h3 className="text-lg font-bold text-gray-900">
-            Scegli quando (max {maxCheatMeals})
+            {t('common.lang') === 'it' ? `Scegli quando (max ${maxCheatMeals})` : `Choose when (max ${maxCheatMeals})`}
           </h3>
           <div className="flex items-center gap-2 text-sm">
             <span className="text-gray-600">Selezionati:</span>
@@ -159,25 +128,6 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
         </div>
       </div>
 
-      {/* Warning se non ha selezionato il numero consigliato */}
-      {selectedCheatMeals.length > 0 && selectedCheatMeals.length < recommendedCount && (
-        <Card className="bg-amber-50 border-2 border-amber-200">
-          <CardContent className="p-4">
-            <div className="flex items-start gap-3">
-              <AlertCircle className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
-              <div>
-                <p className="text-sm text-amber-900 font-semibold mb-1">
-                  Hai selezionato meno cheat meal del consigliato
-                </p>
-                <p className="text-xs text-amber-800">
-                  Un approccio sostenibile include {recommendedCount} cheat meal. Puoi aggiungerne {recommendedCount - selectedCheatMeals.length} in più!
-                </p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
       {/* Buttons */}
       <div className="flex gap-3 pt-4">
         <Button
@@ -185,14 +135,14 @@ export default function CheatMealStep({ weightLossSpeed, onComplete, onSkip }) {
           variant="outline"
           className="flex-1 h-14 text-base"
         >
-          Nessun Cheat Meal
+          {t('meals.skipCheatMeal')}
         </Button>
         <Button
           onClick={handleContinue}
           disabled={selectedCheatMeals.length === 0}
           className="flex-1 h-14 text-base bg-[#26847F] hover:bg-[#1f6b66] text-white disabled:opacity-50"
         >
-          {selectedCheatMeals.length === 0 ? 'Seleziona almeno 1' : `Continua con ${selectedCheatMeals.length}`}
+          {t('meals.continue')}
         </Button>
       </div>
     </div>

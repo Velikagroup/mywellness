@@ -103,7 +103,7 @@ const categorizeIngredient = (ingredientName) => {
   return 'altro';
 };
 
-const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData }) => {
+const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData, t }) => {
   const getStepStatus = (stepThreshold) => {
     if (generationProgress >= stepThreshold) return 'completed';
     if (generationProgress >= stepThreshold - 15 && generationProgress < stepThreshold) return 'in-progress';
@@ -1467,7 +1467,7 @@ STRICT RULES:
   }
   
   if (isGenerating) {
-    return <GenerateMealPlan generationProgress={generationProgress} generationStatus={generationStatus} nutritionData={nutritionData} />;
+    return <GenerateMealPlan generationProgress={generationProgress} generationStatus={generationStatus} nutritionData={nutritionData} t={t} />;
   }
 
   const days = [
