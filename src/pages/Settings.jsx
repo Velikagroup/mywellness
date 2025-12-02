@@ -95,6 +95,17 @@ export default function Settings() {
   const [showUpgradeDialog, setShowUpgradeDialog] = useState(false);
   const [selectedTicketForChat, setSelectedTicketForChat] = useState(null);
   const [showLanguageDialog, setShowLanguageDialog] = useState(false);
+  const [showLanguageWarning, setShowLanguageWarning] = useState(false);
+  
+  // Translation for the language warning banner
+  const languageWarningTexts = {
+    it: "Hai cambiato lingua! Per vedere i piani di nutrizione e allenamento nella nuova lingua, dovrai rigenerarli. Altrimenti rimarranno nella lingua originale.",
+    en: "You changed language! To see your nutrition and workout plans in the new language, you'll need to regenerate them. Otherwise they'll remain in the original language.",
+    es: "¡Cambiaste de idioma! Para ver tus planes de nutrición y entrenamiento en el nuevo idioma, deberás regenerarlos. De lo contrario, permanecerán en el idioma original.",
+    pt: "Você mudou o idioma! Para ver seus planos de nutrição e treino no novo idioma, você precisará regenerá-los. Caso contrário, eles permanecerão no idioma original.",
+    de: "Sie haben die Sprache geändert! Um Ihre Ernährungs- und Trainingspläne in der neuen Sprache zu sehen, müssen Sie sie neu generieren. Andernfalls bleiben sie in der ursprünglichen Sprache.",
+    fr: "Vous avez changé de langue ! Pour voir vos plans de nutrition et d'entraînement dans la nouvelle langue, vous devrez les régénérer. Sinon, ils resteront dans la langue d'origine."
+  };
 
   // Affiliazione
   const [affiliateStats, setAffiliateStats] = useState(null);
@@ -347,18 +358,13 @@ Be concise but detailed (max 200 words).`,
 
   const handleNeedMoreHelp = async () => {
     try {
-      // NON cambiare lo stato - rimane "aperto" finché l'admin non risponde
-      
       // Chiudi il dialog AI
       setShowTicketChat(false);
       setAiResponse('');
       
-      // Apri la chat widget con messaggio che riceverà risposta entro 24h
-      const updatedTicket = {
-        ...currentTicket,
-        message: currentTicket.message + '\n\n--- Risposta AI ---\n✅ Richiesta inoltrata al team! Riceverai risposta via chat entro 24 ore. Continua pure a scrivere qui sotto se hai altre informazioni da aggiungere.'
-      };
-      setSelectedTicketForChat(updatedTicket);
+      // Apri la chat widget SENZA aggiungere la risposta AI al messaggio
+      // L'utente vedrà solo il suo messaggio originale
+      setSelectedTicketForChat(currentTicket);
       setCurrentTicket(null);
       
       await loadUserData();
