@@ -1791,8 +1791,8 @@ STRICT RULES:
                   ) : (
                     <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
                       <Utensils className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-                      <p className="text-gray-500 font-medium text-lg">Nessun dato per {getDayLabel(selectedDay)}</p>
-                      <p className="text-sm text-gray-400 mt-1">Genera un piano per popolare i dati.</p>
+                      <p className="text-gray-500 font-medium text-lg">{t('meals.noDataFor').replace('{day}', getDayLabel(selectedDay))}</p>
+                      <p className="text-sm text-gray-400 mt-1">{t('meals.generatePrompt')}</p>
                     </div>
                   )}
                 </div>
@@ -1805,8 +1805,8 @@ STRICT RULES:
                   <div className="w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-6">
                     <Database className="w-8 h-8 text-gray-400" />
                   </div>
-                  <CardTitle className="text-xl text-gray-900 mb-4">Nessun Protocollo Nutrizionale</CardTitle>
-                  <p className="text-gray-600 mb-6">Genera il tuo piano personalizzato per iniziare.</p>
+                  <CardTitle className="text-xl text-gray-900 mb-4">{t('meals.noProtocol')}</CardTitle>
+                  <p className="text-gray-600 mb-6">{t('meals.generateToStart')}</p>
                 </CardContent>
               </Card>
             )
