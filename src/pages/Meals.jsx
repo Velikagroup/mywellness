@@ -141,10 +141,10 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
               <Activity className="w-8 h-8 text-white animated-energy-icon" strokeWidth={2.5} />
             </div>
             <CardTitle className="text-xl font-bold text-gray-900 text-center">
-              Creazione Protocollo Nutrizionale AI
+              {t('meals.loadingTitle')}
             </CardTitle>
             <p className="text-sm text-gray-600 text-center mt-2">
-              L'AI sta elaborando migliaia di dati per creare un piano alimentare scientifico e su misura per te.
+              {t('meals.loadingDesc')}
             </p>
           </CardHeader>
           
@@ -157,35 +157,35 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
             </div>
             
             <div className="bg-gray-50/80 rounded-xl p-4 border border-gray-200/60">
-              <h4 className="font-semibold text-gray-800 text-sm mb-3">Analisi in corso:</h4>
+              <h4 className="font-semibold text-gray-800 text-sm mb-3">{t('meals.analysisInProgress')}</h4>
               <ul className="space-y-2 text-xs">
                 <li className="flex items-center">
                   {renderStepIcon(getStepStatus(10))}
-                  <span className="text-gray-700">Profilo metabolico (BMR: {nutritionData?.bmr} kcal)</span>
+                  <span className="text-gray-700">{t('meals.metabolicProfile').replace('{bmr}', nutritionData?.bmr)}</span>
                 </li>
                 <li className="flex items-center">
                   {renderStepIcon(getStepStatus(25))}
-                  <span className="text-gray-700">Target calorico ({nutritionData?.daily_calories} kcal/giorno)</span>
+                  <span className="text-gray-700">{t('meals.caloricTarget').replace('{calories}', nutritionData?.daily_calories)}</span>
                 </li>
                 <li className="flex items-center">
                   {renderStepIcon(getStepStatus(50))}
-                  <span className="text-gray-700">Bilanciamento calorico automatico</span>
+                  <span className="text-gray-700">{t('meals.autoBalancing')}</span>
                 </li>
                 <li className="flex items-center">
                   {renderStepIcon(getStepStatus(60))}
-                  <span className="text-gray-700">Piano nutrizionale generato</span>
+                  <span className="text-gray-700">{t('meals.planGenerated')}</span>
                 </li>
                 <li className="flex items-center">
                   {renderStepIcon(getStepStatus(70))}
-                  <span className="text-gray-700">Validazione database ingredienti</span>
+                  <span className="text-gray-700">{t('meals.ingredientValidation')}</span>
                 </li>
                 <li className="flex items-center">
                   {renderStepIcon(getStepStatus(85))}
-                  <span className="text-gray-700">Generazione immagini pasti</span>
+                  <span className="text-gray-700">{t('meals.imageGeneration')}</span>
                 </li>
                 <li className="flex items-center">
                   {renderStepIcon(getStepStatus(95))}
-                  <span className="text-gray-700">Costruzione e salvataggio piano</span>
+                  <span className="text-gray-700">{t('meals.savingPlan')}</span>
                 </li>
               </ul>
             </div>
@@ -193,7 +193,7 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
             {/* Disclaimer */}
             <div className="bg-amber-50/80 rounded-xl p-4 border border-amber-200/60">
               <p className="text-xs text-amber-800 leading-relaxed">
-                <strong>⚠️ Avviso importante:</strong> Questo piano alimentare è generato automaticamente dall'AI e ha finalità esclusivamente informative. Non sostituisce in alcun modo il parere di un medico o di un nutrizionista. Se soffri di diabete, patologie metaboliche o altre condizioni mediche, consulta sempre un professionista qualificato prima di seguire qualsiasi indicazione.
+                {t('meals.disclaimer')}
               </p>
             </div>
           </CardContent>
