@@ -1471,13 +1471,13 @@ STRICT RULES:
   }
 
   const days = [
-    { key: 'monday', label: 'Lunedì' },
-    { key: 'tuesday', label: 'Martedì' },
-    { key: 'wednesday', label: 'Mercoledì' },
-    { key: 'thursday', label: 'Giovedì' },
-    { key: 'friday', label: 'Venerdì' },
-    { key: 'saturday', label: 'Sabato' },
-    { key: 'sunday', label: 'Domenica' }
+    { key: 'monday', label: t('meals.monday') },
+    { key: 'tuesday', label: t('meals.tuesday') },
+    { key: 'wednesday', label: t('meals.wednesday') },
+    { key: 'thursday', label: t('meals.thursday') },
+    { key: 'friday', label: t('meals.friday') },
+    { key: 'saturday', label: t('meals.saturday') },
+    { key: 'sunday', label: t('meals.sunday') }
   ];
 
   const isTrialUser = user?.subscription_plan === 'trial';
