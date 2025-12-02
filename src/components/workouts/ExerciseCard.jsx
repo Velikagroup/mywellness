@@ -269,46 +269,52 @@ export default function ExerciseCard({
             </DialogHeader>
 
             <div className="space-y-6 py-4">
-              {(displayExercise.target_muscles || exercise.target_muscles)?.length > 0 && (
-                <div>
-                  <h4 className="font-semibold text-gray-900 mb-2">🎯 {t('workouts.targetMuscles')}</h4>
-                  <div className="flex flex-wrap gap-2">
-                    {(displayExercise.target_muscles || exercise.target_muscles).map((muscle, idx) => (
-                      <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm border border-blue-200">
-                        {muscle}
-                      </span>
-                    ))}
-                  </div>
+              {/* Target Muscles - mostra sempre anche se vuoto con fallback */}
+              <div>
+                <h4 className="font-semibold text-gray-900 mb-2">🎯 {t('workouts.targetMuscles')}</h4>
+                <div className="flex flex-wrap gap-2">
+                  {((displayExercise.target_muscles || exercise.target_muscles)?.length > 0 
+                    ? (displayExercise.target_muscles || exercise.target_muscles)
+                    : (displayExercise.muscle_groups || exercise.muscle_groups || [])
+                  ).map((muscle, idx) => (
+                    <span key={idx} className="bg-blue-50 text-blue-700 px-3 py-1 rounded-full text-sm border border-blue-200">
+                      {muscle}
+                    </span>
+                  ))}
                 </div>
-              )}
+              </div>
 
-              {(displayExercise.detailed_description || exercise.detailed_description) && (
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
-                  <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
-                    <Info className="w-4 h-4 text-blue-600" />
-                    {t('workouts.detailedDescription')}
-                  </h4>
-                  <p className="text-sm text-gray-700 leading-relaxed">{displayExercise.detailed_description || exercise.detailed_description}</p>
-                </div>
-              )}
+              {/* Descrizione Dettagliata - mostra sempre con fallback */}
+              <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 border border-blue-200">
+                <h4 className="font-semibold text-gray-900 mb-2 flex items-center gap-2">
+                  <Info className="w-4 h-4 text-blue-600" />
+                  {t('workouts.detailedDescription')}
+                </h4>
+                <p className="text-sm text-gray-700 leading-relaxed">
+                  {displayExercise.detailed_description || exercise.detailed_description || exercise.description || t('workouts.noDescriptionAvailable')}
+                </p>
+              </div>
 
-              {(displayExercise.form_tips || exercise.form_tips)?.length > 0 && (
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
-                  <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    <Zap className="w-4 h-4 text-green-600" />
-                    {t('workouts.formTips')}
-                  </h4>
-                  <ul className="space-y-2">
-                    {(displayExercise.form_tips || exercise.form_tips).map((tip, idx) => (
-                      <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
-                        <span className="text-green-600 font-bold flex-shrink-0">•</span>
-                        <span>{tip}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
+              {/* Form Tips - mostra sempre con fallback */}
+              <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-4 border border-green-200">
+                <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
+                  <Zap className="w-4 h-4 text-green-600" />
+                  {t('workouts.formTips')}
+                </h4>
+                <ul className="space-y-2">
+                  {((displayExercise.form_tips || exercise.form_tips)?.length > 0 
+                    ? (displayExercise.form_tips || exercise.form_tips)
+                    : [t('workouts.defaultFormTip1'), t('workouts.defaultFormTip2'), t('workouts.defaultFormTip3')]
+                  ).map((tip, idx) => (
+                    <li key={idx} className="flex items-start gap-2 text-sm text-gray-700">
+                      <span className="text-green-600 font-bold flex-shrink-0">•</span>
+                      <span>{tip}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
+              {/* Intensity Tips - sempre visibile */}
               {intensityTips?.length > 0 && (
                 <div className="bg-gradient-to-br from-orange-50 to-amber-50 rounded-xl p-4 border border-orange-200">
                   <h4 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
@@ -323,13 +329,6 @@ export default function ExerciseCard({
                       </li>
                     ))}
                   </ul>
-                </div>
-              )}
-
-              {(displayExercise.description || exercise.description) && !(displayExercise.detailed_description || exercise.detailed_description) && (
-                <div className="bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <h4 className="font-semibold text-gray-900 mb-2">📋 {t('workouts.execution')}</h4>
-                  <p className="text-sm text-gray-700">{displayExercise.description || exercise.description}</p>
                 </div>
               )}
             </div>
