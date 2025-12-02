@@ -1310,6 +1310,111 @@ ${selectedDays.length > 0 ? `
       
       console.log(`✅ POST-PROCESSING COMPLETATO: Aggiunti intensity_tips a ${tipsAdded} esercizi con pesi per livello ${strengthLevel} in lingua ${language}`);
 
+      // 🔧 POST-PROCESSING: Aggiungi detailed_description, form_tips, target_muscles se mancanti
+      console.log('🔧 POST-PROCESSING: Verifico detailed_description, form_tips, target_muscles...');
+      let detailsAdded = 0;
+      
+      // Traduzioni di fallback per i dettagli
+      const detailsTranslations = {
+        it: {
+          defaultDescription: (name) => `Esegui ${name} con movimento controllato. Mantieni la postura corretta durante tutta l'esecuzione. Respira in modo regolare: espira durante lo sforzo e inspira durante il rilascio.`,
+          defaultFormTips: [
+            "Mantieni la schiena dritta durante tutto il movimento",
+            "Contrai il core per stabilizzare il corpo",
+            "Esegui il movimento in modo lento e controllato",
+            "Non bloccare le articolazioni a fine movimento",
+            "Respira in modo regolare: espira nello sforzo",
+            "Mantieni le spalle basse e rilassate"
+          ],
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Muscoli principali coinvolti"]
+        },
+        en: {
+          defaultDescription: (name) => `Perform ${name} with controlled movement. Maintain proper posture throughout the execution. Breathe regularly: exhale during effort and inhale during release.`,
+          defaultFormTips: [
+            "Keep your back straight throughout the movement",
+            "Engage your core to stabilize your body",
+            "Perform the movement slowly and controlled",
+            "Don't lock your joints at the end of movement",
+            "Breathe regularly: exhale during effort",
+            "Keep your shoulders down and relaxed"
+          ],
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Main muscles involved"]
+        },
+        es: {
+          defaultDescription: (name) => `Realiza ${name} con movimiento controlado. Mantén la postura correcta durante toda la ejecución. Respira de forma regular: exhala durante el esfuerzo e inhala durante la liberación.`,
+          defaultFormTips: [
+            "Mantén la espalda recta durante todo el movimiento",
+            "Contrae el core para estabilizar el cuerpo",
+            "Realiza el movimiento de forma lenta y controlada",
+            "No bloquees las articulaciones al final del movimiento",
+            "Respira de forma regular: exhala en el esfuerzo",
+            "Mantén los hombros bajos y relajados"
+          ],
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Músculos principales involucrados"]
+        },
+        pt: {
+          defaultDescription: (name) => `Execute ${name} com movimento controlado. Mantenha a postura correta durante toda a execução. Respire regularmente: expire durante o esforço e inspire durante a liberação.`,
+          defaultFormTips: [
+            "Mantenha as costas retas durante todo o movimento",
+            "Contraia o core para estabilizar o corpo",
+            "Execute o movimento de forma lenta e controlada",
+            "Não trave as articulações no final do movimento",
+            "Respire regularmente: expire no esforço",
+            "Mantenha os ombros baixos e relaxados"
+          ],
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Músculos principais envolvidos"]
+        },
+        de: {
+          defaultDescription: (name) => `Führe ${name} mit kontrollierter Bewegung aus. Behalte die korrekte Haltung während der gesamten Ausführung bei. Atme regelmäßig: ausatmen bei Anstrengung und einatmen beim Lösen.`,
+          defaultFormTips: [
+            "Halte den Rücken während der gesamten Bewegung gerade",
+            "Spanne den Core an, um den Körper zu stabilisieren",
+            "Führe die Bewegung langsam und kontrolliert aus",
+            "Blockiere die Gelenke am Ende der Bewegung nicht",
+            "Atme regelmäßig: ausatmen bei Anstrengung",
+            "Halte die Schultern unten und entspannt"
+          ],
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Hauptmuskeln beteiligt"]
+        },
+        fr: {
+          defaultDescription: (name) => `Exécutez ${name} avec un mouvement contrôlé. Maintenez une posture correcte tout au long de l'exécution. Respirez régulièrement: expirez pendant l'effort et inspirez pendant le relâchement.`,
+          defaultFormTips: [
+            "Gardez le dos droit pendant tout le mouvement",
+            "Contractez le core pour stabiliser le corps",
+            "Effectuez le mouvement lentement et de manière contrôlée",
+            "Ne bloquez pas les articulations en fin de mouvement",
+            "Respirez régulièrement: expirez pendant l'effort",
+            "Gardez les épaules basses et détendues"
+          ],
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Muscles principaux impliqués"]
+        }
+      };
+      const detailsTrans = detailsTranslations[language] || detailsTranslations.it;
+      
+      for (const plan of response.workout_plans) {
+        if (plan.exercises && Array.isArray(plan.exercises)) {
+          for (const exercise of plan.exercises) {
+            // Aggiungi detailed_description se mancante
+            if (!exercise.detailed_description || exercise.detailed_description.trim() === '') {
+              exercise.detailed_description = detailsTrans.defaultDescription(exercise.name);
+              detailsAdded++;
+            }
+            
+            // Aggiungi form_tips se mancanti
+            if (!exercise.form_tips || !Array.isArray(exercise.form_tips) || exercise.form_tips.length === 0) {
+              exercise.form_tips = detailsTrans.defaultFormTips;
+            }
+            
+            // Aggiungi target_muscles se mancanti
+            if (!exercise.target_muscles || !Array.isArray(exercise.target_muscles) || exercise.target_muscles.length === 0) {
+              exercise.target_muscles = detailsTrans.defaultTargetMuscles(exercise.muscle_groups);
+            }
+          }
+        }
+      }
+      
+      console.log(`✅ POST-PROCESSING DETTAGLI: Aggiunti dettagli a ${detailsAdded} esercizi in lingua ${language}`);
+
       updateProgress(75, t('workouts.genBuilding'));
       
       // ✅ FIX: Fetch TUTTI i piani esistenti per l'utente e cancellali
