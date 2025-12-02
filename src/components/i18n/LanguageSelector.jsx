@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useLanguage, SUPPORTED_LANGUAGES } from './LanguageContext';
-import { ChevronDown, Check, Globe } from 'lucide-react';
+import { ChevronDown, Check, Globe, AlertTriangle } from 'lucide-react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -8,9 +8,30 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 export default function LanguageSelector({ variant = 'default', showLabel = true }) {
   const { language, setLanguage, t } = useLanguage();
+  const [showWarning, setShowWarning] = useState(false);
+  const [previousLanguage, setPreviousLanguage] = useState(language);
+
+  const handleLanguageChange = (newLang) => {
+    if (newLang !== language) {
+      setPreviousLanguage(language);
+      setLanguage(newLang);
+      setShowWarning(true);
+    }
+  };
+
+  // Translation for the warning banner
+  const warningTexts = {
+    it: "Hai cambiato lingua! Per vedere i piani di nutrizione e allenamento nella nuova lingua, dovrai rigenerarli. Altrimenti rimarranno nella lingua originale.",
+    en: "You changed language! To see your nutrition and workout plans in the new language, you'll need to regenerate them. Otherwise they'll remain in the original language.",
+    es: "¡Cambiaste de idioma! Para ver tus planes de nutrición y entrenamiento en el nuevo idioma, deberás regenerarlos. De lo contrario, permanecerán en el idioma original.",
+    pt: "Você mudou o idioma! Para ver seus planos de nutrição e treino no novo idioma, você precisará regenerá-los. Caso contrário, eles permanecerão no idioma original.",
+    de: "Sie haben die Sprache geändert! Um Ihre Ernährungs- und Trainingspläne in der neuen Sprache zu sehen, müssen Sie sie neu generieren. Andernfalls bleiben sie in der ursprünglichen Sprache.",
+    fr: "Vous avez changé de langue ! Pour voir vos plans de nutrition et d'entraînement dans la nouvelle langue, vous devrez les régénérer. Sinon, ils resteront dans la langue d'origine."
+  };
   
   const currentLang = SUPPORTED_LANGUAGES.find(l => l.code === language) || SUPPORTED_LANGUAGES[0];
 
