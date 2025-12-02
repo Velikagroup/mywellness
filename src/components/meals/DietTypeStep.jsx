@@ -1,20 +1,22 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-
-const dietTypes = [
-  { id: 'mediterranean', label: 'Mediterranea', emoji: '🍝', desc: 'Equilibrata e varia' },
-  { id: 'low_carb', label: 'Low Carb', emoji: '🥩', desc: 'Pochi carboidrati' },
-  { id: 'soft_low_carb', label: 'Soft Low Carb', emoji: '🥗', desc: 'Carboidrati ridotti' },
-  { id: 'paleo', label: 'Paleo', emoji: '🦴', desc: 'Come nell\'era paleolitica' },
-  { id: 'keto', label: 'Chetogenica', emoji: '🥓', desc: 'Grassi alti, carbs bassi' },
-  { id: 'carnivore', label: 'Carnivora', emoji: '🍖', desc: 'Solo prodotti animali' },
-  { id: 'vegetarian', label: 'Vegetariana', emoji: '🥕', desc: 'Senza carne e pesce' },
-  { id: 'vegan', label: 'Vegana', emoji: '🌱', desc: '100% vegetale' }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function DietTypeStep({ onDataChange, onNext, currentDietType }) {
+  const { t } = useLanguage();
   const [selected, setSelected] = useState(currentDietType || 'mediterranean');
+
+  const dietTypes = [
+    { id: 'mediterranean', label: t('meals.dietMediterranean'), emoji: '🍝', desc: t('meals.dietMediterraneanDesc') },
+    { id: 'low_carb', label: t('meals.dietLowCarb'), emoji: '🥩', desc: t('meals.dietLowCarbDesc') },
+    { id: 'soft_low_carb', label: t('meals.dietSoftLowCarb'), emoji: '🥗', desc: t('meals.dietSoftLowCarbDesc') },
+    { id: 'paleo', label: t('meals.dietPaleo'), emoji: '🦴', desc: t('meals.dietPaleoDesc') },
+    { id: 'keto', label: t('meals.dietKeto'), emoji: '🥓', desc: t('meals.dietKetoDesc') },
+    { id: 'carnivore', label: t('meals.dietCarnivore'), emoji: '🍖', desc: t('meals.dietCarnivoreDesc') },
+    { id: 'vegetarian', label: t('meals.dietVegetarian'), emoji: '🥕', desc: t('meals.dietVegetarianDesc') },
+    { id: 'vegan', label: t('meals.dietVegan'), emoji: '🌱', desc: t('meals.dietVeganDesc') }
+  ];
 
   const handleSelect = (id) => {
     setSelected(id);
@@ -31,10 +33,10 @@ export default function DietTypeStep({ onDataChange, onNext, currentDietType }) 
     <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-gray-900 text-center">
-          🥗 Tipo di Dieta
+          🥗 {t('meals.dietTypeTitle')}
         </CardTitle>
         <p className="text-gray-600 text-center mt-2">
-          Quale approccio nutrizionale preferisci?
+          {t('meals.dietTypeSubtitle')}
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -62,7 +64,7 @@ export default function DietTypeStep({ onDataChange, onNext, currentDietType }) 
             disabled={!selected}
             className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-8 py-6 text-lg font-semibold rounded-xl"
           >
-            Continua
+            {t('meals.continue')}
           </Button>
         </div>
       </CardContent>
