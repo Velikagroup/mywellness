@@ -2912,6 +2912,63 @@ export const translations = {
       enterExerciseName: "Entrez le nom de l'exercice",
       // Modify session button
       modifySession: "Modifier la Séance"
+    },
+    meals: {
+      title: "Protocole Nutritionnel",
+      subtitle: "Planification et optimisation des repas avec IA",
+      generationsRemaining: "{count} générations restantes ce mois",
+      regenerateWithAI: "Régénérer le Plan avec IA",
+      pantry: "Garde-Manger",
+      shoppingList: "Liste de Courses",
+      limitReached: "Limite de Générations Atteinte",
+      limitReachedDesc: "Vous avez utilisé toutes les {limit} générations disponibles ce mois avec le forfait {plan}.",
+      limitReachedTip: "Améliorez pour obtenir plus de générations ou des générations illimitées !",
+      upgradePlan: "Améliorer le Forfait",
+      weeklySchedule: "Programmation Hebdomadaire",
+      protocolFor: "Protocole du {day}",
+      addToShoppingList: "Ajouter à la Liste de Courses",
+      added: "Ajouté",
+      dailyTotals: "Totaux Quotidiens",
+      totalCalories: "Calories Totales",
+      protein: "Protéines",
+      carbs: "Glucides",
+      fat: "Lipides",
+      dailyTarget: "Objectif quotidien",
+      noDataFor: "Pas de données pour {day}",
+      generatePrompt: "Générez un plan pour remplir les données.",
+      noProtocol: "Aucun Protocole Nutritionnel",
+      generateToStart: "Générez votre plan personnalisé pour commencer.",
+      // Meal types
+      breakfast: "Petit-déjeuner",
+      snack1: "Collation Matin",
+      lunch: "Déjeuner",
+      snack2: "Collation Après-midi",
+      dinner: "Dîner",
+      snack3: "Collation Soir",
+      snack4: "Collation Nuit",
+      cheatMeal: "CHEAT MEAL",
+      // Days
+      monday: "Lundi",
+      tuesday: "Mardi",
+      wednesday: "Mercredi",
+      thursday: "Jeudi",
+      friday: "Vendredi",
+      saturday: "Samedi",
+      sunday: "Dimanche",
+      // Generation progress
+      loadingTitle: "Création du Protocole Nutritionnel IA",
+      loadingDesc: "L'IA traite des milliers de données pour créer un plan alimentaire scientifique et personnalisé pour vous.",
+      analysisInProgress: "Analyse en cours :",
+      metabolicProfile: "Profil métabolique (BMR : {bmr} kcal)",
+      caloricTarget: "Objectif calorique ({calories} kcal/jour)",
+      autoBalancing: "Équilibrage calorique automatique",
+      planGenerated: "Plan nutritionnel généré",
+      ingredientValidation: "Validation de la base de données d'ingrédients",
+      imageGeneration: "Génération d'images de repas",
+      savingPlan: "Construction et sauvegarde du plan",
+      disclaimer: "Ce plan alimentaire est généré automatiquement par l'IA et a des fins exclusivement informatives. Il ne remplace en aucun cas l'avis d'un médecin ou d'un nutritionniste. Si vous souffrez de diabète, de troubles métaboliques ou d'autres conditions médicales, consultez toujours un professionnel qualifié avant de suivre toute recommandation.",
+      // Replace meal
+      replaceMeal: "Remplacer le repas"
     }
   }
 };
