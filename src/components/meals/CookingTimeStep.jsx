@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function CookingTimeStep({ onDataChange, onNext, dietType }) {
+  const { t } = useLanguage();
   const [selected, setSelected] = useState('moderate');
 
   const options = [
-    { id: 'quick', label: 'Veloce', emoji: '⚡', desc: '10-20 minuti', detail: 'Ricette semplici e veloci' },
-    { id: 'moderate', label: 'Moderato', emoji: '☕', desc: '20-30 minuti', detail: 'Equilibrio tra tempo e qualità' },
-    { id: 'relaxed', label: 'Tranquillo', emoji: '👨‍🍳', desc: '30+ minuti', detail: 'Posso dedicare più tempo' }
+    { id: 'quick', label: t('meals.cookingQuick'), emoji: '⚡', desc: t('meals.cookingQuickDesc') },
+    { id: 'moderate', label: t('meals.cookingModerate'), emoji: '☕', desc: t('meals.cookingModerateDesc') },
+    { id: 'relaxed', label: t('meals.cookingRelaxed'), emoji: '👨‍🍳', desc: t('meals.cookingRelaxedDesc') }
   ];
 
   const handleSelect = (id) => {
@@ -26,10 +28,10 @@ export default function CookingTimeStep({ onDataChange, onNext, dietType }) {
     <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-gray-900 text-center">
-          ⏱️ Tempo in Cucina
+          ⏱️ {t('meals.cookingTimeTitle')}
         </CardTitle>
         <p className="text-gray-600 text-center mt-2">
-          Quanto tempo puoi dedicare alla preparazione dei pasti?
+          {t('meals.cookingTimeSubtitle')}
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -46,16 +48,9 @@ export default function CookingTimeStep({ onDataChange, onNext, dietType }) {
             >
               <div className="text-4xl mb-3">{option.emoji}</div>
               <div className="font-bold text-lg text-gray-900 mb-1">{option.label}</div>
-              <div className="text-sm font-semibold text-[#26847F] mb-2">{option.desc}</div>
-              <div className="text-xs text-gray-600">{option.detail}</div>
+              <div className="text-sm font-semibold text-[#26847F]">{option.desc}</div>
             </button>
           ))}
-        </div>
-
-        <div className="bg-purple-50 border-2 border-purple-200 rounded-xl p-4">
-          <p className="text-sm text-purple-900 text-center">
-            💡 L'AI adatterà le ricette al tempo che hai a disposizione
-          </p>
         </div>
 
         <div className="flex justify-center pt-4">
@@ -64,7 +59,7 @@ export default function CookingTimeStep({ onDataChange, onNext, dietType }) {
             disabled={!selected}
             className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-8 py-6 text-lg font-semibold rounded-xl"
           >
-            Continua
+            {t('meals.continue')}
           </Button>
         </div>
       </CardContent>
