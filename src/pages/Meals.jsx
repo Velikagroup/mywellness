@@ -1690,22 +1690,22 @@ STRICT RULES:
                       <div className="bg-gradient-to-r from-[#E0F2F1] to-blue-50 rounded-xl p-4 border-2 border-[#26847F]/30 mb-6">
                         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                           <div className="text-center">
-                            <p className="text-xs text-gray-600 font-medium mb-1">Calorie Totali</p>
+                            <p className="text-xs text-gray-600 font-medium mb-1">{t('meals.totalCalories')}</p>
                             <p className="text-2xl font-bold text-[#26847F]">{Math.round(dailyTotals.calories)}</p>
                             <p className="text-xs text-gray-500">kcal</p>
                           </div>
                           <div className="text-center">
-                            <p className="text-xs text-gray-600 font-medium mb-1">Proteine</p>
+                            <p className="text-xs text-gray-600 font-medium mb-1">{t('meals.protein')}</p>
                             <p className="text-2xl font-bold text-red-600">{Math.round(dailyTotals.protein * 10) / 10}</p>
                             <p className="text-xs text-gray-500">g</p>
                           </div>
                           <div className="text-center">
-                            <p className="text-xs text-gray-600 font-medium mb-1">Carboidrati</p>
+                            <p className="text-xs text-gray-600 font-medium mb-1">{t('meals.carbs')}</p>
                             <p className="text-2xl font-bold text-blue-600">{Math.round(dailyTotals.carbs * 10) / 10}</p>
                             <p className="text-xs text-gray-500">g</p>
                           </div>
                           <div className="text-center">
-                            <p className="text-xs text-gray-600 font-medium mb-1">Grassi</p>
+                            <p className="text-xs text-gray-600 font-medium mb-1">{t('meals.fat')}</p>
                             <p className="text-2xl font-bold text-yellow-600">{Math.round(dailyTotals.fat * 10) / 10}</p>
                             <p className="text-xs text-gray-500">g</p>
                           </div>
@@ -1713,7 +1713,7 @@ STRICT RULES:
                         {nutritionData?.daily_calories && (
                           <div className="mt-3 pt-3 border-t border-[#26847F]/20">
                             <div className="flex items-center justify-between text-xs">
-                              <span className="text-gray-600">Target giornaliero: {nutritionData.daily_calories} kcal</span>
+                              <span className="text-gray-600">{t('meals.dailyTarget')}: {nutritionData.daily_calories} kcal</span>
                               <span className={`font-semibold ${Math.abs(dailyTotals.calories - nutritionData.daily_calories) <= 50 ? 'text-green-600' : 'text-amber-600'}`}>
                                 {dailyTotals.calories > nutritionData.daily_calories ? '+' : ''}
                                 {Math.round(dailyTotals.calories - nutritionData.daily_calories)} kcal
