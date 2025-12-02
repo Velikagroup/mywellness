@@ -2045,6 +2045,11 @@ export const translations = {
       noPlanGenerated: "Kein Plan erstellt",
       notSet: "nicht festgelegt",
       goal: "Ziel",
+      // Fallback details
+      noDescriptionAvailable: "Führen Sie diese Übung mit kontrollierter Bewegung und korrekter Form aus.",
+      defaultFormTip1: "Halten Sie den Rücken während der gesamten Bewegung gerade",
+      defaultFormTip2: "Spannen Sie den Core an, um den Körper zu stabilisieren",
+      defaultFormTip3: "Führen Sie die Bewegung langsam und kontrolliert aus",
       // Quiz steps
       fitnessGoalTitle: "Was ist Ihr Hauptfitnessziel?",
       fitnessGoalSubtitle: "Wählen Sie, was Sie erreichen möchten",
