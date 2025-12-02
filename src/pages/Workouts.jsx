@@ -858,10 +858,26 @@ ${selectedDays.length > 0 ? `
                           reps: { type: "string" }, 
                           rest: { type: "string" },
                           description: { type: "string" },
+                          detailed_description: { 
+                            type: "string",
+                            description: "2-3 sentences explaining how to perform this exercise correctly"
+                          },
+                          form_tips: {
+                            type: "array",
+                            items: { type: "string" },
+                            minItems: 4,
+                            maxItems: 8,
+                            description: "4-8 specific tips on correct form and technique"
+                          },
+                          target_muscles: {
+                            type: "array",
+                            items: { type: "string" },
+                            description: "Specific muscles targeted by this exercise"
+                          },
                           muscle_groups: {
                             type: "array",
                             items: { type: "string" },
-                            description: "Gruppi muscolari principali"
+                            description: "Main muscle groups"
                           },
                           difficulty: {
                             type: "string",
@@ -872,10 +888,10 @@ ${selectedDays.length > 0 ? `
                             items: { type: "string" },
                             minItems: 2,
                             maxItems: 4,
-                            description: "OBBLIGATORIO: 2-4 consigli specifici sul carico/intensità in italiano (es: 'Usa il 70% del massimale', 'RPE 7-8')"
+                            description: "2-4 specific load/intensity recommendations"
                           }
                         },
-                        required: ["name", "sets", "reps", "rest", "intensity_tips", "muscle_groups", "difficulty"]
+                        required: ["name", "sets", "reps", "rest", "intensity_tips", "muscle_groups", "difficulty", "detailed_description", "form_tips", "target_muscles"]
                       } 
                     },
                     warm_up: { 
