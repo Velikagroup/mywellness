@@ -1555,7 +1555,7 @@ STRICT RULES:
                 disabled={generationLimitReached && remainingGenerations === 0}
               >
                 <BrainCircuit className="w-5 h-5" />
-                <span>Rigenera Piano con AI</span>
+                <span>{t('meals.regenerateWithAI')}</span>
                 {generationLimitReached && remainingGenerations === 0 && (
                   <AlertCircle className="w-4 h-4 ml-1 animate-pulse" />
                 )}
@@ -1566,14 +1566,14 @@ STRICT RULES:
                   className="bg-white border-2 border-purple-500 text-purple-600 hover:bg-purple-50 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial"
                 >
                   <Package className="w-5 h-5" />
-                  <span>Dispensa</span>
+                  <span>{t('meals.pantry')}</span>
                 </Button>
                 <Button
                   onClick={() => setShowShoppingList(true)}
                   className="bg-white border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10 flex items-center justify-center gap-2 shadow-lg hover:shadow-xl transition-all px-4 py-6 text-base font-semibold rounded-xl flex-1 lg:flex-initial relative"
                 >
                   <ShoppingCart className="w-5 h-5" />
-                  <span>Lista Spesa</span>
+                  <span>{t('meals.shoppingList')}</span>
                   {shoppingLists.length > 0 && shoppingLists[0].items.length > 0 && (
                     <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs font-bold rounded-full w-6 h-6 flex items-center justify-center shadow-lg border-2 border-white">
                       {shoppingLists[0].items.length}
