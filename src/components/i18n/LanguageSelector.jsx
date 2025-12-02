@@ -77,11 +77,21 @@ export default function LanguageSelector({ variant = 'default', showLabel = true
             {t('settings.selectLanguage')}
           </label>
         )}
+        
+        {showWarning && (
+          <Alert className="bg-amber-50 border-amber-200 mb-4">
+            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertDescription className="text-amber-800 text-sm ml-2">
+              {warningTexts[language] || warningTexts.en}
+            </AlertDescription>
+          </Alert>
+        )}
+        
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
           {SUPPORTED_LANGUAGES.map((lang) => (
             <button
               key={lang.code}
-              onClick={() => setLanguage(lang.code)}
+              onClick={() => handleLanguageChange(lang.code)}
               className={`flex items-center gap-3 p-3 rounded-xl border-2 transition-all ${
                 language === lang.code
                   ? 'border-[#26847F] bg-[#e9f6f5]'
