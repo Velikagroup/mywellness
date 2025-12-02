@@ -1647,13 +1647,23 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
             </DialogTitle>
           </DialogHeader>
           <div className="py-4">
+            {showLanguageWarning && (
+              <Alert className="bg-amber-50 border-amber-200 mb-4">
+                <AlertTriangle className="h-4 w-4 text-amber-600" />
+                <AlertDescription className="text-amber-800 text-sm ml-2">
+                  {languageWarningTexts[language] || languageWarningTexts.en}
+                </AlertDescription>
+              </Alert>
+            )}
             <div className="grid grid-cols-1 gap-3">
               {SUPPORTED_LANGUAGES.map((lang) => (
                 <button
                   key={lang.code}
                   onClick={() => {
-                    setLanguage(lang.code);
-                    setShowLanguageDialog(false);
+                    if (lang.code !== language) {
+                      setLanguage(lang.code);
+                      setShowLanguageWarning(true);
+                    }
                   }}
                   className={`flex items-center gap-4 p-4 rounded-xl border-2 transition-all ${
                     language === lang.code
