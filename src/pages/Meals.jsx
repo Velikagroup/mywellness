@@ -204,6 +204,7 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData 
 };
 
 export default function MealsPage() {
+  const { t, language } = useLanguage();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   
