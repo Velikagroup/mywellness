@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function MealsPerDayStep({ onDataChange, onNext, dailyCalories }) {
+  const { t } = useLanguage();
   const [selected, setSelected] = useState(5);
 
   const handleSelect = (num) => {
@@ -20,10 +22,10 @@ export default function MealsPerDayStep({ onDataChange, onNext, dailyCalories })
     <Card className="bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl">
       <CardHeader>
         <CardTitle className="text-2xl font-bold text-gray-900 text-center">
-          🍽️ Struttura Giornaliera
+          🍽️ {t('meals.mealsPerDayTitle')}
         </CardTitle>
         <p className="text-gray-600 text-center mt-2">
-          Quanti pasti vuoi fare al giorno?
+          {t('meals.mealsPerDaySubtitle')}
         </p>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -39,28 +41,9 @@ export default function MealsPerDayStep({ onDataChange, onNext, dailyCalories })
               }`}
             >
               <div className="text-3xl font-bold text-gray-900">{num}</div>
-              <div className="text-xs text-gray-600 mt-1">
-                {num === 1 ? 'pasto' : 'pasti'}
-              </div>
             </button>
           ))}
         </div>
-
-        {selected && (
-          <div className="bg-gradient-to-r from-[#E0F2F1] to-blue-50 rounded-xl p-4 border-2 border-[#26847F]/30">
-            <div className="text-center">
-              <p className="text-sm text-gray-700 mb-1">
-                📊 Distribuzione calorie su <strong>{selected} {selected === 1 ? 'pasto' : 'pasti'}</strong>
-              </p>
-              <p className="text-lg font-bold text-[#26847F]">
-                ~{Math.round(dailyCalories / selected)} kcal per pasto
-              </p>
-              <p className="text-xs text-gray-600 mt-1">
-                Target giornaliero: {dailyCalories} kcal
-              </p>
-            </div>
-          </div>
-        )}
 
         <div className="flex justify-center pt-4">
           <Button
@@ -68,7 +51,7 @@ export default function MealsPerDayStep({ onDataChange, onNext, dailyCalories })
             disabled={!selected}
             className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-8 py-6 text-lg font-semibold rounded-xl"
           >
-            Continua
+            {t('meals.continue')}
           </Button>
         </div>
       </CardContent>
