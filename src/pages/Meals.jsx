@@ -1596,13 +1596,15 @@ STRICT RULES:
                   </div>
                   <div className="flex-1 text-center md:text-left">
                     <h3 className="text-xl font-bold text-amber-900 mb-2">
-                      🚫 Limite Generazioni Raggiunto
+                      🚫 {t('meals.limitReached')}
                     </h3>
                     <p className="text-amber-800 mb-1">
-                      Hai utilizzato tutte le <strong>{getGenerationLimit(user?.subscription_plan, 'meal')} generazioni</strong> disponibili questo mese con il piano <strong className="capitalize">{user?.subscription_plan || 'base'}</strong>.
+                      {t('meals.limitReachedDesc')
+                        .replace('{limit}', getGenerationLimit(user?.subscription_plan, 'meal'))
+                        .replace('{plan}', user?.subscription_plan || 'base')}
                     </p>
                     <p className="text-sm text-amber-700">
-                      💡 Fai l'upgrade per ottenere più generazioni o generazioni illimitate!
+                      💡 {t('meals.limitReachedTip')}
                     </p>
                   </div>
                   <div className="flex-shrink-0">
@@ -1610,7 +1612,7 @@ STRICT RULES:
                       onClick={() => setShowUpgradeModal(true)}
                       className="bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white px-6 py-3 font-bold rounded-xl shadow-lg hover:shadow-xl transition-all"
                     >
-                      ⬆️ Upgrade Piano
+                      ⬆️ {t('meals.upgradePlan')}
                     </Button>
                   </div>
                 </div>
