@@ -1643,7 +1643,7 @@ STRICT RULES:
           {mealPlans.length > 0 ? (
             <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl">
               <CardHeader className="border-b border-gray-200/30">
-                <CardTitle className="text-lg text-gray-900">Programmazione Settimanale</CardTitle>
+                <CardTitle className="text-lg text-gray-900">{t('meals.weeklySchedule')}</CardTitle>
               </CardHeader>
               <CardContent className="p-4 sm:p-6">
                 <div className="flex flex-wrap gap-2 mb-6 border-b border-gray-200/80">
@@ -1671,7 +1671,7 @@ STRICT RULES:
                   {todaysMeals.length > 0 ? (
                     <div className="space-y-4">
                       <div className="flex items-center justify-between mb-4">
-                        <h4 className="font-bold text-gray-900 text-lg">Protocollo di {getDayLabel(selectedDay)}</h4>
+                        <h4 className="font-bold text-gray-900 text-lg">{t('meals.protocolFor').replace('{day}', getDayLabel(selectedDay))}</h4>
                         <Button
                           onClick={() => addDayToShoppingList(selectedDay)}
                           size="sm"
@@ -1680,9 +1680,9 @@ STRICT RULES:
                           disabled={addedDays.includes(selectedDay)}
                         >
                           {addedDays.includes(selectedDay) ? (
-                            <><Check className="w-4 h-4 mr-1" />Aggiunto</>
+                            <><Check className="w-4 h-4 mr-1" />{t('meals.added')}</>
                           ) : (
-                            <><Plus className="w-4 h-4 mr-1" />Aggiungi a Lista Spesa</>
+                            <><Plus className="w-4 h-4 mr-1" />{t('meals.addToShoppingList')}</>
                           )}
                         </Button>
                       </div>
