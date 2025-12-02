@@ -8,8 +8,10 @@ import IFMealTimingStep from './IFMealTimingStep';
 import IFMealsCountStep from './IFMealsCountStep';
 import CookingTimeStep from './CookingTimeStep';
 import IntolerancesStep from './IntolerancesStep';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function MealPlanWizard({ user, onComplete, onCancel }) {
+  const { t } = useLanguage();
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState({
     diet_type: user?.diet_type || 'mediterranean',
