@@ -1509,13 +1509,13 @@ STRICT RULES:
   const getMealTypeLabel = (type) => {
     const normalized = normalizeMealType(type);
     const labels = { 
-      breakfast: 'Colazione',
-      snack1: 'Spuntino Mattina',
-      lunch: 'Pranzo',
-      snack2: 'Snack Pomeridiano',
-      dinner: 'Cena',
-      snack3: 'Spuntino Serale',
-      snack4: 'Spuntino Notturno'
+      breakfast: t('meals.breakfast'),
+      snack1: t('meals.snack1'),
+      lunch: t('meals.lunch'),
+      snack2: t('meals.snack2'),
+      dinner: t('meals.dinner'),
+      snack3: t('meals.snack3'),
+      snack4: t('meals.snack4')
     };
     return labels[normalized] || type;
   };
