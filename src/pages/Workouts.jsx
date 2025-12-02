@@ -689,6 +689,20 @@ export default function Workouts() {
 
       const workoutPlanPrompt = `You are a world-class AI personal trainer, physical therapist, and motivational coach. Create a hyper-personalized, 7-day weekly workout plan. You MUST select exercises ONLY from the provided database.
 
+🚨🚨🚨 ABSOLUTE CRITICAL LANGUAGE REQUIREMENT 🚨🚨🚨
+TARGET LANGUAGE: ${targetLanguage.toUpperCase()} (language code: ${language})
+
+EVERY SINGLE TEXT OUTPUT MUST BE IN ${targetLanguage.toUpperCase()}:
+- plan_name: MUST be in ${targetLanguage} (e.g., "${language === 'es' ? 'Entrenamiento de Fuerza - Tren Superior' : language === 'en' ? 'Strength Training - Upper Body' : language === 'pt' ? 'Treino de Força - Trem Superior' : language === 'de' ? 'Krafttraining - Oberkörper' : language === 'fr' ? 'Entraînement de Force - Haut du Corps' : 'Allenamento Forza - Parte Superiore'}")
+- warm_up names: MUST be in ${targetLanguage} (e.g., "${terms.lightJog}", "${terms.dynamicStretch}", "${terms.mobilityWork}")
+- cool_down names: MUST be in ${targetLanguage} (e.g., "${terms.staticStretch}", "${terms.lightJog}", "${terms.finalRelax}")
+- exercise descriptions: MUST be in ${targetLanguage}
+- reps format: MUST be in ${targetLanguage} (e.g., "12 ${terms.reps}", "30 ${terms.seconds}")
+- rest format: MUST be in ${targetLanguage} (e.g., "60 ${terms.seconds}", "2 ${terms.minutes}")
+- intensity_tips: MUST be in ${targetLanguage}
+
+DO NOT use Italian words like "Corsa Leggera", "Stretching Dinamico", "Allenamento", "ripetizioni", "secondi" unless ${language} is "it".
+
 CRITICAL RULES:
 1. Generate ALL content in ${targetLanguage.toUpperCase()} language. ALL text including plan names, warm-up names, cool-down names, descriptions, reps format, rest format MUST be in ${targetLanguage}.
 2. ONLY use exercise names from this database - DO NOT invent new names. Use the name_translations.${language} field if available for exercise names in ${targetLanguage}.
