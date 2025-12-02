@@ -785,10 +785,11 @@ ${selectedDays.length > 0 ? `
 ` : `
    The user wants ${workoutDays} workout days total. Choose ${workoutDays} days from Monday to Friday for workouts, keeping Saturday and Sunday as rest days if possible.
 `}
-4. For workout days: provide 'plan_name' (in ${targetLanguage}), 'workout_type', 'warm_up' array (in ${targetLanguage}), 'exercises' array (in ${targetLanguage}), 'cool_down' array (in ${targetLanguage}), 'total_duration', 'calories_burned', 'difficulty_level'.
+4. For workout days: provide 'plan_name' (MUST BE IN ${targetLanguage.toUpperCase()} - e.g., "${language === 'es' ? 'Entrenamiento de Fuerza' : language === 'en' ? 'Strength Training' : language === 'pt' ? 'Treino de Força' : language === 'de' ? 'Krafttraining' : language === 'fr' ? 'Entraînement de Force' : 'Allenamento Forza'}"), 'workout_type', 'warm_up' array (ALL NAMES MUST BE IN ${targetLanguage.toUpperCase()} - e.g., "${terms.lightJog}", "${terms.dynamicStretch}"), 'exercises' array (in ${targetLanguage}), 'cool_down' array (ALL NAMES MUST BE IN ${targetLanguage.toUpperCase()} - e.g., "${terms.staticStretch}", "${terms.finalRelax}"), 'total_duration', 'calories_burned', 'difficulty_level'.
 5. For rest days: provide 'plan_name' (e.g., "${terms.rest}"), 'workout_type': "rest", 'warm_up': [], 'exercises': [], 'cool_down': [], 'total_duration': 0, 'calories_burned': 0, 'difficulty_level': "easy".
 6. Each exercise name MUST be in ${targetLanguage}. Use the name_translations.${language} field from the database when available. DO NOT invent exercises.
 7. 'reps' field must be in ${targetLanguage} format (e.g., "12 ${terms.reps}", "10-12 ${terms.reps}", "30 ${terms.seconds}").
+8. CRITICAL - ALL warm_up and cool_down item names MUST be in ${targetLanguage.toUpperCase()}. Examples: "${terms.lightJog}" (NOT "Corsa Leggera"), "${terms.dynamicStretch}" (NOT "Stretching Dinamico"), "${terms.staticStretch}" (NOT "Stretching Statico").
 8. 'rest' field must be in ${targetLanguage} (e.g., "60 ${terms.seconds}", "90 ${terms.seconds}", "2 ${terms.minutes}").
 9. 'difficulty_level' must be one of: "beginner", "intermediate", "advanced" (in English).
 10. 'description' field for each exercise should include execution tips.
