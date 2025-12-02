@@ -2087,7 +2087,7 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                           
                           {workoutForSelectedDay.warm_up?.length > 0 && (
                             <div>
-                              <h5 className="font-semibold text-gray-800 mb-2">{t('workouts.warmup')}</h5>
+                              <h5 className="font-semibold text-gray-800 mb-2">🔥 {t('workouts.warmup')}</h5>
                               <div className="grid gap-2">
                                 {workoutForSelectedDay.warm_up.map((ex, idx) => (
                                   <div key={idx} className="bg-blue-50/50 border border-blue-200/60 rounded-lg p-3 text-sm">
@@ -2153,7 +2153,7 @@ const workoutForSelectedDay = adjustedWorkout || workoutPlans.find(plan => plan.
                           )}
                           {workoutForSelectedDay.cool_down?.length > 0 && (
                             <div>
-                              <h5 className="font-semibold text-gray-800 mb-2">{t('workouts.cooldown')}</h5>
+                              <h5 className="font-semibold text-gray-800 mb-2">❄️ {t('workouts.cooldown')}</h5>
                               <div className="grid gap-2">
                                 {workoutForSelectedDay.cool_down.map((ex, idx) => (
                                   <div key={idx} className="bg-purple-50/50 border border-purple-200/60 rounded-lg p-3 text-sm">
