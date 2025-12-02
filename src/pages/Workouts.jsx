@@ -777,6 +777,16 @@ RULES by exercise type:
 3. CARDIO/HIIT: Heart rate zones or perceived exertion
 4. ISOMETRIC (plank, wall sit): Duration progression and form cues
 
+🚨🚨🚨 DETAILED EXERCISE INFO - MANDATORY FOR EVERY EXERCISE 🚨🚨🚨
+
+For EVERY exercise, you MUST provide:
+1. "detailed_description": 2-3 sentences explaining proper execution technique
+2. "form_tips": Array of 4-8 specific form tips (e.g., "Keep your back straight", "Don't lock your knees")
+3. "target_muscles": Array of specific muscles worked (e.g., ["Quadriceps", "Gluteus Maximus", "Hamstrings"])
+4. "intensity_tips": Array of 2-4 load/intensity recommendations
+
+ALL these fields must be in ${targetLanguage}.
+
 CRITICAL REQUIREMENTS:
 1. You MUST create EXACTLY 7 workout plans, one for each day: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday" (all lowercase).
 2. EVERY workout plan MUST have a "day_of_week" field with one of these exact values: "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday"
