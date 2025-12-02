@@ -1171,6 +1171,11 @@ export const translations = {
       noPlanGenerated: "Ningún plan generado",
       notSet: "no establecido",
       goal: "Objetivo",
+      // Fallback details
+      noDescriptionAvailable: "Realiza este ejercicio con movimiento controlado y forma correcta.",
+      defaultFormTip1: "Mantén la espalda recta durante todo el movimiento",
+      defaultFormTip2: "Contrae el core para estabilizar el cuerpo",
+      defaultFormTip3: "Realiza el movimiento de forma lenta y controlada",
       // Quiz steps - need to add all the same keys as IT and EN
       fitnessGoalTitle: "¿Cuál es tu objetivo fitness principal?",
       fitnessGoalSubtitle: "Elige lo que quieres lograr",
