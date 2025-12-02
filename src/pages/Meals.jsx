@@ -1535,14 +1535,14 @@ STRICT RULES:
         <div className="max-w-7xl mx-auto p-4 sm:p-6 space-y-8">
           <div className="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Protocollo Nutrizionale</h1>
-              <p className="text-gray-600">Pianificazione e ottimizzazione dei pasti via AI</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('meals.title')}</h1>
+              <p className="text-gray-600">{t('meals.subtitle')}</p>
               {remainingGenerations !== null && remainingGenerations !== -1 && (
                 <div className="flex items-center gap-2 mt-2">
                   <div className="flex items-center gap-1 text-sm">
                     <BrainCircuit className="w-4 h-4 text-[#26847F]" />
                     <span className={`font-semibold ${remainingGenerations === 0 ? 'text-red-600' : 'text-[#26847F]'}`}>
-                      {remainingGenerations} generazioni rimaste questo mese
+                      {t('meals.generationsRemaining').replace('{count}', remainingGenerations)}
                     </span>
                   </div>
                 </div>
