@@ -1139,15 +1139,117 @@ ${selectedDays.length > 0 ? `
       let tipsAdded = 0;
       const strengthLevel = trainingData.strength_level || 'moderate';
       
-      // Pesi consigliati in base al livello
-      const weightsByLevel = {
-        never_lifted: { dumbbell: '1-3kg', barbell: 'solo bilanciere scarico (10-15kg)', machine: 'carico minimo' },
-        light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
-        moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
-        intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
-        advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+      // Pesi consigliati in base al livello - traduzioni per lingua
+      const weightsByLevelTranslated = {
+        it: {
+          never_lifted: { dumbbell: '1-3kg', barbell: 'solo bilanciere scarico (10-15kg)', machine: 'carico minimo' },
+          light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+          moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+          intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+          advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+        },
+        en: {
+          never_lifted: { dumbbell: '1-3kg', barbell: 'empty barbell only (10-15kg)', machine: 'minimum load' },
+          light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+          moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+          intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+          advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+        },
+        es: {
+          never_lifted: { dumbbell: '1-3kg', barbell: 'solo barra vacía (10-15kg)', machine: 'carga mínima' },
+          light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+          moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+          intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+          advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+        },
+        pt: {
+          never_lifted: { dumbbell: '1-3kg', barbell: 'apenas barra vazia (10-15kg)', machine: 'carga mínima' },
+          light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+          moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+          intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+          advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+        },
+        de: {
+          never_lifted: { dumbbell: '1-3kg', barbell: 'nur leere Stange (10-15kg)', machine: 'minimale Belastung' },
+          light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+          moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+          intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+          advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+        },
+        fr: {
+          never_lifted: { dumbbell: '1-3kg', barbell: 'barre vide uniquement (10-15kg)', machine: 'charge minimale' },
+          light: { dumbbell: '4-8kg', barbell: '15-25kg', machine: '20-35kg' },
+          moderate: { dumbbell: '8-15kg', barbell: '30-50kg', machine: '40-60kg' },
+          intermediate: { dumbbell: '12-20kg', barbell: '50-80kg', machine: '60-90kg' },
+          advanced: { dumbbell: '18-30kg', barbell: '70-120kg', machine: '80-120kg' }
+        }
       };
-      const userWeights = weightsByLevel[strengthLevel] || weightsByLevel.moderate;
+      const userWeights = (weightsByLevelTranslated[language] || weightsByLevelTranslated.it)[strengthLevel] || weightsByLevelTranslated.it.moderate;
+      
+      // Traduzioni per intensity tips
+      const intensityTipsTranslations = {
+        it: {
+          isometric: ["⏱️ Tieni per 30-45 secondi per serie", "💪 Quando inizi a tremare, l'intensità è giusta", "⬆️ Se troppo facile, aggiungi peso sulla schiena"],
+          explosive: ["⚡ Concentrati su velocità e potenza esplosiva", "😤 Recupera 90-120 sec tra le serie", "📉 Se perdi velocità, riduci le ripetizioni"],
+          dumbbell: (w) => [`🏋️ Usa manubri da ${w} per lato`, "🔥 Le ultime 2-3 reps devono essere impegnative", "📊 RPE 7-8: potresti fare ancora 2-3 reps"],
+          barbell: (w) => [`🏋️ Carica il bilanciere con ${w} totali`, "🔥 Le ultime 2-3 reps devono essere dure", "📊 RPE 7-8: dovresti poter fare ancora 2-3 reps"],
+          machine: (w) => [`🏋️ Imposta la macchina su ${w}`, "🔥 Le ultime 2-3 reps devono essere impegnative", "⚙️ Regola il sedile per la tua altezza"],
+          bodyweight: ["⏱️ Se troppo facile, rallenta la discesa a 3 secondi", "🔥 Senti bruciore nelle ultime 3-4 ripetizioni", "✅ Mantieni forma perfetta, riduci reps se necessario"],
+          lunge: (w) => [`🏋️ Usa manubri da ${w} per lato`, "🦵 Piega entrambe le ginocchia a 90 gradi", "⚖️ Mantieni il busto eretto"],
+          default: ["💪 Scegli un carico che renda le ultime reps dure", "📊 RPE 7-8: dovresti poter fare ancora 2-3 reps", "✅ Riduci il carico se la forma peggiora"]
+        },
+        en: {
+          isometric: ["⏱️ Hold for 30-45 seconds per set", "💪 When you start shaking, intensity is right", "⬆️ If too easy, add weight on your back"],
+          explosive: ["⚡ Focus on speed and explosive power", "😤 Rest 90-120 sec between sets", "📉 If you lose speed, reduce reps"],
+          dumbbell: (w) => [`🏋️ Use ${w} dumbbells per side`, "🔥 Last 2-3 reps should be challenging", "📊 RPE 7-8: you could do 2-3 more reps"],
+          barbell: (w) => [`🏋️ Load the barbell with ${w} total`, "🔥 Last 2-3 reps should be hard", "📊 RPE 7-8: you should be able to do 2-3 more reps"],
+          machine: (w) => [`🏋️ Set the machine to ${w}`, "🔥 Last 2-3 reps should be challenging", "⚙️ Adjust the seat for your height"],
+          bodyweight: ["⏱️ If too easy, slow down the descent to 3 seconds", "🔥 Feel the burn in the last 3-4 reps", "✅ Maintain perfect form, reduce reps if needed"],
+          lunge: (w) => [`🏋️ Use ${w} dumbbells per side`, "🦵 Bend both knees to 90 degrees", "⚖️ Keep your torso upright"],
+          default: ["💪 Choose a load that makes last reps hard", "📊 RPE 7-8: you should be able to do 2-3 more reps", "✅ Reduce load if form deteriorates"]
+        },
+        es: {
+          isometric: ["⏱️ Mantén 30-45 segundos por serie", "💪 Cuando empieces a temblar, la intensidad es correcta", "⬆️ Si es muy fácil, añade peso en la espalda"],
+          explosive: ["⚡ Concéntrate en velocidad y potencia explosiva", "😤 Descansa 90-120 seg entre series", "📉 Si pierdes velocidad, reduce repeticiones"],
+          dumbbell: (w) => [`🏋️ Usa mancuernas de ${w} por lado`, "🔥 Las últimas 2-3 reps deben ser difíciles", "📊 RPE 7-8: podrías hacer 2-3 reps más"],
+          barbell: (w) => [`🏋️ Carga la barra con ${w} en total`, "🔥 Las últimas 2-3 reps deben ser duras", "📊 RPE 7-8: deberías poder hacer 2-3 reps más"],
+          machine: (w) => [`🏋️ Ajusta la máquina a ${w}`, "🔥 Las últimas 2-3 reps deben ser difíciles", "⚙️ Ajusta el asiento a tu altura"],
+          bodyweight: ["⏱️ Si es muy fácil, ralentiza el descenso a 3 segundos", "🔥 Siente el ardor en las últimas 3-4 reps", "✅ Mantén forma perfecta, reduce reps si es necesario"],
+          lunge: (w) => [`🏋️ Usa mancuernas de ${w} por lado`, "🦵 Dobla ambas rodillas a 90 grados", "⚖️ Mantén el torso erguido"],
+          default: ["💪 Elige un peso que haga las últimas reps difíciles", "📊 RPE 7-8: deberías poder hacer 2-3 reps más", "✅ Reduce el peso si la forma empeora"]
+        },
+        pt: {
+          isometric: ["⏱️ Segure por 30-45 segundos por série", "💪 Quando começar a tremer, a intensidade está certa", "⬆️ Se muito fácil, adicione peso nas costas"],
+          explosive: ["⚡ Foque em velocidade e potência explosiva", "😤 Descanse 90-120 seg entre séries", "📉 Se perder velocidade, reduza repetições"],
+          dumbbell: (w) => [`🏋️ Use halteres de ${w} por lado`, "🔥 As últimas 2-3 reps devem ser difíceis", "📊 RPE 7-8: você poderia fazer mais 2-3 reps"],
+          barbell: (w) => [`🏋️ Carregue a barra com ${w} no total`, "🔥 As últimas 2-3 reps devem ser duras", "📊 RPE 7-8: você deveria conseguir fazer mais 2-3 reps"],
+          machine: (w) => [`🏋️ Ajuste a máquina para ${w}`, "🔥 As últimas 2-3 reps devem ser difíceis", "⚙️ Ajuste o assento para sua altura"],
+          bodyweight: ["⏱️ Se muito fácil, desacelere a descida para 3 segundos", "🔥 Sinta a queimação nas últimas 3-4 reps", "✅ Mantenha forma perfeita, reduza reps se necessário"],
+          lunge: (w) => [`🏋️ Use halteres de ${w} por lado`, "🦵 Dobre ambos os joelhos a 90 graus", "⚖️ Mantenha o tronco ereto"],
+          default: ["💪 Escolha um peso que torne as últimas reps difíceis", "📊 RPE 7-8: você deveria conseguir fazer mais 2-3 reps", "✅ Reduza o peso se a forma piorar"]
+        },
+        de: {
+          isometric: ["⏱️ Halte 30-45 Sekunden pro Satz", "💪 Wenn du anfängst zu zittern, ist die Intensität richtig", "⬆️ Wenn zu leicht, füge Gewicht auf dem Rücken hinzu"],
+          explosive: ["⚡ Konzentriere dich auf Geschwindigkeit und explosive Kraft", "😤 Ruhe 90-120 Sek zwischen den Sätzen", "📉 Wenn du Geschwindigkeit verlierst, reduziere Wiederholungen"],
+          dumbbell: (w) => [`🏋️ Verwende ${w} Kurzhanteln pro Seite`, "🔥 Die letzten 2-3 Wdh sollten anspruchsvoll sein", "📊 RPE 7-8: du könntest noch 2-3 Wdh machen"],
+          barbell: (w) => [`🏋️ Lade die Langhantel mit ${w} insgesamt`, "🔥 Die letzten 2-3 Wdh sollten hart sein", "📊 RPE 7-8: du solltest noch 2-3 Wdh schaffen"],
+          machine: (w) => [`🏋️ Stelle die Maschine auf ${w} ein`, "🔥 Die letzten 2-3 Wdh sollten anspruchsvoll sein", "⚙️ Passe den Sitz an deine Größe an"],
+          bodyweight: ["⏱️ Wenn zu leicht, verlangsame den Abstieg auf 3 Sekunden", "🔥 Spüre das Brennen in den letzten 3-4 Wdh", "✅ Behalte perfekte Form, reduziere Wdh wenn nötig"],
+          lunge: (w) => [`🏋️ Verwende ${w} Kurzhanteln pro Seite`, "🦵 Beuge beide Knie auf 90 Grad", "⚖️ Halte den Oberkörper aufrecht"],
+          default: ["💪 Wähle ein Gewicht, das die letzten Wdh schwer macht", "📊 RPE 7-8: du solltest noch 2-3 Wdh schaffen", "✅ Reduziere das Gewicht wenn die Form leidet"]
+        },
+        fr: {
+          isometric: ["⏱️ Maintenez 30-45 secondes par série", "💪 Quand vous commencez à trembler, l'intensité est bonne", "⬆️ Si trop facile, ajoutez du poids sur le dos"],
+          explosive: ["⚡ Concentrez-vous sur la vitesse et la puissance explosive", "😤 Repos 90-120 sec entre les séries", "📉 Si vous perdez en vitesse, réduisez les répétitions"],
+          dumbbell: (w) => [`🏋️ Utilisez des haltères de ${w} par côté`, "🔥 Les 2-3 dernières reps doivent être difficiles", "📊 RPE 7-8: vous pourriez faire 2-3 reps de plus"],
+          barbell: (w) => [`🏋️ Chargez la barre avec ${w} au total`, "🔥 Les 2-3 dernières reps doivent être dures", "📊 RPE 7-8: vous devriez pouvoir faire 2-3 reps de plus"],
+          machine: (w) => [`🏋️ Réglez la machine sur ${w}`, "🔥 Les 2-3 dernières reps doivent être difficiles", "⚙️ Ajustez le siège à votre taille"],
+          bodyweight: ["⏱️ Si trop facile, ralentissez la descente à 3 secondes", "🔥 Ressentez la brûlure dans les 3-4 dernières reps", "✅ Maintenez une forme parfaite, réduisez les reps si nécessaire"],
+          lunge: (w) => [`🏋️ Utilisez des haltères de ${w} par côté`, "🦵 Pliez les deux genoux à 90 degrés", "⚖️ Gardez le torse droit"],
+          default: ["💪 Choisissez un poids qui rend les dernières reps difficiles", "📊 RPE 7-8: vous devriez pouvoir faire 2-3 reps de plus", "✅ Réduisez le poids si la forme se dégrade"]
+        }
+      };
+      const tipsTrans = intensityTipsTranslations[language] || intensityTipsTranslations.it;
       
       for (const plan of response.workout_plans) {
         if (plan.exercises && Array.isArray(plan.exercises)) {
@@ -1158,75 +1260,40 @@ ${selectedDays.length > 0 ? `
               const exerciseNameLower = (exercise.name || '').toLowerCase();
               const equipmentLower = (exercise.equipment || '').toLowerCase();
               
-              // Determina tipo esercizio
-              const isWeighted = ['bilanciere', 'manubri', 'manubrio', 'kettlebell', 'macchina', 'cable', 'cavo', 'press', 'curl', 'row', 'leg'].some(eq => 
-                exerciseNameLower.includes(eq) || equipmentLower.includes(eq)
-              );
-              const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch', 'sit-up', 'squat a corpo'].some(kw => 
+              // Determina tipo esercizio con keywords multilingua
+              const isIsometric = ['plank', 'isometr', 'hold', 'tenuta', 'wall sit', 'plancha', 'prancha', 'gainage', 'unterarm'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
-              const isIsometric = ['plank', 'isometr', 'hold', 'tenuta', 'wall sit'].some(kw => 
+              const isExplosive = ['jump', 'box', 'salto', 'thruster', 'clean', 'snatch', 'swing', 'burpee', 'corda', 'battle', 'sprung', 'saut'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
-              const isExplosive = ['jump', 'box', 'salto', 'thruster', 'clean', 'snatch', 'swing', 'burpee', 'corda', 'battle'].some(kw => 
+              const isDumbbell = ['manubr', 'dumbbell', 'mancuerna', 'haltere', 'kurzhantel', 'haltère'].some(kw => exerciseNameLower.includes(kw));
+              const isBarbell = ['bilanciere', 'barbell', 'barra', 'langhantel', 'barre'].some(kw => exerciseNameLower.includes(kw));
+              const isMachine = ['macchina', 'machine', 'máquina', 'maschine', 'leg press', 'cable', 'cavo', 'polia', 'polea'].some(kw => exerciseNameLower.includes(kw));
+              const isBodyweight = ['flessioni', 'piegamenti', 'trazioni', 'dip', 'push-up', 'pull-up', 'crunch', 'sit-up', 'squat a corpo', 'flexiones', 'pompes', 'liegestütz', 'flexões'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
-              const isLunge = ['affond', 'lunge', 'camminat'].some(kw => 
+              const isLunge = ['affond', 'lunge', 'camminat', 'zancada', 'fente', 'ausfallschritt'].some(kw => 
                 exerciseNameLower.includes(kw)
               );
-              const isDumbbell = exerciseNameLower.includes('manubr');
-              const isBarbell = exerciseNameLower.includes('bilanciere');
-              const isMachine = exerciseNameLower.includes('macchina') || exerciseNameLower.includes('leg press') || exerciseNameLower.includes('cable');
               
-              // Assegna tips specifici CON PESI CONCRETI
+              // Assegna tips specifici nella lingua corretta
               if (isIsometric) {
-                exercise.intensity_tips = [
-                  "⏱️ Tieni per 30-45 secondi per serie",
-                  "💪 Quando inizi a tremare, l'intensità è giusta",
-                  "⬆️ Se troppo facile, aggiungi peso sulla schiena"
-                ];
+                exercise.intensity_tips = tipsTrans.isometric;
               } else if (isExplosive) {
-                exercise.intensity_tips = [
-                  "⚡ Concentrati su velocità e potenza esplosiva",
-                  "😤 Recupera 90-120 sec tra le serie",
-                  "📉 Se perdi velocità, riduci le ripetizioni"
-                ];
+                exercise.intensity_tips = tipsTrans.explosive;
               } else if (isDumbbell) {
-                exercise.intensity_tips = [
-                  `🏋️ Usa manubri da ${userWeights.dumbbell} per lato`,
-                  "🔥 Le ultime 2-3 reps devono essere impegnative",
-                  "📊 RPE 7-8: potresti fare ancora 2-3 reps"
-                ];
+                exercise.intensity_tips = tipsTrans.dumbbell(userWeights.dumbbell);
               } else if (isBarbell) {
-                exercise.intensity_tips = [
-                  `🏋️ Carica il bilanciere con ${userWeights.barbell} totali`,
-                  "🔥 Le ultime 2-3 reps devono essere dure",
-                  "📊 RPE 7-8: dovresti poter fare ancora 2-3 reps"
-                ];
+                exercise.intensity_tips = tipsTrans.barbell(userWeights.barbell);
               } else if (isMachine) {
-                exercise.intensity_tips = [
-                  `🏋️ Imposta la macchina su ${userWeights.machine}`,
-                  "🔥 Le ultime 2-3 reps devono essere impegnative",
-                  "⚙️ Regola il sedile per la tua altezza"
-                ];
+                exercise.intensity_tips = tipsTrans.machine(userWeights.machine);
               } else if (isBodyweight) {
-                exercise.intensity_tips = [
-                  "⏱️ Se troppo facile, rallenta la discesa a 3 secondi",
-                  "🔥 Senti bruciore nelle ultime 3-4 ripetizioni",
-                  "✅ Mantieni forma perfetta, riduci reps se necessario"
-                ];
+                exercise.intensity_tips = tipsTrans.bodyweight;
               } else if (isLunge) {
-                exercise.intensity_tips = [
-                  `🏋️ Usa manubri da ${userWeights.dumbbell} per lato`,
-                  "🦵 Piega entrambe le ginocchia a 90 gradi",
-                  "⚖️ Mantieni il busto eretto"
-                ];
+                exercise.intensity_tips = tipsTrans.lunge(userWeights.dumbbell);
               } else {
-                exercise.intensity_tips = [
-                  "💪 Scegli un carico che renda le ultime reps dure",
-                  "📊 RPE 7-8: dovresti poter fare ancora 2-3 reps",
-                  "✅ Riduci il carico se la forma peggiora"
-                ];
+                exercise.intensity_tips = tipsTrans.default;
               }
             }
             
@@ -1241,7 +1308,7 @@ ${selectedDays.length > 0 ? `
         }
       }
       
-      console.log(`✅ POST-PROCESSING COMPLETATO: Aggiunti intensity_tips a ${tipsAdded} esercizi con pesi per livello ${strengthLevel}`);
+      console.log(`✅ POST-PROCESSING COMPLETATO: Aggiunti intensity_tips a ${tipsAdded} esercizi con pesi per livello ${strengthLevel} in lingua ${language}`);
 
       updateProgress(75, t('workouts.genBuilding'));
       
