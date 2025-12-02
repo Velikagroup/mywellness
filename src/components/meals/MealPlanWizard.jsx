@@ -93,7 +93,7 @@ export default function MealPlanWizard({ user, onComplete, onCancel }) {
           className="text-gray-600 hover:text-gray-900"
         >
           <ChevronLeft className="w-5 h-5 mr-1" />
-          {currentStep === 0 ? 'Annulla' : 'Indietro'}
+          {currentStep === 0 ? t('meals.cancel') : t('meals.back')}
         </Button>
         <div className="flex items-center gap-2">
           {steps.map((_, index) => (
