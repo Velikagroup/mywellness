@@ -19,6 +19,7 @@ import CheatMealStep from '../components/meals/CheatMealStep';
 import PantryModal from '../components/meals/PantryModal';
 import MealPlanWizard from '../components/meals/MealPlanWizard';
 import ReplaceMealModal from '../components/meals/ReplaceMealModal';
+import { useLanguage } from '../components/i18n/LanguageContext';
 
 const dietTypes = [
   { id: 'mediterranean', label: 'Mediterranea' },
