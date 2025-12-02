@@ -1608,6 +1608,11 @@ export const translations = {
       noPlanGenerated: "Nenhum plano gerado",
       notSet: "não definido",
       goal: "Meta",
+      // Fallback details
+      noDescriptionAvailable: "Execute este exercício com movimento controlado e forma correta.",
+      defaultFormTip1: "Mantenha as costas retas durante todo o movimento",
+      defaultFormTip2: "Contraia o core para estabilizar o corpo",
+      defaultFormTip3: "Execute o movimento de forma lenta e controlada",
       // Quiz steps
       fitnessGoalTitle: "Qual é o seu objetivo fitness principal?",
       fitnessGoalSubtitle: "Escolha o que você quer alcançar",
