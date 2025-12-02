@@ -1915,6 +1915,7 @@ Improve the message above making it:
   };
 
   // Parse TUTTI i messaggi dal campo message in ordine cronologico
+  // NON mostrare la risposta AI automatica agli admin
   const allMessages = [];
   const messageParts = chat.message.split('\n\n---');
   
@@ -1949,14 +1950,15 @@ Improve the message above making it:
     }
   });
   
-  // Aggiungi risposta AI se presente (dopo il primo messaggio utente)
-  if (chat.ai_response && allMessages.length === 1) {
-    allMessages.splice(1, 0, {
-      type: 'ai',
-      content: chat.ai_response,
-      timestamp: null
-    });
-  }
+  // NON mostrare più la risposta AI automatica agli admin
+  // (commentato per non visualizzarla nella chat)
+  // if (chat.ai_response && allMessages.length === 1) {
+  //   allMessages.splice(1, 0, {
+  //     type: 'ai',
+  //     content: chat.ai_response,
+  //     timestamp: null
+  //   });
+  // }
 
   return (
     <div 
