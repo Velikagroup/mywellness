@@ -4,8 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Loader2, Sparkles, ChefHat, X } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritionData, onMealReplaced }) {
+  const { t, language } = useLanguage();
   const [mealName, setMealName] = useState('');
   const [isReplacing, setIsReplacing] = useState(false);
   const [error, setError] = useState('');
@@ -44,27 +46,38 @@ export default function ReplaceMealModal({ isOpen, onClose, meal, user, nutritio
         vegan: "100% vegetale"
       };
 
-      const prompt = `Sei un nutrizionista esperto. L'utente vuole sostituire il suo pasto attuale con: "${mealName}"
+      const languageNames = {
+        it: 'Italian',
+        en: 'English', 
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+      const userLang = language || t('common.lang') || 'en';
+      const langName = languageNames[userLang] || 'English';
 
-OBIETTIVO PRINCIPALE: Creare ESATTAMENTE il piatto richiesto "${mealName}" con le calorie specificate.
+      const prompt = `You are an expert nutritionist. The user wants to replace their current meal with: "${mealName}"
 
-⚠️ VINCOLO CALORICO ASSOLUTO: Il pasto DEVE avere ESATTAMENTE ${targetCalories} kcal.
-- NON creare un piatto diverso da quello richiesto
-- Adatta le PORZIONI degli ingredienti per raggiungere ${targetCalories} kcal
-- Se servono più/meno calorie, aumenta/riduci le quantità proporzionalmente
+MAIN GOAL: Create EXACTLY the requested dish "${mealName}" with the specified calories.
 
-Dieta: ${nutritionData?.diet_type || 'mediterranean'}
+⚠️ ABSOLUTE CALORIE CONSTRAINT: The meal MUST have EXACTLY ${targetCalories} kcal.
+- DO NOT create a different dish
+- Adjust ingredient PORTIONS to reach ${targetCalories} kcal
+- If you need more/less calories, increase/reduce quantities proportionally
+
+Diet: ${nutritionData?.diet_type || 'mediterranean'}
 ${dietRules[nutritionData?.diet_type] || ''}
 
-REGOLE:
-1. Crea ESATTAMENTE "${mealName}" - non un piatto simile o alternativo
-2. Usa NOMI ITALIANI per tutti gli ingredienti
-3. Per le uova, usa SOLO numeri interi (1, 2, 3), MAI decimali
-4. Calcola con precisione: la somma delle calorie degli ingredienti deve fare ${targetCalories} kcal
-5. Se il piatto richiesto ha naturalmente meno calorie, aumenta le porzioni o aggiungi contorni
-6. Se ha più calorie, riduci le porzioni mantenendo il piatto riconoscibile
+RULES:
+1. Create EXACTLY "${mealName}" - not a similar or alternative dish
+2. Use ${langName.toUpperCase()} names for all ingredients, meal name, and cooking instructions
+3. For eggs, use ONLY whole numbers (1, 2, 3), NEVER decimals
+4. Calculate precisely: sum of ingredient calories must equal ${targetCalories} kcal
+5. If the dish naturally has fewer calories, increase portions or add sides
+6. If it has more calories, reduce portions while keeping the dish recognizable
 
-Restituisci il piatto "${mealName}" nel formato JSON richiesto.`;
+Return the dish "${mealName}" in the required JSON format with all content in ${langName.toUpperCase()}.`;
 
       console.log('🚀 Calling LLM for meal replacement...');
       
@@ -131,8 +144,16 @@ Restituisci il piatto "${mealName}" nel formato JSON richiesto.`;
       if (diff > 5) {
         const oilMl = Math.round(diff / 9);
         const oilCalories = oilMl * 9;
+        const oilNames = {
+          it: "olio d'oliva",
+          en: "olive oil",
+          es: "aceite de oliva",
+          pt: "azeite de oliva",
+          de: "Olivenöl",
+          fr: "huile d'olive"
+        };
         validIngredients.push({
-          name: "olio d'oliva",
+          name: oilNames[userLang] || "olive oil",
           quantity: oilMl,
           unit: "ml",
           calories: oilCalories,
@@ -224,26 +245,26 @@ White ceramic plate, natural lighting, 45-degree angle, appetizing presentation.
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2 text-xl">
             <ChefHat className="w-6 h-6 text-[#26847F]" />
-            Sostituisci Pasto
+            {t('meals.replaceMeal')}
           </DialogTitle>
           <DialogDescription>
-            Scrivi cosa vuoi mangiare e l'AI creerà una versione bilanciata
+            {t('meals.replaceMealDesc')}
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4 py-4">
           <div className="bg-gray-50 rounded-lg p-3 border">
-            <p className="text-xs text-gray-500 mb-1">Pasto attuale:</p>
+            <p className="text-xs text-gray-500 mb-1">{t('meals.currentMeal')}:</p>
             <p className="font-semibold text-gray-800">{meal?.name}</p>
             <p className="text-sm text-gray-600">{meal?.total_calories} kcal</p>
           </div>
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Cosa vuoi mangiare invece?
+              {t('meals.whatToEat')}
             </label>
             <Input
-              placeholder="Es: Pasta al pomodoro, Insalata di pollo, Salmone..."
+              placeholder={t('meals.replaceMealPlaceholder')}
               value={mealName}
               onChange={(e) => {
                 setMealName(e.target.value);
@@ -253,7 +274,7 @@ White ceramic plate, natural lighting, 45-degree angle, appetizing presentation.
               disabled={isReplacing}
             />
             <p className="text-xs text-gray-500 mt-1">
-              Puoi scrivere il nome del piatto che ti ha dato il nutrizionista o semplicemente cosa hai voglia di mangiare
+              {t('meals.replaceMealTip')}
             </p>
           </div>
 
@@ -270,7 +291,7 @@ White ceramic plate, natural lighting, 45-degree angle, appetizing presentation.
               disabled={isReplacing}
               className="flex-1"
             >
-              Annulla
+              {t('common.cancel')}
             </Button>
             <Button
               onClick={handleReplace}
@@ -280,12 +301,12 @@ White ceramic plate, natural lighting, 45-degree angle, appetizing presentation.
               {isReplacing ? (
                 <>
                   <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  Creazione...
+                  {t('meals.generating')}
                 </>
               ) : (
                 <>
                   <Sparkles className="w-4 h-4 mr-2" />
-                  Sostituisci con AI
+                  {t('meals.replaceWithAI')}
                 </>
               )}
             </Button>

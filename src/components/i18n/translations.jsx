@@ -657,7 +657,14 @@ export const translations = {
       preparation: "Preparazione",
       replaceIngredient: "Sostituisci ingrediente",
       generatingImage: "L'AI sta creando l'immagine...",
-      imageError: "Impossibile generare l'immagine."
+      imageError: "Impossibile generare l'immagine.",
+      replaceMealDesc: "Scrivi cosa vuoi mangiare e l'AI creerà una versione bilanciata",
+      currentMeal: "Pasto attuale",
+      whatToEat: "Cosa vuoi mangiare invece?",
+      replaceMealPlaceholder: "Es: Pasta al pomodoro, Insalata di pollo, Salmone...",
+      replaceMealTip: "Puoi scrivere il nome del piatto che ti ha dato il nutrizionista o semplicemente cosa hai voglia di mangiare",
+      replaceWithAI: "Sostituisci con AI",
+      generating: "Creazione..."
     }
   },
   en: {
@@ -1318,7 +1325,14 @@ export const translations = {
       preparation: "Preparation",
       replaceIngredient: "Replace ingredient",
       generatingImage: "AI is creating the image...",
-      imageError: "Unable to generate image."
+      imageError: "Unable to generate image.",
+      replaceMealDesc: "Write what you want to eat and AI will create a balanced version",
+      currentMeal: "Current meal",
+      whatToEat: "What do you want to eat instead?",
+      replaceMealPlaceholder: "E.g.: Tomato pasta, Chicken salad, Salmon...",
+      replaceMealTip: "You can write the name of the dish your nutritionist gave you or simply what you feel like eating",
+      replaceWithAI: "Replace with AI",
+      generating: "Creating..."
     }
   },
   es: {
@@ -1975,7 +1989,14 @@ export const translations = {
       preparation: "Preparación",
       replaceIngredient: "Reemplazar ingrediente",
       generatingImage: "La IA está creando la imagen...",
-      imageError: "No se pudo generar la imagen."
+      imageError: "No se pudo generar la imagen.",
+      replaceMealDesc: "Escribe qué quieres comer y la IA creará una versión balanceada",
+      currentMeal: "Comida actual",
+      whatToEat: "¿Qué quieres comer en su lugar?",
+      replaceMealPlaceholder: "Ej: Pasta con tomate, Ensalada de pollo, Salmón...",
+      replaceMealTip: "Puedes escribir el nombre del plato que te dio el nutricionista o simplemente lo que tengas ganas de comer",
+      replaceWithAI: "Reemplazar con IA",
+      generating: "Creando..."
     }
   },
   pt: {
@@ -2632,7 +2653,14 @@ export const translations = {
       preparation: "Preparação",
       replaceIngredient: "Substituir ingrediente",
       generatingImage: "A IA está criando a imagem...",
-      imageError: "Não foi possível gerar a imagem."
+      imageError: "Não foi possível gerar a imagem.",
+      replaceMealDesc: "Escreva o que você quer comer e a IA criará uma versão balanceada",
+      currentMeal: "Refeição atual",
+      whatToEat: "O que você quer comer no lugar?",
+      replaceMealPlaceholder: "Ex: Massa ao tomate, Salada de frango, Salmão...",
+      replaceMealTip: "Você pode escrever o nome do prato que seu nutricionista deu ou simplesmente o que você tem vontade de comer",
+      replaceWithAI: "Substituir com IA",
+      generating: "Criando..."
     }
   },
   de: {
@@ -3289,7 +3317,14 @@ export const translations = {
       preparation: "Zubereitung",
       replaceIngredient: "Zutat ersetzen",
       generatingImage: "KI erstellt das Bild...",
-      imageError: "Bild konnte nicht generiert werden."
+      imageError: "Bild konnte nicht generiert werden.",
+      replaceMealDesc: "Schreiben Sie, was Sie essen möchten, und die KI erstellt eine ausgewogene Version",
+      currentMeal: "Aktuelle Mahlzeit",
+      whatToEat: "Was möchten Sie stattdessen essen?",
+      replaceMealPlaceholder: "Z.B.: Tomatenpasta, Hähnchensalat, Lachs...",
+      replaceMealTip: "Sie können den Namen des Gerichts schreiben, das Ihr Ernährungsberater Ihnen gegeben hat, oder einfach, worauf Sie Lust haben",
+      replaceWithAI: "Mit KI Ersetzen",
+      generating: "Erstelle..."
     }
   },
   fr: {
@@ -3946,7 +3981,14 @@ export const translations = {
       preparation: "Préparation",
       replaceIngredient: "Remplacer l'ingrédient",
       generatingImage: "L'IA crée l'image...",
-      imageError: "Impossible de générer l'image."
+      imageError: "Impossible de générer l'image.",
+      replaceMealDesc: "Écrivez ce que vous voulez manger et l'IA créera une version équilibrée",
+      currentMeal: "Repas actuel",
+      whatToEat: "Que voulez-vous manger à la place?",
+      replaceMealPlaceholder: "Ex: Pâtes à la tomate, Salade de poulet, Saumon...",
+      replaceMealTip: "Vous pouvez écrire le nom du plat que votre nutritionniste vous a donné ou simplement ce dont vous avez envie",
+      replaceWithAI: "Remplacer avec IA",
+      generating: "Création..."
     }
   }
 };
