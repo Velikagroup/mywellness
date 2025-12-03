@@ -385,7 +385,7 @@ Sii preciso nell'identificazione del prodotto.`;
                     >
                       <div className="text-center">
                         <Camera className="w-8 h-8 mx-auto mb-2 text-purple-600" />
-                        <span className="text-sm font-semibold text-gray-700">Carica Foto Prodotto</span>
+                        <span className="text-sm font-semibold text-gray-700">{t('meals.uploadImage')}</span>
                       </div>
                     </Button>
                   )}
@@ -426,8 +426,7 @@ Sii preciso nell'identificazione del prodotto.`;
                     >
                       <div className="text-center">
                         <Upload className="w-8 h-8 mx-auto mb-2 text-gray-500" />
-                        <span className="text-sm font-semibold text-gray-700">Carica Tabella Nutrizionale</span>
-                        <p className="text-xs text-gray-500 mt-1">Altrimenti l'AI stimerà i valori</p>
+                        <span className="text-sm font-semibold text-gray-700">{t('meals.uploadImage')}</span>
                       </div>
                     </Button>
                   )}
