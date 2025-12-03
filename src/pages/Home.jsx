@@ -1101,9 +1101,9 @@ export default function Home() {
             </h2>
           </div>
 
-          <div className="relative pb-32">
+          <div className="relative">
             <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
-              {testimonials.slice(0, window.innerWidth < 768 ? 6 : testimonials.length).map((testimonial, index) => (
+              {testimonials.map((testimonial, index) => (
               <div
                 key={index}
                 className="water-glass-effect rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all break-inside-avoid mb-6">
