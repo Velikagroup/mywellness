@@ -124,16 +124,16 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const currentWeight = weightHistory.length > 0 ? weightHistory[0].weight : startWeight;
 
   const totalWeightToChange = startWeight - targetWeight;
-  const weightChanged = startWeight - currentWeight;
+  const weightChanged = currentWeight - startWeight;
   const isWeightLoss = totalWeightToChange > 0;
   
   const isGoodProgress = isWeightLoss 
-    ? (weightChanged >= 0)
-    : (weightChanged <= 0);
+    ? (weightChanged <= 0)
+    : (weightChanged >= 0);
 
   let progressPercentage = 0;
   if (totalWeightToChange !== 0) {
-      progressPercentage = (weightChanged / totalWeightToChange) * 100;
+      progressPercentage = Math.abs(weightChanged / totalWeightToChange) * 100;
   } else if (startWeight === targetWeight) {
       progressPercentage = 100;
   }
@@ -191,7 +191,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               )}
               <div className="flex items-baseline gap-2">
                 <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
-                  {isWeightLoss ? (weightChanged >= 0 ? '-' : '+') : (weightChanged <= 0 ? '+' : '-')}{Math.abs(weightChanged).toFixed(1)}
+                  {weightChanged > 0 ? '+' : ''}{weightChanged.toFixed(1)}
                 </p>
                 <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
               </div>
