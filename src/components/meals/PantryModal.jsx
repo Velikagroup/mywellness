@@ -253,18 +253,26 @@ Be precise in product identification.`;
 
     setIsSaving(true);
     try {
+      const ingredientData = {
+        user_id: user.id,
+        name: formData.name,
+        calories_per_100g: parseFloat(formData.calories_per_100g),
+        protein_per_100g: parseFloat(formData.protein_per_100g || 0),
+        carbs_per_100g: parseFloat(formData.carbs_per_100g || 0),
+        fat_per_100g: parseFloat(formData.fat_per_100g || 0),
+        unit: formData.unit || 'g',
+        category: formData.category || 'altro',
+        notes: formData.notes || ''
+      };
+      
+      console.log('Saving ingredient:', ingredientData);
+      
       if (editingId) {
-        await base44.entities.UserIngredient.update(editingId, formData);
+        await base44.entities.UserIngredient.update(editingId, ingredientData);
         alert(messages[lang].updated);
       } else {
-        await base44.entities.UserIngredient.create({
-          user_id: user.id,
-          ...formData,
-          calories_per_100g: parseFloat(formData.calories_per_100g),
-          protein_per_100g: parseFloat(formData.protein_per_100g || 0),
-          carbs_per_100g: parseFloat(formData.carbs_per_100g || 0),
-          fat_per_100g: parseFloat(formData.fat_per_100g || 0)
-        });
+        const result = await base44.entities.UserIngredient.create(ingredientData);
+        console.log('Ingredient saved:', result);
         alert(messages[lang].added);
       }
       
