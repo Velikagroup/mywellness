@@ -666,6 +666,30 @@ export const translations = {
       replaceWithAI: "Sostituisci con AI",
       generating: "Creazione...",
       scanTip: "Assicurati che l'etichetta sia ben leggibile e illuminata"
+    },
+    calorieMeter: {
+      title: "Conta Calorie Istantaneo",
+      uploadPhoto: "Carica una foto del piatto",
+      selectPhoto: "Seleziona Foto",
+      or: "OPPURE",
+      describeFood: "Descrivi il piatto",
+      placeholder: "Es: Pasta al pomodoro con basilico, circa 200g",
+      analyzing: "Analisi in corso...",
+      calculate: "Calcola Calorie",
+      uploadError: "Carica una foto o inserisci una descrizione",
+      uploadFailed: "Errore nel caricamento della foto. Riprova.",
+      analysisError: "Errore durante l'analisi. ",
+      retryMessage: "Riprova o contatta il supporto se il problema persiste.",
+      portion: "Porzione",
+      protein: "Proteine",
+      carbs: "Carbo",
+      fat: "Grassi",
+      ingredientsDetected: "Ingredienti identificati:",
+      upgradeTitle: "🚀 Passa a Base per Piani Completi",
+      upgradeDesc: "Sblocca piani pasto settimanali personalizzati, ricette con foto AI, lista della spesa automatica e molto altro!",
+      upgradeButton: "Upgrade a Base • Da €19/mese",
+      newAnalysis: "Nuova Analisi",
+      close: "Chiudi"
     }
   },
   en: {
@@ -1335,6 +1359,30 @@ export const translations = {
       replaceWithAI: "Replace with AI",
       generating: "Creating...",
       scanTip: "Make sure the label is clearly readable and well lit"
+    },
+    calorieMeter: {
+      title: "Instant Calorie Counter",
+      uploadPhoto: "Upload a photo of the dish",
+      selectPhoto: "Select Photo",
+      or: "OR",
+      describeFood: "Describe the dish",
+      placeholder: "E.g.: Tomato pasta with basil, about 200g",
+      analyzing: "Analyzing...",
+      calculate: "Calculate Calories",
+      uploadError: "Upload a photo or enter a description",
+      uploadFailed: "Error uploading photo. Please try again.",
+      analysisError: "Error during analysis. ",
+      retryMessage: "Please try again or contact support if the problem persists.",
+      portion: "Portion",
+      protein: "Protein",
+      carbs: "Carbs",
+      fat: "Fat",
+      ingredientsDetected: "Ingredients detected:",
+      upgradeTitle: "🚀 Upgrade to Base for Complete Plans",
+      upgradeDesc: "Unlock personalized weekly meal plans, AI photo recipes, automatic shopping list and much more!",
+      upgradeButton: "Upgrade to Base • From €19/month",
+      newAnalysis: "New Analysis",
+      close: "Close"
     }
   },
   es: {
@@ -2000,6 +2048,30 @@ export const translations = {
       replaceWithAI: "Reemplazar con IA",
       generating: "Creando...",
       scanTip: "Asegúrate de que la etiqueta sea claramente legible e iluminada"
+    },
+    calorieMeter: {
+      title: "Contador de Calorías Instantáneo",
+      uploadPhoto: "Sube una foto del plato",
+      selectPhoto: "Seleccionar Foto",
+      or: "O",
+      describeFood: "Describe el plato",
+      placeholder: "Ej: Pasta con tomate y albahaca, unos 200g",
+      analyzing: "Analizando...",
+      calculate: "Calcular Calorías",
+      uploadError: "Sube una foto o introduce una descripción",
+      uploadFailed: "Error al subir la foto. Inténtalo de nuevo.",
+      analysisError: "Error durante el análisis. ",
+      retryMessage: "Inténtalo de nuevo o contacta con soporte si el problema persiste.",
+      portion: "Porción",
+      protein: "Proteínas",
+      carbs: "Carbos",
+      fat: "Grasas",
+      ingredientsDetected: "Ingredientes detectados:",
+      upgradeTitle: "🚀 Pasa a Base para Planes Completos",
+      upgradeDesc: "Desbloquea planes de comidas semanales personalizados, recetas con fotos IA, lista de compras automática ¡y mucho más!",
+      upgradeButton: "Upgrade a Base • Desde €19/mes",
+      newAnalysis: "Nuevo Análisis",
+      close: "Cerrar"
     }
   },
   pt: {
@@ -2665,6 +2737,30 @@ export const translations = {
       replaceWithAI: "Substituir com IA",
       generating: "Criando...",
       scanTip: "Certifique-se de que o rótulo está claramente legível e bem iluminado"
+    },
+    calorieMeter: {
+      title: "Contador de Calorias Instantâneo",
+      uploadPhoto: "Carregue uma foto do prato",
+      selectPhoto: "Selecionar Foto",
+      or: "OU",
+      describeFood: "Descreva o prato",
+      placeholder: "Ex: Massa ao tomate com manjericão, cerca de 200g",
+      analyzing: "Analisando...",
+      calculate: "Calcular Calorias",
+      uploadError: "Carregue uma foto ou digite uma descrição",
+      uploadFailed: "Erro ao carregar a foto. Tente novamente.",
+      analysisError: "Erro durante a análise. ",
+      retryMessage: "Tente novamente ou entre em contato com o suporte se o problema persistir.",
+      portion: "Porção",
+      protein: "Proteína",
+      carbs: "Carbos",
+      fat: "Gorduras",
+      ingredientsDetected: "Ingredientes detectados:",
+      upgradeTitle: "🚀 Passe para Base para Planos Completos",
+      upgradeDesc: "Desbloqueie planos de refeições semanais personalizados, receitas com fotos IA, lista de compras automática e muito mais!",
+      upgradeButton: "Upgrade para Base • A partir de €19/mês",
+      newAnalysis: "Nova Análise",
+      close: "Fechar"
     }
   },
   de: {
@@ -3330,6 +3426,30 @@ export const translations = {
       replaceWithAI: "Mit KI Ersetzen",
       generating: "Erstelle...",
       scanTip: "Stellen Sie sicher, dass das Etikett gut lesbar und beleuchtet ist"
+    },
+    calorieMeter: {
+      title: "Sofort-Kalorienzähler",
+      uploadPhoto: "Laden Sie ein Foto des Gerichts hoch",
+      selectPhoto: "Foto Auswählen",
+      or: "ODER",
+      describeFood: "Beschreiben Sie das Gericht",
+      placeholder: "Z.B.: Tomatenpasta mit Basilikum, ca. 200g",
+      analyzing: "Analysiere...",
+      calculate: "Kalorien Berechnen",
+      uploadError: "Laden Sie ein Foto hoch oder geben Sie eine Beschreibung ein",
+      uploadFailed: "Fehler beim Hochladen des Fotos. Bitte erneut versuchen.",
+      analysisError: "Fehler bei der Analyse. ",
+      retryMessage: "Bitte erneut versuchen oder Support kontaktieren, wenn das Problem weiterhin besteht.",
+      portion: "Portion",
+      protein: "Protein",
+      carbs: "Kohlen.",
+      fat: "Fett",
+      ingredientsDetected: "Erkannte Zutaten:",
+      upgradeTitle: "🚀 Auf Base Upgraden für Komplette Pläne",
+      upgradeDesc: "Schalten Sie personalisierte wöchentliche Mahlzeitenpläne, KI-Fotorezepte, automatische Einkaufsliste und vieles mehr frei!",
+      upgradeButton: "Upgrade auf Base • Ab €19/Monat",
+      newAnalysis: "Neue Analyse",
+      close: "Schließen"
     }
   },
   fr: {
@@ -3995,6 +4115,30 @@ export const translations = {
       replaceWithAI: "Remplacer avec IA",
       generating: "Création...",
       scanTip: "Assurez-vous que l'étiquette est clairement lisible et bien éclairée"
+    },
+    calorieMeter: {
+      title: "Compteur de Calories Instantané",
+      uploadPhoto: "Téléchargez une photo du plat",
+      selectPhoto: "Sélectionner Photo",
+      or: "OU",
+      describeFood: "Décrivez le plat",
+      placeholder: "Ex: Pâtes à la tomate avec basilic, environ 200g",
+      analyzing: "Analyse en cours...",
+      calculate: "Calculer les Calories",
+      uploadError: "Téléchargez une photo ou entrez une description",
+      uploadFailed: "Erreur lors du téléchargement de la photo. Veuillez réessayer.",
+      analysisError: "Erreur lors de l'analyse. ",
+      retryMessage: "Veuillez réessayer ou contacter le support si le problème persiste.",
+      portion: "Portion",
+      protein: "Protéines",
+      carbs: "Glucides",
+      fat: "Lipides",
+      ingredientsDetected: "Ingrédients détectés:",
+      upgradeTitle: "🚀 Passez à Base pour des Plans Complets",
+      upgradeDesc: "Débloquez des plans de repas hebdomadaires personnalisés, des recettes photo IA, une liste de courses automatique et bien plus encore!",
+      upgradeButton: "Upgrade vers Base • À partir de €19/mois",
+      newAnalysis: "Nouvelle Analyse",
+      close: "Fermer"
     }
   }
 };
