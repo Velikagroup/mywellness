@@ -664,7 +664,8 @@ export const translations = {
       replaceMealPlaceholder: "Es: Pasta al pomodoro, Insalata di pollo, Salmone...",
       replaceMealTip: "Puoi scrivere il nome del piatto che ti ha dato il nutrizionista o semplicemente cosa hai voglia di mangiare",
       replaceWithAI: "Sostituisci con AI",
-      generating: "Creazione..."
+      generating: "Creazione...",
+      scanTip: "Assicurati che l'etichetta sia ben leggibile e illuminata"
     }
   },
   en: {
@@ -1332,7 +1333,8 @@ export const translations = {
       replaceMealPlaceholder: "E.g.: Tomato pasta, Chicken salad, Salmon...",
       replaceMealTip: "You can write the name of the dish your nutritionist gave you or simply what you feel like eating",
       replaceWithAI: "Replace with AI",
-      generating: "Creating..."
+      generating: "Creating...",
+      scanTip: "Make sure the label is clearly readable and well lit"
     }
   },
   es: {
@@ -1996,7 +1998,8 @@ export const translations = {
       replaceMealPlaceholder: "Ej: Pasta con tomate, Ensalada de pollo, Salmón...",
       replaceMealTip: "Puedes escribir el nombre del plato que te dio el nutricionista o simplemente lo que tengas ganas de comer",
       replaceWithAI: "Reemplazar con IA",
-      generating: "Creando..."
+      generating: "Creando...",
+      scanTip: "Asegúrate de que la etiqueta sea claramente legible e iluminada"
     }
   },
   pt: {
@@ -2660,7 +2663,8 @@ export const translations = {
       replaceMealPlaceholder: "Ex: Massa ao tomate, Salada de frango, Salmão...",
       replaceMealTip: "Você pode escrever o nome do prato que seu nutricionista deu ou simplesmente o que você tem vontade de comer",
       replaceWithAI: "Substituir com IA",
-      generating: "Criando..."
+      generating: "Criando...",
+      scanTip: "Certifique-se de que o rótulo está claramente legível e bem iluminado"
     }
   },
   de: {
@@ -3324,7 +3328,8 @@ export const translations = {
       replaceMealPlaceholder: "Z.B.: Tomatenpasta, Hähnchensalat, Lachs...",
       replaceMealTip: "Sie können den Namen des Gerichts schreiben, das Ihr Ernährungsberater Ihnen gegeben hat, oder einfach, worauf Sie Lust haben",
       replaceWithAI: "Mit KI Ersetzen",
-      generating: "Erstelle..."
+      generating: "Erstelle...",
+      scanTip: "Stellen Sie sicher, dass das Etikett gut lesbar und beleuchtet ist"
     }
   },
   fr: {
@@ -3988,7 +3993,8 @@ export const translations = {
       replaceMealPlaceholder: "Ex: Pâtes à la tomate, Salade de poulet, Saumon...",
       replaceMealTip: "Vous pouvez écrire le nom du plat que votre nutritionniste vous a donné ou simplement ce dont vous avez envie",
       replaceWithAI: "Remplacer avec IA",
-      generating: "Création..."
+      generating: "Création...",
+      scanTip: "Assurez-vous que l'étiquette est clairement lisible et bien éclairée"
     }
   }
 };

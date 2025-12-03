@@ -127,6 +127,17 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
       // Upload foto
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
+      const languageNames = {
+        it: 'Italian',
+        en: 'English', 
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+      const userLang = t('common.lang') || 'en';
+      const langName = languageNames[userLang] || 'English';
+
       // STEP 1: Validazione foto - deve contenere tabella nutrizionale o confezione
       const validationPrompt = `You are an AI validator for nutritional label scanning.
 
@@ -145,7 +156,7 @@ REJECT:
 
 Return:
 - "valid": true/false
-- "reason": brief explanation in Italian why it was accepted/rejected`;
+- "reason": brief explanation in ${langName.toUpperCase()} why it was accepted/rejected`;
 
       const validation = await base44.integrations.Core.InvokeLLM({
         prompt: validationPrompt,
@@ -169,7 +180,7 @@ Return:
       // STEP 2A: Ricerca valori ottimali online (SENZA foto)
       const researchPrompt = `Search internet for BEST nutritional values for "${selectedIngredient.name}".
 Find optimal values per 100g: highest protein, lowest sugar/fat (if lean food), best fiber.
-Return brief Italian summary: "I migliori [food] hanno: Xg proteine, Ykcal, etc."`;
+Return brief summary in ${langName.toUpperCase()} about optimal nutritional values.`;
 
       const benchmark = await base44.integrations.Core.InvokeLLM({
         prompt: researchPrompt,
@@ -196,7 +207,7 @@ Protein: ${benchmark.best_protein_per_100g || 'N/A'}g, Carbs: ${benchmark.best_c
 
 Score 0-10: 10=matches best, 9=within 5%, 7-8=within 15%, 5-6=within 30%, 3-4=30-50% worse, 0-2=>50% worse.
 
-Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score X/10 perché [why]."`;
+CRITICAL: Write explanation in ${langName.toUpperCase()}. Explain nutritional comparison and score reasoning.`;
 
 
       const analysis = await base44.integrations.Core.InvokeLLM({
@@ -654,7 +665,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                 </div>
                 <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
                   <p className="text-xs text-blue-900">
-                    💡 <strong>Tip:</strong> Assicurati che l'etichetta sia ben leggibile e illuminata
+                    💡 <strong>Tip:</strong> {t('meals.scanTip')}
                   </p>
                 </div>
               </div>
