@@ -94,8 +94,17 @@ export default function PantryModal({ isOpen, onClose, user }) {
   };
 
   const analyzeWithAI = async () => {
+    const messages = {
+      it: 'Carica almeno la foto del prodotto',
+      en: 'Upload at least the product photo',
+      es: 'Carga al menos la foto del producto',
+      pt: 'Carregue pelo menos a foto do produto',
+      de: 'Laden Sie mindestens das Produktfoto hoch',
+      fr: 'Téléchargez au moins la photo du produit'
+    };
+    
     if (!productPhoto) {
-      alert('Carica almeno la foto del prodotto');
+      alert(messages[t('common.lang')]);
       return;
     }
 
@@ -184,8 +193,43 @@ Sii preciso nell'identificazione del prodotto.`;
   };
 
   const handleAdd = async () => {
+    const messages = {
+      it: {
+        missingFields: 'Inserisci almeno nome e calorie',
+        updated: `✅ Ingrediente "${formData.name}" aggiornato!\n\n💡 Dalla prossima generazione del piano alimentare, se necessario, userò questo ingrediente con i valori nutrizionali che hai specificato.`,
+        added: `✅ Ingrediente "${formData.name}" aggiunto alla dispensa!\n\n💡 Dalla prossima generazione del piano alimentare completo, se il piano necessita di questo ingrediente, lo prenderò dalla tua dispensa utilizzando questi valori nutrizionali precisi.`
+      },
+      en: {
+        missingFields: 'Enter at least name and calories',
+        updated: `✅ Ingredient "${formData.name}" updated!\n\n💡 From the next meal plan generation, if needed, I'll use this ingredient with the nutritional values you specified.`,
+        added: `✅ Ingredient "${formData.name}" added to pantry!\n\n💡 From the next complete meal plan generation, if the plan needs this ingredient, I'll take it from your pantry using these precise nutritional values.`
+      },
+      es: {
+        missingFields: 'Ingresa al menos nombre y calorías',
+        updated: `✅ Ingrediente "${formData.name}" actualizado!\n\n💡 Desde la próxima generación del plan nutricional, si es necesario, usaré este ingrediente con los valores nutricionales que especificaste.`,
+        added: `✅ Ingrediente "${formData.name}" añadido a la despensa!\n\n💡 Desde la próxima generación completa del plan nutricional, si el plan necesita este ingrediente, lo tomaré de tu despensa usando estos valores nutricionales precisos.`
+      },
+      pt: {
+        missingFields: 'Digite pelo menos nome e calorias',
+        updated: `✅ Ingrediente "${formData.name}" atualizado!\n\n💡 Da próxima geração do plano nutricional, se necessário, usarei este ingrediente com os valores nutricionais que você especificou.`,
+        added: `✅ Ingrediente "${formData.name}" adicionado à despensa!\n\n💡 Da próxima geração completa do plano nutricional, se o plano precisar deste ingrediente, pegarei da sua despensa usando estes valores nutricionais precisos.`
+      },
+      de: {
+        missingFields: 'Geben Sie mindestens Name und Kalorien ein',
+        updated: `✅ Zutat "${formData.name}" aktualisiert!\n\n💡 Bei der nächsten Ernährungsplan-Generierung werde ich diese Zutat bei Bedarf mit den von Ihnen angegebenen Nährwerten verwenden.`,
+        added: `✅ Zutat "${formData.name}" zur Vorratskammer hinzugefügt!\n\n💡 Bei der nächsten vollständigen Ernährungsplan-Generierung werde ich diese Zutat aus Ihrer Vorratskammer mit diesen genauen Nährwerten verwenden.`
+      },
+      fr: {
+        missingFields: 'Entrez au moins le nom et les calories',
+        updated: `✅ Ingrédient "${formData.name}" mis à jour!\n\n💡 Lors de la prochaine génération du plan nutritionnel, si nécessaire, j'utiliserai cet ingrédient avec les valeurs nutritionnelles que vous avez spécifiées.`,
+        added: `✅ Ingrédient "${formData.name}" ajouté au garde-manger!\n\n💡 Lors de la prochaine génération complète du plan nutritionnel, si le plan a besoin de cet ingrédient, je le prendrai de votre garde-manger en utilisant ces valeurs nutritionnelles précises.`
+      }
+    };
+
+    const lang = t('common.lang');
+    
     if (!formData.name || !formData.calories_per_100g) {
-      alert('Inserisci almeno nome e calorie');
+      alert(messages[lang].missingFields);
       return;
     }
 
@@ -193,7 +237,7 @@ Sii preciso nell'identificazione del prodotto.`;
     try {
       if (editingId) {
         await base44.entities.UserIngredient.update(editingId, formData);
-        alert(`✅ Ingrediente "${formData.name}" aggiornato!\n\n💡 Dalla prossima generazione del piano alimentare, se necessario, userò questo ingrediente con i valori nutrizionali che hai specificato.`);
+        alert(messages[lang].updated);
       } else {
         await base44.entities.UserIngredient.create({
           user_id: user.id,
@@ -203,7 +247,7 @@ Sii preciso nell'identificazione del prodotto.`;
           carbs_per_100g: parseFloat(formData.carbs_per_100g || 0),
           fat_per_100g: parseFloat(formData.fat_per_100g || 0)
         });
-        alert(`✅ Ingrediente "${formData.name}" aggiunto alla dispensa!\n\n💡 Dalla prossima generazione del piano alimentare completo, se il piano necessita di questo ingrediente, lo prenderò dalla tua dispensa utilizzando questi valori nutrizionali precisi.`);
+        alert(messages[lang].added);
       }
       
       setFormData({ name: '', calories_per_100g: '', protein_per_100g: '', carbs_per_100g: '', fat_per_100g: '', unit: 'g', category: 'altro', notes: '' });
@@ -218,7 +262,16 @@ Sii preciso nell'identificazione del prodotto.`;
   };
 
   const handleDelete = async (id) => {
-    if (!confirm('Eliminare questo ingrediente dalla dispensa?')) return;
+    const messages = {
+      it: 'Eliminare questo ingrediente dalla dispensa?',
+      en: 'Delete this ingredient from pantry?',
+      es: '¿Eliminar este ingrediente de la despensa?',
+      pt: 'Excluir este ingrediente da despensa?',
+      de: 'Diese Zutat aus der Vorratskammer löschen?',
+      fr: 'Supprimer cet ingrédient du garde-manger?'
+    };
+    
+    if (!confirm(messages[t('common.lang')])) return;
     
     try {
       await base44.entities.UserIngredient.delete(id);
@@ -510,7 +563,7 @@ Sii preciso nell'identificazione del prodotto.`;
           {isLoading ? (
             <div className="text-center py-12">
               <Loader2 className="w-8 h-8 animate-spin text-[#26847F] mx-auto mb-3" />
-              <p className="text-gray-600">Caricamento dispensa...</p>
+              <p className="text-gray-600">{t('common.loading')}</p>
             </div>
           ) : ingredients.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
