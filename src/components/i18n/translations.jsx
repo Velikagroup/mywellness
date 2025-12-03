@@ -569,6 +569,7 @@ export const translations = {
       mealsOption7Desc: "3 principali + 4 snack",
       estimatedDistribution: "Distribuzione calorica stimata",
       perMealAvg: "in media per pasto",
+      generatingDay: "Generazione {day} ({current}/{total})...",
       // Cooking time
       cookingTimeTitle: "Tempo in Cucina",
       cookingTimeSubtitle: "Quanto tempo hai per cucinare?",
@@ -1211,6 +1212,7 @@ export const translations = {
       mealsOption7Desc: "3 main + 4 snacks",
       estimatedDistribution: "Estimated calorie distribution",
       perMealAvg: "average per meal",
+      generatingDay: "Generating {day} ({current}/{total})...",
       // Cooking time
       cookingTimeTitle: "Cooking Time",
       cookingTimeSubtitle: "How much time do you have for cooking?",
@@ -1849,6 +1851,7 @@ export const translations = {
       mealsOption7Desc: "3 principales + 4 snacks",
       estimatedDistribution: "Distribución calórica estimada",
       perMealAvg: "promedio por comida",
+      generatingDay: "Generando {day} ({current}/{total})...",
       // Cooking time
       cookingTimeTitle: "Tiempo de Cocina",
       cookingTimeSubtitle: "¿Cuánto tiempo tienes para cocinar?",
@@ -2487,6 +2490,7 @@ export const translations = {
       mealsOption7Desc: "3 principais + 4 lanches",
       estimatedDistribution: "Distribuição calórica estimada",
       perMealAvg: "média por refeição",
+      generatingDay: "Gerando {day} ({current}/{total})...",
       // Cooking time
       cookingTimeTitle: "Tempo de Cozinha",
       cookingTimeSubtitle: "Quanto tempo você tem para cozinhar?",
@@ -3125,6 +3129,7 @@ export const translations = {
       mealsOption7Desc: "3 Haupt + 4 Snacks",
       estimatedDistribution: "Geschätzte Kalorienverteilung",
       perMealAvg: "durchschnittlich pro Mahlzeit",
+      generatingDay: "Generiere {day} ({current}/{total})...",
       // Cooking time
       cookingTimeTitle: "Kochzeit",
       cookingTimeSubtitle: "Wie viel Zeit haben Sie zum Kochen?",
@@ -3763,6 +3768,7 @@ export const translations = {
       mealsOption7Desc: "3 principaux + 4 collations",
       estimatedDistribution: "Distribution calorique estimée",
       perMealAvg: "moyenne par repas",
+      generatingDay: "Génération {day} ({current}/{total})...",
       // Cooking time
       cookingTimeTitle: "Temps de Cuisine",
       cookingTimeSubtitle: "Combien de temps avez-vous pour cuisiner ?",

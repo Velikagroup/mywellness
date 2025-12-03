@@ -875,8 +875,8 @@ STRICT RULES:
       for (let dayIndex = 0; dayIndex < daysToGenerate.length; dayIndex++) {
         const day = daysToGenerate[dayIndex];
         const progress = 20 + Math.round((dayIndex / daysToGenerate.length) * 70);
-        const dayLabel = { monday: 'Lunedì', tuesday: 'Martedì', wednesday: 'Mercoledì', thursday: 'Giovedì', friday: 'Venerdì', saturday: 'Sabato', sunday: 'Domenica' }[day];
-        updateProgress(progress, `Generazione ${dayLabel} (${dayIndex + 1}/${daysToGenerate.length})...`);
+        const dayLabel = t(`meals.${day}`);
+        updateProgress(progress, t('meals.generatingDay').replace('{day}', dayLabel).replace('{current}', dayIndex + 1).replace('{total}', daysToGenerate.length));
         
         // Costruisci le specifiche per ogni pasto del giorno
         const mealSpecs = mealStructure.map(mealType => {
