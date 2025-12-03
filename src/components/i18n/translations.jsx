@@ -540,6 +540,8 @@ export const translations = {
       ifYes: "Sì, voglio provare",
       ifNo: "No, pasti regolari",
       ifBenefits: "Benefici del digiuno intermittente",
+      ifInfoTitle: "Cos'è il digiuno intermittente?",
+      ifInfoText: "Il digiuno intermittente è un approccio alimentare che alterna periodi di digiuno a finestre di alimentazione. Può aiutare a migliorare la sensibilità all'insulina, favorire la perdita di peso e aumentare l'energia mentale.",
       // Meals per day
       mealsPerDayTitle: "Pasti al Giorno",
       mealsPerDaySubtitle: "Quanti pasti preferisci al giorno?",
@@ -1162,6 +1164,8 @@ export const translations = {
       ifYes: "Yes, I want to try",
       ifNo: "No, regular meals",
       ifBenefits: "Benefits of intermittent fasting",
+      ifInfoTitle: "What is intermittent fasting?",
+      ifInfoText: "Intermittent fasting is an eating approach that alternates between fasting periods and eating windows. It can help improve insulin sensitivity, promote weight loss, and increase mental energy.",
       // Meals per day
       mealsPerDayTitle: "Meals Per Day",
       mealsPerDaySubtitle: "How many meals do you prefer per day?",
@@ -1780,6 +1784,8 @@ export const translations = {
       ifYes: "Sí, quiero probar",
       ifNo: "No, comidas regulares",
       ifBenefits: "Beneficios del ayuno intermitente",
+      ifInfoTitle: "¿Qué es el ayuno intermitente?",
+      ifInfoText: "El ayuno intermitente es un enfoque alimenticio que alterna períodos de ayuno con ventanas de alimentación. Puede ayudar a mejorar la sensibilidad a la insulina, promover la pérdida de peso y aumentar la energía mental.",
       // Meals per day
       mealsPerDayTitle: "Comidas al Día",
       mealsPerDaySubtitle: "¿Cuántas comidas prefieres al día?",
@@ -2398,6 +2404,8 @@ export const translations = {
       ifYes: "Sim, quero experimentar",
       ifNo: "Não, refeições regulares",
       ifBenefits: "Benefícios do jejum intermitente",
+      ifInfoTitle: "O que é o jejum intermitente?",
+      ifInfoText: "O jejum intermitente é uma abordagem alimentar que alterna períodos de jejum com janelas de alimentação. Pode ajudar a melhorar a sensibilidade à insulina, promover a perda de peso e aumentar a energia mental.",
       // Meals per day
       mealsPerDayTitle: "Refeições por Dia",
       mealsPerDaySubtitle: "Quantas refeições você prefere por dia?",
@@ -3016,6 +3024,8 @@ export const translations = {
       ifYes: "Ja, ich möchte es ausprobieren",
       ifNo: "Nein, reguläre Mahlzeiten",
       ifBenefits: "Vorteile des Intervallfastens",
+      ifInfoTitle: "Was ist Intervallfasten?",
+      ifInfoText: "Intervallfasten ist ein Ernährungsansatz, der zwischen Fastenperioden und Essensfenstern wechselt. Es kann helfen, die Insulinsensitivität zu verbessern, die Gewichtsabnahme zu fördern und die mentale Energie zu steigern.",
       // Meals per day
       mealsPerDayTitle: "Mahlzeiten pro Tag",
       mealsPerDaySubtitle: "Wie viele Mahlzeiten bevorzugen Sie pro Tag?",
@@ -3634,6 +3644,8 @@ export const translations = {
       ifYes: "Oui, je veux essayer",
       ifNo: "Non, repas réguliers",
       ifBenefits: "Avantages du jeûne intermittent",
+      ifInfoTitle: "Qu'est-ce que le jeûne intermittent?",
+      ifInfoText: "Le jeûne intermittent est une approche alimentaire qui alterne entre des périodes de jeûne et des fenêtres d'alimentation. Il peut aider à améliorer la sensibilité à l'insuline, favoriser la perte de poids et augmenter l'énergie mentale.",
       // Meals per day
       mealsPerDayTitle: "Repas par Jour",
       mealsPerDaySubtitle: "Combien de repas préférez-vous par jour ?",
