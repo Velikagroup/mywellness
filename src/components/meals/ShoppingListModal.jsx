@@ -7,19 +7,21 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 import UpgradeModal from './UpgradeModal';
 import { ChevronDown, ChevronRight } from 'lucide-react';
-
-const CATEGORY_LABELS = {
-  frutta_verdura: { label: 'Frutta & Verdura', emoji: '🥬', bg: 'bg-green-50' },
-  carne_pesce: { label: 'Carne & Pesce', emoji: '🥩', bg: 'bg-red-50' },
-  latticini_uova: { label: 'Latticini & Uova', emoji: '🥛', bg: 'bg-blue-50' },
-  cereali_pasta: { label: 'Cereali & Pasta', emoji: '🌾', bg: 'bg-amber-50' },
-  legumi_frutta_secca: { label: 'Legumi & Frutta Secca', emoji: '🥜', bg: 'bg-orange-50' },
-  condimenti_spezie: { label: 'Condimenti & Spezie', emoji: '🧂', bg: 'bg-yellow-50' },
-  bevande: { label: 'Bevande', emoji: '🥤', bg: 'bg-cyan-50' },
-  altro: { label: 'Altro', emoji: '🛒', bg: 'bg-gray-50' }
-};
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ShoppingListModal({ isOpen, user, onClose }) {
+  const { t } = useLanguage();
+
+  const CATEGORY_LABELS = {
+    frutta_verdura: { label: t('meals.categoryFruitVeg'), emoji: '🥬', bg: 'bg-green-50' },
+    carne_pesce: { label: t('meals.categoryMeat'), emoji: '🥩', bg: 'bg-red-50' },
+    latticini_uova: { label: t('meals.categoryDairy'), emoji: '🥛', bg: 'bg-blue-50' },
+    cereali_pasta: { label: t('meals.categoryGrains'), emoji: '🌾', bg: 'bg-amber-50' },
+    legumi_frutta_secca: { label: t('meals.categoryLegumes'), emoji: '🥜', bg: 'bg-orange-50' },
+    condimenti_spezie: { label: t('meals.categoryCondiments'), emoji: '🧂', bg: 'bg-yellow-50' },
+    bevande: { label: t('meals.categoryDrinks'), emoji: '🥤', bg: 'bg-cyan-50' },
+    altro: { label: t('meals.categoryOther'), emoji: '🛒', bg: 'bg-gray-50' }
+  };
   const queryClient = useQueryClient();
   const [shoppingList, setShoppingList] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -366,7 +368,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
           <DialogHeader>
             <DialogTitle className="flex items-center gap-2 text-xl">
               <ShoppingCart className="w-6 h-6 text-[var(--brand-primary)]" />
-              Lista della Spesa
+              {t('meals.shoppingListTitle')}
             </DialogTitle>
           </DialogHeader>
 
@@ -377,14 +379,16 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
           ) : !shoppingList || shoppingList.items.length === 0 ? (
             <div className="text-center py-12">
               <ShoppingCart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-              <p className="text-gray-500 font-medium">Nessun ingrediente nella lista</p>
-              <p className="text-sm text-gray-400 mt-2">Aggiungi giorni dal piano nutrizionale</p>
+              <p className="text-gray-500 font-medium">{t('meals.emptyShoppingList')}</p>
+              <p className="text-sm text-gray-400 mt-2">{t('meals.emptyShoppingListDesc')}</p>
             </div>
           ) : (
             <div className="space-y-6">
               <div className="flex items-center justify-between pb-3 border-b">
                 <p className="text-sm text-gray-600">
-                  {shoppingList.items.filter(i => i.checked).length} di {shoppingList.items.length} acquistati
+                  {t('meals.itemsChecked')
+                    .replace('{checked}', shoppingList.items.filter(i => i.checked).length)
+                    .replace('{total}', shoppingList.items.length)}
                 </p>
                 <Button
                   variant="ghost"
@@ -393,7 +397,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                   className="text-red-600 hover:text-red-700 hover:bg-red-50"
                 >
                   <Trash2 className="w-4 h-4 mr-2" />
-                  Svuota Lista
+                  {t('common.delete')}
                 </Button>
               </div>
 
@@ -452,7 +456,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                           className="ml-2 text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] hover:bg-[var(--brand-primary-light)] relative"
                         >
                           <Camera className="w-4 h-4 mr-1" />
-                          Scansiona
+                          {t('meals.scanProduct')}
                           {!hasFeatureAccess(user?.subscription_plan, 'progress_photo_analysis') && (
                             <Crown className="w-3 h-3 absolute -top-1 -right-1 text-purple-600" />
                           )}
@@ -504,8 +508,8 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                   <div className="w-20 h-20 bg-gradient-to-br from-[#26847F] to-teal-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                     <Camera className="w-10 h-10 text-white" />
                   </div>
-                  <p className="text-lg font-bold text-gray-900 mb-2">Scatta o Carica Foto</p>
-                  <p className="text-sm text-gray-600 mb-6">Inquadra l'etichetta nutrizionale del prodotto</p>
+                  <p className="text-lg font-bold text-gray-900 mb-2">{t('meals.scanProduct')}</p>
+                  <p className="text-sm text-gray-600 mb-6">{t('meals.scanProductDesc')}</p>
 
                   <div className="flex flex-col gap-3">
                     {/* Scatta Foto */}
@@ -528,12 +532,12 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                           {isScanning ? (
                             <>
                               <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                              Analisi in corso...
+                              {t('meals.analyzing')}
                             </>
                           ) : (
                             <>
                               <Camera className="w-5 h-5 mr-2" />
-                              📸 Scatta Foto
+                              📸 {t('meals.takePhoto')}
                             </>
                           )}
                         </span>
@@ -558,7 +562,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                       >
                         <span>
                           <Upload className="w-5 h-5 mr-2" />
-                          📂 Carica da Galleria
+                          📂 {t('meals.uploadImage')}
                         </span>
                       </Button>
                     </label>
@@ -588,7 +592,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                       <div className={`text-5xl font-black ${getHealthScoreColor(scanResult.health_score)} rounded-full w-20 h-20 flex items-center justify-center mx-auto`}>
                         {scanResult.health_score}
                       </div>
-                      <p className="text-sm text-gray-600 mt-2 font-semibold">Health Score</p>
+                      <p className="text-sm text-gray-600 mt-2 font-semibold">{t('meals.healthScore')}</p>
                     </div>
                     <div className="text-6xl">
                       {getHealthScoreEmoji(scanResult.health_classification)}
@@ -607,22 +611,22 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                 </div>
 
                 <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                  <p className="font-semibold text-blue-900 mb-2">Valori Nutrizionali (per 100g):</p>
+                  <p className="font-semibold text-blue-900 mb-2">{t('meals.perServing')}:</p>
                   <div className="grid grid-cols-2 gap-2 text-sm">
                     <div className="bg-white rounded p-2">
-                      <span className="text-gray-600">Calorie:</span>
+                      <span className="text-gray-600">{t('meals.calories')}:</span>
                       <span className="font-bold ml-2">{scanResult.calories_per_100g} kcal</span>
                     </div>
                     <div className="bg-white rounded p-2">
-                      <span className="text-gray-600">Proteine:</span>
+                      <span className="text-gray-600">{t('meals.protein')}:</span>
                       <span className="font-bold ml-2">{scanResult.protein_per_100g}g</span>
                     </div>
                     <div className="bg-white rounded p-2">
-                      <span className="text-gray-600">Carboidrati:</span>
+                      <span className="text-gray-600">{t('meals.carbs')}:</span>
                       <span className="font-bold ml-2">{scanResult.carbs_per_100g}g</span>
                     </div>
                     <div className="bg-white rounded p-2">
-                      <span className="text-gray-600">Grassi:</span>
+                      <span className="text-gray-600">{t('meals.fat')}:</span>
                       <span className="font-bold ml-2">{scanResult.fat_per_100g}g</span>
                     </div>
                   </div>
@@ -641,7 +645,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                   className="w-full bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg py-6 text-base font-semibold"
                 >
                   <Check className="w-5 h-5 mr-2" />
-                  ✅ Salva e Aggiorna Ricette
+                  ✅ {t('meals.saveToMeals')}
                 </Button>
                 <div className="grid grid-cols-2 gap-2">
                   <Button
@@ -652,7 +656,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                     className="border-2 border-blue-500 text-blue-600 hover:bg-blue-50"
                   >
                     <Camera className="w-4 h-4 mr-1" />
-                    Scansiona Altro
+                    {t('meals.rescan')}
                   </Button>
                   <Button
                     variant="outline"
@@ -664,7 +668,7 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
                     className="border-2 border-gray-400 text-gray-700 hover:bg-gray-100"
                   >
                     <X className="w-4 h-4 mr-1" />
-                    Chiudi
+                    {t('common.close')}
                   </Button>
                 </div>
               </div>

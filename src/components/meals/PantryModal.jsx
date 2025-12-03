@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,18 +6,20 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { base44 } from '@/api/base44Client';
 import { Plus, Trash2, Loader2, Package, Edit2, Check, X, Camera, Upload, Sparkles } from 'lucide-react';
-
-const CATEGORIES = [
-  { id: 'carne_pesce', label: '🥩 Carne & Pesce', color: 'bg-red-50 border-red-200' },
-  { id: 'latticini_uova', label: '🥛 Latticini & Uova', color: 'bg-yellow-50 border-yellow-200' },
-  { id: 'frutta_verdura', label: '🥗 Frutta & Verdura', color: 'bg-green-50 border-green-200' },
-  { id: 'cereali_pasta', label: '🌾 Cereali & Pasta', color: 'bg-amber-50 border-amber-200' },
-  { id: 'legumi_frutta_secca', label: '🥜 Legumi & Frutta Secca', color: 'bg-orange-50 border-orange-200' },
-  { id: 'condimenti_spezie', label: '🧂 Condimenti', color: 'bg-purple-50 border-purple-200' },
-  { id: 'altro', label: '📦 Altro', color: 'bg-gray-50 border-gray-200' }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function PantryModal({ isOpen, onClose, user }) {
+  const { t } = useLanguage();
+
+  const CATEGORIES = [
+    { id: 'carne_pesce', label: `🥩 ${t('meals.categoryMeat')}`, color: 'bg-red-50 border-red-200' },
+    { id: 'latticini_uova', label: `🥛 ${t('meals.categoryDairy')}`, color: 'bg-yellow-50 border-yellow-200' },
+    { id: 'frutta_verdura', label: `🥗 ${t('meals.categoryFruitVeg')}`, color: 'bg-green-50 border-green-200' },
+    { id: 'cereali_pasta', label: `🌾 ${t('meals.categoryGrains')}`, color: 'bg-amber-50 border-amber-200' },
+    { id: 'legumi_frutta_secca', label: `🥜 ${t('meals.categoryLegumes')}`, color: 'bg-orange-50 border-orange-200' },
+    { id: 'condimenti_spezie', label: `🧂 ${t('meals.categoryCondiments')}`, color: 'bg-purple-50 border-purple-200' },
+    { id: 'altro', label: `📦 ${t('meals.categoryOther')}`, color: 'bg-gray-50 border-gray-200' }
+  ];
   const [ingredients, setIngredients] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddForm, setShowAddForm] = useState(false);
@@ -240,12 +241,12 @@ Sii preciso nell'identificazione del prodotto.`;
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-3 text-2xl">
-            <div className="w-10 h-10 bg-gradient-to-br from-[#26847F] to-teal-600 rounded-xl flex items-center justify-center">
-              <Package className="w-6 h-6 text-white" />
-            </div>
-            La Mia Dispensa
+          <div className="w-10 h-10 bg-gradient-to-br from-[#26847F] to-teal-600 rounded-xl flex items-center justify-center">
+            <Package className="w-6 h-6 text-white" />
+          </div>
+          {t('meals.pantryTitle')}
           </DialogTitle>
-          <p className="text-sm text-gray-600">Gestisci i tuoi ingredienti personalizzati con valori nutrizionali specifici</p>
+          <p className="text-sm text-gray-600">{t('meals.pantrySubtitle')}</p>
         </DialogHeader>
 
         <div className="space-y-6">
@@ -257,8 +258,8 @@ Sii preciso nell'identificazione del prodotto.`;
               >
                 <Sparkles className="w-5 h-5 mr-2" />
                 <div className="text-left">
-                  <div className="font-bold">Scansiona con AI</div>
-                  <div className="text-xs opacity-90">Foto prodotto + tabella nutrizionale</div>
+                  <div className="font-bold">{t('meals.scanWithAI')}</div>
+                  <div className="text-xs opacity-90">{t('meals.scanLabelDesc')}</div>
                 </div>
               </Button>
               <Button
@@ -267,8 +268,8 @@ Sii preciso nell'identificazione del prodotto.`;
               >
                 <Plus className="w-5 h-5 mr-2" />
                 <div className="text-left">
-                  <div className="font-bold">Inserimento Manuale</div>
-                  <div className="text-xs opacity-90">Aggiungi dati manualmente</div>
+                  <div className="font-bold">{t('meals.addManually')}</div>
+                  <div className="text-xs opacity-90">{t('meals.scanLabelDesc')}</div>
                 </div>
               </Button>
             </div>
@@ -277,7 +278,7 @@ Sii preciso nell'identificazione del prodotto.`;
               <div className="flex items-center justify-between mb-4">
                 <h3 className="font-bold text-gray-900 flex items-center gap-2">
                   <Sparkles className="w-5 h-5 text-purple-600" />
-                  Scansione AI Ingrediente
+                  {t('meals.scanLabel')}
                 </h3>
                 <Button
                   variant="ghost"
@@ -297,8 +298,8 @@ Sii preciso nell'identificazione del prodotto.`;
 
               <div className="space-y-4">
                 <div className="bg-white rounded-lg p-4 border-2 border-purple-300">
-                  <Label className="font-semibold text-gray-900 mb-2 block">📸 Foto Prodotto/Confezione *</Label>
-                  <p className="text-xs text-gray-600 mb-3">Scatta o carica una foto del prodotto con etichetta visibile</p>
+                  <Label className="font-semibold text-gray-900 mb-2 block">📸 {t('meals.uploadImage')}</Label>
+                  <p className="text-xs text-gray-600 mb-3">{t('meals.scanLabelDesc')}</p>
                   
                   <input
                     ref={productInputRef}
@@ -338,8 +339,8 @@ Sii preciso nell'identificazione del prodotto.`;
                 </div>
 
                 <div className="bg-white rounded-lg p-4 border-2 border-gray-200">
-                  <Label className="font-semibold text-gray-900 mb-2 block">🏷️ Foto Tabella Nutrizionale (opzionale)</Label>
-                  <p className="text-xs text-gray-600 mb-3">Se disponibile, carica la tabella per dati precisi</p>
+                  <Label className="font-semibold text-gray-900 mb-2 block">🏷️ {t('meals.scanLabel')}</Label>
+                  <p className="text-xs text-gray-600 mb-3">{t('meals.scanLabelDesc')}</p>
                   
                   <input
                     ref={nutritionInputRef}
@@ -387,12 +388,12 @@ Sii preciso nell'identificazione del prodotto.`;
                   {isAnalyzing ? (
                     <>
                       <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                      Analisi AI in corso...
+                      {t('meals.analyzing')}
                     </>
                   ) : (
                     <>
                       <Sparkles className="w-5 h-5 mr-2" />
-                      Analizza con AI
+                      {t('meals.scanWithAI')}
                     </>
                   )}
                 </Button>
@@ -401,7 +402,7 @@ Sii preciso nell'identificazione del prodotto.`;
           ) : showAddForm ? (
             <div className="bg-gray-50 rounded-xl p-4 border-2 border-[#26847F]/20">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-900">{editingId ? 'Modifica' : 'Nuovo'} Ingrediente</h3>
+                <h3 className="font-bold text-gray-900">{editingId ? t('meals.editIngredient') : t('meals.ingredientName')}</h3>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -417,16 +418,16 @@ Sii preciso nell'identificazione del prodotto.`;
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <Label htmlFor="name">Nome Ingrediente *</Label>
+                  <Label htmlFor="name">{t('meals.ingredientName')} *</Label>
                   <Input
                     id="name"
                     value={formData.name}
                     onChange={(e) => setFormData({...formData, name: e.target.value})}
-                    placeholder="Es: Petto di pollo biologico"
+                    placeholder={t('meals.ingredientNamePlaceholder')}
                   />
                 </div>
                 <div>
-                  <Label htmlFor="category">Categoria</Label>
+                  <Label htmlFor="category">{t('meals.category')}</Label>
                   <Select value={formData.category} onValueChange={(val) => setFormData({...formData, category: val})}>
                     <SelectTrigger>
                       <SelectValue />
@@ -439,7 +440,7 @@ Sii preciso nell'identificazione del prodotto.`;
                   </Select>
                 </div>
                 <div>
-                  <Label htmlFor="calories">Calorie per 100g *</Label>
+                  <Label htmlFor="calories">{t('meals.caloriesPer100g')} *</Label>
                   <Input
                     id="calories"
                     type="number"
@@ -450,7 +451,7 @@ Sii preciso nell'identificazione del prodotto.`;
                   />
                 </div>
                 <div>
-                  <Label htmlFor="protein">Proteine per 100g</Label>
+                  <Label htmlFor="protein">{t('meals.proteinPer100g')}</Label>
                   <Input
                     id="protein"
                     type="number"
@@ -461,7 +462,7 @@ Sii preciso nell'identificazione del prodotto.`;
                   />
                 </div>
                 <div>
-                  <Label htmlFor="carbs">Carboidrati per 100g</Label>
+                  <Label htmlFor="carbs">{t('meals.carbsPer100g')}</Label>
                   <Input
                     id="carbs"
                     type="number"
@@ -472,7 +473,7 @@ Sii preciso nell'identificazione del prodotto.`;
                   />
                 </div>
                 <div>
-                  <Label htmlFor="fat">Grassi per 100g</Label>
+                  <Label htmlFor="fat">{t('meals.fatPer100g')}</Label>
                   <Input
                     id="fat"
                     type="number"
@@ -500,7 +501,7 @@ Sii preciso nell'identificazione del prodotto.`;
                   className="bg-[#26847F] hover:bg-[#1f6b66] text-white flex-1"
                 >
                   {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Check className="w-4 h-4 mr-2" />}
-                  {editingId ? 'Salva Modifiche' : 'Aggiungi'}
+                  {t('meals.saveIngredient')}
                 </Button>
               </div>
             </div>
@@ -514,8 +515,8 @@ Sii preciso nell'identificazione del prodotto.`;
           ) : ingredients.length === 0 ? (
             <div className="text-center py-12 border-2 border-dashed border-gray-200 rounded-lg">
               <Package className="w-12 h-12 text-gray-400 mx-auto mb-3" />
-              <p className="text-gray-600 font-medium">Dispensa vuota</p>
-              <p className="text-sm text-gray-500 mt-1">Aggiungi ingredienti personalizzati per usarli nei tuoi piani</p>
+              <p className="text-gray-600 font-medium">{t('meals.emptyPantry')}</p>
+              <p className="text-sm text-gray-500 mt-1">{t('meals.emptyPantryDesc')}</p>
             </div>
           ) : (
             <div className="space-y-4">
