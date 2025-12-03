@@ -54,8 +54,13 @@ export default function PantryModal({ isOpen, onClose, user }) {
   const loadIngredients = async () => {
     setIsLoading(true);
     try {
-      const data = await base44.entities.UserIngredient.filter({ user_id: user.id });
-      setIngredients(data);
+      console.log('Loading pantry for user:', user.id);
+      const data = await base44.entities.UserIngredient.list();
+      console.log('Pantry data loaded:', data);
+      // Filtra localmente per user_id
+      const filtered = data.filter(ing => ing.user_id === user.id);
+      console.log('Filtered pantry:', filtered);
+      setIngredients(filtered);
     } catch (error) {
       console.error('Error loading pantry:', error);
     }
