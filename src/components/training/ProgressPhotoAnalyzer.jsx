@@ -273,19 +273,30 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
 
       // STEP 2: Analisi foto corrente
       setCurrentAnalysisStep('current_analysis');
+
+      const languageNames = {
+        it: 'Italian',
+        en: 'English',
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+      const userLang = t('common.lang') || language || 'en';
+      const langName = languageNames[userLang] || 'English';
       
       const descriptionPrompt = `You are an EXPERT body composition analyst with 20+ years of experience. Describe this photo of the ${selectedZone.label} area in EXTREME SCIENTIFIC DETAIL.
 
-CRITICAL: Generate ALL content in ITALIAN language.
+CRITICAL: Generate ALL content in ${langName.toUpperCase()} language.
 
 Analyze EVERY visible detail with NUMERICAL SCORES (0-10 scale):
-1. GRASSO SUPERFICIALE (0-10): 0=molto grasso, 10=estremamente magro. Quanto grasso sottocutaneo è visibile?
-2. DEFINIZIONE MUSCOLARE (0-10): 0=nessuna, 10=massima. Quanto sono visibili e separati i muscoli?
-3. SIMMETRIA E PROPORZIONI (0-10): 0=asimmetrico, 10=perfettamente simmetrico. Confronta lato sx e dx.
-4. QUALITÀ PELLE (0-10): 0=cellulite grave/smagliature evidenti, 10=pelle perfettamente tonica. Analizza: cellulite, smagliature, tonicità.
-5. GONFIORE/RITENZIONE (0-10): 0=molto gonfio/ritenzione evidente, 10=nessuna ritenzione. La zona appare gonfia o trattenendo liquidi?
+1. SUPERFICIAL FAT (0-10): 0=very fat, 10=extremely lean. How much subcutaneous fat is visible?
+2. MUSCLE DEFINITION (0-10): 0=none, 10=maximum. How visible and separated are the muscles?
+3. SYMMETRY & PROPORTIONS (0-10): 0=asymmetric, 10=perfectly symmetric. Compare left vs right side.
+4. SKIN QUALITY (0-10): 0=severe cellulite/stretch marks, 10=perfectly toned skin. Analyze: cellulite, stretch marks, tone.
+5. SWELLING/RETENTION (0-10): 0=very swollen/evident retention, 10=no retention. Does the area appear swollen or retaining fluids?
 
-For each score, provide detailed observations in Italian.
+For each score, provide detailed observations in ${langName.toUpperCase()}.
 
 User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}
 Target Area: ${selectedZone.label}
@@ -304,43 +315,43 @@ Be FORENSICALLY detailed. Describe what you see like you're writing a medical re
             },
             grasso_superficiale_note: { 
               type: "string", 
-              description: "Osservazioni dettagliate sul grasso visibile in italiano" 
+              description: `Detailed observations on visible fat in ${langName.toUpperCase()}` 
             },
             definizione_muscolare_score: { 
               type: "number", 
-              description: "0-10: quanto sono definiti i muscoli (0=niente, 10=massimo)" 
+              description: "0-10: how defined are the muscles (0=none, 10=maximum)" 
             },
             definizione_muscolare_note: { 
               type: "string", 
-              description: "Osservazioni sui muscoli visibili in italiano" 
+              description: `Observations on visible muscles in ${langName.toUpperCase()}` 
             },
             simmetria_proporzioni_score: { 
               type: "number", 
-              description: "0-10: quanto è simmetrica la zona (0=asimmetrico, 10=perfetto)" 
+              description: "0-10: how symmetric is the zone (0=asymmetric, 10=perfect)" 
             },
             simmetria_proporzioni_note: { 
               type: "string", 
-              description: "Differenze tra lato sx e dx in italiano" 
+              description: `Differences between left and right side in ${langName.toUpperCase()}` 
             },
             qualita_pelle_score: { 
               type: "number", 
-              description: "0-10: qualità pelle (0=cellulite/smagliature evidenti, 10=perfetta)" 
+              description: "0-10: skin quality (0=cellulite/stretch marks evident, 10=perfect)" 
             },
             qualita_pelle_note: { 
               type: "string", 
-              description: "Dettagli su cellulite, smagliature, tonicità in italiano" 
+              description: `Details on cellulite, stretch marks, tone in ${langName.toUpperCase()}` 
             },
             gonfiore_ritenzione_score: { 
               type: "number", 
-              description: "0-10: livello ritenzione (0=molto gonfio, 10=nessun gonfiore)" 
+              description: "0-10: retention level (0=very swollen, 10=no swelling)" 
             },
             gonfiore_ritenzione_note: { 
               type: "string", 
-              description: "Osservazioni su gonfiore e ritenzione liquidi in italiano" 
+              description: `Observations on swelling and fluid retention in ${langName.toUpperCase()}` 
             },
             detailed_description: { 
               type: "string", 
-              description: "Descrizione forense completa in italiano" 
+              description: `Complete forensic description in ${langName.toUpperCase()}` 
             }
           },
           required: [
@@ -380,44 +391,48 @@ Be FORENSICALLY detailed. Describe what you see like you're writing a medical re
       if (previousPhotoDescription && daysSincePrevious !== null) {
         comparisonPrompt = `You are an EXPERT body composition analyst. COMPARE these two detailed analyses:
 
-🔴 FOTO PRECEDENTE (${daysSincePrevious} giorni fa):
-- Grasso Superficiale: ${previousPhotoDescription.grasso_superficiale_score || previousPhotoDescription.muscle_definition_score}/10
-- Definizione Muscolare: ${previousPhotoDescription.definizione_muscolare_score || previousPhotoDescription.muscle_definition_score}/10
-- Simmetria: ${previousPhotoDescription.simmetria_proporzioni_score || 5}/10
-- Qualità Pelle: ${previousPhotoDescription.qualita_pelle_score || 5}/10
-- Gonfiore/Ritenzione: ${previousPhotoDescription.gonfiore_ritenzione_score || 5}/10
+CRITICAL: Generate ALL responses in ${langName.toUpperCase()} language.
 
-🟢 FOTO CORRENTE (OGGI):
-- Grasso Superficiale: ${currentDescription.grasso_superficiale_score}/10
-- Definizione Muscolare: ${currentDescription.definizione_muscolare_score}/10
-- Simmetria: ${currentDescription.simmetria_proporzioni_score}/10
-- Qualità Pelle: ${currentDescription.qualita_pelle_score}/10
-- Gonfiore/Ritenzione: ${currentDescription.gonfiore_ritenzione_score}/10
+🔴 PREVIOUS PHOTO (${daysSincePrevious} days ago):
+- Superficial Fat: ${previousPhotoDescription.grasso_superficiale_score || previousPhotoDescription.muscle_definition_score}/10
+- Muscle Definition: ${previousPhotoDescription.definizione_muscolare_score || previousPhotoDescription.muscle_definition_score}/10
+- Symmetry: ${previousPhotoDescription.simmetria_proporzioni_score || 5}/10
+- Skin Quality: ${previousPhotoDescription.qualita_pelle_score || 5}/10
+- Swelling/Retention: ${previousPhotoDescription.gonfiore_ritenzione_score || 5}/10
 
-CRITICAL INSTRUCTIONS (in ITALIAN):
+🟢 CURRENT PHOTO (TODAY):
+- Superficial Fat: ${currentDescription.grasso_superficiale_score}/10
+- Muscle Definition: ${currentDescription.definizione_muscolare_score}/10
+- Symmetry: ${currentDescription.simmetria_proporzioni_score}/10
+- Skin Quality: ${currentDescription.qualita_pelle_score}/10
+- Swelling/Retention: ${currentDescription.gonfiore_ritenzione_score}/10
+
+CRITICAL INSTRUCTIONS (in ${langName.toUpperCase()}):
 1. COMPARE EVERY SINGLE METRIC above and calculate deltas
 2. For each metric, explain if it improved, stayed same, or regressed
-3. Write a MINIMUM 6-8 sentence paragraph in Italian explaining EVERY difference
+3. Write a MINIMUM 6-8 sentence paragraph in ${langName.toUpperCase()} explaining EVERY difference
 4. Be BRUTALLY HONEST - if numbers improved but you don't see it visually, explain why (lighting, posture, etc)
 5. If numbers show improvement, CELEBRATE IT with specifics
 
 User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}, Area: ${selectedZone.label}
 Days passed: ${daysSincePrevious}
-User notes: ${notes || 'Nessuna nota'}`;
+User notes: ${notes || 'No notes'}`;
 
       } else {
         comparisonPrompt = `This is the user's FIRST progress photo. Provide a baseline assessment.
 
+CRITICAL: Generate ALL responses in ${langName.toUpperCase()} language.
+
 CURRENT PHOTO ANALYSIS:
-- Grasso Superficiale: ${currentDescription.grasso_superficiale_score}/10
-- Definizione Muscolare: ${currentDescription.definizione_muscolare_score}/10
-- Simmetria: ${currentDescription.simmetria_proporzioni_score}/10
-- Qualità Pelle: ${currentDescription.qualita_pelle_score}/10
-- Gonfiore/Ritenzione: ${currentDescription.gonfiore_ritenzione_score}/10
+- Superficial Fat: ${currentDescription.grasso_superficiale_score}/10
+- Muscle Definition: ${currentDescription.definizione_muscolare_score}/10
+- Symmetry: ${currentDescription.simmetria_proporzioni_score}/10
+- Skin Quality: ${currentDescription.qualita_pelle_score}/10
+- Swelling/Retention: ${currentDescription.gonfiore_ritenzione_score}/10
 
 User: ${user.gender}, ${user.current_weight}kg, Goal: ${user.fitness_goal}, Area: ${selectedZone.label}
 
-Task (in ITALIAN):
+Task (in ${langName.toUpperCase()}):
 1. Describe current state as baseline
 2. Set comparison_result to "first_photo"
 3. List visible characteristics based on the 5 scores above
@@ -445,7 +460,7 @@ Task (in ITALIAN):
             },
             comparison_with_previous: {
               type: "string",
-              description: "DETAILED comparison in Italian, minimum 6 sentences"
+              description: `DETAILED comparison in ${langName.toUpperCase()}, minimum 6 sentences`
             },
             overall_assessment: { 
               type: "string"
@@ -594,7 +609,7 @@ Task (in ITALIAN):
               const adjustmentPrompt = `You are an expert personal trainer. Based on the user's progress analysis, suggest ONE alternative exercise to replace "${exerciseToReplace.name}".
               
 CRITICAL INSTRUCTIONS:
-- Generate ALL content in ITALIAN language
+- Generate ALL content in ${langName.toUpperCase()} language
 - Suggest ONLY ONE exercise from this database. The new exercise must be DIFFERENT from "${exerciseToReplace.name}".
 - The new exercise must target similar muscle groups but provide a slight variation or a new stimulus.
 - Keep changes MINIMAL - we're making small adjustments, not overhauling the program.
@@ -609,7 +624,7 @@ User's experience: ${user.fitness_experience}
 Current exercise to replace: "${exerciseToReplace.name}" (sets: ${exerciseToReplace.sets}, reps: ${exerciseToReplace.reps})
 
 Task:
-Suggest ONE single exercise replacement with Italian name, sets, reps (in Italian format, e.g., "12 ripetizioni"), rest (e.g., "60 secondi"), and brief explanation (2 sentences max) why this change helps for the ${selectedZone.label} area.`;
+Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, sets, reps (in ${langName.toUpperCase()} format), rest (in ${langName.toUpperCase()}), and brief explanation (2 sentences max in ${langName.toUpperCase()}) why this change helps for the ${selectedZone.label} area.`;
 
               const replacement = await base44.integrations.Core.InvokeLLM({
                 prompt: adjustmentPrompt,
@@ -673,10 +688,10 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
     if (!proposedChanges) return;
     
     setIsApplyingChanges(true);
-    const changes = { diet: [], workout: [] };
+    const changes = { diet: appliedChanges?.diet || [], workout: appliedChanges?.workout || [] };
     
     try {
-      if ((changeType === 'both' || changeType === 'diet') && proposedChanges.diet.length > 0) {
+      if ((changeType === 'both' || changeType === 'diet') && proposedChanges.diet.length > 0 && !appliedChanges?.diet) {
         for (const proposal of proposedChanges.diet) {
           if (proposal.type === 'calorie_adjustment' && proposal.adjustment !== 0) {
             await base44.auth.updateMe({ daily_calories: proposal.proposed });
@@ -718,7 +733,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
         }
       }
       
-      if ((changeType === 'both' || changeType === 'workout') && proposedChanges.workout.length > 0) {
+      if ((changeType === 'both' || changeType === 'workout') && proposedChanges.workout.length > 0 && !appliedChanges?.workout) {
         for (const proposal of proposedChanges.workout) {
           if (proposal.type === 'exercise_replacement') {
             const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
@@ -742,10 +757,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
       }
 
       console.log('✅ Modifiche applicate:', changes);
-      setAppliedChanges(prev => ({
-        diet: [...(prev?.diet || []), ...changes.diet],
-        workout: [...(prev?.workout || []), ...changes.workout]
-      }));
+      setAppliedChanges(changes);
     } catch (error) {
       console.error('Error applying changes:', error);
       alert(t('progressAnalyzer.applyError'));
@@ -1339,11 +1351,11 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     )}
                     
                     <div className="space-y-2">
-                      {proposedChanges.diet.length > 0 && (
+                      {proposedChanges.diet.length > 0 && !appliedChanges?.diet && (
                         <Button 
                           onClick={() => applyProposedChanges('diet')} 
                           className="w-full bg-orange-600 hover:bg-orange-700" 
-                          disabled={isApplyingChanges}
+                          disabled={isApplyingChanges || appliedChanges?.diet}
                         >
                           {isApplyingChanges ? (
                             <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.applying')}</>
@@ -1353,11 +1365,11 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         </Button>
                       )}
                       
-                      {proposedChanges.workout.length > 0 && (
+                      {proposedChanges.workout.length > 0 && !appliedChanges?.workout && (
                         <Button 
                           onClick={() => applyProposedChanges('workout')} 
                           className="w-full bg-blue-600 hover:bg-blue-700" 
-                          disabled={isApplyingChanges}
+                          disabled={isApplyingChanges || appliedChanges?.workout}
                         >
                           {isApplyingChanges ? (
                             <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.applying')}</>
