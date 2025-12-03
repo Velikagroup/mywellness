@@ -124,16 +124,17 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const currentWeight = weightHistory.length > 0 ? weightHistory[0].weight : startWeight;
 
   const totalWeightToChange = startWeight - targetWeight;
-  const weightChanged = currentWeight - startWeight;
+  const remainingToTarget = currentWeight - targetWeight;
   const isWeightLoss = totalWeightToChange > 0;
   
   const isGoodProgress = isWeightLoss 
-    ? (weightChanged <= 0)
-    : (weightChanged >= 0);
+    ? (remainingToTarget > 0 && remainingToTarget < totalWeightToChange)
+    : (remainingToTarget < 0 && Math.abs(remainingToTarget) < Math.abs(totalWeightToChange));
 
   let progressPercentage = 0;
   if (totalWeightToChange !== 0) {
-      progressPercentage = Math.abs(weightChanged / totalWeightToChange) * 100;
+      const weightProgress = startWeight - currentWeight;
+      progressPercentage = (weightProgress / totalWeightToChange) * 100;
   } else if (startWeight === targetWeight) {
       progressPercentage = 100;
   }
@@ -145,7 +146,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     : [0, 100];
 
   const totalKcalToChange = Math.abs(totalWeightToChange) * KCAL_PER_KG;
-  const kcalChangedSoFar = Math.abs(weightChanged) * KCAL_PER_KG;
+  const weightProgress = startWeight - currentWeight;
+  const kcalChangedSoFar = Math.abs(weightProgress) * KCAL_PER_KG;
   const kcalRemaining = totalKcalToChange - kcalChangedSoFar;
 
   const pieData = [
@@ -191,7 +193,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               )}
               <div className="flex items-baseline gap-2">
                 <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
-                  {weightChanged > 0 ? '+' : ''}{weightChanged.toFixed(1)}
+                  {remainingToTarget > 0 ? '-' : '+'}{Math.abs(remainingToTarget).toFixed(1)}
                 </p>
                 <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
               </div>
