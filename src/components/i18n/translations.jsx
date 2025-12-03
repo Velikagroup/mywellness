@@ -645,7 +645,19 @@ export const translations = {
       perServing: "per porzione",
       aiRecommendation: "Raccomandazione AI",
       saveToMeals: "Salva nei Pasti",
-      markAsPurchased: "Segna come Acquistato"
+      markAsPurchased: "Segna come Acquistato",
+      // Meal Detail Modal
+      nutritionalSummary: "Riepilogo Nutrizionale",
+      prep: "Prep",
+      difficulty: "Difficoltà",
+      easy: "Facile",
+      medium: "Media",
+      hard: "Difficile",
+      ingredients: "Ingredienti",
+      preparation: "Preparazione",
+      replaceIngredient: "Sostituisci ingrediente",
+      generatingImage: "L'AI sta creando l'immagine...",
+      imageError: "Impossibile generare l'immagine."
     }
   },
   en: {
@@ -1294,7 +1306,19 @@ export const translations = {
       perServing: "per serving",
       aiRecommendation: "AI Recommendation",
       saveToMeals: "Save to Meals",
-      markAsPurchased: "Mark as Purchased"
+      markAsPurchased: "Mark as Purchased",
+      // Meal Detail Modal
+      nutritionalSummary: "Nutritional Summary",
+      prep: "Prep",
+      difficulty: "Difficulty",
+      easy: "Easy",
+      medium: "Medium",
+      hard: "Hard",
+      ingredients: "Ingredients",
+      preparation: "Preparation",
+      replaceIngredient: "Replace ingredient",
+      generatingImage: "AI is creating the image...",
+      imageError: "Unable to generate image."
     }
   },
   es: {
@@ -1939,7 +1963,19 @@ export const translations = {
       perServing: "por porción",
       aiRecommendation: "Recomendación IA",
       saveToMeals: "Guardar en Comidas",
-      markAsPurchased: "Marcar como Comprado"
+      markAsPurchased: "Marcar como Comprado",
+      // Meal Detail Modal
+      nutritionalSummary: "Resumen Nutricional",
+      prep: "Prep",
+      difficulty: "Dificultad",
+      easy: "Fácil",
+      medium: "Media",
+      hard: "Difícil",
+      ingredients: "Ingredientes",
+      preparation: "Preparación",
+      replaceIngredient: "Reemplazar ingrediente",
+      generatingImage: "La IA está creando la imagen...",
+      imageError: "No se pudo generar la imagen."
     }
   },
   pt: {
@@ -2584,7 +2620,19 @@ export const translations = {
       perServing: "por porção",
       aiRecommendation: "Recomendação IA",
       saveToMeals: "Salvar nas Refeições",
-      markAsPurchased: "Marcar como Comprado"
+      markAsPurchased: "Marcar como Comprado",
+      // Meal Detail Modal
+      nutritionalSummary: "Resumo Nutricional",
+      prep: "Prep",
+      difficulty: "Dificuldade",
+      easy: "Fácil",
+      medium: "Média",
+      hard: "Difícil",
+      ingredients: "Ingredientes",
+      preparation: "Preparação",
+      replaceIngredient: "Substituir ingrediente",
+      generatingImage: "A IA está criando a imagem...",
+      imageError: "Não foi possível gerar a imagem."
     }
   },
   de: {
@@ -3229,7 +3277,19 @@ export const translations = {
       perServing: "pro Portion",
       aiRecommendation: "KI-Empfehlung",
       saveToMeals: "In Mahlzeiten Speichern",
-      markAsPurchased: "Als Gekauft Markieren"
+      markAsPurchased: "Als Gekauft Markieren",
+      // Meal Detail Modal
+      nutritionalSummary: "Nährwert-Zusammenfassung",
+      prep: "Vorb",
+      difficulty: "Schwierigkeit",
+      easy: "Einfach",
+      medium: "Mittel",
+      hard: "Schwer",
+      ingredients: "Zutaten",
+      preparation: "Zubereitung",
+      replaceIngredient: "Zutat ersetzen",
+      generatingImage: "KI erstellt das Bild...",
+      imageError: "Bild konnte nicht generiert werden."
     }
   },
   fr: {
@@ -3874,7 +3934,19 @@ export const translations = {
       perServing: "par portion",
       aiRecommendation: "Recommandation IA",
       saveToMeals: "Enregistrer dans les Repas",
-      markAsPurchased: "Marquer comme Acheté"
+      markAsPurchased: "Marquer comme Acheté",
+      // Meal Detail Modal
+      nutritionalSummary: "Résumé Nutritionnel",
+      prep: "Prép",
+      difficulty: "Difficulté",
+      easy: "Facile",
+      medium: "Moyen",
+      hard: "Difficile",
+      ingredients: "Ingrédients",
+      preparation: "Préparation",
+      replaceIngredient: "Remplacer l'ingrédient",
+      generatingImage: "L'IA crée l'image...",
+      imageError: "Impossible de générer l'image."
     }
   }
 };

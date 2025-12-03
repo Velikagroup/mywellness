@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { ChefHat, Clock, BarChart2, Sprout, Image as ImageIcon, AlertTriangle, Replace, Loader2, MinusCircle, PlusCircle } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const MacroCircle = ({ label, value, unit, color }) => (
   <div className="flex flex-col items-center">
@@ -14,6 +15,7 @@ const MacroCircle = ({ label, value, unit, color }) => (
 );
 
 export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
+  const { t } = useLanguage();
   const [isGeneratingImage, setIsGeneratingImage] = useState(false);
   const [currentMeal, setCurrentMeal] = useState(() => ({
     ...meal,
@@ -210,40 +212,40 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
               {(isGeneratingImage || !currentMeal.image_url) ? (
                 <div className="flex flex-col items-center gap-2 text-gray-500">
                   <ImageIcon className="w-10 h-10 animate-pulse" />
-                  <p className="text-sm font-medium">L'AI sta creando l'immagine...</p>
+                  <p className="text-sm font-medium">{t('meals.generatingImage')}</p>
                 </div>
               ) : currentMeal.image_url ? (
                 <img src={currentMeal.image_url} alt={currentMeal.name} className="w-full h-full object-cover" />
               ) : (
                 <div className="flex flex-col items-center gap-2 text-gray-500">
                   <AlertTriangle className="w-10 h-10 text-amber-500"/>
-                  <p className="text-sm font-medium">Impossibile generare l'immagine.</p>
+                  <p className="text-sm font-medium">{t('meals.imageError')}</p>
                 </div>
               )}
             </div>
 
             <div className="p-4 bg-gray-50 rounded-lg border">
-                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><BarChart2 className="w-5 h-5 text-[var(--brand-primary)]" /> Riepilogo Nutrizionale</h3>
+                <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2"><BarChart2 className="w-5 h-5 text-[var(--brand-primary)]" /> {t('meals.nutritionalSummary')}</h3>
                  <div className="flex justify-around items-center text-center">
                     <div className="flex flex-col items-center">
                         <p className="text-3xl font-bold text-[var(--brand-primary)]">{currentMeal.total_calories}</p>
-                        <p className="text-sm font-medium text-gray-600">Kcal</p>
+                        <p className="text-sm font-medium text-gray-600">{t('common.kcal')}</p>
                     </div>
-                    <MacroCircle label="Proteine" value={currentMeal.total_protein} unit="g" color="border-red-400" />
-                    <MacroCircle label="Carboidrati" value={currentMeal.total_carbs} unit="g" color="border-blue-400" />
-                    <MacroCircle label="Grassi" value={currentMeal.total_fat} unit="g" color="border-yellow-400" />
+                    <MacroCircle label={t('meals.protein')} value={currentMeal.total_protein} unit="g" color="border-red-400" />
+                    <MacroCircle label={t('meals.carbs')} value={currentMeal.total_carbs} unit="g" color="border-blue-400" />
+                    <MacroCircle label={t('meals.fat')} value={currentMeal.total_fat} unit="g" color="border-yellow-400" />
                 </div>
             </div>
             
              <div className="flex items-center justify-around text-sm text-gray-600 bg-gray-50 rounded-lg border p-3">
-              <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> Prep: {currentMeal.prep_time} min</div>
-              <div className="flex items-center gap-2 capitalize"><ChefHat className="w-4 h-4" /> Difficoltà: {currentMeal.difficulty}</div>
+              <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> {t('meals.prep')}: {currentMeal.prep_time} min</div>
+              <div className="flex items-center gap-2 capitalize"><ChefHat className="w-4 h-4" /> {t('meals.difficulty')}: {t(`meals.${currentMeal.difficulty}`)}</div>
             </div>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2"><Sprout className="w-5 h-5 text-green-600"/> Ingredienti</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2"><Sprout className="w-5 h-5 text-green-600"/> {t('meals.ingredients')}</h3>
               <div className="space-y-2">
                 {currentMeal.ingredients.map((ing, index) => (
                   <div key={index} className={`flex items-center justify-between bg-white p-2 rounded-md border text-sm transition-colors ${!ing.is_active ? 'bg-gray-50' : 'hover:bg-gray-50'}`}>
@@ -261,7 +263,7 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
                         className="w-8 h-8 text-gray-400 hover:text-blue-500 hover:bg-blue-50"
                         onClick={() => handleReplaceIngredient(ing)} 
                         disabled={!!replacingIngredient || isGeneratingImage}
-                        title="Sostituisci ingrediente"
+                        title={t('meals.replaceIngredient')}
                       >
                         {replacingIngredient === ing.name ? <Loader2 className="w-4 h-4 animate-spin" /> : <Replace className="w-4 h-4" />}
                       </Button>
@@ -281,7 +283,7 @@ export default function MealDetailModal({ meal, onClose, onMealUpdate }) {
             </div>
 
             <div>
-              <h3 className="text-lg font-semibold text-gray-800 mb-2">Preparazione</h3>
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">{t('meals.preparation')}</h3>
               <ol className="list-decimal list-inside space-y-2 text-gray-700">
                 {currentMeal.instructions.map((step, index) => (
                   <li key={index}>{step}</li>
