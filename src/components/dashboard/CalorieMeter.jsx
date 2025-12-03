@@ -199,7 +199,9 @@ IMPORTANT: Use MAXIMUM PRECISION and CONSISTENCY. The same image must ALWAYS giv
         carbs: Number(analysis.carbs) || 0,
         fat: Number(analysis.fat) || 0,
         portion_size: Number(analysis.portion_size) || 0,
-        main_ingredients: Array.isArray(analysis.main_ingredients) ? analysis.main_ingredients : []
+        main_ingredients: Array.isArray(analysis.main_ingredients) 
+          ? analysis.main_ingredients.map(ing => typeof ing === 'string' ? ing : (ing.ingrediente || ing.name || JSON.stringify(ing)))
+          : []
       };
 
       // Verifica che i valori siano numerici e positivi
