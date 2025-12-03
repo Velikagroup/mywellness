@@ -25,9 +25,11 @@ import { Label } from "@/components/ui/label";
 import OnboardingTour from "../components/onboarding/OnboardingTour";
 import CalorieMeter from "../components/dashboard/CalorieMeter";
 import NutritionUnlockPrompt from "../components/dashboard/NutritionUnlockPrompt";
+import { useLanguage } from "../components/i18n/LanguageContext";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [todayMeals, setTodayMeals] = useState([]);
   const [todayWorkout, setTodayWorkout] = useState(null);
@@ -522,7 +524,7 @@ export default function Dashboard() {
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#26847F]"></div>
           <p className="text-gray-600 font-medium">
-            {isRebalancing ? "Ribilanciamento pasti in corso..." : "Caricamento Dati di Sistema..."}
+            {isRebalancing ? t('common.loading') : t('common.loading')}
           </p>
         </div>
       </div>
@@ -572,8 +574,8 @@ export default function Dashboard() {
           {/* Header Desktop - nascosto su mobile */}
           <div className="hidden md:flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">Analisi Progressi</h1>
-              <p className="text-gray-600">Tracciamento dettagliato e proiezioni</p>
+              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard.title')}</h1>
+              <p className="text-gray-600">{t('dashboard.subtitle')}</p>
             </div>
             <div className="flex gap-3">
               <button
@@ -582,7 +584,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-center gap-2">
                   <RefreshCw className="w-4 h-4" />
-                  <span>Ricalibra</span>
+                  <span>{t('dashboard.recalibrate')}</span>
                 </div>
               </button>
               <button
@@ -591,7 +593,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-center gap-2">
                   <Calculator className="w-4 h-4" />
-                  <span>Conta Calorie</span>
+                  <span>{t('dashboard.countCalories')}</span>
                 </div>
               </button>
             </div>
@@ -602,8 +604,8 @@ export default function Dashboard() {
           <div className="md:hidden mb-6 pb-6 border-b border-gray-200/30">
             <div className="flex items-start justify-between gap-4 mb-4">
               <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">Analisi Progressi</h1>
-                <p className="text-sm text-gray-600">Tracciamento dettagliato e proiezioni</p>
+                <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('dashboard.title')}</h1>
+                <p className="text-sm text-gray-600">{t('dashboard.subtitle')}</p>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
@@ -613,7 +615,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-center gap-2">
                   <RefreshCw className="w-4 h-4" />
-                  <span>Ricalibra</span>
+                  <span>{t('dashboard.recalibrate')}</span>
                 </div>
               </button>
               <button
@@ -622,7 +624,7 @@ export default function Dashboard() {
               >
                 <div className="flex items-center justify-center gap-2">
                   <Calculator className="w-4 h-4" />
-                  <span>Conta Kcal</span>
+                  <span>{t('dashboard.countCalories')}</span>
                 </div>
               </button>
             </div>
@@ -681,11 +683,10 @@ export default function Dashboard() {
             <div className="space-y-4 sm:space-y-6 onboarding-technical-stats-wrapper">
              <div className="relative">
               <TechnicalStatsCard
-                title="Target Calorico"
+                title={t('dashboard.targetCalories')}
                 value={user.daily_calories || 2000}
                 unit="kcal"
                 icon={Activity}
-                info="Le calorie giornaliere raccomandate per raggiungere il tuo obiettivo. Calcolate su metabolismo, attività e ritmo desiderato."
               />
               <button
                 onClick={handleOpenEditCalories}
@@ -697,7 +698,7 @@ export default function Dashboard() {
             </div>
             <div className="relative">
               <TechnicalStatsCard
-                title="Metabolismo Basale (BMR)"
+                title={t('dashboard.bmr')}
                 value={Math.round(user.bmr || 1500)}
                 unit="kcal"
                 icon={TrendingUp}
@@ -712,11 +713,10 @@ export default function Dashboard() {
             </div>
             <div className="relative">
               <TechnicalStatsCard
-                title="Massa Grassa"
+                title={t('dashboard.bodyFat')}
                 value={user.body_fat_percentage || 0}
                 unit="%"
                 icon={BarChart3}
-                info="Percentuale di massa grassa calcolata con formula US Navy basata su circonferenze corporee."
               />
               <button
                 onClick={handleOpenEditBodyFat}
@@ -730,9 +730,9 @@ export default function Dashboard() {
             {/* ✅ Mostra "Giorni di Allenamento" SOLO se ha accesso al workout_plan */}
             {hasFeatureAccess(user?.subscription_plan, 'workout_plan') && (
               <TechnicalStatsCard
-                title="Giorni di Allenamento"
+                title={t('dashboard.workoutDays')}
                 value={user.workout_days || 0}
-                unit="giorni/sett"
+                unit={t('dashboard.daysPerWeek')}
                 icon={Calendar}
                 status="consistent"
               />
