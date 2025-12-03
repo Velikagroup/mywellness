@@ -354,8 +354,92 @@ Explanation Italian: "${benchmark.benchmark_summary}. Questo ha [values]. Score 
 
   if (!isOpen) return null;
 
+  // Mappa le categorie che potrebbero arrivare con nomi diversi
+  const normalizeCategory = (cat) => {
+    if (!cat) return 'altro';
+    const catLower = cat.toLowerCase().trim();
+    
+    // Mappatura per varianti comuni
+    const categoryMap = {
+      // Frutta e verdura
+      'frutta_verdura': 'frutta_verdura',
+      'frutta': 'frutta_verdura',
+      'verdura': 'frutta_verdura',
+      'fruits_vegetables': 'frutta_verdura',
+      'produce': 'frutta_verdura',
+      'ortaggi': 'frutta_verdura',
+      
+      // Carne e pesce
+      'carne_pesce': 'carne_pesce',
+      'carne': 'carne_pesce',
+      'pesce': 'carne_pesce',
+      'meat_fish': 'carne_pesce',
+      'meat': 'carne_pesce',
+      'fish': 'carne_pesce',
+      'poultry': 'carne_pesce',
+      'pollame': 'carne_pesce',
+      
+      // Latticini e uova
+      'latticini_uova': 'latticini_uova',
+      'latticini': 'latticini_uova',
+      'uova': 'latticini_uova',
+      'dairy_eggs': 'latticini_uova',
+      'dairy': 'latticini_uova',
+      'eggs': 'latticini_uova',
+      'formaggi': 'latticini_uova',
+      'latte': 'latticini_uova',
+      
+      // Cereali e pasta
+      'cereali_pasta': 'cereali_pasta',
+      'cereali': 'cereali_pasta',
+      'pasta': 'cereali_pasta',
+      'grains_pasta': 'cereali_pasta',
+      'grains': 'cereali_pasta',
+      'riso': 'cereali_pasta',
+      'pane': 'cereali_pasta',
+      'bread': 'cereali_pasta',
+      
+      // Legumi e frutta secca
+      'legumi_frutta_secca': 'legumi_frutta_secca',
+      'legumi': 'legumi_frutta_secca',
+      'frutta_secca': 'legumi_frutta_secca',
+      'legumes_nuts': 'legumi_frutta_secca',
+      'legumes': 'legumi_frutta_secca',
+      'nuts': 'legumi_frutta_secca',
+      'noci': 'legumi_frutta_secca',
+      'mandorle': 'legumi_frutta_secca',
+      
+      // Condimenti e spezie
+      'condimenti_spezie': 'condimenti_spezie',
+      'condimenti': 'condimenti_spezie',
+      'spezie': 'condimenti_spezie',
+      'condiments_spices': 'condimenti_spezie',
+      'condiments': 'condimenti_spezie',
+      'spices': 'condimenti_spezie',
+      'olio': 'condimenti_spezie',
+      'oil': 'condimenti_spezie',
+      'aceto': 'condimenti_spezie',
+      'sale': 'condimenti_spezie',
+      'pepe': 'condimenti_spezie',
+      
+      // Bevande
+      'bevande': 'bevande',
+      'drinks': 'bevande',
+      'beverages': 'bevande',
+      'acqua': 'bevande',
+      
+      // Altro
+      'altro': 'altro',
+      'other': 'altro',
+      'misc': 'altro',
+      'vari': 'altro'
+    };
+    
+    return categoryMap[catLower] || 'altro';
+  };
+
   const organizedItems = shoppingList?.items.reduce((acc, item) => {
-    const category = item.category || 'altro';
+    const category = normalizeCategory(item.category);
     if (!acc[category]) acc[category] = [];
     acc[category].push(item);
     return acc;
