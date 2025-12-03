@@ -544,8 +544,8 @@ Target: ${targetCalories} kcal.
 Diet: ${nutritionData.diet_type}. 
 Allowed: ${dietRules.allowed}. 
 ${cookingTimeContext}
-CRITICAL: For eggs ('uova'), use ONLY whole numbers (1, 2, 3), NEVER decimals.
-Use verified nutritional data. All names and units in Italian.`;
+CRITICAL: For eggs, use ONLY whole numbers (1, 2, 3), NEVER decimals.
+Use verified nutritional data. All names and units in ${langName}.`;
 
       const llmResponse = await base44.integrations.Core.InvokeLLM({
         prompt: singleMealPrompt,
@@ -917,12 +917,23 @@ STRICT RULES:
           intolerancesText += '\n\n⚠️ VERIFICA ATTENTAMENTE CHE NESSUN INGREDIENTE CONTENGA QUESTI ALLERGENI!';
         }
 
-        const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ITALIAN for ${day}.
+        const languageNames = {
+          it: 'Italian',
+          en: 'English', 
+          es: 'Spanish',
+          pt: 'Portuguese',
+          de: 'German',
+          fr: 'French'
+        };
+        const userLang = language || t('common.lang') || 'en';
+        const langName = languageNames[userLang] || 'English';
+
+        const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ${langName.toUpperCase()} for ${day}.
 
 CRITICAL INSTRUCTIONS:
 - Create EXACTLY ${mealsPerDay} meals
 - Each meal must have accurate nutritional data
-- Use ITALIAN names for all ingredients, meals, and units
+- Use ${langName.toUpperCase()} names for all ingredients, meals, and units
 - ${cookingTimeContext}
 - Diet: ${generationPrefs.diet_type}
 - Allowed foods: ${dietRules.allowed}
@@ -1214,7 +1225,7 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
               recoveryIntolerancesText += `\n🚫 User also said: "${generationPrefs.custom_intolerances}" - NEVER include these.`;
             }
 
-            const recoveryPrompt = `Create ${missingMealTypes.length} meals in ITALIAN for ${day}:
+            const recoveryPrompt = `Create ${missingMealTypes.length} meals in ${langName.toUpperCase()} for ${day}:
 ${mealSpecs.map(spec => `${spec.label}: ${spec.target_calories} kcal${spec.is_cheat ? ' (CHEAT MEAL)' : ''}`).join('\n')}
 Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesText}${pantryIngredientsPrompt}`;
             
