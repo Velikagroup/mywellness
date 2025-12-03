@@ -120,30 +120,43 @@ export default function PantryModal({ isOpen, onClose, user }) {
         uploadedUrls.push(nutritionUrl);
       }
 
+      const languageNames = {
+        it: 'Italian',
+        en: 'English', 
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+      const userLang = t('common.lang') || 'en';
+      const langName = languageNames[userLang] || 'English';
+
       const prompt = nutritionPhoto 
-        ? `Analizza queste immagini di un prodotto alimentare.
+        ? `Analyze these images of a food product. RESPOND IN ${langName.toUpperCase()}.
 
-FOTO 1: Prodotto/Confezione con etichetta
-FOTO 2: Tabella nutrizionale
-
-TASK:
-1. Identifica il nome esatto del prodotto dall'etichetta
-2. Estrai i valori nutrizionali per 100g dalla tabella nutrizionale
-3. Determina la categoria più appropriata
-4. Aggiungi note sul brand/tipo se visibili
-
-Fornisci dati PRECISI dalla tabella nutrizionale.`
-        : `Analizza questa immagine di un prodotto alimentare.
-
-Vedo solo la foto del prodotto (senza tabella nutrizionale).
+PHOTO 1: Product/Package with label
+PHOTO 2: Nutrition facts table
 
 TASK:
-1. Identifica il nome del prodotto
-2. STIMA i valori nutrizionali medi per 100g basandoti su database alimentari standard
-3. Determina la categoria più appropriata
-4. Indica nelle note che sono valori stimati
+1. Identify the exact product name from the label
+2. Extract nutritional values per 100g from the nutrition table
+3. Determine the most appropriate category
+4. Add notes about brand/type if visible
 
-Sii preciso nell'identificazione del prodotto.`;
+IMPORTANT: The "name" and "notes" fields MUST be in ${langName}.
+Provide PRECISE data from the nutrition table.`
+        : `Analyze this image of a food product. RESPOND IN ${langName.toUpperCase()}.
+
+I only see the product photo (no nutrition table).
+
+TASK:
+1. Identify the product name
+2. ESTIMATE average nutritional values per 100g based on standard food databases
+3. Determine the most appropriate category
+4. Note in the notes field that these are estimated values
+
+IMPORTANT: The "name" and "notes" fields MUST be in ${langName}.
+Be precise in product identification.`;
 
       const aiResult = await base44.integrations.Core.InvokeLLM({
         prompt,
