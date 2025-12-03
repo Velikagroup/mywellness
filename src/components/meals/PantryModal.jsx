@@ -454,7 +454,7 @@ Sii preciso nell'identificazione del prodotto.`;
           ) : showAddForm ? (
             <div className="bg-gray-50 rounded-xl p-4 border-2 border-[#26847F]/20">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-gray-900">{editingId ? t('meals.editIngredient') : t('meals.ingredientName')}</h3>
+                <h3 className="font-bold text-gray-900">{editingId ? t('meals.editIngredient') : t('meals.newIngredient')}</h3>
                 <Button
                   variant="ghost"
                   size="icon"
@@ -536,12 +536,12 @@ Sii preciso nell'identificazione del prodotto.`;
                   />
                 </div>
                 <div className="md:col-span-2">
-                  <Label htmlFor="notes">Note (opzionale)</Label>
+                  <Label htmlFor="notes">{t('meals.notes')}</Label>
                   <Input
                     id="notes"
                     value={formData.notes}
                     onChange={(e) => setFormData({...formData, notes: e.target.value})}
-                    placeholder="Es: Brand specifico, preferito, valori stimati"
+                    placeholder={t('meals.notesPlaceholder')}
                   />
                 </div>
               </div>
