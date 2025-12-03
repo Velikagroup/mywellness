@@ -5,33 +5,35 @@ import { Textarea } from '@/components/ui/textarea';
 import { Camera, Upload, Loader2, TrendingUp, TrendingDown, Minus, CheckCircle2, Sparkles, X, Info, Zap, AlertCircle, ArrowRight, ArrowLeft, RefreshCw, Check, Microscope, Brain, FlaskConical, Target, Utensils, Dumbbell } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
-
-const TARGET_ZONES = [
-  { id: 'pancia', label: 'Pancia/Addome', photoCount: 1, description: 'Foto ravvicinata della zona addominale' },
-  { id: 'petto', label: 'Petto', photoCount: 1, description: 'Foto ravvicinata del petto' },
-  { id: 'schiena', label: 'Schiena', photoCount: 1, description: 'Foto ravvicinata della schiena' },
-  { id: 'braccia', label: 'Braccia', photoCount: 2, description: 'Foto ravvicinate: braccio sinistro e destro' },
-  { id: 'gambe', label: 'Gambe', photoCount: 2, description: 'Foto ravvicinate: gamba sinistra e destra' },
-  { id: 'glutei', label: 'Glutei', photoCount: 2, description: 'Foto ravvicinate: gluteo sinistro e destro' }
-];
-
-const BODY_PHOTOS = [
-  { id: 'front', label: 'Fronte', icon: '⬆️' },
-  { id: 'side_left', label: 'Lato Sinistro', icon: '⬅️' },
-  { id: 'side_right', label: 'Lato Destro', icon: '➡️' },
-  { id: 'back', label: 'Dietro', icon: '⬇️' }
-];
-
-const ANALYSIS_STEPS = [
-  { id: 'upload', label: 'Caricamento foto sul server', icon: Upload },
-  { id: 'current_analysis', label: 'Analisi forense foto corrente', icon: Microscope },
-  { id: 'previous_data', label: 'Recupero dati foto precedente', icon: FlaskConical },
-  { id: 'comparison', label: 'Confronto scientifico Prima vs Dopo', icon: Brain },
-  { id: 'recommendations', label: 'Generazione raccomandazioni personalizzate', icon: Target },
-  { id: 'proposals', label: 'Creazione proposte modifiche ai piani', icon: Sparkles }
-];
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplete }) {
+  const { t, language } = useLanguage();
+
+  const TARGET_ZONES = [
+    { id: 'pancia', label: t('targetZones.belly'), photoCount: 1, description: t('targetZones.bellyDesc') },
+    { id: 'petto', label: t('targetZones.chest'), photoCount: 1, description: t('targetZones.chestDesc') },
+    { id: 'schiena', label: t('targetZones.back'), photoCount: 1, description: t('targetZones.backDesc') },
+    { id: 'braccia', label: t('targetZones.arms'), photoCount: 2, description: t('targetZones.armsDesc') },
+    { id: 'gambe', label: t('targetZones.legs'), photoCount: 2, description: t('targetZones.legsDesc') },
+    { id: 'glutei', label: t('targetZones.glutes'), photoCount: 2, description: t('targetZones.glutesDesc') }
+  ];
+
+  const BODY_PHOTOS = [
+    { id: 'front', label: t('bodyPhotos.front'), icon: '⬆️' },
+    { id: 'side_left', label: t('bodyPhotos.sideLeft'), icon: '⬅️' },
+    { id: 'side_right', label: t('bodyPhotos.sideRight'), icon: '➡️' },
+    { id: 'back', label: t('bodyPhotos.back'), icon: '⬇️' }
+  ];
+
+  const ANALYSIS_STEPS = [
+    { id: 'upload', label: t('progressAnalyzer.uploadStep'), icon: Upload },
+    { id: 'current_analysis', label: t('progressAnalyzer.currentAnalysis'), icon: Microscope },
+    { id: 'previous_data', label: t('progressAnalyzer.previousData'), icon: FlaskConical },
+    { id: 'comparison', label: t('progressAnalyzer.comparison'), icon: Brain },
+    { id: 'recommendations', label: t('progressAnalyzer.recommendations'), icon: Target },
+    { id: 'proposals', label: t('progressAnalyzer.proposals'), icon: Sparkles }
+  ];
   const [step, setStep] = useState('zone_selection');
   const [selectedZone, setSelectedZone] = useState(null);
   const [targetPhotos, setTargetPhotos] = useState({});
@@ -125,7 +127,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     
     if (existingHashes.includes(fileHash)) {
       console.log('🚫 TARGET PHOTO - DUPLICATE DETECTED! Blocking upload.');
-      alert('🚫 FOTO DUPLICATA!\n\nHai già caricato questa foto in precedenza.\n\nPer un confronto accurato, scatta una NUOVA foto della zona ' + selectedZone.label + '.');
+      alert('🚫 ' + t('progressAnalyzer.duplicatePhoto') + '\n\n' + t('progressAnalyzer.duplicatePhotoDesc') + '\n\n' + t('progressAnalyzer.takeNewPhoto') + ' ' + selectedZone.label + '.');
       e.target.value = '';
       return;
     }
@@ -173,7 +175,7 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
     if (existingHashes.includes(fileHash)) {
       console.log('🚫 BODY PHOTO - DUPLICATE DETECTED! Blocking upload.');
       const bodyPhotoLabel = BODY_PHOTOS.find(bp => bp.id === photoType)?.label || photoType;
-      alert('🚫 FOTO DUPLICATA!\n\nHai già caricato questa foto in precedenza.\n\nPer l\'archivio, scatta una NUOVA foto ' + bodyPhotoLabel + '.');
+      alert('🚫 ' + t('progressAnalyzer.duplicatePhoto') + '\n\n' + t('progressAnalyzer.duplicatePhotoDesc') + '\n\n' + t('progressAnalyzer.takeNewPhoto') + ' ' + bodyPhotoLabel + '.');
       e.target.value = '';
       return;
     }
@@ -485,7 +487,7 @@ Task (in ITALIAN):
 
     } catch (error) {
       console.error("Error analyzing photos:", error);
-      alert(`Errore nell'analisi: ${error.message || 'Errore sconosciuto'}`);
+      alert(`${t('progressAnalyzer.analysisError')}: ${error.message || 'Errore sconosciuto'}`);
       setStep('body_photos');
       setIsAnalyzing(false);
       setCurrentAnalysisStep('');
@@ -746,7 +748,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
       }));
     } catch (error) {
       console.error('Error applying changes:', error);
-      alert('Errore nell\'applicazione delle modifiche. L\'analisi verrà comunque salvata.');
+      alert(t('progressAnalyzer.applyError'));
     }
     setIsApplyingChanges(false);
   };
@@ -801,7 +803,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
       onClose();
     } catch (error) {
       console.error("❌ Error saving progress photos:", error);
-      alert("Errore nel salvataggio: " + (error.message || 'Riprova'));
+      alert(t('progressAnalyzer.saveError') + ": " + (error.message || 'Riprova'));
     }
     setIsSaving(false);
   };
@@ -813,28 +815,28 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
         color: 'from-blue-500 to-cyan-500',
         bgColor: 'from-blue-50 to-cyan-50',
         borderColor: 'border-blue-300',
-        label: 'Prima Analisi'
+        label: t('progressAnalyzer.firstAnalysis')
       },
       improved: { 
         icon: TrendingUp, 
         color: 'from-green-500 to-emerald-500',
         bgColor: 'from-green-50 to-emerald-50',
         borderColor: 'border-green-300',
-        label: 'Progressi Visibili'
+        label: t('progressAnalyzer.visibleProgress')
       },
       maintained: { 
         icon: Minus, 
         color: 'from-yellow-500 to-amber-500',
         bgColor: 'from-yellow-50 to-amber-50',
         borderColor: 'border-yellow-300',
-        label: 'Mantenimento'
+        label: t('progressAnalyzer.maintenance')
       },
       regressed: { 
         icon: TrendingDown, 
         color: 'from-orange-500 to-red-500',
         bgColor: 'from-orange-50 to-red-50',
         borderColor: 'border-orange-300',
-        label: 'Necessita Attenzione'
+        label: t('progressAnalyzer.needsAttention')
       }
     };
     return configs[result] || configs.maintained;
@@ -847,13 +849,13 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
         <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto bg-white z-[60]">
           <DialogHeader className="border-b pb-3">
             <DialogTitle className="text-lg font-bold text-gray-900">
-              Analisi Progressi con AI
+              {t('progressAnalyzer.title')}
             </DialogTitle>
             <p className="text-sm text-gray-500 font-normal">
-              {step === 'zone_selection' && 'Seleziona la zona da migliorare'}
-              {step === 'target_photos' && `Foto: ${selectedZone?.label}`}
-              {step === 'body_photos' && 'Foto corpo intero per archivio'}
-              {step === 'analysis' && (isAnalyzing ? 'Analisi AI in corso...' : 'Analisi completata')}
+              {step === 'zone_selection' && t('progressAnalyzer.selectZone')}
+              {step === 'target_photos' && `${t('progressAnalyzer.photoZone')}: ${selectedZone?.label}`}
+              {step === 'body_photos' && t('progressAnalyzer.bodyPhotos')}
+              {step === 'analysis' && (isAnalyzing ? t('progressAnalyzer.analyzing') : t('progressAnalyzer.analysisComplete'))}
             </p>
           </DialogHeader>
 
@@ -864,13 +866,13 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   <div className="flex items-start gap-2">
                     <AlertCircle className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
                     <div>
-                      <p className="text-sm font-semibold text-purple-900 mb-1">Privacy Totale</p>
-                      <p className="text-xs text-purple-800">Le foto sono analizzate SOLO dall'AI. Scatta in intimo per precisione.</p>
+                      <p className="text-sm font-semibold text-purple-900 mb-1">{t('progressAnalyzer.privacyTitle')}</p>
+                      <p className="text-xs text-purple-800">{t('progressAnalyzer.privacyDesc')}</p>
                     </div>
                   </div>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3 text-sm">Quale zona vuoi migliorare?</h3>
+                  <h3 className="font-semibold text-gray-900 mb-3 text-sm">{t('progressAnalyzer.whichZone')}</h3>
                   <div className="space-y-2">
                     {TARGET_ZONES.map((zone) => (
                       <button key={zone.id} onClick={() => handleZoneSelection(zone)} className="w-full p-3 rounded-lg border border-gray-200 hover:border-purple-400 hover:bg-purple-50 transition-all text-left">
@@ -891,10 +893,10 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
             {step === 'target_photos' && selectedZone && (
               <motion.div key="target-photos" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
-                  <p className="text-xs text-blue-800">⚠️ Mantieni angolo e luci simili • Preferibilmente in intimo</p>
+                  <p className="text-xs text-blue-800">⚠️ {t('progressAnalyzer.photoTip')}</p>
                 </div>
                 <div className="space-y-3">
-                  <h3 className="font-semibold text-gray-900 text-sm">Foto: {selectedZone.label}</h3>
+                  <h3 className="font-semibold text-gray-900 text-sm">{t('progressAnalyzer.photoZone')}: {selectedZone.label}</h3>
                   {TARGET_ZONES.find(z => z.id === selectedZone.id).photoCount === 1 ? (
                     <div>
                       {!targetPhotos.single ? (
@@ -903,11 +905,11 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                           <div className="flex gap-2 justify-center">
                             <input type="file" accept="image/*" capture="environment" onChange={(e) => handleTargetPhotoSelect(e, 'single')} className="hidden" id="target-camera-single" />
                             <Button type="button" onClick={() => document.getElementById('target-camera-single').click()} size="sm" className="bg-purple-600 hover:bg-purple-700">
-                              <Camera className="w-4 h-4 mr-1" />Scatta
+                              <Camera className="w-4 h-4 mr-1" />{t('progressAnalyzer.takePhoto')}
                             </Button>
                             <input type="file" accept="image/*" onChange={(e) => handleTargetPhotoSelect(e, 'single')} className="hidden" id="target-gallery-single" />
                             <Button type="button" onClick={() => document.getElementById('target-gallery-single').click()} variant="outline" size="sm">
-                              <Upload className="w-4 h-4 mr-1" />Carica
+                              <Upload className="w-4 h-4 mr-1" />{t('progressAnalyzer.upload')}
                             </Button>
                           </div>
                         </div>
@@ -923,18 +925,18 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   ) : (
                     <div className="grid grid-cols-2 gap-3">
                       <div>
-                        <p className="text-xs font-medium text-gray-600 mb-2">Sinistro</p>
+                        <p className="text-xs font-medium text-gray-600 mb-2">{t('progressAnalyzer.left')}</p>
                         {!targetPhotos.left ? (
                           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                             <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                             <div className="space-y-1">
                               <input type="file" accept="image/*" capture="environment" onChange={(e) => handleTargetPhotoSelect(e, 'left')} className="hidden" id="target-camera-left" />
                               <Button type="button" onClick={() => document.getElementById('target-camera-left').click()} size="sm" className="w-full bg-purple-600 hover:bg-purple-700 text-xs">
-                                <Camera className="w-3 h-3 mr-1" />Scatta
+                                <Camera className="w-3 h-3 mr-1" />{t('progressAnalyzer.takePhoto')}
                               </Button>
                               <input type="file" accept="image/*" onChange={(e) => handleTargetPhotoSelect(e, 'left')} className="hidden" id="target-gallery-left" />
                               <Button type="button" onClick={() => document.getElementById('target-gallery-left').click()} variant="outline" size="sm" className="w-full text-xs">
-                                <Upload className="w-3 h-3 mr-1" />Carica
+                                <Upload className="w-3 h-3 mr-1" />{t('progressAnalyzer.upload')}
                               </Button>
                             </div>
                           </div>
@@ -948,18 +950,18 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         )}
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-gray-600 mb-2">Destro</p>
+                        <p className="text-xs font-medium text-gray-600 mb-2">{t('progressAnalyzer.right')}</p>
                         {!targetPhotos.right ? (
                           <div className="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center">
                             <Camera className="w-8 h-8 text-gray-400 mx-auto mb-2" />
                             <div className="space-y-1">
                               <input type="file" accept="image/*" capture="environment" onChange={(e) => handleTargetPhotoSelect(e, 'right')} className="hidden" id="target-camera-right" />
                               <Button type="button" onClick={() => document.getElementById('target-camera-right').click()} size="sm" className="w-full bg-purple-600 hover:bg-purple-700 text-xs">
-                                <Camera className="w-3 h-3 mr-1" />Scatta
+                                <Camera className="w-3 h-3 mr-1" />{t('progressAnalyzer.takePhoto')}
                               </Button>
                               <input type="file" accept="image/*" onChange={(e) => handleTargetPhotoSelect(e, 'right')} className="hidden" id="target-gallery-right" />
                               <Button type="button" onClick={() => document.getElementById('target-gallery-right').click()} variant="outline" size="sm" className="w-full text-xs">
-                                <Upload className="w-3 h-3 mr-1" />Carica
+                                <Upload className="w-3 h-3 mr-1" />{t('progressAnalyzer.upload')}
                               </Button>
                             </div>
                           </div>
@@ -977,10 +979,10 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                 </div>
                 <div className="flex gap-2 pt-2">
                   <Button onClick={() => setStep('zone_selection')} variant="outline" size="sm" className="flex-1">
-                    <ArrowLeft className="w-4 h-4 mr-1" />Indietro
+                    <ArrowLeft className="w-4 h-4 mr-1" />{t('progressAnalyzer.back')}
                   </Button>
                   <Button onClick={() => setStep('body_photos')} disabled={!canProceedFromTargetPhotos()} size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
-                    Avanti<ArrowRight className="w-4 h-4 ml-1" />
+                    {t('progressAnalyzer.next')}<ArrowRight className="w-4 h-4 ml-1" />
                   </Button>
                 </div>
               </motion.div>
@@ -989,10 +991,10 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
             {step === 'body_photos' && (
               <motion.div key="body-photos" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
                 <div className="bg-amber-50 p-3 rounded-lg border border-amber-200">
-                  <p className="text-xs text-amber-800 font-medium">📁 Foto per archivio storico (non analizzate, solo salvate)</p>
+                  <p className="text-xs text-amber-800 font-medium">📁 {t('progressAnalyzer.archiveNote')}</p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-3 text-sm">Corpo intero (4 angolazioni)</h3>
+                  <h3 className="font-semibold text-gray-900 mb-3 text-sm">{t('progressAnalyzer.fullBody')}</h3>
                   <div className="space-y-2">
                     {BODY_PHOTOS.map((bodyPhoto) => (
                       <div key={bodyPhoto.id}>
@@ -1002,11 +1004,11 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                             <div className="flex gap-2 justify-center">
                               <input type="file" accept="image/*" capture="environment" onChange={(e) => handleBodyPhotoSelect(e, bodyPhoto.id)} className="hidden" id={`body-camera-${bodyPhoto.id}`} />
                               <Button type="button" onClick={() => document.getElementById(`body-camera-${bodyPhoto.id}`).click()} size="sm" className="bg-gray-700 hover:bg-gray-800 text-xs">
-                                <Camera className="w-3 h-3 mr-1" />Scatta
+                                <Camera className="w-3 h-3 mr-1" />{t('progressAnalyzer.takePhoto')}
                               </Button>
                               <input type="file" accept="image/*" onChange={(e) => handleBodyPhotoSelect(e, bodyPhoto.id)} className="hidden" id={`body-gallery-${bodyPhoto.id}`} />
                               <Button type="button" onClick={() => document.getElementById(`body-gallery-${bodyPhoto.id}`).click()} variant="outline" size="sm" className="text-xs">
-                                <Upload className="w-3 h-3 mr-1" />Carica
+                                <Upload className="w-3 h-3 mr-1" />{t('progressAnalyzer.upload')}
                               </Button>
                             </div>
                           </div>
@@ -1023,15 +1025,15 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   </div>
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-700 mb-2 block">Note (opzionali)</label>
-                  <Textarea placeholder="Es: 'Mi sento più forte', 'Ho seguito il piano'..." value={notes} onChange={(e) => setNotes(e.target.value)} className="h-20 text-sm" />
+                  <label className="text-xs font-medium text-gray-700 mb-2 block">{t('progressAnalyzer.notesOptional')}</label>
+                  <Textarea placeholder={t('progressAnalyzer.notesPlaceholder')} value={notes} onChange={(e) => setNotes(e.target.value)} className="h-20 text-sm" />
                 </div>
                 <div className="flex gap-2 pt-2">
                   <Button onClick={() => setStep('target_photos')} variant="outline" size="sm" className="flex-1">
-                    <ArrowLeft className="w-4 h-4 mr-1" />Indietro
+                    <ArrowLeft className="w-4 h-4 mr-1" />{t('progressAnalyzer.back')}
                   </Button>
                   <Button onClick={analyzePhotos} disabled={!canProceedFromBodyPhotos() || isAnalyzing} size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
-                    <Sparkles className="w-4 h-4 mr-1" />Analizza
+                    <Sparkles className="w-4 h-4 mr-1" />{t('progressAnalyzer.analyze')}
                   </Button>
                 </div>
               </motion.div>
@@ -1043,12 +1045,12 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   <div className="w-16 h-16 mx-auto mb-4 rounded-xl bg-gradient-to-br from-purple-500 to-indigo-500 flex items-center justify-center">
                     <Brain className="w-8 h-8 text-white animate-pulse" />
                   </div>
-                  <p className="text-gray-900 font-bold text-lg mb-1">Analisi AI in Corso</p>
-                  <p className="text-xs text-gray-600">L'intelligenza artificiale sta analizzando i tuoi progressi</p>
+                  <p className="text-gray-900 font-bold text-lg mb-1">{t('progressAnalyzer.aiAnalyzing')}</p>
+                  <p className="text-xs text-gray-600">{t('progressAnalyzer.aiAnalyzingDesc')}</p>
                 </div>
 
                 <div className="bg-gray-50/80 rounded-xl p-5 border border-gray-200/60 space-y-3">
-                  <h4 className="font-semibold text-gray-800 text-sm mb-3">Protocollo Analisi AI:</h4>
+                  <h4 className="font-semibold text-gray-800 text-sm mb-3">{t('progressAnalyzer.aiProtocol')}</h4>
                   {ANALYSIS_STEPS.map((analysisStep, idx) => {
                     const StepIcon = analysisStep.icon;
                     const isCompleted = completedSteps.includes(analysisStep.id);
@@ -1102,7 +1104,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                         <TrendingUp className="w-5 h-5 text-white" />
                       </div>
                       <h4 className="font-bold text-indigo-900 text-base">
-                        📊 Confronto Prima vs Dopo {analysisResult.days_since_previous && `(${analysisResult.days_since_previous} giorni)`}
+                        📊 {t('progressAnalyzer.beforeAfter')} {analysisResult.days_since_previous && `(${analysisResult.days_since_previous} ${t('progressAnalyzer.daysAgo')})`}
                       </h4>
                     </div>
                     
@@ -1110,7 +1112,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     {previousPhoto?.ai_analysis?.target_photo_urls && uploadedPhotoUrls.current?.targetPhotoUrls && (
                       <div className="grid grid-cols-2 gap-3 mb-4">
                         <div className="space-y-2">
-                          <p className="text-xs font-bold text-red-700 text-center">🔴 PRIMA ({analysisResult.days_since_previous} giorni fa)</p>
+                          <p className="text-xs font-bold text-red-700 text-center">🔴 {t('progressAnalyzer.before')} ({analysisResult.days_since_previous} {t('progressAnalyzer.daysAgo')})</p>
                           <img 
                             src={previousPhoto.ai_analysis.target_photo_urls[0]} 
                             alt="Foto precedente" 
@@ -1118,7 +1120,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                           />
                         </div>
                         <div className="space-y-2">
-                          <p className="text-xs font-bold text-green-700 text-center">🟢 DOPO (OGGI)</p>
+                          <p className="text-xs font-bold text-green-700 text-center">🟢 {t('progressAnalyzer.after')}</p>
                           <img 
                             src={uploadedPhotoUrls.current.targetPhotoUrls[0]} 
                             alt="Foto attuale" 
@@ -1137,7 +1139,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                 )}
 
                 <div className="bg-gray-50 p-4 rounded-lg border">
-                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">Valutazione AI Stato Attuale</h4>
+                  <h4 className="font-semibold text-gray-900 mb-2 text-sm">{t('progressAnalyzer.currentStateAI')}</h4>
                   <p className="text-sm text-gray-700 leading-relaxed">{analysisResult.overall_assessment}</p>
                 </div>
 
@@ -1145,13 +1147,13 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   <div className="bg-gradient-to-br from-blue-50 to-indigo-50 p-4 rounded-lg border-2 border-blue-300 space-y-3">
                     <h4 className="font-bold text-blue-900 mb-3 text-base flex items-center gap-2">
                       <Microscope className="w-5 h-5" />
-                      📊 Analisi Dettagliata Zona Target
+                      📊 {t('progressAnalyzer.detailedAnalysis')}
                     </h4>
 
                     <div className="space-y-2">
                       <div className="bg-white/60 p-3 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-gray-700">🔥 Grasso Superficiale</span>
+                          <span className="text-xs font-semibold text-gray-700">🔥 {t('progressAnalyzer.superficialFat')}</span>
                           <div className="flex items-center gap-2">
                             <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div 
@@ -1167,7 +1169,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                       <div className="bg-white/60 p-3 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-gray-700">💪 Definizione Muscolare</span>
+                          <span className="text-xs font-semibold text-gray-700">💪 {t('progressAnalyzer.muscleDefinition')}</span>
                           <div className="flex items-center gap-2">
                             <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div 
@@ -1183,7 +1185,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                       <div className="bg-white/60 p-3 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-gray-700">⚖️ Simmetria e Proporzioni</span>
+                          <span className="text-xs font-semibold text-gray-700">⚖️ {t('progressAnalyzer.symmetry')}</span>
                           <div className="flex items-center gap-2">
                             <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div 
@@ -1199,7 +1201,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                       <div className="bg-white/60 p-3 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-gray-700">✨ Qualità Pelle</span>
+                          <span className="text-xs font-semibold text-gray-700">✨ {t('progressAnalyzer.skinQuality')}</span>
                           <div className="flex items-center gap-2">
                             <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div 
@@ -1215,7 +1217,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                       <div className="bg-white/60 p-3 rounded-lg">
                         <div className="flex items-center justify-between mb-1">
-                          <span className="text-xs font-semibold text-gray-700">💧 Gonfiore / Ritenzione</span>
+                          <span className="text-xs font-semibold text-gray-700">💧 {t('progressAnalyzer.swelling')}</span>
                           <div className="flex items-center gap-2">
                             <div className="w-20 h-2 bg-gray-200 rounded-full overflow-hidden">
                               <div 
@@ -1234,7 +1236,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                 {analysisResult.visible_characteristics?.length > 0 && (
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
-                    <h4 className="font-semibold text-blue-900 mb-2 text-sm">Caratteristiche Visibili Oggi</h4>
+                    <h4 className="font-semibold text-blue-900 mb-2 text-sm">{t('progressAnalyzer.visibleCharacteristics')}</h4>
                     <ul className="space-y-1">
                       {analysisResult.visible_characteristics.map((char, idx) => (
                         <li key={idx} className="text-xs text-blue-800 flex gap-2"><span>•</span><span>{char}</span></li>
@@ -1245,7 +1247,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                 {analysisResult.visible_differences?.length > 0 && (
                   <div className="bg-yellow-50 p-4 rounded-lg border border-yellow-200">
-                    <h4 className="font-semibold text-yellow-900 mb-2 text-sm">Differenze (Sx vs Dx)</h4>
+                    <h4 className="font-semibold text-yellow-900 mb-2 text-sm">{t('progressAnalyzer.differences')}</h4>
                     <ul className="space-y-1">
                       {analysisResult.visible_differences.map((diff, idx) => (
                         <li key={idx} className="text-xs text-yellow-800 flex gap-2"><span>↔️</span><span>{diff}</span></li>
@@ -1256,7 +1258,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                 {analysisResult.recommendations?.length > 0 && (
                   <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                    <h4 className="font-semibold text-purple-900 mb-2 text-sm">💡 Raccomandazioni per Migliorare</h4>
+                    <h4 className="font-semibold text-purple-900 mb-2 text-sm">💡 {t('progressAnalyzer.improvementTips')}</h4>
                     <ul className="space-y-1">
                       {analysisResult.recommendations.map((rec, idx) => (
                         <li key={idx} className="text-xs text-purple-800 flex gap-2"><span>→</span><span>{rec}</span></li>
@@ -1270,8 +1272,8 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     <div className="flex items-start gap-2">
                       <Info className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
                       <div>
-                        <p className="text-xs text-amber-800 font-semibold mb-1">🔒 Modifiche ai Piani Non Disponibili</p>
-                        <p className="text-xs text-amber-700">Sono passati {daysSinceLastAdjustment} giorni dall'ultima modifica. Potrai applicare nuove modifiche tra {7 - daysSinceLastAdjustment} giorni per dare tempo al corpo di adattarsi.</p>
+                        <p className="text-xs text-amber-800 font-semibold mb-1">🔒 {t('progressAnalyzer.changesNotAvailable')}</p>
+                        <p className="text-xs text-amber-700">{daysSinceLastAdjustment} {t('progressAnalyzer.daysPassedSince')}. {t('progressAnalyzer.waitDays')} {7 - daysSinceLastAdjustment} {t('progressAnalyzer.daysToAdapt')}</p>
                       </div>
                     </div>
                   </div>
@@ -1281,7 +1283,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                   <div className="bg-blue-50 p-4 rounded-lg border border-blue-200">
                     <div className="flex items-center gap-2">
                       <Loader2 className="w-5 h-5 text-blue-600 animate-spin" />
-                      <p className="text-sm text-blue-800 font-medium">Generazione modifiche proposte dall'AI...</p>
+                      <p className="text-sm text-blue-800 font-medium">{t('progressAnalyzer.generatingProposals')}</p>
                     </div>
                   </div>
                 )}
@@ -1289,21 +1291,21 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                 {proposedChanges && !appliedChanges && canApplyChanges && (
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-300">
                     <h4 className="font-bold text-green-900 mb-3 text-base flex items-center gap-2">
-                      <Sparkles className="w-5 h-5" />Modifiche Proposte dall'AI
+                      <Sparkles className="w-5 h-5" />{t('progressAnalyzer.proposedChanges')}
                     </h4>
                     {proposedChanges.diet.length > 0 && (
                       <div className="mb-4">
-                        <p className="text-sm font-semibold text-green-800 mb-2">🍽️ Piano Nutrizionale:</p>
+                        <p className="text-sm font-semibold text-green-800 mb-2">🍽️ {t('progressAnalyzer.nutritionPlan')}</p>
                         {proposedChanges.diet.map((proposal, idx) => (
                           <div key={idx} className="bg-white/60 p-3 rounded-lg border border-green-200 mb-2">
                             {proposal.type === 'calorie_adjustment' ? (
                               <>
                                 <div className="flex items-center justify-between mb-1">
-                                  <span className="text-sm font-medium text-gray-900">Target Calorico:</span>
+                                  <span className="text-sm font-medium text-gray-900">{t('progressAnalyzer.caloricTarget')}</span>
                                   <span className="text-sm font-bold text-green-700">{proposal.current} → {proposal.proposed} kcal ({proposal.adjustment > 0 ? '+' : ''}{proposal.adjustment})</span>
                                 </div>
                                 <p className="text-xs text-gray-600 mb-1">{proposal.reason}</p>
-                                <p className="text-xs text-purple-700 font-semibold">✨ Tutti i pasti verranno scalati proporzionalmente</p>
+                                <p className="text-xs text-purple-700 font-semibold">✨ {t('progressAnalyzer.allMealsScaled')}</p>
                               </>
                             ) : (
                               <p className="text-sm text-gray-700">✓ {proposal.reason}</p>
@@ -1314,18 +1316,18 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     )}
                     {proposedChanges.workout.length > 0 && (
                       <div className="mb-4">
-                        <p className="text-sm font-semibold text-green-800 mb-2">💪 Piano Allenamento:</p>
+                        <p className="text-sm font-semibold text-green-800 mb-2">💪 {t('progressAnalyzer.workoutPlan')}</p>
                         {proposedChanges.workout.map((proposal, idx) => (
                           <div key={idx} className="bg-white/60 p-3 rounded-lg border border-green-200 mb-2">
                             {proposal.type === 'exercise_replacement' ? (
                               <>
-                                <p className="text-xs font-medium text-gray-700 mb-1">Giorno: <span className="font-bold">{proposal.day}</span></p>
+                                <p className="text-xs font-medium text-gray-700 mb-1">{t('progressAnalyzer.day')} <span className="font-bold">{proposal.day}</span></p>
                                 <div className="flex items-center gap-2 mb-1">
                                   <span className="text-xs text-red-600 line-through">{proposal.current_exercise.name}</span>
                                   <ArrowRight className="w-3 h-3 text-gray-400" />
                                   <span className="text-xs text-green-700 font-bold">{proposal.proposed_exercise.name}</span>
                                 </div>
-                                <p className="text-xs text-gray-600">{proposal.proposed_exercise.sets} serie x {proposal.proposed_exercise.reps} • {proposal.proposed_exercise.rest} recupero</p>
+                                <p className="text-xs text-gray-600">{proposal.proposed_exercise.sets} serie x {proposal.proposed_exercise.reps} • {proposal.proposed_exercise.rest} {t('progressAnalyzer.recovery')}</p>
                                 <p className="text-xs text-gray-600 mt-1">{proposal.reason}</p>
                               </>
                             ) : (
@@ -1344,9 +1346,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                           disabled={isApplyingChanges}
                         >
                           {isApplyingChanges ? (
-                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />Applicazione...</>
+                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.applying')}</>
                           ) : (
-                            <><Utensils className="w-4 h-4 mr-2" />Applica Solo Modifiche Nutrizionali</>
+                            <><Utensils className="w-4 h-4 mr-2" />{t('progressAnalyzer.applyNutritionOnly')}</>
                           )}
                         </Button>
                       )}
@@ -1358,9 +1360,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                           disabled={isApplyingChanges}
                         >
                           {isApplyingChanges ? (
-                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />Applicazione...</>
+                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.applying')}</>
                           ) : (
-                            <><Dumbbell className="w-4 h-4 mr-2" />Applica Solo Modifiche Allenamento</>
+                            <><Dumbbell className="w-4 h-4 mr-2" />{t('progressAnalyzer.applyWorkoutOnly')}</>
                           )}
                         </Button>
                       )}
@@ -1371,11 +1373,11 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                 {appliedChanges && (
                   <div className="bg-green-50 p-4 rounded-lg border border-green-200">
                     <h4 className="font-semibold text-green-900 mb-2 text-sm flex items-center gap-2">
-                      <CheckCircle2 className="w-4 h-4" />✅ Modifiche Applicate con Successo
+                      <CheckCircle2 className="w-4 h-4" />✅ {t('progressAnalyzer.changesApplied')}
                     </h4>
                     {appliedChanges.diet.length > 0 && (
                       <div className="mb-2">
-                        <p className="text-xs font-semibold text-green-800 mb-1">🍽️ Dieta:</p>
+                        <p className="text-xs font-semibold text-green-800 mb-1">🍽️ {t('progressAnalyzer.diet')}</p>
                         <ul className="space-y-0.5">
                           {appliedChanges.diet.map((change, idx) => (
                             <li key={idx} className="text-xs text-green-700">• {change}</li>
@@ -1385,7 +1387,7 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
                     )}
                     {appliedChanges.workout.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-green-800 mb-1">💪 Allenamento:</p>
+                        <p className="text-xs font-semibold text-green-800 mb-1">💪 {t('progressAnalyzer.workout')}</p>
                         <ul className="space-y-0.5">
                           {appliedChanges.workout.map((change, idx) => (
                             <li key={idx} className="text-xs text-green-700">• {change}</li>
@@ -1398,9 +1400,9 @@ Suggest ONE single exercise replacement with Italian name, sets, reps (in Italia
 
                 <Button onClick={saveAnalysis} className="w-full bg-purple-600 hover:bg-purple-700" disabled={isSaving || isApplyingChanges || isGeneratingProposals}>
                   {isSaving ? (
-                    <><Loader2 className="w-4 h-4 animate-spin mr-2" />Salvataggio...</>
+                    <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.savingAnalysis')}</>
                   ) : (
-                    <><Sparkles className="w-4 h-4 mr-2" />Salva Analisi</>
+                    <><Sparkles className="w-4 h-4 mr-2" />{t('progressAnalyzer.saveAnalysis')}</>
                   )}
                 </Button>
               </motion.div>
