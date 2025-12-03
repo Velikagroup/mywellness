@@ -9,6 +9,7 @@ import { WeightHistory } from "@/entities/WeightHistory";
 import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
+import { useLanguage } from '../i18n/LanguageContext';
 
 const KCAL_PER_KG = 7700;
 
@@ -24,6 +25,7 @@ const getActivityMultiplier = (activityLevel) => {
 };
 
 export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false }) {
+  const { t } = useLanguage();
   const [weight, setWeight] = useState('');
   const [isSaving, setIsSaving] = useState(false);
 
@@ -80,7 +82,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     
     if (!weight || !user) {
       console.warn('⚠️ Missing weight or user', { weight, userId: user?.id });
-      alert('Inserisci un peso valido');
+      alert(t('progressChart.enterValidWeight'));
       return;
     }
     
@@ -105,10 +107,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         await onWeightLogged();
       }
       
-      alert('✅ Peso registrato con successo!');
+      alert('✅ ' + t('progressChart.weightSaved'));
     } catch (error) {
       console.error("❌ Errore nel salvare il peso:", error);
-      alert(`Errore nel salvataggio del peso: ${error.message || 'Riprova'}`);
+      alert(`${t('progressChart.saveError')}: ${error.message || 'Riprova'}`);
     }
     setIsSaving(false);
   };
@@ -147,8 +149,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const kcalRemaining = totalKcalToChange - kcalChangedSoFar;
 
   const pieData = [
-    { name: 'Completato', value: kcalChangedSoFar },
-    { name: 'Rimanente', value: kcalRemaining > 0 ? kcalRemaining : 0 },
+    { name: t('progressChart.completedLabel'), value: kcalChangedSoFar },
+    { name: t('progressChart.remainingLabel'), value: kcalRemaining > 0 ? kcalRemaining : 0 },
   ];
 
   const COLORS = ['#26847F', '#e5e7eb'];
@@ -158,7 +160,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
           <div className="p-5 bg-gradient-to-br from-blue-50/70 to-blue-100/30 rounded-xl border border-blue-200/40 backdrop-blur-sm shadow-lg">
-            <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">Peso Iniziale</p>
+            <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">{t('progressChart.startWeight')}</p>
             <div className="flex items-baseline gap-2">
               <p className="text-3xl font-bold text-blue-900">{startWeight.toFixed(1)}</p>
               <span className="text-sm font-medium text-blue-600">kg</span>
@@ -166,7 +168,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           </div>
 
           <div className="p-5 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-xl border-2 border-[#26847F]/30 backdrop-blur-sm shadow-lg">
-            <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">Peso Target</p>
+            <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">{t('progressChart.targetWeight')}</p>
             <div className="flex items-baseline gap-2">
               <p className="text-3xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
               <span className="text-sm font-medium text-[#1a5753]">kg</span>
@@ -180,7 +182,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           }`}>
             <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
               isGoodProgress ? 'text-green-700' : 'text-red-700'
-            }`}>Variazione</p>
+            }`}>{t('progressChart.variation')}</p>
             <div className="flex items-center gap-2">
               {isGoodProgress ? (
                 <TrendingDown className="w-5 h-5 text-green-600" />
@@ -201,10 +203,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           <div className="flex flex-col space-y-4">
             <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-gray-900">Traiettoria Massa Corporea</h3>
+                <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
                 <div className="flex items-center gap-2 text-xs">
                   <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
-                  <span className="text-gray-600 font-medium">Peso attuale</span>
+                  <span className="text-gray-600 font-medium">{t('progressChart.currentWeight')}</span>
                 </div>
               </div>
               <div className="h-64">
@@ -256,7 +258,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 <div className="w-10 h-10 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
                   <Scale className="w-5 h-5 text-[#26847F]" />
                 </div>
-                <h3 className="text-base font-bold text-gray-900">Registra Peso</h3>
+                <h3 className="text-base font-bold text-gray-900">{t('progressChart.logWeight')}</h3>
               </div>
               <div className="space-y-4">
                 <div className="relative">
@@ -279,14 +281,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
                   <Save className="w-4 h-4 mr-2" />
-                  {isSaving ? 'Salvataggio...' : 'Salva Peso'}
+                  {isSaving ? t('progressChart.saving') : t('progressChart.saveWeight')}
                 </Button>
               </div>
             </div>
           </div>
           
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-            <h3 className="text-base font-bold text-gray-900 mb-4">Scomposizione Calorica Obiettivo</h3>
+            <h3 className="text-base font-bold text-gray-900 mb-4">{t('progressChart.calorieBreakdown')}</h3>
             <div className="h-48 relative flex items-center justify-center">
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -315,7 +317,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </ResponsiveContainer>
               <div className="absolute text-center">
                 <p className="text-3xl font-bold text-[#26847F]">{progressPercentage.toFixed(0)}%</p>
-                <p className="text-xs text-gray-500 font-medium mt-1">completato</p>
+                <p className="text-xs text-gray-500 font-medium mt-1">{t('progressChart.completed')}</p>
               </div>
             </div>
             <div className="mt-4 space-y-3">
@@ -330,7 +332,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               ))}
             </div>
             <p className="text-xs text-gray-500 mt-4 text-center bg-white/65 p-3 rounded-lg border border-gray-200/30 backdrop-blur-sm shadow-md">
-              💡 Calcolo basato su <span className="font-semibold text-gray-700">7700 kcal = 1 kg</span> di variazione
+              💡 {t('progressChart.calorieCalc')} <span className="font-semibold text-gray-700">7700 kcal = 1 kg</span> {t('progressChart.perKg')}
             </p>
           </div>
         </div>
