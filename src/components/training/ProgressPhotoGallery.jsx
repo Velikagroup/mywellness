@@ -3,17 +3,22 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { X, Calendar, TrendingUp, TrendingDown, Trash2 } from 'lucide-react';
 import { format } from 'date-fns';
-import { it } from 'date-fns/locale';
-
-const BODY_PHOTO_LABELS = {
-  'front': { label: 'Fronte', icon: '⬆️' },
-  'side_left': { label: 'Lato Sinistro', icon: '⬅️' },
-  'side_right': { label: 'Lato Destro', icon: '➡️' },
-  'back': { label: 'Dietro', icon: '⬇️' }
-};
+import { it, enUS, es, pt, de, fr } from 'date-fns/locale';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDeletePhoto }) {
+  const { t, language } = useLanguage();
   const [selectedPhoto, setSelectedPhoto] = React.useState(null);
+  
+  const localeMap = { it, en: enUS, es, pt, de, fr };
+  const dateLocale = localeMap[language] || enUS;
+
+  const BODY_PHOTO_LABELS = {
+    'front': { label: t('bodyPhotos.front'), icon: '⬆️' },
+    'side_left': { label: t('bodyPhotos.sideLeft'), icon: '⬅️' },
+    'side_right': { label: t('bodyPhotos.sideRight'), icon: '➡️' },
+    'back': { label: t('bodyPhotos.back'), icon: '⬇️' }
+  };
 
   if (!isOpen) return null;
 
@@ -37,10 +42,10 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
       <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-gray-900 flex items-center gap-2">
-            📸 Galleria Progressi
+            📸 {t('progressGallery.title')}
           </DialogTitle>
           <p className="text-sm text-gray-600">
-            {sortedPhotos.length} {sortedPhotos.length === 1 ? 'foto caricata' : 'foto caricate'}
+            {sortedPhotos.length} {sortedPhotos.length === 1 ? t('progressGallery.photoUploaded') : t('progressGallery.photosUploaded')}
           </p>
         </DialogHeader>
 
@@ -49,8 +54,8 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Calendar className="w-8 h-8 text-gray-400" />
             </div>
-            <p className="text-gray-500 font-medium">Nessuna foto ancora caricata</p>
-            <p className="text-sm text-gray-400 mt-2">Inizia a tracciare i tuoi progressi!</p>
+            <p className="text-gray-500 font-medium">{t('progressGallery.noPhotos')}</p>
+            <p className="text-sm text-gray-400 mt-2">{t('progressGallery.startTracking')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -63,7 +68,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                 <div className="aspect-[3/4] relative">
                   <img
                     src={photo.photo_url}
-                    alt={`Progress ${format(new Date(photo.date), 'dd MMM yyyy', { locale: it })}`}
+                    alt={`Progress ${format(new Date(photo.date), 'dd MMM yyyy', { locale: dateLocale })}`}
                     className="w-full h-full object-cover"
                   />
                   
@@ -75,16 +80,16 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                     }`}>
                       {getComparisonIcon(photo.ai_analysis.comparison_result)}
                       <span className="text-xs font-bold uppercase">
-                        {photo.ai_analysis.comparison_result === 'improved' ? 'Migliorato' :
-                         photo.ai_analysis.comparison_result === 'regressed' ? 'Peggiorato' :
-                         'Stabile'}
+                        {photo.ai_analysis.comparison_result === 'improved' ? t('progressGallery.improved') :
+                         photo.ai_analysis.comparison_result === 'regressed' ? t('progressGallery.regressed') :
+                         t('progressGallery.stable')}
                       </span>
                     </div>
                   )}
 
                   {photo.ai_analysis?.comparison_result === 'first_photo' && (
                     <div className="absolute top-2 right-2 px-3 py-1.5 rounded-full bg-purple-500/90 text-white backdrop-blur-md">
-                      <span className="text-xs font-bold">🎯 PRIMA FOTO</span>
+                      <span className="text-xs font-bold">🎯 {t('progressGallery.firstPhoto')}</span>
                     </div>
                   )}
                 </div>
@@ -92,7 +97,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                 <div className="p-3 bg-white/80 backdrop-blur-sm">
                   <div className="flex items-center justify-between mb-1">
                     <p className="text-sm font-semibold text-gray-900">
-                      {format(new Date(photo.date), 'dd MMMM yyyy', { locale: it })}
+                      {format(new Date(photo.date), 'dd MMMM yyyy', { locale: dateLocale })}
                     </p>
                     {photo.weight && (
                       <span className="text-xs bg-gray-100 px-2 py-1 rounded-full font-medium text-gray-700">
@@ -108,12 +113,12 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                 <button
                   onClick={(e) => {
                     e.stopPropagation();
-                    if (confirm('Vuoi davvero eliminare questa foto?')) {
+                    if (confirm(t('progressGallery.deleteConfirm'))) {
                       onDeletePhoto(photo.id);
                     }
                   }}
                   className="absolute top-2 left-2 p-2 bg-red-500/90 hover:bg-red-600 text-white rounded-full backdrop-blur-md transition-all"
-                  title="Elimina foto"
+                  title={t('progressGallery.deletePhoto')}
                 >
                   <Trash2 className="w-4 h-4" />
                 </button>
@@ -127,14 +132,14 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
             <DialogContent className="max-w-6xl max-h-[95vh] overflow-y-auto">
               <DialogHeader>
                 <DialogTitle className="text-xl font-bold text-gray-900">
-                  📸 {format(new Date(selectedPhoto.date), 'dd MMMM yyyy', { locale: it })}
+                  📸 {format(new Date(selectedPhoto.date), 'dd MMMM yyyy', { locale: dateLocale })}
                 </DialogTitle>
               </DialogHeader>
 
               <div className="space-y-6">
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                    🎯 Zona Analizzata: {selectedPhoto.ai_analysis?.target_zone || 'N/A'}
+                    🎯 {t('progressGallery.analyzedZone')} {selectedPhoto.ai_analysis?.target_zone || 'N/A'}
                   </h3>
                   <div className="relative">
                     <img
@@ -153,7 +158,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                 {selectedPhoto.ai_analysis?.body_photo_urls && Object.keys(selectedPhoto.ai_analysis.body_photo_urls).length > 0 && (
                   <div>
                     <h3 className="font-semibold text-gray-900 mb-3 flex items-center gap-2">
-                      📁 Foto Corpo Intero (Archivio)
+                      📁 {t('progressGallery.bodyArchive')}
                     </h3>
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                       {Object.entries(selectedPhoto.ai_analysis.body_photo_urls).map(([photoType, photoUrl]) => {
@@ -189,7 +194,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                             <TrendingUp className="w-5 h-5 text-white" />
                           </div>
                           <h4 className="font-bold text-indigo-900 text-base">
-                            📊 Confronto Prima vs Dopo {selectedPhoto.ai_analysis.days_since_previous && `(${selectedPhoto.ai_analysis.days_since_previous} giorni)`}
+                            📊 {t('progressGallery.beforeAfterComparison')} {selectedPhoto.ai_analysis.days_since_previous && `(${selectedPhoto.ai_analysis.days_since_previous} ${t('progressAnalyzer.daysAgo')})`}
                           </h4>
                         </div>
                         <div className="bg-white/60 p-4 rounded-lg">
@@ -203,7 +208,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                     <div className={`rounded-xl p-4 border-2 ${getComparisonColor(selectedPhoto.ai_analysis.comparison_result)}`}>
                       <div className="flex items-center gap-2 mb-2">
                         {getComparisonIcon(selectedPhoto.ai_analysis.comparison_result)}
-                        <h4 className="font-bold text-gray-900">Valutazione Generale</h4>
+                        <h4 className="font-bold text-gray-900">{t('progressGallery.generalEvaluation')}</h4>
                       </div>
                       <p className="text-gray-700 leading-relaxed">
                         {selectedPhoto.ai_analysis.overall_assessment}
@@ -212,7 +217,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
                     {selectedPhoto.ai_analysis.visible_characteristics?.length > 0 && (
                       <div className="bg-blue-50 rounded-lg p-4 border border-blue-200">
-                        <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">Caratteristiche Osservate</h4>
+                        <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">{t('progressGallery.observedCharacteristics')}</h4>
                         <ul className="space-y-1">
                           {selectedPhoto.ai_analysis.visible_characteristics.map((char, idx) => (
                             <li key={idx} className="text-sm text-blue-800 flex items-start gap-2">
@@ -225,7 +230,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
                     {selectedPhoto.ai_analysis.visible_differences?.length > 0 && (
                       <div className="bg-yellow-50 rounded-lg p-4 border border-yellow-200">
-                        <h4 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">Differenze Osservate (Sx vs Dx)</h4>
+                        <h4 className="font-semibold text-yellow-900 mb-2 flex items-center gap-2">{t('progressGallery.observedDifferences')}</h4>
                         <ul className="space-y-1">
                           {selectedPhoto.ai_analysis.visible_differences.map((diff, idx) => (
                             <li key={idx} className="text-sm text-yellow-800 flex items-start gap-2">
@@ -238,7 +243,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
                     {selectedPhoto.ai_analysis.recommendations?.length > 0 && (
                       <div className="bg-purple-50 rounded-lg p-4 border border-purple-200">
-                        <h4 className="font-semibold text-purple-900 mb-2">💡 Raccomandazioni AI</h4>
+                        <h4 className="font-semibold text-purple-900 mb-2">💡 {t('progressGallery.aiRecommendations')}</h4>
                         <ul className="space-y-1">
                           {selectedPhoto.ai_analysis.recommendations.map((rec, idx) => (
                             <li key={idx} className="text-sm text-purple-800 flex items-start gap-2">
@@ -251,10 +256,10 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
                     {selectedPhoto.ai_analysis.applied_changes && (
                       <div className="bg-green-50 rounded-lg p-4 border border-green-200">
-                        <h4 className="font-semibold text-green-900 mb-2">✅ Modifiche Applicate ai Piani</h4>
+                        <h4 className="font-semibold text-green-900 mb-2">✅ {t('progressGallery.appliedChanges')}</h4>
                         {selectedPhoto.ai_analysis.applied_changes.diet?.length > 0 && (
                           <div className="mb-2">
-                            <p className="text-sm font-semibold text-green-800 mb-1">🍽️ Dieta:</p>
+                            <p className="text-sm font-semibold text-green-800 mb-1">🍽️ {t('progressAnalyzer.diet')}</p>
                             <ul className="space-y-0.5">
                               {selectedPhoto.ai_analysis.applied_changes.diet.map((change, idx) => (
                                 <li key={idx} className="text-xs text-green-700">• {change}</li>
@@ -264,7 +269,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                         )}
                         {selectedPhoto.ai_analysis.applied_changes.workout?.length > 0 && (
                           <div>
-                            <p className="text-sm font-semibold text-green-800 mb-1">💪 Allenamento:</p>
+                            <p className="text-sm font-semibold text-green-800 mb-1">💪 {t('progressAnalyzer.workout')}</p>
                             <ul className="space-y-0.5">
                               {selectedPhoto.ai_analysis.applied_changes.workout.map((change, idx) => (
                                 <li key={idx} className="text-xs text-green-700">• {change}</li>
@@ -287,7 +292,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
                 {selectedPhoto.notes && (
                   <div className="bg-gray-50 rounded-lg p-4 border border-gray-200">
-                    <h4 className="font-semibold text-gray-900 mb-2">📝 Note Personali</h4>
+                    <h4 className="font-semibold text-gray-900 mb-2">📝 {t('progressGallery.personalNotes')}</h4>
                     <p className="text-gray-700 text-sm">{selectedPhoto.notes}</p>
                   </div>
                 )}
