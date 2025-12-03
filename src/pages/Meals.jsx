@@ -755,7 +755,7 @@ STRICT RULES:
     
     setIsGenerating(true);
     setGenerationProgress(0);
-    setGenerationStatus("Avvio protocollo AI...");
+    setGenerationStatus(t('meals.startingAI'));
 
     try {
       const updateProgress = (progress, status) => {
@@ -763,7 +763,7 @@ STRICT RULES:
         setGenerationStatus(status);
       };
 
-      updateProgress(10, "Analisi profilo metabolico...");
+      updateProgress(10, t('meals.analyzingProfile'));
 
       // Carica ingredienti dispensa
       const userIngredients = await base44.entities.UserIngredient.filter({ user_id: user.id });
@@ -853,7 +853,7 @@ STRICT RULES:
         sorbitol: 'SORBITOLO - NO dolcificanti artificiali, prugne, mele, pere'
       };
 
-      updateProgress(15, "Rimozione piani precedenti...");
+      updateProgress(15, t('meals.removingOldPlans'));
       for (const plan of mealPlans) {
         await deleteMealMutation.mutateAsync(plan.id);
       }
@@ -1130,7 +1130,7 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
           }
       }
 
-      updateProgress(90, "Salvataggio ingredienti nel database...");
+      updateProgress(90, t('meals.savingIngredients'));
       
       try {
         const allIngredients = [];
@@ -1147,7 +1147,7 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
         console.warn('⚠️ Database error:', dbError);
       }
 
-      updateProgress(95, "Salvataggio pasti...");
+      updateProgress(95, t('meals.savingMeals'));
       const createdMealIds = [];
       
       // ✅ Ricarica l'utente per assicurarsi che l'ID sia corretto
@@ -1374,7 +1374,7 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesT
         }
       }
 
-      updateProgress(100, "Completato!");
+      updateProgress(100, t('meals.completed'));
       
       // Registra la generazione
       const currentMonth = new Date().toISOString().slice(0, 7);
