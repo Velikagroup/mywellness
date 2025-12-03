@@ -551,6 +551,8 @@ export const translations = {
       mealsOption6Desc: "3 principali + 3 snack",
       mealsOption7: "7 pasti",
       mealsOption7Desc: "3 principali + 4 snack",
+      estimatedDistribution: "Distribuzione calorica stimata",
+      perMealAvg: "in media per pasto",
       // Cooking time
       cookingTimeTitle: "Tempo in Cucina",
       cookingTimeSubtitle: "Quanto tempo hai per cucinare?",
@@ -1175,6 +1177,8 @@ export const translations = {
       mealsOption6Desc: "3 main + 3 snacks",
       mealsOption7: "7 meals",
       mealsOption7Desc: "3 main + 4 snacks",
+      estimatedDistribution: "Estimated calorie distribution",
+      perMealAvg: "average per meal",
       // Cooking time
       cookingTimeTitle: "Cooking Time",
       cookingTimeSubtitle: "How much time do you have for cooking?",
@@ -1795,6 +1799,8 @@ export const translations = {
       mealsOption6Desc: "3 principales + 3 snacks",
       mealsOption7: "7 comidas",
       mealsOption7Desc: "3 principales + 4 snacks",
+      estimatedDistribution: "Distribución calórica estimada",
+      perMealAvg: "promedio por comida",
       // Cooking time
       cookingTimeTitle: "Tiempo de Cocina",
       cookingTimeSubtitle: "¿Cuánto tiempo tienes para cocinar?",
@@ -2415,6 +2421,8 @@ export const translations = {
       mealsOption6Desc: "3 principais + 3 lanches",
       mealsOption7: "7 refeições",
       mealsOption7Desc: "3 principais + 4 lanches",
+      estimatedDistribution: "Distribuição calórica estimada",
+      perMealAvg: "média por refeição",
       // Cooking time
       cookingTimeTitle: "Tempo de Cozinha",
       cookingTimeSubtitle: "Quanto tempo você tem para cozinhar?",
@@ -3035,6 +3043,8 @@ export const translations = {
       mealsOption6Desc: "3 Haupt + 3 Snacks",
       mealsOption7: "7 Mahlzeiten",
       mealsOption7Desc: "3 Haupt + 4 Snacks",
+      estimatedDistribution: "Geschätzte Kalorienverteilung",
+      perMealAvg: "durchschnittlich pro Mahlzeit",
       // Cooking time
       cookingTimeTitle: "Kochzeit",
       cookingTimeSubtitle: "Wie viel Zeit haben Sie zum Kochen?",
@@ -3655,6 +3665,8 @@ export const translations = {
       mealsOption6Desc: "3 principaux + 3 collations",
       mealsOption7: "7 repas",
       mealsOption7Desc: "3 principaux + 4 collations",
+      estimatedDistribution: "Distribution calorique estimée",
+      perMealAvg: "moyenne par repas",
       // Cooking time
       cookingTimeTitle: "Temps de Cuisine",
       cookingTimeSubtitle: "Combien de temps avez-vous pour cuisiner ?",
