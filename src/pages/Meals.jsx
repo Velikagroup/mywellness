@@ -314,63 +314,64 @@ export default function MealsPage() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['mealPlans'] }),
   });
 
-  // Calcola generazioni rimanenti
-  useEffect(() => {
-    const checkRemainingGenerations = async () => {
-      if (!user?.id) return;
+  // Funzione per calcolare generazioni rimanenti (definita fuori dall'useEffect per poterla richiamare)
+  const checkRemainingGenerations = useCallback(async () => {
+    if (!user?.id) return;
 
-      const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
-      const limit = getGenerationLimit(user.subscription_plan, 'meal');
+    const currentMonth = new Date().toISOString().slice(0, 7); // YYYY-MM
+    const limit = getGenerationLimit(user.subscription_plan, 'meal');
 
-      console.log(`📊 Checking generations for user ${user.id}, plan: ${user.subscription_plan}, limit: ${limit}`);
+    console.log(`📊 Checking generations for user ${user.id}, plan: ${user.subscription_plan}, limit: ${limit}`);
 
-      if (limit === -1) {
-        setRemainingGenerations(-1); // Illimitato
-        setGenerationLimitReached(false);
-        return;
-      }
+    if (limit === -1) {
+      setRemainingGenerations(-1); // Illimitato
+      setGenerationLimitReached(false);
+      return;
+    }
 
-      try {
-        // ✅ FIX: Usa .list() e filtra localmente per evitare problemi RLS
-        const [allGenerations, allCredits] = await Promise.all([
-          base44.entities.PlanGeneration.list(),
-          base44.entities.PlanGenerationCredit.list()
-        ]);
-        console.log(`📊 All generations fetched:`, allGenerations.length);
-        console.log(`📊 All credits fetched:`, allCredits.length);
+    try {
+      // ✅ FIX: Usa .list() e filtra localmente per evitare problemi RLS
+      const [allGenerations, allCredits] = await Promise.all([
+        base44.entities.PlanGeneration.list(),
+        base44.entities.PlanGenerationCredit.list()
+      ]);
+      console.log(`📊 All generations fetched:`, allGenerations.length);
+      console.log(`📊 All credits fetched:`, allCredits.length);
 
-        const generations = allGenerations.filter(g => {
-          const matches = g.user_id === user.id && 
-                         g.plan_type === 'meal' && 
-                         g.generation_month === currentMonth;
-          if (matches) console.log(`📊 Match found:`, g);
-          return matches;
-        });
+      const generations = allGenerations.filter(g => {
+        const matches = g.user_id === user.id && 
+                       g.plan_type === 'meal' && 
+                       g.generation_month === currentMonth;
+        if (matches) console.log(`📊 Match found:`, g);
+        return matches;
+      });
 
-        // ✅ FIX: Filtra crediti localmente per l'utente corrente
-        const extraCredits = allCredits.filter(c => 
-          c.user_id === user.id && 
-          c.plan_type === 'meal'
-        );
+      // ✅ FIX: Filtra crediti localmente per l'utente corrente
+      const extraCredits = allCredits.filter(c => 
+        c.user_id === user.id && 
+        c.plan_type === 'meal'
+      );
 
-        // Calcola crediti extra disponibili
-        const extraCreditsAvailable = extraCredits
-          .filter(c => !c.expiration_month || c.expiration_month >= currentMonth)
-          .reduce((sum, c) => sum + c.credits_amount, 0);
+      // Calcola crediti extra disponibili
+      const extraCreditsAvailable = extraCredits
+        .filter(c => !c.expiration_month || c.expiration_month >= currentMonth)
+        .reduce((sum, c) => sum + c.credits_amount, 0);
 
-        const used = generations.length;
-        const totalLimit = limit + extraCreditsAvailable;
-        const remaining = Math.max(0, totalLimit - used);
-        console.log(`📊 Generazioni meal usate: ${used}/${limit}, extra: ${extraCreditsAvailable}, rimanenti: ${remaining}`);
-        setRemainingGenerations(remaining);
-        setGenerationLimitReached(remaining === 0);
-      } catch (error) {
-        console.error('Error checking generations:', error);
-      }
-    };
-
-    checkRemainingGenerations();
+      const used = generations.length;
+      const totalLimit = limit + extraCreditsAvailable;
+      const remaining = Math.max(0, totalLimit - used);
+      console.log(`📊 Generazioni meal usate: ${used}/${limit}, extra: ${extraCreditsAvailable}, rimanenti: ${remaining}`);
+      setRemainingGenerations(remaining);
+      setGenerationLimitReached(remaining === 0);
+    } catch (error) {
+      console.error('Error checking generations:', error);
+    }
   }, [user]);
+
+  // Calcola generazioni rimanenti all'avvio
+  useEffect(() => {
+    checkRemainingGenerations();
+  }, [checkRemainingGenerations]);
 
   const loadMealPlans = useCallback(async () => {
     if (user?.id) {
