@@ -7,8 +7,10 @@ import { Button } from "@/components/ui/button";
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 import { base44 } from "@/api/base44Client";
 import { Checkbox } from "@/components/ui/checkbox";
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onUpgradeClick }) {
+  const { t } = useLanguage();
   const [savingMealId, setSavingMealId] = React.useState(null);
 
   const getMealLog = (mealId) => {
@@ -16,14 +18,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
   };
 
   const getMealTypeLabel = (type) => {
-    const labels = {
-      breakfast: 'Colazione',
-      lunch: 'Pranzo',
-      dinner: 'Cena',
-      snack1: 'Spuntino',
-      snack2: 'Spuntino Serale'
-    };
-    return labels[type] || type;
+    return t(`meals.${type}`) || type;
   };
 
   const handleCheckMeal = async (meal, checked) => {
@@ -51,7 +46,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
       window.location.reload();
     } catch (error) {
       console.error('Error logging meal:', error);
-      alert('Errore nel salvare il pasto');
+      alert(t('nutrition.errorSavingMeal'));
     }
     setSavingMealId(null);
   };
@@ -90,7 +85,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
               <Utensils className="w-6 h-6 text-orange-600" />
             </div>
-            Protocollo Nutrizionale
+            {t('nutrition.title')}
           </CardTitle>
           {hasFeatureAccess(userPlan, 'meal_plan') ? (
             <Link to={createPageUrl("Meals")}>
@@ -116,19 +111,19 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
           <div className="bg-gradient-to-r from-[#e9f6f5] to-blue-50 rounded-xl p-3 border-2 border-[#26847F]/30 mb-4">
             <div className="grid grid-cols-4 gap-2">
               <div className="text-center">
-                <p className="text-xs text-gray-600 font-medium mb-0.5">Kcal</p>
+                <p className="text-xs text-gray-600 font-medium mb-0.5">{t('nutrition.kcal')}</p>
                 <p className="text-lg font-bold text-[#26847F]">{Math.round(dailyTotals.calories)}</p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-gray-600 font-medium mb-0.5">Prot.</p>
+                <p className="text-xs text-gray-600 font-medium mb-0.5">{t('nutrition.prot')}</p>
                 <p className="text-lg font-bold text-red-600">{(Math.round(dailyTotals.protein * 10) / 10).toFixed(1)}g</p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-gray-600 font-medium mb-0.5">Carb.</p>
+                <p className="text-xs text-gray-600 font-medium mb-0.5">{t('nutrition.carb')}</p>
                 <p className="text-lg font-bold text-blue-600">{(Math.round(dailyTotals.carbs * 10) / 10).toFixed(1)}g</p>
               </div>
               <div className="text-center">
-                <p className="text-xs text-gray-600 font-medium mb-0.5">Grassi</p>
+                <p className="text-xs text-gray-600 font-medium mb-0.5">{t('nutrition.fats')}</p>
                 <p className="text-lg font-bold text-yellow-600">{(Math.round(dailyTotals.fat * 10) / 10).toFixed(1)}g</p>
               </div>
             </div>
@@ -141,15 +136,15 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
               <div className="w-16 h-16 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center mx-auto mb-4">
                 <Utensils className="w-8 h-8 text-blue-600" />
               </div>
-              <h3 className="text-xl font-bold text-gray-900 mb-2">Piano Nutrizionale Personalizzato</h3>
+              <h3 className="text-xl font-bold text-gray-900 mb-2">{t('nutrition.unlockTitle')}</h3>
               <p className="text-gray-600 mb-6 max-w-md mx-auto">
-                Sblocca il piano nutrizionale settimanale con ricette AI, lista spesa automatica e molto altro
+                {t('nutrition.unlockDesc')}
               </p>
               <Button 
                 onClick={onUpgradeClick}
                 className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
               >
-                Upgrade a Base
+                {t('nutrition.upgradeToBase')}
               </Button>
             </div>
           ) : sortedMeals.length > 0 ? sortedMeals.map((meal) => {
@@ -192,7 +187,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                           onCheckedChange={(checked) => handleCheckMeal(meal, checked)}
                           disabled={savingMealId === meal.id}
                           className="w-5 h-5 border-2 border-[#26847F] data-[state=checked]:bg-[#26847F]"
-                          title="Segna come consumato"
+                          title={t('nutrition.markAsConsumed')}
                         />
                         {hasFeatureAccess(userPlan, 'meal_photo_analysis') && (
                           <Button
@@ -200,13 +195,13 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                             variant="ghost"
                             size="icon"
                             className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
-                            title="Analizza pasto con foto"
+                            title={t('nutrition.analyzeWithPhoto')}
                           >
                             <Camera className="w-5 h-5" />
                           </Button>
                         )}
                         {!hasFeatureAccess(userPlan, 'meal_photo_analysis') && (
-                          <div className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0" title="Analizza pasto con foto (Pro)">
+                          <div className="text-xs text-gray-400 flex items-center gap-1 flex-shrink-0" title={t('nutrition.analyzeWithPhoto') + ' (Pro)'}>
                             <Camera className="w-4 h-4" />
                             <span>Pro</span>
                           </div>
@@ -220,8 +215,8 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
           }) : (
              <div className="text-center py-10 border-2 border-dashed border-gray-200 rounded-lg">
                 <Calculator className="w-8 h-8 text-gray-400 mx-auto mb-3" />
-                <p className="text-gray-600 font-medium">Nessun piano per oggi</p>
-                <p className="text-sm text-gray-500 mt-1">Genera un protocollo per iniziare.</p>
+                <p className="text-gray-600 font-medium">{t('nutrition.noPlanToday')}</p>
+                <p className="text-sm text-gray-500 mt-1">{t('nutrition.generatePlan')}</p>
              </div>
           )}
         </div>
