@@ -5,9 +5,11 @@ import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan, onViewGalleryClick, onUpgradeClick }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const hasWorkoutAccess = userPlan === 'pro' || userPlan === 'premium';
 
   if (!hasWorkoutAccess) {
@@ -18,7 +20,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center shadow-sm">
               <Dumbbell className="w-6 h-6 text-orange-600" />
             </div>
-            Scheda Allenamento
+            {t('training.workoutPlan')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -26,15 +28,15 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             <div className="w-16 h-16 bg-gradient-to-br from-orange-100 to-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <Dumbbell className="w-8 h-8 text-orange-600" />
             </div>
-            <h3 className="text-xl font-bold text-gray-900 mb-2">Piano di Allenamento Personalizzato</h3>
+            <h3 className="text-xl font-bold text-gray-900 mb-2">{t('training.unlockTitle')}</h3>
             <p className="text-gray-600 mb-6 max-w-md mx-auto">
-              Sblocca il piano di allenamento settimanale con schede personalizzate, analisi progressi AI e molto altro
+              {t('training.unlockDesc')}
             </p>
             <Button 
               onClick={onUpgradeClick}
               className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
             >
-              Upgrade a Pro
+              {t('training.upgradeToPro')}
             </Button>
           </div>
         </CardContent>
@@ -50,7 +52,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             <div className="w-12 h-12 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
               <Dumbbell className="w-6 h-6 text-[#26847F]" />
             </div>
-            Allenamento di Oggi
+            {t('training.todayWorkout')}
           </CardTitle>
         </CardHeader>
         <CardContent>
@@ -58,12 +60,12 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             <div className="w-14 h-14 bg-gray-100 rounded-lg flex items-center justify-center mx-auto mb-3">
               <Dumbbell className="w-7 h-7 text-gray-400" />
             </div>
-            <p className="text-gray-500 font-medium mb-4">Giorno di Riposo</p>
+            <p className="text-gray-500 font-medium mb-4">{t('training.restDay')}</p>
             <Button
               onClick={() => navigate(createPageUrl("Workouts"))}
               className="bg-[#26847F] hover:bg-[#1f6b66] text-white text-sm"
             >
-              Vedi Programmazione
+              {t('training.viewSchedule')}
             </Button>
           </div>
         </CardContent>
@@ -134,7 +136,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
           <div className="w-12 h-12 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
             <Dumbbell className="w-6 h-6 text-[#26847F]" />
           </div>
-          Allenamento di Oggi
+          {t('training.todayWorkout')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -152,7 +154,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
 
         <div className="bg-gradient-to-br from-[#e9f6f5] to-blue-50 rounded-lg p-3 border border-[#26847F]/20">
           <p className="text-sm text-gray-700 font-medium mb-2">
-            💪 {workout.exercises?.length || 0} esercizi
+            💪 {workout.exercises?.length || 0} {t('training.exercises')}
           </p>
           <div className="flex flex-wrap gap-1.5">
             {workout.exercises?.slice(0, 3).map((ex, idx) => (
@@ -181,7 +183,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <Dumbbell className="w-4 h-4" />
-                  <span>Vai alla Scheda</span>
+                  <span>{t('training.goToWorkout')}</span>
                 </div>
               </button>
               <button
@@ -190,7 +192,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
               >
                 <div className="flex items-center justify-center gap-1.5">
                   <Image className="w-4 h-4" />
-                  <span>Galleria</span>
+                  <span>{t('training.gallery')}</span>
                 </div>
               </button>
             </div>
@@ -201,7 +203,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             >
               <div className="flex items-center justify-center gap-1.5">
                 <Dumbbell className="w-4 h-4" />
-                <span>Vai alla Scheda Completa</span>
+                <span>{t('training.goToFullWorkout')}</span>
               </div>
             </button>
           )}
@@ -214,7 +216,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             >
               <div className="flex items-center justify-center gap-2">
                 <Camera className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span>Analisi Progressi con AI</span>
+                <span>{t('training.progressAnalysis')}</span>
                 <Sparkles className="w-5 h-5 group-hover:rotate-12 transition-transform" />
               </div>
             </button>
@@ -225,7 +227,7 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
             >
               <div className="flex items-center justify-center gap-2">
                 <Camera className="w-5 h-5 group-hover:scale-110 transition-transform" />
-                <span>Analisi Progressi con AI</span>
+                <span>{t('training.progressAnalysis')}</span>
                 <Crown className="w-5 h-5 animate-pulse" />
               </div>
               <div className="absolute -top-2 -right-2 bg-purple-600 text-white text-xs px-2 py-0.5 rounded-full font-bold">
