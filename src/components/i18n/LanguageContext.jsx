@@ -117,7 +117,8 @@ export function useLanguage() {
 
 // Export utility for creating localized page URLs
 export function createLocalizedPageUrl(pageName, language, params = {}) {
-  const langPrefix = `/${language}`;
+  // For default language (Italian), use normal routes without language prefix
+  const langPrefix = language === DEFAULT_LANGUAGE ? '' : `/${language}`;
   
   // Map page names to URL paths
   const pageRoutes = {
@@ -153,7 +154,7 @@ export function createLocalizedPageUrl(pageName, language, params = {}) {
   };
   
   const path = pageRoutes[pageName] !== undefined ? pageRoutes[pageName] : `/${pageName.toLowerCase()}`;
-  let url = `${langPrefix}${path}`;
+  let url = langPrefix ? `${langPrefix}${path}` : (path || '/');
   
   // Add query parameters
   const queryString = new URLSearchParams(params).toString();
