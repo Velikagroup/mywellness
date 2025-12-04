@@ -251,13 +251,19 @@ function PricingPageContent() {
       name: "Maria Santos",
       role: "Studentessa Universitaria",
       photo: "https://i.pravatar.cc/400?img=29",
-      text: "Con il budget da studentessa non potevo permettermi un nutrizionista. MyWellness mi ha creato un piano alimentare economico e completo. Ho perso 8kg in 4 mesi spendendo pochissimo al supermercato. L'AI mi suggerisce sempre alternative più economiche quando un ingrediente costa troppo."
+      text: "Con il budget da studentessa non potevo permettermi un nutrizionista. MyWellness mi ha creato un piano alimentare economico e completo. Ho perso 8kg in 4 mesi spendendo pochissimo al supermercato."
     },
     {
       name: "Luca Moretti",
       role: "Personal Trainer",
       photo: "https://i.pravatar.cc/400?img=60",
-      text: "Da 6 anni alleno clienti e consiglio MyWellness a chi vuole supporto quotidiano tra le sessioni. L'analisi fotografica AI è impressionante - rileva progressi che io stesso fatico a notare. Il sistema di ribilanciamento automatico dei pasti è geniale per chi sgarra durante la settimana."
+      text: "Da 6 anni alleno clienti e consiglio MyWellness a chi vuole supporto quotidiano tra le sessioni. L'analisi fotografica AI è impressionante."
+    },
+    {
+      name: "Anna Bianchi",
+      role: "Insegnante Scuola Primaria",
+      photo: "https://i.pravatar.cc/400?img=25",
+      text: "Dopo la gravidanza pesavo 78kg e non riuscivo a tornare in forma. Ho scoperto MyWellness e in 6 mesi sono tornata a 58kg."
     },
     {
       name: "Gabriela Rodriguez",
@@ -276,12 +282,6 @@ function PricingPageContent() {
       role: "Software Engineer",
       photo: "https://i.pravatar.cc/400?img=33",
       text: "Sono un tipo analitico e l'approccio scientifico di MyWellness mi ha conquistato. Dashboard con BMR, massa grassa, proiezioni peso... tutto calcolato con precisione. Il piano vegetariano è perfetto e la lista della spesa automatica mi fa risparmiare ore."
-    },
-    {
-      name: "Anna Bianchi",
-      role: "Insegnante Scuola Primaria",
-      photo: "https://i.pravatar.cc/400?img=25",
-      text: "Dopo la gravidanza pesavo 78kg e non riuscivo a tornare in forma. Ho scoperto MyWellness e in 6 mesi sono tornata a 58kg. L'app ha capito che avevo poco tempo con il neonato: workout brevi a casa senza attrezzi e ricette veloci. L'analisi fotografica mi ha motivata quando non vedevo progressi sulla bilancia."
     },
     {
       name: "Ahmed Hassan",
