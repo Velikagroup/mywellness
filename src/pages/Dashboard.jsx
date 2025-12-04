@@ -348,6 +348,7 @@ export default function Dashboard() {
     if (!user?.id) return;
     try {
       const photos = await base44.entities.ProgressPhoto.filter({ user_id: user.id });
+      console.log('📸 Loaded progress photos:', photos.length, 'photos');
       setProgressPhotos(photos);
     } catch (error) {
       console.error('Error loading progress photos:', error);
