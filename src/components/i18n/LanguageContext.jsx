@@ -119,7 +119,7 @@ export function useLanguage() {
 export function createLocalizedPageUrl(pageName, language, params = {}) {
   const langPrefix = `/${language}`;
   
-  // Map page names to URL paths
+  // Map page names to URL paths (with language-specific pages)
   const pageRoutes = {
     'Home': '',
     'Dashboard': '/dashboard',
@@ -128,6 +128,12 @@ export function createLocalizedPageUrl(pageName, language, params = {}) {
     'Settings': '/settings',
     'Quiz': '/quiz',
     'pricing': '/pricing',
+    'PricingIT': '/it/pricing',
+    'PricingEN': '/en/pricing',
+    'PricingES': '/es/pricing',
+    'PricingPT': '/pt/pricing',
+    'PricingDE': '/de/pricing',
+    'PricingFR': '/fr/pricing',
     'Blog': '/blog',
     'BlogArticle': '/blog',
     'Privacy': '/privacy',
