@@ -6547,7 +6547,82 @@ export const translations = {
       faq7Question: "Les plans sont-ils personnalisés ou génériques?",
       faq7Answer: "Tous les plans sont 100% personnalisés en fonction de votre profil: âge, poids, taille, objectifs, préférences alimentaires, niveau d'activité et bien plus encore.",
       faq8Question: "Que se passe-t-il avec mes données si j'annule l'abonnement?",
-      faq8Answer: "Vos données restent en sécurité pendant 90 jours. Si vous réactivez votre abonnement dans ce délai, vous retrouverez tout comme vous l'avez laissé. Après 90 jours, les données sont supprimées pour respecter la confidentialité."
+      faq8Answer: "Vos données restent en sécurité pendant 90 jours. Si vous réactivez votre abonnement dans ce délai, vous retrouverez tout comme vous l'avez laissé. Après 90 jours, les données sont supprimées pour respecter la confidentialité.",
+      // Testimonials
+      testimonials: [
+        {
+          name: "Maria Santos",
+          role: "Étudiante Universitaire",
+          photo: "https://i.pravatar.cc/400?img=29",
+          text: "Avec mon budget d'étudiante, je ne pouvais pas me permettre un nutritionniste. MyWellness m'a créé un plan alimentaire économique et complet. J'ai perdu 8kg en 4 mois en dépensant très peu au supermarché. L'IA me suggère toujours des alternatives moins chères quand un ingrédient coûte trop cher."
+        },
+        {
+          name: "Luca Moretti",
+          role: "Coach Sportif",
+          photo: "https://i.pravatar.cc/400?img=60",
+          text: "Depuis 6 ans j'entraîne des clients et je recommande MyWellness à ceux qui veulent un soutien quotidien entre les séances. L'analyse photographique IA est impressionnante - elle détecte des progrès que j'ai moi-même du mal à remarquer. Le système de rééquilibrage automatique des repas est génial pour ceux qui trichent pendant la semaine."
+        },
+        {
+          name: "Gabriela Rodriguez",
+          role: "Créatrice de Contenu Fitness",
+          photo: "https://i.pravatar.cc/400?img=49",
+          text: "J'ai essayé tous les types d'applications et de régimes en 8 ans de fitness. MyWellness est différente: l'analyse photographique avec IA est incroyablement précise. Elle me montre des progrès que je ne remarquais même pas. Le plan nutritionnel s'adapte automatiquement en fonction des photos que je télécharge. C'est comme avoir un coach personnel qui vous suit 24/7."
+        },
+        {
+          name: "Yuki Tanaka",
+          role: "Responsable Marketing",
+          photo: "https://i.pravatar.cc/400?img=47",
+          text: "Entre réunions et échéances, je n'avais jamais le temps de m'entraîner ou de cuisiner sainement. L'IA de MyWellness a immédiatement compris mes besoins: repas prêts en 15 minutes et entraînements de 30 minutes. J'ai perdu 11kg en 5 mois sans stress. La fonction qui photographie l'assiette et calcule les calories est géniale quand je mange dehors."
+        },
+        {
+          name: "Thomas Weber",
+          role: "Ingénieur Logiciel",
+          photo: "https://i.pravatar.cc/400?img=33",
+          text: "Je suis de type analytique et l'approche scientifique de MyWellness m'a conquis. Dashboard avec MB, masse grasse, projections de poids... tout calculé avec précision. Le plan végétarien est parfait et la liste de courses automatique me fait gagner des heures."
+        },
+        {
+          name: "Anna Bianchi",
+          role: "Enseignante en École Primaire",
+          photo: "https://i.pravatar.cc/400?img=25",
+          text: "Après la grossesse, je pesais 78kg et n'arrivais pas à retrouver la forme. J'ai découvert MyWellness et en 6 mois je suis revenue à 58kg. L'application a compris que j'avais peu de temps avec le nouveau-né: entraînements courts à la maison sans équipement et recettes rapides. L'analyse photographique m'a motivée quand je ne voyais pas de progrès sur la balance."
+        },
+        {
+          name: "Ahmed Hassan",
+          role: "Entrepreneur en Construction",
+          photo: "https://i.pravatar.cc/400?img=68",
+          text: "À 45 ans, je pensais qu'il était trop tard pour me remettre en forme. MyWellness m'a prouvé le contraire: j'ai gagné 9kg de masse musculaire en 7 mois. Le plan d'entraînement s'adapte quand j'ai des douleurs articulaires, ce qui est crucial à mon âge."
+        },
+        {
+          name: "Elena Kowalski",
+          role: "Avocate Fiscaliste",
+          photo: "https://i.pravatar.cc/400?img=38",
+          text: "Rythmes de travail fous, dîners avec clients, voyages continus. MyWellness est la seule application qui a réussi à s'adapter à mon style de vie chaotique. Je photographie les repas au restaurant et l'IA recalcule tout automatiquement. J'ai perdu 13kg en maintenant ma vie sociale."
+        },
+        {
+          name: "Marcus Johnson",
+          role: "Coach Sportif Certifié",
+          photo: "https://i.pravatar.cc/400?img=52",
+          text: "Je suis certifié depuis plus de 10 ans, et l'intelligence artificielle de MyWellness génère de meilleurs programmes que ceux que je créais manuellement. La périodisation est scientifique et la progression optimale. J'ai commencé à l'utiliser aussi pour mes clients - j'économise des heures chaque semaine."
+        },
+        {
+          name: "Francesca Moretti",
+          role: "Pharmacienne",
+          photo: "https://i.pravatar.cc/400?img=44",
+          text: "Je souffre d'hypothyroïdie et perdre du poids a toujours été un cauchemar pour moi. J'ai essayé 20 régimes différents sans résultats. MyWellness a calibré le plan sur mon métabolisme ralenti: -12kg en 6 mois sans souffrir de la faim. Maintenant je le recommande à tous les patients avec des problèmes métaboliques."
+        },
+        {
+          name: "Diego Ramirez",
+          role: "Chef de Cuisine",
+          photo: "https://i.pravatar.cc/400?img=59",
+          text: "Être entouré de nourriture toute la journée rendait impossible le fait de suivre un régime. MyWellness a créé des recettes qui unissent ma passion culinaire avec des objectifs nutritionnels précis. Les recettes sont créatives, équilibrées et délicieuses. J'ai perdu 15kg sans renoncer au plaisir de la nourriture."
+        },
+        {
+          name: "Luca Colombo",
+          role: "PDG Startup Tech",
+          photo: "https://i.pravatar.cc/400?img=12",
+          text: "Je n'avais même pas le temps de respirer, encore moins de m'entraîner. MyWellness a révolutionné mon approche: 30 minutes d'entraînement 4 fois par semaine, repas rapides et nutritifs. J'ai perdu 14kg en 4 mois et mes niveaux d'énergie ont triplé. C'est un investissement dans ma productivité."
+        }
+      ]
     },
     dashboard: {
       title: "Analyse des Progrès",
