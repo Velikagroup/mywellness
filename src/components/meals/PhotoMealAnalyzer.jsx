@@ -8,7 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
 
 export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [photos, setPhotos] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -97,13 +97,33 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
       }));
       setPhotos(updatedPhotos);
 
+      const languageNames = {
+        it: 'Italian',
+        en: 'English',
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+      const userLang = language || t('common.lang') || 'en';
+      const langName = languageNames[userLang] || 'English';
+
+      const noDescText = {
+        it: 'Nessuna descrizione fornita',
+        en: 'No description provided',
+        es: 'Ninguna descripción proporcionada',
+        pt: 'Nenhuma descrição fornecida',
+        de: 'Keine Beschreibung angegeben',
+        fr: 'Aucune description fournie'
+      }[userLang] || 'No description provided';
+
       const photoDescriptions = updatedPhotos.map((photo, idx) => 
-        `Foto ${idx + 1}: ${photo.description || 'Nessuna descrizione fornita'}`
+        `${t('photoMealAnalyzer.photoLabel')} ${idx + 1}: ${photo.description || noDescText}`
       ).join('\n');
 
       const analysisPrompt = `You are an EXPERT nutritionist, food scientist, and computer vision specialist. Perform a HIGHLY DETAILED and SCIENTIFIC analysis of this meal.
 
-CRITICAL: Generate ALL content in ITALIAN language. Food names, cut types, and analysis MUST be in Italian.
+CRITICAL: Generate ALL content in ${langName.toUpperCase()} language. Food names, cut types, and analysis MUST be in ${langName.toUpperCase()}.
 
 **PLANNED MEAL (Reference):**
 - Name: ${meal.name}
@@ -127,21 +147,18 @@ ${photoDescriptions}
 For EVERY visible food item in the photo, perform this analysis:
 
 **A) IDENTIFICATION:**
-- Food name in Italian (e.g., "petto di pollo grigliato", "coscia di pollo arrosto", "salmone selvaggio")
-- Specific cut/type (e.g., "petto di pollo", "coscia", "filetto", "fesa")
-- Cooking method (e.g., "grigliato", "al forno", "bollito", "fritto")
+- Food name in ${langName.toUpperCase()} (e.g., specific protein/vegetable names)
+- Specific cut/type in ${langName.toUpperCase()}
+- Cooking method in ${langName.toUpperCase()}
 - Visible characteristics (color, texture, visible fat, marbling)
 
 **B) DETAILED NUTRITIONAL DESCRIPTION (CRITICAL):**
-For EACH ingredient, write a COMPREHENSIVE nutritional description in Italian (2-4 sentences) that includes:
+For EACH ingredient, write a COMPREHENSIVE nutritional description in ${langName.toUpperCase()} (2-4 sentences) that includes:
 - What the food is and its nutritional characteristics
 - Main macronutrients and their health benefits
-- Specific nutritional notes (e.g., "ricco di proteine nobili", "fonte di grassi omega-3", "contiene vitamine del gruppo B")
+- Specific nutritional notes about vitamins, minerals, or special properties
 - Cooking method impact on nutrition if relevant
-- Any special properties (e.g., "il ghee è burro chiarificato, privo di lattosio e caseina")
-
-EXAMPLE FORMAT:
-"Il petto di pollo grigliato è una fonte eccellente di proteine nobili ad alto valore biologico (circa 31g per 100g), essenziali per il mantenimento e la crescita muscolare. Contiene pochi grassi saturi e fornisce vitamine del gruppo B, fondamentali per il metabolismo energetico. La cottura alla griglia preserva le proprietà nutrizionali riducendo l'aggiunta di grassi. È un alimento ideale per chi cerca un apporto proteico magro e di qualità."
+- Any special properties relevant to nutrition
 
 **C) DIMENSIONAL MEASUREMENT:**
 - Length (cm) - compare to plate diameter
@@ -176,10 +193,10 @@ Use verified nutritional databases (USDA, CREA, INRAN) for accurate values per 1
 
 **B) NOT VISIBLE IN PHOTO (Hidden/Described Only):**
 For ingredients user mentions but NOT visible in photo:
-- Cooking oils used ("ho messo 2 cucchiai d'olio" = ~30ml = 270 kcal)
+- Cooking oils used (e.g., oil, butter mentioned in description)
 - Sauces/dressings not visible
 - Seasonings with calories (butter, honey, etc.)
-- INCLUDE DETAILED NUTRITIONAL DESCRIPTION for each hidden ingredient too
+- INCLUDE DETAILED NUTRITIONAL DESCRIPTION in ${langName.toUpperCase()} for each hidden ingredient too
 
 Calculate these separately based ENTIRELY on user descriptions.
 
@@ -198,7 +215,7 @@ Compare actual vs planned:
 
 ## 📊 REQUIRED OUTPUT STRUCTURE
 
-Return a JSON object with this EXACT structure (all in Italian):
+Return a JSON object with this EXACT structure (all text fields in ${langName.toUpperCase()}):
 
 {
   "plate_reference": {
@@ -207,12 +224,12 @@ Return a JSON object with this EXACT structure (all in Italian):
   },
   "visible_ingredients": [
     {
-      "name": "string (in Italian, e.g., 'petto di pollo grigliato')",
-      "detailed_nutritional_description": "string (2-4 sentences in Italian explaining nutritional properties, benefits, composition - MANDATORY)",
+      "name": "string (in ${langName.toUpperCase()})",
+      "detailed_nutritional_description": "string (2-4 sentences in ${langName.toUpperCase()} explaining nutritional properties, benefits, composition - MANDATORY)",
       "identification": {
-        "specific_type": "string (e.g., 'petto di pollo', 'coscia', 'filetto')",
-        "cut": "string (e.g., 'a fette', 'intero', 'a cubetti')",
-        "cooking_method": "string (e.g., 'grigliato', 'al forno', 'bollito')",
+        "specific_type": "string (in ${langName.toUpperCase()})",
+        "cut": "string (in ${langName.toUpperCase()})",
+        "cooking_method": "string (in ${langName.toUpperCase()})",
         "visual_notes": "string (color, texture, visible fat)"
       },
       "dimensions": {
@@ -236,8 +253,8 @@ Return a JSON object with this EXACT structure (all in Italian):
   ],
   "hidden_ingredients": [
     {
-      "name": "string (in Italian)",
-      "detailed_nutritional_description": "string (2-4 sentences in Italian - MANDATORY)",
+      "name": "string (in ${langName.toUpperCase()})",
+      "detailed_nutritional_description": "string (2-4 sentences in ${langName.toUpperCase()} - MANDATORY)",
       "source": "user_description",
       "user_stated_amount": "string (e.g., '2 cucchiai', '15ml')",
       "estimated_grams_or_ml": number,
@@ -261,10 +278,10 @@ Return a JSON object with this EXACT structure (all in Italian):
     "delta_carbs": number,
     "delta_fat": number
   },
-  "detected_items": ["array of strings in Italian"],
-  "assessment": "string - detailed Italian explanation of analysis",
+  "detected_items": ["array of strings in ${langName.toUpperCase()}"],
+  "assessment": "string - detailed ${langName.toUpperCase()} explanation of analysis",
   "adherence_level": "on_track" | "slightly_over" | "significantly_over" | "under",
-  "suggested_meal_name": "string in Italian"
+  "suggested_meal_name": "string in ${langName.toUpperCase()}"
 }
 
 ---
@@ -278,9 +295,9 @@ Return a JSON object with this EXACT structure (all in Italian):
 5. **ACCOUNT FOR EVERYTHING**: Even small amounts of oil/butter add up
 6. **VISIBLE FAT**: If you see visible fat on meat, increase fat content estimate
 7. **COOKED vs RAW**: Cooked meat loses ~25% water weight
-8. **ALL IN ITALIAN**: Every food name and description must be in Italian
+8. **ALL IN ${langName.toUpperCase()}**: Every food name and description must be in ${langName.toUpperCase()}
 
-Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingredient.`;
+Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS in ${langName.toUpperCase()} for every ingredient.`;
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
