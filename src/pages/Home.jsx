@@ -25,6 +25,7 @@ import {
   Users
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
+import { useLanguage } from '@/components/i18n/LanguageContext';
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
 import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
