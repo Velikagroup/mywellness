@@ -709,9 +709,8 @@ function PricingPageContent() {
                 onClick={() => setLangMenuOpen(!langMenuOpen)}
                 className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors flex items-center gap-2">
                 <span className="text-lg">{SUPPORTED_LANGUAGES.find(l => l.code === language)?.flag}</span>
-                <span className="hidden sm:inline">{SUPPORTED_LANGUAGES.find(l => l.code === language)?.name}</span>
               </button>
-
+              
               {langMenuOpen && (
                 <>
                   <div className="fixed inset-0 z-40" onClick={() => setLangMenuOpen(false)}></div>
@@ -721,7 +720,6 @@ function PricingPageContent() {
                         key={lang.code}
                         onClick={() => {
                           setLanguage(lang.code);
-                          localStorage.setItem('preferred_language', lang.code);
                           setLangMenuOpen(false);
                         }}
                         className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
@@ -792,13 +790,12 @@ function PricingPageContent() {
               </button>
               
               <div className="border-t border-gray-200/50 pt-2 mt-2">
-                <p className="text-xs text-gray-500 px-3 mb-2 font-semibold">{t('nav.language') || 'Lingua'}</p>
+                <p className="text-xs text-gray-500 px-3 mb-2 font-semibold">Lingua</p>
                 {SUPPORTED_LANGUAGES.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => {
                       setLanguage(lang.code);
-                      localStorage.setItem('preferred_language', lang.code);
                       setMobileMenuOpen(false);
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
