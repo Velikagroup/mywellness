@@ -561,7 +561,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                   <div className="flex items-center justify-between">
                     <h3 className="font-bold text-gray-900 flex items-center gap-2">
                       <Zap className="w-5 h-5 text-[#26847F]" />
-                      Foto Caricate ({photos.length})
+                      {t('photoMealAnalyzer.photosUploaded')} ({photos.length})
                     </h3>
                     <input
                       type="file"
@@ -579,7 +579,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                       className="border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5]"
                     >
                       <Plus className="w-4 h-4 mr-1" />
-                      Aggiungi Altra Foto
+                      {t('photoMealAnalyzer.addMorePhoto')}
                     </Button>
                   </div>
 
@@ -606,22 +606,22 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                             <X className="w-4 h-4" />
                           </Button>
                           <div className="absolute bottom-2 left-2 bg-black/70 backdrop-blur-sm text-white px-3 py-1 rounded-full text-xs font-bold">
-                            Foto {idx + 1}
+                            {t('photoMealAnalyzer.photoLabel')} {idx + 1}
                           </div>
                         </div>
                         
                         <div className="space-y-2">
                           <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
                             <Sparkles className="w-4 h-4 text-[#26847F]" />
-                            Descrizione Ingredienti (anche nascosti)
+                            {t('photoMealAnalyzer.ingredientDescription')}
                           </label>
                           <Textarea
-                            placeholder="Es: Petto di pollo 180g, ho messo 2 cucchiai d'olio per cucinarlo, c'è anche del burro sulle verdure che non si vede"
+                            placeholder={t('photoMealAnalyzer.descriptionPlaceholder')}
                             value={photo.description}
                             onChange={(e) => handleDescriptionChange(photo.id, e.target.value)}
                             className="h-24 border-2 border-gray-300 focus:border-[#26847F] transition-all text-gray-800"
                           />
-                          <p className="text-xs text-gray-600">💡 Più dettagli fornisci, più sarà preciso il calcolo</p>
+                          <p className="text-xs text-gray-600">💡 {t('photoMealAnalyzer.moreDetailsMoreAccurate')}</p>
                         </div>
                       </motion.div>
                     ))}
@@ -634,7 +634,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                       disabled={photos.length === 0}
                     >
                       <Sparkles className="w-5 h-5 mr-2" />
-                      Analizza con Precisione Scientifica
+                      {t('photoMealAnalyzer.analyzeWithScience')}
                     </Button>
                   )}
                 </motion.div>
@@ -651,12 +651,12 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                     <Sparkles className="w-6 h-6 text-teal-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                   </div>
                   <p className="text-gray-900 font-bold text-lg mb-2">🔬 {t('photoMealAnalyzer.analyzing')}</p>
-                  <p className="text-sm text-gray-600 mb-4">{t('photoMealAnalyzer.subtitle')}</p>
+                  <p className="text-sm text-gray-600 mb-4">{t('photoMealAnalyzer.dimensionalCalculation')}</p>
                   <div className="max-w-md mx-auto space-y-2 text-xs text-gray-600">
-                    <p>✓ Calibrazione riferimento piatto</p>
-                    <p>✓ Misurazione dimensioni alimenti</p>
-                    <p>✓ Stima peso per densità</p>
-                    <p>✓ Calcolo valori nutrizionali</p>
+                    <p>✓ {t('photoMealAnalyzer.plateCalibration')}</p>
+                    <p>✓ {t('photoMealAnalyzer.dimensionMeasurement')}</p>
+                    <p>✓ {t('photoMealAnalyzer.weightEstimation')}</p>
+                    <p>✓ {t('photoMealAnalyzer.nutritionCalculation')}</p>
                   </div>
                 </motion.div>
               )}
@@ -677,14 +677,14 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                 className="flex items-center gap-2 border-2 border-gray-200 hover:border-[#26847F] hover:bg-[#e9f6f5] transition-all"
               >
                 <ArrowLeft className="w-4 h-4" />
-                Torna Indietro e Riscatta
+                {t('photoMealAnalyzer.backAndReshoot')}
               </Button>
 
               {/* Suggested Meal Name */}
               <div className="bg-gradient-to-r from-[#e9f6f5] to-teal-50 p-6 rounded-2xl border-2 border-[#26847F]/30 shadow-lg">
                 <h4 className="text-sm font-semibold text-[#0e4a46] mb-2 flex items-center gap-2">
                   <Sparkles className="w-4 h-4" />
-                  Nome Pasto Analizzato:
+                  {t('photoMealAnalyzer.analyzedMealName')}
                 </h4>
                 <p className="text-2xl font-bold bg-gradient-to-r from-[#26847F] to-teal-600 bg-clip-text text-transparent">
                   {analysisResult.suggested_meal_name}
@@ -695,10 +695,10 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
               {analysisResult.plate_reference && (
                 <div className="bg-blue-50 p-4 rounded-xl border-2 border-blue-200">
                   <p className="text-sm text-blue-800 font-semibold mb-1">
-                    📏 Riferimento Piatto: {analysisResult.plate_reference.estimated_diameter_cm}cm
+                    📏 {t('photoMealAnalyzer.plateReference')} {analysisResult.plate_reference.estimated_diameter_cm}cm
                   </p>
                   <p className="text-xs text-blue-600">
-                    Confidenza: {analysisResult.plate_reference.confidence === 'high' ? '🟢 Alta' : analysisResult.plate_reference.confidence === 'medium' ? '🟡 Media' : '🔴 Bassa'}
+                    {t('photoMealAnalyzer.confidence')} {analysisResult.plate_reference.confidence === 'high' ? `🟢 ${t('photoMealAnalyzer.confidenceHigh')}` : analysisResult.plate_reference.confidence === 'medium' ? `🟡 ${t('photoMealAnalyzer.confidenceMedium')}` : `🔴 ${t('photoMealAnalyzer.confidenceLow')}`}
                   </p>
                 </div>
               )}
@@ -708,7 +708,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                 <div className="bg-white p-5 rounded-xl border-2 border-gray-200 shadow-md">
                   <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
                     <Zap className="w-5 h-5 text-[#26847F]" />
-                    Ingredienti Visibili (Analisi Dimensionale)
+                    {t('photoMealAnalyzer.visibleIngredients')}
                   </h4>
                   <div className="space-y-4">
                     {analysisResult.visible_ingredients.map((ing, idx) => (
@@ -731,16 +731,16 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                           {ing.identification && (
                             <div className="col-span-2">
                               <p className="text-gray-600">
-                                <strong>Tipo:</strong> {ing.identification.specific_type} | 
-                                <strong> Taglio:</strong> {ing.identification.cut} | 
-                                <strong> Cottura:</strong> {ing.identification.cooking_method}
+                                <strong>{t('photoMealAnalyzer.type')}</strong> {ing.identification.specific_type} | 
+                                <strong> {t('photoMealAnalyzer.cut')}</strong> {ing.identification.cut} | 
+                                <strong> {t('photoMealAnalyzer.cooking')}</strong> {ing.identification.cooking_method}
                               </p>
                             </div>
                           )}
                           {ing.dimensions && (
                             <div>
                               <p className="text-gray-600">
-                                <strong>📏 Dimensioni:</strong><br/>
+                                <strong>📏 {t('photoMealAnalyzer.dimensions')}</strong><br/>
                                 {ing.dimensions.length_cm}cm × {ing.dimensions.width_cm}cm × {ing.dimensions.thickness_cm}cm
                               </p>
                             </div>
@@ -748,9 +748,9 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                           {ing.weight_estimation && (
                             <div>
                               <p className="text-gray-600">
-                                <strong>⚖️ Peso Stimato:</strong><br/>
+                                <strong>⚖️ {t('photoMealAnalyzer.estimatedWeight')}</strong><br/>
                                 {ing.weight_estimation.estimated_grams}g
-                                <span className="text-xs text-gray-500"> (densità: {ing.weight_estimation.density_used_g_per_cm3}g/cm³)</span>
+                                <span className="text-xs text-gray-500"> ({t('photoMealAnalyzer.density')} {ing.weight_estimation.density_used_g_per_cm3}g/cm³)</span>
                               </p>
                             </div>
                           )}
@@ -775,7 +775,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
               {analysisResult.hidden_ingredients && analysisResult.hidden_ingredients.length > 0 && (
                 <div className="bg-amber-50 p-5 rounded-xl border-2 border-amber-200 shadow-md">
                   <h4 className="font-bold text-amber-900 mb-4 flex items-center gap-2">
-                    👁️‍🗨️ Ingredienti Nascosti (da Descrizione)
+                    👁️‍🗨️ {t('photoMealAnalyzer.hiddenIngredients')}
                   </h4>
                   <div className="space-y-3">
                     {analysisResult.hidden_ingredients.map((ing, idx) => (
@@ -829,7 +829,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                       <AlertTriangle className="w-6 h-6 text-white" />
                     </div>
                   )}
-                  <h4 className="font-bold text-lg">Valutazione Scientifica AI</h4>
+                  <h4 className="font-bold text-lg">{t('photoMealAnalyzer.scientificEvaluation')}</h4>
                 </div>
                 <p className="text-sm leading-relaxed">{analysisResult.assessment}</p>
               </div>
@@ -849,21 +849,21 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
               {/* Nutritional Comparison */}
               <div className="grid grid-cols-2 gap-4">
                 <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-5 rounded-xl border-2 border-gray-200 shadow-md">
-                  <p className="text-sm text-gray-600 font-medium mb-2">🎯 Pianificato</p>
+                  <p className="text-sm text-gray-600 font-medium mb-2">🎯 {t('photoMealAnalyzer.planned')}</p>
                   <p className="text-3xl font-bold text-gray-900">{meal.total_calories} kcal</p>
                   <div className="text-xs text-gray-600 mt-3 space-y-1.5">
-                    <div className="flex justify-between"><span>Proteine:</span><strong>{meal.total_protein}g</strong></div>
-                    <div className="flex justify-between"><span>Carboidrati:</span><strong>{meal.total_carbs}g</strong></div>
-                    <div className="flex justify-between"><span>Grassi:</span><strong>{meal.total_fat}g</strong></div>
+                    <div className="flex justify-between"><span>{t('photoMealAnalyzer.proteins')}</span><strong>{meal.total_protein}g</strong></div>
+                    <div className="flex justify-between"><span>{t('photoMealAnalyzer.carbs')}</span><strong>{meal.total_carbs}g</strong></div>
+                    <div className="flex justify-between"><span>{t('photoMealAnalyzer.fats')}</span><strong>{meal.total_fat}g</strong></div>
                   </div>
                 </div>
                 <div className="bg-gradient-to-br from-[#e9f6f5] to-teal-50 p-5 rounded-xl border-2 border-[#26847F]/30 shadow-md">
-                  <p className="text-sm text-[#0e4a46] font-medium mb-2">🔬 Analisi Scientifica</p>
+                  <p className="text-sm text-[#0e4a46] font-medium mb-2">🔬 {t('photoMealAnalyzer.scientificAnalysis')}</p>
                   <p className="text-3xl font-bold text-[#26847F]">{analysisResult.actual_calories} kcal</p>
                   <div className="text-xs text-[#0e4a46] mt-3 space-y-1.5">
-                    <div className="flex justify-between"><span>Proteine:</span><strong>{analysisResult.actual_protein}g</strong></div>
-                    <div className="flex justify-between"><span>Carboidrati:</span><strong>{analysisResult.actual_carbs}g</strong></div>
-                    <div className="flex justify-between"><span>Grassi:</span><strong>{analysisResult.actual_fat}g</strong></div>
+                    <div className="flex justify-between"><span>{t('photoMealAnalyzer.proteins')}</span><strong>{analysisResult.actual_protein}g</strong></div>
+                    <div className="flex justify-between"><span>{t('photoMealAnalyzer.carbs')}</span><strong>{analysisResult.actual_carbs}g</strong></div>
+                    <div className="flex justify-between"><span>{t('photoMealAnalyzer.fats')}</span><strong>{analysisResult.actual_fat}g</strong></div>
                   </div>
                 </div>
               </div>
@@ -875,14 +875,14 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                     ? 'bg-gradient-to-r from-red-100 to-red-200 text-red-800 border-2 border-red-300'
                     : 'bg-gradient-to-r from-blue-100 to-blue-200 text-blue-800 border-2 border-blue-300'
                 }`}>
-                  {analysisResult.delta_calories > 0 ? '📈 +' : '📉 '}{Math.abs(analysisResult.delta_calories)} kcal dal piano
+                  {analysisResult.delta_calories > 0 ? '📈 +' : '📉 '}{Math.abs(analysisResult.delta_calories)} kcal {t('photoMealAnalyzer.fromPlan')}
                 </div>
               )}
 
               {/* Detected Items Summary */}
               <div className="bg-gradient-to-br from-gray-50 to-white p-5 rounded-xl border-2 border-gray-200 shadow-md">
                 <p className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                  📋 Riepilogo Alimenti Identificati:
+                  📋 {t('photoMealAnalyzer.detectedItemsSummary')}
                 </p>
                 <div className="flex flex-wrap gap-2">
                   {analysisResult.detected_items.map((item, idx) => (
@@ -904,7 +904,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
               disabled={isSaving}
               className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-all"
             >
-              Salva Senza Ribilanciare
+              {t('photoMealAnalyzer.saveWithoutRebalance')}
             </Button>
             {Math.abs(analysisResult.delta_calories) > 50 && (
               <Button
@@ -913,7 +913,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                 disabled={isSaving}
               >
                 {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
-                Salva e Ribilancia Pasti
+                {t('photoMealAnalyzer.saveAndRebalance')}
               </Button>
             )}
           </DialogFooter>
