@@ -26,6 +26,12 @@ import Settings from './pages/Settings';
 import AdminSupportTickets from './pages/AdminSupportTickets';
 import AdminFeedback from './pages/AdminFeedback';
 import Checkout from './pages/Checkout';
+import PricingES from './pages/PricingES';
+import PricingEN from './pages/PricingEN';
+import PricingPT from './pages/PricingPT';
+import PricingDE from './pages/PricingDE';
+import PricingFR from './pages/PricingFR';
+import PricingIT from './pages/PricingIT';
 import __Layout from './Layout.jsx';
 
 
@@ -58,6 +64,12 @@ export const PAGES = {
     "AdminSupportTickets": AdminSupportTickets,
     "AdminFeedback": AdminFeedback,
     "Checkout": Checkout,
+    "PricingES": PricingES,
+    "PricingEN": PricingEN,
+    "PricingPT": PricingPT,
+    "PricingDE": PricingDE,
+    "PricingFR": PricingFR,
+    "PricingIT": PricingIT,
 }
 
 export const pagesConfig = {
