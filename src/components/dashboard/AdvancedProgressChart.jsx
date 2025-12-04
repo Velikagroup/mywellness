@@ -193,7 +193,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               )}
               <div className="flex items-baseline gap-2">
                 <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
-                  {remainingToTarget > 0 ? '-' : '+'}{Math.abs(remainingToTarget).toFixed(1)}
+                  {remainingToTarget >= 0 ? '+' : ''}{remainingToTarget.toFixed(1)}
                 </p>
                 <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
               </div>
