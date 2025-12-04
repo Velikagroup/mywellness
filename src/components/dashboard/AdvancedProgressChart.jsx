@@ -121,7 +121,16 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   
   const startWeight = user.current_weight || 0;
   const targetWeight = user.target_weight || 0;
-  const currentWeight = weightHistory.length > 0 ? weightHistory[0].weight : startWeight;
+  
+  // Trova il peso più recente (ordina per data decrescente)
+  const sortedForCurrent = [...weightHistory].sort((a, b) => {
+    const dateA = a.date || new Date(a.created_date).toISOString().substring(0, 10);
+    const dateB = b.date || new Date(b.created_date).toISOString().substring(0, 10);
+    return dateB.localeCompare(dateA);
+  });
+  const currentWeight = sortedForCurrent.length > 0 ? sortedForCurrent[0].weight : startWeight;
+  
+  console.log('📊 Weight calculation:', { startWeight, targetWeight, currentWeight, historyLength: weightHistory.length });
 
   const totalWeightToChange = startWeight - targetWeight;
   const remainingToTarget = currentWeight - targetWeight;
