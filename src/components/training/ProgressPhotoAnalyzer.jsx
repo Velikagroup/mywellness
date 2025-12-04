@@ -844,13 +844,6 @@ Se le raccomandazioni suggeriscono di aumentare proteine/riducerre carboidrati m
         }
       }
       
-      if (!workoutRecsApplied) {
-        setWorkoutRecsApplied(true);
-        setAppliedChanges(prev => ({
-          ...prev,
-          workout: ['Raccomandazioni di allenamento registrate']
-        }));
-      }
     } catch (error) {
       console.error('Error applying workout recommendations:', error);
       alert(t('progressAnalyzer.applyError'));
