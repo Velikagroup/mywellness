@@ -22,25 +22,16 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
   if (!isOpen) return null;
 
-  // Filtra solo le foto che hanno un URL valido
-  const validPhotos = (photos || []).filter(p => {
-    const url = p.photo_url || p.data?.photo_url;
-    return url && url.trim() !== '';
-  });
+  // Le foto dovrebbero già essere normalizzate dal Dashboard
+  // Ma facciamo un check extra per sicurezza
+  const validPhotos = (photos || []).filter(p => p.photo_url && p.photo_url.trim() !== '');
   
-  // Normalizza le foto per accedere ai dati
-  const normalizedPhotos = validPhotos.map(p => ({
-    ...p,
-    ...(p.data || {}),
-    id: p.id,
-    photo_url: p.photo_url || p.data?.photo_url,
-    date: p.date || p.data?.date,
-    weight: p.weight || p.data?.weight,
-    notes: p.notes || p.data?.notes,
-    ai_analysis: p.ai_analysis || p.data?.ai_analysis
-  }));
+  console.log('📸 Gallery received photos:', photos?.length, 'Valid photos:', validPhotos.length);
+  if (validPhotos.length > 0) {
+    console.log('📸 First valid photo:', validPhotos[0]);
+  }
   
-  const sortedPhotos = [...normalizedPhotos].sort((a, b) => new Date(b.date) - new Date(a.date));
+  const sortedPhotos = [...validPhotos].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const getComparisonIcon = (result) => {
     if (result === 'improved') return <TrendingUp className="w-4 h-4 text-green-600" />;
