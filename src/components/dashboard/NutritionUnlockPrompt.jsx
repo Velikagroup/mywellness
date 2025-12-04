@@ -36,7 +36,7 @@ const getFakeMealPlan = (t) => [
 ];
 
 const getDetailedMeal = (t) => ({
-  name: 'Salmone al Forno con Verdure',
+  name: t('upgradeModal.demoMealName'),
   image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=800&q=80',
   calories: 580,
   protein: 45,
@@ -45,24 +45,24 @@ const getDetailedMeal = (t) => ({
   prepTime: 25,
   difficulty: t('upgradeModal.easy'),
   ingredients: [
-    { name: 'Filetto di salmone', qty: '200g', calories: 280 },
-    { name: 'Broccoli', qty: '150g', calories: 50 },
-    { name: 'Patate dolci', qty: '120g', calories: 110 },
-    { name: 'Olio extravergine', qty: '1 cucchiaio', calories: 90 },
-    { name: 'Limone', qty: '1/2', calories: 15 },
-    { name: 'Aglio', qty: '2 spicchi', calories: 10 },
-    { name: 'Rosmarino', qty: 'q.b.', calories: 5 },
-    { name: 'Sale e pepe', qty: 'q.b.', calories: 0 }
+    { name: t('upgradeModal.demoIngredient1'), qty: t('upgradeModal.demoQty1'), calories: 280 },
+    { name: t('upgradeModal.demoIngredient2'), qty: t('upgradeModal.demoQty2'), calories: 50 },
+    { name: t('upgradeModal.demoIngredient3'), qty: t('upgradeModal.demoQty3'), calories: 110 },
+    { name: t('upgradeModal.demoIngredient4'), qty: t('upgradeModal.demoQty4'), calories: 90 },
+    { name: t('upgradeModal.demoIngredient5'), qty: t('upgradeModal.demoQty5'), calories: 15 },
+    { name: t('upgradeModal.demoIngredient6'), qty: t('upgradeModal.demoQty6'), calories: 10 },
+    { name: t('upgradeModal.demoIngredient7'), qty: t('upgradeModal.demoQty7'), calories: 5 },
+    { name: t('upgradeModal.demoIngredient8'), qty: t('upgradeModal.demoQty8'), calories: 0 }
   ],
   instructions: [
-    'Preriscalda il forno a 200°C.',
-    'Taglia le patate dolci a cubetti e i broccoli in cimette.',
-    'Disponi le verdure su una teglia con carta forno, condisci con metà olio, sale e pepe.',
-    'Inforna le verdure per 15 minuti.',
-    'Nel frattempo, condisci il salmone con succo di limone, aglio tritato, rosmarino e l\'olio rimanente.',
-    'Dopo 15 minuti, aggiungi il salmone sulla teglia con le verdure.',
-    'Cuoci per altri 10-12 minuti fino a doratura del salmone.',
-    'Servi caldo con una spruzzata di limone fresco.'
+    t('upgradeModal.demoStep1'),
+    t('upgradeModal.demoStep2'),
+    t('upgradeModal.demoStep3'),
+    t('upgradeModal.demoStep4'),
+    t('upgradeModal.demoStep5'),
+    t('upgradeModal.demoStep6'),
+    t('upgradeModal.demoStep7'),
+    t('upgradeModal.demoStep8')
   ]
 });
 
