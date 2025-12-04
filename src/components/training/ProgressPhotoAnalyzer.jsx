@@ -1283,7 +1283,7 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                         <Utensils className="w-4 h-4" />
                         🍽️ {t('progressAnalyzer.nutritionRecommendations')}
                       </h4>
-                      {canApplyChanges && !appliedChanges?.diet?.length && !isGeneratingProposals && (
+                      {canApplyChanges && proposedChanges?.diet?.length > 0 && !appliedChanges?.diet?.length && (
                         <Button 
                           onClick={() => applyProposedChanges('diet')} 
                           size="sm"
@@ -1296,9 +1296,6 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                             <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
                           )}
                         </Button>
-                      )}
-                      {isGeneratingProposals && (
-                        <Loader2 className="w-4 h-4 text-orange-600 animate-spin" />
                       )}
                       {appliedChanges?.diet?.length > 0 && (
                         <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
@@ -1328,7 +1325,7 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                         <Dumbbell className="w-4 h-4" />
                         💪 {t('progressAnalyzer.workoutRecommendations')}
                       </h4>
-                      {canApplyChanges && !appliedChanges?.workout?.length && !isGeneratingProposals && (
+                      {canApplyChanges && proposedChanges?.workout?.length > 0 && !appliedChanges?.workout?.length && (
                         <Button 
                           onClick={() => applyProposedChanges('workout')} 
                           size="sm"
@@ -1341,9 +1338,6 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                             <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
                           )}
                         </Button>
-                      )}
-                      {isGeneratingProposals && (
-                        <Loader2 className="w-4 h-4 text-indigo-600 animate-spin" />
                       )}
                       {appliedChanges?.workout?.length > 0 && (
                         <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
