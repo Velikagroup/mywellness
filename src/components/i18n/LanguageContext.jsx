@@ -36,12 +36,14 @@ const getBrowserLanguage = () => {
   return DEFAULT_LANGUAGE;
 };
 
-export function LanguageProvider({ children }) {
+export function LanguageProvider({ children, forcedLanguage = null }) {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Initialize language from URL, localStorage, or browser preference
+  // Initialize language from forced prop, URL, localStorage, or browser preference
   const [language, setLanguageState] = useState(() => {
+    if (forcedLanguage) return forcedLanguage;
+    
     const urlLang = getLanguageFromPath(window.location.pathname);
     if (urlLang) return urlLang;
     
@@ -52,6 +54,13 @@ export function LanguageProvider({ children }) {
     
     return getBrowserLanguage();
   });
+  
+  // Update language if forcedLanguage prop changes
+  useEffect(() => {
+    if (forcedLanguage && forcedLanguage !== language) {
+      setLanguageState(forcedLanguage);
+    }
+  }, [forcedLanguage]);
 
   // Update language when URL changes
   useEffect(() => {
