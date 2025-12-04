@@ -122,27 +122,32 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const startWeight = user.current_weight || 0;
   const targetWeight = user.target_weight || 0;
   
-  // Trova il peso più recente (ordina per data decrescente)
-  const sortedForCurrent = [...weightHistory].sort((a, b) => {
+  // Ordina per data per trovare primo e ultimo peso registrato
+  const sortedByDate = [...weightHistory].sort((a, b) => {
     const dateA = a.date || new Date(a.created_date).toISOString().substring(0, 10);
     const dateB = b.date || new Date(b.created_date).toISOString().substring(0, 10);
-    return dateB.localeCompare(dateA);
+    return dateA.localeCompare(dateB);
   });
-  const currentWeight = sortedForCurrent.length > 0 ? sortedForCurrent[0].weight : startWeight;
   
-  console.log('📊 Weight calculation:', { startWeight, targetWeight, currentWeight, historyLength: weightHistory.length });
-
+  // Primo peso registrato (più vecchio) e ultimo peso registrato (più recente)
+  const firstRecordedWeight = sortedByDate.length > 0 ? sortedByDate[0].weight : startWeight;
+  const lastRecordedWeight = sortedByDate.length > 0 ? sortedByDate[sortedByDate.length - 1].weight : startWeight;
+  
+  // Variazione = ultimo peso - primo peso (negativo = hai perso peso, positivo = hai guadagnato)
+  const weightVariation = lastRecordedWeight - firstRecordedWeight;
+  
   const totalWeightToChange = startWeight - targetWeight;
-  const remainingToTarget = currentWeight - targetWeight;
+  const remainingToTarget = lastRecordedWeight - targetWeight;
   const isWeightLoss = totalWeightToChange > 0;
   
+  // Progresso positivo: se vuoi perdere peso e hai perso, o se vuoi aumentare e hai aumentato
   const isGoodProgress = isWeightLoss 
-    ? (remainingToTarget > 0 && remainingToTarget < totalWeightToChange)
-    : (remainingToTarget < 0 && Math.abs(remainingToTarget) < Math.abs(totalWeightToChange));
+    ? (weightVariation < 0)
+    : (weightVariation > 0);
 
   let progressPercentage = 0;
   if (totalWeightToChange !== 0) {
-      const weightProgress = startWeight - currentWeight;
+      const weightProgress = startWeight - lastRecordedWeight;
       progressPercentage = (weightProgress / totalWeightToChange) * 100;
   } else if (startWeight === targetWeight) {
       progressPercentage = 100;
@@ -155,7 +160,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     : [0, 100];
 
   const totalKcalToChange = Math.abs(totalWeightToChange) * KCAL_PER_KG;
-  const weightProgress = startWeight - currentWeight;
+  const weightProgress = startWeight - lastRecordedWeight;
   const kcalChangedSoFar = Math.abs(weightProgress) * KCAL_PER_KG;
   const kcalRemaining = totalKcalToChange - kcalChangedSoFar;
 
@@ -202,7 +207,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               )}
               <div className="flex items-baseline gap-2">
                 <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
-                  {remainingToTarget >= 0 ? '+' : ''}{remainingToTarget.toFixed(1)}
+                  {weightVariation >= 0 ? '+' : ''}{weightVariation.toFixed(1)}
                 </p>
                 <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
               </div>
