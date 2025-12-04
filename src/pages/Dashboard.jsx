@@ -347,15 +347,29 @@ export default function Dashboard() {
   const loadProgressPhotos = async () => {
     if (!user?.id) return;
     try {
-      const photos = await base44.entities.ProgressPhoto.list('-created_date', 50);
-      // Filtra per user_id nel caso il filter non funzioni correttamente
-      const userPhotos = photos.filter(p => {
-        const photoUserId = p.user_id || p.data?.user_id;
-        return photoUserId === user.id;
-      });
-      console.log('📸 Loaded progress photos:', userPhotos.length, 'photos for user', user.id);
-      console.log('📸 First photo data:', userPhotos[0]);
-      setProgressPhotos(userPhotos);
+      const rawPhotos = await base44.entities.ProgressPhoto.list('-created_date', 50);
+      console.log('📸 Raw photos from API:', rawPhotos.length, 'total');
+      console.log('📸 First raw photo structure:', JSON.stringify(rawPhotos[0], null, 2));
+      
+      // Normalizza e filtra per user_id
+      const normalizedPhotos = rawPhotos
+        .map(p => {
+          // I dati possono essere nested in 'data' o flat
+          const photoData = p.data || p;
+          return {
+            id: p.id,
+            photo_url: photoData.photo_url,
+            date: photoData.date,
+            weight: photoData.weight,
+            notes: photoData.notes,
+            ai_analysis: photoData.ai_analysis,
+            user_id: photoData.user_id
+          };
+        })
+        .filter(p => p.user_id === user.id && p.photo_url);
+      
+      console.log('📸 Normalized photos for user:', normalizedPhotos.length, 'photos');
+      setProgressPhotos(normalizedPhotos);
     } catch (error) {
       console.error('Error loading progress photos:', error);
     }
