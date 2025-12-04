@@ -1,7 +1,7 @@
 import React from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { X, Calendar, TrendingUp, TrendingDown, Trash2 } from 'lucide-react';
+import { X, Calendar, TrendingUp, TrendingDown, Trash2, Utensils, Dumbbell } from 'lucide-react';
 import { format } from 'date-fns';
 import { it, enUS, es, pt, de, fr } from 'date-fns/locale';
 import { useLanguage } from '../i18n/LanguageContext';
@@ -236,6 +236,34 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                             <li key={idx} className="text-sm text-yellow-800 flex items-start gap-2">
                               <span className="text-yellow-600">↔️</span>{diff}
                             </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {selectedPhoto.ai_analysis.nutrition_recommendations?.length > 0 && (
+                      <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-300">
+                        <h4 className="font-bold text-orange-900 mb-2 text-sm flex items-center gap-2">
+                          <Utensils className="w-4 h-4" />
+                          🍽️ {t('progressAnalyzer.nutritionRecommendations')}
+                        </h4>
+                        <ul className="space-y-1">
+                          {selectedPhoto.ai_analysis.nutrition_recommendations.map((rec, idx) => (
+                            <li key={idx} className="text-xs text-orange-800 flex gap-2"><span>→</span><span>{rec}</span></li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+
+                    {selectedPhoto.ai_analysis.workout_recommendations?.length > 0 && (
+                      <div className="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-300">
+                        <h4 className="font-bold text-indigo-900 mb-2 text-sm flex items-center gap-2">
+                          <Dumbbell className="w-4 h-4" />
+                          💪 {t('progressAnalyzer.workoutRecommendations')}
+                        </h4>
+                        <ul className="space-y-1">
+                          {selectedPhoto.ai_analysis.workout_recommendations.map((rec, idx) => (
+                            <li key={idx} className="text-xs text-indigo-800 flex gap-2"><span>→</span><span>{rec}</span></li>
                           ))}
                         </ul>
                       </div>
