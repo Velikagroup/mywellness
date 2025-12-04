@@ -121,7 +121,7 @@ export default function Home() {
   }, []);
 
   const { t } = useLanguage();
-  const testimonials = t('pricing.testimonials');
+  const testimonials = t('pricing.testimonials') || [];
 
   const handleWatchDemo = () => {
     navigate(createPageUrl('Landing'));

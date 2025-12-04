@@ -246,7 +246,7 @@ function PricingPageContent() {
     }
   ];
 
-  const testimonials = t('pricing.testimonials');
+  const testimonials = t('pricing.testimonials') || [];
 
   const handleSelectPlan = async (planId) => {
     let planType = 'base';
