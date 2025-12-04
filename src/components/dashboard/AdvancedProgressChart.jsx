@@ -129,19 +129,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     return dateA.localeCompare(dateB);
   });
   
-  // Primo peso registrato (più vecchio) e ultimo peso registrato (più recente)
-  const firstRecordedWeight = sortedByDate.length > 0 ? parseFloat(sortedByDate[0].weight) : startWeight;
+  // Ultimo peso registrato (più recente)
   const lastRecordedWeight = sortedByDate.length > 0 ? parseFloat(sortedByDate[sortedByDate.length - 1].weight) : startWeight;
   
-  // Variazione = ultimo peso - primo peso (negativo = hai perso peso, positivo = hai guadagnato)
-  const weightVariation = lastRecordedWeight - firstRecordedWeight;
-  
-  console.log('📊 Weight Debug:', { 
-    firstRecordedWeight, 
-    lastRecordedWeight, 
-    weightVariation: weightVariation.toFixed(2),
-    sortedDates: sortedByDate.map(w => ({ date: w.date, weight: w.weight }))
-  });
+  // Variazione = ultimo peso - peso iniziale dal profilo (non dalla prima registrazione!)
+  // Il peso iniziale è quello inserito nel quiz (startWeight), non la prima registrazione
+  const weightVariation = lastRecordedWeight - startWeight;
   
   const totalWeightToChange = startWeight - targetWeight;
   const remainingToTarget = lastRecordedWeight - targetWeight;
