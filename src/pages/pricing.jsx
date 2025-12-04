@@ -6,9 +6,11 @@ import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown,
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
+import { LanguageProvider, useLanguage } from '@/components/i18n/LanguageContext';
 
-export default function PricingPage() {
+function PricingPageContent() {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const [isAnnual, setIsAnnual] = React.useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [openFaqIndex, setOpenFaqIndex] = React.useState(null);
@@ -115,7 +117,7 @@ export default function PricingPage() {
   const plans = [
     {
       id: 'standard',
-      name: "Standard",
+      name: t('pricing.planStandard'),
       priceMonthly: 0,
       priceAnnual: 0,
       stripePriceIdMonthly: null,
@@ -123,21 +125,21 @@ export default function PricingPage() {
       icon: Shield,
       iconColor: "text-gray-600",
       iconBg: "bg-gray-100",
-      description: "Piano gratuito per monitorare i tuoi progressi",
+      description: t('pricing.planStandardDesc'),
       features: [
-        "Dashboard scientifica completa",
-        "Calcolo BMR e massa grassa",
-        "Tracking peso e progressi",
-        "Conta calorie istantaneo",
-        "Impostazioni profilo"
+        t('pricing.featureStd1'),
+        t('pricing.featureStd2'),
+        t('pricing.featureStd3'),
+        t('pricing.featureStd4'),
+        t('pricing.featureStd5')
       ],
-      cta: "Inizia Gratis",
+      cta: t('pricing.startFree'),
       popular: false,
       isFree: true
     },
     {
       id: 'base',
-      name: "Base",
+      name: t('pricing.planBase'),
       priceMonthly: 19,
       priceAnnual: 15.2,
       stripePriceIdMonthly: "price_1SNDMW2OXBs6ZYwlp5UgCO8Y",
@@ -145,22 +147,22 @@ export default function PricingPage() {
       icon: Target,
       iconColor: "text-blue-600",
       iconBg: "bg-blue-100",
-      description: "Perfetto per iniziare il tuo percorso nutrizionale",
+      description: t('pricing.planBaseDesc'),
       features: [
-        "Tutto del Piano Standard",
-        "Piano nutrizionale settimanale personalizzato",
-        "4 generazioni piano nutrizionale/mese",
-        "Ricette con foto AI e istruzioni",
-        "Sostituzione ingredienti AI",
-        "Dispensa ingredienti personalizzati", 
-        "Lista della spesa automatica"
+        t('pricing.featureBase1'),
+        t('pricing.featureBase2'),
+        t('pricing.featureBase3'),
+        t('pricing.featureBase4'),
+        t('pricing.featureBase5'),
+        t('pricing.featureBase6'), 
+        t('pricing.featureBase7')
       ],
-      cta: "Iniza Gratis",
+      cta: t('pricing.startFree'),
       popular: false
     },
     {
       id: 'pro',
-      name: "Pro",
+      name: t('pricing.planPro'),
       priceMonthly: 29,
       priceAnnual: 23.2,
       stripePriceIdMonthly: "price_1SNDMX2OXBs6ZYwlx6jXOgFf",
@@ -168,24 +170,24 @@ export default function PricingPage() {
       icon: Zap,
       iconColor: "text-[var(--brand-primary)]",
       iconBg: "bg-[var(--brand-primary-light)]",
-      description: "Il piano più completo per risultati garantiti",
+      description: t('pricing.planProDesc'),
       features: [
-        "Tutto del Piano Base",
-        "8 generazioni piano nutrizionale/mese",
-        "Piano di allenamento personalizzato",
-        "4 generazioni piano allenamento/mese",
-        "Workout con warm-up e cool-down",
-        "Schede adattive al tuo livello",
-        "Analisi AI dei pasti con foto",
-        "Ribilanciamento automatico calorie",
-        "Tracking allenamenti"
+        t('pricing.featurePro1'),
+        t('pricing.featurePro2'),
+        t('pricing.featurePro3'),
+        t('pricing.featurePro4'),
+        t('pricing.featurePro5'),
+        t('pricing.featurePro6'),
+        t('pricing.featurePro7'),
+        t('pricing.featurePro8'),
+        t('pricing.featurePro9')
       ],
-      cta: "Iniza Gratis",
+      cta: t('pricing.startFree'),
       popular: true
     },
     {
       id: 'premium',
-      name: "Premium",
+      name: t('pricing.planPremium'),
       priceMonthly: 39,
       priceAnnual: 31.2,
       stripePriceIdMonthly: "price_1SNDMX2OXBs6ZYwlKR7FIudX",
@@ -193,17 +195,17 @@ export default function PricingPage() {
       icon: Crown,
       iconColor: "text-purple-600",
       iconBg: "bg-purple-100",
-      description: "Per chi vuole il massimo con AI avanzata",
+      description: t('pricing.planPremiumDesc'),
       features: [
-        "Tutto del Piano Pro",
-        "Generazioni ILLIMITATE piani nutrizionali",
-        "Generazioni ILLIMITATE piani allenamento",
-        "Modifica scheda AI per imprevisti",
-        "Analisi progressi con foto AI",
-        "Scansione etichette con Health Score AI",
-        "Supporto prioritario"
+        t('pricing.featurePremium1'),
+        t('pricing.featurePremium2'),
+        t('pricing.featurePremium3'),
+        t('pricing.featurePremium4'),
+        t('pricing.featurePremium5'),
+        t('pricing.featurePremium6'),
+        t('pricing.featurePremium7')
       ],
-      cta: "Iniza Gratis",
+      cta: t('pricing.startFree'),
       popular: false
     }
   ];
@@ -694,23 +696,23 @@ export default function PricingPage() {
             <button 
               onClick={() => navigate(createPageUrl('pricing'))}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
-              Prezzi
+              {t('nav.pricing')}
             </button>
             <button 
               onClick={() => navigate(createPageUrl('Blog'))}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
-              Blog
+              {t('nav.blog')}
             </button>
             <button
               onClick={handleLogin}
               className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
-              Log-in
+              {t('nav.login')}
             </button>
             
             <button
               onClick={() => navigate(createPageUrl('Quiz'))}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-2 px-4 text-sm font-medium rounded-full whitespace-nowrap flex-shrink-0 transition-colors">
-              Quiz Gratuito
+              {t('pricing.freeQuiz')}
             </button>
           </div>
         </div>
@@ -743,7 +745,7 @@ export default function PricingPage() {
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                Prezzi
+                {t('nav.pricing')}
               </button>
               <button
                 onClick={() => {
@@ -751,7 +753,7 @@ export default function PricingPage() {
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                Blog
+                {t('nav.blog')}
               </button>
               <button
                 onClick={() => {
@@ -759,7 +761,7 @@ export default function PricingPage() {
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                Log-in
+                {t('nav.login')}
               </button>
               <button
                 onClick={() => {
@@ -767,7 +769,7 @@ export default function PricingPage() {
                   setMobileMenuOpen(false);
                 }}
                 className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2">
-                Quiz Gratuito
+                {t('pricing.freeQuiz')}
               </button>
             </div>
           </div>
@@ -780,10 +782,10 @@ export default function PricingPage() {
           {/* Header */}
           <div className="text-center mb-12">
             <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight px-2">
-              Scegli <span className="animated-text-gradient">il Piano Perfetto per Te</span>
+              {t('pricing.title')} <span className="animated-text-gradient">{t('pricing.titleHighlight')}</span>
             </h1>
             <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto mb-8 px-2">
-              Nessun vincolo • Cancella quando vuoi
+              {t('pricing.subtitle')}
             </p>
 
             {/* Billing Toggle */}
@@ -796,7 +798,7 @@ export default function PricingPage() {
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Mensile
+                {t('pricing.monthly')}
               </button>
               <button
                 onClick={() => setIsAnnual(true)}
@@ -806,9 +808,9 @@ export default function PricingPage() {
                     : 'text-gray-600 hover:text-gray-900'
                 }`}
               >
-                Annuale
+                {t('pricing.yearly')}
                 <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                  -20%
+                  {t('pricing.save20')}
                 </span>
               </button>
             </div>
@@ -825,17 +827,17 @@ export default function PricingPage() {
                   <div className="popular-badge text-[var(--brand-primary)] text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
                     <div className="flex items-center justify-center gap-2">
                       <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
-                      Più Scelto
+                      {t('pricing.mostChosen')}
                       <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)] animate-pulse"></div>
                     </div>
                   </div>
                 )}
 
-                {plan.name === "Premium" && (
+                {plan.id === "premium" && (
                   <div className="premium-badge text-purple-600 text-center py-2.5 text-xs font-semibold tracking-widest uppercase">
                     <div className="flex items-center justify-center gap-2">
                       <Crown className="w-3 h-3" />
-                      Piano Esclusivo
+                      {t('pricing.exclusivePlan')}
                     </div>
                   </div>
                 )}
@@ -853,10 +855,10 @@ export default function PricingPage() {
                       {plan.isFree ? (
                         <>
                           <span className="text-4xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
-                            Gratis
+                            {t('pricing.free')}
                           </span>
                           <div className="mt-2">
-                            <span className="text-sm text-gray-600">Per sempre • Nessun costo nascosto</span>
+                            <span className="text-sm text-gray-600">{t('pricing.forever')} • {t('pricing.subtitle')}</span>
                           </div>
                         </>
                       ) : (
@@ -869,17 +871,17 @@ export default function PricingPage() {
                           <span className="text-4xl font-black bg-gradient-to-br from-gray-900 to-gray-700 bg-clip-text text-transparent">
                             €{getPrice(plan)}
                           </span>
-                          <span className="text-gray-600 ml-2 text-lg font-semibold">/mese</span>
+                          <span className="text-gray-600 ml-2 text-lg font-semibold">{t('pricing.perMonth')}</span>
                         </>
                       )}
                     </div>
                     
                     {!plan.isFree && isAnnual && !couponValid && (
                       <div className="space-y-1">
-                        <p className="text-sm text-gray-500 line-through">€{plan.priceMonthly}/mese</p>
+                        <p className="text-sm text-gray-500 line-through">€{plan.priceMonthly}{t('pricing.perMonth')}</p>
                         <div className="inline-flex items-center gap-1 px-3 py-1 bg-green-100 text-green-700 rounded-full text-xs font-bold">
                           <Check className="w-3 h-3" />
-                          Risparmi €{getSavings(plan)}/mese
+                          {t('pricing.save', { amount: getSavings(plan) })}
                         </div>
                       </div>
                     )}
@@ -896,7 +898,7 @@ export default function PricingPage() {
                   
                   {!plan.isFree && isAnnual && (
                     <p className="text-xs text-gray-500 mt-2 font-medium">
-                      💳 Fatturato annualmente (€{(getPrice(plan) * 12).toFixed(0)}/anno)
+                      💳 {t('pricing.billedAnnually', { amount: (getPrice(plan) * 12).toFixed(0) })}
                     </p>
                   )}
                 </CardHeader>
@@ -931,7 +933,7 @@ export default function PricingPage() {
           {/* Comparison Table */}
           <div className="max-w-6xl mx-auto mt-20 mb-20 px-4 sm:px-6">
             <h2 className="text-4xl md:text-5xl font-bold text-gray-900 text-center mb-12">
-              Confronta <span className="animated-text-gradient">i Piani</span>
+              {t('pricing.compareTitle')} <span className="animated-text-gradient">{t('pricing.compareTitleHighlight')}</span>
             </h2>
             
             <div className="water-glass-effect rounded-3xl border border-white/40 overflow-hidden shadow-2xl">
@@ -940,134 +942,134 @@ export default function PricingPage() {
                 <table className="w-full">
                   <thead>
                     <tr className="border-b border-gray-200/50">
-                      <th className="text-left p-6 text-sm font-bold text-gray-700 bg-white/30">Funzionalità</th>
+                      <th className="text-left p-6 text-sm font-bold text-gray-700 bg-white/30">{t('pricing.features')}</th>
                       <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
                         <div className="flex flex-col items-center gap-2">
                           <Shield className="w-6 h-6 text-gray-600" />
-                          <span>Standard</span>
+                          <span>{t('pricing.planStandard')}</span>
                         </div>
                       </th>
                       <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
                         <div className="flex flex-col items-center gap-2">
                           <Target className="w-6 h-6 text-blue-600" />
-                          <span>Base</span>
+                          <span>{t('pricing.planBase')}</span>
                         </div>
                       </th>
                       <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
                         <div className="flex flex-col items-center gap-2">
                           <Zap className="w-6 h-6 text-[var(--brand-primary)]" />
-                          <span>Pro</span>
+                          <span>{t('pricing.planPro')}</span>
                         </div>
                       </th>
                       <th className="text-center p-6 text-sm font-bold text-gray-700 bg-white/30">
                         <div className="flex flex-col items-center gap-2">
                           <Crown className="w-6 h-6 text-purple-600" />
-                          <span>Premium</span>
+                          <span>{t('pricing.planPremium')}</span>
                         </div>
                       </th>
                     </tr>
                   </thead>
                   <tbody>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Dashboard scientifica completa</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.featureStd1')}</td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Calcolo BMR e massa grassa</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.featureStd2')}</td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Tracking peso e progressi</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.featureStd3')}</td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Conta calorie istantaneo</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.featureStd4')}</td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Piano nutrizionale personalizzato</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableNutritionPlan')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Generazioni piano nutrizionale/mese</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableGenerationsNutrition')}</td>
                       <td className="p-4 text-center text-sm text-gray-500">-</td>
                       <td className="p-4 text-center text-sm font-semibold text-gray-900">4</td>
                       <td className="p-4 text-center text-sm font-semibold text-gray-900">8</td>
-                      <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">Illimitate</td>
+                      <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Ricette con foto AI e istruzioni</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableRecipesAI')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Lista della spesa automatica</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableShoppingList')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Piano di allenamento personalizzato</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableWorkoutPlan')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Generazioni piano allenamento/mese</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableGenerationsWorkout')}</td>
                       <td className="p-4 text-center text-sm text-gray-500">-</td>
                       <td className="p-4 text-center text-sm text-gray-500">-</td>
                       <td className="p-4 text-center text-sm font-semibold text-gray-900">4</td>
-                      <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">Illimitate</td>
+                      <td className="p-4 text-center text-sm font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Analisi AI dei pasti con foto</td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
-                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
-                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
-                    </tr>
-                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Ribilanciamento automatico calorie</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableMealAnalysis')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Analisi progressi con foto AI</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableRebalancing')}</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableProgressAnalysis')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Scansione etichette con Health Score AI</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableLabelScanning')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="hover:bg-white/20 transition-colors">
-                      <td className="p-4 text-sm text-gray-700">Supporto prioritario</td>
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tablePrioritySupport')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
@@ -1083,52 +1085,52 @@ export default function PricingPage() {
                   {/* Colonna Funzionalità - FISSA */}
                   <div className="flex-shrink-0 w-40">
                     <div className="border-b border-gray-200/50 p-4 h-20 flex items-center">
-                      <span className="text-xs font-bold text-gray-700">Funzionalità</span>
+                      <span className="text-xs font-bold text-gray-700">{t('pricing.features')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Dashboard scientifica completa</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.featureStd1')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Calcolo BMR e massa grassa</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.featureStd2')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Tracking peso e progressi</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.featureStd3')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Conta calorie istantaneo</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.featureStd4')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Piano nutrizionale personalizzato</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableNutritionPlan')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Generazioni piano nutrizionale/mese</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableGenerationsNutrition')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Ricette con foto AI e istruzioni</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableRecipesAI')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Lista della spesa automatica</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableShoppingList')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Piano di allenamento personalizzato</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableWorkoutPlan')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Generazioni piano allenamento/mese</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableGenerationsWorkout')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Analisi AI dei pasti con foto</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableMealAnalysis')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Ribilanciamento automatico calorie</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableRebalancing')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Analisi progressi con foto AI</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableProgressAnalysis')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Scansione etichette con Health Score AI</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableLabelScanning')}</span>
                     </div>
                     <div className="p-3 min-h-[60px] flex items-center">
-                      <span className="text-xs text-gray-700 leading-tight">Supporto prioritario</span>
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tablePrioritySupport')}</span>
                     </div>
                   </div>
                   
@@ -1139,7 +1141,7 @@ export default function PricingPage() {
                       <div className="w-24 flex-shrink-0">
                         <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
                           <Shield className="w-5 h-5 text-gray-600" />
-                          <span className="text-xs font-bold text-gray-700">Standard</span>
+                          <span className="text-xs font-bold text-gray-700">{t('pricing.planStandard')}</span>
                         </div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
@@ -1162,7 +1164,7 @@ export default function PricingPage() {
                       <div className="w-24 flex-shrink-0">
                         <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
                           <Target className="w-5 h-5 text-blue-600" />
-                          <span className="text-xs font-bold text-gray-700">Base</span>
+                          <span className="text-xs font-bold text-gray-700">{t('pricing.planBase')}</span>
                         </div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
@@ -1185,7 +1187,7 @@ export default function PricingPage() {
                       <div className="w-24 flex-shrink-0">
                         <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
                           <Zap className="w-5 h-5 text-[var(--brand-primary)]" />
-                          <span className="text-xs font-bold text-gray-700">Pro</span>
+                          <span className="text-xs font-bold text-gray-700">{t('pricing.planPro')}</span>
                         </div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
@@ -1208,18 +1210,18 @@ export default function PricingPage() {
                       <div className="w-24 flex-shrink-0">
                         <div className="border-b border-gray-200/50 p-3 h-20 flex flex-col items-center justify-center gap-1">
                           <Crown className="w-5 h-5 text-purple-600" />
-                          <span className="text-xs font-bold text-gray-700">Premium</span>
+                          <span className="text-xs font-bold text-gray-700">{t('pricing.planPremium')}</span>
                         </div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
-                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">Illimitate</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</span></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
-                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">Illimitate</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</span></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
@@ -1235,7 +1237,7 @@ export default function PricingPage() {
 
           {/* FAQ Section */}
           <div className="max-w-3xl mx-auto mt-32 mb-20 px-4 sm:px-6">
-            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-16">Domande <span className="animated-text-gradient">Frequenti</span></h2>
+            <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-16">{t('pricing.faqTitle')} <span className="animated-text-gradient">{t('pricing.faqTitleHighlight')}</span></h2>
             
             <div className="space-y-4">
               {faqs.map((faq, index) => (
@@ -1269,7 +1271,7 @@ export default function PricingPage() {
           {/* Testimonials Section */}
           <div className="mt-20 mb-16 px-4 sm:px-6">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900 text-center mb-12">
-              <span className="animated-text-gradient">Cosa Dicono</span> i Nostri Utenti.
+              <span className="animated-text-gradient">{t('pricing.testimonialsTitle')}</span> {t('pricing.testimonialsTitleHighlight')}
             </h2>
             
             <div className="relative pb-32">
@@ -1321,5 +1323,13 @@ export default function PricingPage() {
         </div>
       </section>
     </div>
+  );
+}
+
+export default function PricingPage() {
+  return (
+    <LanguageProvider>
+      <PricingPageContent />
+    </LanguageProvider>
   );
 }
