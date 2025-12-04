@@ -32,21 +32,55 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const lineData = useMemo(() => {
     console.log('📈 lineData calculation - weightHistory:', weightHistory?.length, 'entries');
     
+    // Usa il peso iniziale dal profilo utente
+    const startWeight = user?.current_weight || 0;
+    const userCreatedDate = user?.created_date;
+    
+    // Se non c'è storico, mostra almeno il peso iniziale
     if (!weightHistory || weightHistory.length === 0) {
-      console.log('📈 No weight history data');
+      console.log('📈 No weight history, using startWeight:', startWeight);
+      if (startWeight > 0) {
+        const dateLabel = userCreatedDate 
+          ? format(new Date(userCreatedDate), 'dd MMM')
+          : format(new Date(), 'dd MMM');
+        return [{ name: dateLabel, weight: startWeight }];
+      }
       return [];
     }
     
     console.log('📈 First entry:', JSON.stringify(weightHistory[0]));
     
     // Ordina per data crescente (più vecchio a sinistra, più recente a destra)
-    const sortedHistory = [...weightHistory].sort((a, b) => {
+    let sortedHistory = [...weightHistory].sort((a, b) => {
       const dateA = a.date || new Date(a.created_date).toISOString().substring(0, 10);
       const dateB = b.date || new Date(b.created_date).toISOString().substring(0, 10);
       if (dateA !== dateB) return dateA.localeCompare(dateB);
       // Se stessa data, ordina per created_date
       return new Date(a.created_date) - new Date(b.created_date);
     });
+
+    // Controlla se il primo peso registrato è diverso dal peso iniziale del profilo
+    // Se sì, aggiungi il peso iniziale come primo punto
+    const firstRecordedWeight = sortedHistory[0]?.weight;
+    if (startWeight > 0 && Math.abs(firstRecordedWeight - startWeight) > 0.01) {
+      // Il peso iniziale del profilo è diverso dalla prima registrazione
+      // Aggiungi il peso iniziale come primo punto del grafico
+      const startDate = userCreatedDate 
+        ? new Date(userCreatedDate).toISOString().substring(0, 10)
+        : new Date(sortedHistory[0].created_date).toISOString().substring(0, 10);
+      
+      const firstRecordDate = sortedHistory[0].date || new Date(sortedHistory[0].created_date).toISOString().substring(0, 10);
+      
+      // Aggiungi solo se la data del peso iniziale è prima o uguale alla prima registrazione
+      if (startDate <= firstRecordDate) {
+        sortedHistory = [{
+          weight: startWeight,
+          date: startDate,
+          created_date: userCreatedDate || sortedHistory[0].created_date,
+          isInitialWeight: true
+        }, ...sortedHistory];
+      }
+    }
 
     const entriesByDay = sortedHistory.reduce((acc, entry) => {
         const dayKey = entry.date || new Date(entry.created_date).toISOString().substring(0, 10);
@@ -75,7 +109,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     
     console.log('📈 lineData result:', result);
     return result;
-  }, [weightHistory]);
+  }, [weightHistory, user]);
 
   const handleSaveWeight = async () => {
     console.log('🔍 handleSaveWeight called', { weight, user: user?.id, isSaving });
