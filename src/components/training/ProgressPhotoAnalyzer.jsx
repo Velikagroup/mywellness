@@ -496,14 +496,10 @@ Task (in ${langName.toUpperCase()}):
         days_since_previous: daysSincePrevious
       });
 
-      // STEP 6: Proposte modifiche
-      if (canApplyChanges && (analysis.workout_adjustment_needed || analysis.diet_adjustment_needed)) {
-        setCurrentAnalysisStep('proposals');
-        await generateProposedChanges(analysis, currentDescription);
-        markStepComplete('proposals');
-      } else {
-        markStepComplete('proposals');
-      }
+      // STEP 6: Proposte modifiche (sempre generate, anche se non applicabili subito)
+      setCurrentAnalysisStep('proposals');
+      await generateProposedChanges(analysis, currentDescription);
+      markStepComplete('proposals');
 
       setCurrentAnalysisStep('');
 
@@ -1279,33 +1275,7 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                   </div>
                 )}
 
-                {analysisResult.nutrition_recommendations?.length > 0 && (
-                  <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-300">
-                    <h4 className="font-bold text-orange-900 mb-2 text-sm flex items-center gap-2">
-                      <Utensils className="w-4 h-4" />
-                      🍽️ {t('progressAnalyzer.nutritionRecommendations')}
-                    </h4>
-                    <ul className="space-y-1">
-                      {analysisResult.nutrition_recommendations.map((rec, idx) => (
-                        <li key={idx} className="text-xs text-orange-800 flex gap-2"><span>→</span><span>{rec}</span></li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
 
-                {analysisResult.workout_recommendations?.length > 0 && (
-                  <div className="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-300">
-                    <h4 className="font-bold text-indigo-900 mb-2 text-sm flex items-center gap-2">
-                      <Dumbbell className="w-4 h-4" />
-                      💪 {t('progressAnalyzer.workoutRecommendations')}
-                    </h4>
-                    <ul className="space-y-1">
-                      {analysisResult.workout_recommendations.map((rec, idx) => (
-                        <li key={idx} className="text-xs text-indigo-800 flex gap-2"><span>→</span><span>{rec}</span></li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
 
                 {!canApplyChanges && daysSinceLastAdjustment !== null && (
                   <div className="bg-amber-50 p-4 rounded-lg border border-amber-200">
@@ -1328,21 +1298,98 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                   </div>
                 )}
 
-                {proposedChanges && !appliedChanges && canApplyChanges && (
+                {!canApplyChanges && proposedChanges && (
+                  <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-lg border-2 border-gray-300">
+                    <h4 className="font-bold text-gray-900 mb-3 text-base flex items-center gap-2">
+                      <Sparkles className="w-5 h-5" />💡 {t('progressAnalyzer.aiSuggestions')}
+                    </h4>
+                    <p className="text-xs text-gray-600 mb-3">
+                      {t('progressAnalyzer.suggestionsNotApplicable')} {7 - daysSinceLastAdjustment} {t('progressAnalyzer.daysToAdapt')}
+                    </p>
+                    
+                    {analysisResult.nutrition_recommendations?.length > 0 && (
+                      <div className="mb-3">
+                        <p className="text-sm font-semibold text-orange-800 mb-2 flex items-center gap-1">
+                          <Utensils className="w-4 h-4" />
+                          🍽️ {t('progressAnalyzer.nutritionRecommendations')}
+                        </p>
+                        <ul className="space-y-1 bg-orange-50 p-3 rounded-lg border border-orange-200">
+                          {analysisResult.nutrition_recommendations.map((rec, idx) => (
+                            <li key={idx} className="text-xs text-orange-800 flex gap-2"><span>→</span><span>{rec}</span></li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {analysisResult.workout_recommendations?.length > 0 && (
+                      <div>
+                        <p className="text-sm font-semibold text-indigo-800 mb-2 flex items-center gap-1">
+                          <Dumbbell className="w-4 h-4" />
+                          💪 {t('progressAnalyzer.workoutRecommendations')}
+                        </p>
+                        <ul className="space-y-1 bg-indigo-50 p-3 rounded-lg border border-indigo-200">
+                          {analysisResult.workout_recommendations.map((rec, idx) => (
+                            <li key={idx} className="text-xs text-indigo-800 flex gap-2"><span>→</span><span>{rec}</span></li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {proposedChanges && canApplyChanges && (
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 rounded-lg border-2 border-green-300">
                     <h4 className="font-bold text-green-900 mb-3 text-base flex items-center gap-2">
                       <Sparkles className="w-5 h-5" />{t('progressAnalyzer.proposedChanges')}
                     </h4>
+                    
                     {proposedChanges.diet.length > 0 && (
                       <div className="mb-4">
-                        <p className="text-sm font-semibold text-green-800 mb-2">🍽️ {t('progressAnalyzer.nutritionPlan')}</p>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm font-semibold text-orange-800 flex items-center gap-1">
+                            <Utensils className="w-4 h-4" />
+                            🍽️ {t('progressAnalyzer.nutritionPlan')}
+                          </p>
+                          {!appliedChanges?.diet && (
+                            <Button 
+                              onClick={() => applyProposedChanges('diet')} 
+                              size="sm"
+                              className="bg-orange-600 hover:bg-orange-700" 
+                              disabled={isApplyingChanges || appliedChanges?.diet}
+                            >
+                              {isApplyingChanges ? (
+                                <><Loader2 className="w-3 h-3 animate-spin mr-1" />{t('progressAnalyzer.applying')}</>
+                              ) : (
+                                <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
+                              )}
+                            </Button>
+                          )}
+                          {appliedChanges?.diet && (
+                            <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" />
+                              {t('progressAnalyzer.applied')}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {analysisResult.nutrition_recommendations?.length > 0 && (
+                          <div className="bg-orange-50 p-3 rounded-lg border border-orange-200 mb-2">
+                            <p className="text-xs font-semibold text-orange-900 mb-1">{t('progressAnalyzer.practicalTips')}</p>
+                            <ul className="space-y-1">
+                              {analysisResult.nutrition_recommendations.map((rec, idx) => (
+                                <li key={idx} className="text-xs text-orange-800 flex gap-2"><span>→</span><span>{rec}</span></li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
                         {proposedChanges.diet.map((proposal, idx) => (
-                          <div key={idx} className="bg-white/60 p-3 rounded-lg border border-green-200 mb-2">
+                          <div key={idx} className="bg-white/60 p-3 rounded-lg border border-orange-200 mb-2">
                             {proposal.type === 'calorie_adjustment' ? (
                               <>
                                 <div className="flex items-center justify-between mb-1">
                                   <span className="text-sm font-medium text-gray-900">{t('progressAnalyzer.caloricTarget')}</span>
-                                  <span className="text-sm font-bold text-green-700">{proposal.current} → {proposal.proposed} kcal ({proposal.adjustment > 0 ? '+' : ''}{proposal.adjustment})</span>
+                                  <span className="text-sm font-bold text-orange-700">{proposal.current} → {proposal.proposed} kcal ({proposal.adjustment > 0 ? '+' : ''}{proposal.adjustment})</span>
                                 </div>
                                 <p className="text-xs text-gray-600 mb-1">{proposal.reason}</p>
                                 <p className="text-xs text-purple-700 font-semibold">✨ {t('progressAnalyzer.allMealsScaled')}</p>
@@ -1354,11 +1401,49 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                         ))}
                       </div>
                     )}
+                    
                     {proposedChanges.workout.length > 0 && (
-                      <div className="mb-4">
-                        <p className="text-sm font-semibold text-green-800 mb-2">💪 {t('progressAnalyzer.workoutPlan')}</p>
+                      <div>
+                        <div className="flex items-center justify-between mb-2">
+                          <p className="text-sm font-semibold text-indigo-800 flex items-center gap-1">
+                            <Dumbbell className="w-4 h-4" />
+                            💪 {t('progressAnalyzer.workoutPlan')}
+                          </p>
+                          {!appliedChanges?.workout && (
+                            <Button 
+                              onClick={() => applyProposedChanges('workout')} 
+                              size="sm"
+                              className="bg-indigo-600 hover:bg-indigo-700" 
+                              disabled={isApplyingChanges || appliedChanges?.workout}
+                            >
+                              {isApplyingChanges ? (
+                                <><Loader2 className="w-3 h-3 animate-spin mr-1" />{t('progressAnalyzer.applying')}</>
+                              ) : (
+                                <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
+                              )}
+                            </Button>
+                          )}
+                          {appliedChanges?.workout && (
+                            <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
+                              <CheckCircle2 className="w-3 h-3" />
+                              {t('progressAnalyzer.applied')}
+                            </span>
+                          )}
+                        </div>
+                        
+                        {analysisResult.workout_recommendations?.length > 0 && (
+                          <div className="bg-indigo-50 p-3 rounded-lg border border-indigo-200 mb-2">
+                            <p className="text-xs font-semibold text-indigo-900 mb-1">{t('progressAnalyzer.practicalTips')}</p>
+                            <ul className="space-y-1">
+                              {analysisResult.workout_recommendations.map((rec, idx) => (
+                                <li key={idx} className="text-xs text-indigo-800 flex gap-2"><span>→</span><span>{rec}</span></li>
+                              ))}
+                            </ul>
+                          </div>
+                        )}
+                        
                         {proposedChanges.workout.map((proposal, idx) => (
-                          <div key={idx} className="bg-white/60 p-3 rounded-lg border border-green-200 mb-2">
+                          <div key={idx} className="bg-white/60 p-3 rounded-lg border border-indigo-200 mb-2">
                             {proposal.type === 'exercise_replacement' ? (
                               <>
                                 <p className="text-xs font-medium text-gray-700 mb-1">{t('progressAnalyzer.day')} <span className="font-bold">{proposal.day}</span></p>
@@ -1377,36 +1462,6 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                         ))}
                       </div>
                     )}
-                    
-                    <div className="space-y-2">
-                      {proposedChanges.diet.length > 0 && !appliedChanges?.diet && (
-                        <Button 
-                          onClick={() => applyProposedChanges('diet')} 
-                          className="w-full bg-orange-600 hover:bg-orange-700" 
-                          disabled={isApplyingChanges || appliedChanges?.diet}
-                        >
-                          {isApplyingChanges ? (
-                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.applying')}</>
-                          ) : (
-                            <><Utensils className="w-4 h-4 mr-2" />{t('progressAnalyzer.applyNutritionOnly')}</>
-                          )}
-                        </Button>
-                      )}
-                      
-                      {proposedChanges.workout.length > 0 && !appliedChanges?.workout && (
-                        <Button 
-                          onClick={() => applyProposedChanges('workout')} 
-                          className="w-full bg-blue-600 hover:bg-blue-700" 
-                          disabled={isApplyingChanges || appliedChanges?.workout}
-                        >
-                          {isApplyingChanges ? (
-                            <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.applying')}</>
-                          ) : (
-                            <><Dumbbell className="w-4 h-4 mr-2" />{t('progressAnalyzer.applyWorkoutOnly')}</>
-                          )}
-                        </Button>
-                      )}
-                    </div>
                   </div>
                 )}
 
