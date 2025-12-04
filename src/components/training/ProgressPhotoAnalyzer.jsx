@@ -1275,13 +1275,40 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                   </div>
                 )}
 
-                {/* Raccomandazioni Nutrizionali - sempre visibili */}
+                {/* Raccomandazioni Nutrizionali - con pulsante applica */}
                 {analysisResult.nutrition_recommendations?.length > 0 && (
                   <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-300">
-                    <h4 className="font-bold text-orange-900 mb-2 text-sm flex items-center gap-2">
-                      <Utensils className="w-4 h-4" />
-                      🍽️ {t('progressAnalyzer.nutritionRecommendations')}
-                    </h4>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold text-orange-900 text-sm flex items-center gap-2">
+                        <Utensils className="w-4 h-4" />
+                        🍽️ {t('progressAnalyzer.nutritionRecommendations')}
+                      </h4>
+                      {canApplyChanges && proposedChanges?.diet?.length > 0 && !appliedChanges?.diet?.length && (
+                        <Button 
+                          onClick={() => applyProposedChanges('diet')} 
+                          size="sm"
+                          className="bg-orange-600 hover:bg-orange-700" 
+                          disabled={isApplyingChanges}
+                        >
+                          {isApplyingChanges ? (
+                            <><Loader2 className="w-3 h-3 animate-spin mr-1" />{t('progressAnalyzer.applying')}</>
+                          ) : (
+                            <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
+                          )}
+                        </Button>
+                      )}
+                      {appliedChanges?.diet?.length > 0 && (
+                        <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          {t('progressAnalyzer.applied')}
+                        </span>
+                      )}
+                      {!canApplyChanges && daysSinceLastAdjustment !== null && (
+                        <span className="text-xs text-amber-700 font-medium">
+                          🔒 {7 - daysSinceLastAdjustment}d
+                        </span>
+                      )}
+                    </div>
                     <ul className="space-y-1">
                       {analysisResult.nutrition_recommendations.map((rec, idx) => (
                         <li key={idx} className="text-xs text-orange-800 flex gap-2"><span>→</span><span>{rec}</span></li>
@@ -1290,13 +1317,40 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                   </div>
                 )}
 
-                {/* Raccomandazioni Allenamento - sempre visibili */}
+                {/* Raccomandazioni Allenamento - con pulsante applica */}
                 {analysisResult.workout_recommendations?.length > 0 && (
                   <div className="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-300">
-                    <h4 className="font-bold text-indigo-900 mb-2 text-sm flex items-center gap-2">
-                      <Dumbbell className="w-4 h-4" />
-                      💪 {t('progressAnalyzer.workoutRecommendations')}
-                    </h4>
+                    <div className="flex items-center justify-between mb-2">
+                      <h4 className="font-bold text-indigo-900 text-sm flex items-center gap-2">
+                        <Dumbbell className="w-4 h-4" />
+                        💪 {t('progressAnalyzer.workoutRecommendations')}
+                      </h4>
+                      {canApplyChanges && proposedChanges?.workout?.length > 0 && !appliedChanges?.workout?.length && (
+                        <Button 
+                          onClick={() => applyProposedChanges('workout')} 
+                          size="sm"
+                          className="bg-indigo-600 hover:bg-indigo-700" 
+                          disabled={isApplyingChanges}
+                        >
+                          {isApplyingChanges ? (
+                            <><Loader2 className="w-3 h-3 animate-spin mr-1" />{t('progressAnalyzer.applying')}</>
+                          ) : (
+                            <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
+                          )}
+                        </Button>
+                      )}
+                      {appliedChanges?.workout?.length > 0 && (
+                        <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" />
+                          {t('progressAnalyzer.applied')}
+                        </span>
+                      )}
+                      {!canApplyChanges && daysSinceLastAdjustment !== null && (
+                        <span className="text-xs text-amber-700 font-medium">
+                          🔒 {7 - daysSinceLastAdjustment}d
+                        </span>
+                      )}
+                    </div>
                     <ul className="space-y-1">
                       {analysisResult.workout_recommendations.map((rec, idx) => (
                         <li key={idx} className="text-xs text-indigo-800 flex gap-2"><span>→</span><span>{rec}</span></li>
