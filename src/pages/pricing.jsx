@@ -278,6 +278,18 @@ function PricingPageContent() {
       text: "Sono un tipo analitico e l'approccio scientifico di MyWellness mi ha conquistato. Dashboard con BMR, massa grassa, proiezioni peso... tutto calcolato con precisione. Il piano vegetariano è perfetto e la lista della spesa automatica mi fa risparmiare ore."
     },
     {
+      name: "Elena Kowalski",
+      role: "Avvocato Tributarista",
+      photo: "https://i.pravatar.cc/400?img=38",
+      text: "Ritmi lavorativi folli, cene con clienti, viaggi continui. MyWellness è l'unica app che è riuscita ad adattarsi al mio stile di vita caotico. Scatto foto dei pasti al ristorante e l'AI ricalcola tutto automaticamente. Ho perso 13kg mantenendo la mia vita sociale."
+    },
+    {
+      name: "Marcus Johnson",
+      role: "Personal Trainer Certificato",
+      photo: "https://i.pravatar.cc/400?img=52",
+      text: "Sono certificato da oltre 10 anni, e l'intelligenza artificiale di MyWellness genera schede migliori di quelle che creavo manualmente. La periodizzazione è scientifica e la progressione ottimale. Ho iniziato a usarla anche per i miei clienti - risparmio ore ogni settimana."
+    },
+    {
       name: "Anna Bianchi",
       role: "Insegnante Scuola Primaria",
       photo: "https://i.pravatar.cc/400?img=25",
