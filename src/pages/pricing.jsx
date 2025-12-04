@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
+import TestimonialsGrid from '@/components/pricing/TestimonialsGrid';
 
 function PricingPageContent() {
   const navigate = useNavigate();
