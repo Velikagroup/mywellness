@@ -347,23 +347,25 @@ export default function Dashboard() {
   const loadProgressPhotos = async () => {
     if (!user?.id) return;
     try {
-      // Usa filter con user_id per ottenere solo le foto dell'utente
       const rawPhotos = await base44.entities.ProgressPhoto.filter({ user_id: user.id }, '-created_date', 50);
       console.log('📸 Raw photos from API:', rawPhotos.length, 'total');
       console.log('📸 First raw photo structure:', rawPhotos.length > 0 ? JSON.stringify(rawPhotos[0], null, 2) : 'No photos');
       
-      // I dati dall'API sono flat (non dentro 'data')
+      // I dati possono essere nested in 'data' o flat - gestiamo entrambi i casi
       const normalizedPhotos = rawPhotos
-        .filter(p => p.photo_url && p.photo_url.trim() !== '')
-        .map(p => ({
-          id: p.id,
-          photo_url: p.photo_url,
-          date: p.date,
-          weight: p.weight,
-          notes: p.notes,
-          ai_analysis: p.ai_analysis,
-          user_id: p.user_id
-        }));
+        .map(p => {
+          const photoData = p.data || p;
+          return {
+            id: p.id,
+            photo_url: photoData.photo_url,
+            date: photoData.date,
+            weight: photoData.weight,
+            notes: photoData.notes,
+            ai_analysis: photoData.ai_analysis,
+            user_id: photoData.user_id
+          };
+        })
+        .filter(p => p.photo_url && p.photo_url.trim() !== '');
       
       console.log('📸 Normalized photos for user:', normalizedPhotos.length, 'photos');
       if (normalizedPhotos.length > 0) {
