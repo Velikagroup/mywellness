@@ -11,6 +11,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { createPageUrl } from '@/utils';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -33,6 +34,7 @@ const countryCodeToFlag = (code) => {
 const TRIAL_DAYS = 3;
 
 export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = 'base', selectedBillingPeriod = 'monthly' }) {
+  const { t } = useLanguage();
   const cardElementRef = useRef(null);
   const stripeLoadedRef = useRef(false);
   const cardMountedRef = useRef(false);
@@ -275,7 +277,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
 
   const handleApplyDiscount = async () => {
     if (!couponCode.trim()) {
-      setDiscountError("Inserisci un codice coupon.");
+      setDiscountError(t('checkout.couponPlaceholder'));
       setAppliedCoupon(null);
       return;
     }
@@ -566,12 +568,12 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             <Sparkles className="w-10 h-10 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900 mb-3">
-            Completa il Pagamento
+            {t('checkout.completePayment')}
           </h2>
           <p className="text-gray-600 text-base">
-            {selectedPlan === 'base' && 'Piano Base - Nutrizionale completo con dashboard scientifica'}
-            {selectedPlan === 'pro' && 'Piano Pro - Nutrizionale + Allenamento + Analisi AI'}
-            {selectedPlan === 'premium' && 'Piano Premium - Accesso completo a tutte le funzionalità'}
+            {selectedPlan === 'base' && t('checkout.planBase')}
+            {selectedPlan === 'pro' && t('checkout.planPro')}
+            {selectedPlan === 'premium' && t('checkout.planPremium')}
           </p>
           
           {affiliateDiscount && (
@@ -579,7 +581,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
               <div className="flex items-center justify-center gap-2">
                 <Sparkles className="w-5 h-5 text-purple-600" />
                 <span className="font-bold text-purple-700">
-                  🎁 Sconto Affiliato {affiliateDiscount.value}% sul primo mese!
+                  {t('checkout.affiliateDiscount').replace('{percent}', affiliateDiscount.value)}
                 </span>
               </div>
             </div>
@@ -590,7 +592,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
               <div className="flex items-center justify-center gap-2">
                 <Tag className="w-5 h-5 text-green-600" />
                 <span className="font-bold text-green-700">
-                  Sconto del {appliedCoupon.discount_value}% applicato! ({appliedCoupon.code})
+                  {t('checkout.discountApplied').replace('{percent}', appliedCoupon.discount_value).replace('{code}', appliedCoupon.code)}
                 </span>
                 <button
                   onClick={() => {
@@ -652,14 +654,14 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
           <div className="space-y-4 pt-4 border-t border-gray-200/50">
             <div className="flex items-center gap-3">
               <FileText className="w-5 h-5 text-[#26847F]"/>
-              <h3 className="text-xl font-bold text-gray-800">Dettagli Principali</h3>
+              <h3 className="text-xl font-bold text-gray-800">{t('checkout.personalInfo')}</h3>
             </div>
             <div>
               <Label htmlFor="billingName" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Nome e Cognome
+                {t('checkout.fullName')}
               </Label>
               <Input
-                id="billingName" name="name" type="text" placeholder="Mario Rossi"
+                id="billingName" name="name" type="text" placeholder={t('checkout.fullNamePlaceholder')}
                 value={billingInfo.name} onChange={handleBillingInfoChange}
                 className="h-12 text-base bg-white"
                 autoComplete="name"
@@ -667,7 +669,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             </div>
             <div>
               <Label htmlFor="email" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Email
+                {t('checkout.email')}
               </Label>
               <Input
                 id="email" name="email" type="email"
@@ -679,7 +681,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             </div>
             <div>
               <Label htmlFor="phoneNumber" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Numero di Telefono
+                {t('checkout.phoneNumber')}
               </Label>
               <div className="flex items-center gap-2">
                 <Popover open={popoverOpen} onOpenChange={setPopoverOpen} modal={true}>
@@ -733,7 +735,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                   </PopoverContent>
                 </Popover>
                 <Input
-                  id="phoneNumber" name="tel-national" type="tel" placeholder="333 1234567"
+                  id="phoneNumber" name="tel-national" type="tel" placeholder={t('checkout.phonePlaceholder')}
                   value={phoneNumber} onChange={(e) => setPhoneNumber(e.target.value)}
                   className="h-12 text-base bg-white"
                   autoComplete="tel-national"
@@ -742,28 +744,28 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             </div>
 
             <div>
-              <Label htmlFor="address" className="text-sm font-semibold text-gray-700 mb-2 block">Indirizzo di Fatturazione</Label>
-              <Input id="address" name="address" type="text" placeholder="Via Roma, 123"
+              <Label htmlFor="address" className="text-sm font-semibold text-gray-700 mb-2 block">{t('checkout.billingAddress')}</Label>
+              <Input id="address" name="address" type="text" placeholder={t('checkout.addressPlaceholder')}
                 value={billingInfo.address} onChange={handleBillingInfoChange}
                 className="h-12 text-base bg-white" autoComplete="address-line1"
               />
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div>
-                <Label htmlFor="city" className="text-sm font-semibold text-gray-700 mb-2 block">Città</Label>
-                <Input id="city" name="city" type="text" placeholder="Milano"
+                <Label htmlFor="city" className="text-sm font-semibold text-gray-700 mb-2 block">{t('checkout.city')}</Label>
+                <Input id="city" name="city" type="text" placeholder={t('checkout.cityPlaceholder')}
                   value={billingInfo.city} onChange={handleBillingInfoChange}
                   className="h-12 text-base bg-white" autoComplete="address-level2" />
               </div>
               <div>
-                <Label htmlFor="zip" className="text-sm font-semibold text-gray-700 mb-2 block">CAP</Label>
-                <Input id="zip" name="zip" type="text" placeholder="20121"
+                <Label htmlFor="zip" className="text-sm font-semibold text-gray-700 mb-2 block">{t('checkout.zip')}</Label>
+                <Input id="zip" name="zip" type="text" placeholder={t('checkout.zipPlaceholder')}
                   value={billingInfo.zip} onChange={handleBillingInfoChange}
                   className="h-12 text-base bg-white" autoComplete="postal-code" />
               </div>
             </div>
             <div>
-              <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">Paese</Label>
+              <Label htmlFor="country" className="text-sm font-semibold text-gray-700 mb-2 block">{t('checkout.country')}</Label>
               <Popover open={countryPopoverOpen} onOpenChange={setCountryPopoverOpen} modal={true}>
                 <PopoverTrigger asChild>
                   <Button
@@ -774,7 +776,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                   >
                     {billingInfo.country
                       ? countries.find((country) => country.code === billingInfo.country)?.name
-                      : "Seleziona paese..."}
+                      : t('checkout.selectCountry')}
                     <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
                   </Button>
                 </PopoverTrigger>
@@ -815,7 +817,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                 onClick={() => setShowBillingFields(!showBillingFields)}
               >
                 <Briefcase className="w-5 h-5" />
-                <span>{showBillingFields ? 'Nascondi dati fiscali' : '💼 Hai bisogno della fattura? Inserisci qui i dati fiscali'}</span>
+                <span>{showBillingFields ? t('checkout.hideFiscalData') : t('checkout.needInvoice')}</span>
               </div>
 
               {showBillingFields && (
@@ -828,21 +830,21 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                   >
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="private" id="r-private" />
-                      <Label htmlFor="r-private">Privato</Label>
+                      <Label htmlFor="r-private">{t('checkout.private')}</Label>
                     </div>
                     <div className="flex items-center space-x-2">
                       <RadioGroupItem value="company" id="r-company" />
-                      <Label htmlFor="r-company">Azienda</Label>
+                      <Label htmlFor="r-company">{t('checkout.company')}</Label>
                     </div>
                   </RadioGroup>
 
                   {billingInfo.billingType === 'company' && (
                     <div>
                       <Label htmlFor="companyName" className="text-sm font-semibold text-gray-700 mb-2 block">
-                        Nome Azienda
+                        {t('checkout.companyName')}
                       </Label>
                       <Input
-                        id="companyName" name="companyName" type="text" placeholder="MyWellness S.R.L."
+                        id="companyName" name="companyName" type="text" placeholder={t('checkout.companyNamePlaceholder')}
                         value={billingInfo.companyName} onChange={handleBillingInfoChange}
                         className="h-12 text-base bg-white"
                       />
@@ -851,11 +853,11 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
 
                   <div>
                     <Label htmlFor="taxId" className="text-sm font-semibold text-gray-700 mb-2 block">
-                      {billingInfo.billingType === 'private' ? 'Codice Fiscale' : 'Partita IVA'}
+                      {billingInfo.billingType === 'private' ? t('checkout.fiscalCode') : t('checkout.vatNumber')}
                     </Label>
                     <Input
                       id="taxId" name="taxId" type="text"
-                      placeholder={billingInfo.billingType === 'private' ? 'RSSMRA80A01H501U' : '01234567890'}
+                      placeholder={billingInfo.billingType === 'private' ? t('checkout.fiscalCodePlaceholder') : t('checkout.vatNumberPlaceholder')}
                       value={billingInfo.taxId} onChange={handleBillingInfoChange}
                       className="h-12 text-base bg-white"
                     />
@@ -864,10 +866,10 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                   {billingInfo.billingType === 'company' && (
                     <div>
                       <Label htmlFor="pecSdi" className="text-sm font-semibold text-gray-700 mb-2 block">
-                        PEC o Codice SDI <span className="text-gray-400 font-normal">(Opzionale)</span>
+                        {t('checkout.pecSdi')} <span className="text-gray-400 font-normal">{t('checkout.optional')}</span>
                       </Label>
                       <Input
-                        id="pecSdi" name="pecSdi" type="text" placeholder="tuamail@pec.it o XXXXXXX"
+                        id="pecSdi" name="pecSdi" type="text" placeholder={t('checkout.pecSdiPlaceholder')}
                         value={billingInfo.pecSdi} onChange={handleBillingInfoChange}
                         className="h-12 text-base bg-white"
                       />
@@ -882,7 +884,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
           <div className="space-y-4 pt-4 border-t border-gray-200/50">
             <div className="flex items-center gap-3 mb-4">
               <CreditCard className="w-5 h-5 text-[#26847F]"/>
-              <h3 className="text-xl font-bold text-gray-800">Metodo di Pagamento</h3>
+              <h3 className="text-xl font-bold text-gray-800">{t('checkout.paymentMethod')}</h3>
             </div>
             
             <div className="space-y-3">
@@ -899,7 +901,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                 }`}>
                   <CreditCard className={`w-6 h-6 ${paymentMethod === 'card' ? 'text-[#26847F]' : 'text-gray-400'}`} />
                 </div>
-                <p className="text-base font-semibold text-gray-800">Carta di Credito / Debito</p>
+                <p className="text-base font-semibold text-gray-800">{t('checkout.cardCredit')}</p>
               </button>
 
               {showApplePay && (
@@ -923,8 +925,8 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                     </svg>
                   </div>
                   <div className="text-left">
-                    <p className="text-base font-semibold text-gray-800">Apple Pay</p>
-                    <p className="text-xs text-gray-500">Pagamento veloce e sicuro</p>
+                    <p className="text-base font-semibold text-gray-800">{t('checkout.applePay')}</p>
+                    <p className="text-xs text-gray-500">{t('checkout.applePayDesc')}</p>
                   </div>
                 </button>
               )}
@@ -950,8 +952,8 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                     </svg>
                   </div>
                   <div className="text-left">
-                    <p className="text-base font-semibold text-gray-800">Google Pay</p>
-                    <p className="text-xs text-gray-500">Pagamento veloce e sicuro</p>
+                    <p className="text-base font-semibold text-gray-800">{t('checkout.googlePay')}</p>
+                    <p className="text-xs text-gray-500">{t('checkout.googlePayDesc')}</p>
                   </div>
                 </button>
               )}
@@ -962,7 +964,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             <div className="space-y-4 pt-4">
               <div>
                 <Label htmlFor="card-element" className="text-sm font-semibold text-gray-700 mb-3 block">
-                  💳 Inserisci i Dati della Carta
+                  {t('checkout.enterCardDetails')}
                 </Label>
                 <div 
                   id="card-element-container"
@@ -971,7 +973,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                 />
                 <p className="text-xs text-gray-500 mt-3 flex items-center gap-1.5">
                   <Shield className="w-3.5 h-3.5" />
-                  Pagamento sicuro gestito da Stripe. I tuoi dati sono protetti con crittografia SSL.
+                  {t('checkout.securePayment')}
                 </p>
               </div>
             </div>
@@ -981,7 +983,7 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             <div className="space-y-4 pt-4">
               <div className="flex items-center justify-center p-6 bg-gray-50 rounded-xl">
                 <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-[#26847F] mr-3"></div>
-                <span className="text-gray-600">Caricamento sistema di pagamento...</span>
+                <span className="text-gray-600">{t('checkout.loadingPayment')}</span>
               </div>
             </div>
           )}
@@ -990,10 +992,10 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
             <div className="p-6 bg-gradient-to-br from-[#e9f6f5] to-teal-50 rounded-xl border border-[#26847F]/20">
               <div className="flex items-center gap-3 mb-2">
                 <CheckCircle className="w-5 h-5 text-[#26847F]" />
-                <p className="font-semibold text-gray-900">Metodo Sicuro e Veloce</p>
+                <p className="font-semibold text-gray-900">{t('checkout.fastSecureMethod')}</p>
               </div>
               <p className="text-sm text-gray-700">
-                Cliccando sul bottone sopra, si aprirà {paymentMethod === 'apple_pay' ? 'Apple Pay' : 'Google Pay'} per completare il pagamento in modo sicuro.
+                {t('checkout.walletOpens').replace('{wallet}', paymentMethod === 'apple_pay' ? 'Apple Pay' : 'Google Pay')}
               </p>
             </div>
           )}
@@ -1003,14 +1005,14 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
               <div className="space-y-6 pt-6 border-t border-gray-200/50">
                 <div className="space-y-2">
                   <Label htmlFor="couponCode" className="text-sm font-semibold text-gray-700">
-                    Codice Sconto (Opzionale)
+                    {t('checkout.couponCode')}
                   </Label>
                   <div className="relative">
-                    <Input id="couponCode" type="text" placeholder="Es. PROMO20" value={couponCode}
+                    <Input id="couponCode" type="text" placeholder={t('checkout.couponPlaceholder')} value={couponCode}
                       onChange={(e) => { setCouponCode(e.target.value); setDiscountError(''); }} className="h-12 text-base pr-28 bg-white" />
                     <Button type="button" onClick={handleApplyDiscount} disabled={isApplyingCoupon || !couponCode.trim()}
                       className={cn("absolute right-2 top-1/2 -translate-y-1/2 h-9", couponCode.trim() ? "bg-[#26847F] text-white hover:bg-[#1f6b66]" : "bg-gray-200 text-gray-700 cursor-not-allowed")}>
-                        {isApplyingCoupon ? 'Applicando...' : 'Applica'}
+                        {isApplyingCoupon ? t('checkout.applyingCoupon') : t('checkout.applyCoupon')}
                     </Button>
                   </div>
                   {discountError && <p className="text-red-500 text-sm mt-1">{discountError}</p>}
@@ -1019,20 +1021,20 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                 <div className="space-y-3 pt-4">
                   <div className="flex items-start space-x-3">
                     <Checkbox id="terms" checked={termsAccepted} onCheckedChange={setTermsAccepted} />
-                    <Label htmlFor="terms" className="text-xs text-gray-600">
-                      Accetto i <a href={createPageUrl('Terms')} target="_blank" className="underline hover:text-[#26847F]">Termini e Condizioni</a> del servizio.*
-                    </Label>
+                    <Label htmlFor="terms" className="text-xs text-gray-600" dangerouslySetInnerHTML={{
+                      __html: t('checkout.termsAccept').replace('{link}', `<a href="${createPageUrl('Terms')}" target="_blank" class="underline hover:text-[#26847F]">${t('checkout.termsLink')}</a>`)
+                    }} />
                   </div>
                   <div className="flex items-start space-x-3">
                     <Checkbox id="privacy" checked={privacyAccepted} onCheckedChange={setPrivacyAccepted} />
-                    <Label htmlFor="privacy" className="text-xs text-gray-600">
-                      Dichiaro di aver letto la <a href={createPageUrl('Privacy')} target="_blank" className="underline hover:text-[#26847F]">Privacy Policy</a> e acconsento al trattamento dei dati.*
-                    </Label>
+                    <Label htmlFor="privacy" className="text-xs text-gray-600" dangerouslySetInnerHTML={{
+                      __html: t('checkout.privacyAccept').replace('{link}', `<a href="${createPageUrl('Privacy')}" target="_blank" class="underline hover:text-[#26847F]">${t('checkout.privacyLink')}</a>`)
+                    }} />
                   </div>
                   <div className="flex items-start space-x-3">
                     <Checkbox id="marketing" checked={marketingConsent} onCheckedChange={setMarketingConsent} />
                     <Label htmlFor="marketing" className="text-xs text-gray-600">
-                      Acconsento a ricevere comunicazioni di marketing e newsletter.
+                      {t('checkout.marketingConsent')}
                     </Label>
                   </div>
                 </div>
@@ -1040,28 +1042,31 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
 
               <div className="flex items-center justify-center gap-2 text-xs sm:text-sm text-gray-500 pt-2">
                 <Shield className="w-4 h-4 flex-shrink-0" />
-                <span className="text-center">Pagamento sicuro e crittografato</span>
+                <span className="text-center">{t('checkout.encryptedPayment')}</span>
               </div>
 
               <div className="bg-gray-50/50 rounded-xl p-4 space-y-2">
                 {activeDiscount && (
                   <div className="flex justify-between text-sm text-gray-500">
-                    <span>Prezzo originale</span>
+                    <span>{t('checkout.originalPrice')}</span>
                     <span className="line-through">€{selectedBillingPeriod === 'monthly' ? monthlyPrice.toFixed(2) : yearlyPrice.toFixed(2)}</span>
                   </div>
                 )}
                 {activeDiscount && (
                   <div className="flex justify-between text-sm text-green-600">
-                    <span>Sconto {activeDiscount.value}%</span>
+                    <span>{t('checkout.discount').replace('{percent}', activeDiscount.value)}</span>
                     <span>-€{(selectedBillingPeriod === 'monthly' ? (monthlyPrice - discountedMonthlyPrice) : (yearlyPrice - discountedYearlyPrice)).toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-sm sm:text-base text-gray-700 font-semibold pt-2 border-t border-gray-200">
-                  <span>Pagamento Oggi</span>
+                  <span>{t('checkout.paymentToday')}</span>
                   <span>€{finalPrice.toFixed(2)}</span>
                 </div>
                 <p className="text-xs text-gray-500 text-center pt-2">
-                  Piano {selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1)} - {selectedBillingPeriod === 'monthly' ? 'Mensile' : 'Annuale'}
+                  {t('checkout.planLabel')
+                    .replace('{plan}', selectedPlan.charAt(0).toUpperCase() + selectedPlan.slice(1))
+                    .replace('{billing}', selectedBillingPeriod === 'monthly' ? t('checkout.planMonthly') : t('checkout.planYearly'))
+                  }
                 </p>
               </div>
 
@@ -1073,15 +1078,18 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
                 {isSaving ? (
                   <div className="flex items-center gap-2">
                     <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                    Attivazione...
+                    {t('checkout.activating')}
                   </div>
                 ) : (
-                  `Paga €${finalPrice.toFixed(2)} Ora`
+                  t('checkout.payNow').replace('{amount}', finalPrice.toFixed(2))
                 )}
               </Button>
 
               <p className="text-xs text-center text-gray-500 mt-4 px-2">
-                Addebito immediato di €{finalPrice.toFixed(2)}. {activeDiscount && selectedBillingPeriod === 'monthly' && 'Dal secondo mese prezzo pieno. '}Accesso illimitato a tutte le funzionalità.
+                {t('checkout.chargeNote')
+                  .replace('{amount}', finalPrice.toFixed(2))
+                  .replace('{discountNote}', activeDiscount && selectedBillingPeriod === 'monthly' ? t('checkout.fullPriceFromSecond') : '')
+                }
               </p>
             </>
           )}
