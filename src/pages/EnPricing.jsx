@@ -2,16 +2,11 @@ import React, { useEffect } from 'react';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
 import PricingPageContent from '@/components/pricing/PricingPageContent.jsx';
 
-// SEO-friendly English pricing page at /EnPricing
+// Redirect to main /pricing page (English is now default)
 export default function EnPricing() {
   useEffect(() => {
-    window.scrollTo(0, 0);
-    localStorage.setItem('preferred_language', 'en');
+    window.location.replace('/pricing');
   }, []);
 
-  return (
-    <LanguageProvider forcedLanguage="en">
-      <PricingPageContent />
-    </LanguageProvider>
-  );
+  return null;
 }

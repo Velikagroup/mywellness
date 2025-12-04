@@ -1381,8 +1381,13 @@ function PricingPageContent() {
 }
 
 export default function PricingPage() {
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+    localStorage.setItem('preferred_language', 'en');
+  }, []);
+
   return (
-    <LanguageProvider>
+    <LanguageProvider forcedLanguage="en">
       <PricingPageContent />
     </LanguageProvider>
   );

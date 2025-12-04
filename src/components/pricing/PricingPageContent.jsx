@@ -11,8 +11,8 @@ import { useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageCont
 // Map language code to pricing page URL
 const getPricingPageUrl = (langCode) => {
   const langPricingPages = {
-    'it': '/pricing',
-    'en': '/EnPricing',
+    'en': '/pricing',
+    'it': '/ItPricing',
     'es': '/EsPricing',
     'pt': '/PtPricing',
     'de': '/DePricing',
@@ -23,8 +23,8 @@ const getPricingPageUrl = (langCode) => {
 
 const getHomePageUrl = (langCode) => {
   const langHomePages = {
-    'it': '/',
-    'en': '/EnHome',
+    'en': '/',
+    'it': '/ItHome',
     'es': '/EsHome',
     'pt': '/PtHome',
     'de': '/DeHome',
@@ -35,8 +35,8 @@ const getHomePageUrl = (langCode) => {
 
 const getQuizPageUrl = (langCode) => {
   const langQuizPages = {
-    'it': '/Quiz',
-    'en': '/EnQuiz',
+    'en': '/Quiz',
+    'it': '/ItQuiz',
     'es': '/EsQuiz',
     'pt': '/PtQuiz',
     'de': '/DeQuiz',
@@ -47,8 +47,8 @@ const getQuizPageUrl = (langCode) => {
 
 const getBlogPageUrl = (langCode) => {
   const langBlogPages = {
-    'it': '/Blog',
-    'en': '/EnBlog',
+    'en': '/Blog',
+    'it': '/ItBlog',
     'es': '/EsBlog',
     'pt': '/PtBlog',
     'de': '/DeBlog',

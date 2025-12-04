@@ -82,6 +82,7 @@ function LayoutContent({ children }) {
     createPageUrl('ApplePayVerification'),
     createPageUrl('NotFound'),
     // Localized pricing pages
+    createPageUrl('ItPricing'),
     createPageUrl('EsPricing'),
     createPageUrl('EnPricing'),
     createPageUrl('PtPricing'),

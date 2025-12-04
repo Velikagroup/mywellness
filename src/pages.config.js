@@ -31,6 +31,7 @@ import EnPricing from './pages/EnPricing';
 import PtPricing from './pages/PtPricing';
 import DePricing from './pages/DePricing';
 import FrPricing from './pages/FrPricing';
+import ItPricing from './pages/ItPricing';
 import __Layout from './Layout.jsx';
 
 
@@ -68,6 +69,7 @@ export const PAGES = {
     "PtPricing": PtPricing,
     "DePricing": DePricing,
     "FrPricing": FrPricing,
+    "ItPricing": ItPricing,
 }
 
 export const pagesConfig = {
