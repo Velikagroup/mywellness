@@ -81,6 +81,12 @@ function LayoutContent({ children }) {
     createPageUrl('Privacy'),
     createPageUrl('ApplePayVerification'),
     createPageUrl('NotFound'),
+    // Localized pricing pages
+    createPageUrl('EsPricing'),
+    createPageUrl('EnPricing'),
+    createPageUrl('PtPricing'),
+    createPageUrl('DePricing'),
+    createPageUrl('FrPricing'),
     '/',
     // Add localized versions
     ...['it', 'en', 'es', 'pt', 'de', 'fr'].flatMap(lang => [
