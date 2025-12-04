@@ -19,11 +19,11 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   const [checkoutPlan, setCheckoutPlan] = useState('base');
   const [checkoutBilling, setCheckoutBilling] = useState('monthly');
 
-  const plans = [
+  const getPlans = () => [
     {
       id: 'standard',
-      name: 'Standard',
-      description: 'Piano gratuito per monitorare i tuoi progressi',
+      name: t('upgradeModal.planStandard'),
+      description: t('upgradeModal.planStandardDesc'),
       monthlyPrice: 0,
       yearlyPrice: 0,
       yearlyMonthly: 0,
@@ -32,17 +32,17 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       iconColor: 'text-gray-600',
       isFree: true,
       features: [
-        'Dashboard scientifica completa',
-        'Calcolo BMR e massa grassa',
-        'Tracking peso e progressi',
-        'Conta calorie istantaneo',
-        'Impostazioni profilo'
+        t('upgradeModal.featureStd1'),
+        t('upgradeModal.featureStd2'),
+        t('upgradeModal.featureStd3'),
+        t('upgradeModal.featureStd4'),
+        t('upgradeModal.featureStd5')
       ]
     },
     {
       id: 'base',
-      name: 'Base',
-      description: 'Perfetto per iniziare il tuo percorso nutrizionale',
+      name: t('upgradeModal.planBase'),
+      description: t('upgradeModal.planBaseDesc'),
       monthlyPrice: 19,
       yearlyPrice: 182.4,
       yearlyMonthly: 15.2,
@@ -50,18 +50,18 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       iconBg: 'bg-blue-100',
       iconColor: 'text-blue-600',
       features: [
-        'Tutto del Piano Standard',
-        'Piano nutrizionale settimanale personalizzato',
-        '4 generazioni piano nutrizionale/mese',
-        'Ricette con foto AI e istruzioni',
-        'Sostituzione ingredienti AI',
-        'Lista della spesa automatica'
+        t('upgradeModal.featureBase1'),
+        t('upgradeModal.featureBase2'),
+        t('upgradeModal.featureBase3'),
+        t('upgradeModal.featureBase4'),
+        t('upgradeModal.featureBase5'),
+        t('upgradeModal.featureBase6')
       ]
     },
     {
       id: 'pro',
-      name: 'Pro',
-      description: 'Il piano più completo per risultati garantiti',
+      name: t('upgradeModal.planPro'),
+      description: t('upgradeModal.planProDesc'),
       monthlyPrice: 29,
       yearlyPrice: 278.4,
       yearlyMonthly: 23.2,
@@ -69,50 +69,52 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
       iconBg: 'bg-gradient-to-br from-[#26847F] to-teal-500',
       iconColor: 'text-white',
       popular: true,
-      badge: '✅ PIÙ SCELTO ✅',
+      badge: t('upgradeModal.badgeMostChosen'),
       features: [
-        'Tutto del Piano Base',
-        '8 generazioni piano nutrizionale/mese',
-        'Piano di allenamento personalizzato',
-        '4 generazioni piano allenamento/mese',
-        'Workout con warm-up e cool-down',
-        'Schede adattive al tuo livello',
-        'Analisi AI dei pasti con foto',
-        'Ribilanciamento automatico calorie',
-        'Tracking allenamento'
+        t('upgradeModal.featurePro1'),
+        t('upgradeModal.featurePro2'),
+        t('upgradeModal.featurePro3'),
+        t('upgradeModal.featurePro4'),
+        t('upgradeModal.featurePro5'),
+        t('upgradeModal.featurePro6'),
+        t('upgradeModal.featurePro7'),
+        t('upgradeModal.featurePro8'),
+        t('upgradeModal.featurePro9')
       ]
     },
     {
       id: 'premium',
-      name: 'Premium',
-      description: 'Per chi vuole il massimo con AI avanzata',
+      name: t('upgradeModal.planPremium'),
+      description: t('upgradeModal.planPremiumDesc'),
       monthlyPrice: 39,
       yearlyPrice: 374.4,
       yearlyMonthly: 31.2,
       icon: Crown,
       iconBg: 'bg-purple-100',
       iconColor: 'text-purple-600',
-      badge: '💎 PIANO ESCLUSIVO',
+      badge: t('upgradeModal.badgeExclusive'),
       features: [
-        'Tutto del Piano Pro',
-        'Generazioni ILLIMITATE piani nutrizionali',
-        'Generazioni ILLIMITATE piani allenamento',
-        'Modifica schede AI per imprevisti',
-        'Analisi progressi con foto AI',
-        'Scansione etichette con Health Score AI',
-        'Supporto prioritario'
+        t('upgradeModal.featurePremium1'),
+        t('upgradeModal.featurePremium2'),
+        t('upgradeModal.featurePremium3'),
+        t('upgradeModal.featurePremium4'),
+        t('upgradeModal.featurePremium5'),
+        t('upgradeModal.featurePremium6'),
+        t('upgradeModal.featurePremium7')
       ]
     }
   ];
 
+  const plans = getPlans();
+
   React.useEffect(() => {
     if (targetPlan && isOpen && !showConfirmDialog) {
-      const plan = plans.find(p => p.id === targetPlan);
+      const plan = getPlans().find(p => p.id === targetPlan);
       if (plan) {
         handleSelectPlan(plan);
       }
     }
-  }, [targetPlan, isOpen]);
+  }, [targetPlan, isOpen, t]);
 
   if (!isOpen) return null;
 
