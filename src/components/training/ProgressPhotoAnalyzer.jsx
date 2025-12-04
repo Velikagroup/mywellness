@@ -52,6 +52,10 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
   const [currentAnalysisStep, setCurrentAnalysisStep] = useState('');
   const [completedSteps, setCompletedSteps] = useState([]);
   const [currentPhotoDescription, setCurrentPhotoDescription] = useState(null);
+  const [isApplyingNutritionRecs, setIsApplyingNutritionRecs] = useState(false);
+  const [isApplyingWorkoutRecs, setIsApplyingWorkoutRecs] = useState(false);
+  const [nutritionRecsApplied, setNutritionRecsApplied] = useState(false);
+  const [workoutRecsApplied, setWorkoutRecsApplied] = useState(false);
 
   const targetFileRefs = useRef({});
   const bodyFileRefs = useRef({});
