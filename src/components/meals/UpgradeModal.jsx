@@ -5,8 +5,10 @@ import { base44 } from '@/api/base44Client';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { createPageUrl } from '@/utils';
 import UpgradeCheckoutModal from '../modals/UpgradeCheckoutModal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', targetPlan = null }) {
+  const { t } = useLanguage();
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedPlanToUpgrade, setSelectedPlanToUpgrade] = useState(null);
@@ -267,14 +269,14 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
             <div className="text-center mb-12">
               <div className="inline-block bg-blue-50 border border-blue-200 rounded-full px-6 py-2 mb-4">
                 <p className="text-sm font-semibold text-blue-800">
-                  Piano Attuale: <span className="capitalize">{currentPlan === 'trial' ? 'Standard' : currentPlan}</span>
+                  {t('upgradeModal.currentPlan')} <span className="capitalize">{currentPlan === 'trial' ? 'Standard' : currentPlan}</span>
                 </p>
               </div>
               <h2 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
-                Scegli <span className="gradient-text">il Tuo Piano</span>
+                {t('upgradeModal.chooseYourPlan').split(' ').slice(0, -2).join(' ')} <span className="gradient-text">{t('upgradeModal.chooseYourPlan').split(' ').slice(-2).join(' ')}</span>
               </h2>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-                Inizia subito con 3 giorni gratuiti. Cancella quando vuoi, senza vincoli.
+                {t('upgradeModal.startImmediately')}
               </p>
             </div>
 
@@ -288,7 +290,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Mensile
+                  {t('upgradeModal.monthly')}
                 </button>
                 <button
                   onClick={() => setBillingCycle('yearly')}
@@ -298,9 +300,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                       : 'text-gray-600 hover:text-gray-900'
                   }`}
                 >
-                  Annuale
+                  {t('upgradeModal.yearly')}
                   <span className="absolute -top-2 -right-2 bg-red-500 text-white text-xs px-2 py-0.5 rounded-full font-bold">
-                    -20%
+                    {t('upgradeModal.save20')}
                   </span>
                 </button>
               </div>
@@ -342,25 +344,25 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                         {plan.isFree ? (
                           <div>
                             <div className="text-4xl font-black text-gray-900">
-                              Gratis
+                              {t('upgradeModal.free')}
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">Per sempre</div>
+                            <div className="text-sm text-gray-600 mt-1">{t('upgradeModal.forever')}</div>
                           </div>
                         ) : billingCycle === 'monthly' ? (
                           <div>
                             <div className="text-4xl font-black text-gray-900">
                               €{plan.monthlyPrice}
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">/mese</div>
+                            <div className="text-sm text-gray-600 mt-1">{t('upgradeModal.perMonth')}</div>
                           </div>
                         ) : (
                           <div>
                             <div className="text-4xl font-black text-gray-900">
                               €{plan.yearlyMonthly}
                             </div>
-                            <div className="text-sm text-gray-600 mt-1">/mese</div>
+                            <div className="text-sm text-gray-600 mt-1">{t('upgradeModal.perMonth')}</div>
                             <div className="text-xs text-green-600 font-semibold mt-1">
-                              Risparmi €{((plan.monthlyPrice * 12) - plan.yearlyPrice).toFixed(0)}/anno
+                              {t('upgradeModal.save').replace('{amount}', ((plan.monthlyPrice * 12) - plan.yearlyPrice).toFixed(0))}
                             </div>
                           </div>
                         )}
@@ -380,7 +382,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                           disabled
                           className="w-full h-12 text-base font-bold bg-gray-200 text-gray-500 cursor-not-allowed rounded-xl"
                         >
-                          Piano Attuale
+                          {t('upgradeModal.currentPlanBadge')}
                         </Button>
                       ) : (
                         <Button
@@ -391,7 +393,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                               : 'bg-gray-900 hover:bg-gray-800 text-white'
                           }`}
                         >
-                          Passa a {plan.name}
+                          {t('upgradeModal.switchTo').replace('{plan}', plan.name)}
                         </Button>
                       )}
                     </div>
@@ -402,7 +404,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
 
             <div className="text-center mt-12">
               <p className="text-sm text-gray-500">
-                💳 Pagamento sicuro • 🔒 Cancellazione facile • ✅ Garanzia 30 giorni
+                {t('upgradeModal.securePayment')}
               </p>
             </div>
           </div>
@@ -415,9 +417,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
           <DialogHeader>
             <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
               {pricingInfo?.isDowngrade ? (
-                <><TrendingDown className="w-5 h-5 text-orange-600" /> Conferma Downgrade</>
+                <><TrendingDown className="w-5 h-5 text-orange-600" /> {t('upgradeModal.confirmDowngrade')}</>
               ) : (
-                <><TrendingUp className="w-5 h-5 text-green-600" /> Conferma Upgrade Immediato</>
+                <><TrendingUp className="w-5 h-5 text-green-600" /> {t('upgradeModal.confirmUpgrade')}</>
               )}
             </DialogTitle>
           </DialogHeader>
@@ -440,37 +442,37 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                   {isCalculating ? (
                     <div className="flex items-center justify-center py-4">
                       <Loader2 className="w-6 h-6 text-[var(--brand-primary)] animate-spin" />
-                      <span className="ml-2 text-sm text-gray-600">Calcolo in corso...</span>
+                      <span className="ml-2 text-sm text-gray-600">{t('upgradeModal.calculating')}</span>
                     </div>
                   ) : pricingInfo && (
                     <div className="space-y-3 pt-3 border-t border-[#26847F]/20">
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Piano attuale:</span>
+                        <span className="text-gray-600">{t('upgradeModal.currentPlanLabel')}</span>
                         <span className="font-semibold text-gray-900 capitalize">
-                          {pricingInfo.currentPlan} ({pricingInfo.currentBillingPeriod === 'yearly' ? 'Annuale' : 'Mensile'})
+                          {pricingInfo.currentPlan} ({pricingInfo.currentBillingPeriod === 'yearly' ? t('upgradeModal.yearly') : t('upgradeModal.monthly')})
                         </span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-gray-600">Nuovo piano:</span>
+                        <span className="text-gray-600">{t('upgradeModal.newPlanLabel')}</span>
                         <span className="font-semibold text-gray-900">€{pricingInfo.newPlanPrice.toFixed(2)}</span>
                       </div>
                       {!pricingInfo.isDowngrade && (
                         <>
                           {pricingInfo.creditFromCurrentPlan > 0 && (
                             <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Credito residuo ({pricingInfo.percentageRemaining}%):</span>
+                              <span className="text-gray-600">{t('upgradeModal.creditRemaining').replace('{percentage}', pricingInfo.percentageRemaining)}</span>
                               <span className="font-semibold text-green-600">-€{pricingInfo.creditFromCurrentPlan.toFixed(2)}</span>
                             </div>
                           )}
                           {pricingInfo.affiliateCreditApplied > 0 && (
                             <div className="flex justify-between text-sm">
-                              <span className="text-gray-600">Credito Affiliazione:</span>
+                              <span className="text-gray-600">{t('upgradeModal.affiliateCredit')}</span>
                               <span className="font-semibold text-purple-600">-€{pricingInfo.affiliateCreditApplied.toFixed(2)}</span>
                             </div>
                           )}
                           <div className="h-px bg-gray-300"></div>
                           <div className="flex justify-between items-center">
-                            <span className="font-bold text-gray-900">Da pagare ora:</span>
+                            <span className="font-bold text-gray-900">{t('upgradeModal.payNow')}</span>
                             <span className="font-black text-2xl text-[#26847F]">
                               €{pricingInfo.amountToPay.toFixed(2)}
                             </span>
@@ -486,12 +488,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                     <div className="flex items-start gap-3">
                       <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
                       <div className="text-sm text-orange-900">
-                        <p className="font-semibold mb-2">📅 Downgrade Programmato:</p>
+                        <p className="font-semibold mb-2">{t('upgradeModal.scheduledDowngrade')}</p>
                         <ul className="space-y-1 text-orange-800">
-                          <li>• Nessun addebito immediato</li>
-                          <li>• Continuerai a usare il piano attuale fino alla fine del periodo</li>
-                          <li>• Il nuovo piano sarà attivo dal prossimo rinnovo</li>
-                          <li>• Non riceverai rimborsi per il periodo corrente</li>
+                          <li>• {t('upgradeModal.noImmediateCharge')}</li>
+                          <li>• {t('upgradeModal.continueCurrentUntilEnd')}</li>
+                          <li>• {t('upgradeModal.newPlanActiveNextRenewal')}</li>
+                          <li>• {t('upgradeModal.noRefunds')}</li>
                         </ul>
                       </div>
                     </div>
@@ -501,12 +503,12 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                     <div className="flex items-start gap-3">
                       <AlertCircle className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" />
                       <div className="text-sm text-blue-900">
-                        <p className="font-semibold mb-2">⚡ Upgrade Immediato:</p>
+                        <p className="font-semibold mb-2">{t('upgradeModal.immediateUpgrade')}</p>
                         <ul className="space-y-1 text-blue-800">
-                          <li>• Il piano verrà aggiornato immediatamente</li>
-                          <li>• La carta verrà addebitata SUBITO per la differenza</li>
-                          <li>• Avrai accesso immediato a tutte le nuove funzionalità</li>
-                          <li>• Il credito del piano attuale viene scalato automaticamente</li>
+                          <li>• {t('upgradeModal.planUpgradedImmediately')}</li>
+                          <li>• {t('upgradeModal.cardChargedNow')}</li>
+                          <li>• {t('upgradeModal.immediateAccessFeatures')}</li>
+                          <li>• {t('upgradeModal.creditAutoDeducted')}</li>
                         </ul>
                       </div>
                     </div>
@@ -515,9 +517,9 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
 
                 <div className="bg-amber-50 border border-amber-200 rounded-xl p-4">
                   <p className="text-xs text-amber-800 font-medium">
-                    💳 {pricingInfo?.isDowngrade 
-                      ? 'Nessun addebito ora. Il cambio sarà effettivo al prossimo rinnovo.' 
-                      : `La tua carta salvata verrà addebitata di €${pricingInfo?.amountToPay?.toFixed(2) || '0.00'} immediatamente.`
+                    {pricingInfo?.isDowngrade 
+                      ? t('upgradeModal.noChargeDowngrade')
+                      : t('upgradeModal.chargeInfo').replace('{amount}', pricingInfo?.amountToPay?.toFixed(2) || '0.00')
                     }
                   </p>
                 </div>
@@ -531,7 +533,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                     }}
                     className="flex-1"
                   >
-                    Annulla
+                    {t('upgradeModal.cancel')}
                   </Button>
                   <Button
                     onClick={handleConfirmUpgrade}
@@ -541,14 +543,14 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                     {isUpgrading ? (
                       <>
                         <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                        Elaborazione...
+                        {t('upgradeModal.processing')}
                       </>
                     ) : pricingInfo?.requiresCheckout ? (
-                      'Continua al Pagamento'
+                      t('upgradeModal.continueToPayment')
                     ) : pricingInfo?.isDowngrade ? (
-                      'Conferma Downgrade'
+                      t('upgradeModal.confirmDowngradeBtn')
                     ) : (
-                      `Conferma e Addebita €${pricingInfo?.amountToPay?.toFixed(2) || '0.00'}`
+                      t('upgradeModal.confirmAndCharge').replace('{amount}', pricingInfo?.amountToPay?.toFixed(2) || '0.00')
                     )}
                   </Button>
                 </div>
