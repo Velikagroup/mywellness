@@ -1454,21 +1454,21 @@ Se le raccomandazioni suggeriscono di aumentare proteine/riducerre carboidrati m
                         <Utensils className="w-4 h-4" />
                         🍽️ {t('progressAnalyzer.nutritionRecommendations')}
                       </h4>
-                      {canApplyChanges && proposedChanges?.diet?.length > 0 && !appliedChanges?.diet?.length && (
+                      {canApplyChanges && !nutritionRecsApplied && (
                         <Button 
-                          onClick={() => applyProposedChanges('diet')} 
+                          onClick={applyNutritionRecommendations} 
                           size="sm"
                           className="bg-orange-600 hover:bg-orange-700" 
-                          disabled={isApplyingChanges}
+                          disabled={isApplyingNutritionRecs}
                         >
-                          {isApplyingChanges ? (
+                          {isApplyingNutritionRecs ? (
                             <><Loader2 className="w-3 h-3 animate-spin mr-1" />{t('progressAnalyzer.applying')}</>
                           ) : (
                             <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
                           )}
                         </Button>
                       )}
-                      {appliedChanges?.diet?.length > 0 && (
+                      {nutritionRecsApplied && (
                         <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           {t('progressAnalyzer.applied')}
@@ -1496,21 +1496,21 @@ Se le raccomandazioni suggeriscono di aumentare proteine/riducerre carboidrati m
                         <Dumbbell className="w-4 h-4" />
                         💪 {t('progressAnalyzer.workoutRecommendations')}
                       </h4>
-                      {canApplyChanges && proposedChanges?.workout?.length > 0 && !appliedChanges?.workout?.length && (
+                      {canApplyChanges && !workoutRecsApplied && (
                         <Button 
-                          onClick={() => applyProposedChanges('workout')} 
+                          onClick={applyWorkoutRecommendations} 
                           size="sm"
                           className="bg-indigo-600 hover:bg-indigo-700" 
-                          disabled={isApplyingChanges}
+                          disabled={isApplyingWorkoutRecs}
                         >
-                          {isApplyingChanges ? (
+                          {isApplyingWorkoutRecs ? (
                             <><Loader2 className="w-3 h-3 animate-spin mr-1" />{t('progressAnalyzer.applying')}</>
                           ) : (
                             <><CheckCircle2 className="w-3 h-3 mr-1" />{t('progressAnalyzer.applyChanges')}</>
                           )}
                         </Button>
                       )}
-                      {appliedChanges?.workout?.length > 0 && (
+                      {workoutRecsApplied && (
                         <span className="text-xs bg-green-600 text-white px-2 py-1 rounded-full font-semibold flex items-center gap-1">
                           <CheckCircle2 className="w-3 h-3" />
                           {t('progressAnalyzer.applied')}
