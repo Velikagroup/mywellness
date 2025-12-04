@@ -125,114 +125,108 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
 
 CRITICAL: Generate ALL content in ${langName.toUpperCase()} language. Food names, cut types, and analysis MUST be in ${langName.toUpperCase()}.
 
-**PLANNED MEAL (Reference):**
-- Name: ${meal.name}
-- Planned Calories: ${meal.total_calories} kcal
-- Planned Protein: ${meal.total_protein}g | Carbs: ${meal.total_carbs}g | Fat: ${meal.total_fat}g
-
 **USER PROVIDED ${updatedPhotos.length} PHOTO(S) WITH DESCRIPTIONS:**
 ${photoDescriptions}
 
 ---
 
-## 🔬 SCIENTIFIC ANALYSIS PROTOCOL
+## 🔬 SCIENTIFIC ANALYSIS PROTOCOL - CONSISTENCY IS PARAMOUNT
 
-### **STEP 1: DIMENSIONAL REFERENCE CALIBRATION**
-1. Identify the PLATE in the photo
-2. Estimate plate diameter (standard: 24-26cm, large: 28-30cm, small: 20-22cm)
-3. Use the plate as a REFERENCE SCALE for all measurements
-4. If cutlery is visible, use it as secondary reference (fork: ~20cm, spoon: ~18cm)
-
-### **STEP 2: INGREDIENT-BY-INGREDIENT VISUAL ANALYSIS**
-For EVERY visible food item in the photo, perform this analysis:
-
-**A) IDENTIFICATION:**
-- Food name in ${langName.toUpperCase()} (e.g., specific protein/vegetable names)
-- Specific cut/type in ${langName.toUpperCase()}
-- Cooking method in ${langName.toUpperCase()}
-- Visible characteristics (color, texture, visible fat, marbling)
-
-**B) DETAILED NUTRITIONAL DESCRIPTION (CRITICAL):**
-For EACH ingredient, write a COMPREHENSIVE nutritional description in ${langName.toUpperCase()} (2-4 sentences) that includes:
-- What the food is and its nutritional characteristics
-- Main macronutrients and their health benefits
-- Specific nutritional notes about vitamins, minerals, or special properties
-- Cooking method impact on nutrition if relevant
-- Any special properties relevant to nutrition
-
-**C) DIMENSIONAL MEASUREMENT:**
-- Length (cm) - compare to plate diameter
-- Width (cm) - compare to plate diameter
-- Estimated thickness/height (cm) - from visual perspective
-- Estimated volume (cm³) - calculate from dimensions
-
-**D) WEIGHT ESTIMATION:**
-Use these density references:
-- Lean meat (chicken breast): ~1.0-1.1 g/cm³
-- Fatty meat (chicken thigh): ~1.0-1.05 g/cm³
-- Fish (salmon): ~1.0-1.05 g/cm³
-- Cooked vegetables: ~0.5-0.7 g/cm³
-- Raw vegetables: ~0.9-1.0 g/cm³
-- Avocado: ~0.9 g/cm³
-- Oils (visible): estimate ml from surface area and depth
-
-**E) NUTRITIONAL CALCULATION:**
-Based on estimated weight and food type, calculate:
-- Calories (kcal)
-- Protein (g)
-- Carbs (g)
-- Fat (g)
-
-Use verified nutritional databases (USDA, CREA, INRAN) for accurate values per 100g.
-
-### **STEP 3: USER DESCRIPTION INTEGRATION**
-**A) VISIBLE IN PHOTO:**
-- Cross-reference user descriptions with visual analysis
-- If user mentions quantities (e.g., "150g chicken"), PRIORITIZE user data if reasonable
-- If discrepancy, note it and explain
-
-**B) NOT VISIBLE IN PHOTO (Hidden/Described Only):**
-For ingredients user mentions but NOT visible in photo:
-- Cooking oils used (e.g., oil, butter mentioned in description)
-- Sauces/dressings not visible
-- Seasonings with calories (butter, honey, etc.)
-- INCLUDE DETAILED NUTRITIONAL DESCRIPTION in ${langName.toUpperCase()} for each hidden ingredient too
-
-Calculate these separately based ENTIRELY on user descriptions.
-
-### **STEP 4: COMPREHENSIVE TOTALS**
-Sum all components:
-- VISIBLE items (from photo analysis)
-- HIDDEN items (from user description)
-
-### **STEP 5: COMPARISON & ASSESSMENT**
-Compare actual vs planned:
-- Calculate delta for each macro
-- Assess adherence level
-- Provide scientific reasoning
+### ⚠️ CRITICAL CONSISTENCY RULES (FOLLOW EXACTLY):
+The SAME photo analyzed multiple times MUST produce CONSISTENT results (within ±10% variance).
+To achieve this, follow these STRICT measurement protocols:
 
 ---
 
-## 📊 REQUIRED OUTPUT STRUCTURE
+### **STEP 1: PLATE CALIBRATION (MANDATORY FIRST STEP)**
+1. **ALWAYS assume standard dinner plate = 26cm diameter** unless clearly smaller/larger
+2. Use plate diameter as ABSOLUTE reference for ALL measurements
+3. 1/4 of plate = ~6.5cm, 1/2 of plate = ~13cm, full plate = ~26cm
+4. If cutlery visible: fork = 20cm, knife = 24cm, spoon = 18cm
 
-Return a JSON object with this EXACT structure (all text fields in ${langName.toUpperCase()}):
+### **STEP 2: STANDARDIZED PORTION ESTIMATION**
+Use these STRICT reference weights for common foods (ALWAYS use these baselines):
+
+**PROTEINS (cooked weights):**
+- Chicken breast: palm-sized piece = 100-120g, full breast half = 150-180g
+- Chicken thigh: 1 piece with bone = 80-100g meat, boneless = 100-130g
+- Salmon/fish fillet: palm-sized = 120-150g, large fillet = 180-220g
+- Beef steak: palm-thick piece = 150-200g
+- Eggs: 1 whole = 50g, scrambled 2 eggs = 100g
+
+**CARBOHYDRATES (cooked weights):**
+- Rice: 1/4 plate coverage = 80-100g, 1/3 plate = 120-150g, 1/2 plate = 180-220g
+- Pasta: similar to rice measurements
+- Bread: 1 slice = 30-40g, thick slice = 50g
+- Potato: medium = 150g, large = 250g
+
+**VEGETABLES:**
+- Salad greens: full plate loose = 50-80g
+- Cooked vegetables: 1/4 plate = 80-100g, 1/2 plate = 150-200g
+- Avocado: 1/4 fruit = 40g, 1/2 fruit = 80g
+
+**FATS/OILS (ONLY if visibly glistening or user mentions):**
+- Visible oil sheen on food = 5-10ml (45-90 kcal)
+- Dressing on salad = 15-20ml if visible
+- DO NOT add hidden oils unless user specifically mentions cooking oil
+
+### **STEP 3: VISUAL MEASUREMENT PROTOCOL**
+For EACH ingredient, measure against the plate:
+1. What fraction of plate does it occupy? (1/8, 1/4, 1/3, 1/2, etc.)
+2. How thick/tall is it compared to a finger (1cm) or thumb (2cm)?
+3. Calculate: fraction × plate_area × thickness × density = weight
+
+### **STEP 4: NUTRITIONAL CALCULATION (USE USDA VALUES)**
+Standard values per 100g:
+- Chicken breast (cooked): 165 kcal, 31g protein, 0g carbs, 3.6g fat
+- Chicken thigh (cooked): 209 kcal, 26g protein, 0g carbs, 11g fat
+- Salmon (cooked): 208 kcal, 20g protein, 0g carbs, 13g fat
+- White rice (cooked): 130 kcal, 2.7g protein, 28g carbs, 0.3g fat
+- Mixed salad: 20 kcal, 1.5g protein, 3g carbs, 0.2g fat
+- Avocado: 160 kcal, 2g protein, 9g carbs, 15g fat
+- Olive oil: 884 kcal per 100ml (1 tbsp = 15ml = 133 kcal)
+
+### **STEP 5: INGREDIENT ANALYSIS**
+For EVERY visible food item:
+
+**A) IDENTIFICATION:**
+- Food name in ${langName.toUpperCase()}
+- Specific type and cooking method in ${langName.toUpperCase()}
+
+**B) DETAILED NUTRITIONAL DESCRIPTION (2-4 sentences in ${langName.toUpperCase()}):**
+- Nutritional characteristics and health benefits
+- Main macronutrients
+- Vitamins, minerals, or special properties
+
+**C) STANDARDIZED MEASUREMENT:**
+- Fraction of plate occupied
+- Estimated dimensions (use plate as reference)
+- Weight based on standard portions above
+
+**D) NUTRITIONAL VALUES:**
+Calculate from weight × standard values per 100g
+
+---
+
+## 📊 REQUIRED OUTPUT STRUCTURE (in ${langName.toUpperCase()}):
 
 {
   "plate_reference": {
-    "estimated_diameter_cm": number,
+    "estimated_diameter_cm": 26,
     "confidence": "high" | "medium" | "low"
   },
   "visible_ingredients": [
     {
       "name": "string (in ${langName.toUpperCase()})",
-      "detailed_nutritional_description": "string (2-4 sentences in ${langName.toUpperCase()} explaining nutritional properties, benefits, composition - MANDATORY)",
+      "detailed_nutritional_description": "string (2-4 sentences in ${langName.toUpperCase()} - MANDATORY)",
       "identification": {
-        "specific_type": "string (in ${langName.toUpperCase()})",
-        "cut": "string (in ${langName.toUpperCase()})",
-        "cooking_method": "string (in ${langName.toUpperCase()})",
-        "visual_notes": "string (color, texture, visible fat)"
+        "specific_type": "string",
+        "cut": "string",
+        "cooking_method": "string",
+        "visual_notes": "string"
       },
       "dimensions": {
+        "plate_fraction": "string (e.g., '1/4 plate')",
         "length_cm": number,
         "width_cm": number,
         "thickness_cm": number,
@@ -240,7 +234,7 @@ Return a JSON object with this EXACT structure (all text fields in ${langName.to
       },
       "weight_estimation": {
         "estimated_grams": number,
-        "density_used_g_per_cm3": number,
+        "reference_used": "string (e.g., 'palm-sized chicken breast = 120g')",
         "confidence": "high" | "medium" | "low"
       },
       "nutrition_per_item": {
@@ -254,9 +248,9 @@ Return a JSON object with this EXACT structure (all text fields in ${langName.to
   "hidden_ingredients": [
     {
       "name": "string (in ${langName.toUpperCase()})",
-      "detailed_nutritional_description": "string (2-4 sentences in ${langName.toUpperCase()} - MANDATORY)",
+      "detailed_nutritional_description": "string (in ${langName.toUpperCase()} - MANDATORY)",
       "source": "user_description",
-      "user_stated_amount": "string (e.g., '2 cucchiai', '15ml')",
+      "user_stated_amount": "string",
       "estimated_grams_or_ml": number,
       "nutrition_per_item": {
         "calories": number,
@@ -279,25 +273,24 @@ Return a JSON object with this EXACT structure (all text fields in ${langName.to
     "delta_fat": number
   },
   "detected_items": ["array of strings in ${langName.toUpperCase()}"],
-  "assessment": "string - detailed ${langName.toUpperCase()} explanation of analysis",
+  "assessment": "string in ${langName.toUpperCase()}",
   "adherence_level": "on_track" | "slightly_over" | "significantly_over" | "under",
   "suggested_meal_name": "string in ${langName.toUpperCase()}"
 }
 
 ---
 
-## ⚠️ IMPORTANT GUIDELINES:
+## ⚠️ CONSISTENCY RULES (CRITICAL):
 
-1. **DETAILED DESCRIPTIONS ARE MANDATORY**: Every ingredient MUST have a comprehensive nutritional description
-2. **BE PRECISE**: Use decimal points for accuracy (e.g., 7.5cm, not 8cm)
-3. **BE REALISTIC**: Don't overestimate or underestimate portions
-4. **USE CONTEXT**: If user says "pollo 150g" and visually looks 150g, use 150g
-5. **ACCOUNT FOR EVERYTHING**: Even small amounts of oil/butter add up
-6. **VISIBLE FAT**: If you see visible fat on meat, increase fat content estimate
-7. **COOKED vs RAW**: Cooked meat loses ~25% water weight
-8. **ALL IN ${langName.toUpperCase()}**: Every food name and description must be in ${langName.toUpperCase()}
+1. **SAME PHOTO = SAME RESULT**: If you see a palm-sized chicken breast, ALWAYS estimate 100-120g
+2. **USE STANDARD REFERENCES**: Don't invent weights - use the standard portions listed above
+3. **DEFAULT PLATE = 26cm**: Unless clearly different
+4. **NO HIDDEN OILS**: Don't add cooking oil unless user explicitly mentions it
+5. **ROUND TO REALISTIC VALUES**: Use 100g, 120g, 150g - not 137g or 143g
+6. **WHEN IN DOUBT, USE MIDDLE VALUE**: If portion looks 100-150g, use 125g
+7. **ALL TEXT IN ${langName.toUpperCase()}**: Every food name and description
 
-Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS in ${langName.toUpperCase()} for every ingredient.`;
+Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
 
       const analysis = await base44.integrations.Core.InvokeLLM({
         prompt: analysisPrompt,
