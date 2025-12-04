@@ -6,7 +6,7 @@ import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown,
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
-import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
+import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES, createLocalizedPageUrl } from '@/components/i18n/LanguageContext';
 
 function PricingPageContent() {
   const navigate = useNavigate();
@@ -336,22 +336,22 @@ function PricingPageContent() {
       
       if (currentUser.subscription_status === 'trial' || 
           currentUser.subscription_status === 'active') {
-        navigate(createPageUrl('Dashboard'));
+        navigate(createLocalizedPageUrl('Dashboard', language));
       } else {
         const billingParam = isAnnual ? '&billing=yearly' : '&billing=monthly';
         const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
-        navigate(createPageUrl('Checkout') + `?plan=${planType}${billingParam}${couponParam}`);
+        navigate(createLocalizedPageUrl('Checkout', language) + `?plan=${planType}${billingParam}${couponParam}`);
       }
     } catch (error) {
       const billingParam = isAnnual ? '&billing=yearly' : '&billing=monthly';
       const couponParam = couponValid && couponCode ? `&coupon=${couponCode}` : '';
-      const checkoutUrl = window.location.origin + createPageUrl('Checkout') + `?plan=${planType}${billingParam}${couponParam}`;
+      const checkoutUrl = window.location.origin + createLocalizedPageUrl('Checkout', language) + `?plan=${planType}${billingParam}${couponParam}`;
       await base44.auth.redirectToLogin(checkoutUrl);
     }
   };
 
   const handleLogin = async () => {
-    const checkoutUrl = window.location.origin + createPageUrl('Checkout') + '?plan=base';
+    const checkoutUrl = window.location.origin + createLocalizedPageUrl('Checkout', language) + '?plan=base';
     await base44.auth.redirectToLogin(checkoutUrl);
   };
 
@@ -694,12 +694,12 @@ function PricingPageContent() {
 
           <div className="flex items-center gap-4 flex-shrink-0">
             <button 
-              onClick={() => navigate(createPageUrl('pricing'))}
+              onClick={() => navigate(createLocalizedPageUrl('pricing', language))}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
               {t('nav.pricing')}
             </button>
             <button 
-              onClick={() => navigate(createPageUrl('Blog'))}
+              onClick={() => navigate(createLocalizedPageUrl('Blog', language))}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
               {t('nav.blog')}
             </button>
@@ -743,7 +743,7 @@ function PricingPageContent() {
             </button>
             
             <button
-              onClick={() => navigate(createPageUrl('Quiz'))}
+              onClick={() => navigate(createLocalizedPageUrl('Quiz', language))}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-2 px-4 text-sm font-medium rounded-full whitespace-nowrap flex-shrink-0 transition-colors">
               {t('pricing.freeQuiz')}
             </button>
@@ -774,7 +774,7 @@ function PricingPageContent() {
             <div className="pt-4 pb-2 space-y-3">
               <button
                 onClick={() => {
-                  navigate(createPageUrl('pricing'));
+                  navigate(createLocalizedPageUrl('pricing', language));
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
@@ -782,7 +782,7 @@ function PricingPageContent() {
               </button>
               <button
                 onClick={() => {
-                  navigate(createPageUrl('Blog'));
+                  navigate(createLocalizedPageUrl('Blog', language));
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
@@ -820,7 +820,7 @@ function PricingPageContent() {
                 </button>
                 <button
                   onClick={() => {
-                    navigate(createPageUrl('Quiz'));
+                    navigate(createLocalizedPageUrl('Quiz', language));
                     setMobileMenuOpen(false);
                   }}
                   className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
