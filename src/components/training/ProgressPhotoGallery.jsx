@@ -22,7 +22,9 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
 
   if (!isOpen) return null;
 
-  const sortedPhotos = [...photos].sort((a, b) => new Date(b.date) - new Date(a.date));
+  // Filtra solo le foto che hanno un URL valido
+  const validPhotos = photos.filter(p => p.photo_url && p.photo_url.trim() !== '');
+  const sortedPhotos = [...validPhotos].sort((a, b) => new Date(b.date) - new Date(a.date));
 
   const getComparisonIcon = (result) => {
     if (result === 'improved') return <TrendingUp className="w-4 h-4 text-green-600" />;
