@@ -102,7 +102,9 @@ function LayoutContent({ children }) {
   ];
 
   // Se è una pagina senza layout, renderizza solo children
-  if (pathsWithoutLayout.includes(location.pathname) || location.pathname.startsWith('/blog/')) {
+  if (pathsWithoutLayout.includes(location.pathname) || 
+      location.pathname.startsWith('/blog/') ||
+      location.pathname.match(/^\/(it|en|es|pt|de|fr)\/blog\//)) {
     return <>{children}</>;
   }
 
