@@ -1597,7 +1597,7 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
                             <Dumbbell className="w-4 h-4" />
                             💪 {t('progressAnalyzer.workoutPlan')}
                           </p>
-                          {!appliedChanges?.workout?.length && (
+                          {!(appliedChanges?.workout?.length > 0) && (
                             <Button 
                               onClick={() => applyProposedChanges('workout')} 
                               size="sm"
