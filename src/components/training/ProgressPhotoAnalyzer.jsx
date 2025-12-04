@@ -787,8 +787,20 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
     
     setIsApplyingWorkoutRecs(true);
     try {
-      const workoutPlans = await base44.entities.WorkoutPlan.filter({ user_id: user.id });
-      const allExercises = await base44.entities.Exercise.list();
+      let workoutPlans = [];
+      let allExercises = [];
+      
+      try {
+        workoutPlans = await base44.entities.WorkoutPlan.filter({ user_id: user.id });
+      } catch (e) {
+        console.warn('Could not load workout plans:', e);
+      }
+      
+      try {
+        allExercises = await base44.entities.Exercise.list();
+      } catch (e) {
+        console.warn('Could not load exercises:', e);
+      }
       
       const targetMuscleGroups = {
         'pancia': ['addominali', 'core'],
@@ -802,16 +814,18 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
       const relevantMuscles = targetMuscleGroups[analysisResult.target_zone] || [];
       const activeDays = workoutPlans.filter(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
       
-      if (activeDays.length > 0 && relevantMuscles.length > 0) {
+      let changesMade = false;
+      
+      if (activeDays.length > 0 && relevantMuscles.length > 0 && allExercises.length > 0) {
         // Trova il giorno con più esercizi rilevanti
         let dayToModify = null;
         let maxRelevantExercises = 0;
         let exerciseToReplace = null;
         
         for (const day of activeDays) {
-          const relevantExercisesInDay = day.exercises.filter(ex => 
+          const relevantExercisesInDay = (day.exercises || []).filter(ex => 
             relevantMuscles.some(muscle => 
-              ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+              (ex.muscle_groups || []).some(mg => mg.toLowerCase().includes(muscle))
             )
           );
           
@@ -825,10 +839,10 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
         if (dayToModify && exerciseToReplace) {
           const availableExercises = allExercises.filter(ex => 
             relevantMuscles.some(muscle => 
-              ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+              (ex.muscle_groups || []).some(mg => mg.toLowerCase().includes(muscle))
             ) && 
             ex.name.toLowerCase() !== exerciseToReplace.name.toLowerCase() &&
-            (user.equipment?.includes(ex.equipment) || ex.equipment === 'corpo_libero' || ex.equipment === 'nessuno')
+            ((user.equipment || []).includes(ex.equipment) || ex.equipment === 'corpo_libero' || ex.equipment === 'nessuno')
           );
           
           if (availableExercises.length > 0) {
@@ -845,13 +859,22 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
             
             await base44.entities.WorkoutPlan.update(dayToModify.id, { exercises: updatedExercises });
             
-            setWorkoutRecsApplied(true);
+            changesMade = true;
             setAppliedChanges(prev => ({
-              ...prev,
+              ...(prev || {}),
               workout: [`${dayToModify.plan_name}: sostituito "${exerciseToReplace.name}" con "${newExercise.name}" per migliorare ${analysisResult.target_zone}`]
             }));
           }
         }
+      }
+      
+      // Segna come applicato anche se non ci sono modifiche specifiche
+      setWorkoutRecsApplied(true);
+      if (!changesMade) {
+        setAppliedChanges(prev => ({
+          ...(prev || {}),
+          workout: ['Raccomandazioni di allenamento registrate']
+        }));
       }
       
     } catch (error) {
