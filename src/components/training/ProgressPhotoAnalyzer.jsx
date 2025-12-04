@@ -1389,7 +1389,7 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                     </h4>
                     {appliedChanges.diet.length > 0 && (
                       <div className="mb-2">
-                        <p className="text-xs font-semibold text-green-800 mb-1">🍽️ {t('progressAnalyzer.diet')}</p>
+                        <p className="text-xs font-semibold text-green-800 mb-1">🍽️ {t('upgradeModal.diet')}</p>
                         <ul className="space-y-0.5">
                           {appliedChanges.diet.map((change, idx) => (
                             <li key={idx} className="text-xs text-green-700">• {change}</li>
@@ -1399,7 +1399,7 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                     )}
                     {appliedChanges.workout.length > 0 && (
                       <div>
-                        <p className="text-xs font-semibold text-green-800 mb-1">💪 {t('progressAnalyzer.workout')}</p>
+                        <p className="text-xs font-semibold text-green-800 mb-1">💪 {t('upgradeModal.workout')}</p>
                         <ul className="space-y-0.5">
                           {appliedChanges.workout.map((change, idx) => (
                             <li key={idx} className="text-xs text-green-700">• {change}</li>
