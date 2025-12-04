@@ -522,6 +522,17 @@ Task (in ${langName.toUpperCase()}):
     setIsGeneratingProposals(true);
     const proposals = { diet: [], workout: [] };
     
+    const languageNames = {
+      it: 'Italian',
+      en: 'English',
+      es: 'Spanish',
+      pt: 'Portuguese',
+      de: 'German',
+      fr: 'French'
+    };
+    const userLang = t('common.lang') || language || 'en';
+    const langName = languageNames[userLang] || 'English';
+    
     try {
       if (analysis.diet_adjustment_needed) {
         const currentCalories = user.daily_calories;
