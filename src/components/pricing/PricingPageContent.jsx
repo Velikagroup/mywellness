@@ -742,7 +742,7 @@ export default function PricingPageContent() {
 
       {/* NAVBAR */}
       <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:w-auto md:max-w-none px-2 md:px-0">
-        <div className="hidden md:flex water-glass-effect rounded-full items-center gap-8 px-6 py-3">
+        <div className="hidden md:flex water-glass-effect rounded-full items-center gap-8 px-6 py-[4px]">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
@@ -806,13 +806,13 @@ export default function PricingPageContent() {
         </div>
 
         <div className="md:hidden water-glass-effect rounded-full px-6 py-[4px]">
-          <div className="flex items-center justify-between">
-            <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
-              alt="MyWellness"
-              className="h-6 cursor-pointer"
-              onClick={() => navigate(getHomePageUrl(language))}
-            />
+            <div className="flex items-center justify-between">
+              <img
+                src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
+                alt="MyWellness"
+                className="h-6 cursor-pointer"
+                onClick={() => navigate(createPageUrl('Home'))}
+              />
             
             <div className="flex items-center gap-2">
               {/* Language selector icon */}
