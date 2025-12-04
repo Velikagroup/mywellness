@@ -129,6 +129,13 @@ export default function Dashboard() {
     loadUserData();
   }, [loadUserData]);
 
+  // Carica le foto progresso quando l'utente è disponibile
+  useEffect(() => {
+    if (user?.id) {
+      loadProgressPhotos();
+    }
+  }, [user?.id]);
+
   useEffect(() => {
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
