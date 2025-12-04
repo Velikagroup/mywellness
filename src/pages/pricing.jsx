@@ -246,7 +246,7 @@ function PricingPageContent() {
     }
   ];
 
-  const testimonials = [
+  const testimonials = t('pricing.testimonials') || [
     {
       name: "Maria Santos",
       role: "Studentessa Universitaria",
@@ -756,7 +756,7 @@ function PricingPageContent() {
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
               alt="MyWellness"
               className="h-6 cursor-pointer"
-              onClick={() => navigate(createPageUrl('Home'))}
+              onClick={() => navigate(createLocalizedPageUrl('Home', language))}
             />
             
             <button
