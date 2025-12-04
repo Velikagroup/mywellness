@@ -834,7 +834,7 @@ function PricingPageContent() {
       </nav>
 
       {/* Main Content */}
-      <section className="pt-32 pb-12 px-4 md:px-6">
+      <section className="pt-80 pb-12 px-4 md:px-6">
         <div className="max-w-6xl mx-auto">
           {/* Header */}
           <div className="text-center mb-12">
