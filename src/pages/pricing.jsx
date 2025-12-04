@@ -792,12 +792,13 @@ function PricingPageContent() {
               </button>
               
               <div className="border-t border-gray-200/50 pt-2 mt-2">
-                <p className="text-xs text-gray-500 px-3 mb-2 font-semibold">Lingua</p>
+                <p className="text-xs text-gray-500 px-3 mb-2 font-semibold">{t('nav.language') || 'Lingua'}</p>
                 {SUPPORTED_LANGUAGES.map((lang) => (
                   <button
                     key={lang.code}
                     onClick={() => {
                       setLanguage(lang.code);
+                      localStorage.setItem('preferred_language', lang.code);
                       setMobileMenuOpen(false);
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
