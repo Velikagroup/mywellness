@@ -902,7 +902,7 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
     const changes = { diet: appliedChanges?.diet || [], workout: appliedChanges?.workout || [] };
     
     try {
-      if ((changeType === 'both' || changeType === 'diet') && proposedChanges.diet.length > 0 && !appliedChanges?.diet) {
+      if ((changeType === 'both' || changeType === 'diet') && proposedChanges.diet.length > 0 && !(appliedChanges?.diet?.length > 0)) {
         for (const proposal of proposedChanges.diet) {
           if (proposal.type === 'calorie_adjustment' && proposal.adjustment !== 0) {
             await base44.auth.updateMe({ daily_calories: proposal.proposed });
@@ -911,20 +911,22 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
             const allMealPlans = await base44.entities.MealPlan.filter({ user_id: user.id });
             
             for (const meal of allMealPlans) {
+              if (!meal.ingredients || meal.ingredients.length === 0) continue;
+              
               const scaledIngredients = meal.ingredients.map(ing => ({
                 ...ing,
-                quantity: Math.round(ing.quantity * scalingFactor * 10) / 10,
-                calories: Math.round(ing.calories * scalingFactor),
-                protein: Math.round(ing.protein * scalingFactor * 10) / 10,
-                carbs: Math.round(ing.carbs * scalingFactor * 10) / 10,
-                fat: Math.round(ing.fat * scalingFactor * 10) / 10
+                quantity: Math.round((ing.quantity || 0) * scalingFactor * 10) / 10,
+                calories: Math.round((ing.calories || 0) * scalingFactor),
+                protein: Math.round((ing.protein || 0) * scalingFactor * 10) / 10,
+                carbs: Math.round((ing.carbs || 0) * scalingFactor * 10) / 10,
+                fat: Math.round((ing.fat || 0) * scalingFactor * 10) / 10
               }));
               
               const newTotals = scaledIngredients.reduce((acc, ing) => ({
-                calories: acc.calories + ing.calories,
-                protein: acc.protein + ing.protein,
-                carbs: acc.carbs + ing.carbs,
-                fat: acc.fat + ing.fat
+                calories: acc.calories + (ing.calories || 0),
+                protein: acc.protein + (ing.protein || 0),
+                carbs: acc.carbs + (ing.carbs || 0),
+                fat: acc.fat + (ing.fat || 0)
               }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
               
               await base44.entities.MealPlan.update(meal.id, {
@@ -944,22 +946,35 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
         }
       }
       
-      if ((changeType === 'both' || changeType === 'workout') && proposedChanges.workout.length > 0 && !appliedChanges?.workout) {
+      if ((changeType === 'both' || changeType === 'workout') && proposedChanges.workout.length > 0 && !(appliedChanges?.workout?.length > 0)) {
         for (const proposal of proposedChanges.workout) {
           if (proposal.type === 'exercise_replacement') {
-            const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
-            const dayPlan = dayPlans[0];
+            try {
+              const dayPlans = await base44.entities.WorkoutPlan.filter({ id: proposal.day_id });
+              const dayPlan = dayPlans[0];
 
-            if (dayPlan) {
-              const updatedExercises = dayPlan.exercises.map(ex => 
-                ex.name === proposal.current_exercise.name ? { ...proposal.proposed_exercise, id: ex.id } : ex
-              );
-              
-              await base44.entities.WorkoutPlan.update(proposal.day_id, {
-                exercises: updatedExercises
-              });
-              
-              changes.workout.push(`${proposal.day}: sostituito "${proposal.current_exercise.name}" con "${proposal.proposed_exercise.name}" - ${proposal.reason}`);
+              if (dayPlan && dayPlan.exercises) {
+                const updatedExercises = dayPlan.exercises.map(ex => 
+                  ex.name === proposal.current_exercise.name ? { 
+                    ...ex,
+                    name: proposal.proposed_exercise.name,
+                    sets: proposal.proposed_exercise.sets,
+                    reps: proposal.proposed_exercise.reps,
+                    rest: proposal.proposed_exercise.rest,
+                    description: proposal.proposed_exercise.explanation || proposal.reason
+                  } : ex
+                );
+                
+                await base44.entities.WorkoutPlan.update(proposal.day_id, {
+                  exercises: updatedExercises
+                });
+                
+                changes.workout.push(`${proposal.day}: sostituito "${proposal.current_exercise.name}" con "${proposal.proposed_exercise.name}" - ${proposal.reason}`);
+              } else {
+                console.warn('WorkoutPlan not found for id:', proposal.day_id);
+              }
+            } catch (err) {
+              console.error('Error updating workout:', err);
             }
           } else if (proposal.type === 'no_change') {
             changes.workout.push(proposal.reason);
