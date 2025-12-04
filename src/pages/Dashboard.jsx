@@ -338,16 +338,6 @@ export default function Dashboard() {
   };
 
   const handleProgressAnalysisComplete = async (analysisResult) => {
-    let message = `Analisi completata! Progresso: ${analysisResult.overall_progress}\n\n`;
-    
-    if (analysisResult.workout_adjustment_needed) {
-      message += "💪 L'AI suggerisce modifiche al piano di allenamento.\n";
-    }
-    if (analysisResult.diet_adjustment_needed) {
-      message += "🍽️ L'AI suggerisce modifiche al piano nutrizionale.\n";
-    }
-    
-    alert(message);
     setShowProgressPhoto(false);
     
     // Ricarica le foto dopo l'analisi
