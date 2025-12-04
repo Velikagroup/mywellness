@@ -2,7 +2,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag, Gift } from 'lucide-react';
+import { Check, Sparkles, Crown, Target, Zap, CheckCircle, Menu, X, ChevronDown, Star, Shield, Clock, Award, TrendingUp, Tag, Gift, Globe } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -64,6 +64,7 @@ export default function PricingPageContent() {
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [openFaqIndex, setOpenFaqIndex] = React.useState(null);
   const [langMenuOpen, setLangMenuOpen] = React.useState(false);
+  const [mobileLangMenuOpen, setMobileLangMenuOpen] = React.useState(false);
   
   const [couponCode, setCouponCode] = React.useState('');
   const [couponValidating, setCouponValidating] = React.useState(false);
@@ -813,15 +814,51 @@ export default function PricingPageContent() {
               onClick={() => navigate(getHomePageUrl(language))}
             />
             
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 ${mobileMenuOpen ? 'burger-open' : ''}`}
-              aria-label="Menu">
-              <div className="burger-container">
-                <span className="burger-line"></span>
-                <span className="burger-line"></span>
+            <div className="flex items-center gap-2">
+              {/* Language selector icon */}
+              <div className="relative">
+                <button
+                  onClick={() => setMobileLangMenuOpen(!mobileLangMenuOpen)}
+                  className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  aria-label="Language">
+                  <span className="text-xl">{SUPPORTED_LANGUAGES.find(l => l.code === language)?.flag}</span>
+                </button>
+                
+                {mobileLangMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setMobileLangMenuOpen(false)}></div>
+                    <div className="absolute right-0 top-12 water-glass-effect rounded-2xl border border-white/40 shadow-xl p-2 min-w-[160px] z-50">
+                      {SUPPORTED_LANGUAGES.map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            handleLanguageChange(lang.code);
+                            setMobileLangMenuOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                            language === lang.code
+                              ? 'bg-[var(--brand-primary)] text-white'
+                              : 'text-gray-700 hover:bg-white/50'
+                          }`}>
+                          <span className="text-lg">{lang.flag}</span>
+                          <span>{lang.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-            </button>
+              
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className={`p-2 ${mobileMenuOpen ? 'burger-open' : ''}`}
+                aria-label="Menu">
+                <div className="burger-container">
+                  <span className="burger-line"></span>
+                  <span className="burger-line"></span>
+                </div>
+              </button>
+            </div>
           </div>
 
           <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
@@ -842,26 +879,6 @@ export default function PricingPageContent() {
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
                 {t('nav.blog')}
               </button>
-              
-              <div className="border-t border-gray-200/50 pt-2 mt-2">
-                <p className="text-xs text-gray-500 px-3 mb-2 font-semibold">Lingua</p>
-                {SUPPORTED_LANGUAGES.map((lang) => (
-                  <button
-                    key={lang.code}
-                    onClick={() => {
-                      handleLanguageChange(lang.code);
-                      setMobileMenuOpen(false);
-                    }}
-                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                      language === lang.code
-                        ? 'bg-[var(--brand-primary)] text-white'
-                        : 'text-gray-700 hover:bg-white/50'
-                    }`}>
-                    <span className="text-lg">{lang.flag}</span>
-                    <span>{lang.name}</span>
-                  </button>
-                ))}
-              </div>
               
               <div className="border-t border-gray-200/50 pt-3 mt-3">
                 <button
