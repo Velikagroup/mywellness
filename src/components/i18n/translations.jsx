@@ -691,6 +691,16 @@ export const translations = {
       newAnalysis: "Nuova Analisi",
       close: "Chiudi"
     },
+    photoMealAnalyzer: {
+      title: "Analisi Scientifica Pasto AI",
+      subtitle: "Analisi dimensionale e calcolo preciso ingrediente per ingrediente",
+      uploadMealPhoto: "Carica foto del tuo pasto",
+      uploadInfo: "L'AI analizzerà e calcolerà peso e nutrienti con precisione scientifica",
+      takePhoto: "Scatta Foto",
+      selectFromGallery: "Carica da Galleria",
+      analyzing: "Analizzando...",
+      analysisComplete: "Analisi Completata"
+    },
     progressChart: {
       startWeight: "Peso Iniziale",
       targetWeight: "Peso Target",
@@ -1791,6 +1801,16 @@ export const translations = {
       upgradeButton: "Upgrade to Base • From €19/month",
       newAnalysis: "New Analysis",
       close: "Close"
+    },
+    photoMealAnalyzer: {
+      title: "AI Scientific Meal Analysis",
+      subtitle: "Dimensional analysis and precise ingredient-by-ingredient calculation",
+      uploadMealPhoto: "Upload your meal photo",
+      uploadInfo: "AI will analyze and calculate weight and nutrients with scientific precision",
+      takePhoto: "Take Photo",
+      selectFromGallery: "Upload from Gallery",
+      analyzing: "Analyzing...",
+      analysisComplete: "Analysis Complete"
     },
     progressChart: {
       startWeight: "Starting Weight",
@@ -3985,6 +4005,16 @@ export const translations = {
       upgradeButton: "Upgrade para Base • A partir de €19/mês",
       newAnalysis: "Nova Análise",
       close: "Fechar"
+    },
+    photoMealAnalyzer: {
+      title: "Análise Científica de Refeição IA",
+      subtitle: "Análise dimensional e cálculo preciso ingrediente por ingrediente",
+      uploadMealPhoto: "Carregue a foto da sua refeição",
+      uploadInfo: "A IA analisará e calculará peso e nutrientes com precisão científica",
+      takePhoto: "Tirar Foto",
+      selectFromGallery: "Carregar da Galeria",
+      analyzing: "Analisando...",
+      analysisComplete: "Análise Completa"
     },
     progressChart: {
       startWeight: "Peso Inicial",
