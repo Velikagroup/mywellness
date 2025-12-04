@@ -466,15 +466,21 @@ Task (in ${langName.toUpperCase()}):
             overall_assessment: { 
               type: "string"
             },
-            recommendations: { 
-              type: "array", 
-              items: { type: "string" }
+            nutrition_recommendations: {
+              type: "array",
+              items: { type: "string" },
+              description: `3-5 practical NUTRITION tips in ${langName.toUpperCase()} to improve this specific area`
+            },
+            workout_recommendations: {
+              type: "array",
+              items: { type: "string" },
+              description: `3-5 practical WORKOUT tips in ${langName.toUpperCase()} to improve this specific area`
             },
             workout_adjustment_needed: { type: "boolean" },
             diet_adjustment_needed: { type: "boolean" },
             motivational_message: { type: "string" }
           },
-          required: ["comparison_result", "visible_characteristics", "overall_assessment", "recommendations", "workout_adjustment_needed", "diet_adjustment_needed", "motivational_message"]
+          required: ["comparison_result", "visible_characteristics", "overall_assessment", "nutrition_recommendations", "workout_recommendations", "workout_adjustment_needed", "diet_adjustment_needed", "motivational_message"]
         }
       });
 
@@ -792,7 +798,8 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
           comparison_with_previous: analysisResult.comparison_with_previous || '',
           days_since_previous: analysisResult.days_since_previous,
           overall_assessment: analysisResult.overall_assessment,
-          recommendations: analysisResult.recommendations,
+          nutrition_recommendations: analysisResult.nutrition_recommendations || [],
+          workout_recommendations: analysisResult.workout_recommendations || [],
           workout_adjustment_needed: analysisResult.workout_adjustment_needed,
           diet_adjustment_needed: analysisResult.diet_adjustment_needed,
           motivational_message: analysisResult.motivational_message,
@@ -1272,12 +1279,29 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                   </div>
                 )}
 
-                {analysisResult.recommendations?.length > 0 && (
-                  <div className="bg-purple-50 p-4 rounded-lg border border-purple-200">
-                    <h4 className="font-semibold text-purple-900 mb-2 text-sm">💡 {t('progressAnalyzer.improvementTips')}</h4>
+                {analysisResult.nutrition_recommendations?.length > 0 && (
+                  <div className="bg-orange-50 p-4 rounded-lg border-2 border-orange-300">
+                    <h4 className="font-bold text-orange-900 mb-2 text-sm flex items-center gap-2">
+                      <Utensils className="w-4 h-4" />
+                      🍽️ {t('progressAnalyzer.nutritionRecommendations')}
+                    </h4>
                     <ul className="space-y-1">
-                      {analysisResult.recommendations.map((rec, idx) => (
-                        <li key={idx} className="text-xs text-purple-800 flex gap-2"><span>→</span><span>{rec}</span></li>
+                      {analysisResult.nutrition_recommendations.map((rec, idx) => (
+                        <li key={idx} className="text-xs text-orange-800 flex gap-2"><span>→</span><span>{rec}</span></li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {analysisResult.workout_recommendations?.length > 0 && (
+                  <div className="bg-indigo-50 p-4 rounded-lg border-2 border-indigo-300">
+                    <h4 className="font-bold text-indigo-900 mb-2 text-sm flex items-center gap-2">
+                      <Dumbbell className="w-4 h-4" />
+                      💪 {t('progressAnalyzer.workoutRecommendations')}
+                    </h4>
+                    <ul className="space-y-1">
+                      {analysisResult.workout_recommendations.map((rec, idx) => (
+                        <li key={idx} className="text-xs text-indigo-800 flex gap-2"><span>→</span><span>{rec}</span></li>
                       ))}
                     </ul>
                   </div>
