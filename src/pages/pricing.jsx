@@ -1331,7 +1331,7 @@ function PricingPageContent() {
             </h2>
 
             <div className="relative pb-32">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
                 {testimonials.slice(0, 12).map((testimonial, index) => (
                   <div
                     key={index}
