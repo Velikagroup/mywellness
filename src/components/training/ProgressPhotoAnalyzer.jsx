@@ -697,7 +697,12 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
     setIsApplyingNutritionRecs(true);
     try {
       // Genera prompt per l'AI per adattare il piano nutrizionale
-      const currentMeals = await base44.entities.MealPlan.filter({ user_id: user.id });
+      let currentMeals = [];
+      try {
+        currentMeals = await base44.entities.MealPlan.filter({ user_id: user.id });
+      } catch (e) {
+        console.warn('Could not load meals:', e);
+      }
       
       const prompt = `Sei un nutrizionista esperto. Basandoti sulle seguenti raccomandazioni nutrizionali derivate dall'analisi foto progresso, suggerisci una modifica calorica appropriata.
 
@@ -705,13 +710,13 @@ RACCOMANDAZIONI AI:
 ${analysisResult.nutrition_recommendations.map((r, i) => `${i + 1}. ${r}`).join('\n')}
 
 DATI UTENTE:
-- Calorie giornaliere attuali: ${user.daily_calories} kcal
-- Peso attuale: ${user.current_weight} kg
-- Peso obiettivo: ${user.target_weight} kg
-- Obiettivo: ${user.fitness_goal}
+- Calorie giornaliere attuali: ${user.daily_calories || 2000} kcal
+- Peso attuale: ${user.current_weight || 70} kg
+- Peso obiettivo: ${user.target_weight || 65} kg
+- Obiettivo: ${user.fitness_goal || 'dimagrimento'}
 
 Basandoti sulle raccomandazioni, suggerisci un aggiustamento calorico (tra -100 e +100 kcal).
-Se le raccomandazioni suggeriscono di aumentare proteine/riducerre carboidrati ma non cambiano calorie totali, suggerisci 0.`;
+Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma non cambiano calorie totali, suggerisci 0.`;
 
       const adjustment = await base44.integrations.Core.InvokeLLM({
         prompt,
@@ -725,45 +730,50 @@ Se le raccomandazioni suggeriscono di aumentare proteine/riducerre carboidrati m
         }
       });
 
-      const calorieAdjustment = Math.max(-100, Math.min(100, adjustment.calorie_adjustment || 0));
+      const calorieAdjustment = Math.max(-100, Math.min(100, adjustment?.calorie_adjustment || 0));
+      const reasonText = adjustment?.reason || 'Raccomandazioni applicate';
       
-      if (calorieAdjustment !== 0) {
+      if (calorieAdjustment !== 0 && user.daily_calories) {
         const newCalories = Math.round(user.daily_calories + calorieAdjustment);
         await base44.auth.updateMe({ daily_calories: newCalories });
         
         // Scala tutti i pasti proporzionalmente
-        const scalingFactor = newCalories / user.daily_calories;
-        for (const meal of currentMeals) {
-          const scaledIngredients = meal.ingredients.map(ing => ({
-            ...ing,
-            quantity: Math.round(ing.quantity * scalingFactor * 10) / 10,
-            calories: Math.round(ing.calories * scalingFactor),
-            protein: Math.round(ing.protein * scalingFactor * 10) / 10,
-            carbs: Math.round(ing.carbs * scalingFactor * 10) / 10,
-            fat: Math.round(ing.fat * scalingFactor * 10) / 10
-          }));
-          
-          const newTotals = scaledIngredients.reduce((acc, ing) => ({
-            calories: acc.calories + ing.calories,
-            protein: acc.protein + ing.protein,
-            carbs: acc.carbs + ing.carbs,
-            fat: acc.fat + ing.fat
-          }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
-          
-          await base44.entities.MealPlan.update(meal.id, {
-            ingredients: scaledIngredients,
-            total_calories: Math.round(newTotals.calories),
-            total_protein: Math.round(newTotals.protein * 10) / 10,
-            total_carbs: Math.round(newTotals.carbs * 10) / 10,
-            total_fat: Math.round(newTotals.fat * 10) / 10
-          });
+        if (currentMeals.length > 0) {
+          const scalingFactor = newCalories / user.daily_calories;
+          for (const meal of currentMeals) {
+            if (!meal.ingredients || meal.ingredients.length === 0) continue;
+            
+            const scaledIngredients = meal.ingredients.map(ing => ({
+              ...ing,
+              quantity: Math.round((ing.quantity || 0) * scalingFactor * 10) / 10,
+              calories: Math.round((ing.calories || 0) * scalingFactor),
+              protein: Math.round((ing.protein || 0) * scalingFactor * 10) / 10,
+              carbs: Math.round((ing.carbs || 0) * scalingFactor * 10) / 10,
+              fat: Math.round((ing.fat || 0) * scalingFactor * 10) / 10
+            }));
+            
+            const newTotals = scaledIngredients.reduce((acc, ing) => ({
+              calories: acc.calories + (ing.calories || 0),
+              protein: acc.protein + (ing.protein || 0),
+              carbs: acc.carbs + (ing.carbs || 0),
+              fat: acc.fat + (ing.fat || 0)
+            }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+            
+            await base44.entities.MealPlan.update(meal.id, {
+              ingredients: scaledIngredients,
+              total_calories: Math.round(newTotals.calories),
+              total_protein: Math.round(newTotals.protein * 10) / 10,
+              total_carbs: Math.round(newTotals.carbs * 10) / 10,
+              total_fat: Math.round(newTotals.fat * 10) / 10
+            });
+          }
         }
       }
       
       setNutritionRecsApplied(true);
       setAppliedChanges(prev => ({
-        ...prev,
-        diet: [`Raccomandazioni nutrizionali applicate: ${adjustment.reason}${calorieAdjustment !== 0 ? ` (${calorieAdjustment > 0 ? '+' : ''}${calorieAdjustment} kcal)` : ''}`]
+        ...(prev || {}),
+        diet: [`${reasonText}${calorieAdjustment !== 0 ? ` (${calorieAdjustment > 0 ? '+' : ''}${calorieAdjustment} kcal)` : ''}`]
       }));
     } catch (error) {
       console.error('Error applying nutrition recommendations:', error);
