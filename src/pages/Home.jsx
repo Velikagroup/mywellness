@@ -120,9 +120,8 @@ function HomeContent() {
     };
   }, []);
 
-  // Get testimonials from translations based on current language
   const { t } = useLanguage();
-  const testimonials = t('pricing.testimonials');
+  const testimonials = t('pricing.testimonials') || [];
 
   const handleWatchDemo = () => {
     navigate(createPageUrl('Landing'));
