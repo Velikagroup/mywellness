@@ -248,6 +248,18 @@ function PricingPageContent() {
 
   const testimonials = [
     {
+      name: "Sofia Greco",
+      role: "Architetto",
+      photo: "https://i.pravatar.cc/400?img=32",
+      text: "Finalmente un'app che capisce i miei ritmi frenetici. Ho perso 7kg in 3 mesi!"
+    },
+    {
+      name: "Andrea Ricci",
+      role: "Medico Chirurgo",
+      photo: "https://i.pravatar.cc/400?img=53",
+      text: "L'approccio scientifico mi ha convinto subito. BMR calcolato alla perfezione."
+    },
+    {
       name: "Maria Santos",
       role: "Studentessa Universitaria",
       photo: "https://i.pravatar.cc/400?img=29",
