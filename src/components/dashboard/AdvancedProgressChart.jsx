@@ -145,14 +145,20 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     ? (weightVariation < 0)
     : (weightVariation > 0);
 
+  // Calcola il progresso reale (positivo = avanzato verso obiettivo, negativo = regresso)
+  const weightProgressTowardsGoal = isWeightLoss 
+    ? (startWeight - lastRecordedWeight)  // Per perdita peso: positivo se hai perso
+    : (lastRecordedWeight - startWeight); // Per aumento peso: positivo se hai guadagnato
+  
   let progressPercentage = 0;
   if (totalWeightToChange !== 0) {
-      const weightProgress = startWeight - lastRecordedWeight;
-      progressPercentage = (weightProgress / totalWeightToChange) * 100;
+      progressPercentage = (weightProgressTowardsGoal / Math.abs(totalWeightToChange)) * 100;
   } else if (startWeight === targetWeight) {
       progressPercentage = 100;
   }
-  progressPercentage = Math.max(0, Math.min(100, progressPercentage));
+  // Permetti valori negativi per mostrare regresso, ma limita a -100% e +100%
+  const clampedProgressPercentage = Math.max(-100, Math.min(100, progressPercentage));
+  const displayProgressPercentage = Math.max(0, clampedProgressPercentage); // Per il display mostra minimo 0%
 
   const allWeights = weightHistory.map(d => d.weight).concat([startWeight, targetWeight]).filter(w => w > 0);
   const yAxisDomain = allWeights.length > 0 
@@ -160,16 +166,21 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     : [0, 100];
 
   const totalKcalToChange = Math.abs(totalWeightToChange) * KCAL_PER_KG;
-  const weightProgress = startWeight - lastRecordedWeight;
-  const kcalChangedSoFar = Math.abs(weightProgress) * KCAL_PER_KG;
-  const kcalRemaining = totalKcalToChange - kcalChangedSoFar;
+  
+  // Se il progresso è negativo (regresso), le kcal completate sono 0 e le restanti aumentano
+  const isRegressing = weightProgressTowardsGoal < 0;
+  const kcalCompleted = isRegressing ? 0 : Math.abs(weightProgressTowardsGoal) * KCAL_PER_KG;
+  const kcalRemaining = isRegressing 
+    ? totalKcalToChange + Math.abs(weightProgressTowardsGoal) * KCAL_PER_KG  // Aggiungi le kcal perse
+    : totalKcalToChange - kcalCompleted;
 
   const pieData = [
-    { name: t('progressChart.completedLabel'), value: kcalChangedSoFar },
-    { name: t('progressChart.remainingLabel'), value: kcalRemaining > 0 ? kcalRemaining : 0 },
+    { name: t('progressChart.completedLabel'), value: kcalCompleted },
+    { name: t('progressChart.remainingLabel'), value: Math.max(0, kcalRemaining) },
   ];
 
-  const COLORS = ['#26847F', '#e5e7eb'];
+  // Colori: verde per completato, grigio normale per restante, rosso se in regresso
+  const COLORS = isRegressing ? ['#26847F', '#ef4444'] : ['#26847F', '#e5e7eb'];
 
   return (
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
@@ -332,7 +343,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 </PieChart>
               </ResponsiveContainer>
               <div className="absolute text-center">
-                <p className="text-3xl font-bold text-[#26847F]">{progressPercentage.toFixed(0)}%</p>
+                <p className={`text-3xl font-bold ${isRegressing ? 'text-red-500' : 'text-[#26847F]'}`}>{displayProgressPercentage.toFixed(0)}%</p>
                 <p className="text-xs text-gray-500 font-medium mt-1">{t('progressChart.completed')}</p>
               </div>
             </div>
