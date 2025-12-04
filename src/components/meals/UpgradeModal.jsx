@@ -436,7 +436,7 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
                     <div>
                       <p className="text-lg font-bold text-gray-900">{selectedPlanToUpgrade.name}</p>
                       <p className="text-sm text-gray-600">
-                        €{billingCycle === 'monthly' ? selectedPlanToUpgrade.monthlyPrice : selectedPlanToUpgrade.yearlyMonthly}/mese
+                        €{billingCycle === 'monthly' ? selectedPlanToUpgrade.monthlyPrice : selectedPlanToUpgrade.yearlyMonthly}{t('upgradeModal.perMonth')}
                       </p>
                     </div>
                   </div>
