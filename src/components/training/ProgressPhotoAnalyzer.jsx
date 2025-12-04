@@ -216,7 +216,8 @@ export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplet
   };
 
   const canProceedFromBodyPhotos = () => {
-    return !!(bodyPhotos.front && bodyPhotos.side_left && bodyPhotos.side_right && bodyPhotos.back);
+    // Le foto corpo intero sono opzionali, si può sempre procedere
+    return true;
   };
 
   const markStepComplete = (stepId) => {
@@ -1002,6 +1003,9 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
 
             {step === 'body_photos' && (
               <motion.div key="body-photos" initial={{ opacity: 0, x: 20 }} animate={{ opacity: 1, x: 0 }} exit={{ opacity: 0, x: -20 }} className="space-y-4">
+                <div className="bg-blue-50 p-3 rounded-lg border border-blue-200">
+                  <p className="text-xs text-blue-800 font-medium">ℹ️ {t('progressAnalyzer.optionalPhotos')}</p>
+                </div>
                 <div className="bg-amber-50 p-3 rounded-lg border border-amber-200">
                   <p className="text-xs text-amber-800 font-medium">📁 {t('progressAnalyzer.archiveNote')}</p>
                 </div>
@@ -1044,7 +1048,7 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
                   <Button onClick={() => setStep('target_photos')} variant="outline" size="sm" className="flex-1">
                     <ArrowLeft className="w-4 h-4 mr-1" />{t('progressAnalyzer.back')}
                   </Button>
-                  <Button onClick={analyzePhotos} disabled={!canProceedFromBodyPhotos() || isAnalyzing} size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
+                  <Button onClick={analyzePhotos} disabled={isAnalyzing} size="sm" className="flex-1 bg-purple-600 hover:bg-purple-700">
                     <Sparkles className="w-4 h-4 mr-1" />{t('progressAnalyzer.analyze')}
                   </Button>
                 </div>
