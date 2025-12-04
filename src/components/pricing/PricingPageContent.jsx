@@ -747,7 +747,7 @@ export default function PricingPageContent() {
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
             className="h-5 flex-shrink-0 cursor-pointer"
-            onClick={() => navigate(getHomePageUrl(language))}
+            onClick={() => navigate(createPageUrl('Home'))}
           />
 
           <div className="flex items-center gap-4 flex-shrink-0">
