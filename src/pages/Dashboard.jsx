@@ -812,15 +812,15 @@ export default function Dashboard() {
       <Dialog open={showEditBMR} onOpenChange={setShowEditBMR}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Modifica Metabolismo Basale (BMR)</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('upgradeModal.editBMR')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
             <p className="text-sm text-gray-600">
-              Inserisci il tuo valore personalizzato di BMR se lo hai già calcolato autonomamente. Questo valore verrà utilizzato per i calcoli nutrizionali.
+              {t('upgradeModal.editBMRDesc')}
             </p>
             <div>
               <Label htmlFor="edit-bmr" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Metabolismo Basale (kcal/giorno)
+                {t('upgradeModal.bmrLabel')}
               </Label>
               <Input
                 id="edit-bmr"
@@ -839,14 +839,14 @@ export default function Dashboard() {
                 disabled={isSavingBMR}
                 className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
-                {isSavingBMR ? 'Salvataggio...' : 'Salva'}
+                {isSavingBMR ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditBMR(false)}
                 variant="outline"
                 className="flex-1"
               >
-                Annulla
+                {t('upgradeModal.cancel')}
               </Button>
             </div>
           </div>
@@ -857,15 +857,15 @@ export default function Dashboard() {
       <Dialog open={showEditBodyFat} onOpenChange={setShowEditBodyFat}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Modifica Massa Grassa</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('upgradeModal.editBodyFat')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
             <p className="text-sm text-gray-600">
-              Inserisci la tua percentuale di massa grassa se l'hai già calcolata con altri metodi (plicometria, DEXA, bilancia impedenziometrica, ecc.).
+              {t('upgradeModal.editBodyFatDesc')}
             </p>
             <div>
               <Label htmlFor="edit-bodyfat" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Massa Grassa (%)
+                {t('upgradeModal.bodyFatLabel')}
               </Label>
               <Input
                 id="edit-bodyfat"
@@ -885,14 +885,14 @@ export default function Dashboard() {
                 disabled={isSavingBodyFat}
                 className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
-                {isSavingBodyFat ? 'Salvataggio...' : 'Salva'}
+                {isSavingBodyFat ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditBodyFat(false)}
                 variant="outline"
                 className="flex-1"
               >
-                Annulla
+                {t('upgradeModal.cancel')}
               </Button>
             </div>
           </div>
@@ -903,15 +903,15 @@ export default function Dashboard() {
       <Dialog open={showEditCalories} onOpenChange={setShowEditCalories}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Modifica Target Calorico</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('upgradeModal.editCalorieTarget')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
             <p className="text-sm text-gray-600">
-              Inserisci il tuo target calorico personalizzato se hai un piano specifico o indicazioni dal tuo nutrizionista.
+              {t('upgradeModal.editCalorieTargetDesc')}
             </p>
             <div>
               <Label htmlFor="edit-calories" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Target Calorico (kcal/giorno)
+                {t('upgradeModal.calorieTargetLabel')}
               </Label>
               <Input
                 id="edit-calories"
@@ -930,14 +930,14 @@ export default function Dashboard() {
                 disabled={isSavingCalories}
                 className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
-                {isSavingCalories ? 'Salvataggio...' : 'Salva'}
+                {isSavingCalories ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditCalories(false)}
                 variant="outline"
                 className="flex-1"
               >
-                Annulla
+                {t('upgradeModal.cancel')}
               </Button>
             </div>
           </div>
