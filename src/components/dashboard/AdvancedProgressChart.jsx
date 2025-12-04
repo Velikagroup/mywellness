@@ -130,11 +130,18 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   });
   
   // Primo peso registrato (più vecchio) e ultimo peso registrato (più recente)
-  const firstRecordedWeight = sortedByDate.length > 0 ? sortedByDate[0].weight : startWeight;
-  const lastRecordedWeight = sortedByDate.length > 0 ? sortedByDate[sortedByDate.length - 1].weight : startWeight;
+  const firstRecordedWeight = sortedByDate.length > 0 ? parseFloat(sortedByDate[0].weight) : startWeight;
+  const lastRecordedWeight = sortedByDate.length > 0 ? parseFloat(sortedByDate[sortedByDate.length - 1].weight) : startWeight;
   
   // Variazione = ultimo peso - primo peso (negativo = hai perso peso, positivo = hai guadagnato)
   const weightVariation = lastRecordedWeight - firstRecordedWeight;
+  
+  console.log('📊 Weight Debug:', { 
+    firstRecordedWeight, 
+    lastRecordedWeight, 
+    weightVariation: weightVariation.toFixed(2),
+    sortedDates: sortedByDate.map(w => ({ date: w.date, weight: w.weight }))
+  });
   
   const totalWeightToChange = startWeight - targetWeight;
   const remainingToTarget = lastRecordedWeight - targetWeight;
