@@ -995,6 +995,9 @@ export const translations = {
       dietLabel: "Dieta:",
       workoutLabel: "Allenamento:",
       daysAgo: "giorni fa",
+      // Progress Analyzer specific
+      diet: "Dieta",
+      workout: "Allenamento",
       confirmDowngrade: "Conferma Downgrade",
       confirmUpgrade: "Conferma Upgrade Immediato",
       scheduledDowngrade: "📅 Downgrade Programmato:",
@@ -2084,6 +2087,9 @@ export const translations = {
       dietLabel: "Diet:",
       workoutLabel: "Workout:",
       daysAgo: "days ago",
+      // Progress Analyzer specific
+      diet: "Diet",
+      workout: "Workout",
       confirmDowngrade: "Confirm Downgrade",
       confirmUpgrade: "Confirm Immediate Upgrade",
       scheduledDowngrade: "📅 Scheduled Downgrade:",
@@ -3169,6 +3175,9 @@ export const translations = {
       dietLabel: "Dieta:",
       workoutLabel: "Entrenamiento:",
       daysAgo: "días atrás",
+      // Progress Analyzer specific
+      diet: "Dieta",
+      workout: "Entrenamiento",
       confirmDowngrade: "Confirmar Downgrade",
       confirmUpgrade: "Confirmar Upgrade Inmediato",
       scheduledDowngrade: "📅 Downgrade Programado:",
@@ -4254,6 +4263,9 @@ export const translations = {
       dietLabel: "Dieta:",
       workoutLabel: "Treino:",
       daysAgo: "dias atrás",
+      // Progress Analyzer specific
+      diet: "Dieta",
+      workout: "Treino",
       confirmDowngrade: "Confirmar Downgrade",
       confirmUpgrade: "Confirmar Upgrade Imediato",
       scheduledDowngrade: "📅 Downgrade Programado:",
@@ -5339,6 +5351,9 @@ export const translations = {
       dietLabel: "Ernährung:",
       workoutLabel: "Training:",
       daysAgo: "Tage her",
+      // Progress Analyzer specific
+      diet: "Ernährung",
+      workout: "Training",
       confirmDowngrade: "Downgrade Bestätigen",
       confirmUpgrade: "Sofortiges Upgrade Bestätigen",
       scheduledDowngrade: "📅 Geplanter Downgrade:",
@@ -6424,6 +6439,9 @@ export const translations = {
       dietLabel: "Régime:",
       workoutLabel: "Entraînement:",
       daysAgo: "jours passés",
+      // Progress Analyzer specific
+      diet: "Régime",
+      workout: "Entraînement",
       confirmDowngrade: "Confirmer le Downgrade",
       confirmUpgrade: "Confirmer l'Upgrade Immédiat",
       scheduledDowngrade: "📅 Downgrade Programmé:",
