@@ -295,7 +295,8 @@ export default function PricingPageContent() {
     }
   ];
 
-  const testimonials = t('pricing.testimonials') || [
+  const translatedTestimonials = t('pricing.testimonials');
+  const testimonials = Array.isArray(translatedTestimonials) ? translatedTestimonials : [
     {
       name: "Maria Santos",
       role: "Studentessa Universitaria",
