@@ -12,11 +12,11 @@ import { useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageCont
 const getPricingPageUrl = (langCode) => {
   const langPricingPages = {
     'en': '/pricing',
-    'it': '/ItPricing',
-    'es': '/EsPricing',
-    'pt': '/PtPricing',
-    'de': '/DePricing',
-    'fr': '/FrPricing'
+    'it': '/itpricing',
+    'es': '/espricing',
+    'pt': '/ptpricing',
+    'de': '/depricing',
+    'fr': '/frpricing'
   };
   return langPricingPages[langCode] || '/pricing';
 };
