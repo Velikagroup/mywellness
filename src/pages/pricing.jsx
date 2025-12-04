@@ -7,7 +7,6 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
-import TestimonialsGrid from '../components/pricing/TestimonialsGrid';
 
 function PricingPageContent() {
   const navigate = useNavigate();
@@ -1331,7 +1330,31 @@ function PricingPageContent() {
               <span className="animated-text-gradient">{t('pricing.testimonialsTitle')}</span> {t('pricing.testimonialsTitleHighlight')}
             </h2>
 
-            <TestimonialsGrid testimonials={testimonials.slice(0, 12)} />
+            <div className="relative pb-32">
+              <div className="flex flex-wrap gap-6">
+                {testimonials.slice(0, 12).map((testimonial, index) => (
+                  <div
+                    key={index}
+                    className="water-glass-effect rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]"
+                  >
+                    <div className="flex items-start gap-4 mb-4">
+                      <img
+                        src={testimonial.photo}
+                        alt={testimonial.name}
+                        className="w-12 h-12 rounded-full object-cover border-2 border-white/90 shadow-md flex-shrink-0"
+                      />
+                      <div>
+                        <p className="font-semibold text-gray-900 text-sm">{testimonial.name}</p>
+                        <p className="text-xs text-gray-600">{testimonial.role}</p>
+                      </div>
+                    </div>
+                    <p className="text-sm text-gray-800 leading-relaxed">
+                      {testimonial.text}
+                    </p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Footer */}
