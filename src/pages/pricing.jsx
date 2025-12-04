@@ -213,37 +213,36 @@ function PricingPageContent() {
 
   const faqs = [
     {
-      question: "Posso cancellare in qualsiasi momento?",
-      answer: "Sì, puoi cancellare quando vuoi senza alcun vincolo o penale. Il servizio resterà attivo fino alla fine del periodo già pagato."
-    },
-
-    {
-      question: "Cosa succede se raggiungo il limite di generazioni mensili?",
-      answer: "Se raggiungi il limite di generazioni del tuo piano (4/mese per Base, 8 nutrizionali + 4 allenamento per Pro), potrai comunque utilizzare i piani già generati. Per generare nuovi piani dovrai attendere il mese successivo oppure fare upgrade a un piano superiore. Il piano Premium ha generazioni illimitate!"
+      question: t('pricing.faq1Question'),
+      answer: t('pricing.faq1Answer')
     },
     {
-      question: "Posso cambiare piano in seguito?",
-      answer: "Certo! Puoi fare upgrade o downgrade del tuo piano in qualsiasi momento. Le modifiche saranno effettive dal prossimo ciclo di fatturazione."
+      question: t('pricing.faq2Question'),
+      answer: t('pricing.faq2Answer')
     },
     {
-      question: "Quali metodi di pagamento accettate?",
-      answer: "Accettiamo tutte le principali carte di credito/debito (Visa, Mastercard, American Express) e PayPal."
+      question: t('pricing.faq3Question'),
+      answer: t('pricing.faq3Answer')
     },
     {
-      question: "Come funziona l'analisi AI dei pasti?",
-      answer: "Fotografi il tuo pasto e la nostra AI analizza automaticamente le calorie e i macronutrienti consumati, confrontandoli con il tuo piano. Se necessario, ribalanciamo automaticamente i pasti successivi."
+      question: t('pricing.faq4Question'),
+      answer: t('pricing.faq4Answer')
     },
     {
-      question: "Posso usare l'app senza connessione internet?",
-      answer: "Alcune funzioni sono disponibili offline (come visualizzare ricette e piani salvati), ma per le analisi AI e l'aggiornamento dei dati è necessaria una connessione."
+      question: t('pricing.faq5Question'),
+      answer: t('pricing.faq5Answer')
     },
     {
-      question: "I piani sono personalizzati o generici?",
-      answer: "Tutti i piani sono 100% personalizzati in base al tuo profilo: età, peso, altezza, obiettivi, preferenze alimentari, livello di attività e molto altro."
+      question: t('pricing.faq6Question'),
+      answer: t('pricing.faq6Answer')
     },
     {
-      question: "Cosa succede ai miei dati se cancello l'abbonamento?",
-      answer: "I tuoi dati rimangono al sicuro per 90 giorni. Se riattivi l'abbonamento entro questo periodo, ritroverai tutto come l'hai lasciato. Dopo 90 giorni, i dati vengono eliminati per rispettare la privacy."
+      question: t('pricing.faq7Question'),
+      answer: t('pricing.faq7Answer')
+    },
+    {
+      question: t('pricing.faq8Question'),
+      answer: t('pricing.faq8Answer')
     }
   ];
 
