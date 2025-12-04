@@ -1,4 +1,3 @@
-
 import React, { useState, useRef } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -6,8 +5,10 @@ import { Textarea } from '@/components/ui/textarea';
 import { Camera, Upload, Loader2, CheckCircle, AlertTriangle, X, Plus, ArrowLeft, Sparkles, Zap, Info } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded }) {
+  const { t } = useLanguage();
   const [photos, setPhotos] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
@@ -490,9 +491,9 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
             </div>
             <div>
               <span className="text-gray-900 font-bold">
-                Analisi Scientifica Pasto AI
+                {t('photoMealAnalyzer.title')}
               </span>
-              <p className="text-sm text-gray-600 font-normal mt-1">Analisi dimensionale e calcolo preciso ingrediente per ingrediente</p>
+              <p className="text-sm text-gray-600 font-normal mt-1">{t('photoMealAnalyzer.subtitle')}</p>
             </div>
           </DialogTitle>
         </DialogHeader>
@@ -509,8 +510,8 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
               {/* Upload Section */}
               <div className="relative border-2 border-dashed border-[#26847F]/30 rounded-2xl p-8 text-center bg-gradient-to-br from-[#e9f6f5]/50 to-white hover:border-[#26847F]/50 transition-all group">
                 <Camera className="w-12 h-12 text-[#26847F] mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                <p className="text-gray-800 font-semibold mb-2">📸 Carica foto del tuo pasto</p>
-                <p className="text-sm text-gray-600 mb-6">L'AI farà analisi dimensionale per calcolare peso e nutrienti con precisione scientifica</p>
+                <p className="text-gray-800 font-semibold mb-2">📸 {t('photoMealAnalyzer.uploadMealPhoto')}</p>
+                <p className="text-sm text-gray-600 mb-6">{t('photoMealAnalyzer.uploadInfo')}</p>
                 <div className="flex gap-3 justify-center flex-wrap">
                   <input
                     type="file"
@@ -527,7 +528,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                     className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
                   >
                     <Camera className="w-4 h-4 mr-2" />
-                    Scatta Foto
+                    {t('photoMealAnalyzer.takePhoto')}
                   </Button>
                   
                   <input
@@ -545,7 +546,7 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                     className="border-2 border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5] transition-all"
                   >
                     <Upload className="w-4 h-4 mr-2" />
-                    Carica da Galleria
+                    {t('photoMealAnalyzer.selectFromGallery')}
                   </Button>
                 </div>
               </div>
@@ -649,8 +650,8 @@ Now perform the analysis with DETAILED NUTRITIONAL DESCRIPTIONS for every ingred
                     <Loader2 className="w-16 h-16 animate-spin text-[#26847F]" />
                     <Sparkles className="w-6 h-6 text-teal-500 absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 animate-pulse" />
                   </div>
-                  <p className="text-gray-900 font-bold text-lg mb-2">🔬 Analisi scientifica in corso...</p>
-                  <p className="text-sm text-gray-600 mb-4">Calcolo dimensionale ingrediente per ingrediente</p>
+                  <p className="text-gray-900 font-bold text-lg mb-2">🔬 {t('photoMealAnalyzer.analyzing')}</p>
+                  <p className="text-sm text-gray-600 mb-4">{t('photoMealAnalyzer.subtitle')}</p>
                   <div className="max-w-md mx-auto space-y-2 text-xs text-gray-600">
                     <p>✓ Calibrazione riferimento piatto</p>
                     <p>✓ Misurazione dimensioni alimenti</p>
