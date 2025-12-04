@@ -1331,11 +1331,11 @@ function PricingPageContent() {
             </h2>
 
             <div className="relative pb-32">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-x-6 gap-y-6 items-start">
+              <div className="columns-1 md:columns-2 lg:columns-3 gap-6">
                 {testimonials.slice(0, 12).map((testimonial, index) => (
                   <div
                     key={index}
-                    className="water-glass-effect rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all"
+                    className="water-glass-effect rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all break-inside-avoid mb-6"
                   >
                     <div className="flex items-start gap-4 mb-4">
                       <img
