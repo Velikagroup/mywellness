@@ -259,7 +259,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                         <h4 className="font-semibold text-green-900 mb-2">✅ {t('upgradeModal.appliedChanges')}</h4>
                         {selectedPhoto.ai_analysis.applied_changes.diet?.length > 0 && (
                           <div className="mb-2">
-                            <p className="text-sm font-semibold text-green-800 mb-1">🍽️ {t('upgradeModal.dietLabel')}</p>
+                            <p className="text-sm font-semibold text-green-800 mb-1">🍽️ {t('upgradeModal.diet')}</p>
                             <ul className="space-y-0.5">
                               {selectedPhoto.ai_analysis.applied_changes.diet.map((change, idx) => (
                                 <li key={idx} className="text-xs text-green-700">• {change}</li>
@@ -269,7 +269,7 @@ export default function ProgressPhotoGallery({ isOpen, onClose, photos, onDelete
                         )}
                         {selectedPhoto.ai_analysis.applied_changes.workout?.length > 0 && (
                           <div>
-                            <p className="text-sm font-semibold text-green-800 mb-1">💪 {t('upgradeModal.workoutLabel')}</p>
+                            <p className="text-sm font-semibold text-green-800 mb-1">💪 {t('upgradeModal.workout')}</p>
                             <ul className="space-y-0.5">
                               {selectedPhoto.ai_analysis.applied_changes.workout.map((change, idx) => (
                                 <li key={idx} className="text-xs text-green-700">• {change}</li>
