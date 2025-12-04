@@ -691,6 +691,173 @@ Suggest ONE single exercise replacement with name in ${langName.toUpperCase()}, 
     setIsGeneratingProposals(false);
   };
 
+  const applyNutritionRecommendations = async () => {
+    if (!analysisResult?.nutrition_recommendations?.length) return;
+    
+    setIsApplyingNutritionRecs(true);
+    try {
+      // Genera prompt per l'AI per adattare il piano nutrizionale
+      const currentMeals = await base44.entities.MealPlan.filter({ user_id: user.id });
+      
+      const prompt = `Sei un nutrizionista esperto. Basandoti sulle seguenti raccomandazioni nutrizionali derivate dall'analisi foto progresso, suggerisci una modifica calorica appropriata.
+
+RACCOMANDAZIONI AI:
+${analysisResult.nutrition_recommendations.map((r, i) => `${i + 1}. ${r}`).join('\n')}
+
+DATI UTENTE:
+- Calorie giornaliere attuali: ${user.daily_calories} kcal
+- Peso attuale: ${user.current_weight} kg
+- Peso obiettivo: ${user.target_weight} kg
+- Obiettivo: ${user.fitness_goal}
+
+Basandoti sulle raccomandazioni, suggerisci un aggiustamento calorico (tra -100 e +100 kcal).
+Se le raccomandazioni suggeriscono di aumentare proteine/riducerre carboidrati ma non cambiano calorie totali, suggerisci 0.`;
+
+      const adjustment = await base44.integrations.Core.InvokeLLM({
+        prompt,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            calorie_adjustment: { type: "number", description: "Aggiustamento calorico da -100 a +100" },
+            reason: { type: "string", description: "Breve spiegazione" }
+          },
+          required: ["calorie_adjustment", "reason"]
+        }
+      });
+
+      const calorieAdjustment = Math.max(-100, Math.min(100, adjustment.calorie_adjustment || 0));
+      
+      if (calorieAdjustment !== 0) {
+        const newCalories = Math.round(user.daily_calories + calorieAdjustment);
+        await base44.auth.updateMe({ daily_calories: newCalories });
+        
+        // Scala tutti i pasti proporzionalmente
+        const scalingFactor = newCalories / user.daily_calories;
+        for (const meal of currentMeals) {
+          const scaledIngredients = meal.ingredients.map(ing => ({
+            ...ing,
+            quantity: Math.round(ing.quantity * scalingFactor * 10) / 10,
+            calories: Math.round(ing.calories * scalingFactor),
+            protein: Math.round(ing.protein * scalingFactor * 10) / 10,
+            carbs: Math.round(ing.carbs * scalingFactor * 10) / 10,
+            fat: Math.round(ing.fat * scalingFactor * 10) / 10
+          }));
+          
+          const newTotals = scaledIngredients.reduce((acc, ing) => ({
+            calories: acc.calories + ing.calories,
+            protein: acc.protein + ing.protein,
+            carbs: acc.carbs + ing.carbs,
+            fat: acc.fat + ing.fat
+          }), { calories: 0, protein: 0, carbs: 0, fat: 0 });
+          
+          await base44.entities.MealPlan.update(meal.id, {
+            ingredients: scaledIngredients,
+            total_calories: Math.round(newTotals.calories),
+            total_protein: Math.round(newTotals.protein * 10) / 10,
+            total_carbs: Math.round(newTotals.carbs * 10) / 10,
+            total_fat: Math.round(newTotals.fat * 10) / 10
+          });
+        }
+      }
+      
+      setNutritionRecsApplied(true);
+      setAppliedChanges(prev => ({
+        ...prev,
+        diet: [`Raccomandazioni nutrizionali applicate: ${adjustment.reason}${calorieAdjustment !== 0 ? ` (${calorieAdjustment > 0 ? '+' : ''}${calorieAdjustment} kcal)` : ''}`]
+      }));
+    } catch (error) {
+      console.error('Error applying nutrition recommendations:', error);
+      alert(t('progressAnalyzer.applyError'));
+    }
+    setIsApplyingNutritionRecs(false);
+  };
+
+  const applyWorkoutRecommendations = async () => {
+    if (!analysisResult?.workout_recommendations?.length) return;
+    
+    setIsApplyingWorkoutRecs(true);
+    try {
+      const workoutPlans = await base44.entities.WorkoutPlan.filter({ user_id: user.id });
+      const allExercises = await base44.entities.Exercise.list();
+      
+      const targetMuscleGroups = {
+        'pancia': ['addominali', 'core'],
+        'petto': ['pettorali'],
+        'schiena': ['dorsali', 'lombari', 'gran dorsale'],
+        'braccia': ['bicipiti', 'tricipiti', 'avambraccio'],
+        'gambe': ['quadricipiti', 'polpacci', 'femorali', 'glutei'],
+        'glutei': ['glutei', 'femorali']
+      };
+      
+      const relevantMuscles = targetMuscleGroups[analysisResult.target_zone] || [];
+      const activeDays = workoutPlans.filter(p => p.workout_type !== 'rest' && p.exercises?.length > 0);
+      
+      if (activeDays.length > 0 && relevantMuscles.length > 0) {
+        // Trova il giorno con più esercizi rilevanti
+        let dayToModify = null;
+        let maxRelevantExercises = 0;
+        let exerciseToReplace = null;
+        
+        for (const day of activeDays) {
+          const relevantExercisesInDay = day.exercises.filter(ex => 
+            relevantMuscles.some(muscle => 
+              ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+            )
+          );
+          
+          if (relevantExercisesInDay.length > maxRelevantExercises) {
+            maxRelevantExercises = relevantExercisesInDay.length;
+            dayToModify = day;
+            exerciseToReplace = relevantExercisesInDay[0];
+          }
+        }
+        
+        if (dayToModify && exerciseToReplace) {
+          const availableExercises = allExercises.filter(ex => 
+            relevantMuscles.some(muscle => 
+              ex.muscle_groups?.some(mg => mg.toLowerCase().includes(muscle))
+            ) && 
+            ex.name.toLowerCase() !== exerciseToReplace.name.toLowerCase() &&
+            (user.equipment?.includes(ex.equipment) || ex.equipment === 'corpo_libero' || ex.equipment === 'nessuno')
+          );
+          
+          if (availableExercises.length > 0) {
+            const newExercise = availableExercises[Math.floor(Math.random() * availableExercises.length)];
+            
+            const updatedExercises = dayToModify.exercises.map(ex => 
+              ex.name === exerciseToReplace.name ? {
+                ...ex,
+                name: newExercise.name,
+                description: newExercise.description,
+                muscle_groups: newExercise.muscle_groups
+              } : ex
+            );
+            
+            await base44.entities.WorkoutPlan.update(dayToModify.id, { exercises: updatedExercises });
+            
+            setWorkoutRecsApplied(true);
+            setAppliedChanges(prev => ({
+              ...prev,
+              workout: [`${dayToModify.plan_name}: sostituito "${exerciseToReplace.name}" con "${newExercise.name}" per migliorare ${analysisResult.target_zone}`]
+            }));
+          }
+        }
+      }
+      
+      if (!workoutRecsApplied) {
+        setWorkoutRecsApplied(true);
+        setAppliedChanges(prev => ({
+          ...prev,
+          workout: ['Raccomandazioni di allenamento registrate']
+        }));
+      }
+    } catch (error) {
+      console.error('Error applying workout recommendations:', error);
+      alert(t('progressAnalyzer.applyError'));
+    }
+    setIsApplyingWorkoutRecs(false);
+  };
+
   const applyProposedChanges = async (changeType = 'both') => {
     if (!proposedChanges) return;
     
