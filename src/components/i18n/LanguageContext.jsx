@@ -55,12 +55,8 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return getBrowserLanguage();
   });
   
-  // Update language if forcedLanguage prop changes
-  useEffect(() => {
-    if (forcedLanguage && forcedLanguage !== language) {
-      setLanguageState(forcedLanguage);
-    }
-  }, [forcedLanguage]);
+  // Always use forcedLanguage if provided, otherwise use state
+  const effectiveLanguage = forcedLanguage || language;
 
   // Update language when URL changes (but NOT if forcedLanguage is set)
   useEffect(() => {
@@ -83,11 +79,8 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
 
   // Translation function
   const t = useCallback((key, params = {}) => {
-    // Use forcedLanguage if provided, otherwise use current language state
-    const currentLang = forcedLanguage || language;
-    
     const keys = key.split('.');
-    let value = translations[currentLang];
+    let value = translations[effectiveLanguage];
     
     for (const k of keys) {
       if (value && typeof value === 'object') {
@@ -112,10 +105,10 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  }, [language, forcedLanguage]);
+  }, [effectiveLanguage]);
 
   return (
-    <LanguageContext.Provider value={{ language: forcedLanguage || language, setLanguage, t, SUPPORTED_LANGUAGES }}>
+    <LanguageContext.Provider value={{ language: effectiveLanguage, setLanguage, t, SUPPORTED_LANGUAGES }}>
       {children}
     </LanguageContext.Provider>
   );
