@@ -66,20 +66,20 @@ function calculateBodyFat(gender, height, waist, neck, hip) {
   return null;
 }
 
-function buildDynamicSteps(t) {
+function buildDynamicSteps(translations) {
   return [
-    { component: IntroStep, label: t?.quizIntroTitle || "Welcome" },
-    { component: BirthdateStep, label: t?.quizBirthdateTitle || "Birthdate" },
-    { component: HeightStep, label: t?.quizHeightTitle || "Height" },
-    { component: CurrentWeightStep, label: t?.quizCurrentWeightTitle || "Current Weight" },
-    { component: TargetWeightStep, label: t?.quizTargetWeightTitle || "Target Weight" },
-    { component: NeckCircumferenceStep, label: t?.quizNeckTitle || "Neck Circumference" },
-    { component: WaistCircumferenceStep, label: t?.quizWaistTitle || "Waist Circumference" },
-    { component: HipCircumferenceStep, label: t?.quizHipTitle || "Hip Circumference" },
-    { component: CurrentBodyTypeStep, label: t?.quizCurrentBodyTypeTitle || "Current Body Type" },
-    { component: TargetZoneStep, label: t?.quizTargetZoneTitle || "Target Zone" },
-    { component: WeightLossSpeedStep, label: t?.quizWeightLossSpeedTitle || "Weight Loss Speed" },
-    { component: TargetBodyTypeStep, label: t?.quizTargetBodyTypeTitle || "Target Body Type" }
+    { component: IntroStep, label: translations?.quiz?.quizIntroTitle || "Welcome" },
+    { component: BirthdateStep, label: translations?.quiz?.quizBirthdateTitle || "Birthdate" },
+    { component: HeightStep, label: translations?.quiz?.quizHeightTitle || "Height" },
+    { component: CurrentWeightStep, label: translations?.quiz?.quizCurrentWeightTitle || "Current Weight" },
+    { component: TargetWeightStep, label: translations?.quiz?.quizTargetWeightTitle || "Target Weight" },
+    { component: NeckCircumferenceStep, label: translations?.quiz?.quizNeckTitle || "Neck Circumference" },
+    { component: WaistCircumferenceStep, label: translations?.quiz?.quizWaistTitle || "Waist Circumference" },
+    { component: HipCircumferenceStep, label: translations?.quiz?.quizHipTitle || "Hip Circumference" },
+    { component: CurrentBodyTypeStep, label: translations?.quiz?.quizCurrentBodyTypeTitle || "Current Body Type" },
+    { component: TargetZoneStep, label: translations?.quiz?.quizTargetZoneTitle || "Target Zone" },
+    { component: WeightLossSpeedStep, label: translations?.quiz?.quizWeightLossSpeedTitle || "Weight Loss Speed" },
+    { component: TargetBodyTypeStep, label: translations?.quiz?.quizTargetBodyTypeTitle || "Target Body Type" }
   ];
 }
 
@@ -97,7 +97,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
     return saved ? JSON.parse(saved) : {};
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [dynamicSteps, setDynamicSteps] = useState(() => buildDynamicSteps(t));
+  const [dynamicSteps, setDynamicSteps] = useState(() => buildDynamicSteps(translations));
   const [isCalculating, setIsCalculating] = useState(false);
   const [showBodyFatReveal, setShowBodyFatReveal] = useState(false);
   const [user, setUser] = useState(null);
@@ -283,8 +283,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
   useEffect(() => {
     localStorage.setItem(`quizData_${language}`, JSON.stringify(quizData));
-    setDynamicSteps(buildDynamicSteps(t));
-  }, [quizData, language, t]);
+    setDynamicSteps(buildDynamicSteps(translations));
+  }, [quizData, language, translations]);
 
   const isCurrentStepValid = () => {
     const stepComponent = dynamicSteps[currentStep]?.component;
@@ -715,8 +715,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         data={quizData}
         onDataChange={handleStepData}
         onNext={nextStep}
-        translations={t}
-        t={t}
+        translations={translations}
       />
     </QuizStepWrapper>
   );
