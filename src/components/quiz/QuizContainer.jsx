@@ -566,6 +566,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
         
         <div className="min-h-screen flex items-center justify-center p-4 animated-gradient-bg">
           <Card className="max-w-2xl w-full bg-white/90 backdrop-blur-xl border-2 border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
+            {/* Progress Bar */}
+            <div className="h-2 bg-gray-100 w-full">
+              <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 w-full rounded-r-full" />
+            </div>
             <CardContent className="p-8 md:p-12">
               <div className="text-center mb-8">
                 <div className="relative w-24 h-24 mx-auto mb-6">
