@@ -5,13 +5,12 @@ import { translations } from '@/components/i18n/translations';
 
 function ItQuizContent() {
   const { t } = useLanguage();
-  const quizTranslations = translations['it']?.quiz || translations['it'] || {};
   
   React.useEffect(() => {
     localStorage.setItem('preferred_language', 'it');
   }, []);
   
-  return <QuizContainer translations={quizTranslations} language="it" />;
+  return <QuizContainer translations={translations.it} language="it" />;
 }
 
 export default function itquiz() {

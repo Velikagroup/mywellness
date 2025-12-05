@@ -5,13 +5,12 @@ import { translations } from '@/components/i18n/translations';
 
 function DeQuizContent() {
   const { t } = useLanguage();
-  const quizTranslations = translations['de']?.quiz || translations['de'] || {};
   
   React.useEffect(() => {
     localStorage.setItem('preferred_language', 'de');
   }, []);
   
-  return <QuizContainer translations={quizTranslations} language="de" />;
+  return <QuizContainer translations={translations.de} language="de" />;
 }
 
 export default function dequiz() {

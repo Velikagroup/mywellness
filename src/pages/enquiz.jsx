@@ -5,13 +5,13 @@ import { translations } from '@/components/i18n/translations';
 
 function EnQuizContent() {
   const { t } = useLanguage();
-  const quizTranslations = translations['en']?.quiz || translations['en'] || {};
   
   React.useEffect(() => {
     localStorage.setItem('preferred_language', 'en');
   }, []);
   
-  return <QuizContainer translations={quizTranslations} language="en" />;
+  // Pass entire English translations object to QuizContainer
+  return <QuizContainer translations={translations.en} language="en" />;
 }
 
 export default function enquiz() {
