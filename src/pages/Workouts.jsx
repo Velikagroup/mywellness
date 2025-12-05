@@ -1809,10 +1809,10 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 {t('workouts.loadingDesc', { count: allExercises.length, goal: trainingData.fitness_goal })}
               </p>
               <p className="text-xs text-amber-600 text-center mt-3 font-semibold">
-                ⏱️ Questa operazione richiederà alcuni minuti
+                ⏱️ {t('workouts.timeWarning')}
               </p>
               <p className="text-xs text-red-600 text-center mt-2 font-bold">
-                ⚠️ Non cambiare pagina durante la generazione
+                ⚠️ {t('workouts.dontLeavePage')}
               </p>
             </CardHeader>
             

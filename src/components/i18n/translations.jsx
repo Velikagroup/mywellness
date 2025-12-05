@@ -407,6 +407,8 @@ export const translations = {
       loadingTitle: "Creazione Protocollo Allenamento AI",
       loadingDesc: "L'AI sta selezionando esercizi dal database di {count} esercizi per il tuo obiettivo: {goal}",
       loadingWait: "Attendere mentre recuperiamo i tuoi dati.",
+      timeWarning: "Questa operazione richiederà alcuni minuti",
+      dontLeavePage: "Non cambiare pagina durante la generazione",
       // Generation progress
       genProtocol: "Protocollo AI:",
       genDatabase: "Database: {count} esercizi totali",
@@ -1681,6 +1683,8 @@ export const translations = {
       loadingTitle: "Creating AI Workout Protocol",
       loadingDesc: "AI is selecting exercises from database of {count} exercises for your goal: {goal}",
       loadingWait: "Please wait while we retrieve your data.",
+      timeWarning: "This operation will take a few minutes",
+      dontLeavePage: "Don't change page during generation",
       // Generation progress
       genProtocol: "AI Protocol:",
       genDatabase: "Database: {count} total exercises",
@@ -2992,6 +2996,8 @@ export const translations = {
       loadingTitle: "Creando Protocolo de Entrenamiento IA",
       loadingDesc: "La IA está seleccionando ejercicios de la base de datos de {count} ejercicios para tu objetivo: {goal}",
       loadingWait: "Espera mientras recuperamos tus datos.",
+      timeWarning: "Esta operación tardará unos minutos",
+      dontLeavePage: "No cambies de página durante la generación",
       // Generation progress
       genProtocol: "Protocolo IA:",
       genDatabase: "Base de datos: {count} ejercicios totales",
@@ -4252,6 +4258,8 @@ export const translations = {
       loadingTitle: "Criando Protocolo de Treino IA",
       loadingDesc: "A IA está selecionando exercícios do banco de dados de {count} exercícios para seu objetivo: {goal}",
       loadingWait: "Aguarde enquanto recuperamos seus dados.",
+      timeWarning: "Esta operação levará alguns minutos",
+      dontLeavePage: "Não mude de página durante a geração",
       // Generation progress
       genProtocol: "Protocolo IA:",
       genDatabase: "Banco de dados: {count} exercícios totais",
@@ -5559,6 +5567,8 @@ export const translations = {
       loadingTitle: "Erstelle KI-Trainingsprotokoll",
       loadingDesc: "KI wählt Übungen aus Datenbank von {count} Übungen für Ihr Ziel: {goal}",
       loadingWait: "Bitte warten Sie, während wir Ihre Daten abrufen.",
+      timeWarning: "Dieser Vorgang wird einige Minuten dauern",
+      dontLeavePage: "Ändern Sie die Seite während der Generierung nicht",
       // Generation progress
       genProtocol: "KI-Protokoll:",
       genDatabase: "Datenbank: {count} Übungen insgesamt",
@@ -6819,6 +6829,8 @@ export const translations = {
       loadingTitle: "Création du Protocole d'Entraînement IA",
       loadingDesc: "L'IA sélectionne des exercices de la base de données de {count} exercices pour votre objectif : {goal}",
       loadingWait: "Veuillez patienter pendant que nous récupérons vos données.",
+      timeWarning: "Cette opération prendra quelques minutes",
+      dontLeavePage: "Ne changez pas de page pendant la génération",
       // Generation progress
       genProtocol: "Protocole IA :",
       genDatabase: "Base de données : {count} exercices au total",
