@@ -48,6 +48,12 @@ import esquiz from './pages/esquiz';
 import ptquiz from './pages/ptquiz';
 import dequiz from './pages/dequiz';
 import frquiz from './pages/frquiz';
+import ItHome from './pages/ItHome';
+import EnHome from './pages/EnHome';
+import EsHome from './pages/EsHome';
+import PtHome from './pages/PtHome';
+import DeHome from './pages/DeHome';
+import FrHome from './pages/FrHome';
 import __Layout from './Layout.jsx';
 
 
@@ -102,6 +108,12 @@ export const PAGES = {
     "ptquiz": ptquiz,
     "dequiz": dequiz,
     "frquiz": frquiz,
+    "ItHome": ItHome,
+    "EnHome": EnHome,
+    "EsHome": EsHome,
+    "PtHome": PtHome,
+    "DeHome": DeHome,
+    "FrHome": FrHome,
 }
 
 export const pagesConfig = {
