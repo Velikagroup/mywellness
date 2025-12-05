@@ -239,8 +239,18 @@ export default function BlogPageContent() {
   const loadPosts = async () => {
     setIsLoading(true);
     try {
-      const allPosts = await base44.entities.BlogPost.filter({ published: true, language: language }, '-created_date', 200);
-      setPosts(allPosts);
+      // Get all published posts
+      const allPosts = await base44.entities.BlogPost.filter({ published: true }, '-created_date', 200);
+      
+      // Filter by language - for Italian, include posts without language field (legacy)
+      let filteredPosts;
+      if (language === 'it') {
+        filteredPosts = allPosts.filter(p => !p.language || p.language === 'it');
+      } else {
+        filteredPosts = allPosts.filter(p => p.language === language);
+      }
+      
+      setPosts(filteredPosts);
     } catch (error) {
       console.error('Error loading posts:', error);
       setPosts([]);
