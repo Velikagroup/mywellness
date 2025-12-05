@@ -344,9 +344,9 @@ export default function BlogPageContent() {
         .water-glass-effect {
           backdrop-filter: blur(12px) saturate(180%);
           background: linear-gradient(135deg, 
-            rgba(249, 250, 251, 0.75) 0%,
-            rgba(243, 244, 246, 0.65) 50%,
-            rgba(249, 250, 241, 0.75) 100%
+            rgba(249, 250, 251, 0.95) 0%,
+            rgba(243, 244, 246, 0.92) 50%,
+            rgba(249, 250, 251, 0.95) 100%
           );
           box-shadow: 
             0 8px 32px 0 rgba(31, 38, 135, 0.08),
