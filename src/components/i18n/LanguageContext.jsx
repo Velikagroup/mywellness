@@ -62,14 +62,16 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
   }, [forcedLanguage]);
 
-  // Update language when URL changes
+  // Update language when URL changes (but NOT if forcedLanguage is set)
   useEffect(() => {
+    if (forcedLanguage) return; // Don't override forced language
+    
     const urlLang = getLanguageFromPath(location.pathname);
     if (urlLang && urlLang !== language) {
       setLanguageState(urlLang);
       localStorage.setItem('preferred_language', urlLang);
     }
-  }, [location.pathname, language]);
+  }, [location.pathname, language, forcedLanguage]);
 
   // Change language (without URL changes for now)
   const setLanguage = useCallback((newLang) => {
