@@ -83,8 +83,11 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
 
   // Translation function
   const t = useCallback((key, params = {}) => {
+    // Use forcedLanguage if provided, otherwise use current language state
+    const currentLang = forcedLanguage || language;
+    
     const keys = key.split('.');
-    let value = translations[language];
+    let value = translations[currentLang];
     
     for (const k of keys) {
       if (value && typeof value === 'object') {
@@ -109,10 +112,10 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  }, [language]);
+  }, [language, forcedLanguage]);
 
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
+    <LanguageContext.Provider value={{ language: forcedLanguage || language, setLanguage, t, SUPPORTED_LANGUAGES }}>
       {children}
     </LanguageContext.Provider>
   );
