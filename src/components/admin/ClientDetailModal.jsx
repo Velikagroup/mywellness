@@ -169,6 +169,34 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
     setIsProcessing(false);
   };
 
+  const handleToggleCustomerSupport = async () => {
+    const isCurrentlySupport = client.custom_role === 'customer_support';
+    const action = isCurrentlySupport ? 'rimuovere' : 'assegnare';
+    
+    if (!confirm(`${action.charAt(0).toUpperCase() + action.slice(1)} il ruolo Customer Support a ${client.full_name || client.email}?`)) {
+      return;
+    }
+
+    setIsProcessing(true);
+    try {
+      const response = await base44.functions.invoke('adminUpdateUserPlan', {
+        userEmail: client.email,
+        customRole: isCurrentlySupport ? null : 'customer_support'
+      });
+
+      if (response.data?.success || response.success) {
+        alert(`✅ Ruolo ${isCurrentlySupport ? 'rimosso' : 'assegnato'} con successo!`);
+        await onUpdate();
+      } else {
+        alert('❌ Errore: ' + (response.data?.error || response.error));
+      }
+    } catch (error) {
+      console.error('Error toggling customer support:', error);
+      alert('❌ Errore: ' + error.message);
+    }
+    setIsProcessing(false);
+  };
+
   const handleGrantCredits = async () => {
     setIsProcessing(true);
     try {
