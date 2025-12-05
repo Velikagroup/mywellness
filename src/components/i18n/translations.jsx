@@ -40,7 +40,8 @@ export const translations = {
       quizFemale: "Donna",
       quizTime: "Richiede solo 3 minuti",
       quizScientific: "Calcoli scientifici precisi",
-      quizPrivacy: "I tuoi dati sono privati e sicuri"
+      quizPrivacy: "I tuoi dati sono privati e sicuri",
+      quizQuestionsCompleted: "domande completate"
     },
     nav: {
       dashboard: "Dashboard",
@@ -1331,7 +1332,8 @@ export const translations = {
       quizFemale: "Female",
       quizTime: "Takes only 3 minutes",
       quizScientific: "Precise scientific calculations",
-      quizPrivacy: "Your data is private and secure"
+      quizPrivacy: "Your data is private and secure",
+      quizQuestionsCompleted: "questions completed"
     },
     nav: {
       dashboard: "Dashboard",
@@ -2657,7 +2659,8 @@ export const translations = {
       quizFemale: "Mujer",
       quizTime: "Solo toma 3 minutos",
       quizScientific: "Cálculos científicos precisos",
-      quizPrivacy: "Tus datos son privados y seguros"
+      quizPrivacy: "Tus datos son privados y seguros",
+      quizQuestionsCompleted: "preguntas completadas"
     },
     nav: {
       dashboard: "Panel",
@@ -3932,7 +3935,8 @@ export const translations = {
       quizFemale: "Mulher",
       quizTime: "Leva apenas 3 minutos",
       quizScientific: "Cálculos científicos precisos",
-      quizPrivacy: "Seus dados são privados e seguros"
+      quizPrivacy: "Seus dados são privados e seguros",
+      quizQuestionsCompleted: "perguntas concluídas"
     },
     nav: {
       dashboard: "Painel",
@@ -5254,7 +5258,8 @@ export const translations = {
       quizFemale: "Frau",
       quizTime: "Dauert nur 3 Minuten",
       quizScientific: "Präzise wissenschaftliche Berechnungen",
-      quizPrivacy: "Ihre Daten sind privat und sicher"
+      quizPrivacy: "Ihre Daten sind privat und sicher",
+      quizQuestionsCompleted: "Fragen beantwortet"
     },
     nav: {
       dashboard: "Dashboard",
@@ -6529,7 +6534,8 @@ export const translations = {
       quizFemale: "Femme",
       quizTime: "Ne prend que 3 minutes",
       quizScientific: "Calculs scientifiques précis",
-      quizPrivacy: "Vos données sont privées et sécurisées"
+      quizPrivacy: "Vos données sont privées et sécurisées",
+      quizQuestionsCompleted: "questions complétées"
     },
     nav: {
       dashboard: "Tableau de bord",
