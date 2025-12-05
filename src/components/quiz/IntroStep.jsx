@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { Card } from "@/components/ui/card";
 
 export default function IntroStep({ data, onDataChange, onNext, translations }) {
-  const t = translations || {};
+  const t = translations?.quiz || translations || {};
   
   const handleSelection = (gender) => {
     onDataChange({ gender });
