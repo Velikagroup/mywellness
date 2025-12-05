@@ -1,31 +1,32 @@
 import React from 'react';
 
-const MALE_BODY_TYPES = [
-  { percentage: 8, label: '8%', description: 'Estremamente Definito', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/1acaba3b0_Male-body-fat-8.png' },
-  { percentage: 10, label: '10%', description: 'Molto Definito', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/96a00655d_Male-body-fat-10.png' },
-  { percentage: 15, label: '15%', description: 'Atletico', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/69302b19e_Male-body-fat-15.png' },
-  { percentage: 20, label: '20%', description: 'Fit', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/b7be7a4c5_Male-body-fat-20.png' },
-  { percentage: 25, label: '25%', description: 'Media', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3b887d54b_Male-body-fat-25.png' },
-  { percentage: 30, label: '30%', description: 'Sopra Media', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/f54bb3688_Male-body-fat-30.png' },
-  { percentage: 35, label: '35%', description: 'Sovrappeso', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/ee93c412f_Male-body-fat-35.png' },
-  { percentage: 40, label: '40%', description: 'Obeso', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/717800cd5_Male-body-fat-40.png' },
-  { percentage: 45, label: '45%', description: 'Obeso Grave', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/99df4e995_Male-body-fat-45.png' }
-];
-
-const FEMALE_BODY_TYPES = [
-  { percentage: 12, label: '12%', description: 'Estremamente Definita', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/772b8960d_Female-body-fat-12.png' },
-  { percentage: 15, label: '15%', description: 'Molto Definita', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/f0c622feb_Female-body-fat-15.png' },
-  { percentage: 20, label: '20%', description: 'Atletica', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2439ba582_Female-body-fat-20.png' },
-  { percentage: 25, label: '25%', description: 'Fit', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/37e8213a8_Female-body-fat-25.png' },
-  { percentage: 30, label: '30%', description: 'Media', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/1a67a83de_Female-body-fat-30.png' },
-  { percentage: 35, label: '35%', description: 'Sopra Media', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/020311e64_Female-body-fat-35.png' },
-  { percentage: 40, label: '40%', description: 'Sovrappeso', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2bc13882f_Female-body-fat-40.png' },
-  { percentage: 45, label: '45%', description: 'Obesa', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/124ac4fdb_Female-body-fat-45.png' },
-  { percentage: 50, label: '50%', description: 'Obesa Grave', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/61e4d162e_Female-body-fat-50.png' }
-];
-
 export default function CurrentBodyTypeStep({ data, onDataChange, onNext, translations }) {
   const t = translations?.quiz || {};
+
+  const MALE_BODY_TYPES = [
+    { percentage: 8, label: '8%', description: t.bodyTypeMale8 || 'Extremely Defined', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/1acaba3b0_Male-body-fat-8.png' },
+    { percentage: 10, label: '10%', description: t.bodyTypeMale10 || 'Very Defined', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/96a00655d_Male-body-fat-10.png' },
+    { percentage: 15, label: '15%', description: t.bodyTypeMale15 || 'Athletic', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/69302b19e_Male-body-fat-15.png' },
+    { percentage: 20, label: '20%', description: t.bodyTypeMale20 || 'Fit', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/b7be7a4c5_Male-body-fat-20.png' },
+    { percentage: 25, label: '25%', description: t.bodyTypeMale25 || 'Average', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3b887d54b_Male-body-fat-25.png' },
+    { percentage: 30, label: '30%', description: t.bodyTypeMale30 || 'Above Average', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/f54bb3688_Male-body-fat-30.png' },
+    { percentage: 35, label: '35%', description: t.bodyTypeMale35 || 'Overweight', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/ee93c412f_Male-body-fat-35.png' },
+    { percentage: 40, label: '40%', description: t.bodyTypeMale40 || 'Obese', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/717800cd5_Male-body-fat-40.png' },
+    { percentage: 45, label: '45%', description: t.bodyTypeMale45 || 'Severely Obese', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/99df4e995_Male-body-fat-45.png' }
+  ];
+
+  const FEMALE_BODY_TYPES = [
+    { percentage: 12, label: '12%', description: t.bodyTypeFemale12 || 'Extremely Defined', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/772b8960d_Female-body-fat-12.png' },
+    { percentage: 15, label: '15%', description: t.bodyTypeFemale15 || 'Very Defined', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/f0c622feb_Female-body-fat-15.png' },
+    { percentage: 20, label: '20%', description: t.bodyTypeFemale20 || 'Athletic', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2439ba582_Female-body-fat-20.png' },
+    { percentage: 25, label: '25%', description: t.bodyTypeFemale25 || 'Fit', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/37e8213a8_Female-body-fat-25.png' },
+    { percentage: 30, label: '30%', description: t.bodyTypeFemale30 || 'Average', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/1a67a83de_Female-body-fat-30.png' },
+    { percentage: 35, label: '35%', description: t.bodyTypeFemale35 || 'Above Average', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/020311e64_Female-body-fat-35.png' },
+    { percentage: 40, label: '40%', description: t.bodyTypeFemale40 || 'Overweight', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2bc13882f_Female-body-fat-40.png' },
+    { percentage: 45, label: '45%', description: t.bodyTypeFemale45 || 'Obese', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/124ac4fdb_Female-body-fat-45.png' },
+    { percentage: 50, label: '50%', description: t.bodyTypeFemale50 || 'Severely Obese', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/61e4d162e_Female-body-fat-50.png' }
+  ];
+
   const bodyTypes = data.gender === 'male' ? MALE_BODY_TYPES : FEMALE_BODY_TYPES;
 
   const handleSelection = (percentage) => {
