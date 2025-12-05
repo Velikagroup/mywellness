@@ -179,6 +179,61 @@ IMPORTANTE:
   article.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
+  // Translate all articles to all selected languages
+  const translateAllArticles = async () => {
+    // Get articles that need translation
+    const articlesToTranslate = filteredArticles.filter(article => {
+      const existingTranslations = getTranslatedLanguages(article.id);
+      const missingLangs = selectedLanguages.filter(
+        lang => !existingTranslations.includes(lang) && lang !== 'it'
+      );
+      return missingLangs.length > 0;
+    });
+
+    if (articlesToTranslate.length === 0) {
+      alert('Tutti gli articoli sono già tradotti nelle lingue selezionate!');
+      return;
+    }
+
+    if (!confirm(`Stai per tradurre ${articlesToTranslate.length} articoli in ${selectedLanguages.length} lingue. Questa operazione può richiedere diversi minuti. Continuare?`)) {
+      return;
+    }
+
+    setBulkTranslating(true);
+    setBulkProgress({ current: 0, total: articlesToTranslate.length, article: '' });
+
+    let totalSuccess = 0;
+    let totalFailed = 0;
+
+    for (let i = 0; i < articlesToTranslate.length; i++) {
+      const article = articlesToTranslate[i];
+      const existingTranslations = getTranslatedLanguages(article.id);
+      const languagesToTranslate = selectedLanguages.filter(
+        lang => !existingTranslations.includes(lang) && lang !== 'it'
+      );
+
+      setBulkProgress({
+        current: i + 1,
+        total: articlesToTranslate.length,
+        article: article.title.substring(0, 50) + (article.title.length > 50 ? '...' : '')
+      });
+
+      for (const lang of languagesToTranslate) {
+        const success = await translateArticle(article, lang);
+        if (success) totalSuccess++;
+        else totalFailed++;
+        
+        // Delay between translations to avoid rate limits
+        await new Promise(resolve => setTimeout(resolve, 1500));
+      }
+    }
+
+    setBulkTranslating(false);
+    setBulkProgress({ current: 0, total: 0, article: '' });
+    alert(`✅ Traduzione completata!\n${totalSuccess} traduzioni create\n${totalFailed} errori`);
+    onRefresh();
+  };
+
   return (
     <Card className="water-glass-effect border-gray-200/30 shadow-xl">
       <CardHeader>
