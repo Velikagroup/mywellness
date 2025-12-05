@@ -47,7 +47,7 @@ export default function AdminBlog() {
   };
 
   const loadPosts = async () => {
-    const allPosts = await base44.entities.BlogPost.list('-created_date', 500);
+    const allPosts = await base44.entities.BlogPost.list('-created_date', 1000);
     setPosts(allPosts);
   };
 
