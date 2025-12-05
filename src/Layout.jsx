@@ -147,7 +147,11 @@ function LayoutContent({ children }) {
   const customerSupportMenuItems = user && user.custom_role === 'customer_support' ? [
     { name: t('nav.clients'), icon: Users, path: 'AdminClients' },
     { name: t('nav.tickets'), icon: HelpCircle, path: 'AdminSupportTickets' },
-    { name: t('nav.feedback'), icon: MessageCircle, path: 'AdminFeedback' }
+    { name: t('nav.feedback'), icon: MessageCircle, path: 'AdminFeedback' },
+    { name: t('nav.coupons'), icon: Tag, path: 'AdminCoupons' },
+    { name: t('nav.blog'), icon: FileText, path: 'AdminBlog' },
+    { name: t('nav.email'), icon: Mail, path: 'AdminEmails' },
+    { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' }
   ] : [];
 
   const adminMenuItems = user && user.role === 'admin' ? [
