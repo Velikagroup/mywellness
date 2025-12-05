@@ -42,6 +42,12 @@ import ptblogarticle from './pages/ptblogarticle';
 import deblogarticle from './pages/deblogarticle';
 import frblogarticle from './pages/frblogarticle';
 import blogarticle from './pages/blogarticle';
+import ItQuiz from './pages/ItQuiz';
+import EnQuiz from './pages/EnQuiz';
+import EsQuiz from './pages/EsQuiz';
+import PtQuiz from './pages/PtQuiz';
+import DeQuiz from './pages/DeQuiz';
+import FrQuiz from './pages/FrQuiz';
 import __Layout from './Layout.jsx';
 
 
@@ -90,6 +96,12 @@ export const PAGES = {
     "deblogarticle": deblogarticle,
     "frblogarticle": frblogarticle,
     "blogarticle": blogarticle,
+    "ItQuiz": ItQuiz,
+    "EnQuiz": EnQuiz,
+    "EsQuiz": EsQuiz,
+    "PtQuiz": PtQuiz,
+    "DeQuiz": DeQuiz,
+    "FrQuiz": FrQuiz,
 }
 
 export const pagesConfig = {
