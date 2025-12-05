@@ -11,18 +11,11 @@ Deno.serve(async (req) => {
             return Response.json({ success: false, error: 'Unauthorized - Admin only' }, { status: 401 });
         }
 
-        const { userEmail, newPlan } = await req.json();
+        const { userEmail, newPlan, customRole } = await req.json();
         
-        if (!userEmail || !newPlan) {
-            return Response.json({ success: false, error: 'Missing userEmail or newPlan' }, { status: 400 });
+        if (!userEmail) {
+            return Response.json({ success: false, error: 'Missing userEmail' }, { status: 400 });
         }
-
-        const validPlans = ['free', 'base', 'pro', 'premium'];
-        if (!validPlans.includes(newPlan)) {
-            return Response.json({ success: false, error: 'Invalid plan. Must be: free, base, pro, premium' }, { status: 400 });
-        }
-
-        console.log(`🔄 Admin ${adminUser.email} updating ${userEmail} to plan: ${newPlan}`);
 
         const users = await base44.asServiceRole.entities.User.filter({ email: userEmail });
 
@@ -31,19 +24,43 @@ Deno.serve(async (req) => {
         }
 
         const user = users[0];
-        const oldPlan = user.subscription_plan;
+        const updateData = {};
 
-        await base44.asServiceRole.entities.User.update(user.id, {
-            subscription_plan: newPlan
-        });
+        // Handle plan change
+        if (newPlan) {
+            const validPlans = ['free', 'base', 'pro', 'premium'];
+            if (!validPlans.includes(newPlan)) {
+                return Response.json({ success: false, error: 'Invalid plan. Must be: free, base, pro, premium' }, { status: 400 });
+            }
+            updateData.subscription_plan = newPlan;
+            console.log(`🔄 Admin ${adminUser.email} updating ${userEmail} to plan: ${newPlan}`);
+        }
 
-        console.log(`✅ User ${userEmail} updated from ${oldPlan} to ${newPlan}`);
+        // Handle custom_role change (customer_support)
+        if (customRole !== undefined) {
+            if (customRole === null || customRole === '') {
+                updateData.custom_role = null;
+                console.log(`🔄 Admin ${adminUser.email} removing custom_role from ${userEmail}`);
+            } else if (customRole === 'customer_support') {
+                updateData.custom_role = 'customer_support';
+                console.log(`🔄 Admin ${adminUser.email} setting ${userEmail} as customer_support`);
+            } else {
+                return Response.json({ success: false, error: 'Invalid customRole. Must be: customer_support or null' }, { status: 400 });
+            }
+        }
+
+        if (Object.keys(updateData).length === 0) {
+            return Response.json({ success: false, error: 'No valid updates provided' }, { status: 400 });
+        }
+
+        await base44.asServiceRole.entities.User.update(user.id, updateData);
+
+        console.log(`✅ User ${userEmail} updated:`, updateData);
 
         return Response.json({ 
             success: true,
-            message: `User ${userEmail} updated from ${oldPlan} to ${newPlan}`,
-            oldPlan,
-            newPlan
+            message: `User ${userEmail} updated successfully`,
+            updates: updateData
         });
 
     } catch (error) {
