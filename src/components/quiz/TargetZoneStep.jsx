@@ -1,22 +1,22 @@
 import React from 'react';
 
-const TARGET_ZONES = [
-  { id: 'arms', label: 'Braccia', icon: '💪', description: 'Tonificare bicipiti e tricipiti' },
-  { id: 'chest', label: 'Petto', icon: '🦸', description: 'Sviluppare pettorali' },
-  { id: 'shoulders', label: 'Spalle', icon: '🏋️', description: 'Rafforzare deltoidi' },
-  { id: 'back', label: 'Schiena', icon: '🧍', description: 'Migliorare postura e dorsali' },
-  { id: 'belly', label: 'Addome', icon: '🤰', description: 'Ridurre grasso addominale' },
-  { id: 'waist', label: 'Fianchi/Vita', icon: '⏳', description: 'Definire punto vita' },
-  { id: 'glutes', label: 'Glutei', icon: '🍑', description: 'Sviluppare e modellare glutei' },
-  { id: 'thighs', label: 'Cosce', icon: '🦵', description: 'Tonificare quadricipiti e femorali' },
-  { id: 'calves', label: 'Polpacci', icon: '🏃', description: 'Rafforzare parte bassa gambe' },
-  { id: 'face_neck', label: 'Viso e Collo', icon: '😊', description: 'Definire lineamenti' },
-  { id: 'full_body', label: 'Corpo Intero', icon: '🎯', description: 'Miglioramento generale' }
-];
-
 export default function TargetZoneStep({ data, onDataChange, onNext, translations }) {
   const t = translations?.quiz || {};
   const selectedZones = data.target_zones || [];
+
+  const TARGET_ZONES = [
+    { id: 'arms', label: t.zoneArms || 'Braccia', icon: '💪', description: t.zoneArmsDesc || 'Tonificare bicipiti e tricipiti' },
+    { id: 'chest', label: t.zoneChest || 'Petto', icon: '🦸', description: t.zoneChestDesc || 'Sviluppare pettorali' },
+    { id: 'shoulders', label: t.zoneShoulders || 'Spalle', icon: '🏋️', description: t.zoneShouldersDesc || 'Rafforzare deltoidi' },
+    { id: 'back', label: t.zoneBack || 'Schiena', icon: '🧍', description: t.zoneBackDesc || 'Migliorare postura e dorsali' },
+    { id: 'belly', label: t.zoneBelly || 'Addome', icon: '🤰', description: t.zoneBellyDesc || 'Ridurre grasso addominale' },
+    { id: 'waist', label: t.zoneWaist || 'Fianchi/Vita', icon: '⏳', description: t.zoneWaistDesc || 'Definire punto vita' },
+    { id: 'glutes', label: t.zoneGlutes || 'Glutei', icon: '🍑', description: t.zoneGlutesDesc || 'Sviluppare e modellare glutei' },
+    { id: 'thighs', label: t.zoneThighs || 'Cosce', icon: '🦵', description: t.zoneThighsDesc || 'Tonificare quadricipiti e femorali' },
+    { id: 'calves', label: t.zoneCalves || 'Polpacci', icon: '🏃', description: t.zoneCalvesDesc || 'Rafforzare parte bassa gambe' },
+    { id: 'face_neck', label: t.zoneFaceNeck || 'Viso e Collo', icon: '😊', description: t.zoneFaceNeckDesc || 'Definire lineamenti' },
+    { id: 'full_body', label: t.zoneFullBody || 'Corpo Intero', icon: '🎯', description: t.zoneFullBodyDesc || 'Miglioramento generale' }
+  ];
 
   const handleSelection = (zoneId) => {
     let newZones;
