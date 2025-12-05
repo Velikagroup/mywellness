@@ -29,6 +29,19 @@ export const translations = {
       lang: "it",
       goal: "Obiettivo"
     },
+    quiz: {
+      quizIntroTitle: "Scopri la tua",
+      quizIntroHighlight: "massa grassa",
+      quizIntroSubtitle: "e costruisci il",
+      quizIntroPlan: "piano nutrizionale",
+      quizIntroCustom: "fatto su misura per te",
+      quizSelectGender: "Seleziona il tuo sesso:",
+      quizMale: "Uomo",
+      quizFemale: "Donna",
+      quizTime: "Richiede solo 3 minuti",
+      quizScientific: "Calcoli scientifici precisi",
+      quizPrivacy: "I tuoi dati sono privati e sicuri"
+    },
     nav: {
       dashboard: "Dashboard",
       nutrition: "Nutrizione",
@@ -1306,6 +1319,19 @@ export const translations = {
       months: "months",
       lang: "en",
       goal: "Goal"
+    },
+    quiz: {
+      quizIntroTitle: "Discover your",
+      quizIntroHighlight: "body fat",
+      quizIntroSubtitle: "and build the",
+      quizIntroPlan: "nutrition plan",
+      quizIntroCustom: "made just for you",
+      quizSelectGender: "Select your gender:",
+      quizMale: "Male",
+      quizFemale: "Female",
+      quizTime: "Takes only 3 minutes",
+      quizScientific: "Precise scientific calculations",
+      quizPrivacy: "Your data is private and secure"
     },
     nav: {
       dashboard: "Dashboard",
@@ -2620,6 +2646,19 @@ export const translations = {
       lang: "es",
       goal: "Objetivo"
     },
+    quiz: {
+      quizIntroTitle: "Descubre tu",
+      quizIntroHighlight: "grasa corporal",
+      quizIntroSubtitle: "y construye el",
+      quizIntroPlan: "plan nutricional",
+      quizIntroCustom: "hecho a tu medida",
+      quizSelectGender: "Selecciona tu sexo:",
+      quizMale: "Hombre",
+      quizFemale: "Mujer",
+      quizTime: "Solo toma 3 minutos",
+      quizScientific: "Cálculos científicos precisos",
+      quizPrivacy: "Tus datos son privados y seguros"
+    },
     nav: {
       dashboard: "Panel",
       nutrition: "Nutrición",
@@ -3881,6 +3920,19 @@ export const translations = {
       months: "meses",
       lang: "pt",
       goal: "Meta"
+    },
+    quiz: {
+      quizIntroTitle: "Descubra sua",
+      quizIntroHighlight: "gordura corporal",
+      quizIntroSubtitle: "e construa o",
+      quizIntroPlan: "plano nutricional",
+      quizIntroCustom: "feito sob medida para você",
+      quizSelectGender: "Selecione seu sexo:",
+      quizMale: "Homem",
+      quizFemale: "Mulher",
+      quizTime: "Leva apenas 3 minutos",
+      quizScientific: "Cálculos científicos precisos",
+      quizPrivacy: "Seus dados são privados e seguros"
     },
     nav: {
       dashboard: "Painel",
@@ -5191,6 +5243,19 @@ export const translations = {
       lang: "de",
       goal: "Ziel"
     },
+    quiz: {
+      quizIntroTitle: "Entdecken Sie Ihr",
+      quizIntroHighlight: "Körperfett",
+      quizIntroSubtitle: "und erstellen Sie den",
+      quizIntroPlan: "Ernährungsplan",
+      quizIntroCustom: "maßgeschneidert für Sie",
+      quizSelectGender: "Wählen Sie Ihr Geschlecht:",
+      quizMale: "Mann",
+      quizFemale: "Frau",
+      quizTime: "Dauert nur 3 Minuten",
+      quizScientific: "Präzise wissenschaftliche Berechnungen",
+      quizPrivacy: "Ihre Daten sind privat und sicher"
+    },
     nav: {
       dashboard: "Dashboard",
       nutrition: "Ernährung",
@@ -6452,6 +6517,19 @@ export const translations = {
       months: "mois",
       lang: "fr",
       goal: "Objectif"
+    },
+    quiz: {
+      quizIntroTitle: "Découvrez votre",
+      quizIntroHighlight: "masse grasse",
+      quizIntroSubtitle: "et construisez le",
+      quizIntroPlan: "plan nutritionnel",
+      quizIntroCustom: "fait sur mesure pour vous",
+      quizSelectGender: "Sélectionnez votre sexe:",
+      quizMale: "Homme",
+      quizFemale: "Femme",
+      quizTime: "Ne prend que 3 minutes",
+      quizScientific: "Calculs scientifiques précis",
+      quizPrivacy: "Vos données sont privées et sécurisées"
     },
     nav: {
       dashboard: "Tableau de bord",
