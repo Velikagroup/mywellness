@@ -7,13 +7,13 @@ import { Progress } from '@/components/ui/progress';
 import { Loader2, Languages, Check, X, Globe, ChevronDown, ChevronUp } from 'lucide-react';
 
 const LANGUAGES = [
-  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
-  { code: 'en', name: 'English', flag: '🇬🇧' },
-  { code: 'es', name: 'Español', flag: '🇪🇸' },
-  { code: 'pt', name: 'Português', flag: '🇧🇷' },
-  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-  { code: 'fr', name: 'Français', flag: '🇫🇷' }
-];
+{ code: 'it', name: 'Italiano', flag: '🇮🇹' },
+{ code: 'en', name: 'English', flag: '🇬🇧' },
+{ code: 'es', name: 'Español', flag: '🇪🇸' },
+{ code: 'pt', name: 'Português', flag: '🇧🇷' },
+{ code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+{ code: 'fr', name: 'Français', flag: '🇫🇷' }];
+
 
 export default function ArticleTranslator({ posts, onRefresh }) {
   const [expandedArticle, setExpandedArticle] = useState(null);
@@ -24,32 +24,32 @@ export default function ArticleTranslator({ posts, onRefresh }) {
   const [searchQuery, setSearchQuery] = useState('');
 
   // Get only Italian articles (original articles)
-  const italianArticles = posts.filter(p => p.language === 'it' || !p.language);
+  const italianArticles = posts.filter((p) => p.language === 'it' || !p.language);
 
   // Get translations for an article
   const getTranslationsForArticle = (articleId) => {
-    return posts.filter(p => p.original_article_id === articleId);
+    return posts.filter((p) => p.original_article_id === articleId);
   };
 
   // Check which languages are already translated
   const getTranslatedLanguages = (articleId) => {
     const translations = getTranslationsForArticle(articleId);
-    return translations.map(t => t.language);
+    return translations.map((t) => t.language);
   };
 
   const createSlug = (title, langCode) => {
-    const baseSlug = title
-      .toLowerCase()
-      .normalize('NFD')
-      .replace(/[\u0300-\u036f]/g, '')
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-+|-+$/g, '');
+    const baseSlug = title.
+    toLowerCase().
+    normalize('NFD').
+    replace(/[\u0300-\u036f]/g, '').
+    replace(/[^a-z0-9]+/g, '-').
+    replace(/^-+|-+$/g, '');
     return baseSlug;
   };
 
   const translateArticle = async (article, targetLang) => {
-    const langName = LANGUAGES.find(l => l.code === targetLang)?.name || targetLang;
-    
+    const langName = LANGUAGES.find((l) => l.code === targetLang)?.name || targetLang;
+
     try {
       const translationPrompt = `Traduci questo articolo di blog in ${langName}.
 
@@ -106,7 +106,7 @@ IMPORTANTE:
   const translateToAllLanguages = async (article) => {
     const existingTranslations = getTranslatedLanguages(article.id);
     const languagesToTranslate = selectedLanguages.filter(
-      lang => !existingTranslations.includes(lang) && lang !== 'it'
+      (lang) => !existingTranslations.includes(lang) && lang !== 'it'
     );
 
     if (languagesToTranslate.length === 0) {
@@ -122,20 +122,20 @@ IMPORTANTE:
 
     for (let i = 0; i < languagesToTranslate.length; i++) {
       const lang = languagesToTranslate[i];
-      const langName = LANGUAGES.find(l => l.code === lang)?.name;
-      
+      const langName = LANGUAGES.find((l) => l.code === lang)?.name;
+
       setTranslationStatus(`Traduzione in ${langName}... (${i + 1}/${languagesToTranslate.length})`);
-      setTranslationProgress(Math.round(((i + 1) / languagesToTranslate.length) * 100));
+      setTranslationProgress(Math.round((i + 1) / languagesToTranslate.length * 100));
 
       const success = await translateArticle(article, lang);
       if (success) successCount++;
 
       // Small delay between translations
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      await new Promise((resolve) => setTimeout(resolve, 1000));
     }
 
     setTranslationStatus(`✅ Completato! ${successCount}/${languagesToTranslate.length} traduzioni create.`);
-    
+
     setTimeout(() => {
       setTranslatingArticle(null);
       setTranslationProgress(0);
@@ -146,11 +146,11 @@ IMPORTANTE:
 
   const translateSingleLanguage = async (article, targetLang) => {
     setTranslatingArticle(article.id);
-    setTranslationStatus(`Traduzione in ${LANGUAGES.find(l => l.code === targetLang)?.name}...`);
+    setTranslationStatus(`Traduzione in ${LANGUAGES.find((l) => l.code === targetLang)?.name}...`);
     setTranslationProgress(50);
 
     const success = await translateArticle(article, targetLang);
-    
+
     if (success) {
       setTranslationStatus('✅ Traduzione completata!');
       setTranslationProgress(100);
@@ -173,8 +173,8 @@ IMPORTANTE:
     }
   };
 
-  const filteredArticles = italianArticles.filter(article =>
-    article.title.toLowerCase().includes(searchQuery.toLowerCase())
+  const filteredArticles = italianArticles.filter((article) =>
+  article.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -187,26 +187,26 @@ IMPORTANTE:
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">Lingue target:</span>
-            {LANGUAGES.filter(l => l.code !== 'it').map(lang => (
-              <button
-                key={lang.code}
-                onClick={() => {
-                  if (selectedLanguages.includes(lang.code)) {
-                    setSelectedLanguages(selectedLanguages.filter(l => l !== lang.code));
-                  } else {
-                    setSelectedLanguages([...selectedLanguages, lang.code]);
-                  }
-                }}
-                className={`text-xl p-1 rounded transition-all ${
-                  selectedLanguages.includes(lang.code) 
-                    ? 'bg-[var(--brand-primary-light)] ring-2 ring-[var(--brand-primary)]' 
-                    : 'opacity-40 hover:opacity-70'
-                }`}
-                title={lang.name}
-              >
+            {LANGUAGES.filter((l) => l.code !== 'it').map((lang) =>
+            <button
+              key={lang.code}
+              onClick={() => {
+                if (selectedLanguages.includes(lang.code)) {
+                  setSelectedLanguages(selectedLanguages.filter((l) => l !== lang.code));
+                } else {
+                  setSelectedLanguages([...selectedLanguages, lang.code]);
+                }
+              }}
+              className={`text-xl p-1 rounded transition-all ${
+              selectedLanguages.includes(lang.code) ?
+              'bg-[var(--brand-primary-light)] ring-2 ring-[var(--brand-primary)]' :
+              'opacity-40 hover:opacity-70'}`
+              }
+              title={lang.name}>
+
                 {lang.flag}
               </button>
-            ))}
+            )}
           </div>
         </div>
         <p className="text-sm text-gray-500 mt-2">
@@ -220,32 +220,32 @@ IMPORTANTE:
           placeholder="🔍 Cerca articolo italiano da tradurre..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="w-full p-3 border rounded-lg"
-        />
+          className="w-full p-3 border rounded-lg" />
+
 
         {/* Articles List */}
         <div className="space-y-3 max-h-[600px] overflow-y-auto">
-          {filteredArticles.length === 0 ? (
-            <p className="text-center text-gray-500 py-8">
+          {filteredArticles.length === 0 ?
+          <p className="text-center text-gray-500 py-8">
               Nessun articolo italiano trovato. Genera prima gli articoli in italiano.
-            </p>
-          ) : (
-            filteredArticles.map(article => {
-              const translations = getTranslationsForArticle(article.id);
-              const translatedLangs = translations.map(t => t.language);
-              const isExpanded = expandedArticle === article.id;
-              const isTranslating = translatingArticle === article.id;
+            </p> :
 
-              return (
-                <div
-                  key={article.id}
-                  className="border rounded-lg overflow-hidden bg-white/50"
-                >
+          filteredArticles.map((article) => {
+            const translations = getTranslationsForArticle(article.id);
+            const translatedLangs = translations.map((t) => t.language);
+            const isExpanded = expandedArticle === article.id;
+            const isTranslating = translatingArticle === article.id;
+
+            return (
+              <div
+                key={article.id}
+                className="border rounded-lg overflow-hidden bg-white/50">
+
                   {/* Article Header */}
                   <div
-                    className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
-                    onClick={() => setExpandedArticle(isExpanded ? null : article.id)}
-                  >
+                  className="p-4 cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => setExpandedArticle(isExpanded ? null : article.id)}>
+
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
@@ -255,128 +255,128 @@ IMPORTANTE:
                           </h3>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          {LANGUAGES.filter(l => l.code !== 'it').map(lang => (
-                            <span
-                              key={lang.code}
-                              className={`text-lg ${
-                                translatedLangs.includes(lang.code) 
-                                  ? '' 
-                                  : 'opacity-30'
-                              }`}
-                              title={translatedLangs.includes(lang.code) ? `${lang.name} ✓` : `${lang.name} - da tradurre`}
-                            >
+                          {LANGUAGES.filter((l) => l.code !== 'it').map((lang) =>
+                        <span
+                          key={lang.code}
+                          className={`text-lg ${
+                          translatedLangs.includes(lang.code) ?
+                          '' :
+                          'opacity-30'}`
+                          }
+                          title={translatedLangs.includes(lang.code) ? `${lang.name} ✓` : `${lang.name} - da tradurre`}>
+
                               {lang.flag}
                             </span>
-                          ))}
+                        )}
                           <span className="text-xs text-gray-500 ml-2">
                             {translations.length}/5 traduzioni
                           </span>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
-                        {isTranslating ? (
-                          <Loader2 className="w-5 h-5 text-[var(--brand-primary)] animate-spin" />
-                        ) : (
-                          <>
+                        {isTranslating ?
+                      <Loader2 className="w-5 h-5 text-[var(--brand-primary)] animate-spin" /> :
+
+                      <>
                             <Button
-                              onClick={(e) => {
-                                e.stopPropagation();
-                                translateToAllLanguages(article);
-                              }}
-                              size="sm"
-                              className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                              disabled={translations.length >= 5}
-                            >
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            translateToAllLanguages(article);
+                          }}
+                          size="sm" className="bg-slate-900 text-primary-foreground px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-8 hover:bg-[var(--brand-primary-hover)]"
+
+                          disabled={translations.length >= 5}>
+
                               <Languages className="w-4 h-4 mr-1" />
                               Traduci Tutte
                             </Button>
-                            {isExpanded ? (
-                              <ChevronUp className="w-5 h-5 text-gray-400" />
-                            ) : (
-                              <ChevronDown className="w-5 h-5 text-gray-400" />
-                            )}
+                            {isExpanded ?
+                        <ChevronUp className="w-5 h-5 text-gray-400" /> :
+
+                        <ChevronDown className="w-5 h-5 text-gray-400" />
+                        }
                           </>
-                        )}
+                      }
                       </div>
                     </div>
 
                     {/* Translation Progress */}
-                    {isTranslating && (
-                      <div className="mt-4 space-y-2">
+                    {isTranslating &&
+                  <div className="mt-4 space-y-2">
                         <p className="text-sm text-gray-600">{translationStatus}</p>
                         <Progress value={translationProgress} className="h-2" />
                       </div>
-                    )}
+                  }
                   </div>
 
                   {/* Expanded Section */}
-                  {isExpanded && !isTranslating && (
-                    <div className="border-t bg-gray-50/50 p-4">
+                  {isExpanded && !isTranslating &&
+                <div className="border-t bg-gray-50/50 p-4">
                       <p className="text-sm font-medium text-gray-700 mb-3">Gestione Traduzioni:</p>
                       <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                        {LANGUAGES.filter(l => l.code !== 'it').map(lang => {
-                          const translation = translations.find(t => t.language === lang.code);
-                          const hasTranslation = !!translation;
+                        {LANGUAGES.filter((l) => l.code !== 'it').map((lang) => {
+                      const translation = translations.find((t) => t.language === lang.code);
+                      const hasTranslation = !!translation;
 
-                          return (
-                            <div
-                              key={lang.code}
-                              className={`p-3 rounded-lg border ${
-                                hasTranslation 
-                                  ? 'bg-green-50 border-green-200' 
-                                  : 'bg-white border-gray-200'
-                              }`}
-                            >
+                      return (
+                        <div
+                          key={lang.code}
+                          className={`p-3 rounded-lg border ${
+                          hasTranslation ?
+                          'bg-green-50 border-green-200' :
+                          'bg-white border-gray-200'}`
+                          }>
+
                               <div className="flex items-center justify-between mb-2">
                                 <span className="text-lg">{lang.flag}</span>
-                                {hasTranslation ? (
-                                  <Check className="w-4 h-4 text-green-600" />
-                                ) : (
-                                  <X className="w-4 h-4 text-gray-300" />
-                                )}
+                                {hasTranslation ?
+                            <Check className="w-4 h-4 text-green-600" /> :
+
+                            <X className="w-4 h-4 text-gray-300" />
+                            }
                               </div>
                               <p className="text-xs font-medium text-gray-700">{lang.name}</p>
                               
-                              {hasTranslation ? (
-                                <div className="mt-2 space-y-1">
+                              {hasTranslation ?
+                          <div className="mt-2 space-y-1">
                                   <Button
-                                    onClick={() => window.open(`/${lang.code}blog/${translation.slug}`, '_blank')}
-                                    size="sm"
-                                    variant="outline"
-                                    className="w-full text-xs h-7"
-                                  >
+                              onClick={() => window.open(`/${lang.code}blog/${translation.slug}`, '_blank')}
+                              size="sm"
+                              variant="outline"
+                              className="w-full text-xs h-7">
+
                                     Vedi
                                   </Button>
                                   <Button
-                                    onClick={() => deleteTranslation(translation.id)}
-                                    size="sm"
-                                    variant="outline"
-                                    className="w-full text-xs h-7 text-red-600 hover:bg-red-50"
-                                  >
+                              onClick={() => deleteTranslation(translation.id)}
+                              size="sm"
+                              variant="outline"
+                              className="w-full text-xs h-7 text-red-600 hover:bg-red-50">
+
                                     Elimina
                                   </Button>
-                                </div>
-                              ) : (
-                                <Button
-                                  onClick={() => translateSingleLanguage(article, lang.code)}
-                                  size="sm"
-                                  className="w-full mt-2 text-xs h-7 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-                                >
+                                </div> :
+
+                          <Button
+                            onClick={() => translateSingleLanguage(article, lang.code)}
+                            size="sm"
+                            className="w-full mt-2 text-xs h-7 bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]">
+
                                   Traduci
                                 </Button>
-                              )}
-                            </div>
-                          );
-                        })}
+                          }
+                            </div>);
+
+                    })}
                       </div>
                     </div>
-                  )}
-                </div>
-              );
-            })
-          )}
+                }
+                </div>);
+
+          })
+          }
         </div>
       </CardContent>
-    </Card>
-  );
+    </Card>);
+
 }
