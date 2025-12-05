@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { BlogPost } from '@/entities/BlogPost';
-import { User } from '@/entities/User';
-import { InvokeLLM } from '@/integrations/Core';
+import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -10,9 +8,11 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Plus, Trash2, Edit, Eye, EyeOff, Loader2, Check, Upload } from 'lucide-react';
+import { Plus, Trash2, Edit, Eye, EyeOff, Loader2, Check, Upload, Globe } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import ArticleTranslator from '@/components/admin/ArticleTranslator';
 
 export default function AdminBlog() {
   const navigate = useNavigate();
