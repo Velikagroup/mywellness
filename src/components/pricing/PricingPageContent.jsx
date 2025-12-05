@@ -875,7 +875,7 @@ export default function PricingPageContent() {
               </button>
               <button
                 onClick={() => {
-                  navigate(getBlogPageUrl(language));
+                  navigate(createPageUrl(getBlogPageName(language)));
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
