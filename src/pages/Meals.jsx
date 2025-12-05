@@ -1030,22 +1030,44 @@ STRICT RULES:
         const langName = languageNames[userLang] || 'English';
 
         // 🔥 GENERA CONTEXT PER VARIETÀ: ricorda cosa hai generato nei giorni precedenti
+        // Costruisci lista di tutti i pasti già generati con dettagli
+        const previousMealsDetailed = allGeneratedMeals.map(m => ({
+          day: m.day_of_week,
+          type: m.meal_type,
+          name: m.name,
+          mainProtein: m.ingredients?.find(i => 
+            /pollo|chicken|manzo|beef|maiale|pork|salmone|salmon|tonno|tuna|uova|egg|tofu|legumi|fagioli|lenticchie/i.test(i.name)
+          )?.name || 'unknown'
+        }));
+        
+        const usedDishes = [...new Set(allGeneratedMeals.map(m => m.name.toLowerCase()))];
+        const usedProteins = [...new Set(previousMealsDetailed.map(m => m.mainProtein.toLowerCase()))];
+        
         const previousDaysContext = allGeneratedMeals.length > 0 ? `
 
-🚨🚨🚨 PREVIOUS DAYS GENERATED - AVOID REPETITION 🚨🚨🚨
+🚨🚨🚨 CRITICAL: ABSOLUTE VARIETY ENFORCEMENT 🚨🚨🚨
 
-You have ALREADY created these meals for previous days:
-${allGeneratedMeals.slice(-10).map(m => `- ${m.day_of_week}: ${m.name} (${m.meal_type})`).join('\n')}
+ALREADY GENERATED MEALS (DO NOT REPEAT ANY OF THESE):
+${allGeneratedMeals.map(m => `❌ ${m.day_of_week.toUpperCase()} ${m.meal_type}: "${m.name}"`).join('\n')}
 
-YOU MUST CREATE COMPLETELY DIFFERENT MEALS FOR ${day.toUpperCase()}.
-DO NOT use the same dishes, proteins, or cooking methods as above!
+PROTEIN SOURCES ALREADY USED THIS WEEK:
+${usedProteins.map(p => `❌ ${p}`).join(', ')}
+
+FOR ${day.toUpperCase()} YOU MUST:
+1. Use COMPLETELY DIFFERENT dish names - not similar, DIFFERENT
+2. Use DIFFERENT protein sources than: ${usedProteins.join(', ')}
+3. Use DIFFERENT cooking methods
+4. Explore DIFFERENT cuisines (if Monday was Italian, Tuesday should be Asian, etc.)
+
+BANNED DISH NAMES FOR TODAY:
+${usedDishes.slice(-15).map(d => `"${d}"`).join(', ')}
+
 ` : `
 
 🚨🚨🚨 ABSOLUTE CRITICAL VARIETY REQUIREMENT 🚨🚨🚨
 
-THIS IS DAY: ${day.toUpperCase()} (${dayIndex + 1} of 7)
-
-YOU MUST CREATE COMPLETELY DIFFERENT MEALS FOR EACH DAY OF THE WEEK.
+THIS IS DAY 1 (${day.toUpperCase()}) - SET THE FOUNDATION FOR VARIETY!
+Create meals that will allow for maximum variety throughout the week.
 `;
 
         const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ${langName.toUpperCase()} for ${day}.
