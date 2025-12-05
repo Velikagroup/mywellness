@@ -1,31 +1,32 @@
 import React from 'react';
 
-const SPEED_OPTIONS = [
-  { 
-    id: 'very_fast', 
-    label: 'Molto Veloce', 
-    description: 'Deficit calorico del 25-30%',
-    icon: '🚀',
-    subtitle: 'Approccio aggressivo'
-  },
-  { 
-    id: 'moderate', 
-    label: 'Moderato', 
-    description: 'Deficit calorico del 20%',
-    icon: '⚡',
-    subtitle: 'Approccio bilanciato'
-  },
-  { 
-    id: 'slow', 
-    label: 'Lento e Costante', 
-    description: 'Deficit calorico del 10-15%',
-    icon: '🐢',
-    subtitle: 'Approccio sostenibile'
-  }
-];
-
 export default function WeightLossSpeedStep({ data, onDataChange, onNext, translations }) {
   const t = translations?.quiz || {};
+
+  const SPEED_OPTIONS = [
+    { 
+      id: 'very_fast', 
+      label: t.speedVeryFast || 'Molto Veloce', 
+      description: t.speedVeryFastDesc || 'Deficit calorico del 25-30%',
+      icon: '🚀',
+      subtitle: t.speedVeryFastSubtitle || 'Approccio aggressivo'
+    },
+    { 
+      id: 'moderate', 
+      label: t.speedModerate || 'Moderato', 
+      description: t.speedModerateDesc || 'Deficit calorico del 20%',
+      icon: '⚡',
+      subtitle: t.speedModerateSubtitle || 'Approccio bilanciato'
+    },
+    { 
+      id: 'slow', 
+      label: t.speedSlow || 'Lento e Costante', 
+      description: t.speedSlowDesc || 'Deficit calorico del 10-15%',
+      icon: '🐢',
+      subtitle: t.speedSlowSubtitle || 'Approccio sostenibile'
+    }
+  ];
+
   const handleSelection = (speed) => {
     onDataChange({ weight_loss_speed: speed });
     setTimeout(() => onNext(), 300);
