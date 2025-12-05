@@ -585,7 +585,7 @@ export default function BlogPageContent() {
       </section>
 
       {/* Categories Filter */}
-      <div ref={filterRef} className={`sticky top-20 z-30 py-4 px-4 md:px-6 transition-all ${isFilterSticky ? 'bg-white/80 backdrop-blur-lg shadow-sm' : ''}`}>
+      <div ref={filterRef} className={`sticky top-20 z-30 py-4 px-4 md:px-6 transition-all ${isFilterSticky ? 'water-glass-effect shadow-sm' : ''}`}>
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-wrap justify-center gap-2">
             {categories.map((cat) => (
