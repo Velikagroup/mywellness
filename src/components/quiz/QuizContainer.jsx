@@ -633,7 +633,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
               <Button
                 onClick={handleRevealBodyFat}
                 disabled={isSaving}
-                className="w-full h-16 text-xl font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105"
+                className="w-full h-16 text-xl font-bold bg-white hover:bg-gray-50 text-[var(--brand-primary)] border-2 border-[var(--brand-primary)] rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105"
               >
                 {isSaving ? (
                   <>
