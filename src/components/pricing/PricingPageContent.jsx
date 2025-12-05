@@ -35,14 +35,14 @@ const getHomePageUrl = (langCode) => {
 
 const getQuizPageName = (langCode) => {
   const langQuizPages = {
-    'en': 'EnQuiz',
-    'it': 'ItQuiz',
-    'es': 'EsQuiz',
-    'pt': 'PtQuiz',
-    'de': 'DeQuiz',
-    'fr': 'FrQuiz'
+    'en': 'enquiz',
+    'it': 'itquiz',
+    'es': 'esquiz',
+    'pt': 'ptquiz',
+    'de': 'dequiz',
+    'fr': 'frquiz'
   };
-  return langQuizPages[langCode] || 'Quiz';
+  return langQuizPages[langCode] || 'quiz';
 };
 
 const getBlogPageName = (langCode) => {
