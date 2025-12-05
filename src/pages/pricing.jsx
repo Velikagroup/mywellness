@@ -852,7 +852,15 @@ function PricingPageContent() {
               </button>
               <button
                 onClick={() => {
-                  navigate(createLocalizedPageUrl('Blog', language));
+                  const blogPages = {
+                    'en': 'Blog',
+                    'it': 'itblog',
+                    'es': 'esblog',
+                    'pt': 'ptblog',
+                    'de': 'deblog',
+                    'fr': 'frblog'
+                  };
+                  navigate(createPageUrl(blogPages[language] || 'Blog'));
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
