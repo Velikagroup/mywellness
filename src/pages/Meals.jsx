@@ -1029,25 +1029,37 @@ STRICT RULES:
         const userLang = language || t('common.lang') || 'en';
         const langName = languageNames[userLang] || 'English';
 
-        const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ${langName.toUpperCase()} for ${day}.
+        // 🔥 GENERA CONTEXT PER VARIETÀ: ricorda cosa hai generato nei giorni precedenti
+        const previousDaysContext = allGeneratedMeals.length > 0 ? `
+
+🚨🚨🚨 PREVIOUS DAYS GENERATED - AVOID REPETITION 🚨🚨🚨
+
+You have ALREADY created these meals for previous days:
+${allGeneratedMeals.slice(-10).map(m => `- ${m.day_of_week}: ${m.name} (${m.meal_type})`).join('\n')}
+
+YOU MUST CREATE COMPLETELY DIFFERENT MEALS FOR ${day.toUpperCase()}.
+DO NOT use the same dishes, proteins, or cooking methods as above!
+` : `
 
 🚨🚨🚨 ABSOLUTE CRITICAL VARIETY REQUIREMENT 🚨🚨🚨
 
 THIS IS DAY: ${day.toUpperCase()} (${dayIndex + 1} of 7)
 
 YOU MUST CREATE COMPLETELY DIFFERENT MEALS FOR EACH DAY OF THE WEEK.
-- DO NOT repeat the same meals across different days
-- DO NOT use the same protein sources on consecutive days
-- DO NOT use the same cooking methods repeatedly
-- MAXIMIZE variety in ingredients, flavors, cuisines, and preparations
+`;
 
-VARIETY RULES:
-1. If Monday has "Salmone al forno" → Tuesday must have CHICKEN or BEEF or EGGS, NOT salmon again
-2. If Monday breakfast is "Omelette" → Tuesday breakfast must be OATS or YOGURT BOWL or TOAST, NOT omelette
-3. Rotate protein sources: fish → poultry → red meat → eggs → legumes
-4. Rotate cuisines: Italian → Asian → Mexican → Mediterranean → American
-5. Rotate cooking methods: baked → grilled → stir-fried → raw → steamed
-6. Use seasonal variety and different vegetable combinations each day
+        const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ${langName.toUpperCase()} for ${day}.
+${previousDaysContext}
+
+VARIETY ENFORCEMENT RULES:
+1. Each day MUST have different protein sources: 
+   - Monday: Fish → Tuesday: Chicken → Wednesday: Beef → Thursday: Eggs → Friday: Legumes → Saturday: Pork → Sunday: Turkey
+2. Each day MUST use different cooking methods:
+   - Rotate: Baked → Grilled → Stir-fried → Steamed → Raw/Salads → Pan-fried → Slow-cooked
+3. Each day MUST explore different cuisines:
+   - Italian → Asian (Thai/Chinese/Japanese) → Mexican → Mediterranean (Greek) → American → Middle Eastern → Spanish
+4. NO SAME MEAL NAMES across different days
+5. NO SAME MAIN INGREDIENTS on consecutive days
 
 CRITICAL INSTRUCTIONS:
 - Create EXACTLY ${mealsPerDay} meals
