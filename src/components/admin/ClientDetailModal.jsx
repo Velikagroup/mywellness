@@ -23,7 +23,8 @@ import {
   Briefcase,
   Gift,
   Utensils,
-  Dumbbell
+  Dumbbell,
+  Shield
 } from 'lucide-react';
 
 export default function ClientDetailModal({ client, isOpen, onClose, onUpdate }) {
