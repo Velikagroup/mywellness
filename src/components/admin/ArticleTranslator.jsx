@@ -22,6 +22,8 @@ export default function ArticleTranslator({ posts, onRefresh }) {
   const [translationStatus, setTranslationStatus] = useState('');
   const [selectedLanguages, setSelectedLanguages] = useState(['en', 'es', 'pt', 'de', 'fr']);
   const [searchQuery, setSearchQuery] = useState('');
+  const [bulkTranslating, setBulkTranslating] = useState(false);
+  const [bulkProgress, setBulkProgress] = useState({ current: 0, total: 0, article: '' });
 
   // Get only Italian articles (original articles)
   const italianArticles = posts.filter((p) => p.language === 'it' || !p.language);
