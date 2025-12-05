@@ -182,7 +182,7 @@ export default function AdminSupportTickets() {
   const checkAccess = async () => {
     try {
       const currentUser = await base44.auth.me();
-      if (currentUser.role !== 'admin') {
+      if (currentUser.role !== 'admin' && currentUser.custom_role !== 'customer_support') {
         navigate(createPageUrl('Dashboard'));
         return;
       }
