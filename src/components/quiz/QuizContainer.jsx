@@ -381,10 +381,12 @@ export default function QuizContainer({ translations, language = 'it' }) {
         bmr: Math.round(bmr),
         daily_calories: Math.round(dailyCalories),
         quiz_completed: true,
+        preferred_language: language
       };
       
       localStorage.setItem(`quizDataToSave_${language}`, JSON.stringify(userDataToSave));
       localStorage.setItem('needsTrialSetup', 'true');
+      localStorage.setItem('preferred_language', language);
       
       const quizUrl = window.location.origin + window.location.pathname;
       await base44.auth.redirectToLogin(quizUrl);
@@ -426,6 +428,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         bmr: Math.round(bmr),
         daily_calories: Math.round(dailyCalories),
         quiz_completed: true,
+        preferred_language: language
       };
 
       await base44.auth.updateMe(userDataToSave);
