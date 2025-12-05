@@ -840,6 +840,7 @@ ${selectedDays.length > 0 ? `
       DO NOT skip any day. Every single day must have a plan object.`;
 
       let response;
+      console.log('🚀 Invio richiesta LLM per generazione workout...');
       try {
         response = await base44.integrations.Core.InvokeLLM({
           prompt: finalPrompt,
@@ -940,9 +941,12 @@ ${selectedDays.length > 0 ? `
           }
         });
       } catch (llmError) {
-        console.error('❌ Errore LLM:', llmError);
-        // Se l'LLM fallisce, creiamo una risposta vuota che verrà completata dopo
-        response = { workout_plans: [] };
+        console.error('❌ ERRORE CRITICO LLM:', llmError);
+        console.error('❌ Stack trace:', llmError.stack);
+        setGenerationStatus(`Errore LLM: ${llmError.message}`);
+        setTimeout(() => setIsGenerating(false), 5000);
+        alert(`❌ Errore durante la generazione: ${llmError.message}\n\nRiprova o contatta il supporto.`);
+        return;
       }
 
       updateProgress(60, t('workouts.genValidation'));
@@ -1479,8 +1483,10 @@ ${selectedDays.length > 0 ? `
       setTimeout(() => setIsGenerating(false), 1500);
 
     } catch (error) {
-      console.error("Error generating workout plan:", error);
+      console.error("❌ ERRORE GENERAZIONE WORKOUT:", error);
+      console.error("❌ Stack completo:", error.stack);
       setGenerationStatus(`Errore: ${error.message}. Riprova.`);
+      alert(`❌ Errore durante la generazione del piano:\n\n${error.message}\n\nDettagli nella console (F12).`);
       setTimeout(() => setIsGenerating(false), 3000);
     }
   };
