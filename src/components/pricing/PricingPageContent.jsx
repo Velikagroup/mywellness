@@ -807,7 +807,7 @@ export default function PricingPageContent() {
           </div>
         </div>
 
-        <div className={`md:hidden water-glass-effect px-6 py-[4px] transition-all duration-300 ${mobileMenuOpen ? 'rounded-[24px]' : 'rounded-full'}`}>
+        <div className={`md:hidden water-glass-effect px-6 py-[4px] transition-all duration-300 ${mobileMenuOpen ? 'rounded-[30px]' : 'rounded-full'}`}>
             <div className="flex items-center justify-between">
               <img
                 src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
