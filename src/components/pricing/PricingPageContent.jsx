@@ -407,11 +407,12 @@ export default function PricingPageContent() {
   };
 
   const handleLanguageChange = (newLang) => {
-    setLanguage(newLang);
+    // Navigate to the correct pricing page for the new language FIRST
+    const targetPage = getPricingPageName(newLang);
     setLangMenuOpen(false);
     setMobileLangMenuOpen(false);
-    // Navigate to the correct pricing page for the new language
-    navigate(createPageUrl(getPricingPageName(newLang)));
+    // Use window.location for a full page navigation to ensure language context updates
+    window.location.href = createPageUrl(targetPage);
   };
 
   const getPrice = (plan) => {
