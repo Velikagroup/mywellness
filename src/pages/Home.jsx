@@ -1459,7 +1459,7 @@ export { HomeContent };
 export default function Home() {
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    const savedLang = localStorage.getItem('preferred_language') || 'it';
+    const savedLang = localStorage.getItem('preferred_language') || 'en';
     localStorage.setItem('preferred_language', savedLang);
   }, []);
 
