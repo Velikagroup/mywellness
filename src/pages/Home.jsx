@@ -22,9 +22,11 @@ import {
   Clock,
   RefreshCw,
   BrainCircuit,
-  Users
+  Users,
+  Globe
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
+import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
 import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
@@ -39,11 +41,14 @@ import ProgressPhotoPreviewDemo from "../components/home/ProgressPhotoPreviewDem
 import AppDemoFlow from "../components/home/AppDemoFlow";
 import SportQuizPreviewDemo from "../components/home/SportQuizPreviewDemo";
 
-export default function Home() {
+function HomeContent() {
   const navigate = useNavigate();
+  const { t, language, setLanguage } = useLanguage();
   const [showNavQuizButton, setShowNavQuizButton] = useState(false);
   const [showMobileFloatingButton, setShowMobileFloatingButton] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [langMenuOpen, setLangMenuOpen] = useState(false);
+  const [mobileLangMenuOpen, setMobileLangMenuOpen] = useState(false);
   const heroQuizButtonRef = useRef(null);
 
   const [liveStats, setLiveStats] = useState({ users: 0, totalKg: 0 });
@@ -207,21 +212,46 @@ export default function Home() {
           (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial')) {
         navigate(createPageUrl('Dashboard'));
       } else {
-        navigate(createPageUrl('Quiz'));
+        const quizPages = {
+          'en': 'enquiz',
+          'it': 'itquiz',
+          'es': 'esquiz',
+          'pt': 'ptquiz',
+          'de': 'dequiz',
+          'fr': 'frquiz'
+        };
+        navigate(createPageUrl(quizPages[language] || 'Quiz'));
       }
     } catch (error) {
       if (error?.response?.status !== 401 && !error?.message?.includes('401')) {
         console.error("Error during get started flow:", error);
       }
-      navigate(createPageUrl('Quiz'));
+      const quizPages = {
+        'en': 'enquiz',
+        'it': 'itquiz',
+        'es': 'esquiz',
+        'pt': 'ptquiz',
+        'de': 'dequiz',
+        'fr': 'frquiz'
+      };
+      navigate(createPageUrl(quizPages[language] || 'Quiz'));
     }
     setIsLoading(false);
   };
 
   const handleQuizPopupStart = (gender) => {
-    localStorage.setItem('quizData', JSON.stringify({ gender }));
+    const quizDataKey = `quizData_${language}`;
+    localStorage.setItem(quizDataKey, JSON.stringify({ gender }));
     setShowQuizPopup(false);
-    navigate(createPageUrl('Quiz'));
+    const quizPages = {
+      'en': 'enquiz',
+      'it': 'itquiz',
+      'es': 'esquiz',
+      'pt': 'ptquiz',
+      'de': 'dequiz',
+      'fr': 'frquiz'
+    };
+    navigate(createPageUrl(quizPages[language] || 'Quiz'));
   };
 
   const handleQuizPopupClose = () => {
@@ -229,7 +259,15 @@ export default function Home() {
   };
 
   const handleLogin = async () => {
-    const quizUrl = window.location.origin + createPageUrl('Quiz');
+    const quizPages = {
+      'en': 'enquiz',
+      'it': 'itquiz',
+      'es': 'esquiz',
+      'pt': 'ptquiz',
+      'de': 'dequiz',
+      'fr': 'frquiz'
+    };
+    const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
     await base44.auth.redirectToLogin(quizUrl);
   };
 
@@ -407,33 +445,85 @@ export default function Home() {
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
-            className="h-5 flex-shrink-0" />
+            className="h-5 flex-shrink-0 cursor-pointer"
+            onClick={() => navigate(createPageUrl('Home'))} />
 
           <div className="flex items-center gap-4 flex-shrink-0">
             <button
-              onClick={() => navigate(createPageUrl('pricing'))}
+              onClick={() => {
+                const pricingPages = {
+                  'en': 'pricing',
+                  'it': 'itpricing',
+                  'es': 'espricing',
+                  'pt': 'ptpricing',
+                  'de': 'depricing',
+                  'fr': 'frpricing'
+                };
+                navigate(createPageUrl(pricingPages[language] || 'pricing'));
+              }}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
-              Prezzi
+              {t('nav.pricing')}
             </button>
             <button
-              onClick={() => navigate(createPageUrl('Blog'))}
+              onClick={() => {
+                const blogPages = {
+                  'en': 'Blog',
+                  'it': 'itblog',
+                  'es': 'esblog',
+                  'pt': 'ptblog',
+                  'de': 'deblog',
+                  'fr': 'frblog'
+                };
+                navigate(createPageUrl(blogPages[language] || 'Blog'));
+              }}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
-              Blog
+              {t('nav.blog')}
             </button>
-            <Button
+            
+            <div className="relative">
+              <button
+                onClick={() => setLangMenuOpen(!langMenuOpen)}
+                className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors flex items-center gap-2">
+                <span className="text-lg">{SUPPORTED_LANGUAGES.find(l => l.code === language)?.flag}</span>
+              </button>
+              
+              {langMenuOpen && (
+              <>
+              <div className="fixed inset-0 z-40" onClick={() => setLangMenuOpen(false)}></div>
+              <div className="absolute right-0 top-12 water-glass-effect rounded-2xl border border-white/40 shadow-xl p-2 min-w-[160px] z-50">
+                {SUPPORTED_LANGUAGES.map((lang) => (
+                  <button
+                    key={lang.code}
+                    onClick={() => {
+                      setLanguage(lang.code);
+                      setLangMenuOpen(false);
+                    }}
+                    className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                      language === lang.code
+                        ? 'bg-[var(--brand-primary)] text-white'
+                        : 'text-gray-700 hover:bg-white/50'
+                    }`}>
+                    <span className="text-lg">{lang.flag}</span>
+                    <span>{lang.name}</span>
+                  </button>
+                ))}
+              </div>
+              </>
+              )}
+            </div>
+            
+            <button
               onClick={handleLogin}
-              variant="ghost"
-              size="sm"
-              className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap">
-              Log-in
-            </Button>
+              className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
+              {t('nav.login')}
+            </button>
             
             {showNavQuizButton &&
             <Button
               onClick={handleGetStarted}
               disabled={isLoading}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-2 px-4 text-sm font-medium rounded-full quiz-button-slide whitespace-nowrap flex-shrink-0">
-                Quiz Gratuito
+                {t('home.freeQuiz')}
               </Button>
             }
           </div>
@@ -444,48 +534,106 @@ export default function Home() {
             <img
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
               alt="MyWellness"
-              className="h-6" />
+              className="h-6 cursor-pointer"
+              onClick={() => navigate(createPageUrl('Home'))} />
             
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className={`p-2 ${mobileMenuOpen ? 'burger-open' : ''}`}
-              aria-label="Menu">
-              <div className="burger-container">
-                <span className="burger-line"></span>
-                <span className="burger-line"></span>
+            <div className="flex items-center gap-2">
+              <div className="relative">
+                <button
+                  onClick={() => setMobileLangMenuOpen(!mobileLangMenuOpen)}
+                  className="p-2 text-gray-600 hover:text-gray-900 transition-colors"
+                  aria-label="Language">
+                  <span className="text-xl">{SUPPORTED_LANGUAGES.find(l => l.code === language)?.flag}</span>
+                </button>
+
+                {mobileLangMenuOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setMobileLangMenuOpen(false)}></div>
+                    <div className="absolute right-0 top-12 water-glass-effect rounded-2xl border border-white/40 shadow-xl p-2 min-w-[160px] z-50">
+                      {SUPPORTED_LANGUAGES.map((lang) => (
+                        <button
+                          key={lang.code}
+                          onClick={() => {
+                            setLanguage(lang.code);
+                            setMobileLangMenuOpen(false);
+                          }}
+                          className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                            language === lang.code
+                              ? 'bg-[var(--brand-primary)] text-white'
+                              : 'text-gray-700 hover:bg-white/50'
+                          }`}>
+                          <span className="text-lg">{lang.flag}</span>
+                          <span>{lang.name}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
               </div>
-            </button>
+
+              <button
+                onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                className={`p-2 ${mobileMenuOpen ? 'burger-open' : ''}`}
+                aria-label="Menu">
+                <div className="burger-container">
+                  <span className="burger-line"></span>
+                  <span className="burger-line"></span>
+                </div>
+              </button>
+            </div>
           </div>
 
           <div className={`mobile-menu ${mobileMenuOpen ? 'open' : ''}`}>
             <div className="pt-4 pb-2 space-y-3">
               <button
                 onClick={() => {
-                  navigate(createPageUrl('pricing'));
+                  const pricingPages = {
+                    'en': 'pricing',
+                    'it': 'itpricing',
+                    'es': 'espricing',
+                    'pt': 'ptpricing',
+                    'de': 'depricing',
+                    'fr': 'frpricing'
+                  };
+                  navigate(createPageUrl(pricingPages[language] || 'pricing'));
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                Prezzi
+                {t('nav.pricing')}
               </button>
               <button
                 onClick={() => {
-                  navigate(createPageUrl('Blog'));
+                  const blogPages = {
+                    'en': 'Blog',
+                    'it': 'itblog',
+                    'es': 'esblog',
+                    'pt': 'ptblog',
+                    'de': 'deblog',
+                    'fr': 'frblog'
+                  };
+                  navigate(createPageUrl(blogPages[language] || 'Blog'));
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                Blog
+                {t('nav.blog')}
               </button>
-              <button
-                onClick={handleLogin}
-                className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                Log-in
-              </button>
-              <Button
-                onClick={handleGetStarted}
-                disabled={isLoading}
-                className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2">
-                Quiz Gratuito
-              </Button>
+
+              <div className="border-t border-gray-200/50 pt-3 mt-3">
+                <button
+                  onClick={() => {
+                    handleLogin();
+                    setMobileMenuOpen(false);
+                  }}
+                  className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
+                  {t('nav.login')}
+                </button>
+                <Button
+                  onClick={handleGetStarted}
+                  disabled={isLoading}
+                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
+                  {t('home.freeQuiz')}
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -497,7 +645,7 @@ export default function Home() {
           onClick={handleGetStarted}
           disabled={isLoading}
           className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-full px-6 py-6 text-base font-semibold shadow-2xl">
-            Quiz Gratuito
+            {t('home.freeQuiz')}
           </Button>
         </div>
       }
@@ -521,7 +669,7 @@ export default function Home() {
                 WebkitTextFillColor: 'transparent',
                 animation: 'borderGradientFlow 8s linear infinite'
               }}>
-                Alimentato da Intelligenza Artificiale
+                {t('home.aiPowered')}
               </span>
             </div>
           </div>
@@ -531,12 +679,12 @@ export default function Home() {
           </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2">
-            Il tuo percorso <span className="animated-text-gradient">Wellness</span>,
-            guidato dall'<span className="animated-text-gradient">AI</span>
+            {t('home.heroTitle1')} <span className="animated-text-gradient">{t('home.heroTitle2')}</span>,
+            {t('home.heroTitle3')}<span className="animated-text-gradient">{t('home.heroTitle4')}</span>
           </h1>
           
           <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed px-2">
-            Piani nutrizionali e allenamenti personalizzati, creati dall'intelligenza artificiale e adattati in tempo reale ai tuoi progressi.
+            {t('home.heroSubtitle')}
           </p>
           
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 px-2">
@@ -545,13 +693,13 @@ export default function Home() {
               onClick={handleGetStarted}
               disabled={isLoading}
               className="w-full sm:w-auto bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-full px-8 py-4 text-base font-semibold shadow-xl hover:shadow-2xl transition-all">
-              Quiz Gratuito
+              {t('home.freeQuiz')}
             </Button>
             <Button
               onClick={handleWatchDemo}
               variant="outline"
               className="hidden w-full sm:w-auto border-2 border-[var(--brand-primary)] text-[var(--brand-primary)] hover:bg-[var(--brand-primary-light)] rounded-full px-6 py-3 text-sm font-medium">
-              Guarda Demo
+              {t('home.watchDemo')}
               <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
@@ -570,11 +718,11 @@ export default function Home() {
               </div>
               
               <div className="text-center">
-                <p className="text-sm text-gray-500 mb-1">Utilizzato da oltre</p>
+                <p className="text-sm text-gray-500 mb-1">{t('home.usedBy')}</p>
                 <p className="text-3xl md:text-4xl font-black text-gray-900">
-                  {liveStats.users.toLocaleString('it-IT')} <span className="text-[var(--brand-primary)]">persone</span>
+                  {liveStats.users.toLocaleString(language === 'en' ? 'en-US' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-PT' : 'it-IT')} <span className="text-[var(--brand-primary)]">{t('home.people')}</span>
                 </p>
-                <p className="text-xs text-gray-400 mt-1">🔥 Aggiornamento in tempo reale</p>
+                <p className="text-xs text-gray-400 mt-1">{t('home.liveUpdate')}</p>
               </div>
             </div>
           </div>
@@ -589,9 +737,9 @@ export default function Home() {
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
               transition={{ duration: 0.6 }}>
-              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">Come Funziona</h2>
+              <h2 className="text-5xl md:text-6xl font-bold text-gray-900 mb-4">{t('home.howItWorks')}</h2>
               <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-                Un percorso guidato dall'intelligenza artificiale in 6 step
+                {t('home.howItWorksSubtitle')}
               </p>
             </motion.div>
           </div>
@@ -611,16 +759,16 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">📋 Assessment Iniziale</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step1Badge')}</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Quiz Personalizzato</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step1Title')}</h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Rispondi a domande mirate su peso, altezza, obiettivi e preferenze. L'AI crea il tuo profilo metabolico completo.
+                {t('home.step1Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">⚡ 3 minuti</span>
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🎯 100% Personalizzato</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step1Tag1')}</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step1Tag2')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -650,18 +798,18 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">📊 Analisi Scientifica</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step2Badge')}</span>
                 </div>
               </div>
               <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
-                Dashboard Scientifica
+                {t('home.step2Title')}
               </h3>
               <p className="text-gray-600 text-lg max-w-2xl mx-auto leading-relaxed">
-                Visualizza BMR, fabbisogno calorico, massa grassa e proiezioni obiettivi in tempo reale.
+                {t('home.step2Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center mt-6">
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">🔬 Calcoli Precisi</span>
-                <span className="px-4 py-2 bg-orange-50 text-orange-700 rounded-full text-sm font-medium">📈 Tracking Live</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{t('home.step2Tag1')}</span>
+                <span className="px-4 py-2 bg-orange-50 text-orange-700 rounded-full text-sm font-medium">{t('home.step2Tag2')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -690,17 +838,17 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🍽️ Nutrizione AI</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step3Badge')}</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Pasti Personalizzati</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step3Title')}</h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Piano settimanale completo: ricette con foto AI, ingredienti esatti, macro nutrizionali e lista della spesa automatica.
+                {t('home.step3Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">🤖 Ricette AI</span>
-                <span className="px-4 py-2 bg-pink-50 text-pink-700 rounded-full text-sm font-medium">🛒 Lista Spesa</span>
-                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">📸 Foto Realistiche</span>
+                <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">{t('home.step3Tag1')}</span>
+                <span className="px-4 py-2 bg-pink-50 text-pink-700 rounded-full text-sm font-medium">{t('home.step3Tag2')}</span>
+                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">{t('home.step3Tag3')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -730,17 +878,17 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🛒 Spesa Smart</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step4Badge')}</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Lista della Spesa AI</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step4Title')}</h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                L'AI genera automaticamente la lista della spesa settimanale, organizzata per categorie di acquisto e ottimizzata per i tuoi pasti.
+                {t('home.step4Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">📊 Auto-generata</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🗂️ Categorie Smart</span>
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">✅ Tracking Acquisti</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{t('home.step4Tag1')}</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step4Tag2')}</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step4Tag3')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -770,17 +918,17 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">📱 Scansione Smart</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step5Badge')}</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Scanner Ingredienti</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step5Title')}</h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Scansiona barcode o etichette nutrizionali degli alimenti che hai in frigorifero. L'AI inserisce automaticamente i valori REALI nel tuo piano, non supposizioni generiche.
+                {t('home.step5Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">📊 Database 500k+ alimenti</span>
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🎯 Valori Precisi</span>
-                <span className="px-4 py-2 bg-pink-50 text-pink-700 rounded-full text-sm font-medium">⚡ Inserimento Automatico</span>
+                <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">{t('home.step5Tag1')}</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step5Tag2')}</span>
+                <span className="px-4 py-2 bg-pink-50 text-pink-700 rounded-full text-sm font-medium">{t('home.step5Tag3')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -810,17 +958,17 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">📦 Gestione Intelligente</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step6Badge')}</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Dispensa AI</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step6Title')}</h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Fotografa gli alimenti in casa: l'AI crea un catalogo completo con kcal e macro precisi. Il piano nutrizionale si rigenera utilizzando prioritariamente ciò che hai già, riducendo sprechi e costi.
+                {t('home.step6Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">📸 Catalogazione Automatica</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🎯 Valori Precisi</span>
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">♻️ Zero Sprechi</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step6Tag1')}</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step6Tag2')}</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{t('home.step6Tag3')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -850,17 +998,17 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🏷️ Scansione Etichette</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step7Badge')}</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Health Score AI</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step7Title')}</h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Scansiona etichette nutrizionali: l'AI assegna uno score 0-10 e ti dice se quel prodotto è sano per i tuoi obiettivi.
+                {t('home.step7Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🔬 Analisi Scientifica</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📊 Score 0-10</span>
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Raccomandazioni AI</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step7Tag1')}</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step7Tag2')}</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{t('home.step7Tag3')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -890,17 +1038,17 @@ export default function Home() {
             transition={{ duration: 0.7, delay: 0.2 }}>
             <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
               <div className="step-badge px-4 py-2 rounded-full">
-                <span className="text-sm font-semibold text-[var(--brand-primary)]">✓ Tracking Smart</span>
+                <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step8Badge')}</span>
               </div>
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Segna i Pasti</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step8Title')}</h3>
             <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-              Spunta semplicemente i pasti che mangi per un tracking base. Vuoi essere più preciso? Scatta una foto per quantità esatte e macro perfettamente allineati.
+              {t('home.step8Desc')}
             </p>
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">✓ Spunta Base</span>
-              <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">📸 Foto Opzionale</span>
-              <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">🎯 Precisione Massima</span>
+              <span className="px-4 py-2 bg-teal-50 text-teal-700 rounded-full text-sm font-medium">{t('home.step8Tag1')}</span>
+              <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step8Tag2')}</span>
+              <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{t('home.step8Tag3')}</span>
             </div>
           </motion.div>
           <motion.div
@@ -930,16 +1078,16 @@ export default function Home() {
             transition={{ duration: 0.7, delay: 0.2 }}>
             <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
               <div className="step-badge px-4 py-2 rounded-full">
-                <span className="text-sm font-semibold text-[var(--brand-primary)]">📷 Computer Vision</span>
+                <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step9Badge')}</span>
               </div>
             </div>
-            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Conto Calorico AI</h3>
+            <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step9Title')}</h3>
             <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-              Scatta foto dei pasti: l'AI analizza calorie e macro. Se vai oltre, i piani nutrizionali e di allenamento si ribilanciano automaticamente.
+              {t('home.step9Desc')}
             </p>
             <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-              <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">🔍 Riconoscimento Cibo</span>
-              <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">⚖️ Ribilanciamento Automatico</span>
+              <span className="px-4 py-2 bg-indigo-50 text-indigo-700 rounded-full text-sm font-medium">{t('home.step9Tag1')}</span>
+              <span className="px-4 py-2 bg-red-50 text-red-700 rounded-full text-sm font-medium">{t('home.step9Tag2')}</span>
             </div>
           </motion.div>
           <motion.div
@@ -969,33 +1117,33 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🏆 Sport-Specific Training</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step10Badge')}</span>
                 </div>
               </div>
               <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">
-                Allenamento per il Tuo Sport
+                {t('home.step10Title')}
               </h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Che tu faccia Bodybuilding, CrossFit, HIIT o qualsiasi altro stile di allenamento, il quiz identifica le tue preferenze e crea un <strong>programma su misura</strong> per i tuoi obiettivi specifici.
+                {t('home.step10Desc')}
               </p>
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-3">
                   <span className="text-xl">💪</span>
-                  <p className="text-gray-600 text-sm"><strong>Bodybuilding:</strong> Ipertrofia, definizione, simmetria muscolare</p>
+                  <p className="text-gray-600 text-sm">{t('home.step10Detail1')}</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-xl">🔥</span>
-                  <p className="text-gray-600 text-sm"><strong>CrossFit:</strong> Forza funzionale, resistenza, WOD personalizzati</p>
+                  <p className="text-gray-600 text-sm">{t('home.step10Detail2')}</p>
                 </div>
                 <div className="flex items-start gap-3">
                   <span className="text-xl">⚡</span>
-                  <p className="text-gray-600 text-sm"><strong>HIIT:</strong> Brucia grassi, metabolismo, intensità massima</p>
+                  <p className="text-gray-600 text-sm">{t('home.step10Detail3')}</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">🎯 60+ Stili Supportati</span>
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">🧘 Yoga & Pilates</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🥊 Combat Sports</span>
+                <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">{t('home.step10Tag1')}</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step10Tag2')}</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step10Tag3')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -1025,18 +1173,18 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">💪 Fitness AI</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step11Badge')}</span>
                 </div>
               </div>
               <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">
-                Workout su Misura
+                {t('home.step11Title')}
               </h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Schede settimanali personalizzate con warm-up e cool-down, analisi AI dei progressi e modifiche immediate della scheda in caso di dolori o impedimenti.
+                {t('home.step11Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-violet-50 text-violet-700 rounded-full text-sm font-medium">🎯 Progressione Adattiva</span>
-                <span className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium">📸 Analisi Progressi AI</span>
+                <span className="px-4 py-2 bg-violet-50 text-violet-700 rounded-full text-sm font-medium">{t('home.step11Tag1')}</span>
+                <span className="px-4 py-2 bg-cyan-50 text-cyan-700 rounded-full text-sm font-medium">{t('home.step11Tag2')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -1066,17 +1214,17 @@ export default function Home() {
               transition={{ duration: 0.7, delay: 0.2 }}>
               <div className="flex items-center justify-center md:justify-start gap-4 mb-6">
                 <div className="step-badge px-4 py-2 rounded-full">
-                  <span className="text-sm font-semibold text-[var(--brand-primary)]">🔬 Analisi Scientifica</span>
+                  <span className="text-sm font-semibold text-[var(--brand-primary)]">{t('home.step12Badge')}</span>
                 </div>
               </div>
-              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">Personal Trainer AI</h3>
+              <h3 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4 text-center md:text-left">{t('home.step12Title')}</h3>
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
-                Carica foto della zona target: l'AI analizza scientificamente i progressi confrontando pelle, grasso, definizione muscolare. Ti suggerisce modifiche nutrizionali e di allenamento che puoi applicare ai tuoi piani.
+                {t('home.step12Desc')}
               </p>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
-                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">📸 Confronto Prima/Dopo</span>
-                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">🔬 Analisi Dettagliata</span>
-                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">💡 Suggerimenti Personalizzati</span>
+                <span className="px-4 py-2 bg-purple-50 text-purple-700 rounded-full text-sm font-medium">{t('home.step12Tag1')}</span>
+                <span className="px-4 py-2 bg-blue-50 text-blue-700 rounded-full text-sm font-medium">{t('home.step12Tag2')}</span>
+                <span className="px-4 py-2 bg-green-50 text-green-700 rounded-full text-sm font-medium">{t('home.step12Tag3')}</span>
               </div>
             </motion.div>
             <motion.div
@@ -1097,13 +1245,13 @@ export default function Home() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-5xl md:text-6xl font-bold text-gray-900">
-              Cosa Dicono i Nostri Utenti.
+              {t('home.testimonialsTitle')}
             </h2>
           </div>
 
           <div className="relative pb-32">
             <div className="flex flex-wrap gap-6">
-              {testimonials.slice(0, window.innerWidth < 768 ? 6 : testimonials.length).map((testimonial, index) => (
+              {t('pricing.testimonials').slice(0, window.innerWidth < 768 ? 6 : t('pricing.testimonials').length).map((testimonial, index) => (
               <div
                 key={index}
                 className="water-glass-effect rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
@@ -1136,7 +1284,7 @@ export default function Home() {
                     textStroke: '3px var(--brand-primary)',
                     letterSpacing: '0.02em'
                   }}>
-                  {liveStats.totalKg.toLocaleString('it-IT')}
+                  {liveStats.totalKg.toLocaleString(language === 'en' ? 'en-US' : language === 'de' ? 'de-DE' : language === 'fr' ? 'fr-FR' : language === 'es' ? 'es-ES' : language === 'pt' ? 'pt-PT' : 'it-IT')}
                 </span>
                 <span
                   style={{
@@ -1150,10 +1298,10 @@ export default function Home() {
                 </span>
               </h2>
               <p className="text-lg sm:text-xl md:text-2xl text-gray-700 font-semibold">
-                persi dai nostri utenti
+                {t('home.kgLost')}
               </p>
               <p className="text-xs sm:text-sm text-gray-500 mt-2">
-                🔥 Media: 4.5kg per utente • Aggiornamento in tempo reale
+                {t('home.avgPerUser')}
               </p>
             </div>
           </div>
@@ -1214,7 +1362,7 @@ export default function Home() {
 
             {/* Progress Text */}
             <div className="px-8 pt-6 pb-2">
-              <p className="text-sm text-gray-600 text-center">1 / 12 domande completate</p>
+              <p className="text-sm text-gray-600 text-center">1 / 12 {t('quiz.quizQuestionsCompleted')}</p>
             </div>
 
             {/* Contenuto */}
@@ -1228,17 +1376,17 @@ export default function Home() {
 
               {/* Titolo principale */}
               <h3 className="text-3xl font-bold text-center mb-3">
-                Scopri la tua <span className="animated-text-gradient">massa grassa</span>
+                {t('home.popupTitle1')} <span className="animated-text-gradient">{t('home.popupTitle2')}</span>
               </h3>
 
               {/* Sottotitolo */}
               <p className="text-center text-gray-600 mb-6">
-                e costruisci il <strong>piano nutrizionale</strong> fatto su misura per te
+                {t('home.popupSubtitle')} <strong>{t('home.popupSubtitle2')}</strong> {t('home.popupSubtitle3')}
               </p>
 
               {/* Label */}
               <p className="text-center text-sm font-semibold text-gray-700 mb-4">
-                Seleziona il tuo sesso:
+                {t('home.popupGenderLabel')}
               </p>
 
               {/* Scelta Genere - Style Minimale come nell'immagine */}
@@ -1249,7 +1397,7 @@ export default function Home() {
                 >
                   <div className="text-center space-y-2">
                     <div className="text-4xl mb-1">👨</div>
-                    <div className="font-semibold text-gray-900">Uomo</div>
+                    <div className="font-semibold text-gray-900">{t('home.popupMale')}</div>
                   </div>
                 </button>
 
@@ -1259,7 +1407,7 @@ export default function Home() {
                 >
                   <div className="text-center space-y-2">
                     <div className="text-4xl mb-1">👩</div>
-                    <div className="font-semibold text-gray-900">Donna</div>
+                    <div className="font-semibold text-gray-900">{t('home.popupFemale')}</div>
                   </div>
                 </button>
               </div>
@@ -1269,15 +1417,15 @@ export default function Home() {
                 <div className="space-y-3 text-sm text-gray-700">
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-base">⏱️</span>
-                    <span>Richiede solo 3 minuti</span>
+                    <span>{t('home.popupBullet1').replace('⏱️ ', '')}</span>
                   </div>
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-base">🎯</span>
-                    <span>Calcoli scientifici precisi</span>
+                    <span>{t('home.popupBullet2').replace('🎯 ', '')}</span>
                   </div>
                   <div className="flex items-center justify-center gap-2">
                     <span className="text-base">📊</span>
-                    <span>I tuoi dati sono privati e sicuri</span>
+                    <span>{t('home.popupBullet3').replace('📊 ', '')}</span>
                   </div>
                 </div>
               </div>
@@ -1286,5 +1434,19 @@ export default function Home() {
         </DialogContent>
       </Dialog>
       </div>
-      );
-      }
+  );
+}
+
+export default function Home() {
+  React.useEffect(() => {
+    window.scrollTo(0, 0);
+    const savedLang = localStorage.getItem('preferred_language') || 'it';
+    localStorage.setItem('preferred_language', savedLang);
+  }, []);
+
+  return (
+    <LanguageProvider>
+      <HomeContent />
+    </LanguageProvider>
+  );
+}
