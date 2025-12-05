@@ -1454,6 +1454,8 @@ function HomeContent() {
   );
 }
 
+export { HomeContent };
+
 export default function Home() {
   React.useEffect(() => {
     window.scrollTo(0, 0);
