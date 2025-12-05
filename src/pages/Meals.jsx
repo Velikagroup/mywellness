@@ -862,8 +862,25 @@ STRICT RULES:
           }`
         : '';
 
-      const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
-      const mealStructure = allMealTypes.slice(0, mealsPerDay);
+      // ✅ FIX CRITICO: Se digiuno intermittente SALTA COLAZIONE, usa solo pasti pomeridiani
+      let mealStructure;
+      
+      if (generationPrefs.intermittent_fasting && generationPrefs.if_skip_meal === 'breakfast') {
+        // ✅ SKIP BREAKFAST = pasti dalle 12:00 in poi: lunch, snack2, dinner, snack3, snack4
+        const afternoonMeals = ['lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
+        mealStructure = afternoonMeals.slice(0, mealsPerDay);
+        console.log(`🍽️ IF SKIP BREAKFAST: usando pasti pomeridiani →`, mealStructure);
+      } else if (generationPrefs.intermittent_fasting && generationPrefs.if_skip_meal === 'dinner') {
+        // ✅ SKIP DINNER = pasti dalle 8:00 alle 16:00: breakfast, snack1, lunch, snack2
+        const morningMeals = ['breakfast', 'snack1', 'lunch', 'snack2'];
+        mealStructure = morningMeals.slice(0, mealsPerDay);
+        console.log(`🍽️ IF SKIP DINNER: usando pasti mattutini →`, mealStructure);
+      } else {
+        // ✅ NORMALE: tutti i pasti
+        const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
+        mealStructure = allMealTypes.slice(0, mealsPerDay);
+        console.log(`🍽️ PASTI NORMALI (${mealsPerDay}) →`, mealStructure);
+      }
       
       const allDays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday', 'sunday'];
       // ✅ SEMPRE genera tutti e 7 i giorni (anche per utenti trial)
