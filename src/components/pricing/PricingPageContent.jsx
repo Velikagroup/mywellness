@@ -759,7 +759,7 @@ export default function PricingPageContent() {
               {t('nav.pricing')}
             </button>
             <button 
-              onClick={() => navigate(getBlogPageUrl(language))}
+              onClick={() => navigate(createPageUrl(getBlogPageName(language)))}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
               {t('nav.blog')}
             </button>
