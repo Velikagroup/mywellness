@@ -716,6 +716,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         onDataChange={handleStepData}
         onNext={nextStep}
         translations={t}
+        t={t}
       />
     </QuizStepWrapper>
   );

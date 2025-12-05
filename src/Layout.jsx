@@ -81,6 +81,13 @@ function LayoutContent({ children }) {
     createPageUrl('Privacy'),
     createPageUrl('ApplePayVerification'),
     createPageUrl('NotFound'),
+    // Localized quiz pages
+    createPageUrl('itquiz'),
+    createPageUrl('enquiz'),
+    createPageUrl('esquiz'),
+    createPageUrl('ptquiz'),
+    createPageUrl('dequiz'),
+    createPageUrl('frquiz'),
     // Localized pricing pages
     createPageUrl('itpricing'),
     createPageUrl('espricing'),
