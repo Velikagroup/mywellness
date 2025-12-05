@@ -37,17 +37,15 @@ Deno.serve(async (req) => {
         }
 
         // Handle custom_role change (customer_support)
+        // NOTA: Il campo 'role' è built-in e non può essere modificato via SDK
+        // Usiamo solo custom_role per gestire i permessi customer_support
         if (customRole !== undefined) {
             if (customRole === null || customRole === '') {
                 updateData.custom_role = null;
-                // Se rimuoviamo il ruolo customer_support, rimuovi anche admin
-                updateData.role = 'user';
-                console.log(`🔄 Admin ${adminUser.email} removing custom_role from ${userEmail} and setting role to user`);
+                console.log(`🔄 Admin ${adminUser.email} removing custom_role from ${userEmail}`);
             } else if (customRole === 'customer_support') {
                 updateData.custom_role = 'customer_support';
-                // Quando assegniamo customer_support, impostiamo anche role admin
-                updateData.role = 'admin';
-                console.log(`🔄 Admin ${adminUser.email} setting ${userEmail} as customer_support AND admin`);
+                console.log(`🔄 Admin ${adminUser.email} setting ${userEmail} as customer_support`);
             } else {
                 return Response.json({ success: false, error: 'Invalid customRole. Must be: customer_support or null' }, { status: 400 });
             }
