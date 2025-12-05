@@ -51,7 +51,7 @@ export default function NeckCircumferenceStep({ data, onDataChange, translations
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Centimetri
+              {t.unitCm || "Centimetri"}
             </button>
             <button
               onClick={() => setUnit('in')}
@@ -61,7 +61,7 @@ export default function NeckCircumferenceStep({ data, onDataChange, translations
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Pollici
+              {t.unitIn || "Pollici"}
             </button>
           </div>
         </div>
@@ -81,7 +81,7 @@ export default function NeckCircumferenceStep({ data, onDataChange, translations
             {unit}
           </span>
         </div>
-        <p className="text-sm text-gray-500 mt-2 text-center">Necessaria per calcolare la massa grassa</p>
+        <p className="text-sm text-gray-500 mt-2 text-center">{t.quizBodyFatRequired || "Necessaria per calcolare la massa grassa"}</p>
       </div>
     </div>
   );

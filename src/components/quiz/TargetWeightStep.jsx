@@ -85,7 +85,7 @@ export default function TargetWeightStep({ data, onDataChange, translations }) {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Chilogrammi
+              {t.unitKg || "Chilogrammi"}
             </button>
             <button
               onClick={() => handleUnitChange('lbs')}
@@ -95,7 +95,7 @@ export default function TargetWeightStep({ data, onDataChange, translations }) {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Libbre
+              {t.unitLbs || "Libbre"}
             </button>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function TargetWeightStep({ data, onDataChange, translations }) {
           </span>
         </div>
         <p className="text-sm text-gray-500 mt-2 text-center">
-          {unit === 'kg' ? 'Inserisci il peso obiettivo in chilogrammi' : 'Inserisci il peso obiettivo in libbre'}
+          {unit === 'kg' ? (t.quizTargetWeightHintKg || 'Inserisci il peso obiettivo in chilogrammi') : (t.quizTargetWeightHintLbs || 'Inserisci il peso obiettivo in libbre')}
         </p>
       </div>
     </div>

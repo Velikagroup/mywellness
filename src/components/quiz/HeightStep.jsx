@@ -67,7 +67,7 @@ export default function HeightStep({ data, onDataChange, translations }) {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Centimetri
+              {t.unitCm || "Centimetri"}
             </button>
             <button
               onClick={() => setUnit('ft')}
@@ -77,7 +77,7 @@ export default function HeightStep({ data, onDataChange, translations }) {
                   : 'text-gray-500 hover:text-gray-700'
               }`}
             >
-              Piedi/Pollici
+              {t.unitFtIn || "Piedi/Pollici"}
             </button>
           </div>
         </div>
@@ -130,7 +130,7 @@ export default function HeightStep({ data, onDataChange, translations }) {
           </div>
         )}
         <p className="text-sm text-gray-500 mt-2 text-center">
-          {unit === 'cm' ? 'Inserisci l\'altezza in centimetri' : 'Inserisci piedi e pollici'}
+          {unit === 'cm' ? (t.quizHeightHintCm || 'Inserisci l\'altezza in centimetri') : (t.quizHeightHintFt || 'Inserisci piedi e pollici')}
         </p>
       </div>
     </div>
