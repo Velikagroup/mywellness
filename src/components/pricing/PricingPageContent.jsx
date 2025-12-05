@@ -45,16 +45,16 @@ const getQuizPageUrl = (langCode) => {
   return langQuizPages[langCode] || '/Quiz';
 };
 
-const getBlogPageUrl = (langCode) => {
+const getBlogPageName = (langCode) => {
   const langBlogPages = {
-    'en': '/Blog',
-    'it': '/ItBlog',
-    'es': '/EsBlog',
-    'pt': '/PtBlog',
-    'de': '/DeBlog',
-    'fr': '/FrBlog'
+    'en': 'Blog',
+    'it': 'itblog',
+    'es': 'esblog',
+    'pt': 'ptblog',
+    'de': 'deblog',
+    'fr': 'frblog'
   };
-  return langBlogPages[langCode] || '/Blog';
+  return langBlogPages[langCode] || 'Blog';
 };
 
 export default function PricingPageContent() {
