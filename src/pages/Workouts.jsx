@@ -1330,7 +1330,23 @@ ${selectedDays.length > 0 ? `
             "Respira in modo regolare: espira nello sforzo",
             "Mantieni le spalle basse e rilassate"
           ],
-          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Muscoli principali coinvolti"]
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Muscoli principali coinvolti"],
+          // Traduzioni specifiche per esercizi comuni
+          exerciseTranslations: {
+            'burpees': {
+              description: 'I burpees sono un esercizio pliometrico che coinvolge tutto il corpo, combinando elementi di forza e cardio. Questo movimento dinamico è fondamentale per migliorare la resistenza cardiovascolare, bruciare calorie e sviluppare la resistenza cardiovascolare e tonificare i muscoli.',
+              formTips: [
+                'Atterra con le spalle delle spalle durante l\'esecuzione per garantire stabilità e supportare il movimento',
+                'Esegui il piegamento in avanti con le mani ben piantate a terra, assicurandoti che le spalle siano sopra le mani al momento del salto',
+                'Quando esegui il salto inferiore, cerca di mantenere il corpo in linea retta, evitando che i fianchi si alzino o si abbassino esageratamente',
+                'Respira profondamente mentre scendi ed espira energicamente quando ti sollevi per il piegamento o esplodi per il salto',
+                'Evita di curvare la schiena durante l\'esecuzione; mantienila retta e in linea retta, evitando che i fianchi si alzino o si abbassino',
+                'Coordinatamente, la gamba deve salire in alto e a non eseguire correttamente il salto inferiori; esegui il movimento in modo controllato e fluido per evitare infortuni',
+                'Se sei un principiante, considera di fare una versione modificata del burpee, omettendo il salto iniziale per adattarti all\'esercizio',
+                'Fai attenzione a non iperestenderle le schioccare durante l\'atterraggio; cerca di atterrare con un leggero piegamento per assorbire l\'impatto'
+              ]
+            }
+          }
         },
         en: {
           defaultDescription: (name) => `Perform ${name} with controlled movement. Maintain proper posture throughout the execution. Breathe regularly: exhale during effort and inhale during release.`,
@@ -1378,7 +1394,23 @@ ${selectedDays.length > 0 ? `
             "Atme regelmäßig: ausatmen bei Anstrengung",
             "Halte die Schultern unten und entspannt"
           ],
-          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Hauptmuskeln beteiligt"]
+          defaultTargetMuscles: (muscleGroups) => muscleGroups?.length > 0 ? muscleGroups : ["Hauptmuskeln beteiligt"],
+          // Traduzioni specifiche per esercizi comuni
+          exerciseTranslations: {
+            'burpees': {
+              description: 'Burpees sind eine plyometrische Übung, die den ganzen Körper beansprucht und Kraft- und Cardio-Elemente kombiniert. Diese dynamische Bewegung ist grundlegend zur Verbesserung der kardiovaskulären Ausdauer, zum Kalorienverbrennen und zur Muskelstärkung.',
+              formTips: [
+                'Lande mit den Schultern auf den Schultern während der Ausführung, um Stabilität zu gewährleisten und die Bewegung zu unterstützen',
+                'Führe die Vorwärtsbeugung mit gut gepflanzten Händen am Boden aus und stelle sicher, dass die Schultern beim Sprung über den Händen sind',
+                'Wenn du den unteren Sprung ausführst, versuche den Körper in einer geraden Linie zu halten und vermeide es, dass die Hüften zu stark nach oben oder unten gehen',
+                'Atme tief ein, während du hinuntergehst, und atme energisch aus, wenn du dich für die Beugung anhebst oder für den Sprung explodierst',
+                'Vermeide es, den Rücken während der Ausführung zu krümmen; halte ihn gerade und in Linie, vermeide, dass die Hüften zu stark steigen oder fallen',
+                'Koordiniert muss das Bein nach oben springen und den unteren Sprung nicht korrekt ausführen; führe die Bewegung kontrolliert und fließend aus, um Verletzungen zu vermeiden',
+                'Wenn du Anfänger bist, erwäge eine modifizierte Version des Burpees, bei der du den anfänglichen Sprung auslässt, um dich an die Übung anzupassen',
+                'Achte darauf, die Gelenke beim Landen nicht zu überstrecken; versuche mit einer leichten Beugung zu landen, um den Aufprall zu absorbieren'
+              ]
+            }
+          }
         },
         fr: {
           defaultDescription: (name) => `Exécutez ${name} avec un mouvement contrôlé. Maintenez une posture correcte tout au long de l'exécution. Respirez régulièrement: expirez pendant l'effort et inspirez pendant le relâchement.`,
@@ -1398,15 +1430,39 @@ ${selectedDays.length > 0 ? `
       for (const plan of response.workout_plans) {
         if (plan.exercises && Array.isArray(plan.exercises)) {
           for (const exercise of plan.exercises) {
-            // Aggiungi detailed_description se mancante
-            if (!exercise.detailed_description || exercise.detailed_description.trim() === '') {
-              exercise.detailed_description = detailsTrans.defaultDescription(exercise.name);
+            const exerciseNameLower = (exercise.name || '').toLowerCase();
+            
+            // 🔧 FIX CRITICO: Se il testo è in italiano ma la lingua è diversa, FORZA la traduzione
+            const hasItalianText = (text) => {
+              if (!text || typeof text !== 'string') return false;
+              // Parole comuni italiane che non dovrebbero apparire in altre lingue
+              const italianWords = ['esegui', 'mantieni', 'durante', 'corpo', 'movimento', 'schiena', 'respirare', 'espira', 'inspira', 'muscoli'];
+              return italianWords.some(word => text.toLowerCase().includes(word));
+            };
+            
+            // Aggiungi detailed_description se mancante O se è in italiano ma la lingua è diversa
+            if (!exercise.detailed_description || exercise.detailed_description.trim() === '' || 
+                (language !== 'it' && hasItalianText(exercise.detailed_description))) {
+              // Cerca traduzione specifica per questo esercizio
+              const specificTranslation = detailsTrans.exerciseTranslations?.[exerciseNameLower];
+              if (specificTranslation?.description) {
+                exercise.detailed_description = specificTranslation.description;
+              } else {
+                exercise.detailed_description = detailsTrans.defaultDescription(exercise.name);
+              }
               detailsAdded++;
             }
             
-            // Aggiungi form_tips se mancanti
-            if (!exercise.form_tips || !Array.isArray(exercise.form_tips) || exercise.form_tips.length === 0) {
-              exercise.form_tips = detailsTrans.defaultFormTips;
+            // Aggiungi form_tips se mancanti O se sono in italiano ma la lingua è diversa
+            if (!exercise.form_tips || !Array.isArray(exercise.form_tips) || exercise.form_tips.length === 0 ||
+                (language !== 'it' && exercise.form_tips.some(tip => hasItalianText(tip)))) {
+              // Cerca traduzione specifica per questo esercizio
+              const specificTranslation = detailsTrans.exerciseTranslations?.[exerciseNameLower];
+              if (specificTranslation?.formTips) {
+                exercise.form_tips = specificTranslation.formTips;
+              } else {
+                exercise.form_tips = detailsTrans.defaultFormTips;
+              }
             }
             
             // Aggiungi target_muscles se mancanti
