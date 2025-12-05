@@ -1,10 +1,6 @@
 import React from 'react';
 import { LanguageProvider } from '@/components/i18n/LanguageContext';
-
-function HomeContentWrapper() {
-  const { HomeContent } = require('./Home');
-  return <HomeContent />;
-}
+import { HomeContent } from './Home';
 
 export default function ItHome() {
   React.useEffect(() => {
@@ -14,7 +10,7 @@ export default function ItHome() {
 
   return (
     <LanguageProvider forcedLanguage="it">
-      <HomeContentWrapper />
+      <HomeContent />
     </LanguageProvider>
   );
 }
