@@ -36,6 +36,12 @@ import esblog from './pages/esblog';
 import ptblog from './pages/ptblog';
 import deblog from './pages/deblog';
 import frblog from './pages/frblog';
+import itblogarticle from './pages/itblogarticle';
+import esblogarticle from './pages/esblogarticle';
+import ptblogarticle from './pages/ptblogarticle';
+import deblogarticle from './pages/deblogarticle';
+import frblogarticle from './pages/frblogarticle';
+import blogarticle from './pages/blogarticle';
 import __Layout from './Layout.jsx';
 
 
@@ -78,6 +84,12 @@ export const PAGES = {
     "ptblog": ptblog,
     "deblog": deblog,
     "frblog": frblog,
+    "itblogarticle": itblogarticle,
+    "esblogarticle": esblogarticle,
+    "ptblogarticle": ptblogarticle,
+    "deblogarticle": deblogarticle,
+    "frblogarticle": frblogarticle,
+    "blogarticle": blogarticle,
 }
 
 export const pagesConfig = {
