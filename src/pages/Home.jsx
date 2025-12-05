@@ -442,7 +442,7 @@ function HomeContent() {
       `}</style>
 
       <nav className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-sm md:w-auto md:max-w-none px-2 md:px-0">
-        <div className={`hidden md:flex water-glass-effect rounded-full items-center nav-expand transition-all ${showNavQuizButton ? 'gap-8 pl-6 pr-6 py-2' : 'gap-8 px-6 py-2'}`}>
+        <div className={`hidden md:flex water-glass-effect rounded-full items-center nav-expand transition-all ${showNavQuizButton ? 'gap-8 pl-6 pr-6 py-[7px]' : 'gap-8 px-6 py-[7px]'}`}>
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
@@ -496,7 +496,15 @@ function HomeContent() {
                   <button
                     key={lang.code}
                     onClick={() => {
-                      setLanguage(lang.code);
+                      const homePages = {
+                        'en': 'EnHome',
+                        'it': 'ItHome',
+                        'es': 'EsHome',
+                        'pt': 'PtHome',
+                        'de': 'DeHome',
+                        'fr': 'FrHome'
+                      };
+                      navigate(createPageUrl(homePages[lang.code] || 'Home'));
                       setLangMenuOpen(false);
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
@@ -555,7 +563,15 @@ function HomeContent() {
                         <button
                           key={lang.code}
                           onClick={() => {
-                            setLanguage(lang.code);
+                            const homePages = {
+                              'en': 'EnHome',
+                              'it': 'ItHome',
+                              'es': 'EsHome',
+                              'pt': 'PtHome',
+                              'de': 'DeHome',
+                              'fr': 'FrHome'
+                            };
+                            navigate(createPageUrl(homePages[lang.code] || 'Home'));
                             setMobileLangMenuOpen(false);
                           }}
                           className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
