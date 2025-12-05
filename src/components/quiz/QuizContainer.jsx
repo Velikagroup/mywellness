@@ -313,6 +313,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (currentStep < dynamicSteps.length - 1) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
+      window.history.pushState({}, '', `?step=${newStep}`);
     } else {
       const trackQuizCompleted = async () => {
         try {
@@ -343,7 +344,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
   const prevStep = () => {
     if (currentStep > 0) {
-      setCurrentStep(currentStep - 1);
+      const newStep = currentStep - 1;
+      setCurrentStep(newStep);
+      window.history.pushState({}, '', `?step=${newStep}`);
     }
   };
 
