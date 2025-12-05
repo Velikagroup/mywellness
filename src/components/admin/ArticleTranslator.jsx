@@ -205,33 +205,39 @@ IMPORTANTE:
     let totalSuccess = 0;
     let totalFailed = 0;
 
-    for (let i = 0; i < articlesToTranslate.length; i++) {
-      const article = articlesToTranslate[i];
-      const existingTranslations = getTranslatedLanguages(article.id);
-      const languagesToTranslate = selectedLanguages.filter(
-        lang => !existingTranslations.includes(lang) && lang !== 'it'
-      );
+    try {
+      for (let i = 0; i < articlesToTranslate.length; i++) {
+        const article = articlesToTranslate[i];
+        const existingTranslations = getTranslatedLanguages(article.id);
+        const languagesToTranslate = selectedLanguages.filter(
+          lang => !existingTranslations.includes(lang) && lang !== 'it'
+        );
 
-      setBulkProgress({
-        current: i + 1,
-        total: articlesToTranslate.length,
-        article: article.title.substring(0, 50) + (article.title.length > 50 ? '...' : '')
-      });
+        setBulkProgress({
+          current: i + 1,
+          total: articlesToTranslate.length,
+          article: article.title.substring(0, 50) + (article.title.length > 50 ? '...' : '')
+        });
 
-      for (const lang of languagesToTranslate) {
-        const success = await translateArticle(article, lang);
-        if (success) totalSuccess++;
-        else totalFailed++;
-        
-        // Delay between translations to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 1500));
+        for (const lang of languagesToTranslate) {
+          const success = await translateArticle(article, lang);
+          if (success) totalSuccess++;
+          else totalFailed++;
+          
+          // Delay between translations to avoid rate limits
+          await new Promise(resolve => setTimeout(resolve, 1500));
+        }
       }
-    }
 
-    setBulkTranslating(false);
-    setBulkProgress({ current: 0, total: 0, article: '' });
-    alert(`✅ Traduzione completata!\n${totalSuccess} traduzioni create\n${totalFailed} errori`);
-    onRefresh();
+      alert(`✅ Traduzione completata!\n${totalSuccess} traduzioni create\n${totalFailed} errori`);
+    } catch (error) {
+      console.error('Bulk translation error:', error);
+      alert(`⚠️ Errore durante la traduzione.\n${totalSuccess} traduzioni completate prima dell'errore.`);
+    } finally {
+      setBulkTranslating(false);
+      setBulkProgress({ current: 0, total: 0, article: '' });
+      onRefresh();
+    }
   };
 
   return (
