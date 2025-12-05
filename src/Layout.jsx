@@ -121,9 +121,12 @@ function LayoutContent({ children }) {
   ];
 
   // Se è una pagina senza layout, renderizza solo children
-  if (pathsWithoutLayout.includes(location.pathname) || 
-      location.pathname.startsWith('/blog/') ||
-      location.pathname.match(/^\/(it|en|es|pt|de|fr)\/blog\//)) {
+  const pathLower = location.pathname.toLowerCase();
+  if (pathsWithoutLayout.some(p => p.toLowerCase() === pathLower) || 
+      pathLower.startsWith('/blog/') ||
+      pathLower.startsWith('/blog') ||
+      pathLower.match(/^\/(it|en|es|pt|de|fr)\/blog/) ||
+      pathLower.match(/blog/i)) {
     return <>{children}</>;
   }
 
