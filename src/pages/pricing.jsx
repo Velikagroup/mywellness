@@ -766,7 +766,17 @@ function PricingPageContent() {
             </button>
             
             <button
-              onClick={() => navigate(createLocalizedPageUrl('Quiz', language))}
+              onClick={() => {
+                const quizPages = {
+                  'en': 'enquiz',
+                  'it': 'itquiz',
+                  'es': 'esquiz',
+                  'pt': 'ptquiz',
+                  'de': 'dequiz',
+                  'fr': 'frquiz'
+                };
+                navigate(createPageUrl(quizPages[language] || 'Quiz'));
+              }}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-2 px-4 text-sm font-medium rounded-full whitespace-nowrap flex-shrink-0 transition-colors">
               {t('pricing.freeQuiz')}
             </button>
@@ -878,7 +888,15 @@ function PricingPageContent() {
                 </button>
                 <button
                   onClick={() => {
-                    navigate(createLocalizedPageUrl('Quiz', language));
+                    const quizPages = {
+                      'en': 'enquiz',
+                      'it': 'itquiz',
+                      'es': 'esquiz',
+                      'pt': 'ptquiz',
+                      'de': 'dequiz',
+                      'fr': 'frquiz'
+                    };
+                    navigate(createPageUrl(quizPages[language] || 'Quiz'));
                     setMobileMenuOpen(false);
                   }}
                   className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
