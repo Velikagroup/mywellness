@@ -243,11 +243,26 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
     );
   }
 
+  // Separate Italian articles from translations
+  const italianPosts = posts.filter(p => p.language === 'it' || !p.language);
+  const translatedPosts = posts.filter(p => p.language && p.language !== 'it');
+
   const stats = {
     total: posts.length,
+    italian: italianPosts.length,
+    translations: translatedPosts.length,
     published: posts.filter(p => p.published).length,
     drafts: posts.filter(p => !p.published).length,
     views: posts.reduce((sum, p) => sum + (p.views || 0), 0)
+  };
+
+  const languageFlags = {
+    it: '🇮🇹',
+    en: '🇬🇧',
+    es: '🇪🇸',
+    pt: '🇧🇷',
+    de: '🇩🇪',
+    fr: '🇫🇷'
   };
 
   return (
@@ -256,23 +271,34 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">Admin Blog</h1>
-            <p className="text-gray-600">Gestisci articoli e contenuti del blog</p>
+            <p className="text-gray-600">Gestisci articoli e traduzioni del blog</p>
           </div>
           <div className="flex gap-3">
-            {/* "Rigenera Tutte le Immagini AI" button removed */}
-            <Button onClick={() => navigate(createPageUrl('Blog'))} variant="outline">
+            <Button onClick={() => navigate(createPageUrl('itblog'))} variant="outline">
               <Eye className="w-4 h-4 mr-2" />
-              Vedi Blog
+              Vedi Blog IT
             </Button>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-4 gap-4 mt-8">
+        <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mt-8">
           <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
-              <p className="text-sm text-gray-500">Totale Articoli</p>
+              <p className="text-sm text-gray-500">Totale</p>
               <p className="text-2xl font-bold text-gray-900">{stats.total}</p>
+            </CardContent>
+          </Card>
+          <Card className="water-glass-effect border-gray-200/30">
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-500">🇮🇹 Italiani</p>
+              <p className="text-2xl font-bold text-blue-600">{stats.italian}</p>
+            </CardContent>
+          </Card>
+          <Card className="water-glass-effect border-gray-200/30">
+            <CardContent className="p-4">
+              <p className="text-sm text-gray-500">🌍 Traduzioni</p>
+              <p className="text-2xl font-bold text-purple-600">{stats.translations}</p>
             </CardContent>
           </Card>
           <Card className="water-glass-effect border-gray-200/30">
@@ -289,14 +315,24 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
           </Card>
           <Card className="water-glass-effect border-gray-200/30">
             <CardContent className="p-4">
-              <p className="text-sm text-gray-500">Visualizzazioni Totali</p>
-              <p className="text-2xl font-bold text-blue-600">{stats.views}</p>
+              <p className="text-sm text-gray-500">Views</p>
+              <p className="text-2xl font-bold text-gray-600">{stats.views}</p>
             </CardContent>
           </Card>
         </div>
 
-        {/* Progress bar for bulk regeneration - removed global image regeneration progress */}
+        {/* Tabs for different sections */}
+        <Tabs defaultValue="articles" className="mt-8">
+          <TabsList className="grid w-full grid-cols-2 mb-6">
+            <TabsTrigger value="articles">📝 Articoli Italiani</TabsTrigger>
+            <TabsTrigger value="translations">🌍 Traduzioni</TabsTrigger>
+          </TabsList>
 
+          <TabsContent value="translations">
+            <ArticleTranslator posts={posts} onRefresh={loadPosts} />
+          </TabsContent>
+
+          <TabsContent value="articles">
         {/* Edit Modal */}
         {editingPost && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
@@ -411,10 +447,10 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
           </Card>
         )}
 
-        {/* Articles List */}
+        {/* Articles List - Only Italian */}
         <Card className="mt-8 water-glass-effect border-gray-200/30 shadow-xl">
           <CardHeader>
-            <CardTitle>Articoli Esistenti ({posts.length})</CardTitle>
+            <CardTitle>🇮🇹 Articoli Italiani ({italianPosts.length})</CardTitle>
           </CardHeader>
           <CardContent>
             <div className="mb-4">
@@ -426,10 +462,10 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
               />
             </div>
             <div className="space-y-2">
-              {posts.length === 0 ? (
+              {italianPosts.length === 0 ? (
                 <p className="text-center text-gray-500 py-8">Nessun articolo ancora. Inizia a generare!</p>
               ) : (
-                posts
+                italianPosts
                   .filter(post => 
                     post.title.toLowerCase().includes(searchQuery.toLowerCase())
                   )
@@ -447,9 +483,9 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
                     className="flex items-center justify-between p-4 water-glass-effect border-gray-200/30 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex items-center gap-4 flex-1">
-                      {/* Featured image display removed */}
                       <div className="flex-1">
                         <div className="flex items-center gap-2">
+                          <span className="text-lg">🇮🇹</span>
                           <h3 className="font-semibold text-gray-900">{post.title}</h3>
                           {post.published ? (
                             <Badge className="bg-green-100 text-green-700">Pubblicato</Badge>
@@ -465,7 +501,7 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
 
                     <div className="flex items-center gap-2">
                       <Button
-                        onClick={() => window.open(createPageUrl('BlogArticle') + `?slug=${post.slug}`, '_blank')}
+                        onClick={() => window.open(`/itblog/${post.slug}`, '_blank')}
                         size="sm"
                         variant="outline"
                       >
@@ -479,7 +515,6 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
                       >
                         <Edit className="w-4 h-4" />
                       </Button>
-                      {/* Individual image regeneration button removed */}
                       <Button
                         onClick={() => togglePublish(post.id, post.published)}
                         size="sm"
@@ -503,6 +538,8 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
             </div>
           </CardContent>
         </Card>
+          </TabsContent>
+        </Tabs>
       </div>
     </div>
   );
