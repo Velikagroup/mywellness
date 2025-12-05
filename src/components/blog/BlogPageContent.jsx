@@ -43,8 +43,16 @@ const getQuizPageUrl = (langCode) => {
 };
 
 const getBlogArticleUrl = (langCode, slug) => {
-  const prefix = langCode === 'en' ? '' : langCode;
-  return prefix ? `/${prefix}blog/${slug}` : `/blog/${slug}`;
+  const articlePages = {
+    'en': 'blogarticle',
+    'it': 'itblogarticle',
+    'es': 'esblogarticle',
+    'pt': 'ptblogarticle',
+    'de': 'deblogarticle',
+    'fr': 'frblogarticle'
+  };
+  const pageName = articlePages[langCode] || 'blogarticle';
+  return createPageUrl(pageName) + `?slug=${slug}`;
 };
 
 // Translations for the blog page

@@ -87,6 +87,19 @@ function LayoutContent({ children }) {
     createPageUrl('ptpricing'),
     createPageUrl('depricing'),
     createPageUrl('frpricing'),
+    // Localized blog pages
+    createPageUrl('itblog'),
+    createPageUrl('esblog'),
+    createPageUrl('ptblog'),
+    createPageUrl('deblog'),
+    createPageUrl('frblog'),
+    // Localized blog article pages
+    createPageUrl('blogarticle'),
+    createPageUrl('itblogarticle'),
+    createPageUrl('esblogarticle'),
+    createPageUrl('ptblogarticle'),
+    createPageUrl('deblogarticle'),
+    createPageUrl('frblogarticle'),
     '/',
     // Add localized versions
     ...['it', 'en', 'es', 'pt', 'de', 'fr'].flatMap(lang => [
