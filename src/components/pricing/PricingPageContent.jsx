@@ -8,17 +8,17 @@ import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
 import { useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
 
-// Map language code to pricing page URL
-const getPricingPageUrl = (langCode) => {
+// Map language code to pricing page name (for createPageUrl)
+const getPricingPageName = (langCode) => {
   const langPricingPages = {
-    'en': '/pricing',
-    'it': '/itpricing',
-    'es': '/espricing',
-    'pt': '/ptpricing',
-    'de': '/depricing',
-    'fr': '/frpricing'
+    'en': 'pricing',
+    'it': 'itpricing',
+    'es': 'espricing',
+    'pt': 'ptpricing',
+    'de': 'depricing',
+    'fr': 'frpricing'
   };
-  return langPricingPages[langCode] || '/pricing';
+  return langPricingPages[langCode] || 'pricing';
 };
 
 const getHomePageUrl = (langCode) => {
@@ -409,8 +409,9 @@ export default function PricingPageContent() {
   const handleLanguageChange = (newLang) => {
     setLanguage(newLang);
     setLangMenuOpen(false);
+    setMobileLangMenuOpen(false);
     // Navigate to the correct pricing page for the new language
-    navigate(getPricingPageUrl(newLang));
+    navigate(createPageUrl(getPricingPageName(newLang)));
   };
 
   const getPrice = (plan) => {
@@ -752,7 +753,7 @@ export default function PricingPageContent() {
 
           <div className="flex items-center gap-4 flex-shrink-0">
             <button 
-              onClick={() => navigate(getPricingPageUrl(language))}
+              onClick={() => navigate(createPageUrl(getPricingPageName(language)))}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
               {t('nav.pricing')}
             </button>
@@ -865,7 +866,7 @@ export default function PricingPageContent() {
             <div className="pt-4 pb-2 space-y-3">
               <button
                 onClick={() => {
-                  navigate(getPricingPageUrl(language));
+                  navigate(createPageUrl(getPricingPageName(language)));
                   setMobileMenuOpen(false);
                 }}
                 className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
