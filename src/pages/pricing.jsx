@@ -714,27 +714,38 @@ function PricingPageContent() {
               </button>
               
               {langMenuOpen && (
-                <>
-                  <div className="fixed inset-0 z-40" onClick={() => setLangMenuOpen(false)}></div>
-                  <div className="absolute right-0 top-12 water-glass-effect rounded-2xl border border-white/40 shadow-xl p-2 min-w-[160px] z-50">
-                    {SUPPORTED_LANGUAGES.map((lang) => (
-                      <button
-                        key={lang.code}
-                        onClick={() => {
-                          setLanguage(lang.code);
-                          setLangMenuOpen(false);
-                        }}
-                        className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                          language === lang.code
-                            ? 'bg-[var(--brand-primary)] text-white'
-                            : 'text-gray-700 hover:bg-white/50'
-                        }`}>
-                        <span className="text-lg">{lang.flag}</span>
-                        <span>{lang.name}</span>
-                      </button>
-                    ))}
-                  </div>
-                </>
+              <>
+              <div className="fixed inset-0 z-40" onClick={() => setLangMenuOpen(false)}></div>
+              <div className="absolute right-0 top-12 water-glass-effect rounded-2xl border border-white/40 shadow-xl p-2 min-w-[160px] z-50">
+                {SUPPORTED_LANGUAGES.map((lang) => {
+                  const pricingPages = {
+                    'en': 'pricing',
+                    'it': 'itpricing',
+                    'es': 'espricing',
+                    'pt': 'ptpricing',
+                    'de': 'depricing',
+                    'fr': 'frpricing'
+                  };
+                  return (
+                    <button
+                      key={lang.code}
+                      onClick={() => {
+                        setLanguage(lang.code);
+                        setLangMenuOpen(false);
+                        navigate(createPageUrl(pricingPages[lang.code] || 'pricing'));
+                      }}
+                      className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                        language === lang.code
+                          ? 'bg-[var(--brand-primary)] text-white'
+                          : 'text-gray-700 hover:bg-white/50'
+                      }`}>
+                      <span className="text-lg">{lang.flag}</span>
+                      <span>{lang.name}</span>
+                    </button>
+                  );
+                })}
+              </div>
+              </>
               )}
             </div>
             
@@ -775,22 +786,33 @@ function PricingPageContent() {
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setMobileLangMenuOpen(false)}></div>
                     <div className="absolute right-0 top-12 water-glass-effect rounded-2xl border border-white/40 shadow-xl p-2 min-w-[160px] z-50">
-                      {SUPPORTED_LANGUAGES.map((lang) => (
-                        <button
-                          key={lang.code}
-                          onClick={() => {
-                            setLanguage(lang.code);
-                            setMobileLangMenuOpen(false);
-                          }}
-                          className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
-                            language === lang.code
-                              ? 'bg-[var(--brand-primary)] text-white'
-                              : 'text-gray-700 hover:bg-white/50'
-                          }`}>
-                          <span className="text-lg">{lang.flag}</span>
-                          <span>{lang.name}</span>
-                        </button>
-                      ))}
+                      {SUPPORTED_LANGUAGES.map((lang) => {
+                        const pricingPages = {
+                          'en': 'pricing',
+                          'it': 'itpricing',
+                          'es': 'espricing',
+                          'pt': 'ptpricing',
+                          'de': 'depricing',
+                          'fr': 'frpricing'
+                        };
+                        return (
+                          <button
+                            key={lang.code}
+                            onClick={() => {
+                              setLanguage(lang.code);
+                              setMobileLangMenuOpen(false);
+                              navigate(createPageUrl(pricingPages[lang.code] || 'pricing'));
+                            }}
+                            className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
+                              language === lang.code
+                                ? 'bg-[var(--brand-primary)] text-white'
+                                : 'text-gray-700 hover:bg-white/50'
+                            }`}>
+                            <span className="text-lg">{lang.flag}</span>
+                            <span>{lang.name}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   </>
                 )}
