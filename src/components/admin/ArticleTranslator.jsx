@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
-import { Loader2, Languages, Check, X, Globe, ChevronDown, ChevronUp } from 'lucide-react';
+import { Loader2, Languages, Check, X, Globe, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 
 const LANGUAGES = [
 { code: 'it', name: 'Italiano', flag: '🇮🇹' },
@@ -35,6 +35,57 @@ export default function ArticleTranslator({ posts, onRefresh }) {
   const getTranslatedLanguages = (articleId) => {
     const translations = getTranslationsForArticle(articleId);
     return translations.map((t) => t.language);
+  };
+
+  // Get unique translations (no duplicates per language)
+  const getUniqueTranslationsCount = (articleId) => {
+    const translations = getTranslationsForArticle(articleId);
+    const uniqueLangs = new Set(translations.map(t => t.language));
+    return uniqueLangs.size;
+  };
+
+  // Check if article has duplicate translations
+  const hasDuplicates = (articleId) => {
+    const translations = getTranslationsForArticle(articleId);
+    const langCounts = {};
+    translations.forEach(t => {
+      langCounts[t.language] = (langCounts[t.language] || 0) + 1;
+    });
+    return Object.values(langCounts).some(count => count > 1);
+  };
+
+  // Delete duplicate translations for an article (keep the newest one per language)
+  const deleteDuplicates = async (articleId) => {
+    const translations = getTranslationsForArticle(articleId);
+    const langGroups = {};
+    
+    // Group by language
+    translations.forEach(t => {
+      if (!langGroups[t.language]) {
+        langGroups[t.language] = [];
+      }
+      langGroups[t.language].push(t);
+    });
+
+    // For each language with duplicates, delete all but the newest
+    let deletedCount = 0;
+    for (const lang of Object.keys(langGroups)) {
+      const group = langGroups[lang];
+      if (group.length > 1) {
+        // Sort by created_date descending (newest first)
+        group.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
+        // Delete all except the first (newest)
+        for (let i = 1; i < group.length; i++) {
+          await base44.entities.BlogPost.delete(group[i].id);
+          deletedCount++;
+        }
+      }
+    }
+    
+    if (deletedCount > 0) {
+      alert(`✅ Eliminati ${deletedCount} duplicati!`);
+      onRefresh();
+    }
   };
 
   const createSlug = (title, langCode) => {
@@ -268,8 +319,9 @@ IMPORTANTE:
                               {lang.flag}
                             </span>
                         )}
-                          <span className="text-xs text-gray-500 ml-2">
-                            {translations.length}/5 traduzioni
+                          <span className={`text-xs ml-2 ${translations.length > 5 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
+                            {getUniqueTranslationsCount(article.id)}/5 traduzioni
+                            {translations.length > 5 && ` (${translations.length - getUniqueTranslationsCount(article.id)} duplicati)`}
                           </span>
                         </div>
                       </div>
@@ -278,6 +330,19 @@ IMPORTANTE:
                       <Loader2 className="w-5 h-5 text-[var(--brand-primary)] animate-spin" /> :
 
                       <>
+                            {hasDuplicates(article.id) && (
+                              <Button
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  deleteDuplicates(article.id);
+                                }}
+                                size="sm"
+                                variant="outline"
+                                className="text-red-600 hover:bg-red-50 h-8 px-2">
+                                <Trash2 className="w-4 h-4 mr-1" />
+                                Elimina Duplicati
+                              </Button>
+                            )}
                             <Button
                           onClick={(e) => {
                             e.stopPropagation();
@@ -285,7 +350,7 @@ IMPORTANTE:
                           }}
                           size="sm" className="bg-slate-900 text-primary-foreground px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-8 hover:bg-[var(--brand-primary-hover)]"
 
-                          disabled={translations.length >= 5}>
+                          disabled={getUniqueTranslationsCount(article.id) >= 5}>
 
                               <Languages className="w-4 h-4 mr-1" />
                               Traduci Tutte
