@@ -497,12 +497,12 @@ function HomeContent() {
                     key={lang.code}
                     onClick={() => {
                       const homePages = {
-                        'en': 'EnHome',
-                        'it': 'ItHome',
-                        'es': 'EsHome',
-                        'pt': 'PtHome',
-                        'de': 'DeHome',
-                        'fr': 'FrHome'
+                        'en': 'enhome',
+                        'it': 'ithome',
+                        'es': 'eshome',
+                        'pt': 'pthome',
+                        'de': 'dehome',
+                        'fr': 'frhome'
                       };
                       navigate(createPageUrl(homePages[lang.code] || 'Home'));
                       setLangMenuOpen(false);
@@ -564,12 +564,12 @@ function HomeContent() {
                           key={lang.code}
                           onClick={() => {
                             const homePages = {
-                              'en': 'EnHome',
-                              'it': 'ItHome',
-                              'es': 'EsHome',
-                              'pt': 'PtHome',
-                              'de': 'DeHome',
-                              'fr': 'FrHome'
+                              'en': 'enhome',
+                              'it': 'ithome',
+                              'es': 'eshome',
+                              'pt': 'pthome',
+                              'de': 'dehome',
+                              'fr': 'frhome'
                             };
                             navigate(createPageUrl(homePages[lang.code] || 'Home'));
                             setMobileLangMenuOpen(false);

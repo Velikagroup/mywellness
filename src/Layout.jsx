@@ -108,12 +108,12 @@ function LayoutContent({ children }) {
     createPageUrl('deblogarticle'),
     createPageUrl('frblogarticle'),
     // Localized home pages
-    createPageUrl('ItHome'),
-    createPageUrl('EnHome'),
-    createPageUrl('EsHome'),
-    createPageUrl('PtHome'),
-    createPageUrl('DeHome'),
-    createPageUrl('FrHome'),
+    createPageUrl('ithome'),
+    createPageUrl('enhome'),
+    createPageUrl('eshome'),
+    createPageUrl('pthome'),
+    createPageUrl('dehome'),
+    createPageUrl('frhome'),
     '/',
     // Add localized versions
     ...['it', 'en', 'es', 'pt', 'de', 'fr'].flatMap(lang => [

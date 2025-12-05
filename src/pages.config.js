@@ -54,6 +54,12 @@ import EsHome from './pages/EsHome';
 import PtHome from './pages/PtHome';
 import DeHome from './pages/DeHome';
 import FrHome from './pages/FrHome';
+import ithome from './pages/ithome';
+import enhome from './pages/enhome';
+import eshome from './pages/eshome';
+import pthome from './pages/pthome';
+import dehome from './pages/dehome';
+import frhome from './pages/frhome';
 import __Layout from './Layout.jsx';
 
 
@@ -114,6 +120,12 @@ export const PAGES = {
     "PtHome": PtHome,
     "DeHome": DeHome,
     "FrHome": FrHome,
+    "ithome": ithome,
+    "enhome": enhome,
+    "eshome": eshome,
+    "pthome": pthome,
+    "dehome": dehome,
+    "frhome": frhome,
 }
 
 export const pagesConfig = {
