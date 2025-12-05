@@ -18,6 +18,13 @@ export default function BirthdateStep({ data, onDataChange, translations }) {
         age--;
       }
       
+      // Verifica che l'età sia almeno 18
+      if (age < 18) {
+        alert(t.quizBirthdateMinAge || 'Devi avere almeno 18 anni');
+        onDataChange({ birthdate: '', age: null });
+        return;
+      }
+      
       onDataChange({ birthdate, age });
     } else {
       onDataChange({ birthdate: '', age: null });

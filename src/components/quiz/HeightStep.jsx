@@ -22,7 +22,20 @@ export default function HeightStep({ data, onDataChange, translations }) {
   }, [data.height, unit]);
 
   const handleCmChange = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    
+    // Se l'utente inserisce formato tipo 1,78 o 1.78 invece di 178
+    if (value.includes(',') || value.includes('.')) {
+      const numValue = parseFloat(value.replace(',', '.'));
+      if (!isNaN(numValue) && numValue < 10) {
+        // Probabilmente ha scritto 1.78 invece di 178
+        value = Math.round(numValue * 100).toString();
+      } else {
+        // Rimuovi semplicemente virgola/punto
+        value = value.replace(/[,\.]/g, '');
+      }
+    }
+    
     setDisplayValue(value);
     onDataChange({ height: parseInt(value) || '' });
   };

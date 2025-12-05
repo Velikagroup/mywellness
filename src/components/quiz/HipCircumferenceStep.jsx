@@ -18,7 +18,11 @@ export default function HipCircumferenceStep({ data, onDataChange, translations 
   }, [data.hip_circumference, unit]);
 
   const handleChange = (e) => {
-    const value = e.target.value;
+    let value = e.target.value;
+    
+    // Sostituisci virgola con punto per decimali
+    value = value.replace(',', '.');
+    
     setDisplayValue(value);
     
     if (unit === 'cm') {
