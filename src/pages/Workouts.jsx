@@ -1805,6 +1805,9 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               <p className="text-xs text-amber-600 text-center mt-3 font-semibold">
                 ⏱️ Questa operazione richiederà alcuni minuti
               </p>
+              <p className="text-xs text-red-600 text-center mt-2 font-bold">
+                ⚠️ Non cambiare pagina durante la generazione
+              </p>
             </CardHeader>
             
             <CardContent className="space-y-5 px-6 pb-6">
@@ -1824,23 +1827,53 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
                 <h4 className="font-semibold text-gray-800 text-sm mb-3">{t('workouts.genProtocol')}</h4>
                 <ul className="space-y-2 text-xs">
                   <li className="flex items-center">
-                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 10 ? 'text-[#26847F]' : 'text-gray-300'}`} />
+                    {generationProgress >= 10 ? (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                    ) : generationProgress >= 0 && generationProgress < 10 ? (
+                      <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                    ) : (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                    )}
                     <span className="text-gray-700">{t('workouts.genDatabase', { count: allExercises.length })}</span>
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 20 ? 'text-[#26847F]' : 'text-gray-300'}`} />
+                    {generationProgress >= 20 ? (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                    ) : generationProgress >= 10 && generationProgress < 20 ? (
+                      <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                    ) : (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                    )}
                     <span className="text-gray-700">{t('workouts.genFilter', { goal: trainingData.fitness_goal })}</span>
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 40 ? 'text-[#26847F]' : 'text-gray-300'}`} />
+                    {generationProgress >= 40 ? (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                    ) : generationProgress >= 20 && generationProgress < 40 ? (
+                      <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                    ) : (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                    )}
                     <span className="text-gray-700">{t('workouts.genSelection')}</span>
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 60 ? 'text-[#26847F]' : 'text-gray-300'}`} />
+                    {generationProgress >= 60 ? (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                    ) : generationProgress >= 40 && generationProgress < 60 ? (
+                      <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                    ) : (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                    )}
                     <span className="text-gray-700">{t('workouts.genValidation')}</span>
                   </li>
                   <li className="flex items-center">
-                    <CheckCircle className={`inline w-4 h-4 mr-2 ${generationProgress >= 85 ? 'text-[#26847F]' : 'text-gray-300'}`} />
+                    {generationProgress >= 85 ? (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                    ) : generationProgress >= 60 && generationProgress < 85 ? (
+                      <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                    ) : (
+                      <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                    )}
                     <span className="text-gray-700">{t('workouts.genBuilding')}</span>
                   </li>
                 </ul>

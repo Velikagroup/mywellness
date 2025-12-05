@@ -180,6 +180,9 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData,
             <p className="text-xs text-amber-600 text-center mt-3 font-semibold">
               ⏱️ Questa operazione richiederà alcuni minuti
             </p>
+            <p className="text-xs text-red-600 text-center mt-2 font-bold">
+              ⚠️ Non cambiare pagina durante la generazione
+            </p>
           </CardHeader>
           
           <CardContent className="space-y-5 px-6 pb-6">
@@ -199,31 +202,73 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData,
               <h4 className="font-semibold text-gray-800 text-sm mb-3">{t('meals.analysisInProgress')}</h4>
               <ul className="space-y-2 text-xs">
                 <li className="flex items-center">
-                  {renderStepIcon(getStepStatus(10))}
+                  {generationProgress >= 10 ? (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                  ) : generationProgress >= 0 && generationProgress < 10 ? (
+                    <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                  ) : (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                  )}
                   <span className="text-gray-700">{t('meals.metabolicProfile').replace('{bmr}', nutritionData?.bmr)}</span>
                 </li>
                 <li className="flex items-center">
-                  {renderStepIcon(getStepStatus(25))}
+                  {generationProgress >= 25 ? (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                  ) : generationProgress >= 10 && generationProgress < 25 ? (
+                    <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                  ) : (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                  )}
                   <span className="text-gray-700">{t('meals.caloricTarget').replace('{calories}', nutritionData?.daily_calories)}</span>
                 </li>
                 <li className="flex items-center">
-                  {renderStepIcon(getStepStatus(50))}
+                  {generationProgress >= 50 ? (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                  ) : generationProgress >= 25 && generationProgress < 50 ? (
+                    <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                  ) : (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                  )}
                   <span className="text-gray-700">{t('meals.autoBalancing')}</span>
                 </li>
                 <li className="flex items-center">
-                  {renderStepIcon(getStepStatus(60))}
+                  {generationProgress >= 60 ? (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                  ) : generationProgress >= 50 && generationProgress < 60 ? (
+                    <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                  ) : (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                  )}
                   <span className="text-gray-700">{t('meals.planGenerated')}</span>
                 </li>
                 <li className="flex items-center">
-                  {renderStepIcon(getStepStatus(70))}
+                  {generationProgress >= 70 ? (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                  ) : generationProgress >= 60 && generationProgress < 70 ? (
+                    <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                  ) : (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                  )}
                   <span className="text-gray-700">{t('meals.ingredientValidation')}</span>
                 </li>
                 <li className="flex items-center">
-                  {renderStepIcon(getStepStatus(85))}
+                  {generationProgress >= 85 ? (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                  ) : generationProgress >= 70 && generationProgress < 85 ? (
+                    <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                  ) : (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                  )}
                   <span className="text-gray-700">{t('meals.imageGeneration')}</span>
                 </li>
                 <li className="flex items-center">
-                  {renderStepIcon(getStepStatus(95))}
+                  {generationProgress >= 95 ? (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-[#26847F]" />
+                  ) : generationProgress >= 85 && generationProgress < 95 ? (
+                    <Loader2 className="inline w-4 h-4 mr-2 text-[#26847F] animate-spin" />
+                  ) : (
+                    <CheckCircle className="inline w-4 h-4 mr-2 text-gray-300" />
+                  )}
                   <span className="text-gray-700">{t('meals.savingPlan')}</span>
                 </li>
               </ul>
