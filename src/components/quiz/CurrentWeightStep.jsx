@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
 import { Scale } from "lucide-react";
 
-export default function CurrentWeightStep({ data, onDataChange }) {
+export default function CurrentWeightStep({ data, onDataChange, translations }) {
+  const t = translations?.quiz || {};
   const [unit, setUnit] = useState('kg');
   const [displayValue, setDisplayValue] = useState('');
   const isTypingRef = useRef(false);
@@ -68,8 +69,8 @@ export default function CurrentWeightStep({ data, onDataChange }) {
         <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Scale className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Qual è il tuo peso attuale?</h2>
-        <p className="text-gray-600">Questo è il tuo punto di partenza nel percorso di benessere</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizCurrentWeightTitle || "Qual è il tuo peso attuale?"}</h2>
+        <p className="text-gray-600">{t.quizCurrentWeightSubtitle || "Questo è il tuo punto di partenza nel percorso di benessere"}</p>
       </div>
 
       <div className="max-w-md mx-auto">

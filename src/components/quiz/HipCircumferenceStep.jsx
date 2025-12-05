@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Circle } from "lucide-react";
 
-export default function HipCircumferenceStep({ data, onDataChange }) {
+export default function HipCircumferenceStep({ data, onDataChange, translations }) {
+  const t = translations?.quiz || {};
   const [unit, setUnit] = useState('cm');
   const [displayValue, setDisplayValue] = useState('');
 
@@ -34,8 +35,8 @@ export default function HipCircumferenceStep({ data, onDataChange }) {
         <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Circle className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Circonferenza dei Fianchi</h2>
-        <p className="text-gray-600">Misura nel punto più largo dei fianchi/glutei</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizHipTitle || "Circonferenza dei Fianchi"}</h2>
+        <p className="text-gray-600">{t.quizHipSubtitle || "Misura nel punto più largo dei fianchi/glutei"}</p>
       </div>
 
       <div className="max-w-md mx-auto">

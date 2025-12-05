@@ -2,7 +2,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
 import { Target } from "lucide-react";
 
-export default function TargetWeightStep({ data, onDataChange }) {
+export default function TargetWeightStep({ data, onDataChange, translations }) {
+  const t = translations?.quiz || {};
   const [unit, setUnit] = useState('kg');
   const [displayValue, setDisplayValue] = useState('');
   const isTypingRef = useRef(false);
@@ -68,8 +69,8 @@ export default function TargetWeightStep({ data, onDataChange }) {
         <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Target className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Qual è il tuo peso obiettivo?</h2>
-        <p className="text-gray-600">Il peso che desideri raggiungere</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizTargetWeightTitle || "Qual è il tuo peso obiettivo?"}</h2>
+        <p className="text-gray-600">{t.quizTargetWeightSubtitle || "Il peso che desideri raggiungere"}</p>
       </div>
 
       <div className="max-w-md mx-auto">

@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Ruler } from "lucide-react";
 
-export default function HeightStep({ data, onDataChange }) {
+export default function HeightStep({ data, onDataChange, translations }) {
+  const t = translations?.quiz || {};
   const [unit, setUnit] = useState('cm');
   const [displayValue, setDisplayValue] = useState('');
   const [feet, setFeet] = useState('');
@@ -50,8 +51,8 @@ export default function HeightStep({ data, onDataChange }) {
         <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Ruler className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Qual è la tua altezza?</h2>
-        <p className="text-gray-600">Necessaria per calcolare il tuo BMI e il fabbisogno calorico</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizHeightTitle || "Qual è la tua altezza?"}</h2>
+        <p className="text-gray-600">{t.quizHeightSubtitle || "Necessaria per calcolare il tuo BMI e il fabbisogno calorico"}</p>
       </div>
 
       <div className="max-w-md mx-auto">

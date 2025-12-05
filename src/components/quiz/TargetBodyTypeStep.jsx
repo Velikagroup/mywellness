@@ -24,7 +24,8 @@ const FEMALE_BODY_TYPES = [
   { percentage: 50, label: '50%', description: 'Obesa Grave', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/61e4d162e_Female-body-fat-50.png' }
 ];
 
-export default function TargetBodyTypeStep({ data, onDataChange, onNext }) {
+export default function TargetBodyTypeStep({ data, onDataChange, onNext, translations }) {
+  const t = translations?.quiz || {};
   const bodyTypes = data.gender === 'male' ? MALE_BODY_TYPES : FEMALE_BODY_TYPES;
 
   const handleSelection = (percentage) => {
@@ -37,8 +38,8 @@ export default function TargetBodyTypeStep({ data, onDataChange, onNext }) {
         <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">🎯</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Come vorresti diventare?</h2>
-        <p className="text-gray-600">Scegli il tuo obiettivo fisico desiderato</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.quizTargetBodyTypeTitle || "Come vorresti diventare?"}</h2>
+        <p className="text-gray-600">{t.quizTargetBodyTypeSubtitle || "Scegli il tuo obiettivo fisico desiderato"}</p>
       </div>
 
       <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">

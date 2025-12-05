@@ -2,7 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Circle } from "lucide-react";
 
-export default function WaistCircumferenceStep({ data, onDataChange }) {
+export default function WaistCircumferenceStep({ data, onDataChange, translations }) {
+  const t = translations?.quiz || {};
   const [unit, setUnit] = useState('cm');
   const [displayValue, setDisplayValue] = useState('');
 
@@ -34,8 +35,8 @@ export default function WaistCircumferenceStep({ data, onDataChange }) {
         <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Circle className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">Circonferenza della Vita</h2>
-        <p className="text-gray-600">Misura all'altezza dell'ombelico, mantenendo il metro orizzontale</p>
+        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizWaistTitle || "Circonferenza della Vita"}</h2>
+        <p className="text-gray-600">{t.quizWaistSubtitle || "Misura all'altezza dell'ombelico, mantenendo il metro orizzontale"}</p>
       </div>
 
       <div className="max-w-md mx-auto">

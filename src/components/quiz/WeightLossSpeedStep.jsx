@@ -1,4 +1,3 @@
-
 import React from 'react';
 
 const SPEED_OPTIONS = [
@@ -25,7 +24,8 @@ const SPEED_OPTIONS = [
   }
 ];
 
-export default function WeightLossSpeedStep({ data, onDataChange, onNext }) {
+export default function WeightLossSpeedStep({ data, onDataChange, onNext, translations }) {
+  const t = translations?.quiz || {};
   const handleSelection = (speed) => {
     onDataChange({ weight_loss_speed: speed });
     setTimeout(() => onNext(), 300);
@@ -37,8 +37,8 @@ export default function WeightLossSpeedStep({ data, onDataChange, onNext }) {
         <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">⏱️</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Qual è il tuo ritmo preferito?</h2>
-        <p className="text-gray-600">Scegli con quale velocità vuoi raggiungere il tuo obiettivo</p>
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.quizWeightLossSpeedTitle || "Qual è il tuo ritmo preferito?"}</h2>
+        <p className="text-gray-600">{t.quizWeightLossSpeedSubtitle || "Scegli con quale velocità vuoi raggiungere il tuo obiettivo"}</p>
       </div>
 
       <div className="grid gap-4 max-w-2xl mx-auto">
