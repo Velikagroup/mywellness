@@ -576,19 +576,19 @@ export default function QuizContainer({ translations, language = 'it' }) {
                 
                 <h1 className="text-3xl md:text-4xl font-black mb-3">
                   <span className="text-transparent bg-gradient-to-r from-[var(--brand-primary)] to-teal-600 bg-clip-text">
-                    {t?.quizBodyFatTitle || 'Your Body Fat'}
+                    {t?.quiz?.quizBodyFatTitle || 'Your Body Fat'}
                   </span>
                 </h1>
                 
                 <p className="text-base text-gray-700 font-medium max-w-lg mx-auto leading-relaxed">
-                  {t?.quizBodyFatSubtitle || 'Calculated with scientific US Navy formula'}
+                  {t?.quiz?.quizBodyFatSubtitle || 'Calculated with scientific US Navy formula'}
                 </p>
               </div>
 
               <div className="relative py-12 mb-8">
                 <div className="text-center space-y-6">
                   <p className="text-2xl font-bold text-gray-900">
-                    {t?.quizBodyFatText || 'Your body fat is:'}
+                    {t?.quiz?.quizBodyFatText || 'Your body fat is:'}
                   </p>
                   
                   <div className="relative inline-block">
@@ -599,7 +599,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
                   
                   <div className="flex items-center justify-center gap-2 text-gray-600">
                     <EyeOff className="w-5 h-5" />
-                    <p className="text-sm">{t?.quizUnlockText || 'Log in to see your result'}</p>
+                    <p className="text-sm">{t?.quiz?.quizUnlockText || 'Log in to see your result'}</p>
                   </div>
                 </div>
               </div>
@@ -610,10 +610,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
                     <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-500 rounded-full flex items-center justify-center">
                       <CheckCircle2 className="w-4 h-4 md:w-6 md:h-6 text-white" />
                     </div>
-                    <h4 className="font-bold text-blue-900 text-sm md:text-base">{t?.quizAnalysisComplete || 'Analysis Complete'}</h4>
+                    <h4 className="font-bold text-blue-900 text-sm md:text-base">{t?.quiz?.quizAnalysisComplete || 'Analysis Complete'}</h4>
                   </div>
                   <p className="text-xs md:text-sm text-blue-800">
-                    {t?.quizAnalysisCompleteDesc || 'We analyzed your physical data with scientific precision'}
+                    {t?.quiz?.quizAnalysisCompleteDesc || 'We analyzed your physical data with scientific precision'}
                   </p>
                 </div>
                 
@@ -622,10 +622,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
                     <div className="w-8 h-8 md:w-10 md:h-10 bg-green-500 rounded-full flex items-center justify-center">
                       <Sparkles className="w-4 h-4 md:w-6 md:h-6 text-white" />
                     </div>
-                    <h4 className="font-bold text-green-900 text-sm md:text-base">{t?.quizPlanReady || 'Personalized Plan'}</h4>
+                    <h4 className="font-bold text-green-900 text-sm md:text-base">{t?.quiz?.quizPlanReady || 'Personalized Plan'}</h4>
                   </div>
                   <p className="text-xs md:text-sm text-green-800">
-                    {t?.quizPlanReadyDesc || 'We will create a custom path for you based on this data'}
+                    {t?.quiz?.quizPlanReadyDesc || 'We will create a custom path for you based on this data'}
                   </p>
                 </div>
               </div>
@@ -633,16 +633,16 @@ export default function QuizContainer({ translations, language = 'it' }) {
               <Button
                 onClick={handleRevealBodyFat}
                 disabled={isSaving}
-                className="w-full h-16 text-xl font-bold bg-white hover:bg-gray-50 text-[var(--brand-primary)] border-2 border-[var(--brand-primary)] rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105"
+                className="w-full h-16 text-xl font-bold bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105 border-0"
               >
                 {isSaving ? (
                   <>
                     <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-                    {t?.quizSaving || 'Saving...'}
+                    {t?.quiz?.quizSaving || 'Saving...'}
                   </>
                 ) : (
                   <>
-                    {t?.quizRevealButton || 'Discover Your Body Fat'}
+                    {t?.quiz?.quizRevealButton || 'Discover Your Body Fat'}
                     <Sparkles className="w-5 h-5 ml-3" />
                   </>
                 )}
@@ -652,7 +652,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
                 <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[var(--brand-primary-light)] to-teal-50 px-6 py-3 rounded-full border border-[var(--brand-primary)]/20">
                   <span className="w-2 h-2 bg-green-500 rounded-full"></span>
                   <p className="text-xs text-gray-700 font-medium">
-                    {t?.quizScientificMethod || 'Scientifically validated US Navy method'}
+                    {t?.quiz?.quizScientificMethod || 'Scientifically validated US Navy method'}
                   </p>
                 </div>
               </div>
@@ -665,37 +665,61 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
   if (isCalculating) {
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 animated-gradient-bg">
-        <Card className="max-w-2xl w-full bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl text-center">
-          <CardHeader>
-            <div className="w-24 h-24 mx-auto mb-4 relative">
-              <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 rounded-full animate-pulse"></div>
-              <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
-                <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-spin" />
+      <>
+        <style>{`
+          @keyframes gradientShift {
+            0% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
+            33% { background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%; }
+            66% { background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%; }
+            100% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
+          }
+          
+          .animated-gradient-bg {
+            background: #f9fafb;
+            background-image: 
+              radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%),
+              radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
+              radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+              radial-gradient(circle at 70% 60%, #f3e8ff 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+              radial-gradient(circle at 90% 85%, #faf5ff 0%, transparent 50%);
+            background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
+            animation: gradientShift 45s ease-in-out infinite;
+            background-attachment: fixed;
+          }
+        `}</style>
+        <div className="min-h-screen flex items-center justify-center p-4 animated-gradient-bg">
+          <Card className="max-w-2xl w-full bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl text-center">
+            <CardHeader>
+              <div className="w-24 h-24 mx-auto mb-4 relative">
+                <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 rounded-full animate-pulse"></div>
+                <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
+                  <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-spin" />
+                </div>
               </div>
-            </div>
-            <CardTitle className="text-2xl font-bold text-gray-900">
-              {t?.quizProcessing || 'Processing...'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-6 p-8">
-            <div className="space-y-4">
-              <div className="flex items-center justify-center gap-3 text-gray-700">
-                <div className="w-2 h-2 bg-[var(--brand-primary)] rounded-full animate-bounce"></div>
-                <p className="text-lg font-medium">{t?.quizCalcBodyFat || 'Calculating body fat'}</p>
+              <CardTitle className="text-2xl font-bold text-gray-900">
+                {t?.quiz?.quizProcessing || 'Processing...'}
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6 p-8">
+              <div className="space-y-4">
+                <div className="flex items-center justify-center gap-3 text-gray-700">
+                  <div className="w-2 h-2 bg-[var(--brand-primary)] rounded-full animate-bounce"></div>
+                  <p className="text-lg font-medium">{t?.quiz?.quizCalcBodyFat || 'Calculating body fat'}</p>
+                </div>
+                <div className="flex items-center justify-center gap-3 text-gray-700">
+                  <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                  <p className="text-lg font-medium">{t?.quiz?.quizCalcMetabolism || 'Analyzing basal metabolism'}</p>
+                </div>
+                <div className="flex items-center justify-center gap-3 text-gray-700">
+                  <div className="w-2 h-2 bg-[var(--brand-primary)] rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
+                  <p className="text-lg font-medium">{t?.quiz?.quizPreparingPlan || 'Preparing personalized nutrition plan'}</p>
+                </div>
               </div>
-              <div className="flex items-center justify-center gap-3 text-gray-700">
-                <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                <p className="text-lg font-medium">{t?.quizCalcMetabolism || 'Analyzing basal metabolism'}</p>
-              </div>
-              <div className="flex items-center justify-center gap-3 text-gray-700">
-                <div className="w-2 h-2 bg-[var(--brand-primary)] rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                <p className="text-lg font-medium">{t?.quizPreparingPlan || 'Preparing personalized nutrition plan'}</p>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
+            </CardContent>
+          </Card>
+        </div>
+      </>
     );
   }
 
