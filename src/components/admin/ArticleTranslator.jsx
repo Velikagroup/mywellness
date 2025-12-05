@@ -76,8 +76,12 @@ export default function ArticleTranslator({ posts, onRefresh }) {
         group.sort((a, b) => new Date(b.created_date) - new Date(a.created_date));
         // Delete all except the first (newest)
         for (let i = 1; i < group.length; i++) {
-          await base44.entities.BlogPost.delete(group[i].id);
-          deletedCount++;
+          try {
+            await base44.entities.BlogPost.delete(group[i].id);
+            deletedCount++;
+          } catch (error) {
+            console.log('Articolo già eliminato:', group[i].id);
+          }
         }
       }
     }
@@ -219,7 +223,11 @@ IMPORTANTE:
 
   const deleteTranslation = async (translationId) => {
     if (confirm('Sei sicuro di voler eliminare questa traduzione?')) {
-      await base44.entities.BlogPost.delete(translationId);
+      try {
+        await base44.entities.BlogPost.delete(translationId);
+      } catch (error) {
+        console.log('Articolo già eliminato o non trovato');
+      }
       onRefresh();
     }
   };
