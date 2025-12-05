@@ -701,7 +701,17 @@ function PricingPageContent() {
               {t('nav.pricing')}
             </button>
             <button 
-              onClick={() => navigate(createLocalizedPageUrl('Blog', language))}
+              onClick={() => {
+                const blogPages = {
+                  'en': 'Blog',
+                  'it': 'itblog',
+                  'es': 'esblog',
+                  'pt': 'ptblog',
+                  'de': 'deblog',
+                  'fr': 'frblog'
+                };
+                navigate(createPageUrl(blogPages[language] || 'Blog'));
+              }}
               className="text-sm text-gray-600 hover:text-gray-900 transition-colors font-semibold whitespace-nowrap">
               {t('nav.blog')}
             </button>
