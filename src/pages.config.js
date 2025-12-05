@@ -31,6 +31,11 @@ import espricing from './pages/espricing';
 import ptpricing from './pages/ptpricing';
 import depricing from './pages/depricing';
 import frpricing from './pages/frpricing';
+import itblog from './pages/itblog';
+import esblog from './pages/esblog';
+import ptblog from './pages/ptblog';
+import deblog from './pages/deblog';
+import frblog from './pages/frblog';
 import __Layout from './Layout.jsx';
 
 
@@ -68,6 +73,11 @@ export const PAGES = {
     "ptpricing": ptpricing,
     "depricing": depricing,
     "frpricing": frpricing,
+    "itblog": itblog,
+    "esblog": esblog,
+    "ptblog": ptblog,
+    "deblog": deblog,
+    "frblog": frblog,
 }
 
 export const pagesConfig = {
