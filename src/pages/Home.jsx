@@ -27,6 +27,7 @@ import {
 } from 'lucide-react';
 import { motion, useScroll, useTransform } from "framer-motion";
 import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
+import { translations } from '@/components/i18n/translations';
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
 import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
@@ -1251,7 +1252,7 @@ function HomeContent() {
 
           <div className="relative pb-32">
             <div className="flex flex-wrap gap-6">
-              {t('pricing.testimonials').slice(0, window.innerWidth < 768 ? 6 : t('pricing.testimonials').length).map((testimonial, index) => (
+              {translations[language].pricing.testimonials.slice(0, window.innerWidth < 768 ? 6 : translations[language].pricing.testimonials.length).map((testimonial, index) => (
               <div
                 key={index}
                 className="water-glass-effect rounded-2xl p-6 border border-white/40 hover:border-white/60 transition-all w-full md:w-[calc(50%-12px)] lg:w-[calc(33.333%-16px)]">
