@@ -7,8 +7,8 @@ Deno.serve(async (req) => {
         const base44 = createClientFromRequest(req);
         const adminUser = await base44.auth.me();
 
-        if (!adminUser || adminUser.role !== 'admin') {
-            return Response.json({ success: false, error: 'Unauthorized - Admin only' }, { status: 401 });
+        if (!adminUser || (adminUser.role !== 'admin' && adminUser.custom_role !== 'customer_support')) {
+            return Response.json({ success: false, error: 'Unauthorized - Admin or Customer Support only' }, { status: 401 });
         }
 
         const { userEmail, newPlan, customRole } = await req.json();
@@ -40,10 +40,14 @@ Deno.serve(async (req) => {
         if (customRole !== undefined) {
             if (customRole === null || customRole === '') {
                 updateData.custom_role = null;
-                console.log(`🔄 Admin ${adminUser.email} removing custom_role from ${userEmail}`);
+                // Se rimuoviamo il ruolo customer_support, rimuovi anche admin
+                updateData.role = 'user';
+                console.log(`🔄 Admin ${adminUser.email} removing custom_role from ${userEmail} and setting role to user`);
             } else if (customRole === 'customer_support') {
                 updateData.custom_role = 'customer_support';
-                console.log(`🔄 Admin ${adminUser.email} setting ${userEmail} as customer_support`);
+                // Quando assegniamo customer_support, impostiamo anche role admin
+                updateData.role = 'admin';
+                console.log(`🔄 Admin ${adminUser.email} setting ${userEmail} as customer_support AND admin`);
             } else {
                 return Response.json({ success: false, error: 'Invalid customRole. Must be: customer_support or null' }, { status: 400 });
             }
