@@ -633,7 +633,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
               <Button
                 onClick={handleRevealBodyFat}
                 disabled={isSaving}
-                className="w-full h-16 text-xl font-bold bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105 border-0"
+                style={{ backgroundColor: '#26847F', borderColor: '#26847F' }}
+                className="w-full h-16 text-xl font-bold text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105 border-0 hover:opacity-90"
               >
                 {isSaving ? (
                   <>
@@ -687,9 +688,22 @@ export default function QuizContainer({ translations, language = 'it' }) {
             animation: gradientShift 45s ease-in-out infinite;
             background-attachment: fixed;
           }
+          
+          @keyframes progressFill {
+            0% { width: 0%; }
+            100% { width: 100%; }
+          }
+          
+          .progress-bar-animated {
+            animation: progressFill 5s ease-out forwards;
+          }
         `}</style>
         <div className="min-h-screen flex items-center justify-center p-4 animated-gradient-bg">
-          <Card className="max-w-2xl w-full bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl text-center">
+          <Card className="max-w-2xl w-full bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl text-center overflow-hidden">
+            {/* Progress Bar */}
+            <div className="h-2 bg-gray-100 w-full">
+              <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 progress-bar-animated rounded-r-full" />
+            </div>
             <CardHeader>
               <div className="w-24 h-24 mx-auto mb-4 relative">
                 <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 rounded-full animate-pulse"></div>
