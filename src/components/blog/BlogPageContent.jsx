@@ -30,16 +30,16 @@ const getPricingPageName = (langCode) => {
   return langPricingPages[langCode] || 'pricing';
 };
 
-const getQuizPageUrl = (langCode) => {
+const getQuizPageName = (langCode) => {
   const langQuizPages = {
-    'en': '/Quiz',
-    'it': '/ItQuiz',
-    'es': '/EsQuiz',
-    'pt': '/PtQuiz',
-    'de': '/DeQuiz',
-    'fr': '/FrQuiz'
+    'en': 'EnQuiz',
+    'it': 'ItQuiz',
+    'es': 'EsQuiz',
+    'pt': 'PtQuiz',
+    'de': 'DeQuiz',
+    'fr': 'FrQuiz'
   };
-  return langQuizPages[langCode] || '/Quiz';
+  return langQuizPages[langCode] || 'Quiz';
 };
 
 const getBlogArticleUrl = (langCode, slug) => {
@@ -452,7 +452,7 @@ export default function BlogPageContent() {
             </button>
             
             <button
-              onClick={() => navigate(getQuizPageUrl(language))}
+              onClick={() => navigate(createPageUrl(getQuizPageName(language)))}
               className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-2 px-4 text-sm font-medium rounded-full whitespace-nowrap flex-shrink-0 transition-colors">
               {t.freeQuiz}
             </button>
@@ -542,7 +542,7 @@ export default function BlogPageContent() {
                 </button>
                 <button
                   onClick={() => {
-                    navigate(getQuizPageUrl(language));
+                    navigate(createPageUrl(getQuizPageName(language)));
                     setMobileMenuOpen(false);
                   }}
                   className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
