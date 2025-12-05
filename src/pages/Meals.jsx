@@ -1070,18 +1070,41 @@ THIS IS DAY 1 (${day.toUpperCase()}) - SET THE FOUNDATION FOR VARIETY!
 Create meals that will allow for maximum variety throughout the week.
 `;
 
+        // Definisci rotazione proteine e cucine per ogni giorno
+        const dayProteinMap = {
+          'monday': 'FISH (salmon, tuna, cod, sea bass)',
+          'tuesday': 'CHICKEN or TURKEY',
+          'wednesday': 'BEEF or VEAL',
+          'thursday': 'EGGS and DAIRY',
+          'friday': 'LEGUMES (lentils, chickpeas, beans) or TOFU',
+          'saturday': 'PORK or LAMB',
+          'sunday': 'MIXED (seafood, game, or premium cuts)'
+        };
+        
+        const dayCuisineMap = {
+          'monday': 'MEDITERRANEAN (Italian, Greek)',
+          'tuesday': 'ASIAN (Thai, Chinese, Japanese, Vietnamese)',
+          'wednesday': 'AMERICAN or BRITISH',
+          'thursday': 'MIDDLE EASTERN (Lebanese, Turkish, Moroccan)',
+          'friday': 'LATIN (Mexican, Spanish, Brazilian)',
+          'saturday': 'FRENCH or GERMAN',
+          'sunday': 'FUSION or INTERNATIONAL'
+        };
+        
         const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ${langName.toUpperCase()} for ${day}.
 ${previousDaysContext}
 
+🎯 MANDATORY REQUIREMENTS FOR ${day.toUpperCase()}:
+
+PRIMARY PROTEIN FOR TODAY: ${dayProteinMap[day] || 'VARIED'}
+CUISINE STYLE FOR TODAY: ${dayCuisineMap[day] || 'INTERNATIONAL'}
+
 VARIETY ENFORCEMENT RULES:
-1. Each day MUST have different protein sources: 
-   - Monday: Fish → Tuesday: Chicken → Wednesday: Beef → Thursday: Eggs → Friday: Legumes → Saturday: Pork → Sunday: Turkey
-2. Each day MUST use different cooking methods:
-   - Rotate: Baked → Grilled → Stir-fried → Steamed → Raw/Salads → Pan-fried → Slow-cooked
-3. Each day MUST explore different cuisines:
-   - Italian → Asian (Thai/Chinese/Japanese) → Mexican → Mediterranean (Greek) → American → Middle Eastern → Spanish
-4. NO SAME MEAL NAMES across different days
-5. NO SAME MAIN INGREDIENTS on consecutive days
+1. TODAY'S PROTEIN: Use ${dayProteinMap[day] || 'varied proteins'} as main protein source
+2. TODAY'S CUISINE: Make dishes inspired by ${dayCuisineMap[day] || 'international'} cuisine
+3. COOKING METHODS: Vary between baked, grilled, stir-fried, steamed, raw
+4. ABSOLUTELY NO repeating dish names from previous days
+5. Each meal must feel FRESH and DIFFERENT
 
 CRITICAL INSTRUCTIONS:
 - Create EXACTLY ${mealsPerDay} meals
