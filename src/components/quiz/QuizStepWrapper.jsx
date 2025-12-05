@@ -14,7 +14,8 @@ export default function QuizStepWrapper({
   nextButtonText = "Avanti",
   backButtonText = "Indietro",
   showBackButton = true,
-  showNextButton = true
+  showNextButton = true,
+  translations
 }) {
   return (
     <>
@@ -108,7 +109,7 @@ export default function QuizStepWrapper({
                       </span>
                     </div>
                     <span className="text-sm text-gray-500 font-medium ml-2">
-                      {currentStep === 0 ? 'domande completate' : 'questions completed'}
+                      {translations?.quiz?.quizQuestionsCompleted || 'domande completate'}
                     </span>
                   </div>
                 </div>

@@ -706,10 +706,11 @@ export default function QuizContainer({ translations, language = 'it' }) {
       onNext={nextStep}
       onPrev={prevStep}
       isValid={isCurrentStepValid()}
-      nextButtonText={t?.next || 'Next'}
-      backButtonText={t?.back || 'Back'}
+      nextButtonText={t?.common?.next || 'Next'}
+      backButtonText={t?.common?.back || 'Back'}
       showBackButton={currentStep > 0}
       showNextButton={true}
+      translations={translations}
     >
       <CurrentStepComponent
         data={quizData}
