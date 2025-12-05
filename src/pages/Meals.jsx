@@ -142,11 +142,27 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData,
           0%, 100% { box-shadow: 0 0 20px rgba(38, 132, 127, 0.3), 0 0 40px rgba(38, 132, 127, 0.2), inset 0 0 15px rgba(34, 197, 94, 0.1); }
           50% { box-shadow: 0 0 30px rgba(38, 132, 127, 0.5), 0 0 60px rgba(38, 132, 127, 0.3), inset 0 0 25px rgba(34, 197, 94, 0.2); }
         }
+        @keyframes progressShimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
         .animated-nutrition-container { 
           animation: containerGlow 2s ease-in-out infinite; 
           background: linear-gradient(135deg, #26847F 0%, #14b8a6 50%, #22c55e 100%); 
         }
         .animated-energy-icon { animation: energyPulse 1.5s ease-in-out infinite; }
+        .shimmer-progress {
+          background: linear-gradient(
+            90deg,
+            #26847F 0%,
+            #14b8a6 25%,
+            #26847F 50%,
+            #14b8a6 75%,
+            #26847F 100%
+          );
+          background-size: 200% 100%;
+          animation: progressShimmer 2s linear infinite;
+        }
       `}</style>
       
       <div className="max-w-xl w-full">
@@ -161,11 +177,19 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData,
             <p className="text-sm text-gray-600 text-center mt-2">
               {t('meals.loadingDesc')}
             </p>
+            <p className="text-xs text-amber-600 text-center mt-3 font-semibold">
+              ⏱️ Questa operazione richiederà alcuni minuti
+            </p>
           </CardHeader>
           
           <CardContent className="space-y-5 px-6 pb-6">
             <div className="space-y-2">
-              <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[#26847F]" />
+              <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                <div 
+                  className="h-full shimmer-progress transition-all duration-300"
+                  style={{ width: `${generationProgress}%` }}
+                />
+              </div>
               <p className="text-sm text-[#26847F] font-semibold text-center min-h-[20px]">
                 {generationStatus}
               </p>

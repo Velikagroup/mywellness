@@ -1762,6 +1762,11 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
             50% { box-shadow: 0 0 35px rgba(38, 132, 127, 0.6), 0 0 70px rgba(38, 132, 127, 0.4); }
           }
 
+          @keyframes progressShimmer {
+            0% { background-position: -200% 0; }
+            100% { background-position: 200% 0; }
+          }
+
           .animated-workout-container {
             animation: pulseGlow 2s ease-in-out infinite;
             background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%);
@@ -1769,6 +1774,19 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
 
           .animated-dumbbell {
             animation: dumbellRotate 2.5s ease-in-out infinite;
+          }
+
+          .shimmer-progress {
+            background: linear-gradient(
+              90deg,
+              #26847F 0%,
+              #14b8a6 25%,
+              #26847F 50%,
+              #14b8a6 75%,
+              #26847F 100%
+            );
+            background-size: 200% 100%;
+            animation: progressShimmer 2s linear infinite;
           }
         `}</style>
         
@@ -1784,11 +1802,19 @@ Return a modified workout plan with Italian exercise names, reps (like "12 ripet
               <p className="text-sm text-gray-600 text-center mt-2">
                 {t('workouts.loadingDesc', { count: allExercises.length, goal: trainingData.fitness_goal })}
               </p>
+              <p className="text-xs text-amber-600 text-center mt-3 font-semibold">
+                ⏱️ Questa operazione richiederà alcuni minuti
+              </p>
             </CardHeader>
             
             <CardContent className="space-y-5 px-6 pb-6">
               <div className="space-y-2">
-                <Progress value={generationProgress} className="w-full h-2.5 [&>div]:bg-[#26847F]" />
+                <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden">
+                  <div 
+                    className="h-full shimmer-progress transition-all duration-300"
+                    style={{ width: `${generationProgress}%` }}
+                  />
+                </div>
                 <p className="text-sm text-[#26847F] font-semibold text-center min-h-[20px]">
                   {generationStatus}
                 </p>
