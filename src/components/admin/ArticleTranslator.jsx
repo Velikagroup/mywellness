@@ -22,8 +22,6 @@ export default function ArticleTranslator({ posts, onRefresh }) {
   const [translationStatus, setTranslationStatus] = useState('');
   const [selectedLanguages, setSelectedLanguages] = useState(['en', 'es', 'pt', 'de', 'fr']);
   const [searchQuery, setSearchQuery] = useState('');
-  const [bulkTranslating, setBulkTranslating] = useState(false);
-  const [bulkProgress, setBulkProgress] = useState({ current: 0, total: 0, article: '' });
 
   // Get only Italian articles (original articles)
   const italianArticles = posts.filter((p) => p.language === 'it' || !p.language);
@@ -179,61 +177,6 @@ IMPORTANTE:
   article.title.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Translate all articles to all selected languages
-  const translateAllArticles = async () => {
-    // Get articles that need translation
-    const articlesToTranslate = filteredArticles.filter(article => {
-      const existingTranslations = getTranslatedLanguages(article.id);
-      const missingLangs = selectedLanguages.filter(
-        lang => !existingTranslations.includes(lang) && lang !== 'it'
-      );
-      return missingLangs.length > 0;
-    });
-
-    if (articlesToTranslate.length === 0) {
-      alert('Tutti gli articoli sono già tradotti nelle lingue selezionate!');
-      return;
-    }
-
-    if (!confirm(`Stai per tradurre ${articlesToTranslate.length} articoli in ${selectedLanguages.length} lingue. Questa operazione può richiedere diversi minuti. Continuare?`)) {
-      return;
-    }
-
-    setBulkTranslating(true);
-    setBulkProgress({ current: 0, total: articlesToTranslate.length, article: '' });
-
-    let totalSuccess = 0;
-    let totalFailed = 0;
-
-    for (let i = 0; i < articlesToTranslate.length; i++) {
-      const article = articlesToTranslate[i];
-      const existingTranslations = getTranslatedLanguages(article.id);
-      const languagesToTranslate = selectedLanguages.filter(
-        lang => !existingTranslations.includes(lang) && lang !== 'it'
-      );
-
-      setBulkProgress({
-        current: i + 1,
-        total: articlesToTranslate.length,
-        article: article.title.substring(0, 50) + (article.title.length > 50 ? '...' : '')
-      });
-
-      for (const lang of languagesToTranslate) {
-        const success = await translateArticle(article, lang);
-        if (success) totalSuccess++;
-        else totalFailed++;
-        
-        // Delay between translations to avoid rate limits
-        await new Promise(resolve => setTimeout(resolve, 1500));
-      }
-    }
-
-    setBulkTranslating(false);
-    setBulkProgress({ current: 0, total: 0, article: '' });
-    alert(`✅ Traduzione completata!\n${totalSuccess} traduzioni create\n${totalFailed} errori`);
-    onRefresh();
-  };
-
   return (
     <Card className="water-glass-effect border-gray-200/30 shadow-xl">
       <CardHeader>
@@ -271,49 +214,6 @@ IMPORTANTE:
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
-        {/* Bulk Translation Button */}
-        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[var(--brand-primary-light)] to-teal-50 rounded-xl border border-[var(--brand-primary)]/20">
-          <div>
-            <h4 className="font-semibold text-gray-900">🚀 Traduzione di Massa</h4>
-            <p className="text-sm text-gray-600">
-              Traduci tutti gli articoli italiani nelle lingue selezionate
-            </p>
-          </div>
-          <Button
-            onClick={translateAllArticles}
-            disabled={bulkTranslating || filteredArticles.length === 0}
-            className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
-          >
-            {bulkTranslating ? (
-              <>
-                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                Traduzione in corso...
-              </>
-            ) : (
-              <>
-                <Languages className="w-4 h-4 mr-2" />
-                Traduci Tutti ({filteredArticles.length})
-              </>
-            )}
-          </Button>
-        </div>
-
-        {/* Bulk Progress */}
-        {bulkTranslating && (
-          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-medium text-blue-800">
-                Articolo {bulkProgress.current}/{bulkProgress.total}
-              </span>
-              <span className="text-sm text-blue-600">
-                {Math.round((bulkProgress.current / bulkProgress.total) * 100)}%
-              </span>
-            </div>
-            <Progress value={(bulkProgress.current / bulkProgress.total) * 100} className="h-2 mb-2" />
-            <p className="text-xs text-blue-600 truncate">📝 {bulkProgress.article}</p>
-          </div>
-        )}
-
         {/* Search */}
         <input
           type="text"
