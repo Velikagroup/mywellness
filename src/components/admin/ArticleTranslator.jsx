@@ -271,6 +271,49 @@ IMPORTANTE:
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
+        {/* Bulk Translation Button */}
+        <div className="flex items-center justify-between p-4 bg-gradient-to-r from-[var(--brand-primary-light)] to-teal-50 rounded-xl border border-[var(--brand-primary)]/20">
+          <div>
+            <h4 className="font-semibold text-gray-900">🚀 Traduzione di Massa</h4>
+            <p className="text-sm text-gray-600">
+              Traduci tutti gli articoli italiani nelle lingue selezionate
+            </p>
+          </div>
+          <Button
+            onClick={translateAllArticles}
+            disabled={bulkTranslating || filteredArticles.length === 0}
+            className="bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)]"
+          >
+            {bulkTranslating ? (
+              <>
+                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                Traduzione in corso...
+              </>
+            ) : (
+              <>
+                <Languages className="w-4 h-4 mr-2" />
+                Traduci Tutti ({filteredArticles.length})
+              </>
+            )}
+          </Button>
+        </div>
+
+        {/* Bulk Progress */}
+        {bulkTranslating && (
+          <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-sm font-medium text-blue-800">
+                Articolo {bulkProgress.current}/{bulkProgress.total}
+              </span>
+              <span className="text-sm text-blue-600">
+                {Math.round((bulkProgress.current / bulkProgress.total) * 100)}%
+              </span>
+            </div>
+            <Progress value={(bulkProgress.current / bulkProgress.total) * 100} className="h-2 mb-2" />
+            <p className="text-xs text-blue-600 truncate">📝 {bulkProgress.article}</p>
+          </div>
+        )}
+
         {/* Search */}
         <input
           type="text"
