@@ -3,7 +3,9 @@ import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from "@/components/ui/card";
 
-export default function IntroStep({ data, onDataChange, onNext }) {
+export default function IntroStep({ data, onDataChange, onNext, translations }) {
+  const t = translations || {};
+  
   const handleSelection = (gender) => {
     onDataChange({ gender });
     setTimeout(() => {
@@ -56,7 +58,7 @@ export default function IntroStep({ data, onDataChange, onNext }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.3 }}
       >
-        Scopri la tua <span className="animated-text-gradient">massa grassa</span>
+        {t.quizIntroTitle || 'Scopri la tua'} <span className="animated-text-gradient">{t.quizIntroHighlight || 'massa grassa'}</span>
       </motion.h1>
 
       <motion.p 
@@ -65,7 +67,7 @@ export default function IntroStep({ data, onDataChange, onNext }) {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
       >
-        e costruisci il <strong>piano nutrizionale</strong> fatto su misura per te
+        {t.quizIntroSubtitle || 'e costruisci il'} <strong>{t.quizIntroPlan || 'piano nutrizionale'}</strong> {t.quizIntroCustom || 'fatto su misura per te'}
       </motion.p>
 
       <motion.div
@@ -74,7 +76,7 @@ export default function IntroStep({ data, onDataChange, onNext }) {
         transition={{ delay: 0.5 }}
         className="mb-10"
       >
-        <p className="text-lg font-semibold text-gray-900 mb-6">Seleziona il tuo sesso:</p>
+        <p className="text-lg font-semibold text-gray-900 mb-6">{t.quizSelectGender || 'Seleziona il tuo sesso:'}</p>
         <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
           <button
             onClick={() => handleSelection('male')}
@@ -88,7 +90,7 @@ export default function IntroStep({ data, onDataChange, onNext }) {
               <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">👨</span>
               </div>
-              <h3 className="font-bold text-lg text-gray-900">Uomo</h3>
+              <h3 className="font-bold text-lg text-gray-900">{t.quizMale || 'Uomo'}</h3>
             </div>
           </button>
 
@@ -104,7 +106,7 @@ export default function IntroStep({ data, onDataChange, onNext }) {
               <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">👩</span>
               </div>
-              <h3 className="font-bold text-lg text-gray-900">Donna</h3>
+              <h3 className="font-bold text-lg text-gray-900">{t.quizFemale || 'Donna'}</h3>
             </div>
           </button>
         </div>
@@ -117,9 +119,9 @@ export default function IntroStep({ data, onDataChange, onNext }) {
         className="bg-gradient-to-br from-gray-50 to-white rounded-2xl p-6 max-w-xl mx-auto border border-gray-100 shadow-inner"
       >
         <p className="text-gray-700 leading-relaxed text-sm">
-          ⏱️ <strong>Richiede solo 3 minuti</strong><br/>
-          🎯 Calcoli scientifici precisi<br/>
-          🔒 I tuoi dati sono privati e sicuri
+          ⏱️ <strong>{t.quizTime || 'Richiede solo 3 minuti'}</strong><br/>
+          🎯 {t.quizScientific || 'Calcoli scientifici precisi'}<br/>
+          🔒 {t.quizPrivacy || 'I tuoi dati sono privati e sicuri'}
         </p>
       </motion.div>
     </motion.div>
