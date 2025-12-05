@@ -295,6 +295,18 @@ export default function ClientDetailModal({ client, isOpen, onClose, onUpdate })
             </Button>
             
             <Button
+              onClick={handleToggleCustomerSupport}
+              disabled={isProcessing}
+              variant="outline"
+              className={client.custom_role === 'customer_support' 
+                ? "border-red-200 text-red-600 hover:bg-red-50" 
+                : "border-indigo-200 text-indigo-600 hover:bg-indigo-50"}
+            >
+              <Shield className="w-4 h-4 mr-2" />
+              {client.custom_role === 'customer_support' ? 'Rimuovi Support' : 'Rendi Support'}
+            </Button>
+            
+            <Button
               onClick={() => window.open(`mailto:${client.email}`, '_blank')}
               variant="outline"
               className="border-blue-200 text-blue-600 hover:bg-blue-50"
