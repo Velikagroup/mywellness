@@ -33,7 +33,7 @@ export default function AdminBlog() {
 
   const checkAccess = async () => {
     try {
-      const currentUser = await User.me();
+      const currentUser = await base44.auth.me();
       if (currentUser.role !== 'admin') {
         navigate(createPageUrl('Dashboard'));
         return;
@@ -47,7 +47,7 @@ export default function AdminBlog() {
   };
 
   const loadPosts = async () => {
-    const allPosts = await BlogPost.list('-created_date', 200);
+    const allPosts = await base44.entities.BlogPost.list('-created_date', 500);
     setPosts(allPosts);
   };
 
@@ -89,7 +89,7 @@ export default function AdminBlog() {
       try {
         // Check if article with same slug already exists
         const slug = createSlug(title);
-        const existing = await BlogPost.filter({ slug });
+        const existing = await base44.entities.BlogPost.filter({ slug });
         if (existing.length > 0) {
           console.log(`Articolo già esistente: ${title}`);
           continue;
@@ -134,7 +134,7 @@ STILE:
 
 IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
 
-        const articleData = await InvokeLLM({
+        const articleData = await base44.integrations.Core.InvokeLLM({
           prompt: articlePrompt,
           response_json_schema: {
             type: "object",
@@ -151,13 +151,13 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
         // Image generation removed as per changes.
 
         // Create blog post
-        await BlogPost.create({
+        await base44.entities.BlogPost.create({
           title: title,
           slug: slug,
           meta_description: articleData.meta_description,
           meta_keywords: articleData.keywords,
-          // featured_image removed
           category: articleData.category,
+          language: 'it', // Default language is Italian
           reading_time: articleData.reading_time || 5,
           content: articleData.content,
           author: user.full_name || "Team MyWellness",
@@ -190,13 +190,13 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
   };
 
   const togglePublish = async (postId, currentStatus) => {
-    await BlogPost.update(postId, { published: !currentStatus });
+    await base44.entities.BlogPost.update(postId, { published: !currentStatus });
     await loadPosts();
   };
 
   const deletePost = async (postId) => {
     if (confirm('Sei sicuro di voler eliminare questo articolo?')) {
-      await BlogPost.delete(postId);
+      await base44.entities.BlogPost.delete(postId);
       await loadPosts();
     }
   };
@@ -209,12 +209,11 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
     if (!editingPost) return;
     
     try {
-      await BlogPost.update(editingPost.id, {
+      await base44.entities.BlogPost.update(editingPost.id, {
         title: editingPost.title,
         content: editingPost.content,
         meta_description: editingPost.meta_description,
         category: editingPost.category,
-        // featured_image removed
       });
       
       await loadPosts();
