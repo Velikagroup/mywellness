@@ -595,6 +595,17 @@ export default function MealsPage() {
     setRegeneratingMealId(mealToRegenerate.id);
     
     try {
+      const languageNames = {
+        it: 'Italian',
+        en: 'English', 
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+      const userLang = language || 'it';
+      const langName = languageNames[userLang] || 'Italian';
+      
       let targetCalories = Math.round(mealToRegenerate.total_calories || 0);
       
       if (targetCalories <= 0) {
@@ -623,7 +634,7 @@ export default function MealsPage() {
         ? 'Puoi dedicare PIÙ TEMPO alla cucina (30+ minuti). Puoi includere ricette più elaborate.'
         : 'Tempo moderato (20-30 minuti). Bilanciamento tra velocità e qualità.';
 
-      const singleMealPrompt = `You are an expert AI nutritionist. Create ONE meal in ITALIAN. 
+      const singleMealPrompt = `You are an expert AI nutritionist. Create ONE meal in ${langName.toUpperCase()}. 
 Target: ${targetCalories} kcal. 
 Diet: ${nutritionData.diet_type}. 
 Allowed: ${dietRules.allowed}. 
