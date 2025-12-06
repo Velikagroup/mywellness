@@ -111,7 +111,7 @@ export default function SportQuizPreviewDemo() {
         </div>
 
         {/* Content */}
-        <div className="px-6 pb-6 h-[550px] overflow-hidden">
+        <div className="px-6 pb-6 h-[565px] overflow-hidden">
           <AnimatePresence mode="wait">
             {/* Step 1: Obiettivo */}
             {currentStep === 0 && (
