@@ -1464,7 +1464,7 @@ export default function Home() {
   }, []);
 
   return (
-    <LanguageProvider>
+    <LanguageProvider forcedLanguage="en">
       <HomeContent />
     </LanguageProvider>
   );
