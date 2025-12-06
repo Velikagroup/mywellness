@@ -1332,12 +1332,12 @@ function HomeContent() {
               <button
                 onClick={() => navigate(createPageUrl('Privacy'))}
                 className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
-                Privacy Policy
+                {t('common.privacyPolicy')}
               </button>
               <button
                 onClick={() => navigate(createPageUrl('Terms'))}
                 className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
-                Termini e Condizioni
+                {t('common.termsConditions')}
               </button>
             </div>
             <p className="text-sm font-semibold text-gray-700">
