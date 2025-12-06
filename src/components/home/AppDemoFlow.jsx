@@ -267,7 +267,12 @@ export default function AppDemoFlow() {
 
   return (
     <div className="w-full flex items-center justify-center px-4">
-      <div className={`relative ${isDesktop ? 'max-w-[650px]' : 'max-w-[450px]'} w-full`} style={{ margin: '0 auto' }}>
+      <div className="relative" style={{ 
+        width: isDesktop ? '650px' : '390px',
+        height: isDesktop ? '490px' : '700px',
+        margin: '0 auto',
+        maxWidth: '100%'
+      }}>
         <style>{`
           @keyframes pulse-glow {
             0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
@@ -275,11 +280,7 @@ export default function AppDemoFlow() {
           }
         `}</style>
 
-        <div className="relative" style={{
-          aspectRatio: isDesktop ? '4/3' : '9/19.5',
-          height: isDesktop ? '490px' : '700px',
-          margin: '0 auto'
-        }}>
+        <div className="relative w-full h-full">
           <div
             className="absolute bg-white overflow-hidden"
             style={{
