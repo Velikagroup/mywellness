@@ -1169,7 +1169,7 @@ function HomeContent() {
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
               transition={{ duration: 0.7, delay: 0.3 }}>
-              <div className="max-w-md mx-auto">
+              <div className="max-w-md mx-auto" style={{ height: '600px', minHeight: '600px', maxHeight: '600px' }}>
                 <SportQuizPreviewDemo />
               </div>
             </motion.div>
