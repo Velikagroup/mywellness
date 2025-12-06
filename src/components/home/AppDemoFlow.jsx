@@ -291,7 +291,7 @@ export default function AppDemoFlow() {
 
         <div className="relative w-full h-full app-demo-container">
           <div
-            className="absolute bg-white overflow-hidden"
+            className="absolute bg-white"
             style={{
               top: isDesktop ? 'calc(3.5% - 3px)' : '0.94%',
               left: '50%',
@@ -299,7 +299,8 @@ export default function AppDemoFlow() {
               height: isDesktop ? 'calc(92.5% + 10px)' : '98.12%',
               transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
               borderRadius: isDesktop ? '18px' : '44px',
-              zIndex: 1
+              zIndex: 1,
+              overflow: 'hidden'
             }}
           >
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-200 z-50">
