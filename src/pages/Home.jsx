@@ -1330,12 +1330,32 @@ function HomeContent() {
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-6 mb-4">
               <button
-                onClick={() => navigate(createPageUrl('Privacy'))}
+                onClick={() => {
+                  const privacyPages = {
+                    'en': 'enprivacy',
+                    'it': 'itprivacy',
+                    'es': 'esprivacy',
+                    'pt': 'ptprivacy',
+                    'de': 'deprivacy',
+                    'fr': 'frprivacy'
+                  };
+                  navigate(createPageUrl(privacyPages[language] || 'Privacy'));
+                }}
                 className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
                 {t('common.privacyPolicy')}
               </button>
               <button
-                onClick={() => navigate(createPageUrl('Terms'))}
+                onClick={() => {
+                  const termsPages = {
+                    'en': 'enterms',
+                    'it': 'itterms',
+                    'es': 'esterms',
+                    'pt': 'ptterms',
+                    'de': 'determs',
+                    'fr': 'frterms'
+                  };
+                  navigate(createPageUrl(termsPages[language] || 'Terms'));
+                }}
                 className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
                 {t('common.termsConditions')}
               </button>
