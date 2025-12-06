@@ -266,12 +266,13 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className="w-full flex items-center justify-center px-4">
+    <div className="w-full flex items-center justify-center px-4" style={{ minHeight: isDesktop ? '490px' : '700px' }}>
       <div className="relative" style={{ 
         width: isDesktop ? '650px' : '390px',
         height: isDesktop ? '490px' : '700px',
         margin: '0 auto',
-        maxWidth: '100%'
+        maxWidth: '100%',
+        overflow: 'hidden'
       }}>
         <style>{`
           @keyframes pulse-glow {
