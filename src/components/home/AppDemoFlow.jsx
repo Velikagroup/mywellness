@@ -378,6 +378,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden ${!isDesktop ? 'pt-14' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <motion.div
                     animate={{ y: -dashboardScroll * 200 }}
@@ -541,6 +542,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <motion.button
                     animate={{
@@ -574,6 +576,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-4 py-2 bg-purple-100 rounded-full mb-3">
@@ -637,6 +640,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="mb-3">
                     <h3 className="text-base font-bold mb-2">Piano Settimanale</h3>
@@ -897,6 +901,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
                   <div className="space-y-1.5">
@@ -1002,6 +1007,7 @@ export default function AppDemoFlow() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-yellow-50 to-amber-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="bg-white rounded-2xl p-6 shadow-2xl text-center max-w-sm mx-auto">
                     <div className="text-6xl mb-3">🍌</div>
@@ -1041,6 +1047,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl p-4 mb-3 border border-yellow-200">
                     <div className="flex items-center gap-3 mb-2">
@@ -1078,6 +1085,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   {mealCheckStep === 0 && (
                     <motion.div
@@ -1300,6 +1308,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="absolute inset-0 bg-white flex flex-col items-center justify-center"
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-30">
                     <img
@@ -1337,6 +1346,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -1425,6 +1435,7 @@ export default function AppDemoFlow() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="bg-white rounded-2xl p-6 shadow-2xl text-center max-w-sm mx-auto">
                     <motion.div
@@ -1447,6 +1458,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-3 py-1 bg-purple-100 rounded-full mb-2">
@@ -1492,6 +1504,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-3 py-1 bg-blue-100 rounded-full mb-2">
@@ -1531,6 +1544,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="mb-3">
                     <div className="flex items-center justify-between mb-3">
@@ -1639,6 +1653,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <h3 className="text-base font-bold mb-3">Rematore con Elastico</h3>
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-3 mb-3">
@@ -1665,6 +1680,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <motion.div
                     ref={analysisRef}
@@ -1796,6 +1812,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="text-center mb-4">
                     <h3 className="text-lg font-bold text-gray-900 mb-2">Traiettoria Peso</h3>
@@ -1866,6 +1883,7 @@ export default function AppDemoFlow() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
@@ -1893,6 +1911,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="absolute inset-0 flex items-center justify-center bg-white"
+                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <motion.img
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
