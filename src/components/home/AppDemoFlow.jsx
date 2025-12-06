@@ -266,10 +266,12 @@ export default function AppDemoFlow() {
   }, []);
 
   return (
-    <div className="w-full flex items-center justify-center px-4" style={{ height: isDesktop ? '490px' : '700px' }}>
+    <div className="w-full flex items-center justify-center px-4">
       <div className="relative" style={{ 
         width: isDesktop ? '650px' : '390px',
         height: isDesktop ? '490px' : '700px',
+        minHeight: isDesktop ? '490px' : '700px',
+        maxHeight: isDesktop ? '490px' : '700px',
         margin: '0 auto',
         maxWidth: '100%'
       }}>
@@ -278,18 +280,9 @@ export default function AppDemoFlow() {
             0%, 100% { box-shadow: 0 0 15px rgba(38, 132, 127, 0.2); }
             50% { box-shadow: 0 0 25px rgba(38, 132, 127, 0.4); }
           }
-          
-          .app-demo-container {
-            height: 100% !important;
-            overflow: hidden !important;
-          }
-          
-          .app-demo-container > div {
-            height: 100% !important;
-          }
         `}</style>
 
-        <div className="relative w-full h-full app-demo-container">
+        <div className="relative w-full h-full" style={{ minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}>
           <div
             className="absolute bg-white"
             style={{
