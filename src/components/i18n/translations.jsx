@@ -27,7 +27,9 @@ export const translations = {
       weeks: "settimane",
       months: "mesi",
       lang: "it",
-      goal: "Obiettivo"
+      goal: "Obiettivo",
+      privacyPolicy: "Privacy Policy",
+      termsConditions: "Termini e Condizioni"
     },
     quiz: {
       quizIntroTitle: "Scopri la tua",
@@ -1420,7 +1422,9 @@ export const translations = {
       weeks: "weeks",
       months: "months",
       lang: "en",
-      goal: "Goal"
+      goal: "Goal",
+      privacyPolicy: "Privacy Policy",
+      termsConditions: "Terms & Conditions"
     },
     quiz: {
       quizIntroTitle: "Discover your",
@@ -2962,7 +2966,9 @@ export const translations = {
       weeks: "semanas",
       months: "meses",
       lang: "es",
-      goal: "Objetivo"
+      goal: "Objetivo",
+      privacyPolicy: "Política de Privacidad",
+      termsConditions: "Términos y Condiciones"
     },
     quiz: {
       quizIntroTitle: "Descubre tu",
@@ -4453,7 +4459,9 @@ export const translations = {
       weeks: "semanas",
       months: "meses",
       lang: "pt",
-      goal: "Meta"
+      goal: "Meta",
+      privacyPolicy: "Política de Privacidade",
+      termsConditions: "Termos e Condições"
     },
     quiz: {
       quizIntroTitle: "Descubra sua",
@@ -5991,7 +5999,9 @@ export const translations = {
       weeks: "Wochen",
       months: "Monate",
       lang: "de",
-      goal: "Ziel"
+      goal: "Ziel",
+      privacyPolicy: "Datenschutzrichtlinie",
+      termsConditions: "Allgemeine Geschäftsbedingungen"
     },
     quiz: {
       quizIntroTitle: "Entdecken Sie Ihr",
@@ -7482,7 +7492,9 @@ export const translations = {
       weeks: "semaines",
       months: "mois",
       lang: "fr",
-      goal: "Objectif"
+      goal: "Objectif",
+      privacyPolicy: "Politique de Confidentialité",
+      termsConditions: "Conditions Générales"
     },
     quiz: {
       quizIntroTitle: "Découvrez votre",
