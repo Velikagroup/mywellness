@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3, Home as HomeIcon, Trees } from 'lucide-react';
@@ -278,7 +277,7 @@ export default function AppDemoFlow() {
 
         <div className="relative" style={{
           aspectRatio: isDesktop ? '4/3' : '9/19.5',
-          maxHeight: isDesktop ? '490px' : '700px',
+          height: isDesktop ? '490px' : '700px',
           margin: '0 auto'
         }}>
           <div
