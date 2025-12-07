@@ -10,18 +10,7 @@ export default function EnTerms() {
   }, []);
 
   return (
-    <div className="min-h-screen overflow-x-hidden" style={{
-      background: '#f9fafb',
-      backgroundImage: `
-        radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%),
-        radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
-        radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
-        radial-gradient(circle at 70% 60%, #f3e8ff 0%, transparent 50%),
-        radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
-        radial-gradient(circle at 90% 85%, #faf5ff 0%, transparent 50%)
-      `,
-      backgroundAttachment: 'fixed'
-    }}>
+    <div className="min-h-screen overflow-x-hidden animated-gradient-bg">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
         * { font-family: 'Inter', sans-serif; }
