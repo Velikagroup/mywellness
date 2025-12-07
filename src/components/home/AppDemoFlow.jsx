@@ -1982,7 +1982,7 @@ export default function AppDemoFlow() {
             <svg
               viewBox="0 0 450 780"
               className="absolute inset-0 w-full h-full pointer-events-none"
-              style={{ zIndex: 2 }}
+              style={{ zIndex: 100 }}
             >
               <defs>
                 <filter id="phoneShadow" x="-50%" y="-50%" width="200%" height="200%">
