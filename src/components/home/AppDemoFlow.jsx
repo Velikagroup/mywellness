@@ -268,10 +268,10 @@ export default function AppDemoFlow() {
   return (
     <div className="w-full flex items-center justify-center px-4">
       <div className="relative" style={{ 
-        width: isDesktop ? '650px' : '390px',
-        height: isDesktop ? '490px' : '700px',
-        minHeight: isDesktop ? '490px' : '700px',
-        maxHeight: isDesktop ? '490px' : '700px',
+        width: isDesktop ? '650px' : '450px',
+        height: isDesktop ? '490px' : '800px',
+        minHeight: isDesktop ? '490px' : '800px',
+        maxHeight: isDesktop ? '490px' : '800px',
         margin: '0 auto',
         maxWidth: '100%'
       }}>
@@ -282,16 +282,16 @@ export default function AppDemoFlow() {
           }
         `}</style>
 
-        <div className="relative w-full h-full" style={{ minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}>
+        <div className="relative w-full h-full" style={{ minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}>
           <div
             className="absolute bg-white"
             style={{
               top: isDesktop ? 'calc(3.5% - 3px)' : '0.94%',
               left: '50%',
               width: isDesktop ? '610px' : '95.94%',
-              height: isDesktop ? '460px' : '687px',
-              minHeight: isDesktop ? '460px' : '687px',
-              maxHeight: isDesktop ? '460px' : '687px',
+              height: isDesktop ? '460px' : '787px',
+              minHeight: isDesktop ? '460px' : '787px',
+              maxHeight: isDesktop ? '460px' : '787px',
               transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
               borderRadius: isDesktop ? '18px' : '44px',
               zIndex: 1,
@@ -314,7 +314,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="text-center mb-6">
                     <div className="inline-block px-4 py-1.5 bg-purple-100 rounded-full mb-3">
@@ -338,7 +338,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, x: 0 }}
                   exit={{ opacity: 0, x: -50 }}
                   className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-16' : 'p-6'} ${isDesktop ? '' : 'p-6'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="text-center mb-6">
                     <div className="inline-block px-4 py-1.5 bg-green-100 rounded-full mb-3">
@@ -362,7 +362,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-teal-50 to-blue-50 ${!isDesktop ? 'pt-16' : ''}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <motion.div
                     animate={{ rotate: 360 }}
@@ -380,7 +380,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-gray-50 to-blue-50 overflow-hidden ${!isDesktop ? 'pt-14' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <motion.div
                     animate={{ y: -dashboardScroll * 200 }}
@@ -544,7 +544,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <motion.button
                     animate={{
@@ -578,7 +578,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-purple-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-4 py-2 bg-purple-100 rounded-full mb-3">
@@ -642,7 +642,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="mb-3">
                     <h3 className="text-base font-bold mb-2">Piano Settimanale</h3>
@@ -1009,7 +1009,7 @@ export default function AppDemoFlow() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-yellow-50 to-amber-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="bg-white rounded-2xl p-6 shadow-2xl text-center max-w-sm mx-auto">
                     <div className="text-6xl mb-3">🍌</div>
@@ -1310,7 +1310,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="absolute inset-0 bg-white flex flex-col items-center justify-center"
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="absolute inset-0 flex items-center justify-center opacity-30">
                     <img
@@ -1437,7 +1437,7 @@ export default function AppDemoFlow() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ scale: 0.8, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-green-50 to-emerald-50 flex flex-col justify-center ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="bg-white rounded-2xl p-6 shadow-2xl text-center max-w-sm mx-auto">
                     <motion.div
@@ -1460,7 +1460,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-3 py-1 bg-purple-100 rounded-full mb-2">
@@ -1682,7 +1682,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-purple-50 to-pink-50 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <motion.div
                     ref={analysisRef}
@@ -1885,7 +1885,7 @@ export default function AppDemoFlow() {
                   animate={{ scale: 1, opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-green-400 via-emerald-500 to-teal-600 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <motion.div
                     animate={{ scale: [1, 1.2, 1], rotate: [0, 10, -10, 0] }}
@@ -1913,7 +1913,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className="absolute inset-0 flex items-center justify-center bg-white"
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <motion.img
                     src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
@@ -1980,7 +1980,7 @@ export default function AppDemoFlow() {
             </svg>
           ) : (
             <svg
-              viewBox="0 0 393 852"
+              viewBox="0 0 450 800"
               className="absolute inset-0 w-full h-full pointer-events-none"
               style={{ zIndex: 2 }}
             >
@@ -2000,7 +2000,7 @@ export default function AppDemoFlow() {
 
               <rect
                 x="5" y="5"
-                width="383" height="842"
+                width="440" height="790"
                 rx="55" ry="55"
                 fill="none"
                 stroke="#000000"
@@ -2010,7 +2010,7 @@ export default function AppDemoFlow() {
 
               <rect
                 x="8" y="8"
-                width="377" height="836"
+                width="434" height="784"
                 rx="52" ry="52"
                 fill="none"
                 stroke="#000000"
@@ -2018,8 +2018,8 @@ export default function AppDemoFlow() {
               />
 
               <rect
-                x="136" y="26"
-                width="121" height="37"
+                x="156" y="26"
+                width="138" height="37"
                 rx="18.5" ry="18.5"
                 fill="#000000"
               />
@@ -2027,9 +2027,9 @@ export default function AppDemoFlow() {
               <rect x="0" y="175" width="4" height="35" rx="2" fill="#000000"/>
               <rect x="0" y="235" width="4" height="58" rx="2" fill="#000000"/>
               <rect x="0" y="310" width="4" height="58" rx="2" fill="#000000"/>
-              <rect x="389" y="240" width="4" height="88" rx="2" fill="#000000"/>
+              <rect x="446" y="240" width="4" height="88" rx="2" fill="#000000"/>
 
-              <rect x="185" y="842" width="23" height="5" rx="2.5" fill="#000000"/>
+              <rect x="212" y="790" width="26" height="5" rx="2.5" fill="#000000"/>
             </svg>
           )}
         </div>
