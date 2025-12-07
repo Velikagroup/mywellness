@@ -54,6 +54,18 @@ import eshome from './pages/eshome';
 import pthome from './pages/pthome';
 import dehome from './pages/dehome';
 import frhome from './pages/frhome';
+import itprivacy from './pages/itprivacy';
+import enprivacy from './pages/enprivacy';
+import esprivacy from './pages/esprivacy';
+import ptprivacy from './pages/ptprivacy';
+import deprivacy from './pages/deprivacy';
+import frprivacy from './pages/frprivacy';
+import itterms from './pages/itterms';
+import enterms from './pages/enterms';
+import esterms from './pages/esterms';
+import ptterms from './pages/ptterms';
+import determs from './pages/determs';
+import frterms from './pages/frterms';
 import __Layout from './Layout.jsx';
 
 
@@ -114,6 +126,18 @@ export const PAGES = {
     "pthome": pthome,
     "dehome": dehome,
     "frhome": frhome,
+    "itprivacy": itprivacy,
+    "enprivacy": enprivacy,
+    "esprivacy": esprivacy,
+    "ptprivacy": ptprivacy,
+    "deprivacy": deprivacy,
+    "frprivacy": frprivacy,
+    "itterms": itterms,
+    "enterms": enterms,
+    "esterms": esterms,
+    "ptterms": ptterms,
+    "determs": determs,
+    "frterms": frterms,
 }
 
 export const pagesConfig = {
