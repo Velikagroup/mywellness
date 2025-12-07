@@ -903,7 +903,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
                   <div className="space-y-1.5">
@@ -1049,7 +1049,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="bg-gradient-to-r from-yellow-50 to-amber-50 rounded-xl p-4 mb-3 border border-yellow-200">
                     <div className="flex items-center gap-3 mb-2">
@@ -1087,7 +1087,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   {mealCheckStep === 0 && (
                     <motion.div
@@ -1348,7 +1348,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 ${!isDesktop ? 'pt-16' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <motion.div
                     initial={{ opacity: 0 }}
@@ -1506,7 +1506,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-gradient-to-br from-blue-50 to-cyan-50 ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-3 py-1 bg-blue-100 rounded-full mb-2">
@@ -1546,7 +1546,7 @@ export default function AppDemoFlow() {
                   animate={{ opacity: 1 }}
                   exit={{ opacity: 0 }}
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <div className="mb-3">
                     <div className="flex items-center justify-between mb-3">
@@ -1655,7 +1655,7 @@ export default function AppDemoFlow() {
                   animate={{ x: 0, opacity: 1 }}
                   exit={{ x: -50, opacity: 0 }}
                   className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
-                  style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
+                  style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
                   <h3 className="text-base font-bold mb-3">Rematore con Elastico</h3>
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-3 mb-3">
