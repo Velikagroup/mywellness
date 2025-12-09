@@ -104,10 +104,10 @@ export default function PantryPreviewDemo() {
         <CardHeader className="bg-gradient-to-r from-indigo-50 to-purple-50 border-b border-gray-200/50 pb-4">
           <CardTitle className="text-lg font-bold text-gray-900 flex items-center gap-2">
             <Package className="w-5 h-5 text-indigo-600" />
-            Dispensa Intelligente
+            {t('home.pantryTitle')}
           </CardTitle>
           <p className="text-xs text-gray-600 mt-1">
-            Cataloga gli alimenti in casa con AI • Piani personalizzati su misura
+            {t('home.pantrySubtitle')}
           </p>
         </CardHeader>
 
@@ -118,15 +118,15 @@ export default function PantryPreviewDemo() {
               <div className="grid grid-cols-3 gap-3 mb-4">
                 <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-lg p-3 text-center border border-blue-200/50">
                   <p className="text-2xl font-black text-blue-700">{pantryItems.length}</p>
-                  <p className="text-[10px] text-blue-600 font-semibold uppercase tracking-wide">Alimenti</p>
+                  <p className="text-[10px] text-blue-600 font-semibold uppercase tracking-wide">{t('home.pantryFoods')}</p>
                 </div>
                 <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 text-center border border-green-200/50">
                   <p className="text-2xl font-black text-green-700">4</p>
-                  <p className="text-[10px] text-green-600 font-semibold uppercase tracking-wide">Categorie</p>
+                  <p className="text-[10px] text-green-600 font-semibold uppercase tracking-wide">{t('home.pantryCategories')}</p>
                 </div>
                 <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-lg p-3 text-center border border-purple-200/50">
                   <p className="text-2xl font-black text-purple-700">98%</p>
-                  <p className="text-[10px] text-purple-600 font-semibold uppercase tracking-wide">Precisione</p>
+                  <p className="text-[10px] text-purple-600 font-semibold uppercase tracking-wide">{t('home.pantryAccuracy')}</p>
                 </div>
               </div>
 
@@ -177,14 +177,14 @@ export default function PantryPreviewDemo() {
                   disabled
                 >
                   <Camera className="w-4 h-4" />
-                  Scansiona Alimento
+                  {t('home.pantryScanFood')}
                 </button>
                 <button
                   className="flex-1 bg-white border-2 border-indigo-600 text-indigo-600 rounded-lg py-2.5 font-semibold text-sm flex items-center justify-center gap-2 opacity-60 cursor-not-allowed"
                   disabled
                 >
                   <Plus className="w-4 h-4" />
-                  Rigenera Piano
+                  {t('home.pantryRegeneratePlan')}
                 </button>
               </div>
             </>
@@ -198,13 +198,13 @@ export default function PantryPreviewDemo() {
                 </div>
                 <div className="absolute inset-0 scanning-line border-t-2 border-indigo-600"></div>
               </div>
-              <p className="text-sm font-bold text-gray-900 mb-1">Scansione in corso...</p>
-              <p className="text-xs text-gray-500">Analisi AI dei valori nutrizionali</p>
+              <p className="text-sm font-bold text-gray-900 mb-1">{t('home.pantryScanningInProgress')}</p>
+              <p className="text-xs text-gray-500">{t('home.pantryAIAnalysis')}</p>
               <button
                 onClick={() => setView('catalog')}
                 className="mt-6 text-xs text-indigo-600 hover:text-indigo-700 font-semibold"
               >
-                ← Torna al catalogo
+                {t('home.pantryBackToCatalog')}
               </button>
             </div>
           )}
@@ -219,11 +219,10 @@ export default function PantryPreviewDemo() {
               </div>
               <div>
                 <p className="text-xs font-bold text-gray-900 mb-1">
-                  💡 Piano Nutrizionale Ottimizzato
+                  💡 {t('home.pantryOptimizedPlan')}
                 </p>
                 <p className="text-[10px] text-gray-600 leading-relaxed">
-                  L'AI genera pasti utilizzando prioritariamente gli ingredienti che hai in casa, 
-                  riducendo sprechi e costi della spesa settimanale.
+                  {t('home.pantryOptimizedDesc')}
                 </p>
               </div>
             </div>
@@ -234,7 +233,7 @@ export default function PantryPreviewDemo() {
         <div className="px-5 pb-4">
           <div className="bg-gray-50/50 rounded-lg px-3 py-2 border border-gray-200/30">
             <p className="text-[10px] text-gray-400 text-center italic">
-              Anteprima interfaccia • Funzionalità disponibili dopo il signup
+              {t('home.quizDemoPreview')}
             </p>
           </div>
         </div>

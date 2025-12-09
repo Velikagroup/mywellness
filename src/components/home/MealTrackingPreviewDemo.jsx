@@ -6,11 +6,11 @@ import { useLanguage } from '../i18n/LanguageContext';
 export default function MealTrackingPreviewDemo() {
   const { t } = useLanguage();
   const [meals, setMeals] = useState([
-    { id: 1, name: 'Colazione', time: '08:00', checked: true, hasPhoto: true },
-    { id: 2, name: 'Spuntino Mattina', time: '11:00', checked: true, hasPhoto: false },
-    { id: 3, name: 'Pranzo', time: '13:30', checked: false, hasPhoto: false },
-    { id: 4, name: 'Snack Pomeridiano', time: '17:00', checked: false, hasPhoto: false },
-    { id: 5, name: 'Cena', time: '20:00', checked: false, hasPhoto: false }
+    { id: 1, name: t('home.mealTrackingBreakfast'), time: '08:00', checked: true, hasPhoto: true },
+    { id: 2, name: t('home.mealTrackingMorningSnack'), time: '11:00', checked: true, hasPhoto: false },
+    { id: 3, name: t('home.mealTrackingLunch'), time: '13:30', checked: false, hasPhoto: false },
+    { id: 4, name: t('home.mealTrackingAfternoonSnack'), time: '17:00', checked: false, hasPhoto: false },
+    { id: 5, name: t('home.mealTrackingDinner'), time: '20:00', checked: false, hasPhoto: false }
   ]);
 
   return (
@@ -44,17 +44,17 @@ export default function MealTrackingPreviewDemo() {
         <div className="bg-gradient-to-br from-teal-50 to-green-50 px-6 py-5 border-b border-gray-100">
           <div className="flex items-center justify-between mb-4">
             <div>
-              <h2 className="text-xl font-bold text-gray-900">Tracking Pasti</h2>
-              <p className="text-xs text-gray-600">Segna cosa hai mangiato oggi</p>
+              <h2 className="text-xl font-bold text-gray-900">{t('home.mealTrackingTitle')}</h2>
+              <p className="text-xs text-gray-600">{t('home.mealTrackingSubtitle')}</p>
             </div>
             <div className="px-3 py-1.5 bg-white rounded-full border border-teal-200">
-              <span className="text-xs font-semibold text-teal-700">Lunedì</span>
+              <span className="text-xs font-semibold text-teal-700">{t('home.mealTrackingMonday')}</span>
             </div>
           </div>
           
           <div className="bg-white/80 rounded-lg p-3 border border-teal-100">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm font-semibold text-gray-700">Pasti Completati</span>
+              <span className="text-sm font-semibold text-gray-700">{t('home.mealTrackingCompleted')}</span>
               <span className="text-lg font-black text-teal-600">2/5</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">

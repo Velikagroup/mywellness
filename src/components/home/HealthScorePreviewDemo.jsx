@@ -79,10 +79,10 @@ export default function HealthScorePreviewDemo() {
           </div>
           <div>
             <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent font-bold">
-              Health Score AI
+              {t('home.healthScoreTitle')}
             </span>
             <p className="text-xs text-gray-500 font-normal mt-0.5">
-              Analisi scientifica immediata
+              {t('home.healthScoreSubtitle')}
             </p>
           </div>
         </CardTitle>
@@ -98,7 +98,7 @@ export default function HealthScorePreviewDemo() {
           />
           <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
             <CheckCircle className="w-3 h-3" />
-            Scansionato
+            {t('home.healthScoreScanned')}
           </div>
         </div>
 
@@ -148,7 +148,7 @@ export default function HealthScorePreviewDemo() {
 
           <div className={`${nutritionAnalysis.scoreBg} border-2 border-orange-200 rounded-xl p-3 mb-4`}>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-gray-900">Valutazione</span>
+              <span className="text-sm font-bold text-gray-900">{t('home.healthScoreEvaluation')}</span>
               <span className={`text-sm font-black ${nutritionAnalysis.scoreColor}`}>
                 {nutritionAnalysis.scoreLevel}
               </span>
@@ -157,23 +157,23 @@ export default function HealthScorePreviewDemo() {
 
           {/* Nutrienti Chiave */}
           <div className="space-y-2">
-            <p className="text-xs font-bold text-gray-700 mb-2">Valori Nutrizionali per Porzione:</p>
+            <p className="text-xs font-bold text-gray-700 mb-2">{t('home.healthScoreNutrients')}</p>
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-white/80 rounded-lg p-2 border border-gray-200">
-                <p className="text-[10px] text-gray-500 mb-0.5">Calorie</p>
+                <p className="text-[10px] text-gray-500 mb-0.5">{t('home.healthScoreCalories')}</p>
                 <p className="text-base font-bold text-gray-900">{nutritionAnalysis.nutrients.calories} kcal</p>
               </div>
               <div className="bg-white/80 rounded-lg p-2 border border-gray-200">
-                <p className="text-[10px] text-gray-500 mb-0.5">Grassi Totali</p>
+                <p className="text-[10px] text-gray-500 mb-0.5">{t('home.healthScoreTotalFat')}</p>
                 <p className="text-base font-bold text-gray-900">{nutritionAnalysis.nutrients.totalFat}g</p>
               </div>
               <div className="bg-red-50/80 rounded-lg p-2 border border-red-200">
                 <p className="text-[10px] text-red-600 mb-0.5 font-semibold">⚠️ Grassi Saturi</p>
                 <p className="text-base font-bold text-red-700">{nutritionAnalysis.nutrients.saturatedFat}g</p>
-                <p className="text-[9px] text-red-600 mt-0.5">63% valore giornaliero</p>
+                <p className="text-[9px] text-red-600 mt-0.5">63% {t('home.healthScoreDailyValue')}</p>
               </div>
               <div className="bg-green-50/80 rounded-lg p-2 border border-green-200">
-                <p className="text-[10px] text-green-600 mb-0.5 font-semibold">✓ Colesterolo</p>
+                <p className="text-[10px] text-green-600 mb-0.5 font-semibold">✓ {t('home.healthScoreCholesterol')}</p>
                 <p className="text-base font-bold text-green-700">{nutritionAnalysis.nutrients.cholesterol}mg</p>
               </div>
             </div>
@@ -186,7 +186,7 @@ export default function HealthScorePreviewDemo() {
           <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="w-4 h-4 text-green-600" />
-              <h5 className="font-bold text-green-900 text-sm">Aspetti Positivi</h5>
+              <h5 className="font-bold text-green-900 text-sm">{t('home.healthScorePositive')}</h5>
             </div>
             <ul className="space-y-2">
               {nutritionAnalysis.positiveAspects.map((aspect, idx) => (
@@ -202,7 +202,7 @@ export default function HealthScorePreviewDemo() {
           <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-4 h-4 text-red-600" />
-              <h5 className="font-bold text-red-900 text-sm">Aspetti Critici</h5>
+              <h5 className="font-bold text-red-900 text-sm">{t('home.healthScoreCritical')}</h5>
             </div>
             <ul className="space-y-2">
               {nutritionAnalysis.negativeAspects.map((aspect, idx) => (
@@ -221,7 +221,7 @@ export default function HealthScorePreviewDemo() {
             <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-bold text-purple-900 text-sm mb-2">
-                Raccomandazione Personalizzata
+                {t('home.healthScoreRecommendation')}
               </p>
               <p className="text-xs text-purple-800 leading-relaxed">
                 {nutritionAnalysis.recommendation}
@@ -233,7 +233,7 @@ export default function HealthScorePreviewDemo() {
         {/* Demo Notice */}
         <div className="text-center">
           <p className="text-xs text-gray-400 italic">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            {t('home.quizDemoPreview')}
           </p>
         </div>
       </CardContent>

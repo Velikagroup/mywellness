@@ -79,15 +79,15 @@ export default function IngredientScannerPreviewDemo() {
                 <Scan className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Scanner Ingredienti</h2>
-                <p className="text-xs text-gray-600">Scansiona per valori nutrizionali precisi</p>
+                <h2 className="text-xl font-bold text-gray-900">{t('home.scannerTitle')}</h2>
+                <p className="text-xs text-gray-600">{t('home.scannerSubtitle')}</p>
               </div>
             </div>
           </div>
           
           <div className="flex items-center gap-2 px-3 py-2 bg-white/80 rounded-lg border border-indigo-200">
             <Database className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-semibold text-indigo-700">Database 500.000+ alimenti</span>
+            <span className="text-xs font-semibold text-indigo-700">{t('home.scannerDatabase')}</span>
             <Zap className="w-4 h-4 text-amber-500 ml-auto" />
           </div>
         </div>
@@ -111,8 +111,8 @@ export default function IngredientScannerPreviewDemo() {
                 
                 <div className="text-center z-10">
                   <Scan className="w-16 h-16 text-gray-400 mx-auto mb-3 pulse-scan" />
-                  <p className="text-sm font-semibold text-gray-700">Inquadra il barcode</p>
-                  <p className="text-xs text-gray-500 mt-1">o l'etichetta nutrizionale</p>
+                  <p className="text-sm font-semibold text-gray-700">{t('home.scannerFrameBarcode')}</p>
+                  <p className="text-xs text-gray-500 mt-1">{t('home.scannerOrLabel')}</p>
                 </div>
               </div>
             </div>
@@ -132,8 +132,8 @@ export default function IngredientScannerPreviewDemo() {
                     <div className="flex items-center gap-3">
                       <div className="animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
                       <div>
-                        <p className="font-bold text-gray-900">Scansione in corso...</p>
-                        <p className="text-xs text-gray-600">Riconoscimento prodotto</p>
+                        <p className="font-bold text-gray-900">{t('home.scannerScanning')}</p>
+                        <p className="text-xs text-gray-600">{t('home.scannerRecognition')}</p>
                       </div>
                     </div>
                   </div>
@@ -151,8 +151,8 @@ export default function IngredientScannerPreviewDemo() {
                     <Check className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-green-900">Prodotto Riconosciuto</p>
-                    <p className="text-xs text-green-700">Database match • 99% accuratezza</p>
+                    <p className="font-bold text-green-900">{t('home.scannerRecognized')}</p>
+                    <p className="text-xs text-green-700">{t('home.scannerDbMatch')} • 99% {t('home.scannerAccuracy')}</p>
                   </div>
                 </div>
               </div>
@@ -171,7 +171,7 @@ export default function IngredientScannerPreviewDemo() {
               </div>
 
               <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
-                <p className="text-sm font-bold text-gray-900 mb-3">Valori Nutrizionali Reali</p>
+                <p className="text-sm font-bold text-gray-900 mb-3">{t('home.scannerRealValues')}</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-3 text-center border border-red-100">
                     <p className="text-2xl font-black text-red-600">{scannedProduct.nutrition.calories}</p>
@@ -179,25 +179,25 @@ export default function IngredientScannerPreviewDemo() {
                   </div>
                   <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-3 text-center border border-blue-100">
                     <p className="text-2xl font-black text-blue-600">{scannedProduct.nutrition.protein}g</p>
-                    <p className="text-xs text-gray-600">Proteine</p>
+                    <p className="text-xs text-gray-600">{t('home.scannerProtein')}</p>
                   </div>
                   <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-3 text-center border border-amber-100">
                     <p className="text-2xl font-black text-amber-600">{scannedProduct.nutrition.carbs}g</p>
-                    <p className="text-xs text-gray-600">Carboidrati</p>
+                    <p className="text-xs text-gray-600">{t('home.scannerCarbs')}</p>
                   </div>
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 text-center border border-green-100">
                     <p className="text-2xl font-black text-green-600">{scannedProduct.nutrition.fat}g</p>
-                    <p className="text-xs text-gray-600">Grassi</p>
+                    <p className="text-xs text-gray-600">{t('home.scannerFat')}</p>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 text-center mt-3">Per {scannedProduct.nutrition.serving}</p>
+                <p className="text-xs text-gray-500 text-center mt-3">{t('home.scannerPer')} {scannedProduct.nutrition.serving}</p>
               </div>
 
               <button
                 disabled
                 className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed"
               >
-                Aggiungi al Piano Nutrizionale
+                {t('home.scannerAddToPlan')}
               </button>
             </div>
           )}
@@ -206,7 +206,7 @@ export default function IngredientScannerPreviewDemo() {
         {/* Info Footer */}
         <div className="px-6 py-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            {t('home.quizDemoPreview')}
           </p>
         </div>
       </Card>
