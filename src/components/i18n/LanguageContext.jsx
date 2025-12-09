@@ -40,8 +40,10 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Always use forcedLanguage if provided, otherwise initialize from URL, localStorage, or browser
-  const effectiveLanguage = forcedLanguage || (() => {
+  // Determine initial language
+  const getInitialLanguage = () => {
+    if (forcedLanguage) return forcedLanguage;
+    
     const urlLang = getLanguageFromPath(window.location.pathname);
     if (urlLang) return urlLang;
     
@@ -51,12 +53,12 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
     
     return getBrowserLanguage();
-  })();
+  };
   
   // Initialize language state
-  const [language, setLanguageState] = useState(effectiveLanguage);
+  const [language, setLanguageState] = useState(getInitialLanguage);
 
-  // Update language when URL changes (but NOT if forcedLanguage is set)
+  // Update language when forcedLanguage or URL changes
   useEffect(() => {
     if (forcedLanguage) {
       setLanguageState(forcedLanguage);
@@ -78,16 +80,28 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     localStorage.setItem('preferred_language', newLang);
   }, []);
 
-  // Translation function
+  // Translation function - always uses current language state
   const t = useCallback((key, params = {}) => {
     const keys = key.split('.');
-    let value = translations[language];
+    
+    // Use forcedLanguage if available, otherwise use state
+    const currentLang = forcedLanguage || language;
+    let value = translations[currentLang];
     
     for (const k of keys) {
       value = value?.[k];
     }
     
     if (typeof value !== 'string') {
+      // Fallback to Italian if translation not found
+      const fallbackKeys = key.split('.');
+      let fallbackValue = translations[DEFAULT_LANGUAGE];
+      for (const k of fallbackKeys) {
+        fallbackValue = fallbackValue?.[k];
+      }
+      if (typeof fallbackValue === 'string') {
+        return fallbackValue;
+      }
       return key;
     }
     
@@ -95,7 +109,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  }, [language]);
+  }, [language, forcedLanguage]);
 
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
