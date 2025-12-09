@@ -13,10 +13,10 @@ export default function HealthScorePreviewDemo() {
   const { t } = useLanguage();
   // Analisi dell'etichetta nutrizionale dalla foto
   const nutritionAnalysis = {
-    productName: "Olio di Cocco",
-    servingSize: "1 cucchiaio (15 mL)",
-    healthScore: 4.2, // Score su 10 (come Nutri-Score)
-    scoreLevel: "Medio-Basso",
+    productName: t('home.healthScoreProductCoconutOil'),
+    servingSize: t('home.healthScoreServing'),
+    healthScore: 4.2,
+    scoreLevel: t('home.healthScoreRatingMediumLow'),
     scoreColor: "text-orange-600",
     scoreBg: "bg-orange-50",
     nutrients: {
@@ -27,16 +27,16 @@ export default function HealthScorePreviewDemo() {
       cholesterol: 0
     },
     positiveAspects: [
-      "Zero colesterolo",
-      "Nessun grasso trans",
-      "100% naturale"
+      t('home.healthScorePositive1'),
+      t('home.healthScorePositive2'),
+      t('home.healthScorePositive3')
     ],
     negativeAspects: [
-      "Alto contenuto di grassi saturi (63% del valore giornaliero)",
-      "120 calorie per porzione",
-      "Grassi saturi: 12.5g per porzione"
+      t('home.healthScoreNegative1'),
+      t('home.healthScoreNegative2'),
+      t('home.healthScoreNegative3')
     ],
-    recommendation: "Usa con moderazione. L'olio di cocco è ricco di grassi saturi che possono aumentare il colesterolo LDL. Considera alternative più salutari come olio d'oliva o olio di avocado per uso quotidiano."
+    recommendation: t('home.healthScoreRecommendationText')
   };
 
   // Calcolo circonferenza per il cerchio (scala 0-10)
@@ -168,7 +168,7 @@ export default function HealthScorePreviewDemo() {
                 <p className="text-base font-bold text-gray-900">{nutritionAnalysis.nutrients.totalFat}g</p>
               </div>
               <div className="bg-red-50/80 rounded-lg p-2 border border-red-200">
-                <p className="text-[10px] text-red-600 mb-0.5 font-semibold">⚠️ Grassi Saturi</p>
+                <p className="text-[10px] text-red-600 mb-0.5 font-semibold">⚠️ {t('home.healthScoreSaturatedFat')}</p>
                 <p className="text-base font-bold text-red-700">{nutritionAnalysis.nutrients.saturatedFat}g</p>
                 <p className="text-[9px] text-red-600 mt-0.5">63% {t('home.healthScoreDailyValue')}</p>
               </div>

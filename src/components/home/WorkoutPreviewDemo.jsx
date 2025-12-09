@@ -9,55 +9,55 @@ export default function WorkoutPreviewDemo() {
   const [selectedDay, setSelectedDay] = useState('lun');
 
   const days = [
-    { id: 'lun', label: 'Lun', active: true, type: 'strength' },
-    { id: 'mar', label: 'Mar', active: true, type: 'cardio' },
-    { id: 'mer', label: 'Mer', active: false, type: 'rest' },
-    { id: 'gio', label: 'Gio', active: true, type: 'strength' },
-    { id: 'ven', label: 'Ven', active: true, type: 'hiit' },
-    { id: 'sab', label: 'Sab', active: false, type: 'rest' },
-    { id: 'dom', label: 'Dom', active: true, type: 'cardio' }
+    { id: 'lun', label: t('home.workoutMonday'), active: true, type: 'strength' },
+    { id: 'mar', label: t('home.workoutTuesday'), active: true, type: 'cardio' },
+    { id: 'mer', label: t('home.workoutWednesday'), active: false, type: 'rest' },
+    { id: 'gio', label: t('home.workoutThursday'), active: true, type: 'strength' },
+    { id: 'ven', label: t('home.workoutFriday'), active: true, type: 'hiit' },
+    { id: 'sab', label: t('home.workoutSaturday'), active: false, type: 'rest' },
+    { id: 'dom', label: t('home.workoutSunday'), active: true, type: 'cardio' }
   ];
 
   const warmup = [
-    { name: 'Corsa sul Posto', duration: '5 min' },
-    { name: 'Rotazioni Braccia', duration: '2 min' }
+    { name: t('home.workoutWarmup1'), duration: '5 min' },
+    { name: t('home.workoutWarmup2'), duration: '2 min' }
   ];
 
   const exercises = [
     {
       id: 1,
-      name: 'Flessioni a Terra',
+      name: t('home.workoutExercise1'),
       sets: '4',
       reps: '10-12',
       rest: '90s',
-      muscles: ['Pettorali', 'Tricipiti', 'Core'],
-      description: 'Posizionati a terra con le mani alla larghezza delle spalle. Mantieni il corpo dritto e abbassati fino a sfiorare il pavimento.',
-      tips: ['Mantieni addominali contratti', 'Non flettere la schiena', 'Scendi lentamente']
+      muscles: [t('home.workoutMuscle1'), t('home.workoutMuscle2'), t('home.workoutMuscle3')],
+      description: t('home.workoutExercise1Desc'),
+      tips: [t('home.workoutTip1a'), t('home.workoutTip1b'), t('home.workoutTip1c')]
     },
     {
       id: 2,
-      name: 'Squat a Corpo Libero',
+      name: t('home.workoutExercise2'),
       sets: '4',
       reps: '12',
       rest: '90s',
-      muscles: ['Gambe', 'Glutei', 'Core'],
-      description: 'Piedi alla larghezza delle spalle, scendi come se ti sedessi su una sedia mantenendo il peso sui talloni.',
-      tips: ['Ginocchia in linea con le punte dei piedi', 'Schiena dritta', 'Scendi fino a 90°']
+      muscles: [t('home.workoutMuscle4'), t('home.workoutMuscle5'), t('home.workoutMuscle3')],
+      description: t('home.workoutExercise2Desc'),
+      tips: [t('home.workoutTip2a'), t('home.workoutTip2b'), t('home.workoutTip2c')]
     },
     {
       id: 3,
-      name: 'Crunch Addominali',
+      name: t('home.workoutExercise3'),
       sets: '3',
       reps: '15',
       rest: '60s',
-      muscles: ['Addominali'],
-      description: 'Sdraiato sulla schiena con ginocchia piegate, solleva le spalle dal pavimento contraendo gli addominali.',
-      tips: ['Non tirare il collo', 'Contrai nella fase di salita', 'Movimento controllato']
+      muscles: [t('home.workoutMuscle6')],
+      description: t('home.workoutExercise3Desc'),
+      tips: [t('home.workoutTip3a'), t('home.workoutTip3b'), t('home.workoutTip3c')]
     }
   ];
 
   const cooldown = [
-    { name: 'Stretching Totale', duration: '5 min' }
+    { name: t('home.workoutCooldown1'), duration: '5 min' }
   ];
 
   return (
@@ -92,20 +92,10 @@ export default function WorkoutPreviewDemo() {
           <div className="flex items-center justify-between mb-3">
             <div>
               <h2 className="text-lg font-bold text-gray-900">
-                {t('common.lang') === 'it' && 'Piano Settimanale'}
-                {t('common.lang') === 'en' && 'Weekly Plan'}
-                {t('common.lang') === 'es' && 'Plan Semanal'}
-                {t('common.lang') === 'pt' && 'Plano Semanal'}
-                {t('common.lang') === 'de' && 'Wochenplan'}
-                {t('common.lang') === 'fr' && 'Plan Hebdomadaire'}
+                {t('home.workoutWeeklyPlan')}
               </h2>
               <p className="text-xs text-gray-500">
-                {t('common.lang') === 'it' && 'Forza & Resistenza • Personalizzato'}
-                {t('common.lang') === 'en' && 'Strength & Endurance • Personalized'}
-                {t('common.lang') === 'es' && 'Fuerza & Resistencia • Personalizado'}
-                {t('common.lang') === 'pt' && 'Força & Resistência • Personalizado'}
-                {t('common.lang') === 'de' && 'Kraft & Ausdauer • Personalisiert'}
-                {t('common.lang') === 'fr' && 'Force & Endurance • Personnalisé'}
+                {t('home.workoutWeeklyPlanSubtitle')}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -148,7 +138,7 @@ export default function WorkoutPreviewDemo() {
               </div>
               <div className="flex items-center gap-1.5">
                 <Dumbbell className="w-4 h-4 text-purple-500" />
-                <span className="text-sm font-semibold text-gray-700">6 esercizi</span>
+                <span className="text-sm font-semibold text-gray-700">6 {t('home.workoutExercises').toLowerCase()}</span>
               </div>
             </div>
           </div>
@@ -181,12 +171,7 @@ export default function WorkoutPreviewDemo() {
                 <Dumbbell className="w-3 h-3 text-purple-600" />
               </div>
               <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
-                {t('common.lang') === 'it' && 'Esercizi'}
-                {t('common.lang') === 'en' && 'Exercises'}
-                {t('common.lang') === 'es' && 'Ejercicios'}
-                {t('common.lang') === 'pt' && 'Exercícios'}
-                {t('common.lang') === 'de' && 'Übungen'}
-                {t('common.lang') === 'fr' && 'Exercices'}
+                {t('home.workoutExercises')}
               </h3>
             </div>
             <div className="space-y-2">
@@ -201,7 +186,7 @@ export default function WorkoutPreviewDemo() {
                       <div className="flex items-center gap-3 mt-0.5">
                         <span className="text-xs text-gray-500 font-medium">{exercise.sets} × {exercise.reps}</span>
                         <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">Riposo {exercise.rest}</span>
+                        <span className="text-xs text-gray-500">{t('home.workoutRest')} {exercise.rest}</span>
                       </div>
                     </div>
                     <ChevronDown 
@@ -217,12 +202,7 @@ export default function WorkoutPreviewDemo() {
                         {/* Set Tracking Boxes */}
                         <div>
                           <p className="text-xs font-semibold text-gray-700 mb-2">
-                            {t('common.lang') === 'it' && 'Serie completate'}
-                            {t('common.lang') === 'en' && 'Completed Sets'}
-                            {t('common.lang') === 'es' && 'Series completadas'}
-                            {t('common.lang') === 'pt' && 'Séries completadas'}
-                            {t('common.lang') === 'de' && 'Abgeschlossene Sätze'}
-                            {t('common.lang') === 'fr' && 'Séries complétées'}
+                            {t('home.workoutCompletedSets')}
                           </p>
                           <div className="grid grid-cols-4 gap-2">
                             {[...Array(parseInt(exercise.sets))].map((_, i) => (
@@ -266,12 +246,7 @@ export default function WorkoutPreviewDemo() {
                         {/* Tips */}
                         <div className="bg-gray-50 rounded-lg p-2">
                           <p className="text-xs font-semibold text-gray-700 mb-1">
-                            💡 {t('common.lang') === 'it' && 'Consigli'}
-                            {t('common.lang') === 'en' && 'Tips'}
-                            {t('common.lang') === 'es' && 'Consejos'}
-                            {t('common.lang') === 'pt' && 'Dicas'}
-                            {t('common.lang') === 'de' && 'Tipps'}
-                            {t('common.lang') === 'fr' && 'Conseils'}
+                            💡 {t('home.workoutTips')}
                           </p>
                           <ul className="space-y-0.5">
                             {exercise.tips.map((tip, idx) => (
@@ -309,12 +284,7 @@ export default function WorkoutPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            {t('common.lang') === 'it' && 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'}
-            {t('common.lang') === 'en' && 'Interface preview • Features available after signup'}
-            {t('common.lang') === 'es' && 'Vista previa de interfaz • Funciones disponibles después del registro'}
-            {t('common.lang') === 'pt' && 'Prévia da interface • Funcionalidades disponíveis após o cadastro'}
-            {t('common.lang') === 'de' && 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'}
-            {t('common.lang') === 'fr' && 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'}
+            {t('home.quizDemoPreview')}
           </p>
         </div>
       </Card>

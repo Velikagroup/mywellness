@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Card } from '@/components/ui/card';
 import { Target, Trophy, Dumbbell, Check, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function SportQuizPreviewDemo() {
   const [currentStep, setCurrentStep] = useState(0);
@@ -9,10 +10,12 @@ export default function SportQuizPreviewDemo() {
   const [selectedPerformance, setSelectedPerformance] = useState(null);
   const [selectedSport, setSelectedSport] = useState(null);
 
+  const { t } = useLanguage();
+  
   const goals = [
-    { id: 'weight_loss', label: 'Perdita Peso', icon: '⬇️', desc: 'Dimagrire e tonificare' },
-    { id: 'muscle_gain', label: 'Massa Muscolare', icon: '💪', desc: 'Aumentare forza e volume' },
-    { id: 'performance', label: 'Performance', icon: '🏆', desc: 'Migliorare nello sport' }
+    { id: 'weight_loss', label: t('home.sportQuizGoalWeightLoss'), icon: '⬇️', desc: t('home.sportQuizGoalWeightLossDesc') },
+    { id: 'muscle_gain', label: t('home.sportQuizGoalMuscle'), icon: '💪', desc: t('home.sportQuizGoalMuscleDesc') },
+    { id: 'performance', label: t('home.sportQuizGoalPerformance'), icon: '🏆', desc: t('home.sportQuizGoalPerformanceDesc') }
   ];
 
   const sports = [
@@ -27,7 +30,7 @@ export default function SportQuizPreviewDemo() {
     { id: 'mma', label: 'MMA', icon: '👊' },
     { id: 'spinning', label: 'Spinning', icon: '🚴' },
     { id: 'zumba', label: 'Zumba', icon: '💃' },
-    { id: 'altro', label: '60+ Altri...', icon: '➕' }
+    { id: 'altro', label: t('home.sportQuizOthers'), icon: '➕' }
   ];
 
   useEffect(() => {
@@ -106,7 +109,13 @@ export default function SportQuizPreviewDemo() {
         {/* Header */}
         <div className="px-6 pt-5 pb-3">
           <p className="text-sm text-gray-500 text-center">
-            {currentStep === 0 ? '4 / 12 domande' : currentStep === 1 ? '5 / 12 domande' : currentStep === 2 ? '6 / 12 domande' : '7 / 12 domande'}
+            {currentStep === 0 
+              ? `4 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}` 
+              : currentStep === 1 
+              ? `5 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}` 
+              : currentStep === 2 
+              ? `6 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}` 
+              : `7 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}`}
           </p>
         </div>
 
@@ -127,8 +136,8 @@ export default function SportQuizPreviewDemo() {
                     <Target className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-center mb-2">Qual è il tuo obiettivo?</h3>
-                <p className="text-gray-500 text-center mb-6 text-sm">Scegli l'obiettivo principale</p>
+                <h3 className="text-2xl font-bold text-center mb-2">{t('home.sportQuizGoalTitle')}</h3>
+                <p className="text-gray-500 text-center mb-6 text-sm">{t('home.sportQuizGoalSubtitle')}</p>
                 
                 <div className="space-y-3">
                   {goals.map((goal) => (
@@ -184,8 +193,8 @@ export default function SportQuizPreviewDemo() {
                     <div className="flex items-center gap-4">
                       <span className="text-4xl">🏆</span>
                       <div className="flex-1">
-                        <p className="font-bold text-gray-900 text-lg">Sì, pratico uno sport</p>
-                        <p className="text-sm text-gray-500">L'AI creerà un programma specifico</p>
+                        <p className="font-bold text-gray-900 text-lg">{t('home.sportQuizYesSport')}</p>
+                        <p className="text-sm text-gray-500">{t('home.sportQuizYesSportDesc')}</p>
                       </div>
                       {selectedPerformance === true && (
                         <div className="w-6 h-6 bg-[#26847F] rounded-full flex items-center justify-center">
@@ -199,8 +208,8 @@ export default function SportQuizPreviewDemo() {
                     <div className="flex items-center gap-4">
                       <span className="text-4xl">🏋️</span>
                       <div className="flex-1">
-                        <p className="font-bold text-gray-900 text-lg">No, solo fitness</p>
-                        <p className="text-sm text-gray-500">Programma generale di allenamento</p>
+                        <p className="font-bold text-gray-900 text-lg">{t('home.sportQuizNoSport')}</p>
+                        <p className="text-sm text-gray-500">{t('home.sportQuizNoSportDesc')}</p>
                       </div>
                     </div>
                   </div>
@@ -208,7 +217,7 @@ export default function SportQuizPreviewDemo() {
 
                 <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
                   <p className="text-sm text-amber-800 text-center">
-                    💡 Se pratichi uno sport, creeremo un piano che migliora le tue prestazioni specifiche
+                    {t('home.sportQuizSportHint')}
                   </p>
                 </div>
               </motion.div>
@@ -228,8 +237,8 @@ export default function SportQuizPreviewDemo() {
                     <Dumbbell className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-center mb-2">Quale sport pratichi?</h3>
-                <p className="text-gray-500 text-center mb-5 text-sm">Seleziona il tuo sport principale</p>
+                <h3 className="text-2xl font-bold text-center mb-2">{t('home.sportQuizWhichSport')}</h3>
+                <p className="text-gray-500 text-center mb-5 text-sm">{t('home.sportQuizWhichSportSubtitle')}</p>
                 
                 <div className="grid grid-cols-3 gap-2">
                   {sports.map((sport) => (
@@ -252,7 +261,7 @@ export default function SportQuizPreviewDemo() {
                     className="mt-4 p-3 bg-green-50 rounded-xl border border-green-200"
                   >
                     <p className="text-sm text-green-800 text-center font-medium">
-                      ✅ L'AI creerà un piano specifico per il Calcio
+                      {t('home.sportQuizSportSelected')}
                     </p>
                   </motion.div>
                 )}
@@ -264,7 +273,7 @@ export default function SportQuizPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            Anteprima Quiz • Personalizzazione sport inclusa
+            {t('home.sportQuizFooter')}
           </p>
         </div>
       </Card>
