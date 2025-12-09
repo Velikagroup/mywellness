@@ -295,7 +295,8 @@ export default function AppDemoFlow() {
               transform: isDesktop ? 'translateX(calc(-50% - 3px))' : 'translateX(-50%)',
               borderRadius: isDesktop ? '18px' : '44px',
               zIndex: 1,
-              overflow: 'hidden'
+              overflow: 'hidden',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.3), 0 10px 30px rgba(0, 0, 0, 0.2)'
             }}
           >
             <div className="absolute top-0 left-0 right-0 h-1.5 bg-gray-200 z-50">
