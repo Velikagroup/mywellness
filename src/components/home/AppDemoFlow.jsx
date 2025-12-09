@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ArrowRight, Check, Camera, Sparkles, TrendingDown, Zap, Activity, Target, Calendar, Ruler, BarChart3, Home as HomeIcon, Trees } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const ANIMATION_DURATION = 108000;
 
@@ -19,6 +20,7 @@ const preloadImages = () => {
 };
 
 export default function AppDemoFlow() {
+  const { t, language } = useLanguage();
   const [step, setStep] = useState(0);
   const [progress, setProgress] = useState(0);
   const [isDesktop, setIsDesktop] = useState(false);
@@ -319,9 +321,9 @@ export default function AppDemoFlow() {
                 >
                   <div className="text-center mb-6">
                     <div className="inline-block px-4 py-1.5 bg-purple-100 rounded-full mb-3">
-                      <span className="text-sm font-semibold text-purple-700">Peso Attuale</span>
+                      <span className="text-sm font-semibold text-purple-700">{t('home.demoCurrentWeight')}</span>
                     </div>
-                    <h3 className="text-xl font-bold mb-6">Quanto pesi attualmente?</h3>
+                    <h3 className="text-xl font-bold mb-6">{t('home.demoHowMuchWeight')}</h3>
                   </div>
                   <div className="bg-white rounded-2xl p-8 shadow-xl max-w-sm mx-auto">
                     <div className="text-center">
@@ -343,9 +345,9 @@ export default function AppDemoFlow() {
                 >
                   <div className="text-center mb-6">
                     <div className="inline-block px-4 py-1.5 bg-green-100 rounded-full mb-3">
-                      <span className="text-sm font-semibold text-green-700">Peso Obiettivo</span>
+                      <span className="text-sm font-semibold text-green-700">{t('home.demoTargetWeight')}</span>
                     </div>
-                    <h3 className="text-xl font-bold mb-6">Qual è il tuo peso obiettivo?</h3>
+                    <h3 className="text-xl font-bold mb-6">{t('home.demoWhatTargetWeight')}</h3>
                   </div>
                   <div className="bg-white rounded-2xl p-8 shadow-xl max-w-sm mx-auto">
                     <div className="text-center">
@@ -370,7 +372,7 @@ export default function AppDemoFlow() {
                     transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                     className="w-16 h-16 border-4 border-[var(--brand-primary)] border-t-transparent rounded-full mb-4"
                   />
-                  <p className="text-base font-semibold text-gray-700">Analisi in corso...</p>
+                  <p className="text-base font-semibold text-gray-700">{t('home.demoAnalyzing')}</p>
                 </motion.div>
               )}
 
@@ -390,15 +392,15 @@ export default function AppDemoFlow() {
                   >
                     <div className="grid grid-cols-3 gap-2">
                       <div className="bg-white rounded-xl p-3 shadow-sm">
-                        <div className="text-[10px] text-gray-500 mb-1">PESO INIZIALE</div>
+                        <div className="text-[10px] text-gray-500 mb-1">{t('home.demoInitialWeight')}</div>
                         <div className="text-2xl font-black text-gray-900">70<span className="text-sm font-normal ml-0.5">kg</span></div>
                       </div>
                       <div className="bg-white rounded-xl p-3 shadow-sm">
-                        <div className="text-[10px] text-gray-500 mb-1">PESO TARGET</div>
+                        <div className="text-[10px] text-gray-500 mb-1">{t('home.demoTargetWeightCaps')}</div>
                         <div className="text-2xl font-black text-gray-900">65<span className="text-sm font-normal ml-0.5">kg</span></div>
                       </div>
                       <div className="bg-gradient-to-br from-green-50 to-emerald-100 rounded-xl p-3 shadow-sm border border-green-200">
-                        <div className="text-[10px] text-gray-600 mb-1">DA PERDERE</div>
+                        <div className="text-[10px] text-gray-600 mb-1">{t('home.demoToLose')}</div>
                         <div className="text-2xl font-black text-green-600">-5.0<span className="text-sm font-normal ml-0.5">kg</span></div>
                       </div>
                     </div>
@@ -407,7 +409,7 @@ export default function AppDemoFlow() {
                       <div className="bg-white rounded-xl p-3 shadow-sm">
                         <div className="flex items-center gap-1 mb-2">
                           <BarChart3 className="w-4 h-4 text-[var(--brand-primary)]" />
-                          <div className="text-[10px] font-bold text-gray-800">Traiettoria Massa</div>
+                          <div className="text-[10px] font-bold text-gray-800">{t('home.demoMassTrajectory')}</div>
                         </div>
                         <div className="relative h-24">
                           <svg viewBox="0 0 100 60" className="w-full h-full">
@@ -439,17 +441,17 @@ export default function AppDemoFlow() {
                         <div className="flex items-center justify-between mt-1.5 text-[9px]">
                           <div className="flex items-center gap-1">
                             <div className="w-2 h-2 rounded-full bg-[var(--brand-primary)]"></div>
-                            <span className="text-gray-600">Peso attuale</span>
+                            <span className="text-gray-600">{t('home.demoCurrentWeightLower')}</span>
                           </div>
                           <div className="flex items-center gap-1">
                             <div className="w-2 h-0.5 bg-gray-400"></div>
-                            <span className="text-gray-600">Target</span>
+                            <span className="text-gray-600">{t('home.demoTargetLower')}</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="bg-white rounded-xl p-3 shadow-sm">
-                        <div className="text-[10px] font-bold text-gray-800 mb-2">Scomposizione Calorica</div>
+                        <div className="text-[10px] font-bold text-gray-800 mb-2">{t('home.demoCalorieBreakdown')}</div>
                         <div className="flex items-center justify-center mb-2">
                           <div className="relative">
                             <svg className="w-24 h-24" viewBox="0 0 100 100">
@@ -471,19 +473,19 @@ export default function AppDemoFlow() {
                             </svg>
                             <div className="absolute inset-0 flex flex-col items-center justify-center">
                               <span className="text-2xl font-black text-[var(--brand-primary)]">40%</span>
-                              <span className="text-[8px] text-gray-500">completato</span>
+                              <span className="text-[8px] text-gray-500">{t('home.demoCompleted')}</span>
                             </div>
                           </div>
                         </div>
                         <div className="space-y-1 text-[9px]">
                           <div className="flex items-center justify-between">
                             <div className="w-1.5 h-1.5 rounded-full bg-[var(--brand-primary)]"></div>
-                            <span className="text-gray-600">Completato</span>
+                            <span className="text-gray-600">{t('home.demoCompletedLabel')}</span>
                             <span className="font-bold">30.800 kcal</span>
                           </div>
                           <div className="flex items-center justify-between">
                             <div className="w-1.5 h-1.5 rounded-full bg-gray-300"></div>
-                            <span className="text-gray-600">Rimanente</span>
+                            <span className="text-gray-600">{t('home.demoRemaining')}</span>
                             <span className="font-bold">46.200 kcal</span>
                           </div>
                         </div>
@@ -498,7 +500,7 @@ export default function AppDemoFlow() {
                       }}
                       className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-4 shadow-md border-2 border-green-200"
                     >
-                      <div className="text-sm text-gray-600 mb-1 text-center font-semibold">Target Calorico Giornaliero</div>
+                      <div className="text-sm text-gray-600 mb-1 text-center font-semibold">{t('home.demoDailyCalorieTarget')}</div>
                       <div className="text-center">
                         <span className="text-4xl font-black text-gray-900">2000</span>
                         <span className="text-lg font-semibold text-gray-700 ml-2">kcal</span>
@@ -515,7 +517,7 @@ export default function AppDemoFlow() {
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <TrendingDown className="w-5 h-5 text-[var(--brand-primary)]" />
-                        <span className="text-sm font-bold text-gray-800">Metabolismo Basale (BMR)</span>
+                        <span className="text-sm font-bold text-gray-800">{t('home.demoBasalMetabolism')}</span>
                       </div>
                       <div className="text-3xl font-black text-gray-900">1500 <span className="text-base font-normal text-gray-500">kcal/giorno</span></div>
                     </motion.div>
@@ -530,7 +532,7 @@ export default function AppDemoFlow() {
                     >
                       <div className="flex items-center gap-2 mb-2">
                         <BarChart3 className="w-5 h-5 text-[var(--brand-primary)]" />
-                        <span className="text-sm font-bold text-gray-800">Percentuale Massa Grassa</span>
+                        <span className="text-sm font-bold text-gray-800">{t('home.demoBodyFatPercentage')}</span>
                       </div>
                       <div className="text-3xl font-black text-gray-900">28.5 <span className="text-base font-normal text-gray-50">%</span></div>
                     </motion.div>
@@ -566,7 +568,7 @@ export default function AppDemoFlow() {
                     />
                     <div className="flex items-center justify-center gap-2 relative z-10">
                       <Sparkles className="w-5 h-5" />
-                      <span className="text-base font-bold">Genera Piano Nutrizionale</span>
+                      <span className="text-base font-bold">{t('home.demoGenerateMealPlan')}</span>
                     </div>
                   </motion.button>
                 </motion.div>
@@ -583,9 +585,9 @@ export default function AppDemoFlow() {
                 >
                   <div className="text-center mb-4">
                     <div className="inline-block px-4 py-2 bg-purple-100 rounded-full mb-3">
-                      <span className="text-sm font-semibold text-purple-700">Preferenze Alimentari</span>
+                      <span className="text-sm font-semibold text-purple-700">{t('home.demoDietPreferences')}</span>
                     </div>
-                    <h3 className="text-xl font-bold">Che tipo di dieta preferisci?</h3>
+                    <h3 className="text-xl font-bold">{t('home.demoWhatDietType')}</h3>
                   </div>
 
                   {dietStep >= 1 && (
@@ -646,9 +648,9 @@ export default function AppDemoFlow() {
                   style={{ height: isDesktop ? '490px' : '720px', minHeight: isDesktop ? '490px' : '720px', maxHeight: isDesktop ? '490px' : '720px' }}
                 >
                   <div className="mb-3">
-                    <h3 className="text-base font-bold mb-2">Piano Settimanale</h3>
+                    <h3 className="text-base font-bold mb-2">{t('home.demoWeeklyPlan')}</h3>
                     <div className="flex gap-1 overflow-x-auto pb-2">
-                      {['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map((day, i) => (
+                      {[t('home.demoMon'), t('home.demoTue'), t('home.demoWed'), t('home.demoThu'), t('home.demoFri'), t('home.demoSat'), t('home.demoSun')].map((day, i) => (
                         <div
                           key={day}
                           className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${
@@ -677,8 +679,8 @@ export default function AppDemoFlow() {
                           className="w-12 h-12 rounded-lg object-cover"
                         />
                         <div className="flex-1">
-                          <div className="font-bold text-sm text-gray-900">Colazione</div>
-                          <div className="text-xs text-gray-500">Porridge Proteico</div>
+                          <div className="font-bold text-sm text-gray-900">{t('home.demoBreakfast')}</div>
+                          <div className="text-xs text-gray-500">{t('home.demoProteicPorridge')}</div>
                           <div className="text-xs text-[var(--brand-primary)] font-semibold mt-0.5">420 kcal</div>
                         </div>
                       </div>
@@ -697,8 +699,8 @@ export default function AppDemoFlow() {
                           className="w-12 h-12 rounded-lg object-cover"
                         />
                         <div className="flex-1">
-                          <div className="font-bold text-sm text-gray-900">Pranzo</div>
-                          <div className="text-xs text-gray-500">Insalata Caesar</div>
+                          <div className="font-bold text-sm text-gray-900">{t('home.demoLunch')}</div>
+                          <div className="text-xs text-gray-500">{t('home.demoCaesarSalad')}</div>
                           <div className="text-xs text-gray-600 font-semibold mt-0.5">650 kcal</div>
                         </div>
                       </div>
@@ -717,8 +719,8 @@ export default function AppDemoFlow() {
                           className="w-12 h-12 rounded-lg object-cover"
                         />
                         <div className="flex-1">
-                          <div className="font-bold text-sm text-gray-900">Cena</div>
-                          <div className="text-xs text-gray-500">Salmone al Forno</div>
+                          <div className="font-bold text-sm text-gray-900">{t('home.demoDinner')}</div>
+                          <div className="text-xs text-gray-500">{t('home.demoBakedSalmon')}</div>
                           <div className="text-xs text-gray-600 font-semibold mt-0.5">700 kcal</div>
                         </div>
                       </div>
@@ -731,7 +733,7 @@ export default function AppDemoFlow() {
                       transition={{ duration: 0.4 }}
                       className="w-full mt-3 bg-blue-500 text-white py-2.5 rounded-lg text-xs font-semibold shadow-md"
                     >
-                      📋 Lista della Spesa
+                      📋 {t('home.demoShoppingList')}
                     </motion.button>
                   )}
 
@@ -754,8 +756,8 @@ export default function AppDemoFlow() {
                         />
 
                         <div className="p-4">
-                          <h3 className="text-lg font-bold text-gray-900 mb-1">Porridge Proteico</h3>
-                          <p className="text-xs text-gray-500 mb-3">Colazione • Low Carb</p>
+                          <h3 className="text-lg font-bold text-gray-900 mb-1">{t('home.demoProteicPorridge')}</h3>
+                          <p className="text-xs text-gray-500 mb-3">{t('home.demoBreakfast')} • Low Carb</p>
 
                           <div className="grid grid-cols-4 gap-2 mb-3">
                             <div className="bg-orange-50 rounded-lg p-2 text-center">
@@ -777,15 +779,15 @@ export default function AppDemoFlow() {
                           </div>
 
                           <div className="mb-3">
-                            <div className="text-sm font-bold text-gray-900 mb-2">Ingredienti</div>
+                            <div className="text-sm font-bold text-gray-900 mb-2">{t('home.demoIngredients')}</div>
                             <div className="space-y-2">
                               <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
                                 <div className="flex items-center gap-2">
                                   <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
-                                  <span className="text-xs">Farina d'avena - 50g</span>
+                                  <span className="text-xs">{t('home.demoOatFlour')}</span>
                                 </div>
                                 <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
-                                  Sostituisci
+                                  {t('home.demoSubstitute')}
                                 </button>
                               </div>
 
@@ -810,7 +812,7 @@ export default function AppDemoFlow() {
                                   <>
                                     <div className="flex items-center gap-2">
                                       <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
-                                      <span className={`text-xs ${substituteStep >= 1 ? 'font-semibold text-[var(--brand-primary)]' : ''}`}>Avocado - 1x</span>
+                                      <span className={`text-xs ${substituteStep >= 1 ? 'font-semibold text-[var(--brand-primary)]' : ''}`}>{t('home.demoAvocadoItem')}</span>
                                     </div>
                                     <motion.button
                                       animate={substituteStep === 2 ? { scale: [1, 0.85, 1] } : {}}
@@ -821,7 +823,7 @@ export default function AppDemoFlow() {
                                           : 'text-gray-400 border border-gray-300'
                                       }`}
                                     >
-                                      Sostituisci
+                                      {t('home.demoSubstitute')}
                                     </motion.button>
                                   </>
                                 ) : (
@@ -832,7 +834,7 @@ export default function AppDemoFlow() {
                                   >
                                     <div className="flex items-center gap-2">
                                       <div className="w-1 h-1 bg-green-600 rounded-full"></div>
-                                      <span className="text-xs font-semibold text-green-700">Banana - 1x</span>
+                                      <span className="text-xs font-semibold text-green-700">{t('home.demoBananaItem')}</span>
                                     </div>
                                     <motion.div
                                       initial={{ scale: 0 }}
@@ -847,20 +849,20 @@ export default function AppDemoFlow() {
                               <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
                                 <div className="flex items-center gap-2">
                                   <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
-                                  <span className="text-xs">Proteine in polvere - 30g</span>
+                                  <span className="text-xs">{t('home.demoProteinPowderItem')}</span>
                                 </div>
                                 <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
-                                  Sostituisci
+                                  {t('home.demoSubstitute')}
                                 </button>
                               </div>
 
                               <div className="flex justify-between items-center p-2 bg-gray-50 rounded-lg">
                                 <div className="flex items-center gap-2">
                                   <div className="w-1 h-1 bg-[var(--brand-primary)] rounded-full"></div>
-                                  <span className="text-xs">Mirtilli - 50g</span>
+                                  <span className="text-xs">{t('home.demoBlueberriesItem')}</span>
                                 </div>
                                 <button className="text-xs text-gray-400 px-2 py-1 rounded-full border border-gray-300">
-                                  Sostituisci
+                                  {t('home.demoSubstitute')}
                                 </button>
                               </div>
                             </div>
@@ -874,15 +876,15 @@ export default function AppDemoFlow() {
                             >
                               <div className="flex items-center gap-2">
                                 <Check className="w-4 h-4 text-green-600" />
-                                <span className="text-xs font-semibold text-green-700">Ingrediente sostituito!</span>
+                                <span className="text-xs font-semibold text-green-700">{t('home.demoIngredientSubstituted')}</span>
                               </div>
                             </motion.div>
                           )}
 
                           <div>
-                            <div className="text-sm font-bold text-gray-900 mb-1">Preparazione</div>
+                            <div className="text-sm font-bold text-gray-900 mb-1">{t('home.demoPreparation')}</div>
                             <div className="space-y-1">
-                              {['Scalda il latte a fuoco medio', 'Aggiungi avena e proteine', 'Cuoci 5-7 minuti mescolando', 'Guarnisci con banana e mirtilli'].map((step, i) => (
+                              {[t('home.demoHeatMilk'), t('home.demoAddOatsProtein'), t('home.demoCook5to7'), t('home.demoGarnishBanana')].map((step, i) => (
                                 <div key={i} className="flex items-start gap-2 text-xs text-gray-700">
                                   <span className="text-[var(--brand-primary)] font-bold flex-shrink-0">{i + 1}.</span>
                                   <span>{step}</span>
@@ -906,9 +908,9 @@ export default function AppDemoFlow() {
                   className={`absolute inset-0 bg-gray-50 ${!isDesktop ? 'pt-20' : 'p-3'} ${isDesktop ? '' : 'p-3'}`}
                   style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
-                  <h3 className="text-base font-bold mb-3">Lista della Spesa</h3>
+                  <h3 className="text-base font-bold mb-3">{t('home.demoShoppingList')}</h3>
                   <div className="space-y-1.5">
-                    {['Farina d\'avena - 200g', 'Mirtilli - 350g', 'Banana - 7x', 'Proteine in polvere - 200g'].map((item, i) => (
+                    {[`${t('home.demoOatmeal')} - 200g`, `${t('home.demoBlueberries')} - 350g`, `${t('home.demoBanana')} - 7x`, `${t('home.demoProteinPowder')} - 200g`].map((item, i) => (
                       <motion.div
                         key={item}
                         initial={{ x: -20, opacity: 0 }}
@@ -959,7 +961,7 @@ export default function AppDemoFlow() {
                             className="text-xs bg-[var(--brand-primary)] text-white px-3 py-1 rounded-full font-semibold flex items-center gap-1"
                           >
                             <Camera className="w-3 h-3" />
-                            Scansiona
+                            {t('home.demoScan')}
                           </motion.button>
                         )}
                       </motion.div>
@@ -997,7 +999,7 @@ export default function AppDemoFlow() {
                           className="absolute top-0 left-0 right-0 h-1 bg-[var(--brand-primary)] shadow-[0_0_15px_rgba(38,132,127,0.8)]"
                         />
                       </motion.div>
-                      <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione banana in corso...</p>
+                      <p className="text-gray-900 mt-6 text-sm font-semibold z-10">{t('home.demoScanningBanana')}</p>
                     </motion.div>
                   )}
                 </motion.div>
@@ -1035,9 +1037,9 @@ export default function AppDemoFlow() {
                         <span className="text-3xl font-black text-green-600">8.5</span>
                       </div>
                     </div>
-                    <h4 className="text-base font-bold mb-2 text-green-700">Ottima Scelta!</h4>
+                    <h4 className="text-base font-bold mb-2 text-green-700">{t('home.demoGreatChoice')}</h4>
                     <p className="text-xs text-gray-600 leading-relaxed">
-                      Alto contenuto di potassio e fibre. Perfetta per energia rapida pre/post workout. Basso indice glicemico ideale per i tuoi obiettivi.
+                      {t('home.demoBananaDesc')}
                     </p>
                   </div>
                 </motion.div>
@@ -1056,17 +1058,17 @@ export default function AppDemoFlow() {
                     <div className="flex items-center gap-3 mb-2">
                       <div className="text-4xl">🍌</div>
                       <div>
-                        <h4 className="font-bold text-sm">Banana - Matura (1x)</h4>
-                        <p className="text-xs text-gray-600">Sostituisce: Avocado</p>
+                        <h4 className="font-bold text-sm">{t('home.demoBananaMature')}</h4>
+                        <p className="text-xs text-gray-600">{t('home.demoReplaces')}: {t('home.demoAvocado')}</p>
                       </div>
                     </div>
                     <div className="grid grid-cols-2 gap-2 text-xs">
                       <div className="bg-white rounded-lg p-2">
-                        <div className="text-gray-500 text-xs">Calorie</div>
+                        <div className="text-gray-500 text-xs">{t('home.demoCalories')}</div>
                         <div className="font-bold">105 kcal</div>
                       </div>
                       <div className="bg-white rounded-lg p-2">
-                        <div className="text-gray-500 text-xs">Carb</div>
+                        <div className="text-gray-500 text-xs">{t('home.demoCarbs')}</div>
                         <div className="font-bold">27g</div>
                       </div>
                     </div>
@@ -1076,7 +1078,7 @@ export default function AppDemoFlow() {
                     whileTap={{ scale: 0.98 }}
                     className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white py-3 rounded-xl text-sm font-bold shadow-lg"
                   >
-                    Aggiungi e Sostituisci Macro
+                    {t('home.demoAddAndReplaceMacro')}
                   </motion.button>
                 </motion.div>
               )}
@@ -1111,8 +1113,8 @@ export default function AppDemoFlow() {
                           </motion.div>
                         </div>
 
-                        <h3 className="text-xl font-black text-center text-gray-900 mb-2">Pasto Aggiornato!</h3>
-                        <p className="text-sm text-center text-gray-600 mb-4">Porridge Proteico con Banana</p>
+                        <h3 className="text-xl font-black text-center text-gray-900 mb-2">{t('home.demoMealUpdated')}</h3>
+                        <p className="text-sm text-center text-gray-600 mb-4">{t('home.demoProteicPorridgeBanana')}</p>
 
                         <motion.div
                           animate={{ borderColor: ['#10b981', '#26847F', '#10b981'] }}
@@ -1121,7 +1123,7 @@ export default function AppDemoFlow() {
                         >
                           <div className="grid grid-cols-2 gap-3">
                             <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-xl p-3 text-center">
-                              <div className="text-xs text-gray-600 mb-1">Calorie</div>
+                              <div className="text-xs text-gray-600 mb-1">{t('home.demoCalories')}</div>
                               <motion.div
                                 initial={{ scale: 1.2, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
@@ -1132,7 +1134,7 @@ export default function AppDemoFlow() {
                               <div className="text-xs text-gray-500 mt-0.5">kcal</div>
                             </div>
                             <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-3 text-center">
-                              <div className="text-xs text-gray-600 mb-1">Proteine</div>
+                              <div className="text-xs text-gray-600 mb-1">{t('home.demoProteins')}</div>
                               <motion.div
                                 initial={{ scale: 1.2, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
@@ -1144,7 +1146,7 @@ export default function AppDemoFlow() {
                               <div className="text-xs text-gray-500 mt-0.5">g</div>
                             </div>
                             <div className="bg-gradient-to-br from-amber-50 to-amber-100 rounded-xl p-3 text-center">
-                              <div className="text-xs text-gray-600 mb-1">Carboidrati</div>
+                              <div className="text-xs text-gray-600 mb-1">{t('home.demoCarbohydrates')}</div>
                               <motion.div
                                 initial={{ scale: 1.2, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
@@ -1156,7 +1158,7 @@ export default function AppDemoFlow() {
                               <div className="text-xs text-gray-500 mt-0.5">g</div>
                             </div>
                             <div className="bg-gradient-to-br from-red-50 to-red-100 rounded-xl p-3 text-center">
-                              <div className="text-xs text-gray-600 mb-1">Grassi</div>
+                              <div className="text-xs text-gray-600 mb-1">{t('home.demoFats')}</div>
                               <motion.div
                                 initial={{ scale: 1.2, opacity: 0 }}
                                 animate={{ scale: 1, opacity: 1 }}
@@ -1172,7 +1174,7 @@ export default function AppDemoFlow() {
 
                         <div className="bg-green-50 border-2 border-green-200 rounded-xl p-3 flex items-center justify-center gap-2">
                           <Check className="w-4 h-4 text-green-600" />
-                          <span className="text-xs font-semibold text-green-700">Sostituzione completata con successo</span>
+                          <span className="text-xs font-semibold text-green-700">{t('home.demoSubstitutionComplete')}</span>
                         </div>
                       </motion.div>
                     </motion.div>
@@ -1185,9 +1187,9 @@ export default function AppDemoFlow() {
                       className="bg-gray-50 h-full"
                     >
                       <div className="mb-3">
-                        <h3 className="text-base font-bold mb-2">Piano Settimanale</h3>
+                        <h3 className="text-base font-bold mb-2">{t('home.demoWeeklyPlan')}</h3>
                         <div className="flex gap-1 overflow-x-auto pb-2">
-                          {['Lun', 'Mar', 'Mer', 'Gio', 'Ven', 'Sab', 'Dom'].map((day, i) => (
+                          {[t('home.demoMon'), t('home.demoTue'), t('home.demoWed'), t('home.demoThu'), t('home.demoFri'), t('home.demoSat'), t('home.demoSun')].map((day, i) => (
                             <div
                               key={day}
                               className={`flex-shrink-0 px-3 py-1.5 rounded-lg text-xs font-semibold ${
@@ -1227,8 +1229,8 @@ export default function AppDemoFlow() {
                               className="w-12 h-12 rounded-lg object-cover"
                             />
                             <div className="flex-1">
-                              <div className="font-bold text-sm">Colazione</div>
-                              <div className="text-xs text-gray-500">Porridge Proteico • 445 kcal</div>
+                              <div className="font-bold text-sm">{t('home.demoBreakfast')}</div>
+                              <div className="text-xs text-gray-500">{t('home.demoProteicPorridge')} • 445 kcal</div>
                             </div>
                           </div>
                         </motion.div>
@@ -1246,8 +1248,8 @@ export default function AppDemoFlow() {
                                 className="w-12 h-12 rounded-lg object-cover"
                               />
                               <div className="flex-1">
-                                <div className="font-bold text-sm">Pranzo</div>
-                                <div className="text-xs text-gray-500">Insalata Caesar • 650 kcal</div>
+                                <div className="font-bold text-sm">{t('home.demoLunch')}</div>
+                                <div className="text-xs text-gray-500">{t('home.demoCaesarSalad')} • 650 kcal</div>
                               </div>
                               <motion.button
                                 animate={{ scale: lunchScanStep === 1 ? [1, 0.9, 1] : 1 }}
@@ -1273,8 +1275,8 @@ export default function AppDemoFlow() {
                                 className="w-12 h-12 rounded-lg object-cover"
                               />
                               <div className="flex-1">
-                                <div className="font-bold text-sm text-gray-900">Pranzo</div>
-                                <div className="text-xs text-gray-500">Insalata Caesar • 650 kcal</div>
+                                <div className="font-bold text-sm text-gray-900">{t('home.demoLunch')}</div>
+                                <div className="text-xs text-gray-500">{t('home.demoCaesarSalad')} • 650 kcal</div>
                               </div>
                             </div>
                           </motion.div>
@@ -1293,8 +1295,8 @@ export default function AppDemoFlow() {
                               className="w-12 h-12 rounded-lg object-cover"
                             />
                             <div className="flex-1">
-                              <div className="font-bold text-sm text-gray-900">Cena</div>
-                              <div className="text-xs text-gray-500">Salmone al Forno • 700 kcal</div>
+                              <div className="font-bold text-sm text-gray-900">{t('home.demoDinner')}</div>
+                              <div className="text-xs text-gray-500">{t('home.demoBakedSalmon')} • 700 kcal</div>
                             </div>
                           </div>
                         </motion.div>
@@ -1338,7 +1340,7 @@ export default function AppDemoFlow() {
                       className="absolute top-0 left-0 right-0 h-1 bg-[var(--brand-primary)] shadow-[0_0_15px_rgba(38,132,127,0.8)]"
                     />
                   </motion.div>
-                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">Scansione pranzo in corso...</p>
+                  <p className="text-gray-900 mt-6 text-sm font-semibold z-10">{t('home.demoScan')} {t('home.demoLunch').toLowerCase()}...</p>
                 </motion.div>
               )}
 
@@ -1359,51 +1361,51 @@ export default function AppDemoFlow() {
                     <div className="mb-3">
                       <div className="flex items-center gap-2 mb-2">
                         <Sparkles className="w-5 h-5 text-[var(--brand-primary)]" />
-                        <h3 className="text-base font-bold">Calcolo Calorico AI</h3>
+                        <h3 className="text-base font-bold">{language === 'es' ? 'Cálculo Calórico IA' : language === 'pt' ? 'Cálculo Calórico IA' : language === 'de' ? 'KI-Kalorienberechnung' : language === 'fr' ? 'Calcul Calorique IA' : language === 'en' ? 'AI Calorie Calculation' : 'Calcolo Calorico AI'}</h3>
                       </div>
-                      <p className="text-xs text-gray-600">Confronto automatico pianificato vs reale</p>
+                      <p className="text-xs text-gray-600">{language === 'es' ? 'Comparación automática planificado vs real' : language === 'pt' ? 'Comparação automática planejado vs real' : language === 'de' ? 'Automatischer Vergleich geplant vs tatsächlich' : language === 'fr' ? 'Comparaison automatique planifié vs réel' : language === 'en' ? 'Automatic comparison planned vs actual' : 'Confronto automatico pianificato vs reale'}</p>
                     </div>
 
                     <div className="grid grid-cols-2 gap-2 mb-3">
                       <div className="bg-blue-50 border-2 border-blue-200 rounded-xl p-3">
-                        <div className="text-xs font-bold text-blue-700 mb-3 text-center">Pianificato</div>
+                        <div className="text-xs font-bold text-blue-700 mb-3 text-center">{language === 'es' ? 'Planificado' : language === 'pt' ? 'Planejado' : language === 'de' ? 'Geplant' : language === 'fr' ? 'Planifié' : language === 'en' ? 'Planned' : 'Pianificato'}</div>
                         <div className="space-y-2 text-[10px]">
                           <div className="bg-white rounded-lg p-2">
-                            <div className="text-gray-500 text-center mb-1">Calorie</div>
+                            <div className="text-gray-500 text-center mb-1">{t('home.demoCalories')}</div>
                             <div className="text-3xl font-black text-center">650</div>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Proteine</span>
+                            <span className="text-gray-600">{t('home.demoProteins')}</span>
                             <span className="font-bold">35g</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Carb</span>
+                            <span className="text-gray-600">{t('home.demoCarbs')}</span>
                             <span className="font-bold">45g</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Grassi</span>
+                            <span className="text-gray-600">{t('home.demoFats')}</span>
                             <span className="font-bold">32g</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="bg-green-50 border-2 border-green-200 rounded-xl p-3">
-                        <div className="text-xs font-bold text-green-700 mb-3 text-center">Reale AI</div>
+                        <div className="text-xs font-bold text-green-700 mb-3 text-center">{language === 'es' ? 'Real IA' : language === 'pt' ? 'Real IA' : language === 'de' ? 'Tatsächlich KI' : language === 'fr' ? 'Réel IA' : language === 'en' ? 'Actual AI' : 'Reale AI'}</div>
                         <div className="space-y-2 text-[10px]">
                           <div className="bg-white rounded-lg p-2">
-                            <div className="text-gray-500 text-center mb-1">Calorie</div>
+                            <div className="text-gray-500 text-center mb-1">{t('home.demoCalories')}</div>
                             <div className="text-3xl font-black text-center text-red-600">725</div>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Proteine</span>
+                            <span className="text-gray-600">{t('home.demoProteins')}</span>
                             <span className="font-bold">38g</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Carb</span>
+                            <span className="text-gray-600">{t('home.demoCarbs')}</span>
                             <span className="font-bold">48g</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Grassi</span>
+                            <span className="text-gray-600">{t('home.demoFats')}</span>
                             <span className="font-bold text-red-600">38g</span>
                           </div>
                         </div>
@@ -1411,9 +1413,9 @@ export default function AppDemoFlow() {
                     </div>
 
                     <div className="bg-orange-50 border-2 border-orange-200 rounded-xl p-3 mb-3">
-                      <div className="text-xs font-bold text-orange-700 mb-2">⚠️ Differenza Rilevata</div>
+                      <div className="text-xs font-bold text-orange-700 mb-2">{t('home.demoDetectedDifference')}</div>
                       <div className="text-xs text-gray-700">
-                        Hai consumato <span className="font-bold text-red-600">+75 kcal</span> rispetto al piano
+                        {t('home.demoConsumedExtra')} <span className="font-bold text-red-600">+75 kcal</span> {t('home.demoVsPlan')}
                       </div>
                     </div>
 
@@ -1424,7 +1426,7 @@ export default function AppDemoFlow() {
                         transition={{ duration: 0.6 }}
                         className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white py-3 rounded-xl text-sm font-bold shadow-lg"
                       >
-                        Salva e Ribilancia i Pasti Successivi
+                        {t('home.demoSaveAndRebalance')}
                       </motion.button>
                     )}
                   </motion.div>
@@ -1448,8 +1450,8 @@ export default function AppDemoFlow() {
                     >
                       ✅
                     </motion.div>
-                    <h4 className="text-lg font-bold mb-2 text-green-700">Pasti Ribilanciati!</h4>
-                    <p className="text-sm text-gray-600">Cena e snack aggiornati per compensare le 75 kcal in eccesso</p>
+                    <h4 className="text-lg font-bold mb-2 text-green-700">{t('home.demoMealsRebalanced')}</h4>
+                    <p className="text-sm text-gray-600">{t('home.demoDinnerSnackUpdated')}</p>
                   </div>
                 </motion.div>
               )}
@@ -1467,9 +1469,9 @@ export default function AppDemoFlow() {
                     <div className="inline-block px-3 py-1 bg-purple-100 rounded-full mb-2">
                       <span className="text-xs font-semibold text-purple-700">Step 2/4</span>
                     </div>
-                    <h3 className="text-base font-bold mb-3">Quali giorni vuoi allenarti?</h3>
+                    <h3 className="text-base font-bold mb-3">{t('home.demoWhichDaysWorkout')}</h3>
                     <div className="grid grid-cols-1 gap-1.5 max-w-xs mx-auto">
-                      {['Lunedì', 'Martedì', 'Mercoledì', 'Giovedì', 'Venerdì', 'Sabato', 'Domenica'].map((day, idx) => {
+                      {[t('home.demoMonday'), t('home.demoTuesday'), t('home.demoWednesday'), t('home.demoThursday'), t('home.demoFriday'), t('home.demoSaturday'), t('home.demoSunday')].map((day, idx) => {
                         const isSelected = (workoutDaySelection >= 1 && idx === 0) ||
                                           (workoutDaySelection >= 2 && idx === 2) ||
                                           (workoutDaySelection >= 3 && idx === 4);
@@ -1513,7 +1515,7 @@ export default function AppDemoFlow() {
                     <div className="inline-block px-3 py-1 bg-blue-100 rounded-full mb-2">
                       <span className="text-xs font-semibold text-blue-700">Step 3/4</span>
                     </div>
-                    <h3 className="text-base font-bold mb-3">Dove vuoi allenarti?</h3>
+                    <h3 className="text-base font-bold mb-3">{t('home.demoWhereWorkout')}</h3>
                     <div className="space-y-2 max-w-xs mx-auto">
                       <motion.button
                         animate={{
@@ -1525,15 +1527,15 @@ export default function AppDemoFlow() {
                         className="w-full py-4 rounded-xl font-bold text-base flex items-center justify-center gap-2 shadow-md"
                       >
                         <HomeIcon className="w-5 h-5" />
-                        In Casa
+                        {t('home.demoAtHome')}
                       </motion.button>
                       <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2 shadow-md">
                         <Zap className="w-5 h-5" />
-                        In Palestra
+                        {t('home.demoAtGym')}
                       </button>
                       <button className="w-full py-4 rounded-xl font-bold text-base bg-white text-gray-700 flex items-center justify-center gap-2 shadow-md">
                         <Trees className="w-5 h-5" />
-                        All'Aperto
+                        {t('home.demoOutdoor')}
                       </button>
                     </div>
                   </div>
@@ -1551,7 +1553,7 @@ export default function AppDemoFlow() {
                 >
                   <div className="mb-3">
                     <div className="flex items-center justify-between mb-3">
-                      <h3 className="text-base font-bold">Allenamento Lunedì</h3>
+                      <h3 className="text-base font-bold">{t('home.demoMondayWorkout')}</h3>
                       <motion.button
                         animate={{
                           scale: modifyWorkoutButtonZoom ? 1.3 : (modifyWorkoutStep >= 1 ? [1, 1.2, 1.1] : 1)
@@ -1559,7 +1561,7 @@ export default function AppDemoFlow() {
                         transition={{ duration: modifyWorkoutButtonZoom ? 0.5 : 0.8 }}
                         className="px-3 py-1.5 bg-yellow-500 text-white rounded-lg text-xs font-semibold shadow-lg"
                       >
-                        Modifica Sessione
+                        {t('home.demoModifySession')}
                       </motion.button>
                     </div>
                   </div>
@@ -1568,7 +1570,7 @@ export default function AppDemoFlow() {
                     className="space-y-2"
                   >
                     <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-3 border-2 border-blue-200">
-                      <div className="text-xs font-bold text-blue-700 mb-1">🔥 Riscaldamento (5 min)</div>
+                      <div className="text-xs font-bold text-blue-700 mb-1">🔥 {t('home.demoWarmup')} (5 min)</div>
                       <div className="text-xs text-gray-700">Jumping Jacks, Arm Circles</div>
                     </div>
 
@@ -1578,8 +1580,8 @@ export default function AppDemoFlow() {
                           1
                         </div>
                         <div className="flex-1">
-                          <div className="font-bold text-sm">Push-ups</div>
-                          <div className="text-xs text-gray-600">3x12 • Petto</div>
+                          <div className="font-bold text-sm">{t('home.demoPushups')}</div>
+                          <div className="text-xs text-gray-600">3x12 • {t('home.demoChest')}</div>
                         </div>
                       </div>
                     </div>
@@ -1590,8 +1592,8 @@ export default function AppDemoFlow() {
                           2
                         </div>
                         <div className="flex-1">
-                          <div className="font-bold text-sm">Squat</div>
-                          <div className="text-xs text-gray-600">4x15 • Gambe</div>
+                          <div className="font-bold text-sm">{t('home.demoSquat')}</div>
+                          <div className="text-xs text-gray-600">4x15 • {t('home.demoLegs')}</div>
                         </div>
                       </div>
                     </div>
@@ -1602,14 +1604,14 @@ export default function AppDemoFlow() {
                           3
                         </div>
                         <div className="flex-1">
-                          <div className="font-bold text-sm">Plank</div>
-                          <div className="text-xs text-gray-600">3x45s • Core</div>
+                          <div className="font-bold text-sm">{t('home.demoPlank')}</div>
+                          <div className="text-xs text-gray-600">3x45s • {t('home.demoCore')}</div>
                         </div>
                       </div>
                     </div>
 
                     <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-xl p-3 border-2 border-green-200">
-                      <div className="text-xs font-bold text-green-700 mb-1">🧘 Stretching (5 min)</div>
+                      <div className="text-xs font-bold text-green-700 mb-1">🧘 {t('home.demoStretching')} (5 min)</div>
                       <div className="text-xs text-gray-700">Quad Stretch, Child's Pose</div>
                     </div>
                   </motion.div>
@@ -1621,11 +1623,10 @@ export default function AppDemoFlow() {
                       className="absolute inset-0 bg-black/80 flex items-center justify-center px-4"
                     >
                       <div className="bg-white rounded-xl p-4 w-full max-w-sm">
-                        <h4 className="font-bold text-sm mb-3">Problemi con l'allenamento?</h4>
+                        <h4 className="font-bold text-sm mb-3">{t('home.demoWorkoutIssues')}</h4>
                         <div className="bg-gray-100 rounded-lg p-3 mb-3 min-h-[60px] flex items-center">
                           <p className="text-sm text-gray-700">
-                            {typingText}
-                            {modifyWorkoutStep === 1 && <span className="animate-pulse">|</span>}
+                            {language === 'es' ? 'Me duele el hombro' : language === 'pt' ? 'Meu ombro dói' : language === 'de' ? 'Meine Schulter tut weh' : language === 'fr' ? 'Mon épaule me fait mal' : language === 'en' ? 'My shoulder hurts' : 'Mi fa male la spalla'}{modifyWorkoutStep === 1 && typingText.length < (language === 'es' ? 18 : language === 'pt' ? 15 : language === 'de' ? 23 : language === 'fr' ? 24 : language === 'en' ? 19 : 20) && <span className="animate-pulse">|</span>}
                           </p>
                         </div>
                         {modifyWorkoutStep >= 2 && (
@@ -1637,8 +1638,8 @@ export default function AppDemoFlow() {
                             <div className="flex items-start gap-1.5">
                               <Check className="w-4 h-4 text-green-600 mt-0.5 flex-shrink-0" />
                               <div>
-                                <div className="font-semibold text-green-800 text-xs mb-0.5">Allenamento Modificato!</div>
-                                <p className="text-xs text-green-700">Ho sostituito gli esercizi per le spalle con alternative più sicure</p>
+                                <div className="font-semibold text-green-800 text-xs mb-0.5">{t('home.demoWorkoutModified')}</div>
+                                <p className="text-xs text-green-700">{t('home.demoReplacedShoulderEx')}</p>
                               </div>
                             </div>
                           </motion.div>
@@ -1658,20 +1659,20 @@ export default function AppDemoFlow() {
                   className={`absolute inset-0 bg-white ${!isDesktop ? 'pt-20' : 'p-4'} ${isDesktop ? '' : 'p-4'}`}
                   style={{ height: isDesktop ? '490px' : '800px', minHeight: isDesktop ? '490px' : '800px', maxHeight: isDesktop ? '490px' : '800px' }}
                 >
-                  <h3 className="text-base font-bold mb-3">Rematore con Elastico</h3>
+                  <h3 className="text-base font-bold mb-3">{t('home.demoRowElastic')}</h3>
                   <div className="bg-gradient-to-r from-blue-50 to-cyan-50 rounded-xl p-3 mb-3">
-                    <div className="text-xs text-gray-600 mb-1">Muscolo Target</div>
+                    <div className="text-xs text-gray-600 mb-1">{t('home.demoTargetMuscle')}</div>
                     <motion.div
                       initial={{ scale: 0.8 }}
                       animate={{ scale: 1.2 }}
                       className="text-2xl font-black text-blue-600"
                     >
-                      💪 SCHIENA
+                      💪 {t('home.demoBack')}
                     </motion.div>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-3">
-                    <div className="text-xs font-semibold mb-1">Esecuzione:</div>
-                    <p className="text-xs text-gray-600">Fissa l'elastico a un punto stabile, piega leggermente il busto in avanti, tira l'elastico verso l'ombilico mantenendo i gomiti vicini al corpo...</p>
+                    <div className="text-xs font-semibold mb-1">{t('home.demoExecution')}:</div>
+                    <p className="text-xs text-gray-600">{t('home.demoRowDesc')}</p>
                   </div>
                 </motion.div>
               )}
@@ -1695,11 +1696,11 @@ export default function AppDemoFlow() {
                     transition={{ duration: 0.5 }}
                     className="space-y-3 overflow-y-auto h-full"
                   >
-                    <h3 className="text-sm font-bold text-center mb-2">Analisi Progressi AI</h3>
+                    <h3 className="text-sm font-bold text-center mb-2">{t('home.demoProgressAnalysisAI')}</h3>
 
                     <div className="grid grid-cols-2 gap-2">
                       <div className="bg-white rounded-xl p-2 shadow-md border border-red-200">
-                        <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">Prima - 12 sett. fa</div>
+                        <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">{t('home.demoBefore')} - 12 {t('home.demoWeeksAgo')}</div>
                         <img
                           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/8eb701ee9_ModelPre.png"
                           alt="Before"
@@ -1709,18 +1710,18 @@ export default function AppDemoFlow() {
                         />
                         <div className="space-y-1 text-[9px]">
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Definizione</span>
+                            <span className="text-gray-600">{t('home.demoDefinition')}</span>
                             <span className="font-bold text-red-600">4.5/10</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Grasso</span>
+                            <span className="text-gray-600">{t('home.demoFat')}</span>
                             <span className="font-bold text-red-600">28.5%</span>
                           </div>
                         </div>
                       </div>
 
                       <div className="bg-white rounded-xl p-2 shadow-md border-2 border-green-500">
-                        <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">Dopo - Oggi</div>
+                        <div className="text-[9px] text-gray-500 mb-1 text-center font-semibold">{t('home.demoAfter')} - {t('home.demoToday')}</div>
                         <img
                           src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3fb8677cc_ModelPost.png"
                           alt="After"
@@ -1730,11 +1731,11 @@ export default function AppDemoFlow() {
                         />
                         <div className="space-y-1 text-[9px]">
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Definizione</span>
+                            <span className="text-gray-600">{t('home.demoDefinition')}</span>
                             <span className="font-bold text-green-600">6.8/10</span>
                           </div>
                           <div className="flex justify-between">
-                            <span className="text-gray-600">Grasso</span>
+                            <span className="text-gray-600">{t('home.demoFat')}</span>
                             <span className="font-bold text-green-600">22.1%</span>
                           </div>
                         </div>
@@ -1744,51 +1745,51 @@ export default function AppDemoFlow() {
                     <div className="bg-white rounded-xl p-3 shadow-md border border-gray-200">
                       <h4 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-1">
                         <Sparkles className="w-4 h-4 text-purple-500" />
-                        Progressi Rilevati
+                        {t('home.demoDetectedProgress')}
                       </h4>
                       <div className="grid grid-cols-2 gap-2">
                         <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
                           <div className="text-xs font-bold text-green-700">+51%</div>
-                          <div className="text-[9px] text-gray-600">Definizione</div>
+                          <div className="text-[9px] text-gray-600">{t('home.demoDefinition')}</div>
                         </div>
                         <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
                           <div className="text-xs font-bold text-green-700">-22%</div>
-                          <div className="text-[9px] text-gray-600">Grasso</div>
+                          <div className="text-[9px] text-gray-600">{t('home.demoFat')}</div>
                         </div>
                         <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
                           <div className="text-xs font-bold text-green-700">-6cm</div>
-                          <div className="text-[9px] text-gray-600">Girovita</div>
+                          <div className="text-[9px] text-gray-600">{t('home.demoWaist')}</div>
                         </div>
                         <div className="bg-green-50 rounded-lg p-2 text-center border border-green-200">
                           <div className="text-xs font-bold text-green-700">+25%</div>
-                          <div className="text-[9px] text-gray-600">Postura</div>
+                          <div className="text-[9px] text-gray-600">{t('home.demoPosture')}</div>
                         </div>
                       </div>
                     </div>
 
                     <div className="bg-gradient-to-br from-amber-50 to-orange-50 rounded-xl p-3 border border-amber-200">
-                      <h4 className="text-xs font-bold text-gray-900 mb-2">💡 Consigli Personal Trainer AI</h4>
+                      <h4 className="text-xs font-bold text-gray-900 mb-2">💡 {t('home.demoPersonalTrainerTips')}</h4>
 
                       <div className="mb-2">
-                        <div className="text-[9px] font-bold text-amber-700 mb-1">🍽️ Nutrizione</div>
+                        <div className="text-[9px] font-bold text-amber-700 mb-1">🍽️ {t('home.demoNutrition')}</div>
                         <div className="space-y-1">
                           <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
-                            • Mantieni deficit 350kcal - risultati ottimali
+                            • {t('home.demoMaintainDeficit')}
                           </div>
                           <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
-                            • Aumenta proteine a 1.8g/kg
+                            • {t('home.demoIncreaseProtein')}
                           </div>
                         </div>
                       </div>
 
                       <div>
-                        <div className="text-[9px] font-bold text-purple-700 mb-1">💪 Allenamento</div>
+                        <div className="text-[9px] font-bold text-purple-700 mb-1">💪 {t('home.demoWorkoutLabel')}</div>
                         <div className="space-y-1">
                           <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
-                            • Aumenta frequenza core a 4-5x/settimana
+                            • {t('home.demoIncreaseCoreFreq')}
                           </div>
                           <div className="bg-white/80 rounded-md p-1.5 text-[8px] text-gray-700">
-                            • Aggiungi 3 sessioni HIIT da 20min
+                            • {t('home.demoAdd3HIIT')}
                           </div>
                         </div>
                       </div>
@@ -1802,7 +1803,7 @@ export default function AppDemoFlow() {
                       transition={{ duration: 0.5 }}
                       className="w-full bg-gradient-to-r from-purple-500 to-pink-500 text-white py-3 rounded-xl text-xs font-bold shadow-lg relative z-10"
                     >
-                      Accetta i Suggerimenti e Salva Analisi
+                      {t('home.demoAcceptSuggestions')}
                     </motion.button>
                   </motion.div>
                 </motion.div>
@@ -1818,8 +1819,8 @@ export default function AppDemoFlow() {
                   style={{ height: isDesktop ? '490px' : '700px', minHeight: isDesktop ? '490px' : '700px', maxHeight: isDesktop ? '490px' : '700px' }}
                 >
                   <div className="text-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">Traiettoria Peso</h3>
-                    <p className="text-xs text-gray-600">12 settimane di progressi</p>
+                    <h3 className="text-lg font-bold text-gray-900 mb-2">{t('home.demoWeightTrajectory')}</h3>
+                    <p className="text-xs text-gray-600">{t('home.demo12WeeksProgress')}</p>
                   </div>
 
                   <div className="bg-white rounded-2xl p-4 shadow-xl">
@@ -1863,15 +1864,15 @@ export default function AppDemoFlow() {
 
                     <div className="grid grid-cols-3 gap-2 text-center">
                       <div className="bg-blue-50 rounded-lg p-2">
-                        <div className="text-xs text-gray-600">Peso Iniziale</div>
+                        <div className="text-xs text-gray-600">{t('home.demoInitialWeightLabel')}</div>
                         <div className="text-xl font-black text-gray-900">70kg</div>
                       </div>
                       <div className="bg-green-50 rounded-lg p-2">
-                        <div className="text-xs text-gray-600">Peso Attuale</div>
+                        <div className="text-xs text-gray-600">{t('home.demoCurrentWeightLabel')}</div>
                         <div className="text-xl font-black text-green-600">65kg</div>
                       </div>
                       <div className="bg-orange-50 rounded-lg p-2">
-                        <div className="text-xs text-gray-600">Persi</div>
+                        <div className="text-xs text-gray-600">{t('home.demoLost')}</div>
                         <div className="text-xl font-black text-orange-600">-5kg</div>
                       </div>
                     </div>
@@ -1895,8 +1896,8 @@ export default function AppDemoFlow() {
                   >
                     🎉
                   </motion.div>
-                  <h2 className="text-2xl font-black text-white text-center mb-1">Obiettivo Raggiunto!</h2>
-                  <p className="text-white text-center text-sm">65kg • -5kg in 12 settimane</p>
+                  <h2 className="text-2xl font-black text-white text-center mb-1">{t('home.demoGoalReached')}</h2>
+                  <p className="text-white text-center text-sm">65kg • -5kg {t('home.demoWeeksResult')}</p>
                   <motion.div
                     animate={{ scale: [1, 1.1, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
