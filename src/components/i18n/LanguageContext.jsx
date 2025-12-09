@@ -40,9 +40,12 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Determine initial language
-  const getInitialLanguage = () => {
-    if (forcedLanguage) return forcedLanguage;
+  // ALWAYS use forcedLanguage if provided, otherwise fallback
+  const [language, setLanguageState] = useState(() => {
+    if (forcedLanguage) {
+      console.log('LanguageProvider: forcedLanguage =', forcedLanguage);
+      return forcedLanguage;
+    }
     
     const urlLang = getLanguageFromPath(window.location.pathname);
     if (urlLang) return urlLang;
@@ -53,14 +56,12 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
     
     return getBrowserLanguage();
-  };
-  
-  // Initialize language state
-  const [language, setLanguageState] = useState(getInitialLanguage);
+  });
 
   // Update language when forcedLanguage or URL changes
   useEffect(() => {
     if (forcedLanguage) {
+      console.log('LanguageProvider useEffect: setting forcedLanguage =', forcedLanguage);
       setLanguageState(forcedLanguage);
       return;
     }
@@ -70,7 +71,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
       setLanguageState(urlLang);
       localStorage.setItem('preferred_language', urlLang);
     }
-  }, [location.pathname, language, forcedLanguage]);
+  }, [location.pathname, forcedLanguage]);
 
   // Change language (without URL changes for now)
   const setLanguage = useCallback((newLang) => {
@@ -80,12 +81,13 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     localStorage.setItem('preferred_language', newLang);
   }, []);
 
-  // Translation function - SEMPRE usa forcedLanguage se disponibile
-  const t = (key, params = {}) => {
+  // Translation function - usa SEMPRE la lingua corretta
+  const t = useCallback((key, params = {}) => {
     const keys = key.split('.');
     
-    // CRITICAL: Use forcedLanguage FIRST if available
-    const currentLang = forcedLanguage || language;
+    // Use current language state (which already accounts for forcedLanguage)
+    const currentLang = language;
+    console.log(`Translation for key "${key}" in language "${currentLang}"`);
     let value = translations[currentLang];
     
     for (const k of keys) {
@@ -101,10 +103,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  };
-
-  // Expose the actual effective language to consumers
-  const effectiveLanguage = forcedLanguage || language;
+  }, [language]);
   
   return (
     <LanguageContext.Provider value={{ language: effectiveLanguage, setLanguage, t, SUPPORTED_LANGUAGES }}>
