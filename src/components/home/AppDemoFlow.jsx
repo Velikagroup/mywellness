@@ -1945,11 +1945,11 @@ export default function AppDemoFlow() {
               alt="iPhone Frame"
               className="absolute pointer-events-none"
               style={{
-                top: '-3.5%',
+                top: '-10%',
                 left: '50%',
                 transform: 'translateX(-50%)',
-                width: '104%',
-                height: '107%',
+                width: '312%',
+                height: '321%',
                 zIndex: 2,
                 objectFit: 'contain'
               }}
