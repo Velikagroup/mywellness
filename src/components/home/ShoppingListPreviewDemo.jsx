@@ -88,8 +88,8 @@ export default function ShoppingListPreviewDemo() {
                 <ShoppingCart className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Lista della Spesa</h2>
-                <p className="text-xs text-gray-600">Generata dall'AI per questa settimana</p>
+                <h2 className="text-xl font-bold text-gray-900">{t('home.shoppingListTitle')}</h2>
+                <p className="text-xs text-gray-600">{t('home.shoppingListSubtitle')}</p>
               </div>
             </div>
           </div>
@@ -97,8 +97,8 @@ export default function ShoppingListPreviewDemo() {
           {/* Progress */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-semibold text-gray-700">Completamento</span>
-              <span className="font-bold text-teal-600">{checkedItems}/{totalItems} articoli</span>
+              <span className="font-semibold text-gray-700">{t('home.shoppingListCompletion')}</span>
+              <span className="font-bold text-teal-600">{checkedItems}/{totalItems} {t('home.shoppingListItems')}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
@@ -170,7 +170,7 @@ export default function ShoppingListPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            {t('home.quizDemoPreview')}
           </p>
         </div>
       </Card>
