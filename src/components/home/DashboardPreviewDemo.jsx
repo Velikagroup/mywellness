@@ -288,7 +288,7 @@ export default function DashboardPreviewDemo() {
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardBodyFat')}</p>
-              <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
+              <span className="text-[9px] text-gray-500 font-medium">— {t('home.dashboardStable')}</span>
             </div>
             <div className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-purple-600" />
@@ -305,7 +305,7 @@ export default function DashboardPreviewDemo() {
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
               <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardWorkoutDays')}</p>
-              <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
+              <span className="text-[9px] text-gray-500 font-medium">— {t('home.dashboardStable')}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-[var(--brand-primary)]" />
