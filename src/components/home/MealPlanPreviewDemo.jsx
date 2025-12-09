@@ -31,106 +31,106 @@ export default function MealPlanPreviewDemo() {
   const mondayMeals = [
     {
       name: t('home.mealPlanBreakfast'),
-      title: 'Yogurt Greco con Miele e Noci',
+      title: t('home.mealGreekYogurt'),
       calories: 342,
       image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop',
       ingredients: [
-        { name: 'Yogurt greco', quantity: 200, unit: 'g', calories: 130, protein: 20, carbs: 8, fat: 4 },
-        { name: 'Miele', quantity: 20, unit: 'g', calories: 64, protein: 0.1, carbs: 17, fat: 0 },
-        { name: 'Noci', quantity: 30, unit: 'g', calories: 196, protein: 4.5, carbs: 4, fat: 19 },
-        { name: 'Mirtilli freschi', quantity: 50, unit: 'g', calories: 29, protein: 0.4, carbs: 7, fat: 0.2 }
+        { name: t('home.ingredientGreekYogurt'), quantity: 200, unit: 'g', calories: 130, protein: 20, carbs: 8, fat: 4 },
+        { name: t('home.ingredientHoney'), quantity: 20, unit: 'g', calories: 64, protein: 0.1, carbs: 17, fat: 0 },
+        { name: t('home.ingredientWalnuts'), quantity: 30, unit: 'g', calories: 196, protein: 4.5, carbs: 4, fat: 19 },
+        { name: t('home.ingredientFreshBlueberries'), quantity: 50, unit: 'g', calories: 29, protein: 0.4, carbs: 7, fat: 0.2 }
       ],
       instructions: [
-        'Versa lo yogurt greco in una ciotola',
-        'Aggiungi il miele sopra lo yogurt',
-        'Trita grossolanamente le noci',
-        'Guarnisci con noci e mirtilli freschi'
+        t('home.instructionPourYogurt'),
+        t('home.instructionAddHoneyTop'),
+        t('home.instructionChopNuts'),
+        t('home.instructionGarnishNutsBerries')
       ],
       total_protein: 25,
       total_carbs: 36,
       total_fat: 23,
       prep_time: 5,
-      difficulty: 'facile'
+      difficulty: t('home.mealPlanEasy')
     },
     {
       name: t('home.mealPlanMorningSnack'),
-      title: 'Spuntino di Fragole e Burro',
+      title: t('home.mealNuts'),
       calories: 159,
       image: 'https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=400&h=400&fit=crop',
       ingredients: [
-        { name: 'Fragole fresche', quantity: 100, unit: 'g', calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3 },
-        { name: 'Burro', quantity: 15, unit: 'g', calories: 112, protein: 0.1, carbs: 0, fat: 12.8 }
+        { name: t('home.ingredientStrawberries'), quantity: 100, unit: 'g', calories: 32, protein: 0.7, carbs: 7.7, fat: 0.3 },
+        { name: t('home.ingredientButter'), quantity: 15, unit: 'g', calories: 112, protein: 0.1, carbs: 0, fat: 12.8 }
       ],
       instructions: [
-        'Lava le fragole',
-        'Taglia a metà',
-        'Servi con burro a fette'
+        t('home.instructionWashStrawberries'),
+        t('home.instructionCutHalf'),
+        t('home.instructionServeButterSlices')
       ],
       total_protein: 1,
       total_carbs: 8,
       total_fat: 13,
       prep_time: 5,
-      difficulty: 'facile'
+      difficulty: t('home.mealPlanEasy')
     },
     {
       name: t('home.mealPlanLunch'),
-      title: 'Pane/Fette di Manzo con Burro',
+      title: t('home.mealSalmonQuinoa'),
       calories: 397,
       image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=400&fit=crop',
       ingredients: [
-        { name: 'Manzo magro', quantity: 180, unit: 'g', calories: 250, protein: 45, carbs: 0, fat: 7 },
-        { name: 'Burro', quantity: 20, unit: 'g', calories: 149, protein: 0.2, carbs: 0, fat: 16.5 }
+        { name: t('home.ingredientLeanBeef'), quantity: 180, unit: 'g', calories: 250, protein: 45, carbs: 0, fat: 7 },
+        { name: t('home.ingredientButter'), quantity: 20, unit: 'g', calories: 149, protein: 0.2, carbs: 0, fat: 16.5 }
       ],
       instructions: [
-        'Cuoci il manzo alla griglia',
-        'Aggiungi burro fuso',
-        'Servi caldo'
+        t('home.instructionGrillBeef'),
+        t('home.instructionAddMeltedButter'),
+        t('home.instructionServeHot')
       ],
       total_protein: 45,
       total_carbs: 0,
       total_fat: 24,
       prep_time: 20,
-      difficulty: 'media'
+      difficulty: t('home.mealPlanMedium')
     },
     {
       name: t('home.mealPlanAfternoonSnack'),
-      title: 'Uova e Burro con Peperoni',
+      title: t('home.mealEggsPeppers'),
       calories: 160,
       image: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=400&fit=crop',
       ingredients: [
-        { name: 'Uova', quantity: 2, unit: 'unità', calories: 140, protein: 12, carbs: 1, fat: 10 },
-        { name: 'Peperoni', quantity: 50, unit: 'g', calories: 20, protein: 0.5, carbs: 4, fat: 0.2 }
+        { name: t('home.ingredientEggs'), quantity: 2, unit: 'unità', calories: 140, protein: 12, carbs: 1, fat: 10 },
+        { name: t('home.ingredientBellPepper'), quantity: 50, unit: 'g', calories: 20, protein: 0.5, carbs: 4, fat: 0.2 }
       ],
       instructions: [
-        'Sbatti le uova',
-        'Cuoci in padella',
-        'Aggiungi peperoni tagliati'
+        t('home.instructionBeatEggs'),
+        t('home.instructionCookPan'),
+        t('home.instructionAddChoppedPeppers')
       ],
       total_protein: 13,
       total_carbs: 5,
       total_fat: 10,
       prep_time: 10,
-      difficulty: 'facile'
+      difficulty: t('home.mealPlanEasy')
     },
     {
       name: t('home.mealPlanDinner'),
-      title: 'Bistecca di Manzo con Burro Aromatizzato',
+      title: t('home.mealSteakButter'),
       calories: 395,
       image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=400&h=400&fit=crop',
       ingredients: [
-        { name: 'Bistecca di manzo', quantity: 200, unit: 'g', calories: 280, protein: 50, carbs: 0, fat: 8 },
-        { name: 'Burro aromatizzato', quantity: 15, unit: 'g', calories: 112, protein: 0.1, carbs: 0, fat: 12.8 }
+        { name: t('home.ingredientBeefSteak'), quantity: 200, unit: 'g', calories: 280, protein: 50, carbs: 0, fat: 8 },
+        { name: t('home.ingredientFlavoredButter'), quantity: 15, unit: 'g', calories: 112, protein: 0.1, carbs: 0, fat: 12.8 }
       ],
       instructions: [
-        'Griglia la bistecca',
-        'Aggiungi burro aromatizzato',
-        'Lascia riposare 5 minuti'
+        t('home.instructionGrillSteak'),
+        t('home.instructionAddFlavoredButter'),
+        t('home.instructionRest5Min')
       ],
       total_protein: 50,
       total_carbs: 0,
       total_fat: 21,
       prep_time: 25,
-      difficulty: 'media'
+      difficulty: t('home.mealPlanMedium')
     }
   ];
 

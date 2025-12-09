@@ -2135,10 +2135,12 @@ export const translations = {
       
       // Meal Plan Demo - Meal Names
       mealProteinPancakes: "Protein Pancakes",
-      mealGreekYogurt: "Greek Yogurt",
+      mealGreekYogurt: "Greek Yogurt with Honey and Nuts",
       mealChickenBreastVeggies: "Chicken Breast with Vegetables",
-      mealNuts: "Mixed Nuts",
-      mealSalmonQuinoa: "Salmon with Quinoa",
+      mealNuts: "Strawberries and Butter",
+      mealSalmonQuinoa: "Beef Slices with Butter",
+      mealEggsPeppers: "Eggs and Butter with Peppers",
+      mealSteakButter: "Beef Steak with Flavored Butter",
       
       // Meal Plan Demo - Ingredients
       ingredientOats: "Oats",
@@ -2157,6 +2159,12 @@ export const translations = {
       ingredientQuinoa: "Quinoa",
       ingredientSpinach: "Spinach",
       ingredientLemon: "Lemon",
+      ingredientButter: "Butter",
+      ingredientStrawberries: "Fresh strawberries",
+      ingredientLeanBeef: "Lean beef",
+      ingredientBeefSteak: "Beef steak",
+      ingredientFlavoredButter: "Flavored butter",
+      ingredientFreshBlueberries: "Fresh blueberries",
       
       // Meal Plan Demo - Instructions
       instructionMixIngredients: "Mix all ingredients until smooth",
@@ -2175,6 +2183,22 @@ export const translations = {
       instructionBoilQuinoa: "Boil quinoa until cooked",
       instructionSauteSpinach: "Sauté spinach with garlic",
       instructionPlate: "Plate and add lemon",
+      instructionPourYogurt: "Pour Greek yogurt into a bowl",
+      instructionAddHoneyTop: "Add honey on top of the yogurt",
+      instructionChopNuts: "Coarsely chop the nuts",
+      instructionGarnishNutsBerries: "Garnish with nuts and fresh blueberries",
+      instructionWashStrawberries: "Wash the strawberries",
+      instructionCutHalf: "Cut in half",
+      instructionServeButterSlices: "Serve with sliced butter",
+      instructionGrillBeef: "Grill the beef",
+      instructionAddMeltedButter: "Add melted butter",
+      instructionServeHot: "Serve hot",
+      instructionBeatEggs: "Beat the eggs",
+      instructionCookPan: "Cook in a pan",
+      instructionAddChoppedPeppers: "Add chopped peppers",
+      instructionGrillSteak: "Grill the steak",
+      instructionAddFlavoredButter: "Add flavored butter",
+      instructionRest5Min: "Let rest for 5 minutes",
       
       popupTitle1: "Discover your",
       popupTitle2: "body fat",
