@@ -1979,58 +1979,12 @@ export default function AppDemoFlow() {
               />
             </svg>
           ) : (
-            <svg
-              viewBox="0 0 450 900"
+            <img
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/a1aeb726d_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
+              alt="iPhone Frame"
               className="absolute w-full pointer-events-none"
               style={{ top: '-110px', left: 0, height: 'calc(100% + 60px)', zIndex: 2 }}
-            >
-              <defs>
-                <filter id="phoneShadow" x="-50%" y="-50%" width="200%" height="200%">
-                  <feGaussianBlur in="SourceAlpha" stdDeviation="3"/>
-                  <feOffset dx="0" dy="2" result="offsetblur"/>
-                  <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.3"/>
-                  </feComponentTransfer>
-                  <feMerge>
-                    <feMergeNode/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-              </defs>
-
-              <rect
-                x="5" y="5"
-                width="440" height="770"
-                rx="55" ry="55"
-                fill="none"
-                stroke="#000000"
-                strokeWidth="4"
-                filter="url(#phoneShadow)"
-              />
-
-              <rect
-                x="8" y="8"
-                width="434" height="764"
-                rx="52" ry="52"
-                fill="none"
-                stroke="#000000"
-                strokeWidth="1"
-              />
-
-              <rect
-                x="156" y="26"
-                width="138" height="37"
-                rx="18.5" ry="18.5"
-                fill="#000000"
-              />
-
-              <rect x="0" y="175" width="4" height="35" rx="2" fill="#000000"/>
-              <rect x="0" y="235" width="4" height="58" rx="2" fill="#000000"/>
-              <rect x="0" y="310" width="4" height="58" rx="2" fill="#000000"/>
-              <rect x="446" y="240" width="4" height="88" rx="2" fill="#000000"/>
-
-              <rect x="212" y="770" width="26" height="5" rx="2.5" fill="#000000"/>
-            </svg>
+            />
           )}
         </div>
       </div>
