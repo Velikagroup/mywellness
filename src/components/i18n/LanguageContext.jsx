@@ -40,10 +40,8 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
   const location = useLocation();
   const navigate = useNavigate();
   
-  // Initialize language from forced prop, URL, localStorage, or browser preference
-  const [language, setLanguageState] = useState(() => {
-    if (forcedLanguage) return forcedLanguage;
-    
+  // Always use forcedLanguage if provided, otherwise initialize from URL, localStorage, or browser
+  const effectiveLanguage = forcedLanguage || (() => {
     const urlLang = getLanguageFromPath(window.location.pathname);
     if (urlLang) return urlLang;
     
@@ -53,14 +51,17 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
     
     return getBrowserLanguage();
-  });
+  })();
   
-  // Always use forcedLanguage if provided, otherwise use state
-  const effectiveLanguage = forcedLanguage || language;
+  // Initialize language state
+  const [language, setLanguageState] = useState(effectiveLanguage);
 
   // Update language when URL changes (but NOT if forcedLanguage is set)
   useEffect(() => {
-    if (forcedLanguage) return; // Don't override forced language
+    if (forcedLanguage) {
+      setLanguageState(forcedLanguage);
+      return;
+    }
     
     const urlLang = getLanguageFromPath(location.pathname);
     if (urlLang && urlLang !== language) {
@@ -78,9 +79,9 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
   }, []);
 
   // Translation function
-  const t = (key, params = {}) => {
+  const t = useCallback((key, params = {}) => {
     const keys = key.split('.');
-    let value = translations[effectiveLanguage];
+    let value = translations[language];
     
     for (const k of keys) {
       value = value?.[k];
@@ -94,10 +95,10 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  };
+  }, [language]);
 
   return (
-    <LanguageContext.Provider value={{ language: effectiveLanguage, setLanguage, t, SUPPORTED_LANGUAGES }}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
       {children}
     </LanguageContext.Provider>
   );
