@@ -1938,23 +1938,6 @@ export default function AppDemoFlow() {
           ...
             </svg>
           )}
-
-          {!isDesktop && (
-            <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/3f76397af_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
-              alt="iPhone Frame"
-              className="absolute pointer-events-none"
-              style={{
-                top: '-10%',
-                left: '50%',
-                transform: 'translateX(-50%)',
-                width: '312%',
-                height: '321%',
-                zIndex: 2,
-                objectFit: 'contain'
-              }}
-            />
-          )}
         </div>
       </div>
     </div>
