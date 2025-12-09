@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Camera, CheckCircle, AlertCircle, Sparkles, RefreshCw, TrendingUp, TrendingDown } from "lucide-react";
+import { useLanguage } from '../i18n/LanguageContext';
 
 /**
  * Componente DEMO per Homepage - Analisi Foto AI

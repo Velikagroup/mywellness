@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { ChefHat, Clock, BarChart2, Sprout, ChevronRight, MousePointerClick } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const MacroCircle = ({ label, value, unit, color }) => (
   <div className="flex flex-col items-center">
@@ -13,6 +14,7 @@ const MacroCircle = ({ label, value, unit, color }) => (
 );
 
 export default function MealPlanPreviewDemo() {
+  const { t } = useLanguage();
   const [selectedDay, setSelectedDay] = useState('Lun');
   const [selectedMeal, setSelectedMeal] = useState(null);
 

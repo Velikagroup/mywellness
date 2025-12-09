@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Target, TrendingUp, Activity, BarChart3, Calendar, TrendingDown, Scale } from "lucide-react";
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
+import { useLanguage } from '../i18n/LanguageContext';
 
 /**
  * Componente DEMO per Homepage - Dashboard
