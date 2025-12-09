@@ -288,7 +288,7 @@ export default function AppDemoFlow() {
             style={{
               top: isDesktop ? 'calc(3.5% - 3px)' : '1.5%',
               left: '50%',
-              width: isDesktop ? '610px' : '96%',
+              width: isDesktop ? '610px' : '96.5%',
               height: isDesktop ? '460px' : '720px',
               minHeight: isDesktop ? '460px' : '720px',
               maxHeight: isDesktop ? '460px' : '720px',
