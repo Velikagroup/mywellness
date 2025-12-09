@@ -38,68 +38,84 @@ const getBrowserLanguage = () => {
 
 export function LanguageProvider({ children, forcedLanguage = null }) {
   const location = useLocation();
-  const navigate = useNavigate();
+  const languageRef = React.useRef(forcedLanguage || DEFAULT_LANGUAGE);
   
   // ALWAYS use forcedLanguage if provided, otherwise fallback
   const [language, setLanguageState] = useState(() => {
     if (forcedLanguage) {
-      console.log('LanguageProvider: forcedLanguage =', forcedLanguage);
+      languageRef.current = forcedLanguage;
       return forcedLanguage;
     }
     
     const urlLang = getLanguageFromPath(window.location.pathname);
-    if (urlLang) return urlLang;
+    if (urlLang) {
+      languageRef.current = urlLang;
+      return urlLang;
+    }
     
     const storedLang = localStorage.getItem('preferred_language');
     if (storedLang && SUPPORTED_LANGUAGES.some(l => l.code === storedLang)) {
+      languageRef.current = storedLang;
       return storedLang;
     }
     
-    return getBrowserLanguage();
+    const browserLang = getBrowserLanguage();
+    languageRef.current = browserLang;
+    return browserLang;
   });
 
   // Update language when forcedLanguage or URL changes
   useEffect(() => {
     if (forcedLanguage) {
-      console.log('LanguageProvider useEffect: setting forcedLanguage =', forcedLanguage);
+      languageRef.current = forcedLanguage;
       setLanguageState(forcedLanguage);
       return;
     }
     
     const urlLang = getLanguageFromPath(location.pathname);
     if (urlLang && urlLang !== language) {
+      languageRef.current = urlLang;
       setLanguageState(urlLang);
       localStorage.setItem('preferred_language', urlLang);
     }
   }, [location.pathname, forcedLanguage]);
 
-  // Translation function
-  const t = (key, params = {}) => {
+  // Translation function - uses ref to always get current language
+  const t = React.useCallback((key, params = {}) => {
+    const currentLang = languageRef.current;
     const keys = key.split('.');
-    let value = translations[language];
+    let value = translations[currentLang];
     
     for (const k of keys) {
       value = value?.[k];
     }
     
     if (typeof value !== 'string') {
-      console.warn(`Translation missing for key "${key}" in language "${language}"`, value);
+      console.warn(`Translation missing for key "${key}" in language "${currentLang}"`, value);
       return key;
     }
     
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  };
+  }, []);
 
-  const setLanguage = (newLang) => {
+  const setLanguage = React.useCallback((newLang) => {
     if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
+    languageRef.current = newLang;
     setLanguageState(newLang);
     localStorage.setItem('preferred_language', newLang);
-  };
+  }, []);
+
+  const contextValue = React.useMemo(() => ({
+    language,
+    setLanguage,
+    t,
+    SUPPORTED_LANGUAGES
+  }), [language, setLanguage, t]);
   
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
