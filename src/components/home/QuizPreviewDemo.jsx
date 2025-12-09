@@ -13,9 +13,9 @@ export default function QuizPreviewDemo() {
   const [selected, setSelected] = React.useState('moderato');
 
   const options = [
-    { id: 'lento', label: 'Lento e Sostenibile', subtitle: '0.25-0.5kg/settimana', emoji: '🐢' },
-    { id: 'moderato', label: 'Moderato', subtitle: '0.5-0.75kg/settimana', emoji: '⚡' },
-    { id: 'veloce', label: 'Veloce', subtitle: '0.75-1kg/settimana', emoji: '🚀' }
+    { id: 'lento', label: t('home.quizDemoOptionSlow'), subtitle: t('home.quizDemoOptionSlowSubtitle'), emoji: '🐢' },
+    { id: 'moderato', label: t('home.quizDemoOptionModerate'), subtitle: t('home.quizDemoOptionModerateSubtitle'), emoji: '⚡' },
+    { id: 'veloce', label: t('home.quizDemoOptionFast'), subtitle: t('home.quizDemoOptionFastSubtitle'), emoji: '🚀' }
   ];
 
   return (
@@ -44,14 +44,14 @@ export default function QuizPreviewDemo() {
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary-light)] border border-[var(--brand-primary)]/30 rounded-full text-sm mb-6">
             <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />
-            <span className="text-[var(--brand-primary-dark-text)] font-semibold">Personalizzazione AI</span>
+            <span className="text-[var(--brand-primary-dark-text)] font-semibold">{t('home.quizDemoAIPersonalization')}</span>
           </div>
           
           <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-            Qual è il tuo ritmo ideale di dimagrimento?
+            {t('home.quizDemoWeightLossSpeed')}
           </h3>
           <p className="text-sm text-gray-600 max-w-lg mx-auto">
-            L'AI calibrerà il tuo piano nutrizionale in base alla velocità che preferisci
+            {t('home.quizDemoWeightLossSpeedSubtitle')}
           </p>
         </div>
 
