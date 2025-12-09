@@ -73,39 +73,37 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
   }, [location.pathname, forcedLanguage]);
 
-  // Memoizza il context value e la funzione t insieme
-  const contextValue = useMemo(() => {
-    const t = (key, params = {}) => {
-      const keys = key.split('.');
-      let value = translations[language];
-      
-      for (const k of keys) {
-        value = value?.[k];
-      }
-      
-      if (typeof value !== 'string') {
-        console.warn(`Translation missing for key "${key}" in language "${language}"`);
-        return key;
-      }
-      
-      return value.replace(/\{(\w+)\}/g, (match, paramName) => {
-        return params[paramName] !== undefined ? params[paramName] : match;
-      });
-    };
+  // Translation function - NOT memoized to force re-render
+  const t = (key, params = {}) => {
+    const keys = key.split('.');
+    let value = translations[language];
+    
+    for (const k of keys) {
+      value = value?.[k];
+    }
+    
+    if (typeof value !== 'string') {
+      console.warn(`Translation missing for key "${key}" in language "${language}"`, value);
+      return key;
+    }
+    
+    return value.replace(/\{(\w+)\}/g, (match, paramName) => {
+      return params[paramName] !== undefined ? params[paramName] : match;
+    });
+  };
 
-    const setLanguage = (newLang) => {
-      if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
-      setLanguageState(newLang);
-      localStorage.setItem('preferred_language', newLang);
-    };
+  const setLanguage = (newLang) => {
+    if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
+    setLanguageState(newLang);
+    localStorage.setItem('preferred_language', newLang);
+  };
 
-    return {
-      language,
-      setLanguage,
-      t,
-      SUPPORTED_LANGUAGES
-    };
-  }, [language]);
+  const contextValue = {
+    language,
+    setLanguage,
+    t,
+    SUPPORTED_LANGUAGES
+  };
   
   return (
     <LanguageContext.Provider value={contextValue}>
