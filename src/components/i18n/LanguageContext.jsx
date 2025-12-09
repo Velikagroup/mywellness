@@ -83,31 +83,11 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     let value = translations[effectiveLanguage];
     
     for (const k of keys) {
-      if (value && typeof value === 'object') {
-        value = value[k];
-      } else {
-        value = undefined;
-        break;
-      }
+      value = value?.[k];
     }
     
-    // If not found, try fallback to default language
-    if (value === undefined || typeof value !== 'string') {
-      let fallbackValue = translations[DEFAULT_LANGUAGE];
-      for (const k of keys) {
-        if (fallbackValue && typeof fallbackValue === 'object') {
-          fallbackValue = fallbackValue[k];
-        } else {
-          fallbackValue = undefined;
-          break;
-        }
-      }
-      
-      if (fallbackValue && typeof fallbackValue === 'string') {
-        value = fallbackValue;
-      } else {
-        return key; // Return key if translation not found even in fallback
-      }
+    if (typeof value !== 'string') {
+      return key;
     }
     
     // Replace parameters like {name} with actual values
