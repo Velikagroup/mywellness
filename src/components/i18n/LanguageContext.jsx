@@ -78,7 +78,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
   }, []);
 
   // Translation function
-  const t = useCallback((key, params = {}) => {
+  const t = (key, params = {}) => {
     const keys = key.split('.');
     let value = translations[effectiveLanguage];
     
@@ -94,7 +94,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  }, [effectiveLanguage]);
+  };
 
   return (
     <LanguageContext.Provider value={{ language: effectiveLanguage, setLanguage, t, SUPPORTED_LANGUAGES }}>
