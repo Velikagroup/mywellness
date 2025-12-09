@@ -43,10 +43,10 @@ export default function PhotoAnalyzerPreviewDemo() {
           </div>
           <div>
             <span className="bg-gradient-to-r from-[var(--brand-primary)] to-teal-600 bg-clip-text text-transparent font-bold">
-              Analisi Scientifica Pasto AI
+              {t('home.photoAnalyzerTitle')}
             </span>
             <p className="text-xs text-gray-500 font-normal mt-0.5">
-              Confronto automatico con il piano nutrizionale
+              {t('home.photoAnalyzerSubtitle')}
             </p>
           </div>
         </CardTitle>
@@ -62,7 +62,7 @@ export default function PhotoAnalyzerPreviewDemo() {
           />
           <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
             <CheckCircle className="w-3 h-3" />
-            Analizzato
+            {t('home.photoAnalyzerAnalyzed')}
           </div>
         </div>
 
@@ -70,16 +70,16 @@ export default function PhotoAnalyzerPreviewDemo() {
         <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border-2 border-gray-200/50">
           <h4 className="font-bold text-gray-900 mb-4 flex items-center gap-2">
             <Camera className="w-4 h-4 text-[var(--brand-primary)]" />
-            Confronto Nutrizionale
+            {t('home.photoAnalyzerComparison')}
           </h4>
           
           <div className="space-y-3">
             {/* Calorie */}
             <div className="bg-white/80 rounded-lg p-3 border border-gray-200">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-sm font-semibold text-gray-700">Calorie</span>
+                <span className="text-sm font-semibold text-gray-700">{t('home.photoAnalyzerCalories')}</span>
                 <div className="flex items-center gap-2">
-                  <span className="text-xs text-gray-500">{plannedMeal.calories} kcal pianificate</span>
+                  <span className="text-xs text-gray-500">{plannedMeal.calories} kcal {t('home.photoAnalyzerPlanned')}</span>
                 </div>
               </div>
               <div className="flex items-center justify-between">
@@ -97,7 +97,7 @@ export default function PhotoAnalyzerPreviewDemo() {
             <div className="grid grid-cols-3 gap-2">
               {/* Proteine */}
               <div className="bg-white/80 rounded-lg p-3 border border-red-200">
-                <p className="text-xs text-gray-500 mb-1">Proteine</p>
+                <p className="text-xs text-gray-500 mb-1">{t('home.photoAnalyzerProtein')}</p>
                 <p className="text-lg font-bold text-red-600">{actualMeal.protein}g</p>
                 <p className="text-xs text-gray-400 mt-1">vs {plannedMeal.protein}g</p>
                 <div className={`mt-1 text-xs font-semibold ${delta.protein > 0 ? 'text-red-600' : 'text-green-600'}`}>
@@ -107,7 +107,7 @@ export default function PhotoAnalyzerPreviewDemo() {
 
               {/* Carboidrati */}
               <div className="bg-white/80 rounded-lg p-3 border border-blue-200">
-                <p className="text-xs text-gray-500 mb-1">Carboidrati</p>
+                <p className="text-xs text-gray-500 mb-1">{t('home.photoAnalyzerCarbs')}</p>
                 <p className="text-lg font-bold text-blue-600">{actualMeal.carbs}g</p>
                 <p className="text-xs text-gray-400 mt-1">vs {plannedMeal.carbs}g</p>
                 <div className={`mt-1 text-xs font-semibold ${delta.carbs > 0 ? 'text-red-600' : 'text-green-600'}`}>
@@ -117,7 +117,7 @@ export default function PhotoAnalyzerPreviewDemo() {
 
               {/* Grassi */}
               <div className="bg-white/80 rounded-lg p-3 border border-yellow-200">
-                <p className="text-xs text-gray-500 mb-1">Grassi</p>
+                <p className="text-xs text-gray-500 mb-1">{t('home.photoAnalyzerFat')}</p>
                 <p className="text-lg font-bold text-yellow-600">{actualMeal.fat}g</p>
                 <p className="text-xs text-gray-400 mt-1">vs {plannedMeal.fat}g</p>
                 <div className={`mt-1 text-xs font-semibold ${delta.fat > 0 ? 'text-red-600' : 'text-green-600'}`}>
@@ -135,10 +135,10 @@ export default function PhotoAnalyzerPreviewDemo() {
               <AlertCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5" />
               <div>
                 <p className="font-bold text-orange-900 text-sm mb-1">
-                  Hai superato il target di +{delta.calories} kcal
+                  {t('home.photoAnalyzerExceeded')} +{delta.calories} kcal
                 </p>
                 <p className="text-xs text-orange-700 leading-relaxed">
-                  L'AI può ribilanciare automaticamente i pasti rimanenti di oggi per compensare
+                  {t('home.photoAnalyzerRebalanceDesc')}
                 </p>
               </div>
             </div>
@@ -151,13 +151,13 @@ export default function PhotoAnalyzerPreviewDemo() {
           className="w-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-600 text-white font-bold text-base py-5 rounded-xl shadow-lg cursor-not-allowed opacity-80"
         >
           <RefreshCw className="w-5 h-5 mr-2" />
-          Riequilibra Pasti Rimanenti
+          {t('home.photoAnalyzerRebalanceButton')}
         </Button>
 
         {/* Demo Notice */}
         <div className="text-center">
           <p className="text-xs text-gray-400 italic">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            {t('home.quizDemoPreview')}
           </p>
         </div>
       </CardContent>
