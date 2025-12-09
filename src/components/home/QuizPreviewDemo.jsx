@@ -29,7 +29,7 @@ export default function QuizPreviewDemo() {
             <span className="text-gray-400 font-medium">/</span>
             <span className="text-xl font-bold text-gray-600">12</span>
           </div>
-          <span className="text-sm text-gray-500 font-medium ml-2">domande completate</span>
+          <span className="text-sm text-gray-500 font-medium ml-2">{t('home.quizDemoQuestionsCompleted')}</span>
         </div>
         
         <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner max-w-md mx-auto">
@@ -91,7 +91,7 @@ export default function QuizPreviewDemo() {
         {/* Demo Notice */}
         <div className="text-center mt-8">
           <p className="text-xs text-gray-400 italic">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            {t('home.quizDemoPreview')}
           </p>
         </div>
       </CardContent>
