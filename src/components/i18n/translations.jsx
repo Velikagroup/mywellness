@@ -8657,6 +8657,43 @@ export const translations = {
       mealPlanMedium: "moyenne",
       mealPlanHard: "difficile",
       
+      // Shopping List Categories & Items
+      shoppingCategoryFruitVeg: "Fruits et Légumes",
+      shoppingCategoryMeat: "Viande et Poisson",
+      shoppingCategoryDairy: "Produits Laitiers et Œufs",
+      shoppingCategoryGrains: "Céréales et Pâtes",
+      shoppingCategoryCondiments: "Condiments",
+      shoppingItemTomatoes: "Tomates",
+      shoppingItemSpinach: "Épinards frais",
+      shoppingItemBananas: "Bananes",
+      shoppingItemChickenBreast: "Blanc de poulet",
+      shoppingItemSalmon: "Saumon frais",
+      shoppingItemGreekYogurt: "Yaourt grec",
+      shoppingItemEggs: "Œufs",
+      shoppingItemMozzarella: "Mozzarella",
+      shoppingItemBrownRice: "Riz complet",
+      shoppingItemWholePasta: "Pâtes complètes",
+      shoppingItemOliveOil: "Huile d'olive",
+      shoppingItemPinkSalt: "Sel rose",
+      shoppingUnit: "unités",
+      
+      // Scanner Product
+      scannerProductName: "Blanc de Poulet Fileni",
+      
+      // Pantry Items
+      pantryChickenBreast: "Blanc de Poulet",
+      pantryBasmatiRice: "Riz Basmati",
+      pantryBroccoli: "Brocolis",
+      pantryOliveOil: "Huile d'olive",
+      pantryEggs: "Œufs",
+      pantrySkimMilk: "Lait écrémé",
+      pantryCategoryProtein: "Protéines",
+      pantryCategoryCarbs: "Glucides",
+      pantryCategoryVegetables: "Légumes",
+      pantryCategoryFats: "Lipides",
+      pantryCategoryDairy: "Produits laitiers",
+      pantryPieces: "pcs",
+      
       featureStd1: "Dashboard scientifique complet",
       featureStd2: "Calcul MB et masse grasse",
       featureStd3: "Suivi du poids et des progrès",
