@@ -55,7 +55,7 @@ export default function DashboardPreviewDemo() {
         <div className="grid grid-cols-3 gap-4">
           <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Iniziale</p>
+              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('home.dashboardStartWeight')}</p>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-3xl font-black text-gray-900">{startWeight}</span>
                 <span className="text-sm text-gray-500 font-medium">kg</span>
@@ -65,7 +65,7 @@ export default function DashboardPreviewDemo() {
 
           <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">Peso Target</p>
+              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('home.dashboardTargetWeight')}</p>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-3xl font-black text-gray-900">{targetWeight}</span>
                 <span className="text-sm text-gray-500 font-medium">kg</span>
@@ -75,7 +75,7 @@ export default function DashboardPreviewDemo() {
 
           <Card className="water-glass-effect border border-green-200/50 shadow-lg rounded-lg">
             <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-green-700 mb-1 uppercase tracking-wider">Variazione</p>
+              <p className="text-[10px] font-medium text-green-700 mb-1 uppercase tracking-wider">{t('home.dashboardVariation')}</p>
               <div className="flex items-baseline gap-1.5">
                 <TrendingDown className="w-4 h-4 text-green-600" />
                 <span className="text-3xl font-black text-green-700">{variation.toFixed(1)}</span>
@@ -92,7 +92,7 @@ export default function DashboardPreviewDemo() {
             <CardHeader className="pb-2 pt-4 px-4">
               <CardTitle className="text-xs font-semibold text-gray-900 flex items-center gap-1.5">
                 <Scale className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-                Traiettoria Massa Corporea
+                {t('home.dashboardTrajectory')}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
@@ -125,7 +125,7 @@ export default function DashboardPreviewDemo() {
                       y={73} 
                       stroke="#10b981" 
                       strokeDasharray="4 4" 
-                      label={{ value: 'Target', fontSize: 8, fill: '#10b981', position: 'right' }}
+                      label={{ value: t('home.dashboardTarget'), fontSize: 8, fill: '#10b981', position: 'right' }}
                     />
                     <Line 
                       type="monotone" 
@@ -133,7 +133,7 @@ export default function DashboardPreviewDemo() {
                       stroke="#26847F" 
                       strokeWidth={2.5}
                       dot={{ fill: '#26847F', r: 3 }}
-                      name="Peso attuale"
+                      name={t('home.dashboardCurrentWeight')}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -141,11 +141,11 @@ export default function DashboardPreviewDemo() {
               <div className="mt-2 flex items-center justify-between text-[9px]">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-[var(--brand-primary)]"></div>
-                  <span className="text-gray-600 font-medium">Peso attuale</span>
+                  <span className="text-gray-600 font-medium">{t('home.dashboardCurrentWeight')}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-0.5 bg-green-500"></div>
-                  <span className="text-gray-600 font-medium">Target</span>
+                  <span className="text-gray-600 font-medium">{t('home.dashboardTarget')}</span>
                 </div>
               </div>
             </CardContent>
@@ -155,7 +155,7 @@ export default function DashboardPreviewDemo() {
           <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardHeader className="pb-2 pt-4 px-4">
               <CardTitle className="text-xs font-semibold text-gray-900">
-                Scomposizione Calorica Obiettivo
+                {t('home.dashboardCalorieBreakdown')}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
@@ -185,7 +185,7 @@ export default function DashboardPreviewDemo() {
                     {progress}%
                   </text>
                   <text x="60" y="70" textAnchor="middle" className="text-[9px]" fill="#6b7280">
-                    completato
+                    {t('home.dashboardCompleted')}
                   </text>
                 </svg>
               </div>
@@ -194,7 +194,7 @@ export default function DashboardPreviewDemo() {
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-[var(--brand-primary-light)]">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-[var(--brand-primary)]"></div>
-                    <span className="text-[11px] font-semibold text-gray-700">Completato</span>
+                    <span className="text-[11px] font-semibold text-gray-700">{t('home.dashboardCompletedLabel')}</span>
                   </div>
                   <span className="text-[11px] font-bold text-gray-900">{caloriesBurned.toLocaleString('it-IT')} kcal</span>
                 </div>
@@ -202,7 +202,7 @@ export default function DashboardPreviewDemo() {
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-50">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
-                    <span className="text-[11px] font-semibold text-gray-700">Rimanente</span>
+                    <span className="text-[11px] font-semibold text-gray-700">{t('home.dashboardRemaining')}</span>
                   </div>
                   <span className="text-[11px] font-bold text-gray-900">{caloriesRemaining.toLocaleString('it-IT')} kcal</span>
                 </div>
@@ -211,7 +211,7 @@ export default function DashboardPreviewDemo() {
               <div className="mt-3 pt-2 border-t border-gray-200">
                 <p className="text-[9px] text-gray-500 text-center flex items-center justify-center gap-1">
                   <Activity className="w-2.5 h-2.5" />
-                  Calcolo basato su 7700 kcal = 1kg di variazione
+                  {t('home.dashboardCalorieCalc')}
                 </p>
               </div>
             </CardContent>
@@ -223,7 +223,7 @@ export default function DashboardPreviewDemo() {
           <CardContent className="p-4">
             <div className="flex items-center gap-1.5 mb-3">
               <Scale className="w-4 h-4 text-[var(--brand-primary)]" />
-              <h3 className="text-xs font-semibold text-gray-900">Registra Peso</h3>
+              <h3 className="text-xs font-semibold text-gray-900">{t('home.dashboardRegisterWeight')}</h3>
             </div>
             <div className="flex gap-2">
               <div className="flex-1 relative">
@@ -240,7 +240,7 @@ export default function DashboardPreviewDemo() {
                 disabled
                 className="px-5 h-10 bg-[var(--brand-primary)] text-white text-sm font-semibold rounded-lg cursor-not-allowed opacity-80"
               >
-                Salva Peso
+                {t('home.dashboardSaveWeight')}
               </button>
             </div>
           </CardContent>
@@ -253,7 +253,7 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Target Calorico</p>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardTargetCalories')}</p>
               <span className="text-[9px] text-green-600 font-semibold">↗ +2.3%</span>
             </div>
             <div className="flex items-center gap-2">
@@ -270,7 +270,7 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Metabolismo Basale (BMR)</p>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardBMR')}</p>
               <span className="text-[9px] text-green-600 font-semibold">↗ +1.8%</span>
             </div>
             <div className="flex items-center gap-2">
@@ -287,7 +287,7 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Massa Grassa</p>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardBodyFat')}</p>
               <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
             </div>
             <div className="flex items-center gap-2">
@@ -304,14 +304,14 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">Giorni di Allenamento</p>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardWorkoutDays')}</p>
               <span className="text-[9px] text-gray-500 font-medium">— stabile</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-[var(--brand-primary)]" />
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-black text-gray-900">5</span>
-                <span className="text-[11px] text-gray-500 font-medium">giorni/sett</span>
+                <span className="text-[11px] text-gray-500 font-medium">{t('home.dashboardDaysPerWeek')}</span>
               </div>
             </div>
           </CardContent>
@@ -321,7 +321,7 @@ export default function DashboardPreviewDemo() {
       {/* Demo Notice - Full Width */}
       <div className="lg:col-span-12 text-center">
         <p className="text-[10px] text-gray-400 italic">
-          Anteprima interfaccia • Funzionalità disponibili dopo il signup
+          {t('home.quizDemoPreview')}
         </p>
       </div>
     </div>
