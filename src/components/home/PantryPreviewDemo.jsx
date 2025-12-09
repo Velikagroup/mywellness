@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Package, Camera, Plus, Check, Apple, Milk, Egg, Fish } from "lucide-react";
+import { useLanguage } from '../i18n/LanguageContext';
 
 /**
  * Componente DEMO per Homepage - Dispensa Intelligente
  * Mostra la funzionalità di catalogazione degli ingredienti in casa con AI
  */
 export default function PantryPreviewDemo() {
+  const { t } = useLanguage();
   const [view, setView] = useState('catalog'); // 'catalog' | 'scanning'
 
   const pantryItems = [

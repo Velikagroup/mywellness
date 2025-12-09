@@ -1,8 +1,10 @@
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { ShoppingCart, Check } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ShoppingListPreviewDemo() {
+  const { t } = useLanguage();
   const categories = [
     {
       name: 'Frutta e Verdura',

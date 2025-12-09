@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Check, Camera, CheckCircle2 } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function MealTrackingPreviewDemo() {
+  const { t } = useLanguage();
   const [meals, setMeals] = useState([
     { id: 1, name: 'Colazione', time: '08:00', checked: true, hasPhoto: true },
     { id: 2, name: 'Spuntino Mattina', time: '11:00', checked: true, hasPhoto: false },

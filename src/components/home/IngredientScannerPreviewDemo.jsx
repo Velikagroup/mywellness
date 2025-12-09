@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Scan, Check, Database, Zap } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function IngredientScannerPreviewDemo() {
+  const { t } = useLanguage();
   const [scanStep, setScanStep] = useState(0);
 
   const scannedProduct = {

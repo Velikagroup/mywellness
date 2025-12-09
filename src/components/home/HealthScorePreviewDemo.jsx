@@ -2,6 +2,7 @@ import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Camera, Sparkles, TrendingDown, AlertTriangle, CheckCircle, XCircle } from "lucide-react";
+import { useLanguage } from '../i18n/LanguageContext';
 
 /**
  * Componente DEMO per Homepage - Health Score
@@ -9,6 +10,7 @@ import { Camera, Sparkles, TrendingDown, AlertTriangle, CheckCircle, XCircle } f
  * SCALA 0-10 (come Nutri-Score europeo)
  */
 export default function HealthScorePreviewDemo() {
+  const { t } = useLanguage();
   // Analisi dell'etichetta nutrizionale dalla foto
   const nutritionAnalysis = {
     productName: "Olio di Cocco",
