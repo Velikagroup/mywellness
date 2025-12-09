@@ -145,6 +145,8 @@ export const translations = {
       quizDemoOptionModerateSubtitle: "0.5-0.75kg/settimana",
       quizDemoOptionFast: "Veloce",
       quizDemoOptionFastSubtitle: "0.75-1kg/settimana",
+      quizDemoPreview: "Anteprima interfaccia • Funzionalità disponibili dopo il signup",
+      quizDemoQuestionsCompleted: "domande completate",
       
       popupTitle1: "Scopri la tua",
       popupTitle2: "massa grassa",
@@ -1782,6 +1784,8 @@ export const translations = {
       quizDemoOptionModerateSubtitle: "0.5-0.75kg/week",
       quizDemoOptionFast: "Fast",
       quizDemoOptionFastSubtitle: "0.75-1kg/week",
+      quizDemoPreview: "Interface preview • Features available after signup",
+      quizDemoQuestionsCompleted: "questions completed",
       
       popupTitle1: "Discover your",
       popupTitle2: "body fat",
@@ -6398,6 +6402,8 @@ export const translations = {
       quizDemoOptionModerateSubtitle: "0.5-0.75kg/Woche",
       quizDemoOptionFast: "Schnell",
       quizDemoOptionFastSubtitle: "0.75-1kg/Woche",
+      quizDemoPreview: "Interface-Vorschau • Funktionen nach Anmeldung verfügbar",
+      quizDemoQuestionsCompleted: "Fragen beantwortet",
       
       popupTitle1: "Entdecken Sie Ihr",
       popupTitle2: "Körperfett",
@@ -7904,6 +7910,8 @@ export const translations = {
       quizDemoOptionModerateSubtitle: "0.5-0.75kg/semaine",
       quizDemoOptionFast: "Rapide",
       quizDemoOptionFastSubtitle: "0.75-1kg/semaine",
+      quizDemoPreview: "Aperçu de l'interface • Fonctionnalités disponibles après inscription",
+      quizDemoQuestionsCompleted: "questions complétées",
       
       popupTitle1: "Découvrez votre",
       popupTitle2: "masse grasse",
