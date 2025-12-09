@@ -332,7 +332,7 @@ export default function MealPlanPreviewDemo() {
                 
                 <div className="flex items-center justify-around text-sm text-gray-600 bg-gray-50 rounded-lg border p-3">
                   <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> {t('home.mealPlanPrep')}: {selectedMeal.prep_time} min</div>
-                  <div className="flex items-center gap-2 capitalize"><ChefHat className="w-4 h-4" /> {t('home.mealPlanDifficulty')}: {t(`home.mealPlan${selectedMeal.difficulty.charAt(0).toUpperCase() + selectedMeal.difficulty.slice(1)}`)}</div>
+                  <div className="flex items-center gap-2 capitalize"><ChefHat className="w-4 h-4" /> {t('home.mealPlanDifficulty')}: {selectedMeal.difficulty}</div>
                 </div>
               </div>
 
