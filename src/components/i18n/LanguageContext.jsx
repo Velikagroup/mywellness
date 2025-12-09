@@ -74,28 +74,26 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
   }, [location.pathname, forcedLanguage]);
 
   // Change language (without URL changes for now)
-  const setLanguage = useCallback((newLang) => {
+  const setLanguage = (newLang) => {
     if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
     
     setLanguageState(newLang);
     localStorage.setItem('preferred_language', newLang);
-  }, []);
+  };
 
-  // Translation function - usa SEMPRE la lingua corretta
-  const t = useCallback((key, params = {}) => {
+  // Translation function - NO useCallback
+  const t = (key, params = {}) => {
     const keys = key.split('.');
     
-    // Use current language state (which already accounts for forcedLanguage)
-    const currentLang = language;
-    console.log(`Translation for key "${key}" in language "${currentLang}"`);
-    let value = translations[currentLang];
+    // Always use current language state
+    let value = translations[language];
     
     for (const k of keys) {
       value = value?.[k];
     }
     
     if (typeof value !== 'string') {
-      console.warn(`Translation missing for key "${key}" in language "${currentLang}"`);
+      console.warn(`Translation missing for key "${key}" in language "${language}"`);
       return key;
     }
     
@@ -103,7 +101,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  }, [language]);
+  };
   
   return (
     <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
