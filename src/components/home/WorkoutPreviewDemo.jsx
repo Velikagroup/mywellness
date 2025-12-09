@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { ChevronDown, Dumbbell, Clock, RotateCcw, Flame, Timer, ChevronRight } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function WorkoutPreviewDemo() {
+  const { t } = useLanguage();
   const [expandedExercise, setExpandedExercise] = useState(1);
   const [selectedDay, setSelectedDay] = useState('lun');
 
@@ -89,8 +91,22 @@ export default function WorkoutPreviewDemo() {
         <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-5 py-4 border-b border-gray-100">
           <div className="flex items-center justify-between mb-3">
             <div>
-              <h2 className="text-lg font-bold text-gray-900">Piano Settimanale</h2>
-              <p className="text-xs text-gray-500">Forza & Resistenza • Personalizzato</p>
+              <h2 className="text-lg font-bold text-gray-900">
+                {t('common.lang') === 'it' && 'Piano Settimanale'}
+                {t('common.lang') === 'en' && 'Weekly Plan'}
+                {t('common.lang') === 'es' && 'Plan Semanal'}
+                {t('common.lang') === 'pt' && 'Plano Semanal'}
+                {t('common.lang') === 'de' && 'Wochenplan'}
+                {t('common.lang') === 'fr' && 'Plan Hebdomadaire'}
+              </h2>
+              <p className="text-xs text-gray-500">
+                {t('common.lang') === 'it' && 'Forza & Resistenza • Personalizzato'}
+                {t('common.lang') === 'en' && 'Strength & Endurance • Personalized'}
+                {t('common.lang') === 'es' && 'Fuerza & Resistencia • Personalizado'}
+                {t('common.lang') === 'pt' && 'Força & Resistência • Personalizado'}
+                {t('common.lang') === 'de' && 'Kraft & Ausdauer • Personalisiert'}
+                {t('common.lang') === 'fr' && 'Force & Endurance • Personnalisé'}
+              </p>
             </div>
             <div className="flex items-center gap-2">
               <div className="flex items-center gap-1 px-2 py-1 bg-orange-100 rounded-lg">
@@ -146,7 +162,7 @@ export default function WorkoutPreviewDemo() {
               <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
                 <span className="text-xs">🔥</span>
               </div>
-              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">Riscaldamento</h3>
+              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{t('workouts.warmup')}</h3>
             </div>
             <div className="flex gap-2">
               {warmup.map((exercise, idx) => (
@@ -164,7 +180,14 @@ export default function WorkoutPreviewDemo() {
               <div className="w-5 h-5 bg-purple-100 rounded-full flex items-center justify-center">
                 <Dumbbell className="w-3 h-3 text-purple-600" />
               </div>
-              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">Esercizi</h3>
+              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                {t('common.lang') === 'it' && 'Esercizi'}
+                {t('common.lang') === 'en' && 'Exercises'}
+                {t('common.lang') === 'es' && 'Ejercicios'}
+                {t('common.lang') === 'pt' && 'Exercícios'}
+                {t('common.lang') === 'de' && 'Übungen'}
+                {t('common.lang') === 'fr' && 'Exercices'}
+              </h3>
             </div>
             <div className="space-y-2">
               {exercises.map((exercise) => (
@@ -193,7 +216,14 @@ export default function WorkoutPreviewDemo() {
                       <div className="pt-2.5 space-y-2.5">
                         {/* Set Tracking Boxes */}
                         <div>
-                          <p className="text-xs font-semibold text-gray-700 mb-2">Serie completate</p>
+                          <p className="text-xs font-semibold text-gray-700 mb-2">
+                            {t('common.lang') === 'it' && 'Serie completate'}
+                            {t('common.lang') === 'en' && 'Completed Sets'}
+                            {t('common.lang') === 'es' && 'Series completadas'}
+                            {t('common.lang') === 'pt' && 'Séries completadas'}
+                            {t('common.lang') === 'de' && 'Abgeschlossene Sätze'}
+                            {t('common.lang') === 'fr' && 'Séries complétées'}
+                          </p>
                           <div className="grid grid-cols-4 gap-2">
                             {[...Array(parseInt(exercise.sets))].map((_, i) => (
                               <div 
@@ -235,7 +265,14 @@ export default function WorkoutPreviewDemo() {
 
                         {/* Tips */}
                         <div className="bg-gray-50 rounded-lg p-2">
-                          <p className="text-xs font-semibold text-gray-700 mb-1">💡 Consigli</p>
+                          <p className="text-xs font-semibold text-gray-700 mb-1">
+                            💡 {t('common.lang') === 'it' && 'Consigli'}
+                            {t('common.lang') === 'en' && 'Tips'}
+                            {t('common.lang') === 'es' && 'Consejos'}
+                            {t('common.lang') === 'pt' && 'Dicas'}
+                            {t('common.lang') === 'de' && 'Tipps'}
+                            {t('common.lang') === 'fr' && 'Conseils'}
+                          </p>
                           <ul className="space-y-0.5">
                             {exercise.tips.map((tip, idx) => (
                               <li key={idx} className="text-xs text-gray-600 flex items-start gap-1">
@@ -259,7 +296,7 @@ export default function WorkoutPreviewDemo() {
               <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
                 <span className="text-xs">🧘</span>
               </div>
-              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">Defaticamento</h3>
+              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{t('workouts.cooldown')}</h3>
             </div>
             {cooldown.map((exercise, idx) => (
               <div key={idx} className="bg-green-50/70 rounded-lg px-3 py-2 border border-green-100">
@@ -272,7 +309,12 @@ export default function WorkoutPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            {t('common.lang') === 'it' && 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'}
+            {t('common.lang') === 'en' && 'Interface preview • Features available after signup'}
+            {t('common.lang') === 'es' && 'Vista previa de interfaz • Funciones disponibles después del registro'}
+            {t('common.lang') === 'pt' && 'Prévia da interface • Funcionalidades disponíveis após o cadastro'}
+            {t('common.lang') === 'de' && 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'}
+            {t('common.lang') === 'fr' && 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'}
           </p>
         </div>
       </Card>

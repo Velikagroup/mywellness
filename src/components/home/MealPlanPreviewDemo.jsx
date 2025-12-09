@@ -289,7 +289,12 @@ export default function MealPlanPreviewDemo() {
         {/* Bottom Navigation (Demo) */}
         <div className="px-4 sm:px-6 py-3 sm:py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            Anteprima interfaccia • Funzionalità disponibili dopo il signup
+            {t('common.lang') === 'it' && 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'}
+            {t('common.lang') === 'en' && 'Interface preview • Features available after signup'}
+            {t('common.lang') === 'es' && 'Vista previa de interfaz • Funciones disponibles después del registro'}
+            {t('common.lang') === 'pt' && 'Prévia da interface • Funcionalidades disponíveis após o cadastro'}
+            {t('common.lang') === 'de' && 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'}
+            {t('common.lang') === 'fr' && 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'}
           </p>
         </div>
       </Card>

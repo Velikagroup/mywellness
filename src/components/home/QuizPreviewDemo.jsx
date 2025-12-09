@@ -8,6 +8,7 @@ import { CheckCircle, Sparkles } from "lucide-react";
  * Mostra un esempio di domanda del quiz con opzioni
  */
 export default function QuizPreviewDemo() {
+  const { t } = useLanguage();
   const [selected, setSelected] = React.useState('moderato');
 
   const options = [

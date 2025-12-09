@@ -8,6 +8,7 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContai
  * Replica ESATTAMENTE il layout della dashboard dall'immagine
  */
 export default function DashboardPreviewDemo() {
+  const { t } = useLanguage();
   const weightData = [
     { date: '24 Set', weight: 83.0 },
     { date: '28 Set', weight: 81.5 },

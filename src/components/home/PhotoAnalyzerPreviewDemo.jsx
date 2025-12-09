@@ -8,6 +8,7 @@ import { Camera, CheckCircle, AlertCircle, Sparkles, RefreshCw, TrendingUp, Tren
  * Mostra un esempio di analisi completata con confronto pianificato vs effettivo
  */
 export default function PhotoAnalyzerPreviewDemo() {
+  const { t } = useLanguage();
   // Dati demo del pasto pianificato
   const plannedMeal = {
     name: "Bistecca con Verdure",
