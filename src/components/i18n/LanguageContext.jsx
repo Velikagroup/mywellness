@@ -73,39 +73,39 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
   }, [location.pathname, forcedLanguage]);
 
-  // Translation function
-  const t = (key, params = {}) => {
-    const keys = key.split('.');
-    let value = translations[language];
-    
-    for (const k of keys) {
-      value = value?.[k];
-    }
-    
-    if (typeof value !== 'string') {
-      console.warn(`Translation missing for key "${key}" in language "${language}"`);
-      return key;
-    }
-    
-    return value.replace(/\{(\w+)\}/g, (match, paramName) => {
-      return params[paramName] !== undefined ? params[paramName] : match;
-    });
-  };
+  // Memoizza il context value e la funzione t insieme
+  const contextValue = useMemo(() => {
+    const t = (key, params = {}) => {
+      const keys = key.split('.');
+      let value = translations[language];
+      
+      for (const k of keys) {
+        value = value?.[k];
+      }
+      
+      if (typeof value !== 'string') {
+        console.warn(`Translation missing for key "${key}" in language "${language}"`);
+        return key;
+      }
+      
+      return value.replace(/\{(\w+)\}/g, (match, paramName) => {
+        return params[paramName] !== undefined ? params[paramName] : match;
+      });
+    };
 
-  // Change language
-  const setLanguage = (newLang) => {
-    if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
-    setLanguageState(newLang);
-    localStorage.setItem('preferred_language', newLang);
-  };
+    const setLanguage = (newLang) => {
+      if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
+      setLanguageState(newLang);
+      localStorage.setItem('preferred_language', newLang);
+    };
 
-  // Memoizza il context value per forzare re-render quando language cambia
-  const contextValue = useMemo(() => ({
-    language,
-    setLanguage,
-    t,
-    SUPPORTED_LANGUAGES
-  }), [language]);
+    return {
+      language,
+      setLanguage,
+      t,
+      SUPPORTED_LANGUAGES
+    };
+  }, [language]);
   
   return (
     <LanguageContext.Provider value={contextValue}>
