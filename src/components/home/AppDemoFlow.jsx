@@ -269,9 +269,9 @@ export default function AppDemoFlow() {
     <div className="w-full flex items-center justify-center px-4">
       <div className="relative" style={{ 
         width: isDesktop ? '650px' : '450px',
-        height: isDesktop ? '490px' : '780px',
-        minHeight: isDesktop ? '490px' : '780px',
-        maxHeight: isDesktop ? '490px' : '780px',
+        height: isDesktop ? '490px' : '810px',
+        minHeight: isDesktop ? '490px' : '810px',
+        maxHeight: isDesktop ? '490px' : '810px',
         margin: '0 auto',
         maxWidth: '100%'
       }}>
@@ -282,7 +282,7 @@ export default function AppDemoFlow() {
           }
         `}</style>
 
-        <div className="relative w-full h-full" style={{ minHeight: isDesktop ? '490px' : '780px', maxHeight: isDesktop ? '490px' : '780px' }}>
+        <div className="relative w-full h-full" style={{ minHeight: isDesktop ? '490px' : '810px', maxHeight: isDesktop ? '490px' : '810px' }}>
           <div
             className="absolute bg-white"
             style={{
