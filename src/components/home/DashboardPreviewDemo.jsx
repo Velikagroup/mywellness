@@ -31,6 +31,18 @@ export default function DashboardPreviewDemo() {
   const caloriesBurned = distanceCovered * targetCalories;
   const caloriesRemaining = totalCaloriesToBurn - caloriesBurned;
 
+  const subtitleText = t('common.lang') === 'pt' 
+    ? 'Visualize TMB, necessidades calóricas, gordura corporal e projeções de objetivos em tempo real.'
+    : t('common.lang') === 'es'
+    ? 'Visualiza TMB, necesidades calóricas, grasa corporal y proyecciones de objetivos en tiempo real.'
+    : t('common.lang') === 'de'
+    ? 'Visualisieren Sie BMR, Kalorienbedarf, Körperfett und Zielprognosen in Echtzeit.'
+    : t('common.lang') === 'fr'
+    ? 'Visualisez MB, besoins caloriques, masse grasse et projections d\'objectifs en temps réel.'
+    : t('common.lang') === 'en'
+    ? 'Visualize BMR, calorie needs, body fat and goal projections in real-time.'
+    : 'Visualizza TMB, necessità caloriche, grasso corporeo e proiezioni di obiettivi in tempo reale.';
+
   return (
     <>
       <style>{`
@@ -47,6 +59,32 @@ export default function DashboardPreviewDemo() {
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
       `}</style>
+
+      {/* TITOLO DASHBOARD CIENTÍFICO */}
+      <div className="text-center mb-6">
+        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary)]/10 rounded-full mb-3">
+          <Activity className="w-4 h-4 text-[var(--brand-primary)]" />
+          <span className="text-sm font-semibold text-[var(--brand-primary)]">
+            {t('common.lang') === 'pt' ? '✅ Análise Científica' : 
+             t('common.lang') === 'es' ? '✅ Análisis Científico' :
+             t('common.lang') === 'de' ? '✅ Wissenschaftliche Analyse' :
+             t('common.lang') === 'fr' ? '✅ Analyse Scientifique' :
+             t('common.lang') === 'en' ? '✅ Scientific Analysis' :
+             '✅ Analisi Scientifica'}
+          </span>
+        </div>
+        <h2 className="text-3xl font-black text-gray-900 mb-2">
+          {t('common.lang') === 'pt' ? 'Dashboard Científico' :
+           t('common.lang') === 'es' ? 'Dashboard Científico' :
+           t('common.lang') === 'de' ? 'Wissenschaftliches Dashboard' :
+           t('common.lang') === 'fr' ? 'Dashboard Scientifique' :
+           t('common.lang') === 'en' ? 'Scientific Dashboard' :
+           'Dashboard Scientifico'}
+        </h2>
+        <p className="text-gray-600 max-w-2xl mx-auto">
+          {subtitleText}
+        </p>
+      </div>
       
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
       {/* Colonna Sinistra - 8 colonne */}
