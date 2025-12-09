@@ -398,6 +398,18 @@ export const translations = {
       workoutMuscle5: "Glutei",
       workoutMuscle6: "Addominali",
       
+      // Health Score specific content
+      healthScoreProductCoconutOil: "Olio di Cocco",
+      healthScoreServing: "1 cucchiaio (15 mL)",
+      healthScoreRatingMediumLow: "Medio-Basso",
+      healthScorePositive1: "Zero colesterolo",
+      healthScorePositive2: "Nessun grasso trans",
+      healthScorePositive3: "100% naturale",
+      healthScoreNegative1: "Alto contenuto di grassi saturi (63% del valore giornaliero)",
+      healthScoreNegative2: "120 calorie per porzione",
+      healthScoreNegative3: "Grassi saturi: 12.5g per porzione",
+      healthScoreRecommendationText: "Usa con moderazione. L'olio di cocco è ricco di grassi saturi che possono aumentare il colesterolo LDL. Considera alternative più salutari come olio d'oliva o olio di avocado per uso quotidiano.",
+      
       // Ingredient Scanner Demo
       scannerTitle: "Scanner Ingredienti",
       scannerSubtitle: "Scansiona per valori nutrizionali precisi",
