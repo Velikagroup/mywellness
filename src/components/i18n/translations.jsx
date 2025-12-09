@@ -44,7 +44,7 @@ export const translations = {
       people: "persone",
       liveUpdate: "🔥 Aggiornamento live",
       howItWorks: "Come Funziona",
-      howItWorksSubtitle: "Un percorso guidato dall'intelligenza artificiale in 6 passaggi",
+      howItWorksSubtitle: "Un percorso guidato dall'intelligenza artificiale in pochi semplici passaggi",
       
       step1Badge: "📋 Valutazione Iniziale",
       step1Title: "Quiz Personalizzato",
@@ -1668,7 +1668,7 @@ export const translations = {
       people: "people",
       liveUpdate: "🔥 Live update",
       howItWorks: "How It Works",
-      howItWorksSubtitle: "A journey guided by artificial intelligence in 6 steps",
+      howItWorksSubtitle: "A journey guided by artificial intelligence in a few simple steps",
       
       step1Badge: "📋 Initial Assessment",
       step1Title: "Personalized Quiz",
@@ -3212,7 +3212,7 @@ export const translations = {
       people: "personas",
       liveUpdate: "🔥 Actualización en tiempo real",
       howItWorks: "Cómo Funciona",
-      howItWorksSubtitle: "Un camino guiado por inteligencia artificial en 6 pasos",
+      howItWorksSubtitle: "Un camino guiado por inteligencia artificial en pocos pasos simples",
       
       step1Badge: "📋 Evaluación Inicial",
       step1Title: "Quiz Personalizado",
@@ -4705,7 +4705,7 @@ export const translations = {
       people: "pessoas",
       liveUpdate: "🔥 Atualização em tempo real",
       howItWorks: "Como Funciona",
-      howItWorksSubtitle: "Uma jornada guiada pela inteligência artificial em 6 etapas",
+      howItWorksSubtitle: "Uma jornada guiada pela inteligência artificial em poucos passos simples",
       
       step1Badge: "📋 Avaliação Inicial",
       step1Title: "Quiz Personalizado",
@@ -6245,7 +6245,7 @@ export const translations = {
       people: "Personen",
       liveUpdate: "🔥 Live-Update",
       howItWorks: "Wie Es Funktioniert",
-      howItWorksSubtitle: "Eine von künstlicher Intelligenz geleitete Reise in 6 Schritten",
+      howItWorksSubtitle: "Eine von künstlicher Intelligenz geleitete Reise in wenigen einfachen Schritten",
       
       step1Badge: "📋 Erste Bewertung",
       step1Title: "Personalisiertes Quiz",
@@ -7738,7 +7738,7 @@ export const translations = {
       people: "personnes",
       liveUpdate: "🔥 Mise à jour en direct",
       howItWorks: "Comment Ça Marche",
-      howItWorksSubtitle: "Un parcours guidé par l'intelligence artificielle en 6 étapes",
+      howItWorksSubtitle: "Un parcours guidé par l'intelligence artificielle en quelques étapes simples",
       
       step1Badge: "📋 Évaluation Initiale",
       step1Title: "Quiz Personnalisé",
