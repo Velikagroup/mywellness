@@ -1983,7 +1983,7 @@ export default function AppDemoFlow() {
               src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/a1aeb726d_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
               alt="iPhone Frame"
               className="absolute pointer-events-none"
-              style={{ top: '-110px', left: '50%', transform: 'translateX(-50%)', height: 'calc(100% + 60px)', width: 'auto', zIndex: 2 }}
+              style={{ top: '-110px', left: '50%', transform: 'translateX(-50%)', width: '115%', height: 'auto', zIndex: 2 }}
             />
           )}
         </div>
