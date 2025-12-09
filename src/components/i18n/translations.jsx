@@ -3241,6 +3241,8 @@ export const translations = {
       usedBy: "Utilizado por más de",
       people: "personas",
       liveUpdate: "🔥 Actualización en tiempo real",
+      quizDemoPreview: "Vista previa de interfaz • Funciones disponibles después del registro",
+      quizDemoQuestionsCompleted: "preguntas completadas",
       howItWorks: "Cómo Funciona",
       howItWorksSubtitle: "Un camino guiado por inteligencia artificial en pocos pasos simples",
       
@@ -4747,6 +4749,8 @@ export const translations = {
       usedBy: "Usado por mais de",
       people: "pessoas",
       liveUpdate: "🔥 Atualização em tempo real",
+      quizDemoPreview: "Prévia da interface • Funcionalidades disponíveis após o cadastro",
+      quizDemoQuestionsCompleted: "perguntas concluídas",
       howItWorks: "Como Funciona",
       howItWorksSubtitle: "Uma jornada guiada pela inteligência artificial em poucos passos simples",
       
