@@ -7,45 +7,45 @@ export default function ShoppingListPreviewDemo() {
   const { t } = useLanguage();
   const categories = [
     {
-      name: 'Frutta e Verdura',
+      name: t('home.shoppingCategoryFruitVeg'),
       icon: '🥬',
       items: [
-        { name: 'Pomodori', quantity: '500g', checked: true },
-        { name: 'Spinaci freschi', quantity: '300g', checked: false },
-        { name: 'Banane', quantity: '6 unità', checked: true }
+        { name: t('home.shoppingItemTomatoes'), quantity: '500g', checked: true },
+        { name: t('home.shoppingItemSpinach'), quantity: '300g', checked: false },
+        { name: t('home.shoppingItemBananas'), quantity: `6 ${t('home.shoppingUnit')}`, checked: true }
       ]
     },
     {
-      name: 'Carne e Pesce',
+      name: t('home.shoppingCategoryMeat'),
       icon: '🥩',
       items: [
-        { name: 'Petto di pollo', quantity: '800g', checked: false },
-        { name: 'Salmone fresco', quantity: '400g', checked: false }
+        { name: t('home.shoppingItemChickenBreast'), quantity: '800g', checked: false },
+        { name: t('home.shoppingItemSalmon'), quantity: '400g', checked: false }
       ]
     },
     {
-      name: 'Latticini e Uova',
+      name: t('home.shoppingCategoryDairy'),
       icon: '🥛',
       items: [
-        { name: 'Yogurt greco', quantity: '1kg', checked: true },
-        { name: 'Uova', quantity: '12 unità', checked: false },
-        { name: 'Mozzarella', quantity: '250g', checked: false }
+        { name: t('home.shoppingItemGreekYogurt'), quantity: '1kg', checked: true },
+        { name: t('home.shoppingItemEggs'), quantity: `12 ${t('home.shoppingUnit')}`, checked: false },
+        { name: t('home.shoppingItemMozzarella'), quantity: '250g', checked: false }
       ]
     },
     {
-      name: 'Cereali e Pasta',
+      name: t('home.shoppingCategoryGrains'),
       icon: '🍝',
       items: [
-        { name: 'Riso integrale', quantity: '500g', checked: false },
-        { name: 'Pasta integrale', quantity: '500g', checked: true }
+        { name: t('home.shoppingItemBrownRice'), quantity: '500g', checked: false },
+        { name: t('home.shoppingItemWholePasta'), quantity: '500g', checked: true }
       ]
     },
     {
-      name: 'Condimenti',
+      name: t('home.shoppingCategoryCondiments'),
       icon: '🧂',
       items: [
-        { name: 'Olio EVO', quantity: '1L', checked: true },
-        { name: 'Sale rosa', quantity: '250g', checked: true }
+        { name: t('home.shoppingItemOliveOil'), quantity: '1L', checked: true },
+        { name: t('home.shoppingItemPinkSalt'), quantity: '250g', checked: true }
       ]
     }
   ];

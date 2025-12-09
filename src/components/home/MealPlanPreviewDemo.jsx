@@ -15,22 +15,22 @@ const MacroCircle = ({ label, value, unit, color }) => (
 
 export default function MealPlanPreviewDemo() {
   const { t } = useLanguage();
-  const [selectedDay, setSelectedDay] = useState('Lun');
+  const [selectedDay, setSelectedDay] = useState('Mon');
   const [selectedMeal, setSelectedMeal] = useState(null);
 
   const daysOfWeek = [
-    { id: 'Lun', label: 'Lun' },
-    { id: 'Mar', label: 'Mar' },
-    { id: 'Mer', label: 'Mer' },
-    { id: 'Gio', label: 'Gio' },
-    { id: 'Ven', label: 'Ven' },
-    { id: 'Sab', label: 'Sab' },
-    { id: 'Dom', label: 'Dom' }
+    { id: 'Mon', label: t('home.mealPlanMonday') },
+    { id: 'Tue', label: t('home.mealPlanTuesday') },
+    { id: 'Wed', label: t('home.mealPlanWednesday') },
+    { id: 'Thu', label: t('home.mealPlanThursday') },
+    { id: 'Fri', label: t('home.mealPlanFriday') },
+    { id: 'Sat', label: t('home.mealPlanSaturday') },
+    { id: 'Sun', label: t('home.mealPlanSunday') }
   ];
 
   const mondayMeals = [
     {
-      name: 'Colazione',
+      name: t('home.mealPlanBreakfast'),
       title: 'Yogurt Greco con Miele e Noci',
       calories: 342,
       image: 'https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=400&fit=crop',
@@ -53,7 +53,7 @@ export default function MealPlanPreviewDemo() {
       difficulty: 'facile'
     },
     {
-      name: 'Spuntino Mattina',
+      name: t('home.mealPlanMorningSnack'),
       title: 'Spuntino di Fragole e Burro',
       calories: 159,
       image: 'https://images.unsplash.com/photo-1464454709131-ffd692591ee5?w=400&h=400&fit=crop',
@@ -73,7 +73,7 @@ export default function MealPlanPreviewDemo() {
       difficulty: 'facile'
     },
     {
-      name: 'Pranzo',
+      name: t('home.mealPlanLunch'),
       title: 'Pane/Fette di Manzo con Burro',
       calories: 397,
       image: 'https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?w=400&h=400&fit=crop',
@@ -93,7 +93,7 @@ export default function MealPlanPreviewDemo() {
       difficulty: 'media'
     },
     {
-      name: 'Snack Pomeridiano',
+      name: t('home.mealPlanAfternoonSnack'),
       title: 'Uova e Burro con Peperoni',
       calories: 160,
       image: 'https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=400&fit=crop',
@@ -113,7 +113,7 @@ export default function MealPlanPreviewDemo() {
       difficulty: 'facile'
     },
     {
-      name: 'Cena',
+      name: t('home.mealPlanDinner'),
       title: 'Bistecca di Manzo con Burro Aromatizzato',
       calories: 395,
       image: 'https://images.unsplash.com/photo-1558030006-450675393462?w=400&h=400&fit=crop',
@@ -188,7 +188,7 @@ export default function MealPlanPreviewDemo() {
         {/* Header */}
         <div className="bg-gradient-to-br from-gray-50 to-white px-4 sm:px-6 py-5 border-b border-gray-100 overflow-hidden">
           <div className="flex items-center justify-between mb-4 gap-2">
-            <h2 className="text-base sm:text-xl font-bold text-gray-900 truncate flex-shrink min-w-0">Programmazione Settimanale</h2>
+            <h2 className="text-base sm:text-xl font-bold text-gray-900 truncate flex-shrink min-w-0">{t('home.mealPlanWeeklyPlanning')}</h2>
           </div>
 
           {/* Days selector */}
@@ -212,7 +212,7 @@ export default function MealPlanPreviewDemo() {
         {/* Protocol Card */}
         <div className="px-3 sm:px-6 py-4 bg-gradient-to-br from-teal-50/50 to-blue-50/30 overflow-hidden">
           <div className="mb-3">
-            <h3 className="text-sm sm:text-base font-bold text-gray-900">Protocollo di Lunedì</h3>
+            <h3 className="text-sm sm:text-base font-bold text-gray-900">{t('home.mealPlanMondayProtocol')}</h3>
           </div>
 
           {/* Macros Grid */}
@@ -237,7 +237,7 @@ export default function MealPlanPreviewDemo() {
 
           {/* Target giornaliero */}
           <div className="text-[10px] sm:text-xs text-gray-600 text-center">
-            <span className="font-medium">Target: 1696 kcal</span>
+            <span className="font-medium">{t('home.mealPlanTarget')}: 1696 kcal</span>
             <span className="ml-1 sm:ml-2 text-gray-400">(-243)</span>
           </div>
         </div>
@@ -317,29 +317,29 @@ export default function MealPlanPreviewDemo() {
 
                 <div className="p-4 bg-gray-50 rounded-lg border">
                   <h3 className="text-lg font-semibold text-gray-800 mb-4 flex items-center gap-2">
-                    <BarChart2 className="w-5 h-5 text-teal-600" /> Riepilogo Nutrizionale
+                    <BarChart2 className="w-5 h-5 text-teal-600" /> {t('home.mealPlanNutritionalSummary')}
                   </h3>
                   <div className="flex justify-around items-center text-center">
                     <div className="flex flex-col items-center">
                       <p className="text-3xl font-bold text-teal-600">{selectedMeal.calories}</p>
                       <p className="text-sm font-medium text-gray-600">Kcal</p>
                     </div>
-                    <MacroCircle label="Proteine" value={selectedMeal.total_protein} unit="g" color="border-red-400" />
-                    <MacroCircle label="Carboidrati" value={selectedMeal.total_carbs} unit="g" color="border-blue-400" />
-                    <MacroCircle label="Grassi" value={selectedMeal.total_fat} unit="g" color="border-yellow-400" />
+                    <MacroCircle label={t('home.mealPlanProteins')} value={selectedMeal.total_protein} unit="g" color="border-red-400" />
+                    <MacroCircle label={t('home.mealPlanCarbs')} value={selectedMeal.total_carbs} unit="g" color="border-blue-400" />
+                    <MacroCircle label={t('home.mealPlanFats')} value={selectedMeal.total_fat} unit="g" color="border-yellow-400" />
                   </div>
                 </div>
                 
                 <div className="flex items-center justify-around text-sm text-gray-600 bg-gray-50 rounded-lg border p-3">
-                  <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> Prep: {selectedMeal.prep_time} min</div>
-                  <div className="flex items-center gap-2 capitalize"><ChefHat className="w-4 h-4" /> Difficoltà: {selectedMeal.difficulty}</div>
+                  <div className="flex items-center gap-2"><Clock className="w-4 h-4" /> {t('home.mealPlanPrep')}: {selectedMeal.prep_time} min</div>
+                  <div className="flex items-center gap-2 capitalize"><ChefHat className="w-4 h-4" /> {t('home.mealPlanDifficulty')}: {t(`home.mealPlan${selectedMeal.difficulty.charAt(0).toUpperCase() + selectedMeal.difficulty.slice(1)}`)}</div>
                 </div>
               </div>
 
               <div className="space-y-6">
                 <div>
                   <h3 className="text-lg font-semibold text-gray-800 mb-2 flex items-center gap-2">
-                    <Sprout className="w-5 h-5 text-green-600"/> Ingredienti
+                    <Sprout className="w-5 h-5 text-green-600"/> {t('home.mealPlanIngredients')}
                   </h3>
                   <div className="space-y-2">
                     {selectedMeal.ingredients.map((ing, index) => (
@@ -357,7 +357,7 @@ export default function MealPlanPreviewDemo() {
                 </div>
 
                 <div>
-                  <h3 className="text-lg font-semibold text-gray-800 mb-2">Preparazione</h3>
+                  <h3 className="text-lg font-semibold text-gray-800 mb-2">{t('home.mealPlanPreparation')}</h3>
                   <ol className="list-decimal list-inside space-y-2 text-gray-700">
                     {selectedMeal.instructions.map((step, index) => (
                       <li key={index}>{step}</li>

@@ -8,7 +8,7 @@ export default function IngredientScannerPreviewDemo() {
   const [scanStep, setScanStep] = useState(0);
 
   const scannedProduct = {
-    name: 'Petto di Pollo Fileni',
+    name: t('home.scannerProductName'),
     brand: 'Fileni',
     barcode: '8003410252079',
     image: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=400&fit=crop',

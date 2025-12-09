@@ -13,64 +13,64 @@ export default function PantryPreviewDemo() {
 
   const pantryItems = [
     {
-      name: 'Petto di Pollo',
+      name: t('home.pantryChickenBreast'),
       quantity: '500g',
       icon: '🍗',
       calories: 165,
       protein: 31,
       carbs: 0,
       fat: 3.6,
-      category: 'Proteine'
+      category: t('home.pantryCategoryProtein')
     },
     {
-      name: 'Riso Basmati',
+      name: t('home.pantryBasmatiRice'),
       quantity: '1kg',
       icon: '🍚',
       calories: 130,
       protein: 2.7,
       carbs: 28,
       fat: 0.3,
-      category: 'Carboidrati'
+      category: t('home.pantryCategoryCarbs')
     },
     {
-      name: 'Broccoli',
+      name: t('home.pantryBroccoli'),
       quantity: '300g',
       icon: '🥦',
       calories: 34,
       protein: 2.8,
       carbs: 7,
       fat: 0.4,
-      category: 'Verdure'
+      category: t('home.pantryCategoryVegetables')
     },
     {
-      name: 'Olio EVO',
+      name: t('home.pantryOliveOil'),
       quantity: '750ml',
       icon: '🫒',
       calories: 884,
       protein: 0,
       carbs: 0,
       fat: 100,
-      category: 'Grassi'
+      category: t('home.pantryCategoryFats')
     },
     {
-      name: 'Uova',
-      quantity: '6 pz',
+      name: t('home.pantryEggs'),
+      quantity: `6 ${t('home.pantryPieces')}`,
       icon: '🥚',
       calories: 155,
       protein: 13,
       carbs: 1.1,
       fat: 11,
-      category: 'Proteine'
+      category: t('home.pantryCategoryProtein')
     },
     {
-      name: 'Latte Scremato',
+      name: t('home.pantrySkimMilk'),
       quantity: '1L',
       icon: '🥛',
       calories: 34,
       protein: 3.4,
       carbs: 5,
       fat: 0.1,
-      category: 'Latticini'
+      category: t('home.pantryCategoryDairy')
     }
   ];
 
