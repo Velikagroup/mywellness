@@ -1,10 +1,12 @@
 import React, { useState } from 'react';
 import { Card } from '@/components/ui/card';
 import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Dumbbell, Save, TrendingDown } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ProgressPhotoPreviewDemo() {
+  const { t } = useLanguage();
   const analysisData = {
-    targetZone: 'Addome',
+    targetZone: t('home.progressPhotoZone'),
     comparison: 'improved',
     daysSince: 28,
     detailedAnalysis: {
@@ -32,14 +34,14 @@ export default function ProgressPhotoPreviewDemo() {
     },
     recommendations: {
       diet: [
-        'Mantieni deficit calorico 350kcal - risultati ottimali',
-        'Aumenta proteine a 1.6-1.8g/kg per preservare massa magra',
-        'Integra Omega-3 (2-3g/die) per ridurre infiammazione'
+        t('home.progressPhotoDiet1'),
+        t('home.progressPhotoDiet2'),
+        t('home.progressPhotoDiet3')
       ],
       workout: [
-        'Aumenta frequenza core a 4-5 sessioni/settimana',
-        'Aggiungi 3 sessioni HIIT/settimana da 20-25 minuti',
-        'Intensifica lavoro obliqui: side plank, russian twist'
+        t('home.progressPhotoWorkout1'),
+        t('home.progressPhotoWorkout2'),
+        t('home.progressPhotoWorkout3')
       ]
     }
   };
@@ -82,11 +84,11 @@ export default function ProgressPhotoPreviewDemo() {
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 px-6 py-5 border-b border-gray-100">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <h2 className="text-xl font-bold text-gray-900">Analisi Completata</h2>
-                <p className="text-sm text-gray-600 mt-1">Zona Target: {analysisData.targetZone} • {analysisData.daysSince} giorni</p>
+                <h2 className="text-xl font-bold text-gray-900">{t('home.progressPhotoTitle')}</h2>
+                <p className="text-sm text-gray-600 mt-1">{t('home.progressPhotoTarget')}: {analysisData.targetZone} • {analysisData.daysSince} {t('home.progressPhotoDays')}</p>
               </div>
               <div className="px-4 py-2 bg-green-100 rounded-full">
-                <span className="text-sm font-bold text-green-700">✓ Progressi Eccellenti</span>
+                <span className="text-sm font-bold text-green-700">✓ {t('home.progressPhotoExcellent')}</span>
               </div>
             </div>
             
@@ -99,7 +101,7 @@ export default function ProgressPhotoPreviewDemo() {
                   className="w-full h-56 object-cover rounded-xl"
                 />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                  Prima - {analysisData.daysSince} giorni fa
+                  {t('home.progressPhotoBefore')} - {analysisData.daysSince} {t('home.progressPhotoDaysAgo')}
                 </div>
               </div>
               <div className="relative">
@@ -109,7 +111,7 @@ export default function ProgressPhotoPreviewDemo() {
                   className="w-full h-56 object-cover rounded-xl"
                 />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                  Dopo - Oggi
+                  {t('home.progressPhotoAfter')} - {t('home.progressPhotoToday')}
                 </div>
               </div>
             </div>
@@ -122,13 +124,13 @@ export default function ProgressPhotoPreviewDemo() {
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                Analisi Scientifica
+                {t('home.progressPhotoScientific')}
               </h3>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Muscle Definition Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-blue-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">Definizione Muscolare</p>
+                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoMuscle')}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -153,7 +155,7 @@ export default function ProgressPhotoPreviewDemo() {
 
                   {/* Fat Reduction Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-green-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">Riduzione Grasso</p>
+                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoFat')}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -174,12 +176,12 @@ export default function ProgressPhotoPreviewDemo() {
                       <TrendingDown className="w-3 h-3 text-green-600" />
                       <span className="text-xs font-bold text-green-600">{analysisData.detailedAnalysis.fatReduction.change}</span>
                     </div>
-                    <p className="text-xs text-green-700 font-semibold mt-1">-{analysisData.detailedAnalysis.fatReduction.waistReduction} vita</p>
+                    <p className="text-xs text-green-700 font-semibold mt-1">-{analysisData.detailedAnalysis.fatReduction.waistReduction} {t('home.progressPhotoWaist')}</p>
                   </div>
 
                   {/* Skin Tone Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-purple-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">Tono Cutaneo</p>
+                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoSkin')}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -204,7 +206,7 @@ export default function ProgressPhotoPreviewDemo() {
 
                   {/* Posture Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-teal-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">Postura</p>
+                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoPosture')}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -235,14 +237,14 @@ export default function ProgressPhotoPreviewDemo() {
                 <div className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                Raccomandazioni Personal Trainer AI
+                {t('home.progressPhotoRecommendations')}
               </h3>
 
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Diet Recommendations with Button */}
                 <div>
                   <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    🍽️ Modifiche Nutrizionali
+                    🍽️ {t('home.progressPhotoDietChanges')}
                   </h4>
                   <div className="space-y-2 mb-4">
                     {analysisData.recommendations.diet.map((rec, idx) => (
@@ -257,14 +259,14 @@ export default function ProgressPhotoPreviewDemo() {
                     className="w-full bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    Applica Piano Nutrizionale
+                    {t('home.progressPhotoApplyDiet')}
                   </button>
                 </div>
 
                 {/* Workout Recommendations with Button */}
                 <div>
                   <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    💪 Modifiche Allenamento
+                    💪 {t('home.progressPhotoWorkoutChanges')}
                   </h4>
                   <div className="space-y-2 mb-4">
                     {analysisData.recommendations.workout.map((rec, idx) => (
@@ -279,7 +281,7 @@ export default function ProgressPhotoPreviewDemo() {
                     className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    Applica Piano Allenamento
+                    {t('home.progressPhotoApplyWorkout')}
                   </button>
                 </div>
               </div>
@@ -292,7 +294,7 @@ export default function ProgressPhotoPreviewDemo() {
                 className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-base"
               >
                 <Save className="w-5 h-5" />
-                Salva Analisi nella Cronologia
+                {t('home.progressPhotoSave')}
               </button>
             </div>
           </div>
@@ -300,7 +302,7 @@ export default function ProgressPhotoPreviewDemo() {
           {/* Footer */}
           <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
             <p className="text-xs text-gray-400 italic text-center">
-              Anteprima interfaccia • Funzionalità disponibili dopo il signup
+              {t('home.quizDemoPreview')}
             </p>
           </div>
         </div>
