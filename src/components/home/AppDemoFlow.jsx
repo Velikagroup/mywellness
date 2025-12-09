@@ -519,7 +519,7 @@ export default function AppDemoFlow() {
                         <TrendingDown className="w-5 h-5 text-[var(--brand-primary)]" />
                         <span className="text-sm font-bold text-gray-800">{t('home.demoBasalMetabolism')}</span>
                       </div>
-                      <div className="text-3xl font-black text-gray-900">1500 <span className="text-base font-normal text-gray-500">kcal/giorno</span></div>
+                      <div className="text-3xl font-black text-gray-900">1500 <span className="text-base font-normal text-gray-500">{t('home.demoKcalPerDay')}</span></div>
                     </motion.div>
 
                     <motion.div
@@ -605,7 +605,7 @@ export default function AppDemoFlow() {
                         transition={{ duration: 2, ease: "easeInOut" }}
                         className="p-3 space-y-2"
                       >
-                        {['Mediterranea', 'Keto', 'Vegetariana', 'Vegana', 'Low Carb', 'Paleo'].map((diet, i) => (
+                        {[t('home.demoDietMediterranean'), t('home.demoDietKeto'), t('home.demoDietVegetarian'), t('home.demoDietVegan'), t('home.demoDietLowCarb'), t('home.demoDietPaleo')].map((diet, i) => (
                           <motion.div
                             key={diet}
                             className={`p-3 rounded-lg border-2 transition-all ${
