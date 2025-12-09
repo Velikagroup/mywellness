@@ -286,7 +286,7 @@ export default function AppDemoFlow() {
           <div
             className="absolute bg-white"
             style={{
-              top: isDesktop ? 'calc(3.5% - 3px)' : '1.5%',
+              top: isDesktop ? 'calc(3.5% - 3px)' : '8.5%',
               left: '50%',
               width: isDesktop ? '610px' : '96.5%',
               height: isDesktop ? '460px' : '756px',
