@@ -73,19 +73,9 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
   }, [location.pathname, forcedLanguage]);
 
-  // Change language (without URL changes for now)
-  const setLanguage = (newLang) => {
-    if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
-    
-    setLanguageState(newLang);
-    localStorage.setItem('preferred_language', newLang);
-  };
-
-  // Translation function - NO useCallback
+  // Translation function
   const t = (key, params = {}) => {
     const keys = key.split('.');
-    
-    // Always use current language state
     let value = translations[language];
     
     for (const k of keys) {
@@ -97,14 +87,28 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
       return key;
     }
     
-    // Replace parameters like {name} with actual values
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
   };
+
+  // Change language
+  const setLanguage = (newLang) => {
+    if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
+    setLanguageState(newLang);
+    localStorage.setItem('preferred_language', newLang);
+  };
+
+  // Memoizza il context value per forzare re-render quando language cambia
+  const contextValue = useMemo(() => ({
+    language,
+    setLanguage,
+    t,
+    SUPPORTED_LANGUAGES
+  }), [language]);
   
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
+    <LanguageContext.Provider value={contextValue}>
       {children}
     </LanguageContext.Provider>
   );
