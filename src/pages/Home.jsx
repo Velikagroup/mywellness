@@ -667,7 +667,7 @@ function HomeContent() {
         </div>
       }
 
-      <section className="pt-32 pb-20 px-4 md:px-6">
+      <section className="pt-48 md:pt-24 pb-20 px-4 md:px-6">
         <div className="max-w-4xl mx-auto text-center">
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
             <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-transparent border-2 border-transparent rounded-full text-sm shadow-lg" style={{
