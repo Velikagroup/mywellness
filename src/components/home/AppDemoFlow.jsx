@@ -1980,7 +1980,7 @@ export default function AppDemoFlow() {
             </svg>
           ) : (
             <svg
-              viewBox="0 0 450 840"
+              viewBox="0 0 450 900"
               className="absolute w-full h-full pointer-events-none"
               style={{ top: '-110px', left: 0, zIndex: 2 }}
             >
