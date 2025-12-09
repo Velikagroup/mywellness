@@ -80,11 +80,11 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     localStorage.setItem('preferred_language', newLang);
   }, []);
 
-  // Translation function - always uses current language state
-  const t = useCallback((key, params = {}) => {
+  // Translation function - SEMPRE usa forcedLanguage se disponibile
+  const t = (key, params = {}) => {
     const keys = key.split('.');
     
-    // Use forcedLanguage if available, otherwise use state
+    // CRITICAL: Use forcedLanguage FIRST if available
     const currentLang = forcedLanguage || language;
     let value = translations[currentLang];
     
@@ -93,15 +93,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
     
     if (typeof value !== 'string') {
-      // Fallback to Italian if translation not found
-      const fallbackKeys = key.split('.');
-      let fallbackValue = translations[DEFAULT_LANGUAGE];
-      for (const k of fallbackKeys) {
-        fallbackValue = fallbackValue?.[k];
-      }
-      if (typeof fallbackValue === 'string') {
-        return fallbackValue;
-      }
+      console.warn(`Translation missing for key "${key}" in language "${currentLang}"`);
       return key;
     }
     
@@ -109,10 +101,13 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  }, [language, forcedLanguage]);
+  };
 
+  // Expose the actual effective language to consumers
+  const effectiveLanguage = forcedLanguage || language;
+  
   return (
-    <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
+    <LanguageContext.Provider value={{ language: effectiveLanguage, setLanguage, t, SUPPORTED_LANGUAGES }}>
       {children}
     </LanguageContext.Provider>
   );
