@@ -133,6 +133,10 @@ export const translations = {
       kgLost: "persi dai nostri utenti",
       avgPerUser: "🔥 Media: 4.5kg per utente • Aggiornamento live",
       
+      quizTargetWeightTitle: "Qual è il tuo <span class='text-[#26847F]'>peso obiettivo</span>?",
+      quizTargetWeightSubtitle: "L'obiettivo che vuoi raggiungere",
+      demoMealName: "Salmone al forno",
+      
       popupTitle1: "Scopri la tua",
       popupTitle2: "massa grassa",
       popupSubtitle: "e costruisci il",
@@ -1757,6 +1761,10 @@ export const translations = {
       kgLost: "lost by our users",
       avgPerUser: "🔥 Average: 4.5kg per user • Live update",
       
+      quizTargetWeightTitle: "What is your <span class='text-[#26847F]'>target weight</span>?",
+      quizTargetWeightSubtitle: "The goal you want to achieve",
+      demoMealName: "Baked Salmon",
+      
       popupTitle1: "Discover your",
       popupTitle2: "body fat",
       popupSubtitle: "and build the",
@@ -3301,6 +3309,10 @@ export const translations = {
       kgLost: "perdidos por nuestros usuarios",
       avgPerUser: "🔥 Media: 4.5kg por usuario • Actualización en vivo",
       
+      quizTargetWeightTitle: "¿Cuál es tu <span class='text-[#26847F]'>peso objetivo</span>?",
+      quizTargetWeightSubtitle: "El objetivo que quieres alcanzar",
+      demoMealName: "Salmón al horno",
+      
       popupTitle1: "Descubre tu",
       popupTitle2: "grasa corporal",
       popupSubtitle: "y construye el",
@@ -4793,6 +4805,10 @@ export const translations = {
       testimonialsTitle: "O Que Dizem Nossos Usuários.",
       kgLost: "perdidos pelos nossos usuários",
       avgPerUser: "🔥 Média: 4.5kg por usuário • Atualização ao vivo",
+      
+      quizTargetWeightTitle: "Qual é o seu <span class='text-[#26847F]'>peso objetivo</span>?",
+      quizTargetWeightSubtitle: "O objetivo que você quer alcançar",
+      demoMealName: "Salmão assado",
       
       popupTitle1: "Descubra sua",
       popupTitle2: "gordura corporal",
@@ -6334,6 +6350,10 @@ export const translations = {
       kgLost: "verloren von unseren Nutzern",
       avgPerUser: "🔥 Durchschnitt: 4.5kg pro Nutzer • Live-Update",
       
+      quizTargetWeightTitle: "Was ist Ihr <span class='text-[#26847F]'>Zielgewicht</span>?",
+      quizTargetWeightSubtitle: "Das Ziel, das Sie erreichen möchten",
+      demoMealName: "Gebackener Lachs",
+      
       popupTitle1: "Entdecken Sie Ihr",
       popupTitle2: "Körperfett",
       popupSubtitle: "und erstellen Sie den",
@@ -7826,6 +7846,10 @@ export const translations = {
       testimonialsTitle: "Ce Que Disent Nos Utilisateurs.",
       kgLost: "perdus par nos utilisateurs",
       avgPerUser: "🔥 Moyenne: 4.5kg par utilisateur • Mise à jour en direct",
+      
+      quizTargetWeightTitle: "Quel est votre <span class='text-[#26847F]'>poids cible</span>?",
+      quizTargetWeightSubtitle: "L'objectif que vous souhaitez atteindre",
+      demoMealName: "Saumon au four",
       
       popupTitle1: "Découvrez votre",
       popupTitle2: "masse grasse",
