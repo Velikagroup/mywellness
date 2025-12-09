@@ -1928,63 +1928,14 @@ export default function AppDemoFlow() {
             </AnimatePresence>
           </div>
 
-          {isDesktop ? (
+          {isDesktop && (
             <svg
               viewBox="0 0 820 615"
               className="absolute inset-0 w-full h-full pointer-events-none"
               style={{ left: '-3px', zIndex: 2 }}
             >
-              <defs>
-                <linearGradient id="frameGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                  <stop offset="0%" stopColor="#1a1a1a" />
-                  <stop offset="50%" stopColor="#2a2a2a" />
-                  <stop offset="100%" stopColor="#1a1a1a" />
-                </linearGradient>
-                <filter id="frameShadow">
-                  <feGaussianBlur in="SourceAlpha" stdDeviation="4"/>
-                  <feOffset dx="0" dy="3" result="offsetblur"/>
-                  <feComponentTransfer>
-                    <feFuncA type="linear" slope="0.5"/>
-                  </feComponentTransfer>
-                  <feMerge>
-                    <feMergeNode/>
-                    <feMergeNode in="SourceGraphic"/>
-                  </feMerge>
-                </filter>
-                <mask id="screenMask">
-                  <rect x="0" y="0" width="820" height="615" fill="white"/>
-                  <rect x="29" y="18" width="762" height="579" rx="18" ry="18" fill="black"/>
-                </mask>
-              </defs>
-
-              <rect
-                x="2" y="2"
-                width="816" height="611"
-                rx="32" ry="32"
-                fill="url(#frameGradient)"
-                stroke="#0a0a0a"
-                strokeWidth="1"
-                filter="url(#frameShadow)"
-                mask="url(#screenMask)"
-              />
-
-              <circle cx="410" cy="9" r="3" fill="#0a0a0a" opacity="0.9"/>
-
-              <rect
-                x="29" y="18"
-                width="762" height="2"
-                rx="1" ry="1"
-                fill="white"
-                opacity="0.1"
-              />
+          ...
             </svg>
-          ) : (
-            <img
-              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/cbc5be4e2_vecteezy_white-smartphone-mockup-blank-screen-isolated-on-transparent_42538623.png"
-              alt="iPhone Frame"
-              className="absolute pointer-events-none"
-              style={{ top: '-110px', left: '50%', transform: 'translateX(-50%)', width: '125%', height: 'auto', zIndex: 2 }}
-            />
           )}
         </div>
       </div>
