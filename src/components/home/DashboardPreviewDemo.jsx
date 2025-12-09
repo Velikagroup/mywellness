@@ -9,13 +9,13 @@ import { useLanguage } from '../i18n/LanguageContext';
  * Replica ESATTAMENTE il layout della dashboard dall'immagine
  */
 export default function DashboardPreviewDemo() {
-  const { t } = useLanguage();
-  const weightData = [
-    { date: '24 Set', weight: 83.0 },
-    { date: '28 Set', weight: 81.5 },
-    { date: '01 Ott', weight: 80.2 },
-    { date: '02 Ott', weight: 79.0 }
-  ];
+  const { t, language } = useLanguage();
+  const weightData = React.useMemo(() => [
+    { date: language === 'es' ? '24 Sep' : '24 Set', weight: 83.0 },
+    { date: language === 'es' ? '28 Sep' : '28 Set', weight: 81.5 },
+    { date: language === 'es' ? '01 Oct' : '01 Ott', weight: 80.2 },
+    { date: language === 'es' ? '02 Oct' : '02 Ott', weight: 79.0 }
+  ], [language]);
 
   const startWeight = 83.0;
   const currentWeight = 79.0;
@@ -31,17 +31,14 @@ export default function DashboardPreviewDemo() {
   const caloriesBurned = distanceCovered * targetCalories;
   const caloriesRemaining = totalCaloriesToBurn - caloriesBurned;
 
-  const subtitleText = t('common.lang') === 'pt' 
-    ? 'Visualize TMB, necessidades calóricas, gordura corporal e projeções de objetivos em tempo real.'
-    : t('common.lang') === 'es'
-    ? 'Visualiza TMB, necesidades calóricas, grasa corporal y proyecciones de objetivos en tiempo real.'
-    : t('common.lang') === 'de'
-    ? 'Visualisieren Sie BMR, Kalorienbedarf, Körperfett und Zielprognosen in Echtzeit.'
-    : t('common.lang') === 'fr'
-    ? 'Visualisez MB, besoins caloriques, masse grasse et projections d\'objectifs en temps réel.'
-    : t('common.lang') === 'en'
-    ? 'Visualize BMR, calorie needs, body fat and goal projections in real-time.'
-    : 'Visualizza TMB, necessità caloriche, grasso corporeo e proiezioni di obiettivi in tempo reale.';
+  const subtitleText = React.useMemo(() => {
+    if (language === 'pt') return 'Visualize TMB, necessidades calóricas, gordura corporal e projeções de objetivos em tempo real.';
+    if (language === 'es') return 'Visualiza TMB, necesidades calóricas, grasa corporal y proyecciones de objetivos en tiempo real.';
+    if (language === 'de') return 'Visualisieren Sie BMR, Kalorienbedarf, Körperfett und Zielprognosen in Echtzeit.';
+    if (language === 'fr') return 'Visualisez MB, besoins caloriques, masse grasse et projections d\'objectifs en temps réel.';
+    if (language === 'en') return 'Visualize BMR, calorie needs, body fat and goal projections in real-time.';
+    return 'Visualizza TMB, necessità caloriche, grasso corporeo e proiezioni di obiettivi in tempo reale.';
+  }, [language]);
 
   return (
     <>
