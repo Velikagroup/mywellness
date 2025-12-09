@@ -73,7 +73,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
   }, [location.pathname, forcedLanguage]);
 
-  // Translation function - NOT memoized to force re-render
+  // Translation function
   const t = (key, params = {}) => {
     const keys = key.split('.');
     let value = translations[language];
@@ -97,16 +97,9 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     setLanguageState(newLang);
     localStorage.setItem('preferred_language', newLang);
   };
-
-  const contextValue = {
-    language,
-    setLanguage,
-    t,
-    SUPPORTED_LANGUAGES
-  };
   
   return (
-    <LanguageContext.Provider value={contextValue}>
+    <LanguageContext.Provider value={{ language, setLanguage, t, SUPPORTED_LANGUAGES }}>
       {children}
     </LanguageContext.Provider>
   );
