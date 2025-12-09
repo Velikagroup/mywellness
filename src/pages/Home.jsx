@@ -691,7 +691,7 @@ function HomeContent() {
             </div>
           </div>
           
-          <div className="mb-0" style={{ height: '700px', minHeight: '700px', maxHeight: '700px' }}>
+          <div className="mb-12" style={{ height: '700px', minHeight: '700px', maxHeight: '700px' }}>
             <AppDemoFlow />
           </div>
           
