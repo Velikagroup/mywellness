@@ -1126,10 +1126,19 @@ function HomeContent() {
               <p className="text-gray-600 mb-6 text-lg leading-relaxed text-center md:text-left">
                 {t('home.step10Desc')}
               </p>
-              <div className="space-y-3 mb-6 flex justify-center md:justify-start gap-4">
-                <span className="text-3xl">💪</span>
-                <span className="text-3xl">🔥</span>
-                <span className="text-3xl">⚡</span>
+              <div className="space-y-3 mb-6">
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">💪</span>
+                  <p className="text-gray-600 text-sm">{t('home.step10Detail1')}</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">🔥</span>
+                  <p className="text-gray-600 text-sm">{t('home.step10Detail2')}</p>
+                </div>
+                <div className="flex items-start gap-3">
+                  <span className="text-xl">⚡</span>
+                  <p className="text-gray-600 text-sm">{t('home.step10Detail3')}</p>
+                </div>
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
                 <span className="px-4 py-2 bg-amber-50 text-amber-700 rounded-full text-sm font-medium">{t('home.step10Tag1')}</span>
