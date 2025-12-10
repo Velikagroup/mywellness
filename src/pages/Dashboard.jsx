@@ -600,7 +600,7 @@ export default function Dashboard() {
             <div className="flex gap-3">
               <button
                 onClick={handleRecalibrate}
-                className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+                className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
               >
                 <div className="flex items-center justify-center gap-2">
                   <RefreshCw className="w-4 h-4" />
@@ -609,7 +609,7 @@ export default function Dashboard() {
               </button>
               <button
                 onClick={() => setShowCalorieMeter(true)}
-                className="liquid-glass-button text-[#26847F] font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+                className="liquid-glass-button text-[#26847F] font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
               >
                 <div className="flex items-center justify-center gap-2">
                   <Calculator className="w-4 h-4" />
@@ -631,7 +631,7 @@ export default function Dashboard() {
             <div className="grid grid-cols-2 gap-3">
               <button
                 onClick={handleRecalibrate}
-                className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+                className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
               >
                 <div className="flex items-center justify-center gap-2">
                   <RefreshCw className="w-4 h-4" />
@@ -640,7 +640,7 @@ export default function Dashboard() {
               </button>
               <button
                 onClick={() => setShowCalorieMeter(true)}
-                className="liquid-glass-button text-[#26847F] font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02]"
+                className="liquid-glass-button text-[#26847F] font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
               >
                 <div className="flex items-center justify-center gap-2">
                   <Calculator className="w-4 h-4" />
