@@ -149,18 +149,101 @@ export default function SportQuizPreviewDemo() {
     { id: 'performance', label: tr.goalPerformance, icon: '🏆', desc: tr.goalPerformanceDesc }
   ];
 
+  const sportTranslations = {
+    it: {
+      bodybuilding: 'Bodybuilding: Ipertrofia, definizione, simmetria muscolare',
+      powerlifting: 'Powerlifting: Forza massimale, tecnica, potenza',
+      crossfit: 'CrossFit: Forza funzionale, resistenza, WOD personalizzati',
+      hiit: 'HIIT: Brucia grassi, metabolismo, intensità massima',
+      calisthenics: 'Calisthenics: Controllo corporeo, forza relativa',
+      yoga: 'Yoga: Flessibilità, equilibrio, mindfulness',
+      pilates: 'Pilates: Core, postura, stabilità',
+      kickboxing: 'Kickboxing: Cardio, tecnica, potenza esplosiva',
+      mma: 'MMA: Combattimento completo, condizionamento',
+      spinning: 'Spinning: Resistenza cardiovascolare, gambe',
+      zumba: 'Zumba: Cardio divertente, coordinazione'
+    },
+    en: {
+      bodybuilding: 'Bodybuilding: Hypertrophy, definition, muscle symmetry',
+      powerlifting: 'Powerlifting: Maximum strength, technique, power',
+      crossfit: 'CrossFit: Functional strength, endurance, custom WODs',
+      hiit: 'HIIT: Fat burning, metabolism, maximum intensity',
+      calisthenics: 'Calisthenics: Body control, relative strength',
+      yoga: 'Yoga: Flexibility, balance, mindfulness',
+      pilates: 'Pilates: Core, posture, stability',
+      kickboxing: 'Kickboxing: Cardio, technique, explosive power',
+      mma: 'MMA: Complete combat, conditioning',
+      spinning: 'Spinning: Cardiovascular endurance, legs',
+      zumba: 'Zumba: Fun cardio, coordination'
+    },
+    es: {
+      bodybuilding: 'Bodybuilding: Hipertrofia, definición, simetría muscular',
+      powerlifting: 'Powerlifting: Fuerza máxima, técnica, potencia',
+      crossfit: 'CrossFit: Fuerza funcional, resistencia, WODs personalizados',
+      hiit: 'HIIT: Quema grasas, metabolismo, intensidad máxima',
+      calisthenics: 'Calisthenics: Control corporal, fuerza relativa',
+      yoga: 'Yoga: Flexibilidad, equilibrio, mindfulness',
+      pilates: 'Pilates: Core, postura, estabilidad',
+      kickboxing: 'Kickboxing: Cardio, técnica, potencia explosiva',
+      mma: 'MMA: Combate completo, acondicionamiento',
+      spinning: 'Spinning: Resistencia cardiovascular, piernas',
+      zumba: 'Zumba: Cardio divertido, coordinación'
+    },
+    pt: {
+      bodybuilding: 'Bodybuilding: Hipertrofia, definição, simetria muscular',
+      powerlifting: 'Powerlifting: Força máxima, técnica, potência',
+      crossfit: 'CrossFit: Força funcional, resistência, WODs personalizados',
+      hiit: 'HIIT: Queima de gordura, metabolismo, intensidade máxima',
+      calisthenics: 'Calisthenics: Controle corporal, força relativa',
+      yoga: 'Yoga: Flexibilidade, equilíbrio, mindfulness',
+      pilates: 'Pilates: Core, postura, estabilidade',
+      kickboxing: 'Kickboxing: Cardio, técnica, potência explosiva',
+      mma: 'MMA: Combate completo, condicionamento',
+      spinning: 'Spinning: Resistência cardiovascular, pernas',
+      zumba: 'Zumba: Cardio divertido, coordenação'
+    },
+    de: {
+      bodybuilding: 'Bodybuilding: Hypertrophie, Definition, Muskelsymmetrie',
+      powerlifting: 'Powerlifting: Maximalkraft, Technik, Kraft',
+      crossfit: 'CrossFit: Funktionelle Kraft, Ausdauer, personalisierte WODs',
+      hiit: 'HIIT: Fettverbrennung, Stoffwechsel, maximale Intensität',
+      calisthenics: 'Calisthenics: Körperkontrolle, relative Kraft',
+      yoga: 'Yoga: Flexibilität, Gleichgewicht, Achtsamkeit',
+      pilates: 'Pilates: Core, Haltung, Stabilität',
+      kickboxing: 'Kickboxing: Cardio, Technik, explosive Kraft',
+      mma: 'MMA: Kompletter Kampf, Konditionierung',
+      spinning: 'Spinning: Kardiovaskuläre Ausdauer, Beine',
+      zumba: 'Zumba: Spaß Cardio, Koordination'
+    },
+    fr: {
+      bodybuilding: 'Bodybuilding: Hypertrophie, définition, symétrie musculaire',
+      powerlifting: 'Powerlifting: Force maximale, technique, puissance',
+      crossfit: 'CrossFit: Force fonctionnelle, endurance, WODs personnalisés',
+      hiit: 'HIIT: Brûle graisse, métabolisme, intensité maximale',
+      calisthenics: 'Calisthenics: Contrôle corporel, force relative',
+      yoga: 'Yoga: Flexibilité, équilibre, pleine conscience',
+      pilates: 'Pilates: Core, posture, stabilité',
+      kickboxing: 'Kickboxing: Cardio, technique, puissance explosive',
+      mma: 'MMA: Combat complet, conditionnement',
+      spinning: 'Spinning: Endurance cardiovasculaire, jambes',
+      zumba: 'Zumba: Cardio amusant, coordination'
+    }
+  };
+
+  const st = sportTranslations[language] || sportTranslations.it;
+
   const sports = [
-    { id: 'bodybuilding', label: 'Bodybuilding', icon: '💪' },
-    { id: 'powerlifting', label: 'Powerlifting', icon: '🏋️' },
-    { id: 'crossfit', label: 'CrossFit', icon: '🔥' },
-    { id: 'hiit', label: 'HIIT', icon: '⚡' },
-    { id: 'calisthenics', label: 'Calisthenics', icon: '🤸' },
-    { id: 'yoga', label: 'Yoga', icon: '🧘' },
-    { id: 'pilates', label: 'Pilates', icon: '🎯' },
-    { id: 'kickboxing', label: 'Kickboxing', icon: '🥊' },
-    { id: 'mma', label: 'MMA', icon: '👊' },
-    { id: 'spinning', label: 'Spinning', icon: '🚴' },
-    { id: 'zumba', label: 'Zumba', icon: '💃' },
+    { id: 'bodybuilding', label: st.bodybuilding, icon: '💪' },
+    { id: 'powerlifting', label: st.powerlifting, icon: '🏋️' },
+    { id: 'crossfit', label: st.crossfit, icon: '🔥' },
+    { id: 'hiit', label: st.hiit, icon: '⚡' },
+    { id: 'calisthenics', label: st.calisthenics, icon: '🤸' },
+    { id: 'yoga', label: st.yoga, icon: '🧘' },
+    { id: 'pilates', label: st.pilates, icon: '🎯' },
+    { id: 'kickboxing', label: st.kickboxing, icon: '🥊' },
+    { id: 'mma', label: st.mma, icon: '👊' },
+    { id: 'spinning', label: st.spinning, icon: '🚴' },
+    { id: 'zumba', label: st.zumba, icon: '💃' },
     { id: 'altro', label: tr.others, icon: '➕' }
   ];
 
@@ -375,12 +458,14 @@ export default function SportQuizPreviewDemo() {
                   {sports.map((sport) => (
                     <div
                       key={sport.id}
-                      className={`sport-chip p-3 bg-white rounded-xl border-2 cursor-pointer text-center ${
+                      className={`sport-chip p-3 bg-white rounded-xl border-2 cursor-pointer ${
                         selectedSport === sport.id ? 'selected border-[#26847F]' : 'border-gray-200'
                       }`}
                     >
-                      <span className="text-2xl block mb-1">{sport.icon}</span>
-                      <p className="text-xs font-semibold truncate">{sport.label}</p>
+                      <div className="flex items-start gap-2">
+                        <span className="text-xl flex-shrink-0">{sport.icon}</span>
+                        <p className="text-xs font-semibold text-left leading-tight">{sport.label}</p>
+                      </div>
                     </div>
                   ))}
                 </div>
