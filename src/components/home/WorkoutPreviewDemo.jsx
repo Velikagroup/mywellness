@@ -4,18 +4,95 @@ import { ChevronDown, Dumbbell, Clock, RotateCcw, Flame, Timer, ChevronRight } f
 import { useLanguage } from '../i18n/LanguageContext';
 
 export default function WorkoutPreviewDemo() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [expandedExercise, setExpandedExercise] = useState(1);
   const [selectedDay, setSelectedDay] = useState('lun');
 
+  const translations = React.useMemo(() => ({
+    it: {
+      weeklyPlan: 'Piano Settimanale',
+      subtitle: 'Allenamenti personalizzati',
+      monday: 'Lun', tuesday: 'Mar', wednesday: 'Mer', thursday: 'Gio', friday: 'Ven', saturday: 'Sab', sunday: 'Dom',
+      exercises: 'Esercizi',
+      warmup: 'Riscaldamento',
+      cooldown: 'Defaticamento',
+      rest: 'Riposo',
+      completedSets: 'Serie completate',
+      tips: 'Consigli',
+      preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'
+    },
+    en: {
+      weeklyPlan: 'Weekly Plan',
+      subtitle: 'Personalized workouts',
+      monday: 'Mon', tuesday: 'Tue', wednesday: 'Wed', thursday: 'Thu', friday: 'Fri', saturday: 'Sat', sunday: 'Sun',
+      exercises: 'Exercises',
+      warmup: 'Warmup',
+      cooldown: 'Cooldown',
+      rest: 'Rest',
+      completedSets: 'Completed sets',
+      tips: 'Tips',
+      preview: 'Interface preview • Features available after signup'
+    },
+    es: {
+      weeklyPlan: 'Plan Semanal',
+      subtitle: 'Entrenamientos personalizados',
+      monday: 'Lun', tuesday: 'Mar', wednesday: 'Mié', thursday: 'Jue', friday: 'Vie', saturday: 'Sáb', sunday: 'Dom',
+      exercises: 'Ejercicios',
+      warmup: 'Calentamiento',
+      cooldown: 'Enfriamiento',
+      rest: 'Descanso',
+      completedSets: 'Series completadas',
+      tips: 'Consejos',
+      preview: 'Vista previa de interfaz • Funciones disponibles después del registro'
+    },
+    pt: {
+      weeklyPlan: 'Plano Semanal',
+      subtitle: 'Treinos personalizados',
+      monday: 'Seg', tuesday: 'Ter', wednesday: 'Qua', thursday: 'Qui', friday: 'Sex', saturday: 'Sáb', sunday: 'Dom',
+      exercises: 'Exercícios',
+      warmup: 'Aquecimento',
+      cooldown: 'Resfriamento',
+      rest: 'Descanso',
+      completedSets: 'Séries completadas',
+      tips: 'Dicas',
+      preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro'
+    },
+    de: {
+      weeklyPlan: 'Wochenplan',
+      subtitle: 'Personalisierte Trainings',
+      monday: 'Mo', tuesday: 'Di', wednesday: 'Mi', thursday: 'Do', friday: 'Fr', saturday: 'Sa', sunday: 'So',
+      exercises: 'Übungen',
+      warmup: 'Aufwärmen',
+      cooldown: 'Abkühlen',
+      rest: 'Ruhe',
+      completedSets: 'Abgeschlossene Sätze',
+      tips: 'Tipps',
+      preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'
+    },
+    fr: {
+      weeklyPlan: 'Programme Hebdomadaire',
+      subtitle: 'Entraînements personnalisés',
+      monday: 'Lun', tuesday: 'Mar', wednesday: 'Mer', thursday: 'Jeu', friday: 'Ven', saturday: 'Sam', sunday: 'Dim',
+      exercises: 'Exercices',
+      warmup: 'Échauffement',
+      cooldown: 'Récupération',
+      rest: 'Repos',
+      completedSets: 'Séries terminées',
+      tips: 'Conseils',
+      preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'
+    }
+  }), []);
+
+  const tr = translations[language] || translations.it;
+
   const days = [
-    { id: 'lun', label: t('home.workoutMonday'), active: true, type: 'strength' },
-    { id: 'mar', label: t('home.workoutTuesday'), active: true, type: 'cardio' },
-    { id: 'mer', label: t('home.workoutWednesday'), active: false, type: 'rest' },
-    { id: 'gio', label: t('home.workoutThursday'), active: true, type: 'strength' },
-    { id: 'ven', label: t('home.workoutFriday'), active: true, type: 'hiit' },
-    { id: 'sab', label: t('home.workoutSaturday'), active: false, type: 'rest' },
-    { id: 'dom', label: t('home.workoutSunday'), active: true, type: 'cardio' }
+    { id: 'lun', label: tr.monday, active: true, type: 'strength' },
+    { id: 'mar', label: tr.tuesday, active: true, type: 'cardio' },
+    { id: 'mer', label: tr.wednesday, active: false, type: 'rest' },
+    { id: 'gio', label: tr.thursday, active: true, type: 'strength' },
+    { id: 'ven', label: tr.friday, active: true, type: 'hiit' },
+    { id: 'sab', label: tr.saturday, active: false, type: 'rest' },
+    { id: 'dom', label: tr.sunday, active: true, type: 'cardio' }
   ];
 
   const warmup = [
@@ -89,13 +166,13 @@ export default function WorkoutPreviewDemo() {
       <Card className="w-full max-w-md mx-auto water-glass-effect border border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden relative">
         {/* Header */}
         <div className="bg-gradient-to-br from-purple-50 to-indigo-50 px-5 py-4 border-b border-gray-100">
-          <div className="flex items-center justify-between mb-3">
-            <div>
+          <div className="flex flex-col sm:flex-row items-center justify-between mb-3 gap-2">
+            <div className="text-center sm:text-left">
               <h2 className="text-lg font-bold text-gray-900">
-                {t('home.workoutWeeklyPlan')}
+                {tr.weeklyPlan}
               </h2>
               <p className="text-xs text-gray-500">
-                {t('home.workoutWeeklyPlanSubtitle')}
+                {tr.subtitle}
               </p>
             </div>
             <div className="flex items-center gap-2">
@@ -138,7 +215,7 @@ export default function WorkoutPreviewDemo() {
               </div>
               <div className="flex items-center gap-1.5">
                 <Dumbbell className="w-4 h-4 text-purple-500" />
-                <span className="text-sm font-semibold text-gray-700">6 {t('home.workoutExercises').toLowerCase()}</span>
+                <span className="text-sm font-semibold text-gray-700">6 {tr.exercises.toLowerCase()}</span>
               </div>
             </div>
           </div>
@@ -152,7 +229,7 @@ export default function WorkoutPreviewDemo() {
               <div className="w-5 h-5 bg-blue-100 rounded-full flex items-center justify-center">
                 <span className="text-xs">🔥</span>
               </div>
-              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{t('workouts.warmup')}</h3>
+              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{tr.warmup}</h3>
             </div>
             <div className="flex gap-2">
               {warmup.map((exercise, idx) => (
@@ -171,7 +248,7 @@ export default function WorkoutPreviewDemo() {
                 <Dumbbell className="w-3 h-3 text-purple-600" />
               </div>
               <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
-                {t('home.workoutExercises')}
+                {tr.exercises}
               </h3>
             </div>
             <div className="space-y-2">
@@ -186,7 +263,7 @@ export default function WorkoutPreviewDemo() {
                       <div className="flex items-center gap-3 mt-0.5">
                         <span className="text-xs text-gray-500 font-medium">{exercise.sets} × {exercise.reps}</span>
                         <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">{t('home.workoutRest')} {exercise.rest}</span>
+                        <span className="text-xs text-gray-500">{tr.rest} {exercise.rest}</span>
                       </div>
                     </div>
                     <ChevronDown 
@@ -202,7 +279,7 @@ export default function WorkoutPreviewDemo() {
                         {/* Set Tracking Boxes */}
                         <div>
                           <p className="text-xs font-semibold text-gray-700 mb-2">
-                            {t('home.workoutCompletedSets')}
+                            {tr.completedSets}
                           </p>
                           <div className="grid grid-cols-4 gap-2">
                             {[...Array(parseInt(exercise.sets))].map((_, i) => (
@@ -246,7 +323,7 @@ export default function WorkoutPreviewDemo() {
                         {/* Tips */}
                         <div className="bg-gray-50 rounded-lg p-2">
                           <p className="text-xs font-semibold text-gray-700 mb-1">
-                            💡 {t('home.workoutTips')}
+                            💡 {tr.tips}
                           </p>
                           <ul className="space-y-0.5">
                             {exercise.tips.map((tip, idx) => (
@@ -271,7 +348,7 @@ export default function WorkoutPreviewDemo() {
               <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center">
                 <span className="text-xs">🧘</span>
               </div>
-              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{t('workouts.cooldown')}</h3>
+              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">{tr.cooldown}</h3>
             </div>
             {cooldown.map((exercise, idx) => (
               <div key={idx} className="bg-green-50/70 rounded-lg px-3 py-2 border border-green-100">
@@ -284,7 +361,7 @@ export default function WorkoutPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            {t('home.quizDemoPreview')}
+            {tr.preview}
           </p>
         </div>
       </Card>
