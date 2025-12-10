@@ -1128,16 +1128,13 @@ function HomeContent() {
               </p>
               <div className="space-y-3 mb-6">
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">💪</span>
-                  <p className="text-gray-600 text-sm">{t('home.step10Detail1')}</p>
+                  <p className="text-gray-600 text-sm">💪 {t('home.step10Detail1')}</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">🔥</span>
-                  <p className="text-gray-600 text-sm">{t('home.step10Detail2')}</p>
+                  <p className="text-gray-600 text-sm">🔥 {t('home.step10Detail2')}</p>
                 </div>
                 <div className="flex items-start gap-3">
-                  <span className="text-xl">⚡</span>
-                  <p className="text-gray-600 text-sm">{t('home.step10Detail3')}</p>
+                  <p className="text-gray-600 text-sm">⚡ {t('home.step10Detail3')}</p>
                 </div>
               </div>
               <div className="flex flex-wrap gap-3 justify-center md:justify-start">
