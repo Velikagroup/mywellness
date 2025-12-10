@@ -19,7 +19,15 @@ export default function WorkoutPreviewDemo() {
       rest: 'Riposo',
       completedSets: 'Serie completate',
       tips: 'Consigli',
-      preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'
+      preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup',
+      warmup1: 'Cardio Leggero', warmup2: 'Mobilità Articolare',
+      exercise1: 'Squat con Bilanciere', exercise2: 'Stacchi Rumeni', exercise3: 'Panca Piana',
+      muscle1: 'Quadricipiti', muscle2: 'Glutei', muscle3: 'Core', muscle4: 'Femorali', muscle5: 'Lombari', muscle6: 'Pettorali',
+      exercise1Desc: 'Re degli esercizi per le gambe', exercise2Desc: 'Catena posteriore completa', exercise3Desc: 'Fondamentale per il petto',
+      tip1a: 'Scendi sotto il parallelo', tip1b: 'Spingi dai talloni', tip1c: 'Mantieni schiena dritta',
+      tip2a: 'Ginocchia leggermente flesse', tip2b: 'Spingi con i glutei', tip2c: 'Mantieni barra vicina',
+      tip3a: 'Gomiti a 45°', tip3b: 'Scendi al petto', tip3c: 'Spingi esplosivo',
+      cooldown1: 'Stretching Gambe'
     },
     en: {
       weeklyPlan: 'Weekly Plan',
@@ -31,7 +39,15 @@ export default function WorkoutPreviewDemo() {
       rest: 'Rest',
       completedSets: 'Completed sets',
       tips: 'Tips',
-      preview: 'Interface preview • Features available after signup'
+      preview: 'Interface preview • Features available after signup',
+      warmup1: 'Light Cardio', warmup2: 'Joint Mobility',
+      exercise1: 'Barbell Squat', exercise2: 'Romanian Deadlift', exercise3: 'Bench Press',
+      muscle1: 'Quadriceps', muscle2: 'Glutes', muscle3: 'Core', muscle4: 'Hamstrings', muscle5: 'Lower Back', muscle6: 'Chest',
+      exercise1Desc: 'King of leg exercises', exercise2Desc: 'Complete posterior chain', exercise3Desc: 'Essential for chest',
+      tip1a: 'Go below parallel', tip1b: 'Push through heels', tip1c: 'Keep back straight',
+      tip2a: 'Slight knee bend', tip2b: 'Drive with glutes', tip2c: 'Keep bar close',
+      tip3a: 'Elbows at 45°', tip3b: 'Lower to chest', tip3c: 'Push explosively',
+      cooldown1: 'Leg Stretching'
     },
     es: {
       weeklyPlan: 'Plan Semanal',
@@ -43,7 +59,15 @@ export default function WorkoutPreviewDemo() {
       rest: 'Descanso',
       completedSets: 'Series completadas',
       tips: 'Consejos',
-      preview: 'Vista previa de interfaz • Funciones disponibles después del registro'
+      preview: 'Vista previa de interfaz • Funciones disponibles después del registro',
+      warmup1: 'Cardio Ligero', warmup2: 'Movilidad Articular',
+      exercise1: 'Sentadilla con Barra', exercise2: 'Peso Muerto Rumano', exercise3: 'Press de Banca',
+      muscle1: 'Cuádriceps', muscle2: 'Glúteos', muscle3: 'Core', muscle4: 'Isquiotibiales', muscle5: 'Lumbar', muscle6: 'Pectorales',
+      exercise1Desc: 'Rey de ejercicios de piernas', exercise2Desc: 'Cadena posterior completa', exercise3Desc: 'Fundamental para pecho',
+      tip1a: 'Baja bajo paralelo', tip1b: 'Empuja con talones', tip1c: 'Mantén espalda recta',
+      tip2a: 'Rodillas ligeramente flexionadas', tip2b: 'Empuja con glúteos', tip2c: 'Mantén barra cerca',
+      tip3a: 'Codos a 45°', tip3b: 'Baja al pecho', tip3c: 'Empuja explosivo',
+      cooldown1: 'Estiramiento Piernas'
     },
     pt: {
       weeklyPlan: 'Plano Semanal',
@@ -55,7 +79,15 @@ export default function WorkoutPreviewDemo() {
       rest: 'Descanso',
       completedSets: 'Séries completadas',
       tips: 'Dicas',
-      preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro'
+      preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro',
+      warmup1: 'Cardio Leve', warmup2: 'Mobilidade Articular',
+      exercise1: 'Agachamento com Barra', exercise2: 'Levantamento Terra Romeno', exercise3: 'Supino Reto',
+      muscle1: 'Quadríceps', muscle2: 'Glúteos', muscle3: 'Core', muscle4: 'Posteriores', muscle5: 'Lombar', muscle6: 'Peitorais',
+      exercise1Desc: 'Rei dos exercícios de pernas', exercise2Desc: 'Cadeia posterior completa', exercise3Desc: 'Fundamental para peito',
+      tip1a: 'Desça abaixo do paralelo', tip1b: 'Empurre pelos calcanhares', tip1c: 'Mantenha costas retas',
+      tip2a: 'Joelhos levemente flexionados', tip2b: 'Empurre com glúteos', tip2c: 'Mantenha barra próxima',
+      tip3a: 'Cotovelos a 45°', tip3b: 'Desça ao peito', tip3c: 'Empurre explosivo',
+      cooldown1: 'Alongamento Pernas'
     },
     de: {
       weeklyPlan: 'Wochenplan',
@@ -67,7 +99,15 @@ export default function WorkoutPreviewDemo() {
       rest: 'Ruhe',
       completedSets: 'Abgeschlossene Sätze',
       tips: 'Tipps',
-      preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'
+      preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar',
+      warmup1: 'Leichtes Cardio', warmup2: 'Gelenkmobilität',
+      exercise1: 'Kniebeugen mit Langhantel', exercise2: 'Rumänisches Kreuzheben', exercise3: 'Bankdrücken',
+      muscle1: 'Quadrizeps', muscle2: 'Gesäß', muscle3: 'Rumpf', muscle4: 'Beinbeuger', muscle5: 'Unterer Rücken', muscle6: 'Brustmuskulatur',
+      exercise1Desc: 'König der Beinübungen', exercise2Desc: 'Komplette hintere Kette', exercise3Desc: 'Grundübung für Brust',
+      tip1a: 'Unter Parallel gehen', tip1b: 'Über Fersen drücken', tip1c: 'Rücken gerade halten',
+      tip2a: 'Knie leicht gebeugt', tip2b: 'Mit Gesäß drücken', tip2c: 'Stange nah halten',
+      tip3a: 'Ellbogen bei 45°', tip3b: 'Zur Brust senken', tip3c: 'Explosiv drücken',
+      cooldown1: 'Beindehnung'
     },
     fr: {
       weeklyPlan: 'Programme Hebdomadaire',
@@ -79,7 +119,15 @@ export default function WorkoutPreviewDemo() {
       rest: 'Repos',
       completedSets: 'Séries terminées',
       tips: 'Conseils',
-      preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'
+      preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription',
+      warmup1: 'Cardio Léger', warmup2: 'Mobilité Articulaire',
+      exercise1: 'Squat avec Barre', exercise2: 'Soulevé de Terre Roumain', exercise3: 'Développé Couché',
+      muscle1: 'Quadriceps', muscle2: 'Fessiers', muscle3: 'Tronc', muscle4: 'Ischio-jambiers', muscle5: 'Bas du Dos', muscle6: 'Pectoraux',
+      exercise1Desc: 'Roi des exercices jambes', exercise2Desc: 'Chaîne postérieure complète', exercise3Desc: 'Fondamental pour poitrine',
+      tip1a: 'Descendre sous parallèle', tip1b: 'Pousser par talons', tip1c: 'Maintenir dos droit',
+      tip2a: 'Genoux légèrement fléchis', tip2b: 'Pousser avec fessiers', tip2c: 'Maintenir barre proche',
+      tip3a: 'Coudes à 45°', tip3b: 'Descendre à poitrine', tip3c: 'Pousser explosif',
+      cooldown1: 'Étirement Jambes'
     }
   }), []);
 
@@ -96,45 +144,45 @@ export default function WorkoutPreviewDemo() {
   ];
 
   const warmup = [
-    { name: t('home.workoutWarmup1'), duration: '5 min' },
-    { name: t('home.workoutWarmup2'), duration: '2 min' }
+    { name: tr.warmup1, duration: '5 min' },
+    { name: tr.warmup2, duration: '2 min' }
   ];
 
   const exercises = [
     {
       id: 1,
-      name: t('home.workoutExercise1'),
+      name: tr.exercise1,
       sets: '4',
       reps: '10-12',
       rest: '90s',
-      muscles: [t('home.workoutMuscle1'), t('home.workoutMuscle2'), t('home.workoutMuscle3')],
-      description: t('home.workoutExercise1Desc'),
-      tips: [t('home.workoutTip1a'), t('home.workoutTip1b'), t('home.workoutTip1c')]
+      muscles: [tr.muscle1, tr.muscle2, tr.muscle3],
+      description: tr.exercise1Desc,
+      tips: [tr.tip1a, tr.tip1b, tr.tip1c]
     },
     {
       id: 2,
-      name: t('home.workoutExercise2'),
+      name: tr.exercise2,
       sets: '4',
       reps: '12',
       rest: '90s',
-      muscles: [t('home.workoutMuscle4'), t('home.workoutMuscle5'), t('home.workoutMuscle3')],
-      description: t('home.workoutExercise2Desc'),
-      tips: [t('home.workoutTip2a'), t('home.workoutTip2b'), t('home.workoutTip2c')]
+      muscles: [tr.muscle4, tr.muscle5, tr.muscle3],
+      description: tr.exercise2Desc,
+      tips: [tr.tip2a, tr.tip2b, tr.tip2c]
     },
     {
       id: 3,
-      name: t('home.workoutExercise3'),
+      name: tr.exercise3,
       sets: '3',
       reps: '15',
       rest: '60s',
-      muscles: [t('home.workoutMuscle6')],
-      description: t('home.workoutExercise3Desc'),
-      tips: [t('home.workoutTip3a'), t('home.workoutTip3b'), t('home.workoutTip3c')]
+      muscles: [tr.muscle6],
+      description: tr.exercise3Desc,
+      tips: [tr.tip3a, tr.tip3b, tr.tip3c]
     }
   ];
 
   const cooldown = [
-    { name: t('home.workoutCooldown1'), duration: '5 min' }
+    { name: tr.cooldown1, duration: '5 min' }
   ];
 
   return (
@@ -263,7 +311,7 @@ export default function WorkoutPreviewDemo() {
                       <div className="flex items-center gap-3 mt-0.5">
                         <span className="text-xs text-gray-500 font-medium">{exercise.sets} × {exercise.reps}</span>
                         <span className="text-xs text-gray-400">•</span>
-                        <span className="text-xs text-gray-500">{tr.rest} {exercise.rest}</span>
+                        <span className="text-xs text-gray-500">{exercise.rest}</span>
                       </div>
                     </div>
                     <ChevronDown 
