@@ -4,11 +4,136 @@ import { Scan, Check, Database, Zap } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 
 export default function IngredientScannerPreviewDemo() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [scanStep, setScanStep] = useState(0);
 
+  const translations = React.useMemo(() => ({
+    it: {
+      title: 'Scanner Ingredienti AI',
+      subtitle: 'Scansiona codici a barre e etichette',
+      database: '🍗 Database 50.000+ Alimenti',
+      frameBarcode: 'Inquadra il Codice a Barre',
+      orLabel: 'oppure l\'etichetta nutrizionale',
+      scanning: 'Scansione in corso...',
+      recognition: 'Riconoscimento AI attivo',
+      recognized: 'Prodotto Riconosciuto!',
+      dbMatch: 'Trovato nel Database',
+      accuracy: 'accuratezza',
+      productName: 'Petto di Pollo 100g',
+      realValues: 'Valori Nutrizionali Reali',
+      protein: 'Proteine',
+      carbs: 'Carboidrati',
+      fat: 'Grassi',
+      per: 'Per',
+      addToPlan: '+ Aggiungi al Piano',
+      preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'
+    },
+    en: {
+      title: 'AI Ingredient Scanner',
+      subtitle: 'Scan barcodes and labels',
+      database: '🍗 50,000+ Food Database',
+      frameBarcode: 'Frame the Barcode',
+      orLabel: 'or the nutritional label',
+      scanning: 'Scanning...',
+      recognition: 'AI recognition active',
+      recognized: 'Product Recognized!',
+      dbMatch: 'Found in Database',
+      accuracy: 'accuracy',
+      productName: 'Chicken Breast 100g',
+      realValues: 'Real Nutritional Values',
+      protein: 'Protein',
+      carbs: 'Carbs',
+      fat: 'Fat',
+      per: 'Per',
+      addToPlan: '+ Add to Plan',
+      preview: 'Interface preview • Features available after signup'
+    },
+    es: {
+      title: 'Escáner de Ingredientes IA',
+      subtitle: 'Escanea códigos de barras y etiquetas',
+      database: '🍗 Base de Datos 50.000+ Alimentos',
+      frameBarcode: 'Encuadra el Código de Barras',
+      orLabel: 'o la etiqueta nutricional',
+      scanning: 'Escaneando...',
+      recognition: 'Reconocimiento IA activo',
+      recognized: '¡Producto Reconocido!',
+      dbMatch: 'Encontrado en Base de Datos',
+      accuracy: 'precisión',
+      productName: 'Pechuga de Pollo 100g',
+      realValues: 'Valores Nutricionales Reales',
+      protein: 'Proteínas',
+      carbs: 'Carbohidratos',
+      fat: 'Grasas',
+      per: 'Por',
+      addToPlan: '+ Añadir al Plan',
+      preview: 'Vista previa de interfaz • Funciones disponibles después del registro'
+    },
+    pt: {
+      title: 'Scanner de Ingredientes IA',
+      subtitle: 'Digitalize códigos de barras e rótulos',
+      database: '🍗 Base de Dados 50.000+ Alimentos',
+      frameBarcode: 'Enquadre o Código de Barras',
+      orLabel: 'ou o rótulo nutricional',
+      scanning: 'Digitalizando...',
+      recognition: 'Reconhecimento IA ativo',
+      recognized: 'Produto Reconhecido!',
+      dbMatch: 'Encontrado na Base de Dados',
+      accuracy: 'precisão',
+      productName: 'Peito de Frango 100g',
+      realValues: 'Valores Nutricionais Reais',
+      protein: 'Proteínas',
+      carbs: 'Carboidratos',
+      fat: 'Gorduras',
+      per: 'Por',
+      addToPlan: '+ Adicionar ao Plano',
+      preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro'
+    },
+    de: {
+      title: 'KI-Zutaten-Scanner',
+      subtitle: 'Scannen Sie Barcodes und Etiketten',
+      database: '🍗 50.000+ Lebensmittel-Datenbank',
+      frameBarcode: 'Barcode Einrahmen',
+      orLabel: 'oder das Nährwertetikett',
+      scanning: 'Wird gescannt...',
+      recognition: 'KI-Erkennung aktiv',
+      recognized: 'Produkt Erkannt!',
+      dbMatch: 'In Datenbank gefunden',
+      accuracy: 'Genauigkeit',
+      productName: 'Hähnchenbrust 100g',
+      realValues: 'Echte Nährwerte',
+      protein: 'Protein',
+      carbs: 'Kohlenhydrate',
+      fat: 'Fett',
+      per: 'Pro',
+      addToPlan: '+ Zum Plan Hinzufügen',
+      preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'
+    },
+    fr: {
+      title: 'Scanner d\'Ingrédients IA',
+      subtitle: 'Scannez les codes-barres et étiquettes',
+      database: '🍗 Base de Données 50 000+ Aliments',
+      frameBarcode: 'Cadrez le Code-Barres',
+      orLabel: 'ou l\'étiquette nutritionnelle',
+      scanning: 'Numérisation...',
+      recognition: 'Reconnaissance IA active',
+      recognized: 'Produit Reconnu !',
+      dbMatch: 'Trouvé dans la Base de Données',
+      accuracy: 'précision',
+      productName: 'Blanc de Poulet 100g',
+      realValues: 'Valeurs Nutritionnelles Réelles',
+      protein: 'Protéines',
+      carbs: 'Glucides',
+      fat: 'Lipides',
+      per: 'Par',
+      addToPlan: '+ Ajouter au Plan',
+      preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'
+    }
+  }), []);
+
+  const tr = translations[language] || translations.it;
+
   const scannedProduct = {
-    name: t('home.scannerProductName'),
+    name: tr.productName,
     brand: 'Fileni',
     barcode: '8003410252079',
     image: 'https://images.unsplash.com/photo-1604503468506-a8da13d82791?w=400&h=400&fit=crop',
@@ -79,15 +204,15 @@ export default function IngredientScannerPreviewDemo() {
                 <Scan className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{t('home.scannerTitle')}</h2>
-                <p className="text-xs text-gray-600">{t('home.scannerSubtitle')}</p>
+                <h2 className="text-xl font-bold text-gray-900">{tr.title}</h2>
+                <p className="text-xs text-gray-600">{tr.subtitle}</p>
               </div>
             </div>
           </div>
           
           <div className="flex items-center gap-2 px-3 py-2 bg-white/80 rounded-lg border border-indigo-200">
             <Database className="w-4 h-4 text-indigo-600" />
-            <span className="text-xs font-semibold text-indigo-700">{t('home.scannerDatabase')}</span>
+            <span className="text-xs font-semibold text-indigo-700">{tr.database}</span>
             <Zap className="w-4 h-4 text-amber-500 ml-auto" />
           </div>
         </div>
@@ -111,8 +236,8 @@ export default function IngredientScannerPreviewDemo() {
                 
                 <div className="text-center z-10">
                   <Scan className="w-16 h-16 text-gray-400 mx-auto mb-3 pulse-scan" />
-                  <p className="text-sm font-semibold text-gray-700">{t('home.scannerFrameBarcode')}</p>
-                  <p className="text-xs text-gray-500 mt-1">{t('home.scannerOrLabel')}</p>
+                  <p className="text-sm font-semibold text-gray-700">{tr.frameBarcode}</p>
+                  <p className="text-xs text-gray-500 mt-1">{tr.orLabel}</p>
                 </div>
               </div>
             </div>
@@ -132,8 +257,8 @@ export default function IngredientScannerPreviewDemo() {
                     <div className="flex items-center gap-3">
                       <div className="animate-spin rounded-full h-8 w-8 border-4 border-indigo-500 border-t-transparent"></div>
                       <div>
-                        <p className="font-bold text-gray-900">{t('home.scannerScanning')}</p>
-                        <p className="text-xs text-gray-600">{t('home.scannerRecognition')}</p>
+                        <p className="font-bold text-gray-900">{tr.scanning}</p>
+                        <p className="text-xs text-gray-600">{tr.recognition}</p>
                       </div>
                     </div>
                   </div>
@@ -151,8 +276,8 @@ export default function IngredientScannerPreviewDemo() {
                     <Check className="w-6 h-6 text-white" />
                   </div>
                   <div>
-                    <p className="font-bold text-green-900">{t('home.scannerRecognized')}</p>
-                    <p className="text-xs text-green-700">{t('home.scannerDbMatch')} • 99% {t('home.scannerAccuracy')}</p>
+                    <p className="font-bold text-green-900">{tr.recognized}</p>
+                    <p className="text-xs text-green-700">{tr.dbMatch} • 99% {tr.accuracy}</p>
                   </div>
                 </div>
               </div>
@@ -171,7 +296,7 @@ export default function IngredientScannerPreviewDemo() {
               </div>
 
               <div className="bg-white rounded-xl border border-gray-200 p-4 mb-4">
-                <p className="text-sm font-bold text-gray-900 mb-3">{t('home.scannerRealValues')}</p>
+                <p className="text-sm font-bold text-gray-900 mb-3">{tr.realValues}</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-gradient-to-br from-red-50 to-pink-50 rounded-lg p-3 text-center border border-red-100">
                     <p className="text-2xl font-black text-red-600">{scannedProduct.nutrition.calories}</p>
@@ -179,25 +304,25 @@ export default function IngredientScannerPreviewDemo() {
                   </div>
                   <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-lg p-3 text-center border border-blue-100">
                     <p className="text-2xl font-black text-blue-600">{scannedProduct.nutrition.protein}g</p>
-                    <p className="text-xs text-gray-600">{t('home.scannerProtein')}</p>
+                    <p className="text-xs text-gray-600">{tr.protein}</p>
                   </div>
                   <div className="bg-gradient-to-br from-amber-50 to-yellow-50 rounded-lg p-3 text-center border border-amber-100">
                     <p className="text-2xl font-black text-amber-600">{scannedProduct.nutrition.carbs}g</p>
-                    <p className="text-xs text-gray-600">{t('home.scannerCarbs')}</p>
+                    <p className="text-xs text-gray-600">{tr.carbs}</p>
                   </div>
                   <div className="bg-gradient-to-br from-green-50 to-emerald-50 rounded-lg p-3 text-center border border-green-100">
                     <p className="text-2xl font-black text-green-600">{scannedProduct.nutrition.fat}g</p>
-                    <p className="text-xs text-gray-600">{t('home.scannerFat')}</p>
+                    <p className="text-xs text-gray-600">{tr.fat}</p>
                   </div>
                 </div>
-                <p className="text-xs text-gray-500 text-center mt-3">{t('home.scannerPer')} {scannedProduct.nutrition.serving}</p>
+                <p className="text-xs text-gray-500 text-center mt-3">{tr.per} {scannedProduct.nutrition.serving}</p>
               </div>
 
               <button
                 disabled
                 className="w-full bg-gradient-to-r from-indigo-500 to-purple-500 text-white font-bold py-3 rounded-xl opacity-50 cursor-not-allowed"
               >
-                {t('home.scannerAddToPlan')}
+                {tr.addToPlan}
               </button>
             </div>
           )}
@@ -206,7 +331,7 @@ export default function IngredientScannerPreviewDemo() {
         {/* Info Footer */}
         <div className="px-6 py-4 bg-gradient-to-r from-indigo-50 to-purple-50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            {t('home.quizDemoPreview')}
+            {tr.preview}
           </p>
         </div>
       </Card>
