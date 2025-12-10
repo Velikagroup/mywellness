@@ -4,9 +4,195 @@ import { Camera, TrendingUp, CheckCircle2, X, Sparkles, ArrowRight, Utensils, Du
 import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ProgressPhotoPreviewDemo() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const translations = React.useMemo(() => ({
+    it: {
+      title: 'Analisi Foto Progresso AI',
+      target: 'Zona Target',
+      days: 'giorni',
+      excellent: 'Eccellente',
+      before: 'Prima',
+      daysAgo: 'giorni fa',
+      after: 'Dopo',
+      today: 'Oggi',
+      scientific: 'Analisi Scientifica Dettagliata',
+      muscle: 'Definizione Muscolare',
+      fat: 'Riduzione Grasso',
+      waist: 'vita',
+      skin: 'Tono Pelle',
+      posture: 'Postura',
+      recommendations: 'Raccomandazioni AI Personalizzate',
+      dietChanges: 'Modifiche Dieta',
+      workoutChanges: 'Modifiche Allenamento',
+      applyDiet: 'Applica Modifiche Dieta',
+      applyWorkout: 'Applica Modifiche Allenamento',
+      save: 'Salva Analisi',
+      preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup',
+      zone: 'Addome',
+      diet1: 'Aumenta proteine a 2.2g/kg per preservare massa muscolare',
+      diet2: 'Riduci carboidrati serali del 15% per ottimizzare perdita grasso',
+      diet3: 'Aggiungi 200ml acqua ogni 2h per idratazione e metabolismo',
+      workout1: 'Incrementa volume allenamento addominali +20%',
+      workout2: 'Aggiungi 15min HIIT 3x/settimana post-allenamento',
+      workout3: 'Focus su esercizi composti per massimo dispendio calorico'
+    },
+    en: {
+      title: 'AI Progress Photo Analysis',
+      target: 'Target Zone',
+      days: 'days',
+      excellent: 'Excellent',
+      before: 'Before',
+      daysAgo: 'days ago',
+      after: 'After',
+      today: 'Today',
+      scientific: 'Detailed Scientific Analysis',
+      muscle: 'Muscle Definition',
+      fat: 'Fat Reduction',
+      waist: 'waist',
+      skin: 'Skin Tone',
+      posture: 'Posture',
+      recommendations: 'Personalized AI Recommendations',
+      dietChanges: 'Diet Changes',
+      workoutChanges: 'Workout Changes',
+      applyDiet: 'Apply Diet Changes',
+      applyWorkout: 'Apply Workout Changes',
+      save: 'Save Analysis',
+      preview: 'Interface preview • Features available after signup',
+      zone: 'Abdomen',
+      diet1: 'Increase protein to 2.2g/kg to preserve muscle mass',
+      diet2: 'Reduce evening carbs by 15% to optimize fat loss',
+      diet3: 'Add 200ml water every 2h for hydration and metabolism',
+      workout1: 'Increase abdominal training volume +20%',
+      workout2: 'Add 15min HIIT 3x/week post-workout',
+      workout3: 'Focus on compound exercises for maximum calorie expenditure'
+    },
+    es: {
+      title: 'Análisis de Foto de Progreso IA',
+      target: 'Zona Objetivo',
+      days: 'días',
+      excellent: 'Excelente',
+      before: 'Antes',
+      daysAgo: 'días atrás',
+      after: 'Después',
+      today: 'Hoy',
+      scientific: 'Análisis Científico Detallado',
+      muscle: 'Definición Muscular',
+      fat: 'Reducción de Grasa',
+      waist: 'cintura',
+      skin: 'Tono de Piel',
+      posture: 'Postura',
+      recommendations: 'Recomendaciones IA Personalizadas',
+      dietChanges: 'Cambios de Dieta',
+      workoutChanges: 'Cambios de Entrenamiento',
+      applyDiet: 'Aplicar Cambios de Dieta',
+      applyWorkout: 'Aplicar Cambios de Entrenamiento',
+      save: 'Guardar Análisis',
+      preview: 'Vista previa de interfaz • Funciones disponibles después del registro',
+      zone: 'Abdomen',
+      diet1: 'Aumenta proteínas a 2.2g/kg para preservar masa muscular',
+      diet2: 'Reduce carbohidratos nocturnos 15% para optimizar pérdida grasa',
+      diet3: 'Añade 200ml agua cada 2h para hidratación y metabolismo',
+      workout1: 'Incrementa volumen entrenamiento abdominales +20%',
+      workout2: 'Añade 15min HIIT 3x/semana post-entrenamiento',
+      workout3: 'Enfócate en ejercicios compuestos para máximo gasto calórico'
+    },
+    pt: {
+      title: 'Análise de Foto de Progresso IA',
+      target: 'Zona Alvo',
+      days: 'dias',
+      excellent: 'Excelente',
+      before: 'Antes',
+      daysAgo: 'dias atrás',
+      after: 'Depois',
+      today: 'Hoje',
+      scientific: 'Análise Científica Detalhada',
+      muscle: 'Definição Muscular',
+      fat: 'Redução de Gordura',
+      waist: 'cintura',
+      skin: 'Tom de Pele',
+      posture: 'Postura',
+      recommendations: 'Recomendações IA Personalizadas',
+      dietChanges: 'Mudanças na Dieta',
+      workoutChanges: 'Mudanças no Treino',
+      applyDiet: 'Aplicar Mudanças na Dieta',
+      applyWorkout: 'Aplicar Mudanças no Treino',
+      save: 'Salvar Análise',
+      preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro',
+      zone: 'Abdômen',
+      diet1: 'Aumenta proteínas para 2.2g/kg para preservar massa muscular',
+      diet2: 'Reduz carboidratos noturnos 15% para otimizar perda de gordura',
+      diet3: 'Adiciona 200ml água a cada 2h para hidratação e metabolismo',
+      workout1: 'Incrementa volume treino abdominal +20%',
+      workout2: 'Adiciona 15min HIIT 3x/semana pós-treino',
+      workout3: 'Foca em exercícios compostos para máximo gasto calórico'
+    },
+    de: {
+      title: 'KI-Fortschrittsphoto-Analyse',
+      target: 'Zielzone',
+      days: 'Tage',
+      excellent: 'Ausgezeichnet',
+      before: 'Vorher',
+      daysAgo: 'Tage her',
+      after: 'Nachher',
+      today: 'Heute',
+      scientific: 'Detaillierte Wissenschaftliche Analyse',
+      muscle: 'Muskeldefinition',
+      fat: 'Fettreduktion',
+      waist: 'Taille',
+      skin: 'Hautton',
+      posture: 'Haltung',
+      recommendations: 'Personalisierte KI-Empfehlungen',
+      dietChanges: 'Diätänderungen',
+      workoutChanges: 'Trainingsänderungen',
+      applyDiet: 'Diätänderungen Anwenden',
+      applyWorkout: 'Trainingsänderungen Anwenden',
+      save: 'Analyse Speichern',
+      preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar',
+      zone: 'Bauch',
+      diet1: 'Erhöhe Protein auf 2.2g/kg um Muskelmasse zu erhalten',
+      diet2: 'Reduziere Abend-Kohlenhydrate um 15% für optimalen Fettabbau',
+      diet3: 'Füge alle 2h 200ml Wasser für Hydratation und Stoffwechsel hinzu',
+      workout1: 'Erhöhe Bauchmuskel-Trainingsvolumen +20%',
+      workout2: 'Füge 15min HIIT 3x/Woche nach Training hinzu',
+      workout3: 'Fokus auf Verbundübungen für maximalen Kalorienverbrauch'
+    },
+    fr: {
+      title: 'Analyse de Photo de Progrès IA',
+      target: 'Zone Cible',
+      days: 'jours',
+      excellent: 'Excellent',
+      before: 'Avant',
+      daysAgo: 'jours passés',
+      after: 'Après',
+      today: 'Aujourd\'hui',
+      scientific: 'Analyse Scientifique Détaillée',
+      muscle: 'Définition Musculaire',
+      fat: 'Réduction Graisse',
+      waist: 'taille',
+      skin: 'Teint',
+      posture: 'Posture',
+      recommendations: 'Recommandations IA Personnalisées',
+      dietChanges: 'Modifications Régime',
+      workoutChanges: 'Modifications Entraînement',
+      applyDiet: 'Appliquer Modifications Régime',
+      applyWorkout: 'Appliquer Modifications Entraînement',
+      save: 'Sauvegarder Analyse',
+      preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription',
+      zone: 'Abdomen',
+      diet1: 'Augmente protéines à 2.2g/kg pour préserver masse musculaire',
+      diet2: 'Réduis glucides du soir de 15% pour optimiser perte de graisse',
+      diet3: 'Ajoute 200ml eau toutes les 2h pour hydratation et métabolisme',
+      workout1: 'Augmente volume entraînement abdominaux +20%',
+      workout2: 'Ajoute 15min HIIT 3x/semaine post-entraînement',
+      workout3: 'Focus sur exercices composés pour dépense calorique maximale'
+    }
+  }), []);
+
+  const tr = translations[language] || translations.it;
+
   const analysisData = {
-    targetZone: t('home.progressPhotoZone'),
+    targetZone: tr.zone,
     comparison: 'improved',
     daysSince: 28,
     detailedAnalysis: {
@@ -34,14 +220,14 @@ export default function ProgressPhotoPreviewDemo() {
     },
     recommendations: {
       diet: [
-        t('home.progressPhotoDiet1'),
-        t('home.progressPhotoDiet2'),
-        t('home.progressPhotoDiet3')
+        tr.diet1,
+        tr.diet2,
+        tr.diet3
       ],
       workout: [
-        t('home.progressPhotoWorkout1'),
-        t('home.progressPhotoWorkout2'),
-        t('home.progressPhotoWorkout3')
+        tr.workout1,
+        tr.workout2,
+        tr.workout3
       ]
     }
   };
@@ -82,13 +268,13 @@ export default function ProgressPhotoPreviewDemo() {
         <div className="slide-up">
           {/* Header */}
           <div className="bg-gradient-to-br from-purple-50 to-pink-50 px-6 py-5 border-b border-gray-100">
-            <div className="flex items-center justify-between mb-4">
-              <div>
-                <h2 className="text-xl font-bold text-gray-900">{t('home.progressPhotoTitle')}</h2>
-                <p className="text-sm text-gray-600 mt-1">{t('home.progressPhotoTarget')}: {analysisData.targetZone} • {analysisData.daysSince} {t('home.progressPhotoDays')}</p>
+            <div className="flex flex-col sm:flex-row items-center justify-between mb-4 gap-3">
+              <div className="text-center sm:text-left">
+                <h2 className="text-xl font-bold text-gray-900">{tr.title}</h2>
+                <p className="text-sm text-gray-600 mt-1">{tr.target}: {analysisData.targetZone} • {analysisData.daysSince} {tr.days}</p>
               </div>
               <div className="px-4 py-2 bg-green-100 rounded-full">
-                <span className="text-sm font-bold text-green-700">✓ {t('home.progressPhotoExcellent')}</span>
+                <span className="text-sm font-bold text-green-700">✓ {tr.excellent}</span>
               </div>
             </div>
             
@@ -101,7 +287,7 @@ export default function ProgressPhotoPreviewDemo() {
                   className="w-full h-56 object-cover rounded-xl"
                 />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-red-500 text-white text-xs font-bold rounded-full">
-                  {t('home.progressPhotoBefore')} - {analysisData.daysSince} {t('home.progressPhotoDaysAgo')}
+                  {tr.before} - {analysisData.daysSince} {tr.daysAgo}
                 </div>
               </div>
               <div className="relative">
@@ -111,7 +297,7 @@ export default function ProgressPhotoPreviewDemo() {
                   className="w-full h-56 object-cover rounded-xl"
                 />
                 <div className="absolute top-2 left-2 px-2 py-1 bg-green-500 text-white text-xs font-bold rounded-full">
-                  {t('home.progressPhotoAfter')} - {t('home.progressPhotoToday')}
+                  {tr.after} - {tr.today}
                 </div>
               </div>
             </div>
@@ -124,13 +310,13 @@ export default function ProgressPhotoPreviewDemo() {
                 <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                {t('home.progressPhotoScientific')}
+                {tr.scientific}
               </h3>
               
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Muscle Definition Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-blue-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoMuscle')}</p>
+                    <p className="text-xs text-gray-600 mb-2">{tr.muscle}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -155,7 +341,7 @@ export default function ProgressPhotoPreviewDemo() {
 
                   {/* Fat Reduction Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-green-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoFat')}</p>
+                    <p className="text-xs text-gray-600 mb-2">{tr.fat}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -176,12 +362,12 @@ export default function ProgressPhotoPreviewDemo() {
                       <TrendingDown className="w-3 h-3 text-green-600" />
                       <span className="text-xs font-bold text-green-600">{analysisData.detailedAnalysis.fatReduction.change}</span>
                     </div>
-                    <p className="text-xs text-green-700 font-semibold mt-1">-{analysisData.detailedAnalysis.fatReduction.waistReduction} {t('home.progressPhotoWaist')}</p>
+                    <p className="text-xs text-green-700 font-semibold mt-1">-{analysisData.detailedAnalysis.fatReduction.waistReduction} {tr.waist}</p>
                   </div>
 
                   {/* Skin Tone Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-purple-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoSkin')}</p>
+                    <p className="text-xs text-gray-600 mb-2">{tr.skin}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -206,7 +392,7 @@ export default function ProgressPhotoPreviewDemo() {
 
                   {/* Posture Score */}
                   <div className="bg-white/90 rounded-xl p-4 border border-teal-100 text-center">
-                    <p className="text-xs text-gray-600 mb-2">{t('home.progressPhotoPosture')}</p>
+                    <p className="text-xs text-gray-600 mb-2">{tr.posture}</p>
                     <div className="relative inline-flex items-center justify-center mb-2">
                       <svg className="w-20 h-20 transform -rotate-90">
                         <circle cx="40" cy="40" r="32" fill="none" stroke="#e5e7eb" strokeWidth="6" />
@@ -237,14 +423,14 @@ export default function ProgressPhotoPreviewDemo() {
                 <div className="w-6 h-6 bg-gradient-to-br from-amber-500 to-orange-500 rounded-full flex items-center justify-center">
                   <Sparkles className="w-4 h-4 text-white" />
                 </div>
-                {t('home.progressPhotoRecommendations')}
+                {tr.recommendations}
               </h3>
 
               <div className="grid md:grid-cols-2 gap-6">
                 {/* Diet Recommendations with Button */}
                 <div>
                   <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    🍽️ {t('home.progressPhotoDietChanges')}
+                    🍽️ {tr.dietChanges}
                   </h4>
                   <div className="space-y-2 mb-4">
                     {analysisData.recommendations.diet.map((rec, idx) => (
@@ -259,14 +445,14 @@ export default function ProgressPhotoPreviewDemo() {
                     className="w-full bg-gradient-to-r from-teal-500 to-green-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    {t('home.progressPhotoApplyDiet')}
+                    {tr.applyDiet}
                   </button>
                 </div>
 
                 {/* Workout Recommendations with Button */}
                 <div>
                   <h4 className="text-sm font-bold text-gray-800 mb-3 flex items-center gap-2">
-                    💪 {t('home.progressPhotoWorkoutChanges')}
+                    💪 {tr.workoutChanges}
                   </h4>
                   <div className="space-y-2 mb-4">
                     {analysisData.recommendations.workout.map((rec, idx) => (
@@ -281,7 +467,7 @@ export default function ProgressPhotoPreviewDemo() {
                     className="w-full bg-gradient-to-r from-purple-500 to-indigo-500 text-white font-bold py-2.5 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-sm"
                   >
                     <CheckCircle2 className="w-4 h-4" />
-                    {t('home.progressPhotoApplyWorkout')}
+                    {tr.applyWorkout}
                   </button>
                 </div>
               </div>
@@ -294,7 +480,7 @@ export default function ProgressPhotoPreviewDemo() {
                 className="w-full bg-gradient-to-r from-blue-500 to-cyan-500 text-white font-bold py-3 rounded-xl opacity-60 cursor-not-allowed flex items-center justify-center gap-2 text-base"
               >
                 <Save className="w-5 h-5" />
-                {t('home.progressPhotoSave')}
+                {tr.save}
               </button>
             </div>
           </div>
@@ -302,7 +488,7 @@ export default function ProgressPhotoPreviewDemo() {
           {/* Footer */}
           <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
             <p className="text-xs text-gray-400 italic text-center">
-              {t('home.quizDemoPreview')}
+              {tr.preview}
             </p>
           </div>
         </div>
