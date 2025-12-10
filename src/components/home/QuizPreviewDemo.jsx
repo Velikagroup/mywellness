@@ -9,13 +9,96 @@ import { useLanguage } from '../i18n/LanguageContext';
  * Mostra un esempio di domanda del quiz con opzioni
  */
 export default function QuizPreviewDemo() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [selected, setSelected] = React.useState('moderato');
 
+  const translations = React.useMemo(() => ({
+    it: {
+      questionsCompleted: 'domande completate',
+      aiPersonalization: 'Personalizzazione AI',
+      title: 'A che velocità vuoi perdere peso?',
+      subtitle: 'Imposteremo calorie e macros in base al tuo obiettivo',
+      optionSlow: 'Lento e Costante',
+      optionSlowSubtitle: '-0.5kg/settimana • Sostenibile lungo termine',
+      optionModerate: 'Moderato',
+      optionModerateSubtitle: '-0.8kg/settimana • Equilibrio ideale',
+      optionFast: 'Veloce',
+      optionFastSubtitle: '-1kg/settimana • Deficit più marcato',
+      preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'
+    },
+    en: {
+      questionsCompleted: 'questions completed',
+      aiPersonalization: 'AI Personalization',
+      title: 'How fast do you want to lose weight?',
+      subtitle: 'We\'ll set calories and macros based on your goal',
+      optionSlow: 'Slow and Steady',
+      optionSlowSubtitle: '-0.5kg/week • Sustainable long-term',
+      optionModerate: 'Moderate',
+      optionModerateSubtitle: '-0.8kg/week • Ideal balance',
+      optionFast: 'Fast',
+      optionFastSubtitle: '-1kg/week • More marked deficit',
+      preview: 'Interface preview • Features available after signup'
+    },
+    es: {
+      questionsCompleted: 'preguntas completadas',
+      aiPersonalization: 'Personalización IA',
+      title: '¿A qué velocidad quieres perder peso?',
+      subtitle: 'Estableceremos calorías y macros según tu objetivo',
+      optionSlow: 'Lento y Constante',
+      optionSlowSubtitle: '-0.5kg/semana • Sostenible largo plazo',
+      optionModerate: 'Moderado',
+      optionModerateSubtitle: '-0.8kg/semana • Equilibrio ideal',
+      optionFast: 'Rápido',
+      optionFastSubtitle: '-1kg/semana • Déficit más marcado',
+      preview: 'Vista previa de interfaz • Funciones disponibles después del registro'
+    },
+    pt: {
+      questionsCompleted: 'perguntas completadas',
+      aiPersonalization: 'Personalização IA',
+      title: 'Qual velocidade você quer perder peso?',
+      subtitle: 'Definiremos calorias e macros com base no seu objetivo',
+      optionSlow: 'Lento e Constante',
+      optionSlowSubtitle: '-0.5kg/semana • Sustentável longo prazo',
+      optionModerate: 'Moderado',
+      optionModerateSubtitle: '-0.8kg/semana • Equilíbrio ideal',
+      optionFast: 'Rápido',
+      optionFastSubtitle: '-1kg/semana • Déficit mais marcado',
+      preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro'
+    },
+    de: {
+      questionsCompleted: 'Fragen abgeschlossen',
+      aiPersonalization: 'KI-Personalisierung',
+      title: 'Wie schnell möchten Sie abnehmen?',
+      subtitle: 'Wir stellen Kalorien und Makros basierend auf Ihrem Ziel ein',
+      optionSlow: 'Langsam und Stetig',
+      optionSlowSubtitle: '-0.5kg/Woche • Langfristig nachhaltig',
+      optionModerate: 'Moderat',
+      optionModerateSubtitle: '-0.8kg/Woche • Ideales Gleichgewicht',
+      optionFast: 'Schnell',
+      optionFastSubtitle: '-1kg/Woche • Stärkeres Defizit',
+      preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'
+    },
+    fr: {
+      questionsCompleted: 'questions complétées',
+      aiPersonalization: 'Personnalisation IA',
+      title: 'À quelle vitesse voulez-vous perdre du poids?',
+      subtitle: 'Nous définirons les calories et macros selon votre objectif',
+      optionSlow: 'Lent et Régulier',
+      optionSlowSubtitle: '-0.5kg/semaine • Durable long terme',
+      optionModerate: 'Modéré',
+      optionModerateSubtitle: '-0.8kg/semaine • Équilibre idéal',
+      optionFast: 'Rapide',
+      optionFastSubtitle: '-1kg/semaine • Déficit plus marqué',
+      preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'
+    }
+  }), []);
+
+  const tr = translations[language] || translations.it;
+
   const options = [
-    { id: 'lento', label: t('home.quizDemoOptionSlow'), subtitle: t('home.quizDemoOptionSlowSubtitle'), emoji: '🐢' },
-    { id: 'moderato', label: t('home.quizDemoOptionModerate'), subtitle: t('home.quizDemoOptionModerateSubtitle'), emoji: '⚡' },
-    { id: 'veloce', label: t('home.quizDemoOptionFast'), subtitle: t('home.quizDemoOptionFastSubtitle'), emoji: '🚀' }
+    { id: 'lento', label: tr.optionSlow, subtitle: tr.optionSlowSubtitle, emoji: '🐢' },
+    { id: 'moderato', label: tr.optionModerate, subtitle: tr.optionModerateSubtitle, emoji: '⚡' },
+    { id: 'veloce', label: tr.optionFast, subtitle: tr.optionFastSubtitle, emoji: '🚀' }
   ];
 
   return (
@@ -29,7 +112,7 @@ export default function QuizPreviewDemo() {
             <span className="text-gray-400 font-medium">/</span>
             <span className="text-xl font-bold text-gray-600">12</span>
           </div>
-          <span className="text-sm text-gray-500 font-medium ml-2">{t('home.quizDemoQuestionsCompleted')}</span>
+          <span className="text-sm text-gray-500 font-medium ml-2">{tr.questionsCompleted}</span>
         </div>
         
         <div className="relative h-3 bg-gray-100 rounded-full overflow-hidden shadow-inner max-w-md mx-auto">
@@ -44,14 +127,14 @@ export default function QuizPreviewDemo() {
         <div className="mb-8 text-center">
           <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary-light)] border border-[var(--brand-primary)]/30 rounded-full text-sm mb-6">
             <Sparkles className="w-4 h-4 text-[var(--brand-primary)]" />
-            <span className="text-[var(--brand-primary-dark-text)] font-semibold">{t('home.quizDemoAIPersonalization')}</span>
+            <span className="text-[var(--brand-primary-dark-text)] font-semibold">{tr.aiPersonalization}</span>
           </div>
           
           <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-4 leading-tight">
-            {t('home.quizDemoWeightLossSpeed')}
+            {tr.title}
           </h3>
           <p className="text-sm text-gray-600 max-w-lg mx-auto">
-            {t('home.quizDemoWeightLossSpeedSubtitle')}
+            {tr.subtitle}
           </p>
         </div>
 
@@ -91,7 +174,7 @@ export default function QuizPreviewDemo() {
         {/* Demo Notice */}
         <div className="text-center mt-8">
           <p className="text-xs text-gray-400 italic">
-            {t('home.quizDemoPreview')}
+            {tr.preview}
           </p>
         </div>
       </CardContent>
