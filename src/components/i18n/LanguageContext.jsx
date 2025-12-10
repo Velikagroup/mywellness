@@ -69,6 +69,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     if (forcedLanguage) {
       languageRef.current = forcedLanguage;
       setLanguageState(forcedLanguage);
+      localStorage.setItem('preferred_language', forcedLanguage);
       return;
     }
     
@@ -78,7 +79,7 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
       setLanguageState(urlLang);
       localStorage.setItem('preferred_language', urlLang);
     }
-  }, [location.pathname, forcedLanguage]);
+  }, [location.pathname, forcedLanguage, language]);
 
   // Translation function - uses ref to always get current language
   const t = React.useCallback((key, params = {}) => {
