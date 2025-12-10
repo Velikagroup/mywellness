@@ -4,48 +4,60 @@ import { ShoppingCart, Check } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 
 export default function ShoppingListPreviewDemo() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  
+  const translations = React.useMemo(() => ({
+    it: { title: 'Lista della Spesa', subtitle: 'Generata dall\'AI per questa settimana', completion: 'Completamento', items: 'articoli', fruitVeg: 'Frutta e Verdura', meat: 'Carne e Pesce', dairy: 'Latticini e Uova', grains: 'Cereali e Pasta', condiments: 'Condimenti', tomatoes: 'Pomodori', spinach: 'Spinaci freschi', bananas: 'Banane', chickenBreast: 'Petto di pollo', salmon: 'Salmone fresco', greekYogurt: 'Yogurt greco', eggs: 'Uova', mozzarella: 'Mozzarella', brownRice: 'Riso integrale', wholePasta: 'Pasta integrale', oliveOil: 'Olio EVO', pinkSalt: 'Sale rosa', unit: 'unità', preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup' },
+    en: { title: 'Shopping List', subtitle: 'AI-generated for this week', completion: 'Completion', items: 'items', fruitVeg: 'Fruits and Vegetables', meat: 'Meat and Fish', dairy: 'Dairy and Eggs', grains: 'Grains and Pasta', condiments: 'Condiments', tomatoes: 'Tomatoes', spinach: 'Fresh spinach', bananas: 'Bananas', chickenBreast: 'Chicken breast', salmon: 'Fresh salmon', greekYogurt: 'Greek yogurt', eggs: 'Eggs', mozzarella: 'Mozzarella', brownRice: 'Brown rice', wholePasta: 'Whole wheat pasta', oliveOil: 'Olive oil', pinkSalt: 'Pink salt', unit: 'units', preview: 'Interface preview • Features available after signup' },
+    es: { title: 'Lista de Compras', subtitle: 'Generada por IA para esta semana', completion: 'Completado', items: 'artículos', fruitVeg: 'Frutas y Verduras', meat: 'Carne y Pescado', dairy: 'Lácteos y Huevos', grains: 'Cereales y Pasta', condiments: 'Condimentos', tomatoes: 'Tomates', spinach: 'Espinacas frescas', bananas: 'Plátanos', chickenBreast: 'Pechuga de pollo', salmon: 'Salmón fresco', greekYogurt: 'Yogur griego', eggs: 'Huevos', mozzarella: 'Mozzarella', brownRice: 'Arroz integral', wholePasta: 'Pasta integral', oliveOil: 'Aceite de oliva', pinkSalt: 'Sal rosa', unit: 'unidades', preview: 'Vista previa de interfaz • Funciones disponibles después del registro' },
+    pt: { title: 'Lista de Compras', subtitle: 'Gerada pela IA para esta semana', completion: 'Conclusão', items: 'itens', fruitVeg: 'Frutas e Vegetais', meat: 'Carne e Peixe', dairy: 'Laticínios e Ovos', grains: 'Cereais e Massa', condiments: 'Condimentos', tomatoes: 'Tomates', spinach: 'Espinafre fresco', bananas: 'Bananas', chickenBreast: 'Peito de frango', salmon: 'Salmão fresco', greekYogurt: 'Iogurte grego', eggs: 'Ovos', mozzarella: 'Mozzarella', brownRice: 'Arroz integral', wholePasta: 'Massa integral', oliveOil: 'Azeite de oliva', pinkSalt: 'Sal rosa', unit: 'unidades', preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro' },
+    de: { title: 'Einkaufsliste', subtitle: 'Von KI für diese Woche generiert', completion: 'Abschluss', items: 'Artikel', fruitVeg: 'Obst und Gemüse', meat: 'Fleisch und Fisch', dairy: 'Milchprodukte und Eier', grains: 'Getreide und Nudeln', condiments: 'Gewürze', tomatoes: 'Tomaten', spinach: 'Frischer Spinat', bananas: 'Bananen', chickenBreast: 'Hähnchenbrust', salmon: 'Frischer Lachs', greekYogurt: 'Griechischer Joghurt', eggs: 'Eier', mozzarella: 'Mozzarella', brownRice: 'Vollkornreis', wholePasta: 'Vollkornnudeln', oliveOil: 'Olivenöl', pinkSalt: 'Rosa Salz', unit: 'Stück', preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar' },
+    fr: { title: 'Liste de Courses', subtitle: 'Générée par IA pour cette semaine', completion: 'Achèvement', items: 'articles', fruitVeg: 'Fruits et Légumes', meat: 'Viande et Poisson', dairy: 'Produits Laitiers et Œufs', grains: 'Céréales et Pâtes', condiments: 'Condiments', tomatoes: 'Tomates', spinach: 'Épinards frais', bananas: 'Bananes', chickenBreast: 'Blanc de poulet', salmon: 'Saumon frais', greekYogurt: 'Yaourt grec', eggs: 'Œufs', mozzarella: 'Mozzarella', brownRice: 'Riz complet', wholePasta: 'Pâtes complètes', oliveOil: 'Huile d\'olive', pinkSalt: 'Sel rose', unit: 'unités', preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription' }
+  }), []);
+
+  const tr = translations[language] || translations.it;
+  
   const categories = [
     {
-      name: t('home.shoppingCategoryFruitVeg'),
+      name: tr.fruitVeg,
       icon: '🥬',
       items: [
-        { name: t('home.shoppingItemTomatoes'), quantity: '500g', checked: true },
-        { name: t('home.shoppingItemSpinach'), quantity: '300g', checked: false },
-        { name: t('home.shoppingItemBananas'), quantity: `6 ${t('home.shoppingUnit')}`, checked: true }
+        { name: tr.tomatoes, quantity: '500g', checked: true },
+        { name: tr.spinach, quantity: '300g', checked: false },
+        { name: tr.bananas, quantity: `6 ${tr.unit}`, checked: true }
       ]
     },
     {
-      name: t('home.shoppingCategoryMeat'),
+      name: tr.meat,
       icon: '🥩',
       items: [
-        { name: t('home.shoppingItemChickenBreast'), quantity: '800g', checked: false },
-        { name: t('home.shoppingItemSalmon'), quantity: '400g', checked: false }
+        { name: tr.chickenBreast, quantity: '800g', checked: false },
+        { name: tr.salmon, quantity: '400g', checked: false }
       ]
     },
     {
-      name: t('home.shoppingCategoryDairy'),
+      name: tr.dairy,
       icon: '🥛',
       items: [
-        { name: t('home.shoppingItemGreekYogurt'), quantity: '1kg', checked: true },
-        { name: t('home.shoppingItemEggs'), quantity: `12 ${t('home.shoppingUnit')}`, checked: false },
-        { name: t('home.shoppingItemMozzarella'), quantity: '250g', checked: false }
+        { name: tr.greekYogurt, quantity: '1kg', checked: true },
+        { name: tr.eggs, quantity: `12 ${tr.unit}`, checked: false },
+        { name: tr.mozzarella, quantity: '250g', checked: false }
       ]
     },
     {
-      name: t('home.shoppingCategoryGrains'),
+      name: tr.grains,
       icon: '🍝',
       items: [
-        { name: t('home.shoppingItemBrownRice'), quantity: '500g', checked: false },
-        { name: t('home.shoppingItemWholePasta'), quantity: '500g', checked: true }
+        { name: tr.brownRice, quantity: '500g', checked: false },
+        { name: tr.wholePasta, quantity: '500g', checked: true }
       ]
     },
     {
-      name: t('home.shoppingCategoryCondiments'),
+      name: tr.condiments,
       icon: '🧂',
       items: [
-        { name: t('home.shoppingItemOliveOil'), quantity: '1L', checked: true },
-        { name: t('home.shoppingItemPinkSalt'), quantity: '250g', checked: true }
+        { name: tr.oliveOil, quantity: '1L', checked: true },
+        { name: tr.pinkSalt, quantity: '250g', checked: true }
       ]
     }
   ];
@@ -90,8 +102,8 @@ export default function ShoppingListPreviewDemo() {
                 <ShoppingCart className="w-5 h-5 text-white" />
               </div>
               <div>
-                <h2 className="text-xl font-bold text-gray-900">{t('home.shoppingListTitle')}</h2>
-                <p className="text-xs text-gray-600">{t('home.shoppingListSubtitle')}</p>
+                <h2 className="text-xl font-bold text-gray-900">{tr.title}</h2>
+                <p className="text-xs text-gray-600">{tr.subtitle}</p>
               </div>
             </div>
           </div>
@@ -99,8 +111,8 @@ export default function ShoppingListPreviewDemo() {
           {/* Progress */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-semibold text-gray-700">{t('home.shoppingListCompletion')}</span>
-              <span className="font-bold text-teal-600">{checkedItems}/{totalItems} {t('home.shoppingListItems')}</span>
+              <span className="font-semibold text-gray-700">{tr.completion}</span>
+              <span className="font-bold text-teal-600">{checkedItems}/{totalItems} {tr.items}</span>
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <div 
@@ -172,7 +184,7 @@ export default function ShoppingListPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            {t('home.quizDemoPreview')}
+            {tr.preview}
           </p>
         </div>
       </Card>
