@@ -10,11 +10,161 @@ import { useLanguage } from '../i18n/LanguageContext';
  */
 export default function DashboardPreviewDemo() {
   const { t, language } = useLanguage();
+  
+  const translations = React.useMemo(() => ({
+    it: {
+      scientificAnalysis: '✅ Analisi Scientifica',
+      scientificDashboard: 'Dashboard Scientifico',
+      subtitle: 'Visualizza TMB, necessità caloriche, grasso corporeo e proiezioni di obiettivi in tempo reale.',
+      startWeight: 'Peso Iniziale',
+      targetWeight: 'Peso Target',
+      variation: 'Variazione',
+      trajectory: 'Traiettoria Massa Corporea',
+      currentWeight: 'Peso attuale',
+      target: 'Target',
+      calorieBreakdown: 'Scomposizione Calorica Obiettivo',
+      completed: 'completato',
+      completedLabel: 'Completato',
+      remaining: 'Rimanente',
+      calorieCalc: 'Calcolo basato su 7700 kcal = 1kg di variazione',
+      targetCalories: 'Target Calorico',
+      bmr: 'Metabolismo Basale (BMR)',
+      bodyFat: 'Massa Grassa',
+      workoutDays: 'Giorni di Allenamento',
+      daysPerWeek: 'giorni/sett',
+      stable: 'stabile',
+      registerWeight: 'Registra Peso',
+      saveWeight: 'Salva Peso'
+    },
+    en: {
+      scientificAnalysis: '✅ Scientific Analysis',
+      scientificDashboard: 'Scientific Dashboard',
+      subtitle: 'Visualize BMR, calorie needs, body fat and goal projections in real-time.',
+      startWeight: 'Starting Weight',
+      targetWeight: 'Target Weight',
+      variation: 'Variation',
+      trajectory: 'Body Mass Trajectory',
+      currentWeight: 'Current weight',
+      target: 'Target',
+      calorieBreakdown: 'Calorie Goal Breakdown',
+      completed: 'completed',
+      completedLabel: 'Completed',
+      remaining: 'Remaining',
+      calorieCalc: 'Calculation based on 7700 kcal = 1kg change',
+      targetCalories: 'Calorie Target',
+      bmr: 'Basal Metabolic Rate (BMR)',
+      bodyFat: 'Body Fat',
+      workoutDays: 'Workout Days',
+      daysPerWeek: 'days/week',
+      stable: 'stable',
+      registerWeight: 'Log Weight',
+      saveWeight: 'Save Weight'
+    },
+    es: {
+      scientificAnalysis: '✅ Análisis Científico',
+      scientificDashboard: 'Dashboard Científico',
+      subtitle: 'Visualiza TMB, necesidades calóricas, grasa corporal y proyecciones de objetivos en tiempo real.',
+      startWeight: 'Peso Inicial',
+      targetWeight: 'Peso Objetivo',
+      variation: 'Variación',
+      trajectory: 'Trayectoria de Masa Corporal',
+      currentWeight: 'Peso actual',
+      target: 'Objetivo',
+      calorieBreakdown: 'Desglose Calórico del Objetivo',
+      completed: 'completado',
+      completedLabel: 'Completado',
+      remaining: 'Restante',
+      calorieCalc: 'Cálculo basado en 7700 kcal = 1kg de cambio',
+      targetCalories: 'Objetivo Calórico',
+      bmr: 'Metabolismo Basal (TMB)',
+      bodyFat: 'Grasa Corporal',
+      workoutDays: 'Días de Entrenamiento',
+      daysPerWeek: 'días/sem',
+      stable: 'estable',
+      registerWeight: 'Registrar Peso',
+      saveWeight: 'Guardar Peso'
+    },
+    pt: {
+      scientificAnalysis: '✅ Análise Científica',
+      scientificDashboard: 'Dashboard Científico',
+      subtitle: 'Visualize TMB, necessidades calóricas, gordura corporal e projeções de objetivos em tempo real.',
+      startWeight: 'Peso Inicial',
+      targetWeight: 'Peso Alvo',
+      variation: 'Variação',
+      trajectory: 'Trajetória de Massa Corporal',
+      currentWeight: 'Peso atual',
+      target: 'Alvo',
+      calorieBreakdown: 'Detalhamento da Meta Calórica',
+      completed: 'completado',
+      completedLabel: 'Completado',
+      remaining: 'Restante',
+      calorieCalc: 'Cálculo baseado em 7700 kcal = 1kg de mudança',
+      targetCalories: 'Meta Calórica',
+      bmr: 'Taxa Metabólica Basal (TMB)',
+      bodyFat: 'Gordura Corporal',
+      workoutDays: 'Dias de Treino',
+      daysPerWeek: 'dias/sem',
+      stable: 'estável',
+      registerWeight: 'Registrar Peso',
+      saveWeight: 'Salvar Peso'
+    },
+    de: {
+      scientificAnalysis: '✅ Wissenschaftliche Analyse',
+      scientificDashboard: 'Wissenschaftliches Dashboard',
+      subtitle: 'Visualisieren Sie BMR, Kalorienbedarf, Körperfett und Zielprognosen in Echtzeit.',
+      startWeight: 'Startgewicht',
+      targetWeight: 'Zielgewicht',
+      variation: 'Variation',
+      trajectory: 'Körpermassenentwicklung',
+      currentWeight: 'Aktuelles Gewicht',
+      target: 'Ziel',
+      calorieBreakdown: 'Kalorische Zielaufschlüsselung',
+      completed: 'abgeschlossen',
+      completedLabel: 'Abgeschlossen',
+      remaining: 'Verbleibend',
+      calorieCalc: 'Berechnung basiert auf 7700 kcal = 1 kg Änderung',
+      targetCalories: 'Kalorienziel',
+      bmr: 'Grundumsatz (BMR)',
+      bodyFat: 'Körperfett',
+      workoutDays: 'Trainingstage',
+      daysPerWeek: 'Tage/Woche',
+      stable: 'stabil',
+      registerWeight: 'Gewicht Erfassen',
+      saveWeight: 'Gewicht Speichern'
+    },
+    fr: {
+      scientificAnalysis: '✅ Analyse Scientifique',
+      scientificDashboard: 'Dashboard Scientifique',
+      subtitle: 'Visualisez MB, besoins caloriques, masse grasse et projections d\'objectifs en temps réel.',
+      startWeight: 'Poids Initial',
+      targetWeight: 'Poids Cible',
+      variation: 'Variation',
+      trajectory: 'Trajectoire de Masse Corporelle',
+      currentWeight: 'Poids actuel',
+      target: 'Cible',
+      calorieBreakdown: 'Répartition de l\'Objectif Calorique',
+      completed: 'complété',
+      completedLabel: 'Complété',
+      remaining: 'Restant',
+      calorieCalc: 'Calcul basé sur 7700 kcal = 1 kg de changement',
+      targetCalories: 'Objectif Calorique',
+      bmr: 'Métabolisme de Base (MB)',
+      bodyFat: 'Masse Grasse',
+      workoutDays: 'Jours d\'Entraînement',
+      daysPerWeek: 'jours/sem',
+      stable: 'stable',
+      registerWeight: 'Enregistrer le Poids',
+      saveWeight: 'Sauvegarder le Poids'
+    }
+  }), []);
+
+  const tr = translations[language] || translations.it;
+  
   const weightData = React.useMemo(() => [
-    { date: language === 'es' ? '24 Sep' : '24 Set', weight: 83.0 },
-    { date: language === 'es' ? '28 Sep' : '28 Set', weight: 81.5 },
-    { date: language === 'es' ? '01 Oct' : '01 Ott', weight: 80.2 },
-    { date: language === 'es' ? '02 Oct' : '02 Ott', weight: 79.0 }
+    { date: language === 'es' ? '24 Sep' : language === 'pt' ? '24 Set' : language === 'en' ? '24 Sep' : language === 'de' ? '24 Sep' : language === 'fr' ? '24 Sep' : '24 Set', weight: 83.0 },
+    { date: language === 'es' ? '28 Sep' : language === 'pt' ? '28 Set' : language === 'en' ? '28 Sep' : language === 'de' ? '28 Sep' : language === 'fr' ? '28 Sep' : '28 Set', weight: 81.5 },
+    { date: language === 'es' ? '01 Oct' : language === 'pt' ? '01 Out' : language === 'en' ? '01 Oct' : language === 'de' ? '01 Okt' : language === 'fr' ? '01 Oct' : '01 Ott', weight: 80.2 },
+    { date: language === 'es' ? '02 Oct' : language === 'pt' ? '02 Out' : language === 'en' ? '02 Oct' : language === 'de' ? '02 Okt' : language === 'fr' ? '02 Oct' : '02 Ott', weight: 79.0 }
   ], [language]);
 
   const startWeight = 83.0;
@@ -30,15 +180,6 @@ export default function DashboardPreviewDemo() {
   const totalCaloriesToBurn = totalDistance * targetCalories;
   const caloriesBurned = distanceCovered * targetCalories;
   const caloriesRemaining = totalCaloriesToBurn - caloriesBurned;
-
-  const subtitleText = React.useMemo(() => {
-    if (language === 'pt') return 'Visualize TMB, necessidades calóricas, gordura corporal e projeções de objetivos em tempo real.';
-    if (language === 'es') return 'Visualiza TMB, necesidades calóricas, grasa corporal y proyecciones de objetivos en tiempo real.';
-    if (language === 'de') return 'Visualisieren Sie BMR, Kalorienbedarf, Körperfett und Zielprognosen in Echtzeit.';
-    if (language === 'fr') return 'Visualisez MB, besoins caloriques, masse grasse et projections d\'objectifs en temps réel.';
-    if (language === 'en') return 'Visualize BMR, calorie needs, body fat and goal projections in real-time.';
-    return 'Visualizza TMB, necessità caloriche, grasso corporeo e proiezioni di obiettivi in tempo reale.';
-  }, [language]);
 
   return (
     <>
@@ -62,24 +203,14 @@ export default function DashboardPreviewDemo() {
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary)]/10 rounded-full mb-3">
           <Activity className="w-4 h-4 text-[var(--brand-primary)]" />
           <span className="text-sm font-semibold text-[var(--brand-primary)]">
-            {t('common.lang') === 'pt' ? '✅ Análise Científica' : 
-             t('common.lang') === 'es' ? '✅ Análisis Científico' :
-             t('common.lang') === 'de' ? '✅ Wissenschaftliche Analyse' :
-             t('common.lang') === 'fr' ? '✅ Analyse Scientifique' :
-             t('common.lang') === 'en' ? '✅ Scientific Analysis' :
-             '✅ Analisi Scientifica'}
+            {tr.scientificAnalysis}
           </span>
         </div>
         <h2 className="text-3xl font-black text-gray-900 mb-2">
-          {t('common.lang') === 'pt' ? 'Dashboard Científico' :
-           t('common.lang') === 'es' ? 'Dashboard Científico' :
-           t('common.lang') === 'de' ? 'Wissenschaftliches Dashboard' :
-           t('common.lang') === 'fr' ? 'Dashboard Scientifique' :
-           t('common.lang') === 'en' ? 'Scientific Dashboard' :
-           'Dashboard Scientifico'}
+          {tr.scientificDashboard}
         </h2>
         <p className="text-gray-600 max-w-2xl mx-auto">
-          {subtitleText}
+          {tr.subtitle}
         </p>
       </div>
       
@@ -90,7 +221,7 @@ export default function DashboardPreviewDemo() {
         <div className="grid grid-cols-3 gap-4">
           <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('home.dashboardStartWeight')}</p>
+              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">{tr.startWeight}</p>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-3xl font-black text-gray-900">{startWeight}</span>
                 <span className="text-sm text-gray-500 font-medium">kg</span>
@@ -100,7 +231,7 @@ export default function DashboardPreviewDemo() {
 
           <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">{t('home.dashboardTargetWeight')}</p>
+              <p className="text-[10px] font-medium text-gray-500 mb-1 uppercase tracking-wider">{tr.targetWeight}</p>
               <div className="flex items-baseline gap-1.5">
                 <span className="text-3xl font-black text-gray-900">{targetWeight}</span>
                 <span className="text-sm text-gray-500 font-medium">kg</span>
@@ -110,7 +241,7 @@ export default function DashboardPreviewDemo() {
 
           <Card className="water-glass-effect border border-green-200/50 shadow-lg rounded-lg">
             <CardContent className="p-4">
-              <p className="text-[10px] font-medium text-green-700 mb-1 uppercase tracking-wider">{t('home.dashboardVariation')}</p>
+              <p className="text-[10px] font-medium text-green-700 mb-1 uppercase tracking-wider">{tr.variation}</p>
               <div className="flex items-baseline gap-1.5">
                 <TrendingDown className="w-4 h-4 text-green-600" />
                 <span className="text-3xl font-black text-green-700">{variation.toFixed(1)}</span>
@@ -127,7 +258,7 @@ export default function DashboardPreviewDemo() {
             <CardHeader className="pb-2 pt-4 px-4">
               <CardTitle className="text-xs font-semibold text-gray-900 flex items-center gap-1.5">
                 <Scale className="w-3.5 h-3.5 text-[var(--brand-primary)]" />
-                {t('home.dashboardTrajectory')}
+                {tr.trajectory}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
@@ -160,7 +291,7 @@ export default function DashboardPreviewDemo() {
                       y={73} 
                       stroke="#10b981" 
                       strokeDasharray="4 4" 
-                      label={{ value: t('home.dashboardTarget'), fontSize: 8, fill: '#10b981', position: 'right' }}
+                      label={{ value: tr.target, fontSize: 8, fill: '#10b981', position: 'right' }}
                     />
                     <Line 
                       type="monotone" 
@@ -168,7 +299,7 @@ export default function DashboardPreviewDemo() {
                       stroke="#26847F" 
                       strokeWidth={2.5}
                       dot={{ fill: '#26847F', r: 3 }}
-                      name={t('home.dashboardCurrentWeight')}
+                      name={tr.currentWeight}
                     />
                   </LineChart>
                 </ResponsiveContainer>
@@ -176,11 +307,11 @@ export default function DashboardPreviewDemo() {
               <div className="mt-2 flex items-center justify-between text-[9px]">
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-[var(--brand-primary)]"></div>
-                  <span className="text-gray-600 font-medium">{t('home.dashboardCurrentWeight')}</span>
+                  <span className="text-gray-600 font-medium">{tr.currentWeight}</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <div className="w-2.5 h-0.5 bg-green-500"></div>
-                  <span className="text-gray-600 font-medium">{t('home.dashboardTarget')}</span>
+                  <span className="text-gray-600 font-medium">{tr.target}</span>
                 </div>
               </div>
             </CardContent>
@@ -190,7 +321,7 @@ export default function DashboardPreviewDemo() {
           <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
             <CardHeader className="pb-2 pt-4 px-4">
               <CardTitle className="text-xs font-semibold text-gray-900">
-                {t('home.dashboardCalorieBreakdown')}
+                {tr.calorieBreakdown}
               </CardTitle>
             </CardHeader>
             <CardContent className="px-4 pb-4">
@@ -220,7 +351,7 @@ export default function DashboardPreviewDemo() {
                     {progress}%
                   </text>
                   <text x="60" y="70" textAnchor="middle" className="text-[9px]" fill="#6b7280">
-                    {t('home.dashboardCompleted')}
+                    {tr.completed}
                   </text>
                 </svg>
               </div>
@@ -229,7 +360,7 @@ export default function DashboardPreviewDemo() {
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-[var(--brand-primary-light)]">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-[var(--brand-primary)]"></div>
-                    <span className="text-[11px] font-semibold text-gray-700">{t('home.dashboardCompletedLabel')}</span>
+                    <span className="text-[11px] font-semibold text-gray-700">{tr.completedLabel}</span>
                   </div>
                   <span className="text-[11px] font-bold text-gray-900">{caloriesBurned.toLocaleString('it-IT')} kcal</span>
                 </div>
@@ -237,7 +368,7 @@ export default function DashboardPreviewDemo() {
                 <div className="flex items-center justify-between py-1.5 px-2 rounded-md bg-gray-50">
                   <div className="flex items-center gap-1.5">
                     <div className="w-2.5 h-2.5 rounded-full bg-gray-300"></div>
-                    <span className="text-[11px] font-semibold text-gray-700">{t('home.dashboardRemaining')}</span>
+                    <span className="text-[11px] font-semibold text-gray-700">{tr.remaining}</span>
                   </div>
                   <span className="text-[11px] font-bold text-gray-900">{caloriesRemaining.toLocaleString('it-IT')} kcal</span>
                 </div>
@@ -246,7 +377,7 @@ export default function DashboardPreviewDemo() {
               <div className="mt-3 pt-2 border-t border-gray-200">
                 <p className="text-[9px] text-gray-500 text-center flex items-center justify-center gap-1">
                   <Activity className="w-2.5 h-2.5" />
-                  {t('home.dashboardCalorieCalc')}
+                  {tr.calorieCalc}
                 </p>
               </div>
             </CardContent>
@@ -258,7 +389,7 @@ export default function DashboardPreviewDemo() {
           <CardContent className="p-4">
             <div className="flex items-center gap-1.5 mb-3">
               <Scale className="w-4 h-4 text-[var(--brand-primary)]" />
-              <h3 className="text-xs font-semibold text-gray-900">{t('home.dashboardRegisterWeight')}</h3>
+              <h3 className="text-xs font-semibold text-gray-900">{tr.registerWeight}</h3>
             </div>
             <div className="flex gap-2">
               <div className="flex-1 relative">
@@ -275,7 +406,7 @@ export default function DashboardPreviewDemo() {
                 disabled
                 className="px-5 h-10 bg-[var(--brand-primary)] text-white text-sm font-semibold rounded-lg cursor-not-allowed opacity-80"
               >
-                {t('home.dashboardSaveWeight')}
+                {tr.saveWeight}
               </button>
             </div>
           </CardContent>
@@ -288,7 +419,7 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardTargetCalories')}</p>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{tr.targetCalories}</p>
               <span className="text-[9px] text-green-600 font-semibold">↗ +2.3%</span>
             </div>
             <div className="flex items-center gap-2">
@@ -305,7 +436,7 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardBMR')}</p>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{tr.bmr}</p>
               <span className="text-[9px] text-green-600 font-semibold">↗ +1.8%</span>
             </div>
             <div className="flex items-center gap-2">
@@ -322,8 +453,8 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardBodyFat')}</p>
-              <span className="text-[9px] text-gray-500 font-medium">— {t('home.dashboardStable')}</span>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{tr.bodyFat}</p>
+              <span className="text-[9px] text-gray-500 font-medium">— {tr.stable}</span>
             </div>
             <div className="flex items-center gap-2">
               <BarChart3 className="w-4 h-4 text-purple-600" />
@@ -339,14 +470,14 @@ export default function DashboardPreviewDemo() {
         <Card className="water-glass-effect border border-gray-200/40 shadow-lg rounded-lg">
           <CardContent className="p-4">
             <div className="flex items-start justify-between mb-2">
-              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{t('home.dashboardWorkoutDays')}</p>
-              <span className="text-[9px] text-gray-500 font-medium">— {t('home.dashboardStable')}</span>
+              <p className="text-[10px] font-medium text-gray-500 uppercase tracking-wider">{tr.workoutDays}</p>
+              <span className="text-[9px] text-gray-500 font-medium">— {tr.stable}</span>
             </div>
             <div className="flex items-center gap-2">
               <Calendar className="w-4 h-4 text-[var(--brand-primary)]" />
               <div className="flex items-baseline gap-1">
                 <span className="text-3xl font-black text-gray-900">5</span>
-                <span className="text-[11px] text-gray-500 font-medium">{t('home.dashboardDaysPerWeek')}</span>
+                <span className="text-[11px] text-gray-500 font-medium">{tr.daysPerWeek}</span>
               </div>
             </div>
           </CardContent>
