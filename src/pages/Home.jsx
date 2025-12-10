@@ -496,15 +496,7 @@ function HomeContent() {
                   <button
                     key={lang.code}
                     onClick={() => {
-                      const homePages = {
-                        'en': 'enhome',
-                        'it': 'ithome',
-                        'es': 'eshome',
-                        'pt': 'pthome',
-                        'de': 'dehome',
-                        'fr': 'frhome'
-                      };
-                      navigate(createPageUrl(homePages[lang.code] || 'Home'));
+                      navigate(createPageUrl(lang.code));
                       setLangMenuOpen(false);
                     }}
                     className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
@@ -563,15 +555,7 @@ function HomeContent() {
                         <button
                           key={lang.code}
                           onClick={() => {
-                            const homePages = {
-                              'en': 'enhome',
-                              'it': 'ithome',
-                              'es': 'eshome',
-                              'pt': 'pthome',
-                              'de': 'dehome',
-                              'fr': 'frhome'
-                            };
-                            navigate(createPageUrl(homePages[lang.code] || 'Home'));
+                            navigate(createPageUrl(lang.code));
                             setMobileLangMenuOpen(false);
                           }}
                           className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors flex items-center gap-2 ${
@@ -1474,11 +1458,22 @@ function HomeContent() {
 }
 
 export default function Home() {
+  const navigate = useNavigate();
+
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    const savedLang = localStorage.getItem('preferred_language') || 'en';
-    localStorage.setItem('preferred_language', savedLang);
-  }, []);
+    
+    // Rileva lingua del browser
+    const browserLang = navigator.language.toLowerCase().split('-')[0];
+    const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+    const detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+    
+    // Se siamo su /, redirect alla versione localizzata
+    if (window.location.pathname === '/' || window.location.pathname === createPageUrl('Home')) {
+      localStorage.setItem('preferred_language', detectedLang);
+      navigate(createPageUrl(detectedLang), { replace: true });
+    }
+  }, [navigate]);
 
   return (
     <LanguageProvider forcedLanguage="en">

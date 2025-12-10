@@ -48,7 +48,6 @@ import esquiz from './pages/esquiz';
 import ptquiz from './pages/ptquiz';
 import dequiz from './pages/dequiz';
 import frquiz from './pages/frquiz';
-import eshome from './pages/eshome';
 import itprivacy from './pages/itprivacy';
 import enprivacy from './pages/enprivacy';
 import esprivacy from './pages/esprivacy';
@@ -121,7 +120,6 @@ export const PAGES = {
     "ptquiz": ptquiz,
     "dequiz": dequiz,
     "frquiz": frquiz,
-    "eshome": eshome,
     "itprivacy": itprivacy,
     "enprivacy": enprivacy,
     "esprivacy": esprivacy,
