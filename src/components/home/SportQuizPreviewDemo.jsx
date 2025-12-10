@@ -10,12 +10,143 @@ export default function SportQuizPreviewDemo() {
   const [selectedPerformance, setSelectedPerformance] = useState(null);
   const [selectedSport, setSelectedSport] = useState(null);
 
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const translations = React.useMemo(() => ({
+    it: {
+      questions: 'domande',
+      goalTitle: 'Qual è il tuo obiettivo principale?',
+      goalSubtitle: 'Personalizzeremo tutto in base al tuo obiettivo',
+      goalWeightLoss: 'Perdita Peso',
+      goalWeightLossDesc: 'Dimagrire e tonificare',
+      goalMuscle: 'Aumento Massa',
+      goalMuscleDesc: 'Costruire muscoli',
+      goalPerformance: 'Performance',
+      goalPerformanceDesc: 'Migliorare prestazioni',
+      yesSport: 'Sì, pratico uno sport',
+      yesSportDesc: 'Allenamento specifico per il mio sport',
+      noSport: 'No, solo palestra',
+      noSportDesc: 'Allenamento generale in palestra',
+      sportHint: '💡 Adatteremo esercizi e intensità al tuo sport specifico',
+      whichSport: 'Quale sport pratichi?',
+      whichSportSubtitle: 'Ottimizzeremo allenamento e alimentazione',
+      others: 'Altro',
+      sportSelected: '✓ Ottimo! Creeremo un piano specifico per te',
+      footer: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'
+    },
+    en: {
+      questions: 'questions',
+      goalTitle: 'What is your main goal?',
+      goalSubtitle: 'We\'ll personalize everything based on your goal',
+      goalWeightLoss: 'Weight Loss',
+      goalWeightLossDesc: 'Lose weight and tone',
+      goalMuscle: 'Muscle Gain',
+      goalMuscleDesc: 'Build muscle',
+      goalPerformance: 'Performance',
+      goalPerformanceDesc: 'Improve performance',
+      yesSport: 'Yes, I play a sport',
+      yesSportDesc: 'Training specific to my sport',
+      noSport: 'No, just gym',
+      noSportDesc: 'General gym training',
+      sportHint: '💡 We\'ll adapt exercises and intensity to your specific sport',
+      whichSport: 'Which sport do you practice?',
+      whichSportSubtitle: 'We\'ll optimize training and nutrition',
+      others: 'Other',
+      sportSelected: '✓ Great! We\'ll create a specific plan for you',
+      footer: 'Interface preview • Features available after signup'
+    },
+    es: {
+      questions: 'preguntas',
+      goalTitle: '¿Cuál es tu objetivo principal?',
+      goalSubtitle: 'Personalizaremos todo según tu objetivo',
+      goalWeightLoss: 'Pérdida de Peso',
+      goalWeightLossDesc: 'Adelgazar y tonificar',
+      goalMuscle: 'Aumento Masa',
+      goalMuscleDesc: 'Construir músculo',
+      goalPerformance: 'Rendimiento',
+      goalPerformanceDesc: 'Mejorar rendimiento',
+      yesSport: 'Sí, practico un deporte',
+      yesSportDesc: 'Entrenamiento específico para mi deporte',
+      noSport: 'No, solo gimnasio',
+      noSportDesc: 'Entrenamiento general en gimnasio',
+      sportHint: '💡 Adaptaremos ejercicios e intensidad a tu deporte específico',
+      whichSport: '¿Qué deporte practicas?',
+      whichSportSubtitle: 'Optimizaremos entrenamiento y nutrición',
+      others: 'Otro',
+      sportSelected: '✓ ¡Genial! Crearemos un plan específico para ti',
+      footer: 'Vista previa de interfaz • Funciones disponibles después del registro'
+    },
+    pt: {
+      questions: 'perguntas',
+      goalTitle: 'Qual é o seu objetivo principal?',
+      goalSubtitle: 'Personalizaremos tudo com base no seu objetivo',
+      goalWeightLoss: 'Perda de Peso',
+      goalWeightLossDesc: 'Emagrecer e tonificar',
+      goalMuscle: 'Ganho de Massa',
+      goalMuscleDesc: 'Construir músculos',
+      goalPerformance: 'Performance',
+      goalPerformanceDesc: 'Melhorar desempenho',
+      yesSport: 'Sim, pratico um esporte',
+      yesSportDesc: 'Treino específico para meu esporte',
+      noSport: 'Não, só academia',
+      noSportDesc: 'Treino geral na academia',
+      sportHint: '💡 Adaptaremos exercícios e intensidade ao seu esporte específico',
+      whichSport: 'Qual esporte você pratica?',
+      whichSportSubtitle: 'Otimizaremos treino e nutrição',
+      others: 'Outro',
+      sportSelected: '✓ Ótimo! Criaremos um plano específico para você',
+      footer: 'Prévia da interface • Funcionalidades disponíveis após o cadastro'
+    },
+    de: {
+      questions: 'Fragen',
+      goalTitle: 'Was ist Ihr Hauptziel?',
+      goalSubtitle: 'Wir personalisieren alles basierend auf Ihrem Ziel',
+      goalWeightLoss: 'Gewichtsverlust',
+      goalWeightLossDesc: 'Abnehmen und straffen',
+      goalMuscle: 'Muskelaufbau',
+      goalMuscleDesc: 'Muskeln aufbauen',
+      goalPerformance: 'Leistung',
+      goalPerformanceDesc: 'Leistung verbessern',
+      yesSport: 'Ja, ich treibe Sport',
+      yesSportDesc: 'Training spezifisch für meinen Sport',
+      noSport: 'Nein, nur Fitnessstudio',
+      noSportDesc: 'Allgemeines Fitnessstudio-Training',
+      sportHint: '💡 Wir passen Übungen und Intensität an Ihren spezifischen Sport an',
+      whichSport: 'Welchen Sport betreiben Sie?',
+      whichSportSubtitle: 'Wir optimieren Training und Ernährung',
+      others: 'Andere',
+      sportSelected: '✓ Großartig! Wir erstellen einen spezifischen Plan für Sie',
+      footer: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'
+    },
+    fr: {
+      questions: 'questions',
+      goalTitle: 'Quel est votre objectif principal?',
+      goalSubtitle: 'Nous personnaliserons tout selon votre objectif',
+      goalWeightLoss: 'Perte de Poids',
+      goalWeightLossDesc: 'Perdre du poids et tonifier',
+      goalMuscle: 'Prise de Masse',
+      goalMuscleDesc: 'Construire du muscle',
+      goalPerformance: 'Performance',
+      goalPerformanceDesc: 'Améliorer les performances',
+      yesSport: 'Oui, je pratique un sport',
+      yesSportDesc: 'Entraînement spécifique à mon sport',
+      noSport: 'Non, juste la gym',
+      noSportDesc: 'Entraînement général en salle',
+      sportHint: '💡 Nous adapterons les exercices et l\'intensité à votre sport spécifique',
+      whichSport: 'Quel sport pratiquez-vous?',
+      whichSportSubtitle: 'Nous optimiserons l\'entraînement et la nutrition',
+      others: 'Autre',
+      sportSelected: '✓ Super! Nous créerons un plan spécifique pour vous',
+      footer: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'
+    }
+  }), []);
+
+  const tr = translations[language] || translations.it;
   
   const goals = [
-    { id: 'weight_loss', label: t('home.sportQuizGoalWeightLoss'), icon: '⬇️', desc: t('home.sportQuizGoalWeightLossDesc') },
-    { id: 'muscle_gain', label: t('home.sportQuizGoalMuscle'), icon: '💪', desc: t('home.sportQuizGoalMuscleDesc') },
-    { id: 'performance', label: t('home.sportQuizGoalPerformance'), icon: '🏆', desc: t('home.sportQuizGoalPerformanceDesc') }
+    { id: 'weight_loss', label: tr.goalWeightLoss, icon: '⬇️', desc: tr.goalWeightLossDesc },
+    { id: 'muscle_gain', label: tr.goalMuscle, icon: '💪', desc: tr.goalMuscleDesc },
+    { id: 'performance', label: tr.goalPerformance, icon: '🏆', desc: tr.goalPerformanceDesc }
   ];
 
   const sports = [
@@ -30,7 +161,7 @@ export default function SportQuizPreviewDemo() {
     { id: 'mma', label: 'MMA', icon: '👊' },
     { id: 'spinning', label: 'Spinning', icon: '🚴' },
     { id: 'zumba', label: 'Zumba', icon: '💃' },
-    { id: 'altro', label: t('home.sportQuizOthers'), icon: '➕' }
+    { id: 'altro', label: tr.others, icon: '➕' }
   ];
 
   useEffect(() => {
@@ -110,12 +241,12 @@ export default function SportQuizPreviewDemo() {
         <div className="px-6 pt-5 pb-3">
           <p className="text-sm text-gray-500 text-center">
             {currentStep === 0 
-              ? `4 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}` 
+              ? `4 / 12 ${tr.questions}` 
               : currentStep === 1 
-              ? `5 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}` 
+              ? `5 / 12 ${tr.questions}` 
               : currentStep === 2 
-              ? `6 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}` 
-              : `7 / 12 ${t('common.lang') === 'it' ? 'domande' : t('common.lang') === 'en' ? 'questions' : t('common.lang') === 'es' ? 'preguntas' : t('common.lang') === 'pt' ? 'perguntas' : t('common.lang') === 'de' ? 'Fragen' : 'questions'}`}
+              ? `6 / 12 ${tr.questions}` 
+              : `7 / 12 ${tr.questions}`}
           </p>
         </div>
 
@@ -136,8 +267,8 @@ export default function SportQuizPreviewDemo() {
                     <Target className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-center mb-2">{t('home.sportQuizGoalTitle')}</h3>
-                <p className="text-gray-500 text-center mb-6 text-sm">{t('home.sportQuizGoalSubtitle')}</p>
+                <h3 className="text-2xl font-bold text-center mb-2">{tr.goalTitle}</h3>
+                <p className="text-gray-500 text-center mb-6 text-sm">{tr.goalSubtitle}</p>
                 
                 <div className="space-y-3">
                   {goals.map((goal) => (
@@ -193,8 +324,8 @@ export default function SportQuizPreviewDemo() {
                     <div className="flex items-center gap-4">
                       <span className="text-4xl">🏆</span>
                       <div className="flex-1">
-                        <p className="font-bold text-gray-900 text-lg">{t('home.sportQuizYesSport')}</p>
-                        <p className="text-sm text-gray-500">{t('home.sportQuizYesSportDesc')}</p>
+                        <p className="font-bold text-gray-900 text-lg">{tr.yesSport}</p>
+                        <p className="text-sm text-gray-500">{tr.yesSportDesc}</p>
                       </div>
                       {selectedPerformance === true && (
                         <div className="w-6 h-6 bg-[#26847F] rounded-full flex items-center justify-center">
@@ -208,8 +339,8 @@ export default function SportQuizPreviewDemo() {
                     <div className="flex items-center gap-4">
                       <span className="text-4xl">🏋️</span>
                       <div className="flex-1">
-                        <p className="font-bold text-gray-900 text-lg">{t('home.sportQuizNoSport')}</p>
-                        <p className="text-sm text-gray-500">{t('home.sportQuizNoSportDesc')}</p>
+                        <p className="font-bold text-gray-900 text-lg">{tr.noSport}</p>
+                        <p className="text-sm text-gray-500">{tr.noSportDesc}</p>
                       </div>
                     </div>
                   </div>
@@ -217,7 +348,7 @@ export default function SportQuizPreviewDemo() {
 
                 <div className="mt-6 p-4 bg-amber-50 rounded-xl border border-amber-200">
                   <p className="text-sm text-amber-800 text-center">
-                    {t('home.sportQuizSportHint')}
+                    {tr.sportHint}
                   </p>
                 </div>
               </motion.div>
@@ -237,8 +368,8 @@ export default function SportQuizPreviewDemo() {
                     <Dumbbell className="w-7 h-7 text-white" />
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold text-center mb-2">{t('home.sportQuizWhichSport')}</h3>
-                <p className="text-gray-500 text-center mb-5 text-sm">{t('home.sportQuizWhichSportSubtitle')}</p>
+                <h3 className="text-2xl font-bold text-center mb-2">{tr.whichSport}</h3>
+                <p className="text-gray-500 text-center mb-5 text-sm">{tr.whichSportSubtitle}</p>
                 
                 <div className="grid grid-cols-3 gap-2">
                   {sports.map((sport) => (
@@ -261,7 +392,7 @@ export default function SportQuizPreviewDemo() {
                     className="mt-4 p-3 bg-green-50 rounded-xl border border-green-200"
                   >
                     <p className="text-sm text-green-800 text-center font-medium">
-                      {t('home.sportQuizSportSelected')}
+                      {tr.sportSelected}
                     </p>
                   </motion.div>
                 )}
@@ -273,7 +404,7 @@ export default function SportQuizPreviewDemo() {
         {/* Footer */}
         <div className="px-6 py-4 bg-gray-50/50 border-t border-gray-100">
           <p className="text-xs text-gray-400 italic text-center">
-            {t('home.sportQuizFooter')}
+            {tr.footer}
           </p>
         </div>
       </Card>
