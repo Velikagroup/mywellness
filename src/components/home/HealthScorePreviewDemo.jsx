@@ -10,13 +10,175 @@ import { useLanguage } from '../i18n/LanguageContext';
  * SCALA 0-10 (come Nutri-Score europeo)
  */
 export default function HealthScorePreviewDemo() {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+
+  const translations = React.useMemo(() => ({
+    it: {
+      title: 'Health Score AI',
+      subtitle: 'Analisi nutrizionale automatica',
+      scanned: 'Scansionata',
+      evaluation: 'Valutazione',
+      nutrients: 'Nutrienti Principali',
+      calories: 'Calorie',
+      totalFat: 'Grassi Totali',
+      saturatedFat: 'Grassi Saturi',
+      cholesterol: 'Colesterolo',
+      dailyValue: 'del valore giornaliero',
+      positive: 'Aspetti Positivi',
+      critical: 'Punti Critici',
+      recommendation: 'Raccomandazione AI',
+      productName: 'Olio di Cocco',
+      serving: 'Per porzione: 15ml',
+      ratingMediumLow: 'Medio-Basso',
+      positive1: 'Zero colesterolo',
+      positive2: 'Senza grassi trans',
+      positive3: '100% naturale',
+      negative1: 'Alto contenuto di grassi saturi (63% del valore giornaliero)',
+      negative2: '120 calorie per porzione',
+      negative3: 'Grassi saturi: 12.5g per porzione',
+      recommendationText: 'Usare con moderazione. L\'olio di cocco è calorico e ricco di grassi saturi. Considera alternative più salutari come olio di oliva o olio di avocado per uso giornaliero.',
+      preview: 'Anteprima interfaccia • Funzionalità disponibili dopo il signup'
+    },
+    en: {
+      title: 'AI Health Score',
+      subtitle: 'Automatic nutritional analysis',
+      scanned: 'Scanned',
+      evaluation: 'Evaluation',
+      nutrients: 'Main Nutrients',
+      calories: 'Calories',
+      totalFat: 'Total Fat',
+      saturatedFat: 'Saturated Fat',
+      cholesterol: 'Cholesterol',
+      dailyValue: 'of daily value',
+      positive: 'Positive Aspects',
+      critical: 'Critical Points',
+      recommendation: 'AI Recommendation',
+      productName: 'Coconut Oil',
+      serving: 'Per serving: 15ml',
+      ratingMediumLow: 'Medium-Low',
+      positive1: 'Zero cholesterol',
+      positive2: 'No trans fats',
+      positive3: '100% natural',
+      negative1: 'High saturated fat content (63% of daily value)',
+      negative2: '120 calories per serving',
+      negative3: 'Saturated fat: 12.5g per serving',
+      recommendationText: 'Use in moderation. Coconut oil is caloric and rich in saturated fats. Consider healthier alternatives like olive oil or avocado oil for daily use.',
+      preview: 'Interface preview • Features available after signup'
+    },
+    es: {
+      title: 'Health Score IA',
+      subtitle: 'Análisis nutricional automático',
+      scanned: 'Escaneado',
+      evaluation: 'Evaluación',
+      nutrients: 'Nutrientes Principales',
+      calories: 'Calorías',
+      totalFat: 'Grasas Totales',
+      saturatedFat: 'Grasas Saturadas',
+      cholesterol: 'Colesterol',
+      dailyValue: 'del valor diario',
+      positive: 'Aspectos Positivos',
+      critical: 'Puntos Críticos',
+      recommendation: 'Recomendación IA',
+      productName: 'Aceite de Coco',
+      serving: 'Por porción: 15ml',
+      ratingMediumLow: 'Medio-Bajo',
+      positive1: 'Cero colesterol',
+      positive2: 'Sin grasas trans',
+      positive3: '100% natural',
+      negative1: 'Alto contenido de grasas saturadas (63% del valor diario)',
+      negative2: '120 calorías por porción',
+      negative3: 'Grasas saturadas: 12.5g por porción',
+      recommendationText: 'Usar con moderación. El aceite de coco es calórico y rico en grasas saturadas. Considera alternativas más saludables como aceite de oliva o aguacate para uso diario.',
+      preview: 'Vista previa de interfaz • Funciones disponibles después del registro'
+    },
+    pt: {
+      title: 'Health Score IA',
+      subtitle: 'Análise nutricional automática',
+      scanned: 'Digitalizado',
+      evaluation: 'Avaliação',
+      nutrients: 'Nutrientes Principais',
+      calories: 'Calorias',
+      totalFat: 'Gorduras Totais',
+      saturatedFat: 'Gorduras Saturadas',
+      cholesterol: 'Colesterol',
+      dailyValue: 'do valor diário',
+      positive: 'Aspectos Positivos',
+      critical: 'Pontos Críticos',
+      recommendation: 'Recomendação IA',
+      productName: 'Óleo de Coco',
+      serving: 'Por porção: 15ml',
+      ratingMediumLow: 'Médio-Baixo',
+      positive1: 'Zero colesterol',
+      positive2: 'Sem gorduras trans',
+      positive3: '100% natural',
+      negative1: 'Alto conteúdo de gorduras saturadas (63% do valor diário)',
+      negative2: '120 calorias por porção',
+      negative3: 'Gorduras saturadas: 12.5g por porção',
+      recommendationText: 'Usar com moderação. O óleo de coco é calórico e rico em gorduras saturadas. Considere alternativas mais saudáveis como azeite de oliva ou óleo de abacate para uso diário.',
+      preview: 'Prévia da interface • Funcionalidades disponíveis após o cadastro'
+    },
+    de: {
+      title: 'KI-Gesundheitswert',
+      subtitle: 'Automatische Ernährungsanalyse',
+      scanned: 'Gescannt',
+      evaluation: 'Bewertung',
+      nutrients: 'Hauptnährstoffe',
+      calories: 'Kalorien',
+      totalFat: 'Gesamtfett',
+      saturatedFat: 'Gesättigte Fettsäuren',
+      cholesterol: 'Cholesterin',
+      dailyValue: 'des Tageswertes',
+      positive: 'Positive Aspekte',
+      critical: 'Kritische Punkte',
+      recommendation: 'KI-Empfehlung',
+      productName: 'Kokosöl',
+      serving: 'Pro Portion: 15ml',
+      ratingMediumLow: 'Mittel-Niedrig',
+      positive1: 'Kein Cholesterin',
+      positive2: 'Keine Transfette',
+      positive3: '100% natürlich',
+      negative1: 'Hoher Gehalt an gesättigten Fettsäuren (63% des Tageswertes)',
+      negative2: '120 Kalorien pro Portion',
+      negative3: 'Gesättigte Fettsäuren: 12.5g pro Portion',
+      recommendationText: 'Mit Maß verwenden. Kokosöl ist kalorienreich und reich an gesättigten Fettsäuren. Erwägen Sie gesündere Alternativen wie Olivenöl oder Avocadoöl für den täglichen Gebrauch.',
+      preview: 'Interface-Vorschau • Funktionen nach Anmeldung verfügbar'
+    },
+    fr: {
+      title: 'Score Santé IA',
+      subtitle: 'Analyse nutritionnelle automatique',
+      scanned: 'Numérisé',
+      evaluation: 'Évaluation',
+      nutrients: 'Nutriments Principaux',
+      calories: 'Calories',
+      totalFat: 'Lipides Totaux',
+      saturatedFat: 'Graisses Saturées',
+      cholesterol: 'Cholestérol',
+      dailyValue: 'de la valeur quotidienne',
+      positive: 'Aspects Positifs',
+      critical: 'Points Critiques',
+      recommendation: 'Recommandation IA',
+      productName: 'Huile de Coco',
+      serving: 'Par portion: 15ml',
+      ratingMediumLow: 'Moyen-Faible',
+      positive1: 'Zéro cholestérol',
+      positive2: 'Sans gras trans',
+      positive3: '100% naturel',
+      negative1: 'Teneur élevée en graisses saturées (63% de la valeur quotidienne)',
+      negative2: '120 calories par portion',
+      negative3: 'Graisses saturées: 12.5g par portion',
+      recommendationText: 'Utiliser avec modération. L\'huile de coco est calorique et riche en graisses saturées. Envisagez des alternatives plus saines comme l\'huile d\'olive ou d\'avocat pour un usage quotidien.',
+      preview: 'Aperçu de l\'interface • Fonctionnalités disponibles après inscription'
+    }
+  }), []);
+
+  const tr = translations[language] || translations.it;
+
   // Analisi dell'etichetta nutrizionale dalla foto
   const nutritionAnalysis = {
-    productName: t('home.healthScoreProductCoconutOil'),
-    servingSize: t('home.healthScoreServing'),
+    productName: tr.productName,
+    servingSize: tr.serving,
     healthScore: 4.2,
-    scoreLevel: t('home.healthScoreRatingMediumLow'),
+    scoreLevel: tr.ratingMediumLow,
     scoreColor: "text-orange-600",
     scoreBg: "bg-orange-50",
     nutrients: {
@@ -27,16 +189,16 @@ export default function HealthScorePreviewDemo() {
       cholesterol: 0
     },
     positiveAspects: [
-      t('home.healthScorePositive1'),
-      t('home.healthScorePositive2'),
-      t('home.healthScorePositive3')
+      tr.positive1,
+      tr.positive2,
+      tr.positive3
     ],
     negativeAspects: [
-      t('home.healthScoreNegative1'),
-      t('home.healthScoreNegative2'),
-      t('home.healthScoreNegative3')
+      tr.negative1,
+      tr.negative2,
+      tr.negative3
     ],
-    recommendation: t('home.healthScoreRecommendationText')
+    recommendation: tr.recommendationText
   };
 
   // Calcolo circonferenza per il cerchio (scala 0-10)
@@ -79,10 +241,10 @@ export default function HealthScorePreviewDemo() {
           </div>
           <div>
             <span className="bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent font-bold">
-              {t('home.healthScoreTitle')}
+              {tr.title}
             </span>
             <p className="text-xs text-gray-500 font-normal mt-0.5">
-              {t('home.healthScoreSubtitle')}
+              {tr.subtitle}
             </p>
           </div>
         </CardTitle>
@@ -98,7 +260,7 @@ export default function HealthScorePreviewDemo() {
           />
           <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1.5 rounded-full text-xs font-bold shadow-lg flex items-center gap-1">
             <CheckCircle className="w-3 h-3" />
-            {t('home.healthScoreScanned')}
+            {tr.scanned}
           </div>
         </div>
 
@@ -148,7 +310,7 @@ export default function HealthScorePreviewDemo() {
 
           <div className={`${nutritionAnalysis.scoreBg} border-2 border-orange-200 rounded-xl p-3 mb-4`}>
             <div className="flex items-center justify-between">
-              <span className="text-sm font-bold text-gray-900">{t('home.healthScoreEvaluation')}</span>
+              <span className="text-sm font-bold text-gray-900">{tr.evaluation}</span>
               <span className={`text-sm font-black ${nutritionAnalysis.scoreColor}`}>
                 {nutritionAnalysis.scoreLevel}
               </span>
@@ -157,23 +319,23 @@ export default function HealthScorePreviewDemo() {
 
           {/* Nutrienti Chiave */}
           <div className="space-y-2">
-            <p className="text-xs font-bold text-gray-700 mb-2">{t('home.healthScoreNutrients')}</p>
+            <p className="text-xs font-bold text-gray-700 mb-2">{tr.nutrients}</p>
             <div className="grid grid-cols-2 gap-2">
               <div className="bg-white/80 rounded-lg p-2 border border-gray-200">
-                <p className="text-[10px] text-gray-500 mb-0.5">{t('home.healthScoreCalories')}</p>
+                <p className="text-[10px] text-gray-500 mb-0.5">{tr.calories}</p>
                 <p className="text-base font-bold text-gray-900">{nutritionAnalysis.nutrients.calories} kcal</p>
               </div>
               <div className="bg-white/80 rounded-lg p-2 border border-gray-200">
-                <p className="text-[10px] text-gray-500 mb-0.5">{t('home.healthScoreTotalFat')}</p>
+                <p className="text-[10px] text-gray-500 mb-0.5">{tr.totalFat}</p>
                 <p className="text-base font-bold text-gray-900">{nutritionAnalysis.nutrients.totalFat}g</p>
               </div>
               <div className="bg-red-50/80 rounded-lg p-2 border border-red-200">
-                <p className="text-[10px] text-red-600 mb-0.5 font-semibold">⚠️ {t('home.healthScoreSaturatedFat')}</p>
+                <p className="text-[10px] text-red-600 mb-0.5 font-semibold">⚠️ {tr.saturatedFat}</p>
                 <p className="text-base font-bold text-red-700">{nutritionAnalysis.nutrients.saturatedFat}g</p>
-                <p className="text-[9px] text-red-600 mt-0.5">63% {t('home.healthScoreDailyValue')}</p>
+                <p className="text-[9px] text-red-600 mt-0.5">63% {tr.dailyValue}</p>
               </div>
               <div className="bg-green-50/80 rounded-lg p-2 border border-green-200">
-                <p className="text-[10px] text-green-600 mb-0.5 font-semibold">✓ {t('home.healthScoreCholesterol')}</p>
+                <p className="text-[10px] text-green-600 mb-0.5 font-semibold">✓ {tr.cholesterol}</p>
                 <p className="text-base font-bold text-green-700">{nutritionAnalysis.nutrients.cholesterol}mg</p>
               </div>
             </div>
@@ -186,7 +348,7 @@ export default function HealthScorePreviewDemo() {
           <div className="bg-green-50 border-2 border-green-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <CheckCircle className="w-4 h-4 text-green-600" />
-              <h5 className="font-bold text-green-900 text-sm">{t('home.healthScorePositive')}</h5>
+              <h5 className="font-bold text-green-900 text-sm">{tr.positive}</h5>
             </div>
             <ul className="space-y-2">
               {nutritionAnalysis.positiveAspects.map((aspect, idx) => (
@@ -202,7 +364,7 @@ export default function HealthScorePreviewDemo() {
           <div className="bg-red-50 border-2 border-red-200 rounded-xl p-4">
             <div className="flex items-center gap-2 mb-3">
               <AlertTriangle className="w-4 h-4 text-red-600" />
-              <h5 className="font-bold text-red-900 text-sm">{t('home.healthScoreCritical')}</h5>
+              <h5 className="font-bold text-red-900 text-sm">{tr.critical}</h5>
             </div>
             <ul className="space-y-2">
               {nutritionAnalysis.negativeAspects.map((aspect, idx) => (
@@ -221,7 +383,7 @@ export default function HealthScorePreviewDemo() {
             <Sparkles className="w-5 h-5 text-purple-600 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-bold text-purple-900 text-sm mb-2">
-                {t('home.healthScoreRecommendation')}
+                {tr.recommendation}
               </p>
               <p className="text-xs text-purple-800 leading-relaxed">
                 {nutritionAnalysis.recommendation}
@@ -233,7 +395,7 @@ export default function HealthScorePreviewDemo() {
         {/* Demo Notice */}
         <div className="text-center">
           <p className="text-xs text-gray-400 italic">
-            {t('home.quizDemoPreview')}
+            {tr.preview}
           </p>
         </div>
       </CardContent>
