@@ -11,7 +11,7 @@ Deno.serve(async (req) => {
         const base44 = createClientFromRequest(req);
         
         const body = await req.json();
-        const { userId, userEmail, userName, plan } = body;
+        const { userId, userEmail, userName, plan, invoiceUrl, paymentAmount } = body;
 
         if (!userEmail) {
             return Response.json({ error: 'Missing userEmail' }, { status: 400 });
@@ -54,7 +54,9 @@ Deno.serve(async (req) => {
             userEmail: userEmail,
             templateId: templateId,
             variables: {
-                user_name: userName || 'Utente'
+                user_name: userName || 'Utente',
+                invoice_url: invoiceUrl || '#',
+                payment_amount: paymentAmount || '0'
             },
             triggerSource: 'sendPlanWelcome'
         });
