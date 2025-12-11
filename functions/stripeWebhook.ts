@@ -149,6 +149,7 @@ Deno.serve(async (req) => {
                     }
 
                     // Generate and save invoice PDF
+                    let generatedInvoiceUrl = null;
                     try {
                         console.log('📄 Generating invoice PDF...');
                         const invoiceResponse = await base44.asServiceRole.functions.invoke('generateInvoicePDF', {
@@ -156,12 +157,13 @@ Deno.serve(async (req) => {
                         });
 
                         if (invoiceResponse?.data?.invoice_url) {
-                            console.log('✅ Invoice generated:', invoiceResponse.data.invoice_url);
+                            generatedInvoiceUrl = invoiceResponse.data.invoice_url;
+                            console.log('✅ Invoice generated:', generatedInvoiceUrl);
                             await base44.asServiceRole.entities.Transaction.update(transaction.id, {
-                                invoice_pdf_url: invoiceResponse.data.invoice_url,
+                                invoice_pdf_url: generatedInvoiceUrl,
                                 metadata: {
                                     ...transaction.metadata,
-                                    invoice_url: invoiceResponse.data.invoice_url
+                                    invoice_url: generatedInvoiceUrl
                                 }
                             });
                             console.log('✅ Invoice URL saved to transaction');
@@ -174,6 +176,24 @@ Deno.serve(async (req) => {
                     }
 
                     console.log(`✅ Transaction recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
+
+                    // Send welcome email if not landing offer
+                    if (!isLandingOffer && ['base', 'pro', 'premium'].includes(plan)) {
+                        try {
+                            console.log(`📧 Sending ${plan} welcome email...`);
+                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                userName: user.full_name,
+                                plan: plan,
+                                invoiceUrl: generatedInvoiceUrl,
+                                paymentAmount: amount.toFixed(2)
+                            });
+                            console.log(`✅ ${plan} welcome email sent`);
+                        } catch (emailError) {
+                            console.error('⚠️ Welcome email failed:', emailError.message);
+                        }
+                    }
                 } else {
                     console.warn('⚠️ No user found with stripe_customer_id:', customerId);
                 }
@@ -342,26 +362,48 @@ Deno.serve(async (req) => {
                     console.log(`✅ Transaction created: ${transaction.id}`);
 
                     // Generate and save invoice PDF
+                    let generatedInvoiceUrl = null;
                     try {
                         const invoiceResponse = await base44.asServiceRole.functions.invoke('generateInvoicePDF', {
                             transactionId: transaction.id
                         });
 
                         if (invoiceResponse?.data?.invoice_url) {
+                            generatedInvoiceUrl = invoiceResponse.data.invoice_url;
                             await base44.asServiceRole.entities.Transaction.update(transaction.id, {
-                                invoice_pdf_url: invoiceResponse.data.invoice_url,
+                                invoice_pdf_url: generatedInvoiceUrl,
                                 metadata: {
                                     ...transaction.metadata,
-                                    invoice_url: invoiceResponse.data.invoice_url
+                                    invoice_url: generatedInvoiceUrl
                                 }
                             });
-                            console.log(`✅ Invoice PDF generated: ${invoiceResponse.data.invoice_url}`);
+                            console.log(`✅ Invoice PDF generated: ${generatedInvoiceUrl}`);
                         }
                     } catch (invoiceError) {
                         console.error('⚠️ Invoice generation failed:', invoiceError.message);
                     }
 
                     console.log(`✅ Payment recorded for user ${user.id}: €${amount} (ID: ${transaction.id})`);
+
+                    // Send renewal confirmation or welcome email for recurring payments
+                    const userPlan = user.subscription_plan || 'base';
+                    if (['base', 'pro', 'premium'].includes(userPlan)) {
+                        try {
+                            console.log(`📧 Sending renewal confirmation for ${userPlan}...`);
+                            await base44.asServiceRole.functions.invoke('sendRenewalConfirmation', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                userName: user.full_name,
+                                plan: userPlan,
+                                amount: amount.toFixed(2),
+                                invoiceUrl: generatedInvoiceUrl,
+                                nextBillingDate: new Date(invoice.period_end * 1000).toISOString().split('T')[0]
+                            });
+                            console.log(`✅ Renewal confirmation sent`);
+                        } catch (emailError) {
+                            console.error('⚠️ Renewal email failed:', emailError.message);
+                        }
+                    }
 
                     // 🔗 AFFILIATE: Traccia commissione per pagamenti ricorrenti
                     if (user.referred_by_affiliate_code) {
