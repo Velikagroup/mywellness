@@ -38,14 +38,14 @@ export default function Video() {
       words.forEach((_, index) => {
         setTimeout(() => {
           setVisibleWords(index + 1);
-        }, index * 250);
+        }, index * 175);
       });
 
       // Dopo tutte le parole, nascondi l'intro e mostra il video
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, words.length * 250 + 1500);
+      }, words.length * 175 + 1500);
 
       return () => clearTimeout(timer);
     }
