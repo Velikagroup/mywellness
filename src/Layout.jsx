@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Megaphone } from "lucide-react";
+import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
@@ -178,7 +178,7 @@ function LayoutContent({ children }) {
     { name: t('nav.analytics'), icon: BarChart3, path: 'AdminAnalytics' },
     { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' },
     { name: t('nav.salesTax'), icon: Activity, path: 'AdminSalesTax' },
-    { name: 'Ads', icon: Megaphone, path: 'Ads' }
+    { name: 'Video', icon: Video, path: 'Video' }
   ] : [];
 
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
@@ -275,7 +275,7 @@ function LayoutContent({ children }) {
         }
       `}</style>
       
-      {location.pathname !== createPageUrl('Ads') && (
+      {location.pathname !== createPageUrl('Video') && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
           <div className="water-glass-effect rounded-full px-6 py-3">
             <img 
