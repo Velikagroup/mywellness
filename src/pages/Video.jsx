@@ -123,7 +123,7 @@ export default function Video() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.6 }}
-            className="absolute inset-0 flex items-center justify-start z-50 bg-white px-4 md:px-12"
+            className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black flex items-center">
               {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"].slice(0, visibleWords).map((word, index) => (
