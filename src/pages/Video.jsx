@@ -125,30 +125,36 @@ export default function Video() {
             transition={{ duration: 0.6 }}
             className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]">
+            <motion.h1 
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]"
+              animate={visibleWords === 7 ? { x: -10 } : {}}
+              transition={{
+                delay: 0.3,
+                duration: 0.8,
+                ease: [0.22, 1, 0.36, 1]
+              }}
+            >
               {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"].slice(0, visibleWords).map((word, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ 
-                    opacity: 0, 
-                    y: 20,
-                    x: 15
-                  }}
-                  animate={{ 
-                    opacity: 1, 
-                    y: 0,
-                    x: -5
-                  }}
-                  transition={{
-                    duration: 1.4,
-                    ease: [0.22, 1, 0.36, 1]
-                  }}
-                  className="animated-gradient-text inline-block mr-3 sm:mr-4"
-                >
-                  {word}
-                </motion.span>
-              ))}
-            </h1>
+                  <motion.span
+                    key={index}
+                    initial={{ 
+                      opacity: 0, 
+                      y: 30
+                    }}
+                    animate={{ 
+                      opacity: 1, 
+                      y: 0
+                    }}
+                    transition={{
+                      duration: 0.8,
+                      ease: [0.33, 1, 0.68, 1]
+                    }}
+                    className="animated-gradient-text inline-block mr-3 sm:mr-4"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
+            </motion.h1>
           </motion.div>
         )}
       </AnimatePresence>
