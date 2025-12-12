@@ -129,7 +129,7 @@ export default function Video() {
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]"
               animate={visibleWords === 7 ? { x: -10 } : {}}
               transition={{
-                delay: 0.3,
+                delay: 1.5,
                 duration: 0.8,
                 ease: [0.22, 1, 0.36, 1]
               }}
