@@ -125,7 +125,7 @@ export default function Video() {
             transition={{ duration: 0.6 }}
             className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
           >
-            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-8">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]">
               {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"].slice(0, visibleWords).map((word, index) => (
                 <motion.span
                   key={index}
