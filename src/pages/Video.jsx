@@ -113,8 +113,22 @@ export default function Video() {
             transition={{ duration: 0.6 }}
             className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4"
           >
-            <h1 className="animated-gradient-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black">
-              Immagina di poter cambiare il tuo corpo.
+            <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black flex flex-wrap justify-center gap-x-3 gap-y-2">
+              {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo."].map((word, index) => (
+                <motion.span
+                  key={index}
+                  initial={{ opacity: 0, y: 30, scale: 0.9, filter: "blur(10px)" }}
+                  animate={{ opacity: 1, y: 0, scale: 1, filter: "blur(0px)" }}
+                  transition={{
+                    duration: 0.8,
+                    delay: index * 0.15,
+                    ease: [0.34, 1.56, 0.64, 1]
+                  }}
+                  className="animated-gradient-text inline-block"
+                >
+                  {word}
+                </motion.span>
+              ))}
             </h1>
           </motion.div>
         )}
