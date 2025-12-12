@@ -139,15 +139,15 @@ export default function Video() {
                     key={index}
                     initial={{ 
                       opacity: 0, 
-                      y: 20
+                      y: 15
                     }}
                     animate={{ 
                       opacity: 1, 
                       y: 0
                     }}
                     transition={{
-                      duration: 1.5,
-                      ease: [0.25, 0.46, 0.45, 0.94]
+                      duration: 2,
+                      ease: [0.16, 1, 0.3, 1]
                     }}
                     className="animated-gradient-text inline-block mr-3 sm:mr-4"
                   >
