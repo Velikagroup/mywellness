@@ -289,8 +289,9 @@ function LayoutContent({ children }) {
         {children}
       </main>
 
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4" style={{ maxWidth: `${getMenuMaxWidth()}px` }}>
-        <div className="water-glass-effect rounded-3xl py-3 px-2">
+      {location.pathname !== createPageUrl('Ads') && (
+        <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4" style={{ maxWidth: `${getMenuMaxWidth()}px` }}>
+          <div className="water-glass-effect rounded-3xl py-3 px-2">
           <div className="hidden sm:flex items-center justify-around">
             {allNavItems.map((item) => (
               <Link
@@ -363,13 +364,14 @@ function LayoutContent({ children }) {
               )}
             </div>
           </div>
-        </div>
-      </div>
-    </div>
-  );
-}
+          </div>
+          </div>
+          )}
+          </div>
+          );
+          }
 
-export default function Layout({ children }) {
+          export default function Layout({ children }) {
   return (
     <LanguageProvider>
       <LayoutContent>{children}</LayoutContent>
