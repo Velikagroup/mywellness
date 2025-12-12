@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle } from "lucide-react";
+import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Megaphone } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
@@ -178,7 +178,7 @@ function LayoutContent({ children }) {
     { name: t('nav.analytics'), icon: BarChart3, path: 'AdminAnalytics' },
     { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' },
     { name: t('nav.salesTax'), icon: Activity, path: 'AdminSalesTax' },
-    { name: 'Ads', icon: Target, path: 'Ads' }
+    { name: 'Ads', icon: Megaphone, path: 'Ads' }
   ] : [];
 
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
