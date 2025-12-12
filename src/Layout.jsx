@@ -177,7 +177,8 @@ function LayoutContent({ children }) {
     { name: t('nav.email'), icon: Mail, path: 'AdminEmails' },
     { name: t('nav.analytics'), icon: BarChart3, path: 'AdminAnalytics' },
     { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' },
-    { name: t('nav.salesTax'), icon: Activity, path: 'AdminSalesTax' }
+    { name: t('nav.salesTax'), icon: Activity, path: 'AdminSalesTax' },
+    { name: 'Ads', icon: Target, path: 'Ads' }
   ] : [];
 
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
