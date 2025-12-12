@@ -275,15 +275,17 @@ function LayoutContent({ children }) {
         }
       `}</style>
       
-      <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
-        <div className="water-glass-effect rounded-full px-6 py-3">
-          <img 
-            src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" 
-            alt="MyWellness" 
-            className="h-6"
-          />
+      {location.pathname !== createPageUrl('Ads') && (
+        <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
+          <div className="water-glass-effect rounded-full px-6 py-3">
+            <img 
+              src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png" 
+              alt="MyWellness" 
+              className="h-6"
+            />
+          </div>
         </div>
-      </div>
+      )}
 
       <main className="pt-28 pb-20">
         {children}
