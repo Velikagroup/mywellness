@@ -32,7 +32,7 @@ export default function Video() {
     if (!isLoading && showIntro) {
       // Reset visible words
       setVisibleWords(0);
-      
+
       // Show words one by one
       const words = ["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"];
       words.forEach((_, index) => {
@@ -45,7 +45,7 @@ export default function Video() {
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, words.length * 120 + 1500);
+      }, words.length * 120 + 3500);
 
       return () => clearTimeout(timer);
     }
@@ -126,7 +126,7 @@ export default function Video() {
             className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
           >
             <motion.h1 
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem] overflow-hidden"
               animate={visibleWords === 7 ? { x: -10 } : {}}
               transition={{
                 delay: 1.5,
@@ -141,19 +141,46 @@ export default function Video() {
                       opacity: 0,
                       filter: "blur(4px)"
                     }}
-                    animate={{ 
-                      opacity: 1,
-                      filter: "blur(0px)"
+                    animate={index === 6 ? { 
+                      opacity: [0, 1, 1, 1],
+                      filter: ["blur(4px)", "blur(0px)", "blur(0px)", "blur(0px)"],
+                      color: ["transparent", "#26847F", "#26847F", "#ffffff"],
+                      scale: [1, 1, 1, 1.5],
+                      x: [0, 0, 0, "50vw"]
+                    } : { 
+                      opacity: [0, 1, 1, 0],
+                      filter: ["blur(4px)", "blur(0px)", "blur(0px)", "blur(0px)"]
                     }}
-                    transition={{
+                    transition={index === 6 ? {
+                      duration: 2.5,
+                      ease: [0.19, 1.0, 0.22, 1.0],
+                      times: [0, 0.24, 0.6, 1],
+                      delay: 2.3
+                    } : {
                       duration: 0.6,
-                      ease: [0.19, 1.0, 0.22, 1.0]
+                      ease: [0.19, 1.0, 0.22, 1.0],
+                      opacity: { times: [0, 0.4, 0.6, 1], duration: 2, delay: 2.3 }
                     }}
-                    className="animated-gradient-text inline-block mr-3 sm:mr-4"
+                    className={index === 6 ? "inline-block mr-3 sm:mr-4" : "animated-gradient-text inline-block mr-3 sm:mr-4"}
                   >
                     {word}
                   </motion.span>
                 ))}
+              <motion.div
+                initial={{ width: 0, opacity: 0 }}
+                animate={{ width: "100vw", opacity: [0, 1, 1] }}
+                transition={{
+                  delay: 3.5,
+                  duration: 1,
+                  ease: [0.19, 1.0, 0.22, 1.0]
+                }}
+                className="absolute left-0 top-0 h-full"
+                style={{
+                  background: 'radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%), radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%), radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%), radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%), radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%), radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%)',
+                  backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
+                  animation: 'gradientShift 3s linear infinite',
+                }}
+              />
             </motion.h1>
           </motion.div>
         )}
