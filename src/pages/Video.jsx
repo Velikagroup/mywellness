@@ -139,18 +139,21 @@ export default function Video() {
                     key={index}
                     initial={{ 
                       opacity: 0, 
-                      y: 20,
-                      scale: 0.97
+                      y: 12,
+                      scale: 0.98,
+                      filter: "blur(4px)"
                     }}
                     animate={{ 
                       opacity: 1, 
                       y: 0,
-                      scale: 1
+                      scale: 1,
+                      filter: "blur(0px)"
                     }}
                     transition={{
-                      duration: 1.2,
-                      ease: [0.4, 0, 0.2, 1],
-                      opacity: { duration: 1.2, ease: [0.4, 0, 0.2, 1] }
+                      duration: 2.5,
+                      ease: [0.19, 1.0, 0.22, 1.0],
+                      opacity: { duration: 2.5, ease: [0.19, 1.0, 0.22, 1.0] },
+                      filter: { duration: 2.5, ease: [0.19, 1.0, 0.22, 1.0] }
                     }}
                     className="animated-gradient-text inline-block mr-3 sm:mr-4"
                   >
