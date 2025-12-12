@@ -12,7 +12,6 @@ export default function Video() {
   const [showVideo, setShowVideo] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const [visibleWords, setVisibleWords] = useState(0);
-  const [expandGradient, setExpandGradient] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -33,7 +32,6 @@ export default function Video() {
     if (!isLoading && showIntro) {
       // Reset visible words
       setVisibleWords(0);
-      setExpandGradient(false);
       
       // Show words one by one
       const words = ["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"];
@@ -43,21 +41,13 @@ export default function Video() {
         }, index * 120);
       });
 
-      // Dopo la spinta a sinistra, inizia l'espansione del gradiente
-      const expandTimer = setTimeout(() => {
-        setExpandGradient(true);
-      }, words.length * 120 + 2300);
-
-      // Dopo l'espansione, nascondi l'intro e mostra il video
+      // Dopo tutte le parole, nascondi l'intro e mostra il video
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, words.length * 120 + 4000);
+      }, words.length * 120 + 1500);
 
-      return () => {
-        clearTimeout(expandTimer);
-        clearTimeout(timer);
-      };
+      return () => clearTimeout(timer);
     }
   }, [isLoading, showIntro, animationKey]);
 
@@ -136,7 +126,7 @@ export default function Video() {
             className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
           >
             <motion.h1 
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem] relative"
+              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]"
               animate={visibleWords === 7 ? { x: -10 } : {}}
               transition={{
                 delay: 1.5,
@@ -145,43 +135,25 @@ export default function Video() {
               }}
             >
               {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"].slice(0, visibleWords).map((word, index) => (
-                <motion.span
-                  key={index}
-                  initial={{ 
-                    opacity: 0,
-                    filter: "blur(4px)"
-                  }}
-                  animate={{ 
-                    opacity: expandGradient && index < 6 ? 0 : 1,
-                    filter: "blur(0px)",
-                    color: expandGradient && index === 6 ? "#ffffff" : undefined
-                  }}
-                  transition={{
-                    duration: 0.6,
-                    ease: [0.19, 1.0, 0.22, 1.0],
-                    opacity: { duration: expandGradient ? 1.2 : 0.6, delay: expandGradient ? index * 0.08 : 0 },
-                    color: { duration: 1.5, ease: [0.19, 1.0, 0.22, 1.0] }
-                  }}
-                  className={index === 6 ? "inline-block mr-3 sm:mr-4 relative z-10" : "animated-gradient-text inline-block mr-3 sm:mr-4"}
-                >
-                  {word}
-                </motion.span>
-              ))}
-
-              {/* Gradiente che si espande da "corpo" */}
-              {expandGradient && (
-                <motion.div
-                  initial={{ width: 0, opacity: 0 }}
-                  animate={{ width: "200vw", opacity: 1 }}
-                  transition={{ duration: 1.5, ease: [0.19, 1.0, 0.22, 1.0] }}
-                  className="absolute top-1/2 -translate-y-1/2 h-[150%] right-0 origin-right"
-                  style={{
-                    background: 'radial-gradient(ellipse at right, rgba(38, 132, 127, 0.4) 0%, rgba(38, 132, 127, 0.2) 40%, transparent 70%)',
-                    filter: 'blur(40px)',
-                    zIndex: 5
-                  }}
-                />
-              )}
+                  <motion.span
+                    key={index}
+                    initial={{ 
+                      opacity: 0,
+                      filter: "blur(4px)"
+                    }}
+                    animate={{ 
+                      opacity: 1,
+                      filter: "blur(0px)"
+                    }}
+                    transition={{
+                      duration: 0.6,
+                      ease: [0.19, 1.0, 0.22, 1.0]
+                    }}
+                    className="animated-gradient-text inline-block mr-3 sm:mr-4"
+                  >
+                    {word}
+                  </motion.span>
+                ))}
             </motion.h1>
           </motion.div>
         )}
