@@ -30,22 +30,14 @@ export default function Video() {
 
   useEffect(() => {
     if (!isLoading && showIntro) {
-      // Reset visible words
-      setVisibleWords(0);
-      
-      // Show words one by one
-      const words = ["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"];
-      words.forEach((_, index) => {
-        setTimeout(() => {
-          setVisibleWords(index + 1);
-        }, index * 120);
-      });
+      // Mostra tutte le parole insieme
+      setVisibleWords(7);
 
-      // Dopo tutte le parole, nascondi l'intro e mostra il video
+      // Dopo l'animazione, nascondi l'intro e mostra il video
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, words.length * 120 + 1500);
+      }, 3500);
 
       return () => clearTimeout(timer);
     }
