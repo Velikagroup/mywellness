@@ -30,14 +30,22 @@ export default function Video() {
 
   useEffect(() => {
     if (!isLoading && showIntro) {
-      // Mostra tutte le parole insieme
-      setVisibleWords(7);
+      // Reset visible words
+      setVisibleWords(0);
+      
+      // Show words one by one
+      const words = ["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"];
+      words.forEach((_, index) => {
+        setTimeout(() => {
+          setVisibleWords(index + 1);
+        }, index * 120);
+      });
 
-      // Dopo l'animazione, nascondi l'intro e mostra il video
+      // Dopo tutte le parole, nascondi l'intro e mostra il video
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, 3500);
+      }, words.length * 120 + 1500);
 
       return () => clearTimeout(timer);
     }
@@ -131,21 +139,21 @@ export default function Video() {
                     key={index}
                     initial={{ 
                       opacity: 0, 
-                      y: 50,
+                      x: -50,
                       scale: 0.95,
                       filter: "blur(6px)"
                     }}
                     animate={{ 
                       opacity: 1, 
-                      y: 0,
+                      x: 0,
                       scale: 1,
                       filter: "blur(0px)"
                     }}
                     transition={{
-                      duration: 2.5,
+                      duration: 0.8,
                       ease: [0.19, 1.0, 0.22, 1.0],
-                      opacity: { duration: 2.5, ease: [0.19, 1.0, 0.22, 1.0] },
-                      filter: { duration: 2.5, ease: [0.19, 1.0, 0.22, 1.0] }
+                      opacity: { duration: 0.8, ease: [0.19, 1.0, 0.22, 1.0] },
+                      filter: { duration: 0.8, ease: [0.19, 1.0, 0.22, 1.0] }
                     }}
                     className="animated-gradient-text inline-block mr-3 sm:mr-4"
                   >
