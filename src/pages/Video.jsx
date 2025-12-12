@@ -48,19 +48,36 @@ export default function Video() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       <style>{`
-        @keyframes fadeInScale {
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap');
+        
+        @keyframes smoothFadeInUp {
           0% {
             opacity: 0;
-            transform: scale(0.95);
+            transform: translateY(30px);
           }
           100% {
             opacity: 1;
-            transform: scale(1);
+            transform: translateY(0);
           }
         }
 
+        @keyframes textGradientFlow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+
         .intro-text {
-          animation: fadeInScale 0.8s ease-out forwards;
+          animation: smoothFadeInUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          font-family: 'Inter', sans-serif;
+          background: linear-gradient(90deg, #26847F, #14b8a6, #10b981, #14b8a6, #26847F);
+          background-size: 200% auto;
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: smoothFadeInUp 1.2s cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+                     textGradientFlow 4s ease-in-out infinite;
+          white-space: nowrap;
         }
       `}</style>
 
@@ -70,10 +87,10 @@ export default function Video() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            transition={{ duration: 0.5 }}
-            className="absolute inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900"
+            transition={{ duration: 0.6 }}
+            className="absolute inset-0 flex items-center justify-center z-50 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 px-4"
           >
-            <h1 className="intro-text text-4xl md:text-6xl lg:text-7xl font-bold text-white text-center px-8 leading-tight">
+            <h1 className="intro-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black">
               Immagina di poter cambiare il tuo corpo.
             </h1>
           </motion.div>
