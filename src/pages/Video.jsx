@@ -111,7 +111,7 @@ export default function Video() {
           background-clip: text;
           -webkit-background-clip: text;
           -webkit-text-fill-color: transparent;
-          animation: gradientShift 45s ease-in-out infinite, smoothTextReveal 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+          animation: gradientShift 3s linear infinite, smoothTextReveal 1.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
           white-space: nowrap;
         }
       `}</style>
@@ -139,8 +139,8 @@ export default function Video() {
                     key={index}
                     initial={{ 
                       opacity: 0, 
-                      y: 35,
-                      filter: "blur(8px)"
+                      y: 40,
+                      filter: "blur(10px)"
                     }}
                     animate={{ 
                       opacity: 1, 
@@ -148,10 +148,10 @@ export default function Video() {
                       filter: "blur(0px)"
                     }}
                     transition={{
-                      duration: 3.5,
-                      ease: [0.16, 1, 0.3, 1],
-                      opacity: { duration: 3.5, ease: [0.16, 1, 0.3, 1] },
-                      filter: { duration: 3.5, ease: [0.16, 1, 0.3, 1] }
+                      duration: 4,
+                      ease: [0.12, 0.8, 0.24, 1],
+                      opacity: { duration: 4, ease: [0.12, 0.8, 0.24, 1] },
+                      filter: { duration: 4, ease: [0.12, 0.8, 0.24, 1] }
                     }}
                     className="animated-gradient-text inline-block mr-3 sm:mr-4"
                   >
