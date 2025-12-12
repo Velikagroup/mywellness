@@ -66,7 +66,7 @@ import pt from './pages/pt';
 import de from './pages/de';
 import fr from './pages/fr';
 import en from './pages/en';
-import Ads from './pages/Ads';
+import Video from './pages/Video';
 import __Layout from './Layout.jsx';
 
 
@@ -139,7 +139,7 @@ export const PAGES = {
     "de": de,
     "fr": fr,
     "en": en,
-    "Ads": Ads,
+    "Video": Video,
 }
 
 export const pagesConfig = {
