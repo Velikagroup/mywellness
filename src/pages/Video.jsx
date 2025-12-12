@@ -38,7 +38,7 @@ export default function Video() {
       words.forEach((_, index) => {
         setTimeout(() => {
           setVisibleWords(index + 1);
-        }, index * 400);
+        }, index * 120);
       });
 
       // Dopo tutte le parole, nascondi l'intro e mostra il video
