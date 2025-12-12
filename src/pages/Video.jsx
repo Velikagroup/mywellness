@@ -11,6 +11,7 @@ export default function Video() {
   const [showIntro, setShowIntro] = useState(true);
   const [showVideo, setShowVideo] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
+  const [visibleWords, setVisibleWords] = useState(0);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -29,11 +30,22 @@ export default function Video() {
 
   useEffect(() => {
     if (!isLoading && showIntro) {
-      // Dopo 2 secondi nascondi l'intro e mostra il video
+      // Reset visible words
+      setVisibleWords(0);
+      
+      // Show words one by one
+      const words = ["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"];
+      words.forEach((_, index) => {
+        setTimeout(() => {
+          setVisibleWords(index + 1);
+        }, index * 250);
+      });
+
+      // Dopo tutte le parole, nascondi l'intro e mostra il video
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, 2000);
+      }, words.length * 250 + 1500);
 
       return () => clearTimeout(timer);
     }
@@ -114,7 +126,7 @@ export default function Video() {
             className="absolute inset-0 flex items-center justify-start z-50 bg-white px-4 md:px-12"
           >
             <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-black flex flex-wrap items-center">
-              {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo."].map((word, index) => (
+              {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"].slice(0, visibleWords).map((word, index) => (
                 <motion.span
                   key={index}
                   initial={{ 
@@ -131,7 +143,6 @@ export default function Video() {
                   }}
                   transition={{
                     duration: 0.7,
-                    delay: index * 0.25,
                     ease: [0.34, 1.56, 0.64, 1]
                   }}
                   className="animated-gradient-text inline-block mr-3 sm:mr-4"
