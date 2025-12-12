@@ -139,9 +139,9 @@ export default function Video() {
                     key={index}
                     initial={{ 
                       opacity: 0, 
-                      y: 12,
-                      scale: 0.98,
-                      filter: "blur(4px)"
+                      y: 50,
+                      scale: 0.95,
+                      filter: "blur(6px)"
                     }}
                     animate={{ 
                       opacity: 1, 
