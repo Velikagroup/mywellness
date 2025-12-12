@@ -125,13 +125,16 @@ export default function Video() {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="w-full h-screen flex items-center justify-center relative"
+          className="w-full h-screen flex items-center justify-center relative bg-white"
         >
-          {/* Qui andrà il video */}
-          
+          <div className="text-center">
+            <p className="text-2xl text-gray-600 mb-8">Video in arrivo</p>
+          </div>
+
           <button
             onClick={restartAnimation}
-            className="absolute bottom-8 right-8 bg-[#26847F] hover:bg-[#1f6b66] text-white rounded-full p-4 shadow-xl transition-all hover:scale-110 z-10"
+            className="fixed bottom-8 right-8 bg-[#26847F] hover:bg-[#1f6b66] text-white rounded-full p-4 shadow-xl transition-all hover:scale-110 z-50"
+            aria-label="Riavvia animazione"
           >
             <Play className="w-6 h-6" fill="currentColor" />
           </button>
