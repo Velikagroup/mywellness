@@ -139,9 +139,9 @@ export default function Video() {
                     key={index}
                     initial={{ 
                       opacity: 0, 
-                      y: 12,
-                      scale: 0.98,
-                      filter: "blur(4px)"
+                      y: 8,
+                      scale: 0.99,
+                      filter: "blur(2px)"
                     }}
                     animate={{ 
                       opacity: 1, 
@@ -150,10 +150,10 @@ export default function Video() {
                       filter: "blur(0px)"
                     }}
                     transition={{
-                      duration: 2.5,
-                      ease: [0.19, 1.0, 0.22, 1.0],
-                      opacity: { duration: 2.5, ease: [0.19, 1.0, 0.22, 1.0] },
-                      filter: { duration: 2.5, ease: [0.19, 1.0, 0.22, 1.0] }
+                      duration: 3.8,
+                      ease: [0.25, 0.1, 0.25, 1.0],
+                      opacity: { duration: 3.8, ease: [0.25, 0.1, 0.25, 1.0] },
+                      filter: { duration: 3.8, ease: [0.25, 0.1, 0.25, 1.0] }
                     }}
                     className="animated-gradient-text inline-block mr-3 sm:mr-4"
                   >
