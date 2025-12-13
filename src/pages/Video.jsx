@@ -130,15 +130,20 @@ export default function Video() {
               }}
             >
               <motion.div
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 20, opacity: 1 }}
+                initial={{ scale: 0, opacity: 1 }}
+                animate={{ scale: 30, opacity: 1 }}
                 transition={{ 
                   delay: 1.5,
                   duration: 2.5,
                   ease: [0.22, 1, 0.36, 1]
                 }}
-                className="absolute inset-0 pointer-events-none"
+                className="absolute top-1/2 left-1/2 pointer-events-none"
                 style={{
+                  width: '100px',
+                  height: '100px',
+                  marginLeft: '-50px',
+                  marginTop: '-50px',
+                  borderRadius: '50%',
                   background: `
                     radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%),
                     radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
@@ -149,7 +154,7 @@ export default function Video() {
                   `,
                   backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
                   animation: 'gradientShift 3s linear infinite',
-                  transformOrigin: 'center center'
+                  filter: 'blur(20px)'
                 }}
               />
             <motion.h1 
