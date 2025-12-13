@@ -127,7 +127,7 @@ export default function Video() {
               className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
             >
             <motion.h1 
-              className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]"
+              className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold flex items-center leading-relaxed pb-[2.625rem]"
               animate={visibleWords === 7 ? { x: -10 } : {}}
               transition={{
                 delay: 1.5,
