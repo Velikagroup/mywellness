@@ -160,12 +160,10 @@ export default function Video() {
               />
             <motion.h1 
               className="text-2xl sm:text-3xl md:text-4xl lg:text-5xl xl:text-6xl font-semibold flex items-center justify-center leading-relaxed pb-[2.625rem]"
-              initial={{ color: 'transparent' }}
-              animate={{ color: '#ffffff' }}
-              transition={{
-                delay: 2,
-                duration: 1.5,
-                ease: [0.12, 1, 0.25, 1]
+              style={{
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                WebkitBackgroundClip: 'text'
               }}
             >
               {["Immagina", "di", "poter", "cambiare", "il", "tuo", "corpo"].slice(0, visibleWords).map((word, index) => (
@@ -177,14 +175,19 @@ export default function Video() {
                     }}
                     animate={{ 
                       opacity: 1,
-                      filter: "blur(0px)"
+                      filter: "blur(0px)",
+                      WebkitTextFillColor: '#ffffff'
                     }}
                     transition={{
-                      duration: 0.6,
-                      ease: [0.19, 1.0, 0.22, 1.0]
+                      opacity: { duration: 0.6, ease: [0.19, 1.0, 0.22, 1.0] },
+                      filter: { duration: 0.6, ease: [0.19, 1.0, 0.22, 1.0] },
+                      WebkitTextFillColor: { 
+                        delay: 2,
+                        duration: 1.5, 
+                        ease: [0.12, 1, 0.25, 1] 
+                      }
                     }}
                     className="animated-gradient-text inline-block mr-3 sm:mr-4"
-                    style={{ WebkitTextFillColor: 'inherit' }}
                   >
                     {word}
                   </motion.span>
