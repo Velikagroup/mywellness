@@ -12,6 +12,7 @@ export default function Video() {
   const [showVideo, setShowVideo] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const [visibleWords, setVisibleWords] = useState(0);
+  const [gradientStarted, setGradientStarted] = useState(false);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -41,13 +42,21 @@ export default function Video() {
         }, index * 120);
       });
 
+      // Avvia gradiente dopo 2 secondi
+      const gradientTimer = setTimeout(() => {
+        setGradientStarted(true);
+      }, 2000);
+
       // Dopo tutte le parole e l'espansione del gradiente, nascondi l'intro e mostra il video
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
       }, words.length * 120 + 4000);
 
-      return () => clearTimeout(timer);
+      return () => {
+        clearTimeout(timer);
+        clearTimeout(gradientTimer);
+      };
     }
   }, [isLoading, showIntro, animationKey]);
 
@@ -169,14 +178,18 @@ export default function Video() {
                       filter: "blur(4px)"
                     }}
                     animate={{ 
-                      opacity: 1,
-                      filter: "blur(0px)"
+                      opacity: gradientStarted && index < 6 ? 0 : 1,
+                      filter: "blur(0px)",
+                      color: gradientStarted && index === 6 ? "#ffffff" : undefined
                     }}
                     transition={{
                       duration: 0.6,
                       ease: [0.19, 1.0, 0.22, 1.0]
                     }}
-                    className="animated-gradient-text inline-block mr-3 sm:mr-4"
+                    className={gradientStarted && index === 6 ? "inline-block mr-3 sm:mr-4" : "animated-gradient-text inline-block mr-3 sm:mr-4"}
+                    style={{
+                      textShadow: gradientStarted && index === 6 ? '0 2px 10px rgba(0,0,0,0.3)' : undefined
+                    }}
                   >
                     {word}
                   </motion.span>
