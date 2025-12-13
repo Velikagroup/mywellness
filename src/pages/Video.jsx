@@ -134,8 +134,8 @@ export default function Video() {
                 animate={{ scale: 30, opacity: 1 }}
                 transition={{ 
                   delay: 1.5,
-                  duration: 2.5,
-                  ease: [0.22, 1, 0.36, 1]
+                  duration: 3.5,
+                  ease: [0.16, 1, 0.3, 1]
                 }}
                 className="absolute top-1/2 left-1/2 pointer-events-none"
                 style={{
@@ -154,7 +154,7 @@ export default function Video() {
                   `,
                   backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
                   animation: 'gradientShift 3s linear infinite',
-                  filter: 'blur(20px)'
+                  filter: 'blur(40px)'
                 }}
               />
             <motion.h1 
