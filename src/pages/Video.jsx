@@ -9,6 +9,7 @@ export default function Video() {
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(true);
   const [showIntro, setShowIntro] = useState(true);
+  const [showLogo, setShowLogo] = useState(false);
   const [showVideo, setShowVideo] = useState(false);
   const [animationKey, setAnimationKey] = useState(0);
   const [visibleWords, setVisibleWords] = useState(0);
@@ -41,18 +42,28 @@ export default function Video() {
         }, index * 120);
       });
 
-      // Dopo tutte le parole e l'espansione del gradiente, nascondi l'intro e mostra il video
-      const timer = setTimeout(() => {
+      // Dopo tutte le parole e l'espansione del gradiente, mostra il logo
+      const logoTimer = setTimeout(() => {
         setShowIntro(false);
-        setShowVideo(true);
+        setShowLogo(true);
       }, words.length * 120 + 4000);
 
-      return () => clearTimeout(timer);
+      // Dopo l'animazione del logo, mostra il video
+      const videoTimer = setTimeout(() => {
+        setShowLogo(false);
+        setShowVideo(true);
+      }, words.length * 120 + 6500);
+
+      return () => {
+        clearTimeout(logoTimer);
+        clearTimeout(videoTimer);
+      };
     }
   }, [isLoading, showIntro, animationKey]);
 
   const restartAnimation = () => {
     setShowVideo(false);
+    setShowLogo(false);
     setShowIntro(true);
     setAnimationKey(prev => prev + 1);
   };
@@ -117,7 +128,7 @@ export default function Video() {
       `}</style>
 
       <div className="relative w-full max-w-7xl bg-black rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '16/9' }}>
-        <AnimatePresence key={animationKey}>
+        <AnimatePresence key={animationKey} mode="wait">
           {showIntro && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -194,6 +205,51 @@ export default function Video() {
                 ))}
             </motion.h1>
           </motion.div>
+          )}
+
+          {showLogo && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.5 }}
+              className="absolute inset-0 flex items-center justify-center z-50"
+              style={{
+                background: `
+                  radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%),
+                  radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
+                  radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+                  radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
+                  radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+                  radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%)
+                `,
+                backgroundSize: '250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%',
+                animation: 'gradientShift 3s linear infinite'
+              }}
+            >
+              <motion.div
+                initial={{ scale: 0.3, opacity: 0, filter: 'blur(20px)' }}
+                animate={{ 
+                  scale: [0.3, 1.1, 1],
+                  opacity: [0, 1, 1],
+                  filter: ['blur(20px)', 'blur(0px)', 'blur(0px)']
+                }}
+                transition={{
+                  duration: 1.5,
+                  times: [0, 0.6, 1],
+                  ease: [0.34, 1.56, 0.64, 1]
+                }}
+                style={{
+                  filter: 'drop-shadow(0 0 40px rgba(38, 132, 127, 0.3))'
+                }}
+              >
+                <img
+                  src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
+                  alt="MyWellness"
+                  className="h-12 md:h-16"
+                />
+              </motion.div>
+            </motion.div>
           )}
           </AnimatePresence>
 
