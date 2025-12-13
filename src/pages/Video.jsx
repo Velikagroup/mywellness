@@ -116,7 +116,7 @@ export default function Video() {
         }
       `}</style>
 
-      <div className="w-full max-w-7xl bg-black rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '16/9' }}>
+      <div className="relative w-full max-w-7xl bg-black rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '16/9' }}>
         <AnimatePresence key={animationKey}>
           {showIntro && (
             <motion.div
