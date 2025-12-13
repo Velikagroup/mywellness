@@ -134,7 +134,7 @@ export default function Video() {
                 animate={{ scale: 30, opacity: 1 }}
                 transition={{ 
                   delay: 1.5,
-                  duration: 3.5,
+                  duration: 5,
                   ease: [0.16, 1, 0.3, 1]
                 }}
                 className="absolute top-1/2 left-1/2 pointer-events-none"
