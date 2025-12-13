@@ -45,7 +45,7 @@ export default function Video() {
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, words.length * 120 + 3000);
+      }, words.length * 120 + 4000);
 
       return () => clearTimeout(timer);
     }
@@ -133,7 +133,7 @@ export default function Video() {
                 initial={{ scale: 0, opacity: 1 }}
                 animate={{ scale: 30, opacity: 1 }}
                 transition={{ 
-                  delay: 1,
+                  delay: 2,
                   duration: 1.5,
                   ease: [0.12, 1, 0.25, 1]
                 }}
