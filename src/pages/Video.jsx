@@ -41,11 +41,11 @@ export default function Video() {
         }, index * 120);
       });
 
-      // Dopo tutte le parole, nascondi l'intro e mostra il video
+      // Dopo tutte le parole e l'espansione del gradiente, nascondi l'intro e mostra il video
       const timer = setTimeout(() => {
         setShowIntro(false);
         setShowVideo(true);
-      }, words.length * 120 + 4500);
+      }, words.length * 120 + 3000);
 
       return () => clearTimeout(timer);
     }
@@ -133,8 +133,8 @@ export default function Video() {
                 initial={{ scale: 0, opacity: 1 }}
                 animate={{ scale: 30, opacity: 1 }}
                 transition={{ 
-                  delay: 1.5,
-                  duration: 1,
+                  delay: 1,
+                  duration: 1.5,
                   ease: [0.12, 1, 0.25, 1]
                 }}
                 className="absolute pointer-events-none"
