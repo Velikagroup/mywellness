@@ -66,7 +66,7 @@ export default function Video() {
   }
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
+    <div className="min-h-screen flex items-center justify-center p-4 md:p-8">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;800;900&display=swap');
         
@@ -116,15 +116,16 @@ export default function Video() {
         }
       `}</style>
 
-      <AnimatePresence key={animationKey}>
-        {showIntro && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.6 }}
-            className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
-          >
+      <div className="w-full max-w-7xl bg-black rounded-2xl overflow-hidden shadow-2xl" style={{ aspectRatio: '16/9' }}>
+        <AnimatePresence key={animationKey}>
+          {showIntro && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.6 }}
+              className="absolute inset-0 flex items-center justify-center z-50 bg-white px-4 md:px-12"
+            >
             <motion.h1 
               className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-semibold flex items-center leading-relaxed pb-[2.625rem]"
               animate={visibleWords === 7 ? { x: -10 } : {}}
@@ -156,16 +157,16 @@ export default function Video() {
                 ))}
             </motion.h1>
           </motion.div>
-        )}
-      </AnimatePresence>
+          )}
+          </AnimatePresence>
 
-      {showVideo && (
-        <motion.div
+          {showVideo && (
+          <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.5 }}
-          className="w-full h-screen flex items-center justify-center bg-white"
-        >
+          className="w-full h-full flex items-center justify-center bg-white"
+          >
           <button
             onClick={restartAnimation}
             className="bg-[#26847F] hover:bg-[#1f6b66] text-white rounded-full p-8 shadow-2xl transition-all hover:scale-110"
@@ -173,8 +174,9 @@ export default function Video() {
           >
             <Play className="w-20 h-20" fill="currentColor" />
           </button>
-        </motion.div>
-      )}
-    </div>
-  );
+          </motion.div>
+          )}
+          </div>
+          </div>
+          );
 }
