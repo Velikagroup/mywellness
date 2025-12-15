@@ -726,8 +726,9 @@ Use verified nutritional data. All names and units in ${langName}.`;
       const calorieDifference = targetCalories - currentCalories;
       
       if (calorieDifference !== 0) {
-        if (calorieDifference > 5) {
-          // ✅ Controlla se l'olio è già presente
+        // ✅ Aggiungi olio SOLO per pasti principali E solo se deficit > 50 kcal
+        const isMainMeal = ['breakfast', 'lunch', 'dinner'].includes(mealToRegenerate.meal_type);
+        if (calorieDifference > 50 && isMainMeal) {
           const oilIndex = validIngredients.findIndex(ing => 
             ing.name.toLowerCase().includes('olio') && ing.name.toLowerCase().includes('oliva')
           );
@@ -736,12 +737,10 @@ Use verified nutritional data. All names and units in ${langName}.`;
           const oilCalories = oilMl * 9;
           
           if (oilIndex >= 0) {
-            // Se esiste già, aumenta la quantità
             validIngredients[oilIndex].quantity += oilMl;
             validIngredients[oilIndex].calories += oilCalories;
             validIngredients[oilIndex].fat = Math.round((validIngredients[oilIndex].fat + oilMl) * 10) / 10;
           } else {
-            // Aggiungi nuovo
             validIngredients.push({
               name: "olio d'oliva",
               quantity: oilMl,
@@ -1290,8 +1289,9 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
             let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
             const diff = targetCals - calculatedCalories;
 
-            if (diff > 5) {
-              // ✅ Controlla se olio già presente
+            // ✅ Aggiungi olio SOLO per pasti principali E solo se deficit > 50 kcal
+            const isMainMeal = ['breakfast', 'lunch', 'dinner'].includes(mealType);
+            if (diff > 50 && isMainMeal) {
               const oilKey = roundedIngredients.findIndex(ing => 
                 ing.name.toLowerCase().includes('olio') && ing.name.toLowerCase().includes('oliva')
               );
@@ -1528,8 +1528,9 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesT
               let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
               const diff = targetCals - calculatedCalories;
               
-              if (diff > 5) {
-                // ✅ Controlla se olio già presente
+              // ✅ Aggiungi olio SOLO per pasti principali E solo se deficit > 50 kcal
+              const isMainMeal = ['breakfast', 'lunch', 'dinner'].includes(mealData.meal_type);
+              if (diff > 50 && isMainMeal) {
                 const oilKey = roundedIngredients.findIndex(ing => 
                   ing.name.toLowerCase().includes('olio') && ing.name.toLowerCase().includes('oliva')
                 );
