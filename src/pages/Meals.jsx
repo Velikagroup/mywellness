@@ -644,6 +644,7 @@ Target: ${targetCalories} kcal.
 Diet: ${nutritionData.diet_type}. 
 Allowed: ${dietRules.allowed}. 
 ${preparationRules}
+🛒 SUPERMARKET PRIORITY: Use ONLY common, easy-to-find supermarket ingredients. NO exotic or specialty items.
 ${cookingTimeContext}
 CRITICAL: For eggs, use ONLY whole numbers (1, 2, 3), NEVER decimals.
 Use verified nutritional data. All names and units in ${langName}.`;
@@ -1135,6 +1136,12 @@ FOR MAIN MEALS (breakfast, lunch, dinner):
 - Examples: sandwiches, salads, cold plates, wraps with pre-cooked ingredients
 - FORBIDDEN: recipes requiring cooking, heating, elaborate preparation
 - Keep it SIMPLE: combine ingredients that are ready or pre-cooked
+
+🛒 INGREDIENT SOURCING PRIORITY:
+- Use ONLY common supermarket ingredients (easy to find in any grocery store)
+- Examples: yogurt, bread, ham, cheese, canned tuna, pre-cooked chicken, eggs, milk, fruits, vegetables
+- FORBIDDEN: exotic ingredients, specialty items, hard-to-find products, gourmet ingredients
+- Think: "Can I buy this at a regular supermarket in 2 minutes?"
 
 CRITICAL INSTRUCTIONS:
 - Create EXACTLY ${mealsPerDay} meals
