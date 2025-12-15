@@ -634,10 +634,16 @@ export default function MealsPage() {
         ? 'Puoi dedicare PIÙ TEMPO alla cucina (30+ minuti). Puoi includere ricette più elaborate.'
         : 'Tempo moderato (20-30 minuti). Bilanciamento tra velocità e qualità.';
 
+      const isSnack = mealToRegenerate.meal_type?.includes('snack');
+      const preparationRules = isSnack 
+        ? 'ULTRA SIMPLE SNACK: ONLY ready-to-eat foods. NO cooking, NO heating, NO preparation. Examples: yogurt+fruit, crackers+cheese, nuts, protein bar. Just open and eat.'
+        : 'SIMPLE ASSEMBLY ONLY: NO cooking, NO stove, NO oven. Only combine ready/pre-cooked ingredients. Examples: sandwiches, salads, cold plates.';
+      
       const singleMealPrompt = `You are an expert AI nutritionist. Create ONE meal in ${langName.toUpperCase()}. 
 Target: ${targetCalories} kcal. 
 Diet: ${nutritionData.diet_type}. 
 Allowed: ${dietRules.allowed}. 
+${preparationRules}
 ${cookingTimeContext}
 CRITICAL: For eggs, use ONLY whole numbers (1, 2, 3), NEVER decimals.
 Use verified nutritional data. All names and units in ${langName}.`;
@@ -1117,6 +1123,20 @@ VARIETY ENFORCEMENT RULES:
 4. ABSOLUTELY NO repeating dish names from previous days
 5. Each meal must feel FRESH and DIFFERENT
 
+🚨🚨🚨 CRITICAL PREPARATION RULES 🚨🚨🚨
+
+FOR SNACKS (snack1, snack2, snack3, snack4):
+- ONLY ready-to-eat foods that require NO cooking, NO heating, NO preparation
+- Examples: yogurt + fruit, crackers + cheese, nuts, protein bar, fruit, vegetables + hummus
+- FORBIDDEN: anything requiring a stove, oven, pan, or any cooking
+- ULTRA SIMPLE: just open packages and combine/eat directly
+
+FOR MAIN MEALS (breakfast, lunch, dinner):
+- ONLY foods that can be assembled or combined without cooking
+- Examples: sandwiches, salads, cold plates, wraps with pre-cooked ingredients
+- FORBIDDEN: recipes requiring cooking, heating, elaborate preparation
+- Keep it SIMPLE: combine ingredients that are ready or pre-cooked
+
 CRITICAL INSTRUCTIONS:
 - Create EXACTLY ${mealsPerDay} meals
 - Each meal must have accurate nutritional data
@@ -1133,6 +1153,7 @@ ${mealSpecs.map(spec => `
 ${spec.label}:
 - Target: ${spec.target_calories} kcal
 ${spec.is_cheat ? `- THIS IS A CHEAT MEAL: Make it delicious! User favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, hamburger'}. Can go +20% calories.` : '- Follow diet rules strictly'}
+${spec.meal_type.includes('snack') ? '- ULTRA SIMPLE SNACK: only ready-to-eat foods, NO cooking at all' : '- SIMPLE ASSEMBLY: no cooking required, just combine ingredients'}
 `).join('\n')}
 
 User: ${nutritionData.age} anni, ${nutritionData.gender}, ${nutritionData.current_weight}kg → ${nutritionData.target_weight}kg
