@@ -181,6 +181,29 @@ Deno.serve(async (req) => {
                         console.error('⚠️ Affiliate tracking error:', affiliateError.message);
                     }
                 }
+
+                // 📊 TikTok Event: Purchase
+                if (invoiceAmount > 0) {
+                    (async () => {
+                        try {
+                            await base44.functions.invoke('sendTikTokEvent', {
+                                event: 'Purchase',
+                                email: user.email,
+                                phone: user.phone_number,
+                                external_id: user.id,
+                                value: invoiceAmount / 100,
+                                currency: 'EUR',
+                                content_id: newPlan,
+                                content_type: 'subscription',
+                                content_name: `MyWellness ${newPlan}`,
+                                url: 'https://app.projectmywellness.com/checkout'
+                            });
+                            console.log('✅ TikTok Purchase tracked (upgrade from free)');
+                        } catch (e) {
+                            console.warn('⚠️ TikTok tracking error:', e);
+                        }
+                    })();
+                }
                 
                 // 📧 Invia email di benvenuto piano
                 try {
@@ -508,6 +531,29 @@ Deno.serve(async (req) => {
         }
 
         console.log('✅ Upgrade completed with immediate billing');
+
+        // 📊 TikTok Event: Purchase
+        if (finalAmountToPay > 0 && paymentIntent) {
+            (async () => {
+                try {
+                    await base44.functions.invoke('sendTikTokEvent', {
+                        event: 'Purchase',
+                        email: user.email,
+                        phone: user.phone_number,
+                        external_id: user.id,
+                        value: finalAmountToPay,
+                        currency: 'EUR',
+                        content_id: newPlan,
+                        content_type: 'subscription',
+                        content_name: `MyWellness ${newPlan}`,
+                        url: 'https://app.projectmywellness.com/checkout'
+                    });
+                    console.log('✅ TikTok Purchase tracked (upgrade)');
+                } catch (e) {
+                    console.warn('⚠️ TikTok tracking error:', e);
+                }
+            })();
+        }
 
         // 📧 Invia email di benvenuto piano
         try {
