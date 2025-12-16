@@ -104,9 +104,11 @@ export default function PricingPageContent() {
       const trackPricingVisit = async () => {
         try {
           let userIdentifier = 'anonymous';
+          let userObj = null;
           try {
             const currentUser = await base44.auth.me();
             userIdentifier = currentUser.email;
+            userObj = currentUser;
           } catch (error) {
             // Not logged in
           }
@@ -116,6 +118,25 @@ export default function PricingPageContent() {
             event_type: 'pricing_visited',
             event_data: {}
           });
+
+          // 📊 TikTok Event: ViewContent (pricing page)
+          try {
+            await base44.functions.invoke('sendTikTokEvent', {
+              event: 'ViewContent',
+              email: userObj?.email,
+              phone: userObj?.phone_number,
+              external_id: userObj?.id,
+              user_agent: navigator.userAgent,
+              content_id: 'pricing_page',
+              content_type: 'page',
+              content_name: 'Pricing Page',
+              url: window.location.href
+            });
+            console.log('✅ TikTok ViewContent tracked (pricing)');
+          } catch (e) {
+            console.warn('⚠️ TikTok tracking error:', e);
+          }
+
           setPricingTracked(true);
         } catch (error) {
           console.error('Error tracking pricing visit:', error);
@@ -307,7 +328,37 @@ export default function PricingPageContent() {
       planType = 'premium';
     }
 
-    setSelectedPlan(planId); 
+    setSelectedPlan(planId);
+
+    // 📊 TikTok Event: AddToCart (plan selection)
+    try {
+      let userObj = null;
+      try {
+        userObj = await base44.auth.me();
+      } catch (e) {
+        // Not logged in
+      }
+
+      const planPrices = { base: 19, pro: 29, premium: 39 };
+      const price = planPrices[planType] || 19;
+
+      await base44.functions.invoke('sendTikTokEvent', {
+        event: 'AddToCart',
+        email: userObj?.email,
+        phone: userObj?.phone_number,
+        external_id: userObj?.id,
+        user_agent: navigator.userAgent,
+        value: price,
+        currency: 'EUR',
+        content_id: planType,
+        content_type: 'subscription',
+        content_name: `MyWellness ${planType}`,
+        url: window.location.href
+      });
+      console.log('✅ TikTok AddToCart tracked');
+    } catch (e) {
+      console.warn('⚠️ TikTok tracking error:', e);
+    } 
 
     try {
       const currentUser = await base44.auth.me();

@@ -323,6 +323,24 @@ export default function QuizContainer({ translations, language = 'it' }) {
             event_type: 'quiz_completed',
             event_data: { total_steps: dynamicSteps.length }
           });
+
+          // 📊 TikTok Event: CompleteRegistration
+          try {
+            await base44.functions.invoke('sendTikTokEvent', {
+              event: 'CompleteRegistration',
+              email: user?.email,
+              phone: user?.phone_number,
+              external_id: user?.id,
+              user_agent: navigator.userAgent,
+              content_id: 'quiz',
+              content_type: 'registration',
+              content_name: 'Quiz Completed',
+              url: window.location.href
+            });
+            console.log('✅ TikTok CompleteRegistration tracked');
+          } catch (e) {
+            console.warn('⚠️ TikTok tracking error:', e);
+          }
         } catch (error) {
           console.error('Error tracking quiz completion:', error);
         }
