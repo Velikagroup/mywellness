@@ -13,7 +13,15 @@ function hashData(data) {
 Deno.serve(async (req) => {
   try {
     const base44 = createClientFromRequest(req);
+    
+    // Authenticate user
+    const user = await base44.auth.me();
+    if (!user) {
+      return Response.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    
     const payload = await req.json();
+    console.log('📥 Received payload:', JSON.stringify(payload, null, 2));
     
     const {
       event,
@@ -104,6 +112,8 @@ Deno.serve(async (req) => {
       throw new Error('TIKTOK_ACCESS_TOKEN not configured');
     }
 
+    console.log('📤 Sending to TikTok:', JSON.stringify({ data: [tiktokPayload] }, null, 2));
+
     const response = await fetch(TIKTOK_API_ENDPOINT, {
       method: 'POST',
       headers: {
@@ -115,12 +125,19 @@ Deno.serve(async (req) => {
 
     const result = await response.json();
     
+    console.log('📬 TikTok Response:', {
+      status: response.status,
+      ok: response.ok,
+      result: JSON.stringify(result, null, 2)
+    });
+    
     if (!response.ok) {
-      console.error('TikTok API Error:', result);
+      console.error('❌ TikTok API Error:', result);
       return Response.json({ 
         success: false, 
         error: result.message || 'TikTok API error',
-        details: result 
+        details: result,
+        sentPayload: tiktokPayload
       }, { status: response.status });
     }
 
@@ -128,7 +145,8 @@ Deno.serve(async (req) => {
     return Response.json({ 
       success: true, 
       event_id: eventId,
-      response: result 
+      response: result,
+      sentPayload: tiktokPayload
     });
 
   } catch (error) {
