@@ -73,6 +73,7 @@ import escheckout from './pages/escheckout';
 import ptcheckout from './pages/ptcheckout';
 import decheckout from './pages/decheckout';
 import frcheckout from './pages/frcheckout';
+import TikTokTest from './pages/TikTokTest';
 import __Layout from './Layout.jsx';
 
 
@@ -152,6 +153,7 @@ export const PAGES = {
     "ptcheckout": ptcheckout,
     "decheckout": decheckout,
     "frcheckout": frcheckout,
+    "TikTokTest": TikTokTest,
 }
 
 export const pagesConfig = {
