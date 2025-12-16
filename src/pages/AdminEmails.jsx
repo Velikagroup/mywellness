@@ -959,9 +959,9 @@ ${trustBadgesHtml}
       icon: Clock,
       color: 'orange',
       emails: [
-        { id: 'renewal_7_days', name: 'Reminder Rinnovo - 7 Giorni', trigger: 'Cron (7 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
-        { id: 'renewal_3_days', name: 'Reminder Rinnovo - 3 Giorni', trigger: 'Cron (3 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
-        { id: 'renewal_1_day', name: 'Reminder Rinnovo - 1 Giorno', trigger: 'Cron (1 giorno prima scadenza, con cancellazione)', function: 'sendRenewalReminders' }
+        { id: `renewal_7_days_${selectedLanguage}`, name: 'Reminder Rinnovo - 7 Giorni', trigger: 'Cron (7 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
+        { id: `renewal_3_days_${selectedLanguage}`, name: 'Reminder Rinnovo - 3 Giorni', trigger: 'Cron (3 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
+        { id: `renewal_1_day_${selectedLanguage}`, name: 'Reminder Rinnovo - 1 Giorno', trigger: 'Cron (1 giorno prima scadenza, con cancellazione)', function: 'sendRenewalReminders' }
       ]
     },
     winback: {
@@ -969,9 +969,9 @@ ${trustBadgesHtml}
       icon: Heart,
       color: 'pink',
       emails: [
-        { id: 'subscription_expired', name: 'Abbonamento Scaduto', trigger: 'Cron - Subscription status = expired', function: 'sendSubscriptionExpired' },
-        { id: 'standard_upgrade_invite', name: 'Invito Upgrade da Standard', trigger: 'Cron - Utente Standard Free da 7+ giorni', function: 'sendStandardUpgradeInvite' },
-        { id: 'standard_limits_reached', name: 'Limiti Piano Standard Raggiunti', trigger: 'Utente Standard raggiunge limiti funzionalità', function: 'sendStandardLimitsReached' }
+        { id: `subscription_expired_${selectedLanguage}`, name: 'Abbonamento Scaduto', trigger: 'Cron - Subscription status = expired', function: 'sendSubscriptionExpired' },
+        { id: `standard_upgrade_invite_${selectedLanguage}`, name: 'Invito Upgrade da Standard', trigger: 'Cron - Utente Standard Free da 7+ giorni', function: 'sendStandardUpgradeInvite' },
+        { id: `standard_limits_reached_${selectedLanguage}`, name: 'Limiti Piano Standard Raggiunti', trigger: 'Utente Standard raggiunge limiti funzionalità', function: 'sendStandardLimitsReached' }
       ]
     },
     engagement: {
@@ -979,12 +979,12 @@ ${trustBadgesHtml}
       icon: TrendingUp,
       color: 'green',
       emails: [
-        { id: 'goal_weight_achieved', name: 'Obiettivo Peso Raggiunto', trigger: 'current_weight raggiunge target_weight', function: 'sendGoalWeightAchieved' },
-        { id: 'milestone_30_days', name: 'Milestone - 30 Giorni', trigger: 'Cron - 30 giorni dall\'iscrizione', function: 'sendMilestones' },
-        { id: 'milestone_60_days', name: 'Milestone - 60 Giorni', trigger: 'Cron - 60 giorni dall\'iscrizione', function: 'sendMilestones' },
-        { id: 'milestone_90_days', name: 'Milestone - 90 Giorni (+ Reward)', trigger: 'Cron - 90 giorni dall\'iscrizione', function: 'sendMilestones' },
-        { id: 'workout_streak_7_days', name: 'Streak Allenamenti 7 Giorni', trigger: '7 workout consecutivi', function: 'sendWorkoutStreak7Days' },
-        { id: 'no_workout_week', name: 'Nessun Workout Questa Settimana', trigger: 'Cron Lunedì - 0 workout settimana', function: 'sendNoWorkoutWeek' }
+        { id: `goal_weight_achieved_${selectedLanguage}`, name: 'Obiettivo Peso Raggiunto', trigger: 'current_weight raggiunge target_weight', function: 'sendGoalWeightAchieved' },
+        { id: `milestone_30_days_${selectedLanguage}`, name: 'Milestone - 30 Giorni', trigger: 'Cron - 30 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: `milestone_60_days_${selectedLanguage}`, name: 'Milestone - 60 Giorni', trigger: 'Cron - 60 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: `milestone_90_days_${selectedLanguage}`, name: 'Milestone - 90 Giorni (+ Reward)', trigger: 'Cron - 90 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: `workout_streak_7_days_${selectedLanguage}`, name: 'Streak Allenamenti 7 Giorni', trigger: '7 workout consecutivi', function: 'sendWorkoutStreak7Days' },
+        { id: `no_workout_week_${selectedLanguage}`, name: 'Nessun Workout Questa Settimana', trigger: 'Cron Lunedì - 0 workout settimana', function: 'sendNoWorkoutWeek' }
       ]
     },
     motivational: {
@@ -992,8 +992,8 @@ ${trustBadgesHtml}
       icon: Zap,
       color: 'purple',
       emails: [
-        { id: 'inactive_user_7_days', name: 'Utente Inattivo 7 Giorni', trigger: 'Cron - Nessun login per 7 giorni', function: 'sendInactiveUserReminder' },
-        { id: 'feedback_request', name: 'Richiesta Feedback', trigger: 'Cron - 14 giorni di utilizzo', function: 'sendFeedbackRequest' }
+        { id: `inactive_user_7_days_${selectedLanguage}`, name: 'Utente Inattivo 7 Giorni', trigger: 'Cron - Nessun login per 7 giorni', function: 'sendInactiveUserReminder' },
+        { id: `feedback_request_${selectedLanguage}`, name: 'Richiesta Feedback', trigger: 'Cron - 14 giorni di utilizzo', function: 'sendFeedbackRequest' }
       ]
     },
     technical: {
@@ -1001,10 +1001,10 @@ ${trustBadgesHtml}
       icon: Shield,
       color: 'blue',
       emails: [
-        { id: 'password_reset_confirmed', name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
-        { id: 'plan_upgrade', name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
-        { id: 'plan_downgrade', name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },
-        { id: 'cancellation_confirmation', name: 'Conferma Cancellazione', trigger: 'Utente cancella abbonamento', function: 'sendCancellationConfirmation' }
+        { id: `password_reset_confirmed_${selectedLanguage}`, name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
+        { id: `plan_upgrade_${selectedLanguage}`, name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
+        { id: `plan_downgrade_${selectedLanguage}`, name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },
+        { id: `cancellation_confirmation_${selectedLanguage}`, name: 'Conferma Cancellazione', trigger: 'Utente cancella abbonamento', function: 'sendCancellationConfirmation' }
       ]
     },
     reporting: {
@@ -1012,7 +1012,7 @@ ${trustBadgesHtml}
       icon: BarChart3,
       color: 'indigo',
       emails: [
-        { id: 'weekly_report', name: 'Report Settimanale Progressi', trigger: 'Cron settimanale (ogni Lunedì)', function: 'sendWeeklyReport' }
+        { id: `weekly_report_${selectedLanguage}`, name: 'Report Settimanale Progressi', trigger: 'Cron settimanale (ogni Lunedì)', function: 'sendWeeklyReport' }
       ]
     },
     abandonment: {
@@ -1020,10 +1020,10 @@ ${trustBadgesHtml}
         icon: ShoppingCart,
         color: 'amber',
         emails: [
-          { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
-          { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
-          { id: 'cart_abandoned_24h', name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
-          { id: 'cart_abandoned_72h', name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
+          { id: `quiz_completed_abandoned_${selectedLanguage}`, name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
+          { id: `cart_checkout_abandoned_${selectedLanguage}`, name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
+          { id: `cart_abandoned_24h_${selectedLanguage}`, name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
+          { id: `cart_abandoned_72h_${selectedLanguage}`, name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
         ]
       }
   };
@@ -1148,22 +1148,20 @@ ${trustBadgesHtml}
                     Email Automatizzate per Categoria
                   </CardTitle>
                   <div className="flex items-center gap-3">
-                    {selectedCategory === 'critical' && (
-                      <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-                        <Globe className="w-4 h-4 text-blue-600" />
-                        <select
-                          value={selectedLanguage}
-                          onChange={(e) => setSelectedLanguage(e.target.value)}
-                          className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
-                        >
-                          {languageOptions.map(lang => (
-                            <option key={lang.code} value={lang.code}>
-                              {lang.flag} {lang.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                      <Globe className="w-4 h-4 text-blue-600" />
+                      <select
+                        value={selectedLanguage}
+                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                        className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
+                      >
+                        {languageOptions.map(lang => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.flag} {lang.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
