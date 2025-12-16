@@ -204,10 +204,28 @@ export default function TikTokTest() {
             <CardContent className="space-y-4">
               <p className="text-sm">{result.message}</p>
               
+              {result.data?.sentPayload && (
+                <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                  <p className="text-xs font-semibold text-purple-700 mb-2">🔍 Payload Inviato a TikTok:</p>
+                  <pre className="text-xs overflow-auto max-h-64">
+                    {JSON.stringify(result.data.sentPayload, null, 2)}
+                  </pre>
+                </div>
+              )}
+              
+              {result.data?.details && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-xs font-semibold text-red-700 mb-2">❌ Dettagli Errore da TikTok:</p>
+                  <pre className="text-xs overflow-auto max-h-64">
+                    {JSON.stringify(result.data.details, null, 2)}
+                  </pre>
+                </div>
+              )}
+              
               {result.data && (
                 <div className="bg-gray-50 rounded-lg p-4">
-                  <p className="text-xs font-semibold text-gray-700 mb-2">Dettagli Risposta:</p>
-                  <pre className="text-xs overflow-auto">
+                  <p className="text-xs font-semibold text-gray-700 mb-2">📋 Risposta Completa:</p>
+                  <pre className="text-xs overflow-auto max-h-64">
                     {JSON.stringify(result.data, null, 2)}
                   </pre>
                 </div>
