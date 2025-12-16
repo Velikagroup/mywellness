@@ -4,6 +4,8 @@ import { Button } from '@/components/ui/button';
 import { X, Clock, ChefHat, Utensils, Apple } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
 const getFakeMealPlan = (t) => [
   {
@@ -67,7 +69,8 @@ const getDetailedMeal = (t) => ({
 });
 
 export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const [showMealDetail, setShowMealDetail] = useState(false);
   const [scrollProgress, setScrollProgress] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -346,7 +349,17 @@ export default function NutritionUnlockPrompt({ isOpen, onClose, onUpgrade }) {
           {/* CTA fisso in basso */}
           <div className="sticky bottom-0 left-0 right-0 bg-gradient-to-t from-white via-white to-transparent px-3 sm:px-6 py-3 sm:py-4">
             <Button
-              onClick={onUpgrade}
+              onClick={() => {
+                const checkoutPages = {
+                  'it': 'itcheckout',
+                  'en': 'encheckout',
+                  'es': 'escheckout',
+                  'pt': 'ptcheckout',
+                  'de': 'decheckout',
+                  'fr': 'frcheckout'
+                };
+                navigate(createPageUrl(checkoutPages[language] || 'itcheckout') + '?plan=base&billing=monthly');
+              }}
               className="w-full h-12 sm:h-14 bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white text-sm sm:text-lg font-black rounded-xl sm:rounded-2xl shadow-2xl"
             >
               {t('upgradeModal.unlockPlan')}

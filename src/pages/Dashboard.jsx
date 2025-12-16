@@ -813,12 +813,6 @@ export default function Dashboard() {
       <NutritionUnlockPrompt
         isOpen={showNutritionUnlock}
         onClose={() => setShowNutritionUnlock(false)}
-        onUpgrade={() => {
-          setShowNutritionUnlock(false);
-          setCheckoutPlan('base');
-          setCheckoutBilling('monthly');
-          setShowUpgradeCheckout(true);
-        }}
       />
 
       <UpgradeCheckoutModal

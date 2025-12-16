@@ -92,6 +92,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     createPageUrl('Privacy'),
     createPageUrl('ApplePayVerification'),
     createPageUrl('NotFound'),
+    // Checkout pages
+    createPageUrl('itcheckout'),
+    createPageUrl('encheckout'),
+    createPageUrl('escheckout'),
+    createPageUrl('ptcheckout'),
+    createPageUrl('decheckout'),
+    createPageUrl('frcheckout'),
     // Localized quiz pages
     createPageUrl('itquiz'),
     createPageUrl('enquiz'),
