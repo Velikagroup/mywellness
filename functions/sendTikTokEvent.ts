@@ -109,14 +109,23 @@ Deno.serve(async (req) => {
     if (user_agent) contextObj.user_agent = user_agent;
     if (ip) contextObj.ip = ip;
 
-    // Build base payload
-    const tiktokPayload = {
-      pixel_code: TIKTOK_PIXEL_ID,
+    // Build event data in TikTok format (user at top level, not in context)
+    const eventData = {
       event,
       event_time: eventTime,
       event_id: eventId,
-      context: contextObj,
+      user: userObj,
       properties
+    };
+
+    if (user_agent) eventData.user_agent = user_agent;
+    if (ip) eventData.ip = ip;
+    if (url) eventData.page = { url };
+
+    // Main payload with event_source_id and data array
+    const tiktokPayload = {
+      event_source_id: TIKTOK_PIXEL_ID,
+      data: [eventData]
     };
 
     // Only add test_event_code if provided
@@ -129,7 +138,7 @@ Deno.serve(async (req) => {
       throw new Error('TIKTOK_ACCESS_TOKEN not configured');
     }
 
-    console.log('📤 Sending to TikTok:', JSON.stringify({ data: [tiktokPayload] }, null, 2));
+    console.log('📤 Sending to TikTok:', JSON.stringify(tiktokPayload, null, 2));
 
     const response = await fetch(TIKTOK_API_ENDPOINT, {
       method: 'POST',
@@ -137,7 +146,7 @@ Deno.serve(async (req) => {
         'Content-Type': 'application/json',
         'Access-Token': accessToken
       },
-      body: JSON.stringify({ data: [tiktokPayload] })
+      body: JSON.stringify(tiktokPayload)
     });
 
     const result = await response.json();
