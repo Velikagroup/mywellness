@@ -620,23 +620,15 @@ export default function Dashboard() {
                 <button
                   onClick={async () => {
                     try {
-                      const response = await fetch('/api/functions/sendTikTokEvent', {
-                        method: 'POST',
-                        headers: {
-                          'Content-Type': 'application/json',
-                          'Authorization': `Bearer ${localStorage.getItem('base44_token')}`
-                        },
-                        body: JSON.stringify({
-                          event: 'Purchase',
-                          test_event_code: 'TEST78881',
-                          email: user.email,
-                          external_id: user.id,
-                          value: 19.00,
-                          currency: 'EUR'
-                        })
+                      const result = await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
+                        event: 'Purchase',
+                        test_event_code: 'TEST78881',
+                        email: user.email,
+                        external_id: user.id,
+                        value: 19.00,
+                        currency: 'EUR'
                       });
-                      const result = await response.json();
-                      alert(result.success ? '✅ Test event inviato a TikTok!' : '❌ Errore: ' + result.error);
+                      alert(result.success ? '✅ Test event inviato a TikTok!' : '❌ Errore: ' + (result.error || JSON.stringify(result)));
                     } catch (error) {
                       alert('❌ Errore invio test: ' + error.message);
                     }
