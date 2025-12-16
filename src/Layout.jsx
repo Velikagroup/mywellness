@@ -1,7 +1,7 @@
 import React from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
-import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video } from "lucide-react";
+import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video, Receipt } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
@@ -195,7 +195,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     { name: t('nav.email'), icon: Mail, path: 'AdminEmails' },
     { name: t('nav.analytics'), icon: BarChart3, path: 'AdminAnalytics' },
     { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' },
-    { name: t('nav.salesTax'), icon: Activity, path: 'AdminSalesTax' },
+    { name: t('nav.salesTax'), icon: Receipt, path: 'AdminSalesTax' },
     { name: 'Video', icon: Video, path: 'Video' }
   ] : [];
 
