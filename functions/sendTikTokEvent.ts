@@ -1,8 +1,21 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 import { createHash } from 'node:crypto';
 
-const TIKTOK_PIXEL_ID = 'D50ASNBC77UDC9ALLB2G';
 const TIKTOK_API_ENDPOINT = 'https://business-api.tiktok.com/open_api/v1.3/event/track/';
+
+// PIXEL CONFIGURATION PER PRODOTTO
+const PIXEL_CONFIG = {
+  trial: {
+    pixel_id: 'D50ASNBC77UDC9ALLB2G', // Trial Setup pixel (storico)
+    access_token_key: 'TIKTOK_ACCESS_TOKEN',
+    test_code_key: 'TIKTOK_TRIAL_TEST_CODE'
+  },
+  landing: {
+    pixel_id: Deno.env.get('TIKTOK_CHECKOUT_PIXEL_ID') || null,
+    access_token_key: 'TIKTOK_CHECKOUT_ACCESS_TOKEN',
+    test_code_key: 'TIKTOK_CHECKOUT_TEST_CODE'
+  }
+};
 
 // Hash sensitive data for TikTok
 function hashData(data) {
@@ -24,6 +37,7 @@ Deno.serve(async (req) => {
     console.log('📥 Received payload:', JSON.stringify(payload, null, 2));
     
     const {
+      product = 'trial', // 'trial' o 'landing' - default trial per retrocompatibilità
       event,
       email,
       phone,
@@ -45,6 +59,18 @@ Deno.serve(async (req) => {
       zip,
       test_event_code
     } = payload;
+
+    // Seleziona configurazione pixel in base al prodotto
+    const config = PIXEL_CONFIG[product];
+    if (!config || !config.pixel_id) {
+      return Response.json({ 
+        success: false, 
+        error: `Pixel TikTok non configurato per il prodotto: ${product}`,
+        product: product
+      }, { status: 200 });
+    }
+
+    console.log(`🎯 Using pixel for product: ${product} - Pixel ID: ${config.pixel_id}`);
 
     // Extract IP from request headers
     const ip = req.headers.get('cf-connecting-ip') || 
@@ -122,21 +148,23 @@ Deno.serve(async (req) => {
     if (ip) eventData.ip = ip;
     if (url) eventData.page = { url };
 
-    // Main payload with event_source_id, event_source at root level, and data array
+    // Main payload with event_source_id specifico del prodotto
     const tiktokPayload = {
-      event_source_id: TIKTOK_PIXEL_ID,
+      event_source_id: config.pixel_id, // Pixel specifico del prodotto
       event_source: "web",
       data: [eventData]
     };
 
-    // Only add test_event_code if provided
-    if (test_event_code) {
-      tiktokPayload.test_event_code = test_event_code;
+    // Add test_event_code - usa il test code specifico del prodotto se disponibile
+    const testCode = test_event_code || Deno.env.get(config.test_code_key);
+    if (testCode) {
+      tiktokPayload.test_event_code = testCode;
     }
 
-    const accessToken = Deno.env.get('TIKTOK_ACCESS_TOKEN');
+    // Access token specifico del prodotto
+    const accessToken = Deno.env.get(config.access_token_key);
     if (!accessToken) {
-      throw new Error('TIKTOK_ACCESS_TOKEN not configured');
+      throw new Error(`Access token not configured for product ${product} (${config.access_token_key})`);
     }
 
     console.log('📤 Sending to TikTok:', JSON.stringify(tiktokPayload, null, 2));
@@ -168,10 +196,12 @@ Deno.serve(async (req) => {
       }, { status: 200 }); // ⚠️ SEMPRE 200 per vedere i dettagli nel frontend
     }
 
-    console.log('✅ TikTok Event Sent:', event, eventId);
+    console.log('✅ TikTok Event Sent:', event, eventId, 'Product:', product);
     return Response.json({ 
       success: true, 
       event_id: eventId,
+      product: product,
+      pixel_id: config.pixel_id,
       response: result,
       sentPayload: tiktokPayload
     });
