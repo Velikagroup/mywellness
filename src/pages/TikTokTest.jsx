@@ -54,22 +54,24 @@ export default function TikTokTest() {
       const response = await base44.functions.invoke('sendTikTokEvent', formData);
       console.log('TikTok Response:', response);
       
-      // Check if the response itself is successful
-      const isSuccess = response?.success === true;
+      // base44.functions.invoke wraps response in axios format
+      const data = response.data || response;
+      const isSuccess = data?.success === true;
       
       setResult({
         success: isSuccess,
         message: isSuccess
-          ? `✅ Evento inviato con successo! Event ID: ${response.event_id}` 
-          : `❌ Errore: ${response?.error || 'Errore sconosciuto'}`,
-        data: response
+          ? `✅ Evento inviato con successo! Event ID: ${data.event_id}` 
+          : `❌ Errore: ${data?.error || 'Errore sconosciuto'}`,
+        data: data
       });
     } catch (error) {
       console.error('Error:', error);
+      const errorData = error.response?.data || error.data || null;
       setResult({
         success: false,
         message: `❌ Errore: ${error.message}`,
-        data: error.response?.data || null
+        data: errorData
       });
     }
 
