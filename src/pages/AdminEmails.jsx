@@ -39,7 +39,8 @@ import {
   X,
   Globe,
   Filter,
-  Activity
+  Activity,
+  Info
 } from 'lucide-react';
 import EmailLogsPanel from '@/components/admin/EmailLogsPanel';
 
@@ -75,6 +76,17 @@ export default function AdminEmails() {
   const [editingBroadcast, setEditingBroadcast] = useState(null);
   const [estimatedRecipients, setEstimatedRecipients] = useState(null);
   const [testEmailAddress, setTestEmailAddress] = useState('');
+  
+  // Test Email states
+  const [testSelectedTemplate, setTestSelectedTemplate] = useState('');
+  const [testSelectedLanguage, setTestSelectedLanguage] = useState('it');
+  const [testTargetEmail, setTestTargetEmail] = useState('');
+  const [testResult, setTestResult] = useState(null);
+  const [testLogs, setTestLogs] = useState([]);
+  const [testEmailLog, setTestEmailLog] = useState(null);
+  const [testEmailPreview, setTestEmailPreview] = useState(null);
+  const [isLoadingTestPreview, setIsLoadingTestPreview] = useState(false);
+  const [isSendingTest, setIsSendingTest] = useState(false);
 
   const loadEmailTemplates = async () => {
     try {
@@ -1108,7 +1120,7 @@ ${trustBadgesHtml}
         </div>
 
         <Tabs defaultValue="system" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-3">
+          <TabsList className="grid w-full grid-cols-4">
             <TabsTrigger value="system" className="flex items-center gap-2">
               <Settings className="w-4 h-4" />
               Email di Sistema
@@ -1116,6 +1128,10 @@ ${trustBadgesHtml}
             <TabsTrigger value="broadcast" className="flex items-center gap-2">
               <Send className="w-4 h-4" />
               Broadcast Campagne
+            </TabsTrigger>
+            <TabsTrigger value="test" className="flex items-center gap-2">
+              <Zap className="w-4 h-4" />
+              Test Email
             </TabsTrigger>
             <TabsTrigger value="logs" className="flex items-center gap-2">
               <Activity className="w-4 h-4" />
@@ -1349,6 +1365,395 @@ ${trustBadgesHtml}
                 </CardContent>
               </Card>
             )}
+          </TabsContent>
+
+          <TabsContent value="test" className="space-y-6">
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Zap className="w-5 h-5 text-[#26847F]" />
+                  🧪 Test Email Localizzate
+                </CardTitle>
+                <p className="text-sm text-gray-600">Testa le email Critical in tutte le lingue</p>
+              </CardHeader>
+              <CardContent className="space-y-6">
+                <div className="space-y-2">
+                  <Label>Template Email</Label>
+                  <select
+                    value={testSelectedTemplate}
+                    onChange={(e) => setTestSelectedTemplate(e.target.value)}
+                    className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
+                  >
+                    <option value="">Seleziona template...</option>
+                    <option value="standard_free_welcome">Standard Free - Benvenuto (Critical)</option>
+                    <option value="base_welcome">Base - Benvenuto (Critical)</option>
+                    <option value="pro_welcome">Pro - Benvenuto (Critical)</option>
+                    <option value="premium_welcome">Premium - Benvenuto (Critical)</option>
+                    <option value="renewal_confirmation">Conferma Rinnovo (Critical)</option>
+                    <option value="landing_new_user">Landing Offer - Nuovo Utente (Critical)</option>
+                    <option value="landing_existing_user">Landing Offer - Utente Esistente (Critical)</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Lingua</Label>
+                  <select
+                    value={testSelectedLanguage}
+                    onChange={(e) => setTestSelectedLanguage(e.target.value)}
+                    className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
+                  >
+                    <option value="it">Italiano 🇮🇹</option>
+                    <option value="en">English 🇬🇧</option>
+                    <option value="es">Español 🇪🇸</option>
+                    <option value="pt">Português 🇵🇹</option>
+                    <option value="de">Deutsch 🇩🇪</option>
+                    <option value="fr">Français 🇫🇷</option>
+                  </select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label>Email Destinatario</Label>
+                  <Input
+                    type="email"
+                    value={testTargetEmail}
+                    onChange={(e) => setTestTargetEmail(e.target.value)}
+                    placeholder={user?.email || "tua@email.com"}
+                  />
+                </div>
+
+                {testSelectedTemplate && testSelectedLanguage && (
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-800">
+                      <strong>Template finale:</strong> {testSelectedTemplate}_{testSelectedLanguage}
+                    </p>
+                  </div>
+                )}
+
+                <div className="flex gap-3">
+                  <Button
+                    onClick={async () => {
+                      if (!testSelectedTemplate || !testTargetEmail || !testSelectedLanguage) {
+                        setTestResult({ success: false, message: 'Seleziona template, lingua e inserisci email' });
+                        return;
+                      }
+
+                      setIsSendingTest(true);
+                      setTestResult(null);
+                      setTestLogs([]);
+                      setTestEmailLog(null);
+
+                      const addLog = (message, type = 'info') => {
+                        setTestLogs(prev => [...prev, { message, type, timestamp: new Date().toISOString() }]);
+                      };
+
+                      try {
+                        const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
+                        addLog(`🔍 Verifica template: ${templateId}`, 'info');
+                        
+                        const templates = await base44.entities.EmailTemplate.filter({ 
+                          template_id: templateId,
+                          is_active: true 
+                        });
+                        
+                        if (templates.length === 0) {
+                          addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
+                          setTestResult({
+                            success: false,
+                            message: `Template ${templateId} non esiste o non è attivo`
+                          });
+                          setIsSendingTest(false);
+                          return;
+                        }
+                        
+                        addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
+                        addLog(`📧 Invio email a ${testTargetEmail}...`, 'info');
+                        
+                        const response = await base44.functions.invoke('testLocalizedEmail', {
+                          templateId: templateId,
+                          testEmail: testTargetEmail,
+                          language: testSelectedLanguage
+                        });
+
+                        addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
+
+                        if (response.data?.success) {
+                          addLog(`✅ Email inviata con successo!`, 'success');
+                          
+                          addLog(`🔍 Verifica nel log email...`, 'info');
+                          await new Promise(resolve => setTimeout(resolve, 2000));
+                          
+                          const emailLogs = await base44.entities.EmailLog.filter({ 
+                            user_email: testTargetEmail 
+                          }, '-created_date', 1);
+                          
+                          if (emailLogs.length > 0) {
+                            const latestLog = emailLogs[0];
+                            setTestEmailLog(latestLog);
+                            addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
+                            addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
+                          } else {
+                            addLog(`⚠️ Nessun log trovato`, 'warning');
+                          }
+                          
+                          setTestResult({
+                            success: true,
+                            message: `✅ Email inviata a ${testTargetEmail}`
+                          });
+                        } else {
+                          addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
+                          setTestResult({
+                            success: false,
+                            message: response.data?.error || 'Errore sconosciuto'
+                          });
+                        }
+                      } catch (error) {
+                        addLog(`❌ Errore: ${error.message}`, 'error');
+                        setTestResult({ success: false, message: error.message });
+                      }
+
+                      setIsSendingTest(false);
+                    }}
+                    disabled={isSendingTest || !testSelectedTemplate || !testTargetEmail || !testSelectedLanguage}
+                    className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                  >
+                    {isSendingTest ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        <span>Invio...</span>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <Send className="w-4 h-4" />
+                        <span>Invia Test</span>
+                      </div>
+                    )}
+                  </Button>
+                  
+                  <Button
+                    onClick={() => {
+                      setTestTargetEmail(user?.email || '');
+                      setTimeout(() => {
+                        if (testSelectedTemplate && testSelectedLanguage && user?.email) {
+                          document.querySelector('[value="test"] ~ div button[class*="bg-\\[\\#26847F\\]"]')?.click();
+                        }
+                      }, 100);
+                    }}
+                    disabled={isSendingTest || !testSelectedTemplate || !testSelectedLanguage}
+                    className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+                  >
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      <span>A Me Stesso</span>
+                    </div>
+                  </Button>
+
+                  <Button
+                    onClick={async () => {
+                      if (!testSelectedTemplate || !testSelectedLanguage) {
+                        alert('Seleziona template e lingua prima di vedere anteprima');
+                        return;
+                      }
+
+                      setIsLoadingTestPreview(true);
+                      try {
+                        const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
+                        const templates = await base44.entities.EmailTemplate.filter({ 
+                          template_id: templateId,
+                          is_active: true 
+                        });
+
+                        if (templates.length === 0) {
+                          alert(`Template ${templateId} non trovato`);
+                          setIsLoadingTestPreview(false);
+                          return;
+                        }
+
+                        const template = templates[0];
+                        
+                        const previewData = {
+                          user_name: 'Mario Rossi',
+                          user_email: 'mario.rossi@example.com',
+                          dashboard_url: 'https://app.base44.com/dashboard',
+                          support_email: 'support@mywellness.com',
+                          current_plan: 'Base',
+                          renewal_date: '15/01/2025',
+                          amount: '€19.00',
+                          invoice_url: '#'
+                        };
+
+                        let htmlContent = template.main_content || template.greeting || 'Preview non disponibile';
+                        Object.keys(previewData).forEach(key => {
+                          const regex = new RegExp(`{${key}}`, 'g');
+                          htmlContent = htmlContent.replace(regex, previewData[key]);
+                        });
+
+                        setTestEmailPreview({
+                          subject: template.subject || 'Nessun oggetto',
+                          html: htmlContent,
+                          templateName: template.name
+                        });
+                      } catch (error) {
+                        console.error('Error loading preview:', error);
+                        alert('Errore nel caricamento anteprima');
+                      }
+                      setIsLoadingTestPreview(false);
+                    }}
+                    disabled={isLoadingTestPreview || !testSelectedTemplate || !testSelectedLanguage}
+                    variant="outline"
+                    className="flex-1"
+                  >
+                    {isLoadingTestPreview ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                      </div>
+                    ) : (
+                      <div className="flex items-center gap-2">
+                        <FileText className="w-4 h-4" />
+                        <span>Anteprima</span>
+                      </div>
+                    )}
+                  </Button>
+                </div>
+
+                {testEmailPreview && (
+                  <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                    <div className="flex items-center justify-between mb-3">
+                      <p className="font-semibold text-blue-900">📧 Anteprima Email</p>
+                      <Button
+                        onClick={() => setTestEmailPreview(null)}
+                        variant="ghost"
+                        size="sm"
+                        className="h-6 w-6 p-0"
+                      >
+                        <X className="w-4 h-4" />
+                      </Button>
+                    </div>
+                    <div className="space-y-3">
+                      <div>
+                        <span className="text-xs text-gray-600">Template:</span>
+                        <p className="font-semibold text-gray-900">{testEmailPreview.templateName}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-600">Oggetto:</span>
+                        <p className="font-semibold text-gray-900">{testEmailPreview.subject}</p>
+                      </div>
+                      <div>
+                        <span className="text-xs text-gray-600 block mb-2">Contenuto HTML:</span>
+                        <div className="bg-white rounded border border-gray-200 p-4 max-h-80 overflow-auto">
+                          <div dangerouslySetInnerHTML={{ __html: testEmailPreview.html }} />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {testLogs.length > 0 && (
+                  <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-2 max-h-60 overflow-y-auto">
+                    <p className="font-semibold text-sm text-gray-700 mb-2">📋 Log Esecuzione:</p>
+                    {testLogs.map((log, idx) => (
+                      <div key={idx} className="flex items-start gap-2 text-sm">
+                        <span className="text-gray-400 text-xs">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                        <span className={`${
+                          log.type === 'success' ? 'text-green-600' : 
+                          log.type === 'error' ? 'text-red-600' : 
+                          log.type === 'warning' ? 'text-amber-600' : 
+                          'text-gray-600'
+                        }`}>{log.message}</span>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {testEmailLog && (
+                  <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                    <p className="font-semibold text-green-900 mb-3">✅ Prova di Invio dal Database (EmailLog)</p>
+                    <div className="space-y-1 text-sm">
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">ID Log:</span>
+                        <span className="font-mono text-xs text-gray-900">{testEmailLog.id}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Email Destinatario:</span>
+                        <span className="font-semibold text-gray-900">{testEmailLog.user_email}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Template:</span>
+                        <span className="font-semibold text-gray-900">{testEmailLog.template_id}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Lingua:</span>
+                        <span className="font-semibold text-gray-900">{testEmailLog.language}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Status:</span>
+                        <span className={`font-bold ${testEmailLog.status === 'sent' ? 'text-green-600' : 'text-red-600'}`}>
+                          {testEmailLog.status}
+                        </span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Provider:</span>
+                        <span className="font-semibold text-gray-900">{testEmailLog.provider}</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span className="text-gray-600">Inviata il:</span>
+                        <span className="text-gray-900">{new Date(testEmailLog.sent_at || testEmailLog.created_date).toLocaleString('it-IT')}</span>
+                      </div>
+                      {testEmailLog.sendgrid_message_id && (
+                        <div className="flex justify-between">
+                          <span className="text-gray-600">SendGrid ID:</span>
+                          <span className="font-mono text-xs text-gray-900">{testEmailLog.sendgrid_message_id}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+
+                {testResult && (
+                  <div className={`border rounded-lg p-4 ${testResult.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                    <div className="flex items-start gap-3">
+                      {testResult.success ? (
+                        <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      ) : (
+                        <AlertCircle className="w-5 h-5 text-red-600 mt-0.5 flex-shrink-0" />
+                      )}
+                      <p className={`font-semibold ${testResult.success ? 'text-green-900' : 'text-red-900'}`}>
+                        {testResult.message}
+                      </p>
+                    </div>
+                  </div>
+                )}
+
+                <div className="space-y-4 mt-6">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm text-blue-900">
+                        <p className="font-semibold mb-2">⚠️ Note Importanti:</p>
+                        <ul className="list-disc list-inside space-y-1 text-blue-800">
+                          <li>Le email "Critical" vengono inviate automaticamente in base alla lingua dell'utente</li>
+                          <li>Il nome template deve essere: <code className="bg-blue-100 px-1 rounded">nome_template_lingua</code></li>
+                          <li>Esempio: <code className="bg-blue-100 px-1 rounded">renewal_confirmation_it</code></li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <div className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                      <div className="text-sm text-green-900">
+                        <p className="font-semibold mb-2">✅ Come Verificare:</p>
+                        <ol className="list-decimal list-inside space-y-1 text-green-800">
+                          <li><strong>Usa "A Me Stesso"</strong> - ricevi email nella tua casella</li>
+                          <li><strong>Controlla EmailLog</strong> - verifica status "sent"</li>
+                          <li><strong>SendGrid</strong> - <a href="https://app.sendgrid.com/email_activity" target="_blank" rel="noopener" className="underline">SendGrid Activity</a></li>
+                        </ol>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
           </TabsContent>
 
           <TabsContent value="logs" className="space-y-6">
