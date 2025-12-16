@@ -34,7 +34,8 @@ Deno.serve(async (req) => {
       city,
       state,
       country,
-      zip
+      zip,
+      test_event_code
     } = payload;
 
     // Extract IP from request headers
@@ -55,6 +56,7 @@ Deno.serve(async (req) => {
       event,
       event_time: eventTime,
       event_id: eventId,
+      test_event_code: test_event_code || undefined,
       context: {
         user: {
           email: email ? hashData(email) : null,
