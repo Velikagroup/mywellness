@@ -40,7 +40,7 @@ export default function CheckoutPage() {
   const cardMountedRef = useRef(false);
   
   const [isSaving, setIsSaving] = useState(false);
-  const [paymentMethod, setPaymentMethod] = useState(null);
+  const [paymentMethod, setPaymentMethod] = useState('card');
   const [stripe, setStripe] = useState(null);
   const [cardElement, setCardElement] = useState(null);
   const [cardComplete, setCardComplete] = useState(false);
