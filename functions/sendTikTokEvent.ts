@@ -114,6 +114,7 @@ Deno.serve(async (req) => {
       event,
       event_time: eventTime,
       event_id: eventId,
+      event_source: "web",
       user: userObj,
       properties
     };
