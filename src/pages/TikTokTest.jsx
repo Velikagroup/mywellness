@@ -53,11 +53,15 @@ export default function TikTokTest() {
     try {
       const response = await base44.functions.invoke('sendTikTokEvent', formData);
       console.log('TikTok Response:', response);
+      
+      // Check if the response itself is successful
+      const isSuccess = response?.success === true;
+      
       setResult({
-        success: response.success || false,
-        message: response.success 
+        success: isSuccess,
+        message: isSuccess
           ? `✅ Evento inviato con successo! Event ID: ${response.event_id}` 
-          : `❌ Errore: ${response.error || JSON.stringify(response)}`,
+          : `❌ Errore: ${response?.error || 'Errore sconosciuto'}`,
         data: response
       });
     } catch (error) {
@@ -65,7 +69,7 @@ export default function TikTokTest() {
       setResult({
         success: false,
         message: `❌ Errore: ${error.message}`,
-        data: null
+        data: error.response?.data || null
       });
     }
 
