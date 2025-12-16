@@ -97,6 +97,10 @@ export default function CheckoutPage() {
           const ttclid = urlParams.get('ttclid');
           const ttp = urlParams.get('ttp');
 
+          const nameParts = (currentUser.full_name || '').split(' ');
+          const firstName = nameParts[0] || '';
+          const lastName = nameParts.slice(1).join(' ') || '';
+
           await base44.functions.invoke('sendTikTokEvent', {
             event: 'InitiateCheckout',
             email: currentUser.email,
@@ -110,7 +114,12 @@ export default function CheckoutPage() {
             content_name: `MyWellness ${selectedPlan}`,
             url: window.location.href,
             ttclid: ttclid,
-            ttp: ttp
+            ttp: ttp,
+            first_name: firstName,
+            last_name: lastName,
+            city: currentUser.billing_city,
+            country: currentUser.billing_country,
+            zip: currentUser.billing_zip
           });
           console.log('✅ TikTok InitiateCheckout tracked');
         } catch (e) {
@@ -923,6 +932,10 @@ export default function CheckoutPage() {
                       const ttclid = urlParams.get('ttclid');
                       const ttp = urlParams.get('ttp');
 
+                      const nameParts = (user.full_name || '').split(' ');
+                      const firstName = nameParts[0] || '';
+                      const lastName = nameParts.slice(1).join(' ') || '';
+
                       await base44.functions.invoke('sendTikTokEvent', {
                         event: 'AddPaymentInfo',
                         email: user.email,
@@ -934,7 +947,12 @@ export default function CheckoutPage() {
                         content_id: selectedPlan,
                         url: window.location.href,
                         ttclid: ttclid,
-                        ttp: ttp
+                        ttp: ttp,
+                        first_name: firstName,
+                        last_name: lastName,
+                        city: billingInfo.city,
+                        country: billingInfo.country,
+                        zip: billingInfo.zip
                       });
                       setPaymentInfoTracked(true);
                       console.log('✅ TikTok AddPaymentInfo tracked');

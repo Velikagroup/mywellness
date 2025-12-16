@@ -105,6 +105,10 @@ Deno.serve(async (req) => {
                     // 📊 TikTok Event: Purchase (lifetime free)
                     (async () => {
                         try {
+                            const nameParts = (user.full_name || '').split(' ');
+                            const firstName = nameParts[0] || '';
+                            const lastName = nameParts.slice(1).join(' ') || '';
+
                             await base44.functions.invoke('sendTikTokEvent', {
                                 event: 'Purchase',
                                 email: user.email,
@@ -115,7 +119,12 @@ Deno.serve(async (req) => {
                                 content_id: lifetimePlan,
                                 content_type: 'subscription',
                                 content_name: `MyWellness ${lifetimePlan} (Lifetime Free)`,
-                                url: 'https://app.projectmywellness.com/checkout'
+                                url: 'https://app.projectmywellness.com/checkout',
+                                first_name: firstName,
+                                last_name: lastName,
+                                city: user.billing_city,
+                                country: user.billing_country,
+                                zip: user.billing_zip
                             });
                             console.log('✅ TikTok Purchase tracked (lifetime free)');
                         } catch (e) {
@@ -573,6 +582,10 @@ Deno.serve(async (req) => {
                     const paymentIntent = finalSubscription.latest_invoice.payment_intent;
                     const amount = paymentIntent.amount / 100;
                     
+                    const nameParts = (billingInfo?.name || user.full_name || '').split(' ');
+                    const firstName = nameParts[0] || '';
+                    const lastName = nameParts.slice(1).join(' ') || '';
+                    
                     await base44.functions.invoke('sendTikTokEvent', {
                         event: 'Purchase',
                         email: user.email,
@@ -583,7 +596,12 @@ Deno.serve(async (req) => {
                         content_id: planType,
                         content_type: 'subscription',
                         content_name: `MyWellness ${planType}`,
-                        url: 'https://app.projectmywellness.com/checkout'
+                        url: 'https://app.projectmywellness.com/checkout',
+                        first_name: firstName,
+                        last_name: lastName,
+                        city: billingInfo?.city,
+                        country: billingInfo?.country,
+                        zip: billingInfo?.zip
                     });
                     console.log('✅ TikTok Purchase tracked');
                 } catch (e) {

@@ -28,7 +28,13 @@ Deno.serve(async (req) => {
       content_name,
       url,
       ttclid,
-      ttp
+      ttp,
+      first_name,
+      last_name,
+      city,
+      state,
+      country,
+      zip
     } = payload;
 
     // Extract IP from request headers
@@ -55,7 +61,13 @@ Deno.serve(async (req) => {
           phone: phone ? hashData(phone) : null,
           external_id: external_id || null,
           ttclid: ttclid || null,
-          ttp: ttp || null
+          ttp: ttp || null,
+          first_name: first_name ? hashData(first_name) : null,
+          last_name: last_name ? hashData(last_name) : null,
+          city: city ? hashData(city) : null,
+          state: state ? hashData(state) : null,
+          country: country ? hashData(country) : null,
+          zip_code: zip ? hashData(zip) : null
         },
         ad: {},
         page: {

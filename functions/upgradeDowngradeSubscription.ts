@@ -186,6 +186,10 @@ Deno.serve(async (req) => {
                 if (invoiceAmount > 0) {
                     (async () => {
                         try {
+                            const nameParts = (user.full_name || '').split(' ');
+                            const firstName = nameParts[0] || '';
+                            const lastName = nameParts.slice(1).join(' ') || '';
+
                             await base44.functions.invoke('sendTikTokEvent', {
                                 event: 'Purchase',
                                 email: user.email,
@@ -196,7 +200,12 @@ Deno.serve(async (req) => {
                                 content_id: newPlan,
                                 content_type: 'subscription',
                                 content_name: `MyWellness ${newPlan}`,
-                                url: 'https://app.projectmywellness.com/checkout'
+                                url: 'https://app.projectmywellness.com/checkout',
+                                first_name: firstName,
+                                last_name: lastName,
+                                city: user.billing_city,
+                                country: user.billing_country,
+                                zip: user.billing_zip
                             });
                             console.log('✅ TikTok Purchase tracked (upgrade from free)');
                         } catch (e) {
@@ -536,6 +545,10 @@ Deno.serve(async (req) => {
         if (finalAmountToPay > 0 && paymentIntent) {
             (async () => {
                 try {
+                    const nameParts = (user.full_name || '').split(' ');
+                    const firstName = nameParts[0] || '';
+                    const lastName = nameParts.slice(1).join(' ') || '';
+
                     await base44.functions.invoke('sendTikTokEvent', {
                         event: 'Purchase',
                         email: user.email,
@@ -546,7 +559,12 @@ Deno.serve(async (req) => {
                         content_id: newPlan,
                         content_type: 'subscription',
                         content_name: `MyWellness ${newPlan}`,
-                        url: 'https://app.projectmywellness.com/checkout'
+                        url: 'https://app.projectmywellness.com/checkout',
+                        first_name: firstName,
+                        last_name: lastName,
+                        city: user.billing_city,
+                        country: user.billing_country,
+                        zip: user.billing_zip
                     });
                     console.log('✅ TikTok Purchase tracked (upgrade)');
                 } catch (e) {
