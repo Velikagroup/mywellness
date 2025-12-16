@@ -21,6 +21,8 @@ export default function AdminEmailTest() {
   const [result, setResult] = useState(null);
   const [logs, setLogs] = useState([]);
   const [emailLog, setEmailLog] = useState(null);
+  const [emailPreview, setEmailPreview] = useState(null);
+  const [isLoadingPreview, setIsLoadingPreview] = useState(false);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -59,6 +61,66 @@ export default function AdminEmailTest() {
     { code: 'de', name: 'Deutsch 🇩🇪' },
     { code: 'fr', name: 'Français 🇫🇷' }
   ];
+
+  const handleSendToMyself = async () => {
+    if (!user?.email) return;
+    setTestEmail(user.email);
+    // Trigger send after setting email
+    setTimeout(() => handleSendTest(), 100);
+  };
+
+  const handleLoadPreview = async () => {
+    if (!selectedTemplate || !selectedLanguage) {
+      alert('Seleziona template e lingua prima di vedere anteprima');
+      return;
+    }
+
+    setIsLoadingPreview(true);
+    try {
+      const templateId = `${selectedTemplate}_${selectedLanguage}`;
+      const templates = await base44.entities.EmailTemplate.filter({ 
+        template_id: templateId,
+        is_active: true 
+      });
+
+      if (templates.length === 0) {
+        alert(`Template ${templateId} non trovato`);
+        setIsLoadingPreview(false);
+        return;
+      }
+
+      const template = templates[0];
+      
+      // Generate preview HTML with placeholder data
+      const previewData = {
+        user_name: 'Mario Rossi',
+        user_email: 'mario.rossi@example.com',
+        dashboard_url: 'https://app.base44.com/dashboard',
+        support_email: 'support@mywellness.com',
+        current_plan: 'Base',
+        renewal_date: '15/01/2025',
+        amount: '€19.00',
+        invoice_url: '#'
+      };
+
+      // Simple template variable replacement
+      let htmlContent = template.main_content || template.greeting || 'Preview non disponibile';
+      Object.keys(previewData).forEach(key => {
+        const regex = new RegExp(`{${key}}`, 'g');
+        htmlContent = htmlContent.replace(regex, previewData[key]);
+      });
+
+      setEmailPreview({
+        subject: template.subject || 'Nessun oggetto',
+        html: htmlContent,
+        templateName: template.name
+      });
+    } catch (error) {
+      console.error('Error loading preview:', error);
+      alert('Errore nel caricamento anteprima');
+    }
+    setIsLoadingPreview(false);
+  };
 
   const handleSendTest = async () => {
     if (!selectedTemplate || !testEmail || !selectedLanguage) {
@@ -242,6 +304,38 @@ export default function AdminEmailTest() {
               <Send className="w-4 h-4 mr-2" />
               {isSending ? 'Invio in corso...' : 'Invia Email di Test'}
             </Button>
+
+            {emailPreview && (
+              <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
+                <div className="flex items-center justify-between mb-3">
+                  <p className="font-semibold text-blue-900">📧 Anteprima Email</p>
+                  <Button
+                    onClick={() => setEmailPreview(null)}
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0"
+                  >
+                    <X className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="space-y-3">
+                  <div>
+                    <span className="text-xs text-gray-600">Template:</span>
+                    <p className="font-semibold text-gray-900">{emailPreview.templateName}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-600">Oggetto:</span>
+                    <p className="font-semibold text-gray-900">{emailPreview.subject}</p>
+                  </div>
+                  <div>
+                    <span className="text-xs text-gray-600 block mb-2">Contenuto HTML:</span>
+                    <div className="bg-white rounded border border-gray-200 p-4 max-h-80 overflow-auto">
+                      <div dangerouslySetInnerHTML={{ __html: emailPreview.html }} />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {logs.length > 0 && (
               <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-2 max-h-60 overflow-y-auto">
