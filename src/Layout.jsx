@@ -196,7 +196,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     { name: t('nav.analytics'), icon: BarChart3, path: 'AdminAnalytics' },
     { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' },
     { name: t('nav.salesTax'), icon: Activity, path: 'AdminSalesTax' },
-    { name: 'TikTok Test', icon: Activity, path: 'TikTokTest' }
+    { name: 'TikTok Test', icon: Activity, path: 'TikTokTest' },
+    { name: 'Email Test', icon: Mail, path: 'AdminEmailTest' }
   ] : [];
 
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
