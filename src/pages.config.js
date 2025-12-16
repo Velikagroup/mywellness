@@ -67,6 +67,12 @@ import de from './pages/de';
 import fr from './pages/fr';
 import en from './pages/en';
 import Video from './pages/Video';
+import itcheckout from './pages/itcheckout';
+import encheckout from './pages/encheckout';
+import escheckout from './pages/escheckout';
+import ptcheckout from './pages/ptcheckout';
+import decheckout from './pages/decheckout';
+import frcheckout from './pages/frcheckout';
 import __Layout from './Layout.jsx';
 
 
@@ -140,6 +146,12 @@ export const PAGES = {
     "fr": fr,
     "en": en,
     "Video": Video,
+    "itcheckout": itcheckout,
+    "encheckout": encheckout,
+    "escheckout": escheckout,
+    "ptcheckout": ptcheckout,
+    "decheckout": decheckout,
+    "frcheckout": frcheckout,
 }
 
 export const pagesConfig = {
