@@ -354,8 +354,29 @@ Deno.serve(async (req) => {
             }
         }
 
-        // Send email - ALWAYS for Landing Offer purchases
-        console.log('📧 Preparing to send email...');
+        // 📧 Send welcome email LANDING OFFER - Localizzata
+        const userLanguage = (await base44.asServiceRole.entities.User.get(user.id)).preferred_language || 'it';
+        const templateId = isNewUser ? `landing_new_user_${userLanguage}` : `landing_existing_user_${userLanguage}`;
+        
+        console.log(`📧 Sending landing offer email: ${templateId}`);
+        
+        try {
+            await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                userId: user.id,
+                userEmail: user.email,
+                templateId: templateId,
+                variables: {
+                    user_name: userName || 'Utente'
+                },
+                language: userLanguage,
+                triggerSource: 'stripeCreateOneTimePayment'
+            });
+            console.log('✅ Landing offer email sent');
+        } catch (emailError) {
+            console.error('❌ Email error (non-critical):', emailError.message);
+        }
+        
+        // LEGACY: Send temp password email if new user
         const APP_URL = Deno.env.get('APP_URL') || 'https://app.mywellness.pro';
         const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
         
@@ -446,93 +467,6 @@ Deno.serve(async (req) => {
                 });
                 
                 console.log('✅ Email sent to NEW user');
-                
-            } else {
-                // EXISTING USER - Send welcome with login link
-                console.log('📧 Sending email to EXISTING user...');
-                const loginUrl = APP_URL;
-                
-                await base44.asServiceRole.integrations.Core.SendEmail({
-                    to: userEmail,
-                    from_name: `MyWellness <${fromEmail}>`,
-                    subject: '🎉 Grazie per il tuo acquisto - MyWellness Premium Attivato',
-                    body: `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; padding: 0; font-family: Arial, sans-serif; }
-        @media only screen and (max-width: 600px) {
-            .container { width: 100% !important; border-radius: 0 !important; }
-            .content { padding: 30px 20px !important; }
-            .outer-wrapper { padding: 0 !important; }
-        }
-    </style>
-</head>
-<body style="margin: 0; padding: 0;">
-    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
-        <tr>
-            <td align="center">
-                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
-                    <tr>
-                        <td style="background: white; padding: 40px 30px 24px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h1 style="color: #26847F; margin-top: 20px;">Il Tuo Piano Premium è Attivo!</h1>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content" style="padding: 40px 30px;">
-                            <p style="font-size: 16px; color: #333;">Ciao <strong>${userName}</strong>,</p>
-                            
-                            <p style="font-size: 16px; color: #333;">Grazie per aver acquistato il piano Premium di MyWellness! Il tuo pagamento è stato completato con successo.</p>
-                            
-                            <div style="background-color: #f0f9f8; border-left: 4px solid #26847F; padding: 20px; margin: 20px 0;">
-                                <p style="margin: 0; font-size: 18px; font-weight: bold; color: #26847F;">✅ Piano Premium Attivato</p>
-                                <p style="margin: 10px 0 0 0; font-size: 14px; color: #333;">Durata: 3 mesi</p>
-                            </div>
-                            
-                            <p style="font-size: 16px; color: #333;">Accedi subito alla tua dashboard per iniziare il tuo percorso di trasformazione:</p>
-                            
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="${loginUrl}" style="display: inline-block; background: linear-gradient(to right, #26847F, #14b8a6); color: #ffffff !important; padding: 15px 40px; text-decoration: none; border-radius: 8px; font-size: 18px; font-weight: bold;">
-                                            Vai alla Dashboard
-                                        </a>
-                                    </td>
-                                </tr>
-                            </table>
-                            
-                            <p style="font-size: 14px; color: #666;">Se il pulsante non funziona, copia e incolla questo link nel tuo browser:</p>
-                            <p style="font-size: 12px; color: #999; word-break: break-all;">${loginUrl}</p>
-                            
-                            <hr style="border: none; border-top: 1px solid #ddd; margin: 30px 0;">
-                            
-                            <p style="font-size: 14px; color: #666;">Se hai bisogno di aiuto, contattaci a <a href="mailto:support@projectmywellness.com" style="color: #26847F;">support@projectmywellness.com</a></p>
-                        </td>
-                    </tr>
-                </table>
-                
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
-                    <tr>
-                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
-                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
-                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
-                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>
-                    `
-                });
-                
-                console.log('✅ Email sent to EXISTING user');
             }
             
         } catch (emailError) {
