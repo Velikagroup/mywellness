@@ -114,7 +114,6 @@ Deno.serve(async (req) => {
       event,
       event_time: eventTime,
       event_id: eventId,
-      event_source: "web",
       user: userObj,
       properties
     };
@@ -123,9 +122,10 @@ Deno.serve(async (req) => {
     if (ip) eventData.ip = ip;
     if (url) eventData.page = { url };
 
-    // Main payload with event_source_id and data array
+    // Main payload with event_source_id, event_source at root level, and data array
     const tiktokPayload = {
       event_source_id: TIKTOK_PIXEL_ID,
+      event_source: "web",
       data: [eventData]
     };
 
