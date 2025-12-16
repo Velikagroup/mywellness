@@ -59,6 +59,26 @@ Deno.serve(async (req) => {
     const eventTime = Math.floor(Date.now() / 1000);
     const eventId = `${external_id || 'anonymous'}_${event}_${eventTime}`;
 
+    // Build properties based on event type
+    const properties = {
+      currency: currency,
+      value: value || null
+    };
+
+    // For Purchase events, TikTok requires "contents" array format
+    if (event === 'Purchase' || event === 'CompletePayment') {
+      properties.contents = [{
+        content_id: content_id || 'default',
+        content_type: content_type || 'product',
+        content_name: content_name || 'Subscription'
+      }];
+    } else {
+      // For other events, use flat structure
+      properties.content_id = content_id || null;
+      properties.content_type = content_type || null;
+      properties.content_name = content_name || null;
+    }
+
     const tiktokPayload = {
       pixel_code: TIKTOK_PIXEL_ID,
       event,
@@ -86,13 +106,7 @@ Deno.serve(async (req) => {
         user_agent: user_agent || null,
         ip: ip || null
       },
-      properties: {
-        currency: currency,
-        value: value || null,
-        content_id: content_id || null,
-        content_type: content_type || null,
-        content_name: content_name || null
-      }
+      properties
     };
 
     // Remove null values
