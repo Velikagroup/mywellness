@@ -59,67 +59,70 @@ Deno.serve(async (req) => {
     const eventTime = Math.floor(Date.now() / 1000);
     const eventId = `${external_id || 'anonymous'}_${event}_${eventTime}`;
 
+    // Build user object with only non-null values
+    const userObj = {};
+    if (email) userObj.email = hashData(email);
+    if (phone) userObj.phone = hashData(phone);
+    if (external_id) userObj.external_id = external_id;
+    if (ttclid) userObj.ttclid = ttclid;
+    if (ttp) userObj.ttp = ttp;
+    if (first_name) userObj.first_name = hashData(first_name);
+    if (last_name) userObj.last_name = hashData(last_name);
+    if (city) userObj.city = hashData(city);
+    if (state) userObj.state = hashData(state);
+    if (country) userObj.country = hashData(country);
+    if (zip) userObj.zip_code = hashData(zip);
+
+    // Build page object
+    const pageObj = {};
+    if (url) pageObj.url = url;
+
     // Build properties based on event type
-    const properties = {
-      currency: currency,
-      value: value || null
-    };
+    const properties = {};
+    
+    // Always include currency and value if provided
+    if (currency) properties.currency = currency;
+    if (value !== undefined && value !== null) properties.value = parseFloat(value);
 
     // For Purchase events, TikTok requires "contents" array format
     if (event === 'Purchase' || event === 'CompletePayment') {
       properties.contents = [{
-        content_id: content_id || 'default',
+        content_id: content_id || 'subscription',
         content_type: content_type || 'product',
-        content_name: content_name || 'Subscription'
+        content_name: content_name || 'MyWellness Subscription',
+        price: value || 0,
+        quantity: 1
       }];
     } else {
       // For other events, use flat structure
-      properties.content_id = content_id || null;
-      properties.content_type = content_type || null;
-      properties.content_name = content_name || null;
+      if (content_id) properties.content_id = content_id;
+      if (content_type) properties.content_type = content_type;
+      if (content_name) properties.content_name = content_name;
     }
 
+    // Build context object
+    const contextObj = {
+      user: userObj,
+      ad: {},
+      page: pageObj
+    };
+    if (user_agent) contextObj.user_agent = user_agent;
+    if (ip) contextObj.ip = ip;
+
+    // Build base payload
     const tiktokPayload = {
       pixel_code: TIKTOK_PIXEL_ID,
       event,
       event_time: eventTime,
       event_id: eventId,
-      test_event_code: test_event_code || undefined,
-      context: {
-        user: {
-          email: email ? hashData(email) : null,
-          phone: phone ? hashData(phone) : null,
-          external_id: external_id || null,
-          ttclid: ttclid || null,
-          ttp: ttp || null,
-          first_name: first_name ? hashData(first_name) : null,
-          last_name: last_name ? hashData(last_name) : null,
-          city: city ? hashData(city) : null,
-          state: state ? hashData(state) : null,
-          country: country ? hashData(country) : null,
-          zip_code: zip ? hashData(zip) : null
-        },
-        ad: {},
-        page: {
-          url: url || null
-        },
-        user_agent: user_agent || null,
-        ip: ip || null
-      },
+      context: contextObj,
       properties
     };
 
-    // Remove null values
-    Object.keys(tiktokPayload.context.user).forEach(key => {
-      if (tiktokPayload.context.user[key] === null) {
-        delete tiktokPayload.context.user[key];
-      }
-    });
-    Object.keys(tiktokPayload.properties).forEach(key => {
-      if (tiktokPayload.properties[key] === null) {
-        delete tiktokPayload.properties[key];
-      }
-    });
+    // Only add test_event_code if provided
+    if (test_event_code) {
+      tiktokPayload.test_event_code = test_event_code;
+    }
 
     const accessToken = Deno.env.get('TIKTOK_ACCESS_TOKEN');
     if (!accessToken) {
