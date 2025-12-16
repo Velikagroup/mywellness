@@ -6,9 +6,11 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { createPageUrl } from '@/utils';
 import UpgradeCheckoutModal from '../modals/UpgradeCheckoutModal';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 
 export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', targetPlan = null }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const [billingCycle, setBillingCycle] = useState('monthly');
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedPlanToUpgrade, setSelectedPlanToUpgrade] = useState(null);
@@ -119,52 +121,17 @@ export default function UpgradeModal({ isOpen, onClose, currentPlan = 'base', ta
   if (!isOpen) return null;
 
   const handleSelectPlan = async (plan) => {
-    setSelectedPlanToUpgrade(plan);
-    setIsCalculating(true);
-    setShowConfirmDialog(true);
-    
-    const normalizedCurrentPlan = (currentPlan === 'trial' || currentPlan === 'standard') ? 'standard' : currentPlan;
-    
-    // Calcola il prezzo prorated per qualsiasi upgrade/downgrade
-    try {
-      const response = await base44.functions.invoke('upgradeDowngradeSubscription', {
-        newPlan: plan.id,
-        newBillingPeriod: billingCycle,
-        calculateOnly: true
-      });
-
-      const data = response.data || response;
-      console.log('📊 Pricing response:', data);
-      
-      if (data.success && data.calculate) {
-        setPricingInfo(data);
-        
-        // Se l'utente NON ha una carta salvata E viene da piano gratuito, mostra checkout
-        if (data.hasPaymentMethod === false && normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
-          console.log('🔄 No payment method - showing checkout');
-          setShowConfirmDialog(false);
-          setIsCalculating(false);
-          setCheckoutPlan(plan.id);
-          setCheckoutBilling(billingCycle);
-          setShowCheckoutView(true);
-          return;
-        }
-        // Altrimenti mostra il popup di conferma con pagamento one-click
-        console.log('✅ Has payment method - showing confirm dialog');
-      }
-    } catch (error) {
-      console.error('Error calculating pricing:', error);
-      // Fallback: se errore e piano standard senza subscription, mostra checkout
-      if (normalizedCurrentPlan === 'standard' && plan.id !== 'standard') {
-        setShowConfirmDialog(false);
-        setIsCalculating(false);
-        setCheckoutPlan(plan.id);
-        setCheckoutBilling(billingCycle);
-        setShowCheckoutView(true);
-        return;
-      }
-    }
-    setIsCalculating(false);
+    // Redirect direttamente alla pagina checkout dedicata
+    const checkoutPages = {
+      'it': 'itcheckout',
+      'en': 'encheckout',
+      'es': 'escheckout',
+      'pt': 'ptcheckout',
+      'de': 'decheckout',
+      'fr': 'frcheckout'
+    };
+    navigate(createPageUrl(checkoutPages[language] || 'itcheckout') + `?plan=${plan.id}&billing=${billingCycle}`);
+    onClose();
   };
 
   const handleConfirmUpgrade = async () => {
