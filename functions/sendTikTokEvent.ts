@@ -155,7 +155,7 @@ Deno.serve(async (req) => {
         error: result.message || 'TikTok API error',
         details: result,
         sentPayload: tiktokPayload
-      }, { status: response.status });
+      }, { status: 200 }); // ⚠️ SEMPRE 200 per vedere i dettagli nel frontend
     }
 
     console.log('✅ TikTok Event Sent:', event, eventId);
