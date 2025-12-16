@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { base44 } from '@/api/base44Client';
-import { sendTikTokEvent } from '@/functions/sendTikTokEvent';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -52,7 +51,7 @@ export default function TikTokTest() {
     setResult(null);
 
     try {
-      const response = await sendTikTokEvent(formData);
+      const response = await base44.functions.invoke('sendTikTokEvent', formData);
       console.log('TikTok Response:', response);
       setResult({
         success: response.success || false,
