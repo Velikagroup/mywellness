@@ -29,8 +29,10 @@ import {
   Eye,
   ShoppingCart,
   Zap,
-  CheckCircle, // Added CheckCircle import
-  Calendar as CalendarIcon // Added CalendarIcon import
+  CheckCircle,
+  Calendar as CalendarIcon,
+  Loader2,
+  XCircle
 } from 'lucide-react';
 import { LineChart, Line, BarChart, Bar, PieChart, Pie, Cell, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import { format, subDays, parseISO, isWithinInterval } from 'date-fns';
@@ -96,7 +98,20 @@ export default function AdminMarketing() {
   const [countryPopoverOpen, setCountryPopoverOpen] = useState(false);
   const [selectedCountry, setSelectedCountry] = useState(countries.find((c) => c.code === 'IT'));
   const [copiedLink, setCopiedLink] = useState(null);
-  const [showDatePicker, setShowDatePicker] = useState(false); // Added showDatePicker state
+  const [showDatePicker, setShowDatePicker] = useState(false);
+
+  // Pixel Test states
+  const [selectedPixelPlatform, setSelectedPixelPlatform] = useState('tiktok');
+  const [pixelTestLoading, setPixelTestLoading] = useState(false);
+  const [pixelTestResult, setPixelTestResult] = useState(null);
+  const [pixelFormData, setPixelFormData] = useState({
+    event: 'Purchase',
+    email: '',
+    external_id: '',
+    value: 19.00,
+    currency: 'EUR',
+    test_event_code: 'TEST78881'
+  });
 
   const APP_URL = window.location.origin;
 
@@ -266,6 +281,11 @@ export default function AdminMarketing() {
           return;
         }
         setUser(currentUser);
+        setPixelFormData(prev => ({
+          ...prev,
+          email: currentUser.email,
+          external_id: currentUser.id
+        }));
         await loadMarketingData();
       } catch (error) {
         console.error("Access check failed:", error);
@@ -1404,7 +1424,7 @@ export default function AdminMarketing() {
                 </AccordionTrigger>
               </CardHeader>
               <AccordionContent>
-                <CardContent className="pt-4">
+                <CardContent className="pt-4 space-y-6">
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                     {['Meta', 'TikTok', 'Pinterest', 'Google'].map((platformDisplayName) => {
                       const platformKey = platformDisplayName.toLowerCase();
@@ -1452,6 +1472,176 @@ export default function AdminMarketing() {
                         </div>);
 
                     })}
+                  </div>
+
+                  {/* Pixel Testing Section */}
+                  <div className="border-t border-gray-200 pt-6">
+                    <h3 className="text-lg font-bold text-gray-900 mb-4">🧪 Test Pixel & Conversioni</h3>
+                    
+                    <Tabs value={selectedPixelPlatform} onValueChange={setSelectedPixelPlatform}>
+                      <TabsList className="grid w-full grid-cols-4 mb-6">
+                        <TabsTrigger value="tiktok">TikTok</TabsTrigger>
+                        <TabsTrigger value="meta">Meta</TabsTrigger>
+                        <TabsTrigger value="pinterest">Pinterest</TabsTrigger>
+                        <TabsTrigger value="google">Google</TabsTrigger>
+                      </TabsList>
+
+                      {/* TikTok Pixel Test */}
+                      {selectedPixelPlatform === 'tiktok' && (
+                        <div className="space-y-4">
+                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
+                            <p className="text-sm font-semibold text-purple-900 mb-2">📊 TikTok Pixel Info</p>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Pixel ID:</span>
+                                <span className="font-mono font-semibold">D50ASNBC77UDC9ALLB2G</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Test Code:</span>
+                                <span className="font-mono font-semibold">TEST78881</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label>Event Type</Label>
+                              <select
+                                value={pixelFormData.event}
+                                onChange={(e) => setPixelFormData(prev => ({ ...prev, event: e.target.value }))}
+                                className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
+                              >
+                                <option value="ViewContent">ViewContent</option>
+                                <option value="ClickButton">ClickButton</option>
+                                <option value="AddToCart">AddToCart</option>
+                                <option value="InitiateCheckout">InitiateCheckout</option>
+                                <option value="CompletePayment">CompletePayment</option>
+                                <option value="Purchase">Purchase</option>
+                              </select>
+                            </div>
+                            <div>
+                              <Label>Email</Label>
+                              <Input
+                                type="email"
+                                value={pixelFormData.email}
+                                onChange={(e) => setPixelFormData(prev => ({ ...prev, email: e.target.value }))}
+                                placeholder="user@example.com"
+                              />
+                            </div>
+                          </div>
+
+                          <div className="grid grid-cols-2 gap-4">
+                            <div>
+                              <Label>Value (€)</Label>
+                              <Input
+                                type="number"
+                                step="0.01"
+                                value={pixelFormData.value}
+                                onChange={(e) => setPixelFormData(prev => ({ ...prev, value: parseFloat(e.target.value) }))}
+                              />
+                            </div>
+                            <div>
+                              <Label>Currency</Label>
+                              <Input
+                                value={pixelFormData.currency}
+                                onChange={(e) => setPixelFormData(prev => ({ ...prev, currency: e.target.value }))}
+                                placeholder="EUR"
+                              />
+                            </div>
+                          </div>
+
+                          <Button
+                            onClick={async () => {
+                              setPixelTestLoading(true);
+                              setPixelTestResult(null);
+
+                              try {
+                                const response = await base44.functions.invoke('sendTikTokEvent', pixelFormData);
+                                const data = response.data || response;
+                                const isSuccess = data?.success === true;
+                                
+                                setPixelTestResult({
+                                  success: isSuccess,
+                                  message: isSuccess
+                                    ? `✅ Evento inviato con successo! Event ID: ${data.event_id}` 
+                                    : `❌ Errore: ${data?.error || 'Errore sconosciuto'}`,
+                                  data: data
+                                });
+                              } catch (error) {
+                                const errorData = error.response?.data || error.data || null;
+                                setPixelTestResult({
+                                  success: false,
+                                  message: `❌ Errore: ${error.message}`,
+                                  data: errorData
+                                });
+                              }
+
+                              setPixelTestLoading(false);
+                            }}
+                            disabled={pixelTestLoading}
+                            className="w-full bg-[#26847F] hover:bg-[#1f6b66]"
+                          >
+                            {pixelTestLoading ? (
+                              <>
+                                <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                                Invio in corso...
+                              </>
+                            ) : (
+                              'Invia Evento Test'
+                            )}
+                          </Button>
+
+                          {pixelTestResult && (
+                            <div className={`border rounded-lg p-4 ${pixelTestResult.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+                              <div className="flex items-start gap-2 mb-3">
+                                {pixelTestResult.success ? (
+                                  <CheckCircle className="w-5 h-5 text-green-600" />
+                                ) : (
+                                  <XCircle className="w-5 h-5 text-red-600" />
+                                )}
+                                <p className="text-sm font-semibold">{pixelTestResult.message}</p>
+                              </div>
+                              
+                              {pixelTestResult.data?.sentPayload && (
+                                <div className="bg-purple-50 border border-purple-200 rounded-lg p-3 mb-2">
+                                  <p className="text-xs font-semibold text-purple-700 mb-1">🔍 Payload Inviato:</p>
+                                  <pre className="text-xs overflow-auto max-h-32">{JSON.stringify(pixelTestResult.data.sentPayload, null, 2)}</pre>
+                                </div>
+                              )}
+
+                              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
+                                <p className="text-xs font-semibold text-blue-900 mb-1">📊 Verifica TikTok:</p>
+                                <ol className="text-xs text-blue-800 space-y-1 list-decimal list-inside">
+                                  <li>Vai su Events Manager → Test events</li>
+                                  <li>Cerca: <span className="font-mono font-bold">TEST78881</span></li>
+                                </ol>
+                              </div>
+                            </div>
+                          )}
+                        </div>
+                      )}
+
+                      {/* Meta Pixel Test - Placeholder */}
+                      {selectedPixelPlatform === 'meta' && (
+                        <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
+                          <p className="text-gray-600">Meta Pixel test in sviluppo</p>
+                        </div>
+                      )}
+
+                      {/* Pinterest Pixel Test - Placeholder */}
+                      {selectedPixelPlatform === 'pinterest' && (
+                        <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
+                          <p className="text-gray-600">Pinterest Tag test in sviluppo</p>
+                        </div>
+                      )}
+
+                      {/* Google Pixel Test - Placeholder */}
+                      {selectedPixelPlatform === 'google' && (
+                        <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
+                          <p className="text-gray-600">Google Analytics test in sviluppo</p>
+                        </div>
+                      )}
+                    </Tabs>
                   </div>
                 </CardContent>
               </AccordionContent>
