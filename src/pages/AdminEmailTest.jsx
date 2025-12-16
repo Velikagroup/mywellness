@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Mail, Send, CheckCircle, AlertCircle } from 'lucide-react';
+import { Mail, Send, CheckCircle, AlertCircle, X, Info, FileText } from 'lucide-react';
 
 export default function AdminEmailTest() {
   const navigate = useNavigate();
@@ -296,14 +296,54 @@ export default function AdminEmailTest() {
               </div>
             )}
 
-            <Button
-              onClick={handleSendTest}
-              disabled={isSending || !selectedTemplate || !testEmail}
-              className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
-            >
-              <Send className="w-4 h-4 mr-2" />
-              {isSending ? 'Invio in corso...' : 'Invia Email di Test'}
-            </Button>
+            <div className="flex gap-3">
+              <Button
+                onClick={handleSendTest}
+                disabled={isSending || !selectedTemplate || !testEmail || !selectedLanguage}
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+              >
+                {isSending ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                    <span>Invio...</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <Send className="w-4 h-4" />
+                    <span>Invia Test</span>
+                  </div>
+                )}
+              </Button>
+              
+              <Button
+                onClick={handleSendToMyself}
+                disabled={isSending || !selectedTemplate || !selectedLanguage}
+                className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <div className="flex items-center gap-2">
+                  <Mail className="w-4 h-4" />
+                  <span>A Me Stesso</span>
+                </div>
+              </Button>
+
+              <Button
+                onClick={handleLoadPreview}
+                disabled={isLoadingPreview || !selectedTemplate || !selectedLanguage}
+                variant="outline"
+                className="flex-1"
+              >
+                {isLoadingPreview ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-gray-600"></div>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <FileText className="w-4 h-4" />
+                    <span>Anteprima</span>
+                  </div>
+                )}
+              </Button>
+            </div>
 
             {emailPreview && (
               <div className="border border-blue-200 rounded-lg p-4 bg-blue-50">
@@ -423,11 +463,35 @@ export default function AdminEmailTest() {
               </div>
             )}
 
-            <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 mt-6">
-              <p className="text-sm text-amber-900">
-                <strong>ℹ️ Info:</strong> Questa funzione testa solo le email della categoria "Critical". 
-                Verifica che i template esistano nel database con il suffisso della lingua (es: standard_free_welcome_it, base_welcome_en).
-              </p>
+            <div className="space-y-4 mt-6">
+              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <Info className="w-5 h-5 text-blue-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-blue-900">
+                    <p className="font-semibold mb-2">⚠️ Note Importanti:</p>
+                    <ul className="list-disc list-inside space-y-1 text-blue-800">
+                      <li>Le email "Critical" vengono inviate automaticamente in base alla lingua dell'utente</li>
+                      <li>Il nome template deve essere esattamente: <code className="bg-blue-100 px-1 rounded">nome_template_lingua</code></li>
+                      <li>Esempio: <code className="bg-blue-100 px-1 rounded">standard_free_welcome_it</code>, <code className="bg-blue-100 px-1 rounded">standard_free_welcome_en</code></li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                <div className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-green-600 mt-0.5 flex-shrink-0" />
+                  <div className="text-sm text-green-900">
+                    <p className="font-semibold mb-2">✅ Come Verificare che Funziona Davvero:</p>
+                    <ol className="list-decimal list-inside space-y-1 text-green-800">
+                      <li><strong>Usa "A Me Stesso"</strong> - riceverai l'email nella tua casella reale</li>
+                      <li><strong>Controlla EmailLog</strong> - verifica status "sent" e provider "sendgrid"</li>
+                      <li><strong>Verifica SendGrid</strong> - apri <a href="https://app.sendgrid.com/email_activity" target="_blank" rel="noopener" className="underline text-green-700 hover:text-green-900">SendGrid Activity</a> per vedere delivery status</li>
+                      <li><strong>Test con utente reale</strong> - fai registrare un utente di test per vedere il flusso completo</li>
+                    </ol>
+                  </div>
+                </div>
+              </div>
             </div>
           </CardContent>
         </Card>
