@@ -6,7 +6,7 @@ Deno.serve(async (req) => {
     try {
         const base44 = createClientFromRequest(req);
         const body = await req.json();
-        const { userId, transactionId } = body;
+        const { userId, transactionId, amount } = body;
 
         if (!userId) {
             return Response.json({ error: 'Missing userId' }, { status: 400 });
@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
             // Sostituisci variabili nel template
             let content = template.main_content || '';
             content = content.replace(/\{plan_name\}/g, planName);
-            content = content.replace(/\{amount\}/g, user.subscription_amount || '0');
+            content = content.replace(/\{amount\}/g, amount ? `€${parseFloat(amount).toFixed(2)}` : (user.subscription_amount || '€0.00'));
             content = content.replace(/\{next_billing_date\}/g, nextRenewalDate);
             content = content.replace(/\{user_name\}/g, user.full_name || 'Utente');
             
