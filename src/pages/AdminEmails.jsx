@@ -53,6 +53,7 @@ export default function AdminEmails() {
   const [isEditMode, setIsEditMode] = useState(false);
   const [emailTemplates, setEmailTemplates] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedLanguage, setSelectedLanguage] = useState('it');
   const [userCount, setUserCount] = useState(0);
   
   // Broadcast states
@@ -917,19 +918,28 @@ ${trustBadgesHtml}
     );
   }
 
+  const languageOptions = [
+    { code: 'it', flag: '🇮🇹', name: 'Italiano' },
+    { code: 'en', flag: '🇬🇧', name: 'English' },
+    { code: 'es', flag: '🇪🇸', name: 'Español' },
+    { code: 'pt', flag: '🇵🇹', name: 'Português' },
+    { code: 'de', flag: '🇩🇪', name: 'Deutsch' },
+    { code: 'fr', flag: '🇫🇷', name: 'Français' }
+  ];
+
   const emailCategories = {
     critical: {
         name: 'Critical',
         icon: AlertCircle,
         color: 'red',
         emails: [
-          { id: 'standard_free_welcome', name: 'Benvenuto Standard Free', trigger: 'Registrazione piano gratuito', function: 'sendStandardFreeWelcome' },
-          { id: 'base_welcome', name: 'Benvenuto Piano Base', trigger: 'Acquisto piano Base €19/mese', function: 'sendPlanWelcome' },
-          { id: 'pro_welcome', name: 'Benvenuto Piano Pro', trigger: 'Acquisto piano Pro €29/mese', function: 'sendPlanWelcome' },
-          { id: 'premium_welcome', name: 'Benvenuto Piano Premium', trigger: 'Acquisto piano Premium €39/mese', function: 'sendPlanWelcome' },
-          { id: 'landing_new_user', name: 'Landing Offer - Nuovo Utente', trigger: 'Acquisto Landing Offer (nuovo utente)', function: 'stripeCreateOneTimePayment' },
-          { id: 'landing_existing_user', name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' },
-          { id: 'renewal_confirmation', name: 'Conferma Rinnovo Automatico', trigger: 'Rinnovo automatico abbonamento (Stripe webhook)', function: 'sendRenewalConfirmation' }
+          { id: `standard_free_welcome_${selectedLanguage}`, name: 'Benvenuto Standard Free', trigger: 'Registrazione piano gratuito', function: 'sendStandardFreeWelcome' },
+          { id: `base_welcome_${selectedLanguage}`, name: 'Benvenuto Piano Base', trigger: 'Acquisto piano Base €19/mese', function: 'sendPlanWelcome' },
+          { id: `pro_welcome_${selectedLanguage}`, name: 'Benvenuto Piano Pro', trigger: 'Acquisto piano Pro €29/mese', function: 'sendPlanWelcome' },
+          { id: `premium_welcome_${selectedLanguage}`, name: 'Benvenuto Piano Premium', trigger: 'Acquisto piano Premium €39/mese', function: 'sendPlanWelcome' },
+          { id: `landing_new_user_${selectedLanguage}`, name: 'Landing Offer - Nuovo Utente', trigger: 'Acquisto Landing Offer (nuovo utente)', function: 'stripeCreateOneTimePayment' },
+          { id: `landing_existing_user_${selectedLanguage}`, name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' },
+          { id: `renewal_confirmation_${selectedLanguage}`, name: 'Conferma Rinnovo Automatico', trigger: 'Rinnovo automatico abbonamento (Stripe webhook)', function: 'sendRenewalConfirmation' }
         ]
       },
     renewal: {
@@ -1121,16 +1131,34 @@ ${trustBadgesHtml}
                     <Mail className="w-5 h-5" />
                     Email Automatizzate per Categoria
                   </CardTitle>
-                  <select
-                    value={selectedCategory}
-                    onChange={(e) => setSelectedCategory(e.target.value)}
-                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
-                  >
-                    <option value="all">Tutte le Categorie</option>
-                    {Object.entries(emailCategories).map(([key, cat]) => (
-                      <option key={key} value={key}>{cat.name}</option>
-                    ))}
-                  </select>
+                  <div className="flex items-center gap-3">
+                    {selectedCategory === 'critical' && (
+                      <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                        <Globe className="w-4 h-4 text-blue-600" />
+                        <select
+                          value={selectedLanguage}
+                          onChange={(e) => setSelectedLanguage(e.target.value)}
+                          className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
+                        >
+                          {languageOptions.map(lang => (
+                            <option key={lang.code} value={lang.code}>
+                              {lang.flag} {lang.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
+                    <select
+                      value={selectedCategory}
+                      onChange={(e) => setSelectedCategory(e.target.value)}
+                      className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                    >
+                      <option value="all">Tutte le Categorie</option>
+                      {Object.entries(emailCategories).map(([key, cat]) => (
+                        <option key={key} value={key}>{cat.name}</option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-8">
