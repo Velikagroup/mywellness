@@ -19,14 +19,29 @@ Deno.serve(async (req) => {
 
         console.log(`📬 Sending Standard Free welcome to ${userEmail}`);
 
+        // Ottieni lingua dell'utente
+        let userLanguage = 'it';
+        if (userId) {
+            try {
+                const user = await base44.asServiceRole.entities.User.get(userId);
+                userLanguage = user.preferred_language || 'it';
+                console.log(`🌍 User language detected: ${userLanguage}`);
+            } catch (error) {
+                console.warn('⚠️ Could not load user language, defaulting to it');
+            }
+        }
+
+        // Template ID con lingua
+        const templateId = `standard_free_welcome_${userLanguage}`;
+
         // Carica template
         const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
-            template_id: 'standard_free_welcome',
+            template_id: templateId,
             is_active: true 
         });
         
         if (templates.length === 0) {
-            console.error('❌ Template standard_free_welcome not found');
+            console.error(`❌ Template ${templateId} not found`);
             return Response.json({ error: 'Template not found' }, { status: 404 });
         }
 
@@ -36,10 +51,11 @@ Deno.serve(async (req) => {
         const response = await base44.functions.invoke('sendEmailUnified', {
             userId: userId,
             userEmail: userEmail,
-            templateId: 'standard_free_welcome',
+            templateId: templateId,
             variables: {
                 user_name: userName || 'Utente'
             },
+            language: userLanguage,
             triggerSource: 'sendStandardFreeWelcome'
         });
 

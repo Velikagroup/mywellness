@@ -21,21 +21,36 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing plan' }, { status: 400 });
         }
 
-        // Mappa piano -> template_id
+        // Ottieni lingua dell'utente
+        let userLanguage = 'it';
+        if (userId) {
+            try {
+                const user = await base44.asServiceRole.entities.User.get(userId);
+                userLanguage = user.preferred_language || 'it';
+                console.log(`🌍 User language detected: ${userLanguage}`);
+            } catch (error) {
+                console.warn('⚠️ Could not load user language, defaulting to it');
+            }
+        }
+
+        // Mappa piano -> template_id base
         const planTemplateMap = {
             'base': 'base_welcome',
             'pro': 'pro_welcome',
             'premium': 'premium_welcome'
         };
 
-        const templateId = planTemplateMap[plan.toLowerCase()];
+        const baseTemplateId = planTemplateMap[plan.toLowerCase()];
         
-        if (!templateId) {
+        if (!baseTemplateId) {
             console.error(`❌ Unknown plan: ${plan}`);
             return Response.json({ error: `Unknown plan: ${plan}` }, { status: 400 });
         }
 
-        console.log(`📬 Sending ${plan} welcome to ${userEmail}`);
+        // Template ID con lingua
+        const templateId = `${baseTemplateId}_${userLanguage}`;
+
+        console.log(`📬 Sending ${plan} welcome to ${userEmail} (${templateId})`);
 
         // Verifica che il template esista
         const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
@@ -58,6 +73,7 @@ Deno.serve(async (req) => {
                 invoice_url: invoiceUrl || '#',
                 payment_amount: paymentAmount || '0'
             },
+            language: userLanguage,
             triggerSource: 'sendPlanWelcome'
         });
 
