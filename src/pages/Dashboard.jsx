@@ -616,31 +616,6 @@ export default function Dashboard() {
                   <span>{t('dashboard.countCalories')}</span>
                 </div>
               </button>
-              {user?.role === 'admin' && (
-                <button
-                  onClick={async () => {
-                    try {
-                      const result = await base44.functions.invoke('sendTikTokEvent', {
-                        event: 'Purchase',
-                        test_event_code: 'TEST78881',
-                        email: user.email,
-                        external_id: user.id,
-                        value: 19.00,
-                        currency: 'EUR'
-                      });
-                      alert(result.success ? '✅ Test event inviato a TikTok!' : '❌ Errore: ' + (result.error || JSON.stringify(result)));
-                    } catch (error) {
-                      alert('❌ Errore invio test: ' + error.message);
-                    }
-                  }}
-                  className="liquid-glass-button text-purple-600 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
-                >
-                  <div className="flex items-center justify-center gap-2">
-                    <Target className="w-4 h-4" />
-                    <span>Test TikTok</span>
-                  </div>
-                </button>
-              )}
             </div>
           </div>
 
