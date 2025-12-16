@@ -121,6 +121,10 @@ export default function PricingPageContent() {
 
           // 📊 TikTok Event: ViewContent (pricing page)
           try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ttclid = urlParams.get('ttclid');
+            const ttp = urlParams.get('ttp');
+
             await base44.functions.invoke('sendTikTokEvent', {
               event: 'ViewContent',
               email: userObj?.email,
@@ -130,7 +134,9 @@ export default function PricingPageContent() {
               content_id: 'pricing_page',
               content_type: 'page',
               content_name: 'Pricing Page',
-              url: window.location.href
+              url: window.location.href,
+              ttclid: ttclid,
+              ttp: ttp
             });
             console.log('✅ TikTok ViewContent tracked (pricing)');
           } catch (e) {
@@ -339,6 +345,10 @@ export default function PricingPageContent() {
         // Not logged in
       }
 
+      const urlParams = new URLSearchParams(window.location.search);
+      const ttclid = urlParams.get('ttclid');
+      const ttp = urlParams.get('ttp');
+
       const planPrices = { base: 19, pro: 29, premium: 39 };
       const price = planPrices[planType] || 19;
 
@@ -353,7 +363,9 @@ export default function PricingPageContent() {
         content_id: planType,
         content_type: 'subscription',
         content_name: `MyWellness ${planType}`,
-        url: window.location.href
+        url: window.location.href,
+        ttclid: ttclid,
+        ttp: ttp
       });
       console.log('✅ TikTok AddToCart tracked');
     } catch (e) {

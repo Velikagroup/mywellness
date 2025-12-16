@@ -326,6 +326,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
           // 📊 TikTok Event: CompleteRegistration
           try {
+            const urlParams = new URLSearchParams(window.location.search);
+            const ttclid = urlParams.get('ttclid');
+            const ttp = urlParams.get('ttp');
+
             await base44.functions.invoke('sendTikTokEvent', {
               event: 'CompleteRegistration',
               email: user?.email,
@@ -335,7 +339,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
               content_id: 'quiz',
               content_type: 'registration',
               content_name: 'Quiz Completed',
-              url: window.location.href
+              url: window.location.href,
+              ttclid: ttclid,
+              ttp: ttp
             });
             console.log('✅ TikTok CompleteRegistration tracked');
           } catch (e) {

@@ -93,19 +93,24 @@ export default function CheckoutPage() {
 
         // 📊 TikTok Event: InitiateCheckout
         try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const ttclid = urlParams.get('ttclid');
+          const ttp = urlParams.get('ttp');
+
           await base44.functions.invoke('sendTikTokEvent', {
             event: 'InitiateCheckout',
             email: currentUser.email,
             phone: currentUser.phone_number,
             external_id: currentUser.id,
-            ip: null,
             user_agent: navigator.userAgent,
             value: selectedPlan === 'base' ? 19 : selectedPlan === 'pro' ? 29 : 39,
             currency: 'EUR',
             content_id: selectedPlan,
             content_type: 'product',
             content_name: `MyWellness ${selectedPlan}`,
-            url: window.location.href
+            url: window.location.href,
+            ttclid: ttclid,
+            ttp: ttp
           });
           console.log('✅ TikTok InitiateCheckout tracked');
         } catch (e) {
@@ -914,6 +919,10 @@ export default function CheckoutPage() {
                   setPaymentMethod('card');
                   if (!paymentInfoTracked && user) {
                     try {
+                      const urlParams = new URLSearchParams(window.location.search);
+                      const ttclid = urlParams.get('ttclid');
+                      const ttp = urlParams.get('ttp');
+
                       await base44.functions.invoke('sendTikTokEvent', {
                         event: 'AddPaymentInfo',
                         email: user.email,
@@ -923,7 +932,9 @@ export default function CheckoutPage() {
                         value: selectedPlan === 'base' ? 19 : selectedPlan === 'pro' ? 29 : 39,
                         currency: 'EUR',
                         content_id: selectedPlan,
-                        url: window.location.href
+                        url: window.location.href,
+                        ttclid: ttclid,
+                        ttp: ttp
                       });
                       setPaymentInfoTracked(true);
                       console.log('✅ TikTok AddPaymentInfo tracked');
