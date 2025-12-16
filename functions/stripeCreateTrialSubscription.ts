@@ -101,7 +101,28 @@ Deno.serve(async (req) => {
                     });
                     
                     console.log('✅ User upgraded to lifetime free access');
-                    
+
+                    // 📊 TikTok Event: CompletePayment (lifetime free)
+                    (async () => {
+                        try {
+                            await base44.functions.invoke('sendTikTokEvent', {
+                                event: 'CompletePayment',
+                                email: user.email,
+                                phone: user.phone_number,
+                                external_id: user.id,
+                                value: 0,
+                                currency: 'EUR',
+                                content_id: lifetimePlan,
+                                content_type: 'subscription',
+                                content_name: `MyWellness ${lifetimePlan} (Lifetime Free)`,
+                                url: 'https://app.projectmywellness.com/checkout'
+                            });
+                            console.log('✅ TikTok CompletePayment tracked (lifetime free)');
+                        } catch (e) {
+                            console.warn('⚠️ TikTok tracking error:', e);
+                        }
+                    })();
+
                     // Invia email lifetime usando SendGrid e template
                     (async () => {
                         try {
@@ -544,6 +565,32 @@ Deno.serve(async (req) => {
         }
 
         console.log('✅ User updated with subscription data');
+
+        // 📊 TikTok Event: CompletePayment
+        if (skipTrial && finalSubscription?.latest_invoice?.payment_intent) {
+            (async () => {
+                try {
+                    const paymentIntent = finalSubscription.latest_invoice.payment_intent;
+                    const amount = paymentIntent.amount / 100;
+                    
+                    await base44.functions.invoke('sendTikTokEvent', {
+                        event: 'CompletePayment',
+                        email: user.email,
+                        phone: body.phoneNumber,
+                        external_id: user.id,
+                        value: amount,
+                        currency: 'EUR',
+                        content_id: planType,
+                        content_type: 'subscription',
+                        content_name: `MyWellness ${planType}`,
+                        url: 'https://app.projectmywellness.com/checkout'
+                    });
+                    console.log('✅ TikTok CompletePayment tracked');
+                } catch (e) {
+                    console.warn('⚠️ TikTok tracking error:', e);
+                }
+            })();
+        }
 
         // 🎫 MARCA COUPON COME USATO (se applicabile)
         if (appliedCouponCode) {

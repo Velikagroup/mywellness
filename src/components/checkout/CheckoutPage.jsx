@@ -41,6 +41,7 @@ export default function CheckoutPage() {
   
   const [isSaving, setIsSaving] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('card');
+  const [paymentInfoTracked, setPaymentInfoTracked] = useState(false);
   const [stripe, setStripe] = useState(null);
   const [cardElement, setCardElement] = useState(null);
   const [cardComplete, setCardComplete] = useState(false);
@@ -89,6 +90,27 @@ export default function CheckoutPage() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+
+        // 📊 TikTok Event: InitiateCheckout
+        try {
+          await base44.functions.invoke('sendTikTokEvent', {
+            event: 'InitiateCheckout',
+            email: currentUser.email,
+            phone: currentUser.phone_number,
+            external_id: currentUser.id,
+            ip: null,
+            user_agent: navigator.userAgent,
+            value: selectedPlan === 'base' ? 19 : selectedPlan === 'pro' ? 29 : 39,
+            currency: 'EUR',
+            content_id: selectedPlan,
+            content_type: 'product',
+            content_name: `MyWellness ${selectedPlan}`,
+            url: window.location.href
+          });
+          console.log('✅ TikTok InitiateCheckout tracked');
+        } catch (e) {
+          console.warn('⚠️ TikTok tracking error:', e);
+        }
 
         setBillingInfo(prev => ({
           ...prev,
@@ -888,7 +910,28 @@ export default function CheckoutPage() {
             
             <div className="space-y-3">
               <button
-                onClick={() => setPaymentMethod('card')}
+                onClick={async () => {
+                  setPaymentMethod('card');
+                  if (!paymentInfoTracked && user) {
+                    try {
+                      await base44.functions.invoke('sendTikTokEvent', {
+                        event: 'AddPaymentInfo',
+                        email: user.email,
+                        phone: user.phone_number,
+                        external_id: user.id,
+                        user_agent: navigator.userAgent,
+                        value: selectedPlan === 'base' ? 19 : selectedPlan === 'pro' ? 29 : 39,
+                        currency: 'EUR',
+                        content_id: selectedPlan,
+                        url: window.location.href
+                      });
+                      setPaymentInfoTracked(true);
+                      console.log('✅ TikTok AddPaymentInfo tracked');
+                    } catch (e) {
+                      console.warn('⚠️ TikTok tracking error:', e);
+                    }
+                  }
+                }}
                 className={`w-full p-5 rounded-xl border-2 transition-all flex items-center gap-4 ${
                   paymentMethod === 'card'
                     ? 'border-[#26847F] bg-[#e9f6f5]'
