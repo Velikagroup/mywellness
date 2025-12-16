@@ -620,7 +620,7 @@ export default function Dashboard() {
                 <button
                   onClick={async () => {
                     try {
-                      const result = await base44.asServiceRole.functions.invoke('sendTikTokEvent', {
+                      const result = await base44.functions.invoke('sendTikTokEvent', {
                         event: 'Purchase',
                         test_event_code: 'TEST78881',
                         email: user.email,
