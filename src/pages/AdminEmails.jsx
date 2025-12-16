@@ -1372,7 +1372,7 @@ ${trustBadgesHtml}
                   <Zap className="w-5 h-5 text-[#26847F]" />
                   🧪 Test Email Localizzate
                 </CardTitle>
-                <p className="text-sm text-gray-600">Testa le email Critical in tutte le lingue</p>
+                <p className="text-sm text-gray-600">Testa tutte le email in tutte le lingue</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
@@ -1383,13 +1383,60 @@ ${trustBadgesHtml}
                     className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
                   >
                     <option value="">Seleziona template...</option>
-                    <option value="standard_free_welcome">Standard Free - Benvenuto (Critical)</option>
-                    <option value="base_welcome">Base - Benvenuto (Critical)</option>
-                    <option value="pro_welcome">Pro - Benvenuto (Critical)</option>
-                    <option value="premium_welcome">Premium - Benvenuto (Critical)</option>
-                    <option value="renewal_confirmation">Conferma Rinnovo (Critical)</option>
-                    <option value="landing_new_user">Landing Offer - Nuovo Utente (Critical)</option>
-                    <option value="landing_existing_user">Landing Offer - Utente Esistente (Critical)</option>
+                    
+                    <optgroup label="🚨 Critical">
+                      <option value="standard_free_welcome">Standard Free - Benvenuto</option>
+                      <option value="base_welcome">Base - Benvenuto</option>
+                      <option value="pro_welcome">Pro - Benvenuto</option>
+                      <option value="premium_welcome">Premium - Benvenuto</option>
+                      <option value="renewal_confirmation">Conferma Rinnovo</option>
+                      <option value="landing_new_user">Landing Offer - Nuovo Utente</option>
+                      <option value="landing_existing_user">Landing Offer - Utente Esistente</option>
+                    </optgroup>
+                    
+                    <optgroup label="⏰ Renewal">
+                      <option value="renewal_7_days">Reminder Rinnovo - 7 Giorni</option>
+                      <option value="renewal_3_days">Reminder Rinnovo - 3 Giorni</option>
+                      <option value="renewal_1_day">Reminder Rinnovo - 1 Giorno</option>
+                    </optgroup>
+                    
+                    <optgroup label="💖 Win-Back">
+                      <option value="subscription_expired">Abbonamento Scaduto</option>
+                      <option value="standard_upgrade_invite">Invito Upgrade da Standard</option>
+                      <option value="standard_limits_reached">Limiti Piano Standard</option>
+                    </optgroup>
+                    
+                    <optgroup label="📈 Engagement">
+                      <option value="goal_weight_achieved">Obiettivo Peso Raggiunto</option>
+                      <option value="milestone_30_days">Milestone 30 Giorni</option>
+                      <option value="milestone_60_days">Milestone 60 Giorni</option>
+                      <option value="milestone_90_days">Milestone 90 Giorni + Reward</option>
+                      <option value="workout_streak_7_days">Streak Allenamenti 7 Giorni</option>
+                      <option value="no_workout_week">Nessun Workout Settimana</option>
+                    </optgroup>
+                    
+                    <optgroup label="⚡ Motivational">
+                      <option value="inactive_user_7_days">Utente Inattivo 7 Giorni</option>
+                      <option value="feedback_request">Richiesta Feedback</option>
+                    </optgroup>
+                    
+                    <optgroup label="🛡️ Technical">
+                      <option value="password_reset_confirmed">Password Reset Completato</option>
+                      <option value="plan_upgrade">Upgrade Piano</option>
+                      <option value="plan_downgrade">Downgrade Piano</option>
+                      <option value="cancellation_confirmation">Conferma Cancellazione</option>
+                    </optgroup>
+                    
+                    <optgroup label="📊 Reporting">
+                      <option value="weekly_report">Report Settimanale</option>
+                    </optgroup>
+                    
+                    <optgroup label="🛒 Abandonment">
+                      <option value="quiz_completed_abandoned">Quiz Completato - Promo Base</option>
+                      <option value="cart_checkout_abandoned">Checkout Abbandonato 30min</option>
+                      <option value="cart_abandoned_24h">Checkout Abbandonato 24h</option>
+                      <option value="cart_abandoned_72h">Checkout Abbandonato 72h - ULTIMA</option>
+                    </optgroup>
                   </select>
                 </div>
 
