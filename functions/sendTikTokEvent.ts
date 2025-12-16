@@ -20,15 +20,22 @@ Deno.serve(async (req) => {
       email,
       phone,
       external_id,
-      ip,
       user_agent,
       value,
       currency = 'EUR',
       content_id,
       content_type,
       content_name,
-      url
+      url,
+      ttclid,
+      ttp
     } = payload;
+
+    // Extract IP from request headers
+    const ip = req.headers.get('cf-connecting-ip') || 
+               req.headers.get('x-forwarded-for')?.split(',')[0] || 
+               req.headers.get('x-real-ip') || 
+               null;
 
     if (!event) {
       return Response.json({ error: 'Event name required' }, { status: 400 });
@@ -46,7 +53,9 @@ Deno.serve(async (req) => {
         user: {
           email: email ? hashData(email) : null,
           phone: phone ? hashData(phone) : null,
-          external_id: external_id || null
+          external_id: external_id || null,
+          ttclid: ttclid || null,
+          ttp: ttp || null
         },
         ad: {},
         page: {
