@@ -111,7 +111,7 @@ Deno.serve(async (req) => {
 
     // Build base payload
     const tiktokPayload = {
-      pixel_code: TIKTOK_PIXEL_ID,
+      event_source_id: TIKTOK_PIXEL_ID,
       event,
       event_time: eventTime,
       event_id: eventId,
