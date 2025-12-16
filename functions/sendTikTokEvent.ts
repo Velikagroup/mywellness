@@ -82,12 +82,13 @@ Deno.serve(async (req) => {
     
     // For Purchase events, TikTok has specific requirements
     if (event === 'Purchase' || event === 'CompletePayment') {
-      // Required fields for Purchase
+      // Required fields for Purchase - must include content_type
       properties.contents = [{
         content_id: content_id || 'mywellness_subscription',
+        content_type: content_type || 'product',
         content_name: content_name || 'MyWellness Subscription',
-        quantity: 1,
-        price: value ? parseFloat(value) : 0
+        price: value ? parseFloat(value) : 0,
+        quantity: 1
       }];
       properties.value = value ? parseFloat(value) : 0;
       properties.currency = currency || 'EUR';
