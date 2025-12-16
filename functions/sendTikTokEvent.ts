@@ -80,21 +80,21 @@ Deno.serve(async (req) => {
     // Build properties based on event type
     const properties = {};
     
-    // Always include currency and value if provided
-    if (currency) properties.currency = currency;
-    if (value !== undefined && value !== null) properties.value = parseFloat(value);
-
-    // For Purchase events, TikTok requires "contents" array format
+    // For Purchase events, TikTok has specific requirements
     if (event === 'Purchase' || event === 'CompletePayment') {
+      // Required fields for Purchase
       properties.contents = [{
-        content_id: content_id || 'subscription',
-        content_type: content_type || 'product',
+        content_id: content_id || 'mywellness_subscription',
         content_name: content_name || 'MyWellness Subscription',
-        price: value || 0,
-        quantity: 1
+        quantity: 1,
+        price: value ? parseFloat(value) : 0
       }];
+      properties.value = value ? parseFloat(value) : 0;
+      properties.currency = currency || 'EUR';
     } else {
-      // For other events, use flat structure
+      // For other events, use standard structure
+      if (value !== undefined && value !== null) properties.value = parseFloat(value);
+      if (currency) properties.currency = currency;
       if (content_id) properties.content_id = content_id;
       if (content_type) properties.content_type = content_type;
       if (content_name) properties.content_name = content_name;
