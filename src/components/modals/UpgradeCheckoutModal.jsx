@@ -12,6 +12,7 @@ import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { createPageUrl } from '@/utils';
 import { useLanguage } from '../i18n/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 
 const countries = [
   { code: 'IT', name: 'Italia', dial_code: '+39' },
@@ -34,7 +35,8 @@ const countryCodeToFlag = (code) => {
 const TRIAL_DAYS = 3;
 
 export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = 'base', selectedBillingPeriod = 'monthly' }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const cardElementRef = useRef(null);
   const stripeLoadedRef = useRef(false);
   const cardMountedRef = useRef(false);
@@ -79,6 +81,19 @@ export default function UpgradeCheckoutModal({ isOpen, onClose, selectedPlan = '
 
   useEffect(() => {
     if (!isOpen) return;
+
+    // Redirect to checkout page instead of modal
+    const checkoutPages = {
+      'it': 'itcheckout',
+      'en': 'encheckout',
+      'es': 'escheckout',
+      'pt': 'ptcheckout',
+      'de': 'decheckout',
+      'fr': 'frcheckout'
+    };
+    navigate(createPageUrl(checkoutPages[language] || 'itcheckout') + `?plan=${selectedPlan}&billing=${selectedBillingPeriod}`);
+    onClose();
+    return;
 
     const initModal = async () => {
       try {

@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -6,9 +5,11 @@ import { Crown, Zap, Target, Calendar } from 'lucide-react';
 import { PLANS, getPlanName } from '@/components/utils/subscriptionPlans'; // Updated import path
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function SubscriptionBanner({ user }) {
   const navigate = useNavigate();
+  const { language } = useLanguage();
   
   if (!user) return null;
 
@@ -55,7 +56,22 @@ export default function SubscriptionBanner({ user }) {
 
         {user.subscription_plan !== PLANS.PREMIUM && (
           <Button
-            onClick={() => navigate(createPageUrl('Pricing'))}
+            onClick={() => {
+              // Determine next plan level
+              let targetPlan = 'premium';
+              if (user.subscription_plan === PLANS.STANDARD) targetPlan = 'base';
+              else if (user.subscription_plan === PLANS.BASE) targetPlan = 'pro';
+              
+              const checkoutPages = {
+                'it': 'itcheckout',
+                'en': 'encheckout',
+                'es': 'escheckout',
+                'pt': 'ptcheckout',
+                'de': 'decheckout',
+                'fr': 'frcheckout'
+              };
+              navigate(createPageUrl(checkoutPages[language] || 'itcheckout') + `?plan=${targetPlan}&billing=monthly`);
+            }}
             variant="secondary"
             className="bg-white text-gray-900 hover:bg-gray-100"
           >
