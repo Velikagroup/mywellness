@@ -1414,12 +1414,16 @@ export default function AdminMarketing() {
               <CardHeader className="pb-0">
                 <CardTitle className="flex items-center gap-2 text-lg">
                   <LinkIcon className="w-5 h-5 text-[var(--brand-primary)]" />
-                  Connetti Piattaforme Advertising
+                  Connetti Piattaforme Advertising - {selectedFunnel === 'trial' ? '🟢 Trial Setup' : '🔵 Landing Checkout'}
                 </CardTitle>
-                <p className="text-sm text-gray-500 mt-1 mb-4">Collega i tuoi account pubblicitari per sincronizzare automaticamente le metriche</p>
+                <p className="text-sm text-gray-500 mt-1 mb-4">
+                  {selectedFunnel === 'trial' 
+                    ? 'Pixel dedicati al prodotto Trial Setup (subscription)' 
+                    : 'Pixel dedicati al prodotto Landing Checkout (one-time offer)'}
+                </p>
                 <AccordionTrigger className="hover:no-underline py-2 border-t border-gray-200">
                   <span className="text-sm font-semibold text-gray-700">
-                    Mostra piattaforme disponibili
+                    Mostra test pixel e conversioni
                   </span>
                 </AccordionTrigger>
               </CardHeader>
@@ -1440,16 +1444,30 @@ export default function AdminMarketing() {
                       {/* TikTok Pixel Test */}
                       {selectedPixelPlatform === 'tiktok' && (
                         <div className="space-y-4">
-                          <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
-                            <p className="text-sm font-semibold text-purple-900 mb-2">📊 TikTok Pixel Info</p>
+                          <div className={`border rounded-lg p-4 ${selectedFunnel === 'trial' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'}`}>
+                            <div className="flex items-center justify-between mb-3">
+                              <p className={`text-sm font-semibold ${selectedFunnel === 'trial' ? 'text-green-900' : 'text-blue-900'}`}>
+                                📊 TikTok Pixel - {selectedFunnel === 'trial' ? 'Prodotto: Trial Setup 🟢' : 'Prodotto: Landing Checkout 🔵'}
+                              </p>
+                            </div>
                             <div className="space-y-1 text-xs">
                               <div className="flex justify-between">
                                 <span className="text-gray-600">Pixel ID:</span>
-                                <span className="font-mono font-semibold">D50ASNBC77UDC9ALLB2G</span>
+                                <span className="font-mono font-semibold">
+                                  {selectedFunnel === 'trial' ? 'D50ASNBC77UDC9ALLB2G' : 'Non configurato'}
+                                </span>
                               </div>
                               <div className="flex justify-between">
                                 <span className="text-gray-600">Test Code:</span>
-                                <span className="font-mono font-semibold">TEST78881</span>
+                                <span className="font-mono font-semibold">
+                                  {selectedFunnel === 'trial' ? 'TEST78881' : 'N/A'}
+                                </span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Prodotto:</span>
+                                <span className={`font-semibold ${selectedFunnel === 'trial' ? 'text-green-700' : 'text-blue-700'}`}>
+                                  {selectedFunnel === 'trial' ? 'Trial Setup (Subscription)' : 'Landing Checkout (One-Time)'}
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -1503,18 +1521,26 @@ export default function AdminMarketing() {
 
                           <Button
                             onClick={async () => {
+                              if (selectedFunnel === 'landing') {
+                                alert('⚠️ Configura prima il pixel per Landing Checkout nelle variabili di ambiente');
+                                return;
+                              }
+
                               setPixelTestLoading(true);
                               setPixelTestResult(null);
 
                               try {
-                                const response = await base44.functions.invoke('sendTikTokEvent', pixelFormData);
+                                const response = await base44.functions.invoke('sendTikTokEvent', {
+                                  ...pixelFormData,
+                                  product: selectedFunnel // 'trial' o 'landing'
+                                });
                                 const data = response.data || response;
                                 const isSuccess = data?.success === true;
                                 
                                 setPixelTestResult({
                                   success: isSuccess,
                                   message: isSuccess
-                                    ? `✅ Evento inviato con successo! Event ID: ${data.event_id}` 
+                                    ? `✅ Evento inviato al pixel ${selectedFunnel === 'trial' ? 'Trial Setup' : 'Landing Checkout'}! Event ID: ${data.event_id}` 
                                     : `❌ Errore: ${data?.error || 'Errore sconosciuto'}`,
                                   data: data
                                 });
@@ -1538,7 +1564,7 @@ export default function AdminMarketing() {
                                 Invio in corso...
                               </>
                             ) : (
-                              'Invia Evento Test'
+                              `Invia Evento Test - ${selectedFunnel === 'trial' ? 'Trial Pixel 🟢' : 'Checkout Pixel 🔵'}`
                             )}
                           </Button>
 
@@ -1572,24 +1598,81 @@ export default function AdminMarketing() {
                         </div>
                       )}
 
-                      {/* Meta Pixel Test - Placeholder */}
+                      {/* Meta Pixel Test */}
                       {selectedPixelPlatform === 'meta' && (
-                        <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-                          <p className="text-gray-600">Meta Pixel test in sviluppo</p>
+                        <div className="space-y-4">
+                          <div className={`border rounded-lg p-4 ${selectedFunnel === 'trial' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'}`}>
+                            <p className={`text-sm font-semibold ${selectedFunnel === 'trial' ? 'text-green-900' : 'text-blue-900'} mb-3`}>
+                              📊 Meta Pixel - {selectedFunnel === 'trial' ? 'Prodotto: Trial Setup 🟢' : 'Prodotto: Landing Checkout 🔵'}
+                            </p>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Pixel ID:</span>
+                                <span className="font-mono font-semibold">Non configurato</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Prodotto:</span>
+                                <span className={`font-semibold ${selectedFunnel === 'trial' ? 'text-green-700' : 'text-blue-700'}`}>
+                                  {selectedFunnel === 'trial' ? 'Trial Setup (Subscription)' : 'Landing Checkout (One-Time)'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
+                            <p className="text-gray-600">Meta Conversions API test - in sviluppo</p>
+                          </div>
                         </div>
                       )}
 
-                      {/* Pinterest Pixel Test - Placeholder */}
+                      {/* Pinterest Tag Test */}
                       {selectedPixelPlatform === 'pinterest' && (
-                        <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-                          <p className="text-gray-600">Pinterest Tag test in sviluppo</p>
+                        <div className="space-y-4">
+                          <div className={`border rounded-lg p-4 ${selectedFunnel === 'trial' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'}`}>
+                            <p className={`text-sm font-semibold ${selectedFunnel === 'trial' ? 'text-green-900' : 'text-blue-900'} mb-3`}>
+                              📊 Pinterest Tag - {selectedFunnel === 'trial' ? 'Prodotto: Trial Setup 🟢' : 'Prodotto: Landing Checkout 🔵'}
+                            </p>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Tag ID:</span>
+                                <span className="font-mono font-semibold">Non configurato</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Prodotto:</span>
+                                <span className={`font-semibold ${selectedFunnel === 'trial' ? 'text-green-700' : 'text-blue-700'}`}>
+                                  {selectedFunnel === 'trial' ? 'Trial Setup (Subscription)' : 'Landing Checkout (One-Time)'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
+                            <p className="text-gray-600">Pinterest Conversions API test - in sviluppo</p>
+                          </div>
                         </div>
                       )}
 
-                      {/* Google Pixel Test - Placeholder */}
+                      {/* Google Analytics Test */}
                       {selectedPixelPlatform === 'google' && (
-                        <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
-                          <p className="text-gray-600">Google Analytics test in sviluppo</p>
+                        <div className="space-y-4">
+                          <div className={`border rounded-lg p-4 ${selectedFunnel === 'trial' ? 'bg-green-50 border-green-200' : 'bg-blue-50 border-blue-200'}`}>
+                            <p className={`text-sm font-semibold ${selectedFunnel === 'trial' ? 'text-green-900' : 'text-blue-900'} mb-3`}>
+                              📊 Google Analytics 4 - {selectedFunnel === 'trial' ? 'Prodotto: Trial Setup 🟢' : 'Prodotto: Landing Checkout 🔵'}
+                            </p>
+                            <div className="space-y-1 text-xs">
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Measurement ID:</span>
+                                <span className="font-mono font-semibold">Non configurato</span>
+                              </div>
+                              <div className="flex justify-between">
+                                <span className="text-gray-600">Prodotto:</span>
+                                <span className={`font-semibold ${selectedFunnel === 'trial' ? 'text-green-700' : 'text-blue-700'}`}>
+                                  {selectedFunnel === 'trial' ? 'Trial Setup (Subscription)' : 'Landing Checkout (One-Time)'}
+                                </span>
+                              </div>
+                            </div>
+                          </div>
+                          <div className="text-center p-8 bg-gray-50 rounded-lg border border-gray-200">
+                            <p className="text-gray-600">Google Analytics 4 Measurement Protocol test - in sviluppo</p>
+                          </div>
                         </div>
                       )}
                     </Tabs>
