@@ -9,7 +9,7 @@ import { useLanguage } from '../i18n/LanguageContext';
 
 export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan, onViewGalleryClick, onUpgradeClick }) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const hasWorkoutAccess = userPlan === 'pro' || userPlan === 'premium';
 
   if (!hasWorkoutAccess) {
@@ -33,7 +33,17 @@ export default function TrainingStatus({ workout, onProgressPhotoClick, userPlan
               {t('training.unlockDesc')}
             </p>
             <Button 
-              onClick={onUpgradeClick}
+              onClick={() => {
+                const checkoutPages = {
+                  'it': 'itcheckout',
+                  'en': 'encheckout',
+                  'es': 'escheckout',
+                  'pt': 'ptcheckout',
+                  'de': 'decheckout',
+                  'fr': 'frcheckout'
+                };
+                navigate(createPageUrl(checkoutPages[language] || 'itcheckout') + '?plan=pro&billing=monthly');
+              }}
               className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
             >
               {t('training.upgradeToPro')}

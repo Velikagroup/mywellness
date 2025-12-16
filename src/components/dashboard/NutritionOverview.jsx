@@ -1,6 +1,6 @@
 import React from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { createPageUrl } from "@/utils";
 import { Utensils, ArrowRight, Calculator, ImageIcon, Camera, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -10,7 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from '../i18n/LanguageContext';
 
 export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onUpgradeClick }) {
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
+  const navigate = useNavigate();
   const [savingMealId, setSavingMealId] = React.useState(null);
 
   const getMealLog = (mealId) => {
@@ -141,7 +142,17 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                 {t('nutrition.unlockDesc')}
               </p>
               <Button 
-                onClick={onUpgradeClick}
+                onClick={() => {
+                  const checkoutPages = {
+                    'it': 'itcheckout',
+                    'en': 'encheckout',
+                    'es': 'escheckout',
+                    'pt': 'ptcheckout',
+                    'de': 'decheckout',
+                    'fr': 'frcheckout'
+                  };
+                  navigate(createPageUrl(checkoutPages[language] || 'itcheckout') + '?plan=base&billing=monthly');
+                }}
                 className="bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold"
               >
                 {t('nutrition.upgradeToBase')}
