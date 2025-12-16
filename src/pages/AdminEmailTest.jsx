@@ -19,6 +19,8 @@ export default function AdminEmailTest() {
   const [selectedLanguage, setSelectedLanguage] = useState('it');
   const [testEmail, setTestEmail] = useState('');
   const [result, setResult] = useState(null);
+  const [logs, setLogs] = useState([]);
+  const [emailLog, setEmailLog] = useState(null);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -69,9 +71,37 @@ export default function AdminEmailTest() {
 
     setIsSending(true);
     setResult(null);
+    setLogs([]);
+    setEmailLog(null);
+
+    const addLog = (message, type = 'info') => {
+      setLogs(prev => [...prev, { message, type, timestamp: new Date().toISOString() }]);
+    };
 
     try {
       const templateId = `${selectedTemplate}_${selectedLanguage}`;
+      
+      addLog(`🔍 Verifica template: ${templateId}`, 'info');
+      
+      // Verifica template prima di inviare
+      const templates = await base44.entities.EmailTemplate.filter({ 
+        template_id: templateId,
+        is_active: true 
+      });
+      
+      if (templates.length === 0) {
+        addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
+        setResult({
+          success: false,
+          message: `Template ${templateId} non esiste o non è attivo`,
+          details: { templateId, language: selectedLanguage }
+        });
+        setIsSending(false);
+        return;
+      }
+      
+      addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
+      addLog(`📧 Invio email a ${testEmail}...`, 'info');
       
       const response = await base44.functions.invoke('testLocalizedEmail', {
         templateId: templateId,
@@ -79,15 +109,38 @@ export default function AdminEmailTest() {
         language: selectedLanguage
       });
 
-      console.log('Response:', response);
+      addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
 
       if (response.data?.success) {
+        addLog(`✅ Email inviata con successo!`, 'success');
+        
+        // Verifica nell'EmailLog
+        addLog(`🔍 Verifica nel log email...`, 'info');
+        
+        // Aspetta 2 secondi per dare tempo al log di essere salvato
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        const emailLogs = await base44.entities.EmailLog.filter({ 
+          user_email: testEmail 
+        }, '-created_date', 1);
+        
+        if (emailLogs.length > 0) {
+          const latestLog = emailLogs[0];
+          setEmailLog(latestLog);
+          addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
+          addLog(`📊 Provider: ${latestLog.provider}`, 'info');
+          addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
+        } else {
+          addLog(`⚠️ Nessun log trovato (potrebbe essere in ritardo)`, 'warning');
+        }
+        
         setResult({
           success: true,
           message: `✅ Email inviata a ${testEmail}`,
           details: response.data
         });
       } else {
+        addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
         setResult({
           success: false,
           message: response.data?.error || 'Errore sconosciuto',
@@ -96,6 +149,7 @@ export default function AdminEmailTest() {
       }
     } catch (error) {
       console.error('Error:', error);
+      addLog(`❌ Errore: ${error.message}`, 'error');
       setResult({
         success: false,
         message: error.message,
@@ -189,6 +243,67 @@ export default function AdminEmailTest() {
               {isSending ? 'Invio in corso...' : 'Invia Email di Test'}
             </Button>
 
+            {logs.length > 0 && (
+              <div className="border border-gray-200 rounded-lg p-4 bg-gray-50 space-y-2 max-h-60 overflow-y-auto">
+                <p className="font-semibold text-sm text-gray-700 mb-2">📋 Log Esecuzione:</p>
+                {logs.map((log, idx) => (
+                  <div key={idx} className="flex items-start gap-2 text-sm">
+                    <span className="text-gray-400 text-xs">{new Date(log.timestamp).toLocaleTimeString()}</span>
+                    <span className={`${
+                      log.type === 'success' ? 'text-green-600' : 
+                      log.type === 'error' ? 'text-red-600' : 
+                      log.type === 'warning' ? 'text-amber-600' : 
+                      'text-gray-600'
+                    }`}>{log.message}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {emailLog && (
+              <div className="border border-green-200 rounded-lg p-4 bg-green-50">
+                <p className="font-semibold text-green-900 mb-3">✅ Prova di Invio dal Database (EmailLog)</p>
+                <div className="space-y-1 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">ID Log:</span>
+                    <span className="font-mono text-xs text-gray-900">{emailLog.id}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Email Destinatario:</span>
+                    <span className="font-semibold text-gray-900">{emailLog.user_email}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Template:</span>
+                    <span className="font-semibold text-gray-900">{emailLog.template_id}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Lingua:</span>
+                    <span className="font-semibold text-gray-900">{emailLog.language}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Status:</span>
+                    <span className={`font-bold ${emailLog.status === 'sent' ? 'text-green-600' : 'text-red-600'}`}>
+                      {emailLog.status}
+                    </span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Provider:</span>
+                    <span className="font-semibold text-gray-900">{emailLog.provider}</span>
+                  </div>
+                  <div className="flex justify-between">
+                    <span className="text-gray-600">Inviata il:</span>
+                    <span className="text-gray-900">{new Date(emailLog.sent_at || emailLog.created_date).toLocaleString('it-IT')}</span>
+                  </div>
+                  {emailLog.sendgrid_message_id && (
+                    <div className="flex justify-between">
+                      <span className="text-gray-600">SendGrid ID:</span>
+                      <span className="font-mono text-xs text-gray-900">{emailLog.sendgrid_message_id}</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
             {result && (
               <div className={`border rounded-lg p-4 ${result.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                 <div className="flex items-start gap-3">
@@ -202,9 +317,12 @@ export default function AdminEmailTest() {
                       {result.message}
                     </p>
                     {result.details && (
-                      <pre className="mt-2 text-xs bg-white/50 p-2 rounded overflow-auto max-h-40">
-                        {JSON.stringify(result.details, null, 2)}
-                      </pre>
+                      <details className="mt-2">
+                        <summary className="text-xs text-gray-600 cursor-pointer">Dettagli Tecnici</summary>
+                        <pre className="mt-2 text-xs bg-white/50 p-2 rounded overflow-auto max-h-40">
+                          {JSON.stringify(result.details, null, 2)}
+                        </pre>
+                      </details>
                     )}
                   </div>
                 </div>
