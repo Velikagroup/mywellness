@@ -69,7 +69,7 @@ Deno.serve(async (req) => {
                     .replace(/\{user_email\}/g, targetUser.email);
 
                 // Genera link unsubscribe
-                const unsubscribeUrl = `https://app.base44.com/api/68d44c626cc2c19cca9c750d/functions/unsubscribeEmail?email=${encodeURIComponent(targetUser.email)}&source=broadcast`;
+                const unsubscribeUrl = `https://projectmywellness.com/api/functions/unsubscribeEmail?email=${encodeURIComponent(targetUser.email)}&source=broadcast`;
 
                 // Wrap in proper HTML template with desktop spacing
                 const htmlEmail = `
