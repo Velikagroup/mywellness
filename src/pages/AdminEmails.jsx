@@ -256,6 +256,7 @@ export default function AdminEmails() {
         htmlBody = generateQuizCompletedTestEmail(template, variables, appUrl);
       } else {
         // Standard email generation
+        const replacedGreeting = replaceVars(template.greeting || 'Ciao {user_name},', variables);
         const replacedMainContent = replaceVars(template.main_content || '', variables);
         const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
 
@@ -301,6 +302,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 </tr>
 <tr>
 <td class="content-cell">
+<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${replacedGreeting}</p>
 <div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
 ${ctaHtml}
 </td>
