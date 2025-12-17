@@ -238,11 +238,18 @@ export default function AdminEmails() {
       return;
     }
 
+    console.log('📧 START handleSendTestEmail');
+    console.log('📧 Target email:', targetEmail);
+    console.log('📧 Template:', previewEmail.template);
+
     try {
       const template = previewEmail.template;
       const fromEmail = safeRenderField(template.from_email) || 'info@projectmywellness.com';
       const replyToEmail = safeRenderField(template.reply_to_email) || 'no-reply@projectmywellness.com';
       const appUrl = 'https://projectmywellness.com';
+      
+      console.log('📧 From:', fromEmail);
+      console.log('📧 Reply-To:', replyToEmail);
       
       const variables = {
         user_name: user?.full_name || 'Mario Rossi',
@@ -262,6 +269,7 @@ export default function AdminEmails() {
       };
 
       const replacedSubject = replaceVars(safeRenderField(template.subject) || 'Email di Test', variables);
+      console.log('📧 Subject:', replacedSubject);
       
       // Check if this is a cart abandoned email type (with or without language suffix)
       const emailIdBase = previewEmail.id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
@@ -346,7 +354,10 @@ ${ctaHtml}
 </html>`;
       }
 
-      await base44.functions.invoke('sendTestEmailDirect', {
+      console.log('📧 Calling sendTestEmailDirect...');
+      console.log('📧 HTML length:', htmlBody.length);
+
+      const response = await base44.functions.invoke('sendTestEmailDirect', {
         to: targetEmail,
         from_email: fromEmail,
         from_name: 'MyWellness',
@@ -355,10 +366,17 @@ ${ctaHtml}
         html: htmlBody
       });
 
-      alert(`✅ Email di test inviata con successo a ${targetEmail}!`);
+      console.log('📧 Response:', response);
+
+      if (response?.data?.success) {
+        alert(`✅ Email di test inviata con successo a ${targetEmail}!`);
+      } else {
+        throw new Error(response?.data?.error || 'Risposta non valida');
+      }
     } catch (error) {
-      console.error('Error sending test email:', error);
-      alert('❌ Errore durante l\'invio dell\'email di test: ' + error.message);
+      console.error('❌ Error sending test email:', error);
+      console.error('Error details:', error.response?.data);
+      alert('❌ Errore durante l\'invio dell\'email di test: ' + (error.response?.data?.error || error.message));
     }
   };
 
