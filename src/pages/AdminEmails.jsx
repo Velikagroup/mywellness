@@ -1541,13 +1541,94 @@ ${trustBadgesHtml}
                   </Button>
                   
                   <Button
-                    onClick={() => {
-                      setTestTargetEmail(user?.email || '');
-                      setTimeout(() => {
-                        if (testSelectedTemplate && testSelectedLanguage && user?.email) {
-                          document.querySelector('[value="test"] ~ div button[class*="bg-\\[\\#26847F\\]"]')?.click();
+                    onClick={async () => {
+                      if (!testSelectedTemplate || !testSelectedLanguage) {
+                        setTestResult({ success: false, message: 'Seleziona template e lingua' });
+                        return;
+                      }
+
+                      const targetEmail = user?.email;
+                      if (!targetEmail) {
+                        setTestResult({ success: false, message: 'Email utente non trovata' });
+                        return;
+                      }
+
+                      setTestTargetEmail(targetEmail);
+                      setIsSendingTest(true);
+                      setTestResult(null);
+                      setTestLogs([]);
+                      setTestEmailLog(null);
+
+                      const addLog = (message, type = 'info') => {
+                        setTestLogs(prev => [...prev, { message, type, timestamp: new Date().toISOString() }]);
+                      };
+
+                      try {
+                        const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
+                        addLog(`🔍 Verifica template: ${templateId}`, 'info');
+                        
+                        const templates = await base44.entities.EmailTemplate.filter({ 
+                          template_id: templateId,
+                          is_active: true 
+                        });
+                        
+                        if (templates.length === 0) {
+                          addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
+                          setTestResult({
+                            success: false,
+                            message: `Template ${templateId} non esiste o non è attivo`
+                          });
+                          setIsSendingTest(false);
+                          return;
                         }
-                      }, 100);
+                        
+                        addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
+                        addLog(`📧 Invio email a ${targetEmail}...`, 'info');
+                        
+                        const response = await base44.functions.invoke('testLocalizedEmail', {
+                          templateId: templateId,
+                          testEmail: targetEmail,
+                          language: testSelectedLanguage
+                        });
+
+                        addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
+
+                        if (response.data?.success) {
+                          addLog(`✅ Email inviata con successo!`, 'success');
+                          
+                          addLog(`🔍 Verifica nel log email...`, 'info');
+                          await new Promise(resolve => setTimeout(resolve, 2000));
+                          
+                          const emailLogs = await base44.entities.EmailLog.filter({ 
+                            user_email: targetEmail 
+                          }, '-created_date', 1);
+                          
+                          if (emailLogs.length > 0) {
+                            const latestLog = emailLogs[0];
+                            setTestEmailLog(latestLog);
+                            addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
+                            addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
+                          } else {
+                            addLog(`⚠️ Nessun log trovato`, 'warning');
+                          }
+                          
+                          setTestResult({
+                            success: true,
+                            message: `✅ Email inviata a ${targetEmail}`
+                          });
+                        } else {
+                          addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
+                          setTestResult({
+                            success: false,
+                            message: response.data?.error || 'Errore sconosciuto'
+                          });
+                        }
+                      } catch (error) {
+                        addLog(`❌ Errore: ${error.message}`, 'error');
+                        setTestResult({ success: false, message: error.message });
+                      }
+
+                      setIsSendingTest(false);
                     }}
                     disabled={isSendingTest || !testSelectedTemplate || !testSelectedLanguage}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
