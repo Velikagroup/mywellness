@@ -2451,7 +2451,7 @@ ${trustBadgesHtml}
                                       {previewEmail.template.greeting && (
                                         <div className="pt-3 border-t border-gray-300">
                                           <p className="text-xs text-gray-500 mb-1">Saluto:</p>
-                                          <p className="text-sm text-gray-900">{previewEmail.template.greeting}</p>
+                                          <p className="text-base text-gray-900">{previewEmail.template.greeting}</p>
                                         </div>
                                       )}
                                       <div className="pt-3 border-t border-gray-300">
