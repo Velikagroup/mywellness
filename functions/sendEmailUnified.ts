@@ -51,7 +51,7 @@ async function sendViaSendGrid(apiKey, emailData) {
     };
 }
 
-function generateEmailHtml(template, variables) {
+function generateEmailHtml(template, variables, language = 'it') {
     const appUrl = 'https://projectmywellness.com';
     const userName = variables.user_name || 'Utente';
     const templateId = template.template_id || '';
@@ -512,7 +512,7 @@ Deno.serve(async (req) => {
             user_email: userEmail,
             app_url: 'https://projectmywellness.com',
             ...variables
-        });
+        }, language);
 
         logEntry.subject = subject;
         logEntry.from_email = template.from_email || 'info@projectmywellness.com';
