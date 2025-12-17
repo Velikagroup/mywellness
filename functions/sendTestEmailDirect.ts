@@ -4,15 +4,21 @@ Deno.serve(async (req) => {
     console.log('📧 sendTestEmailDirect - Start');
     
     try {
+        console.log('🔧 Creating base44 client...');
         const base44 = createClientFromRequest(req);
         
+        console.log('👤 Getting user...');
         // Verifica che l'utente sia admin
         const user = await base44.auth.me();
+        console.log('👤 User:', user?.email, 'Role:', user?.role);
+        
         if (!user || user.role !== 'admin') {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
+        console.log('📦 Parsing request body...');
         const body = await req.json();
+        console.log('📦 Body keys:', Object.keys(body));
         const { to, from_email, from_name, reply_to, subject, html } = body;
 
         if (!to || !from_email || !subject || !html) {
