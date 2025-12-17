@@ -53,9 +53,16 @@ async function sendViaSendGrid(apiKey, emailData) {
 
 function generateEmailHtml(template, variables) {
     const appUrl = 'https://projectmywellness.com';
+    const userName = variables.user_name || 'Utente';
+    const templateId = template.template_id || '';
+    
+    // Check if this is a cart abandoned email
+    const emailIdBase = templateId.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+    const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(emailIdBase);
+    const isQuizCompletedEmail = emailIdBase === 'quiz_completed_abandoned';
     
     // Sostituisci variabili
-    let greeting = template.greeting || '';
+    let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
     let mainContent = template.main_content || '';
     let subject = template.subject || 'MyWellness';
     let ctaUrl = template.call_to_action_url || `${appUrl}/login`;
@@ -74,6 +81,13 @@ function generateEmailHtml(template, variables) {
     // Sostituisci {app_url}
     mainContent = mainContent.replace(/\{app_url\}/g, appUrl);
     ctaUrl = ctaUrl.replace(/\{app_url\}/g, appUrl);
+    
+    // Generate HTML based on email type
+    if (isCartAbandonedEmail) {
+        return generateCartAbandonedHtml(template, variables, appUrl, emailIdBase);
+    } else if (isQuizCompletedEmail) {
+        return generateQuizCompletedHtml(template, variables, appUrl);
+    }
 
     const html = `<!DOCTYPE html>
 <html>
@@ -132,6 +146,270 @@ function generateEmailHtml(template, variables) {
 </html>`;
 
     return { html, subject };
+}
+
+function generateCartAbandonedHtml(template, variables, appUrl, emailType) {
+    const userName = variables.user_name || 'Utente';
+    const greeting = (template.greeting || 'Ciao {user_name},').replace(/{user_name}/g, userName);
+    const introText = template.intro_text || '';
+    const secondParagraph = template.second_paragraph || '';
+    const showFeatures = template.show_features_section !== false;
+    const featuresTitle = template.features_section_title || '❌ Ecco cosa ti stai perdendo:';
+    const closingText = template.closing_text || '';
+    const showUrgency = template.show_urgency_box !== false;
+    const urgencyTitle = template.urgency_title || '⏰ Il momento è ADESSO';
+    const urgencySubtitle = template.urgency_subtitle || '';
+    const showTrustBadges = template.show_trust_badges !== false;
+    const ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
+    const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace(/{app_url}/g, appUrl);
+    const footerQuote = template.footer_quote || '';
+    
+    let boxBg, boxBorder, boxTextColor, boxSubtitleColor, buttonGradient;
+    if (emailType === 'cart_abandoned_72h') {
+        boxBg = '#fef2f2';
+        boxBorder = '#fecaca';
+        boxTextColor = '#991b1b';
+        boxSubtitleColor = '#b91c1c';
+        buttonGradient = 'linear-gradient(135deg, #dc2626 0%, #b91c1c 100%)';
+    } else if (emailType === 'cart_abandoned_24h') {
+        boxBg = '#fffbeb';
+        boxBorder = '#fcd34d';
+        boxTextColor = '#92400e';
+        boxSubtitleColor = '#b45309';
+        buttonGradient = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+    } else {
+        boxBg = '#fef2f2';
+        boxBorder = '#fecaca';
+        boxTextColor = '#991b1b';
+        boxSubtitleColor = '#b91c1c';
+        buttonGradient = 'linear-gradient(135deg, #26847F 0%, #1f6b66 100%)';
+    }
+
+    const featuresHtml = showFeatures ? `
+        <h3 style="color: ${boxTextColor}; margin: 25px 0 15px 0; font-size: 18px;">${featuresTitle}</h3>
+        <table width="100%" cellpadding="0" cellspacing="6" border="0" style="table-layout: fixed; margin-bottom: 25px;">
+            <tr>
+                <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+                    <p style="margin: 0; font-size: 28px;">${template.feature_1_emoji || '🍽️'}</p>
+                    <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${template.feature_1_title || 'Piano Nutrizionale AI'}</p>
+                    <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${template.feature_1_subtitle || 'Pasti personalizzati'}</p>
+                </td>
+                <td width="4%"></td>
+                <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+                    <p style="margin: 0; font-size: 28px;">${template.feature_2_emoji || '📊'}</p>
+                    <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${template.feature_2_title || 'Dashboard Scientifica'}</p>
+                    <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${template.feature_2_subtitle || 'Monitora ogni progresso'}</p>
+                </td>
+            </tr>
+            <tr><td colspan="3" style="height: 6px;"></td></tr>
+            <tr>
+                <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+                    <p style="margin: 0; font-size: 28px;">${template.feature_3_emoji || '📸'}</p>
+                    <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${template.feature_3_title || 'Analisi Foto AI'}</p>
+                    <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${template.feature_3_subtitle || 'Vedi la trasformazione'}</p>
+                </td>
+                <td width="4%"></td>
+                <td width="48%" style="background: ${boxBg}; border-radius: 12px; padding: 16px; text-align: center; border: 2px solid ${boxBorder}; vertical-align: top;">
+                    <p style="margin: 0; font-size: 28px;">${template.feature_4_emoji || '🛒'}</p>
+                    <p style="font-size: 13px; font-weight: bold; color: ${boxTextColor}; margin: 8px 0 4px 0;">${template.feature_4_title || 'Lista Spesa Smart'}</p>
+                    <p style="font-size: 11px; color: ${boxSubtitleColor}; margin: 0;">${template.feature_4_subtitle || 'Mai più dubbi'}</p>
+                </td>
+            </tr>
+        </table>
+    ` : '';
+
+    const urgencyHtml = showUrgency ? `
+        <div style="background: linear-gradient(135deg, ${boxBg} 0%, ${boxBorder} 100%); border: 2px solid ${boxTextColor}; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+            <p style="color: ${boxTextColor}; font-size: 18px; margin: 0; font-weight: bold;">${urgencyTitle}</p>
+            <p style="color: ${boxSubtitleColor}; font-size: 14px; margin: 10px 0 0 0; line-height: 1.5;">${urgencySubtitle}</p>
+        </div>
+    ` : '';
+
+    const trustBadgesHtml = showTrustBadges ? `
+        <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin-bottom: 25px;">
+            <tr>
+                <td align="center">
+                    <table cellpadding="0" cellspacing="15" border="0">
+                        <tr>
+                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🔒</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Pagamento<br>Sicuro</p></td>
+                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">✅</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Garanzia<br>100%</p></td>
+                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🚀</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Attivazione<br>Istantanea</p></td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    ` : '';
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        .logo-cell { padding: 60px 30px 24px 30px; }
+        .content-cell { padding: 40px 30px; }
+        @media only screen and (min-width: 600px) {
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 60px 60px 40px 60px !important; }
+        }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+            .outer-wrapper { padding: 0 !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td class="logo-cell">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td class="content-cell">
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>
+                            <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 20px 0;">${introText}</p>
+                            <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 20px 0;">${secondParagraph}</p>
+                            ${featuresHtml}
+                            <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 25px 0;">${closingText}</p>
+                            ${urgencyHtml}
+                            ${trustBadgesHtml}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${ctaUrl}" style="display: inline-block; background: ${buttonGradient}; color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">${ctaText}</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
+                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+
+    return { html, subject: template.subject };
+}
+
+function generateQuizCompletedHtml(template, variables, appUrl) {
+    const userName = variables.user_name || 'Utente';
+    const ctaText = template.call_to_action_text || 'Attiva Piano Base - €19/mese';
+    const ctaUrl = (template.call_to_action_url || `${appUrl}/pricing`).replace(/{app_url}/g, appUrl);
+    const footerText = template.footer_text || 'Il tuo piano personalizzato ti aspetta';
+
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+            .outer-wrapper { padding: 0 !important; }
+            .feature-table td { display: block !important; width: 100% !important; margin-bottom: 10px !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td style="background: white; padding: 40px 30px 10px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 20px 30px 40px 30px;">
+                            <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 25px;">
+                                <p style="font-size: 48px; margin: 0 0 10px 0;">🎯</p>
+                                <h1 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">Quiz Completato!</h1>
+                                <p style="color: #374151; margin: 0; font-size: 16px;">Il tuo piano personalizzato è pronto</p>
+                            </div>
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
+                            <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 0 0 25px 0;">${template.intro_text || 'Complimenti per aver completato il quiz!'}</p>
+                            <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📊 Cosa abbiamo calcolato per te:</h3>
+                            <table class="feature-table" width="100%" cellpadding="0" cellspacing="8" border="0" style="table-layout: fixed; margin-bottom: 25px;">
+                                <tr>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 28px;">🔥</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Fabbisogno Calorico</p>
+                                    </td>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 28px;">⚖️</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Macro Ottimali</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 28px;">🍽️</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Ricette Personalizzate</p>
+                                    </td>
+                                    <td style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+                                        <p style="margin: 0; font-size: 28px;">📈</p>
+                                        <p style="font-size: 16px; font-weight: bold; color: #374151; margin: 8px 0 0 0;">Proiezione Obiettivo</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b; border-radius: 12px; padding: 20px; margin-bottom: 25px; text-align: center;">
+                                <h3 style="color: #92400e; margin: 0 0 15px 0; font-size: 18px;">💡 Piano Base - Solo €19/mese</h3>
+                                <table width="100%" cellpadding="0" cellspacing="8" border="0">
+                                    <tr>
+                                        <td width="50%" style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Piano nutrizionale AI</td>
+                                        <td width="50%" style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Ricette settimanali</td>
+                                    </tr>
+                                    <tr>
+                                        <td style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Lista della spesa</td>
+                                        <td style="color: #92400e; font-size: 16px;"><span style="color: #10b981; font-weight: bold;">✓</span> Dashboard progressi</td>
+                                    </tr>
+                                </table>
+                            </div>
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">${ctaText}</a>
+                                    </td>
+                                </tr>
+                            </table>
+                            <p style="color: #26847F; text-align: center; font-size: 16px; margin: 15px 0 0 0;">${footerText}</p>
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
+                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+
+    return { html, subject: template.subject };
 }
 
 Deno.serve(async (req) => {
