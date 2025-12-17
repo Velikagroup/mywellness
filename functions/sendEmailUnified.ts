@@ -84,7 +84,7 @@ function generateEmailHtml(template, variables) {
     
     // Generate HTML based on email type
     if (isCartAbandonedEmail) {
-        return generateCartAbandonedHtml(template, variables, appUrl, emailIdBase);
+        return generateCartAbandonedHtml(template, variables, appUrl, emailIdBase, language);
     } else if (isQuizCompletedEmail) {
         return generateQuizCompletedHtml(template, variables, appUrl);
     }
@@ -148,7 +148,7 @@ function generateEmailHtml(template, variables) {
     return { html, subject };
 }
 
-function generateCartAbandonedHtml(template, variables, appUrl, emailType) {
+function generateCartAbandonedHtml(template, variables, appUrl, emailType, language = 'it') {
     const userName = variables.user_name || 'Utente';
     const greeting = (template.greeting || 'Ciao {user_name},').replace(/{user_name}/g, userName);
     const introText = template.intro_text || '';
@@ -163,6 +163,17 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType) {
     const ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
     const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace(/{app_url}/g, appUrl);
     const footerQuote = template.footer_quote || '';
+    
+    // Trust badges translations
+    const trustBadgeTranslations = {
+        it: { secure: 'Pagamento<br>Sicuro', guarantee: 'Garanzia<br>100%', instant: 'Attivazione<br>Istantanea' },
+        en: { secure: 'Secure<br>Payment', guarantee: '100%<br>Guarantee', instant: 'Instant<br>Activation' },
+        es: { secure: 'Pago<br>Seguro', guarantee: 'Garantía<br>100%', instant: 'Activación<br>Instantánea' },
+        pt: { secure: 'Pagamento<br>Seguro', guarantee: 'Garantia<br>100%', instant: 'Ativação<br>Instantânea' },
+        de: { secure: 'Sichere<br>Zahlung', guarantee: '100%<br>Garantie', instant: 'Sofortige<br>Aktivierung' },
+        fr: { secure: 'Paiement<br>Sécurisé', guarantee: 'Garantie<br>100%', instant: 'Activation<br>Instantanée' }
+    };
+    const badges = trustBadgeTranslations[language] || trustBadgeTranslations.it;
     
     let boxBg, boxBorder, boxTextColor, boxSubtitleColor, buttonGradient;
     if (emailType === 'cart_abandoned_72h') {
@@ -231,9 +242,9 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType) {
                 <td align="center">
                     <table cellpadding="0" cellspacing="15" border="0">
                         <tr>
-                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🔒</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Pagamento<br>Sicuro</p></td>
-                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">✅</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Garanzia<br>100%</p></td>
-                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🚀</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">Attivazione<br>Istantanea</p></td>
+                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🔒</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">${badges.secure}</p></td>
+                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">✅</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">${badges.guarantee}</p></td>
+                            <td style="text-align: center;"><p style="font-size: 20px; margin: 0;">🚀</p><p style="font-size: 11px; color: #6b7280; margin: 5px 0 0 0;">${badges.instant}</p></td>
                         </tr>
                     </table>
                 </td>
