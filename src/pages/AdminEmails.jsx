@@ -55,7 +55,6 @@ export default function AdminEmails() {
   const [emailTemplates, setEmailTemplates] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [selectedLanguage, setSelectedLanguage] = useState('it');
-  const [abandonmentLanguage, setAbandonmentLanguage] = useState('it');
   const [userCount, setUserCount] = useState(0);
   
   // Broadcast states
@@ -1021,10 +1020,10 @@ ${trustBadgesHtml}
         icon: ShoppingCart,
         color: 'amber',
         emails: [
-          { id: `quiz_completed_abandoned_${abandonmentLanguage}`, name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
-          { id: `cart_checkout_abandoned_${abandonmentLanguage}`, name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
-          { id: `cart_abandoned_24h_${abandonmentLanguage}`, name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
-          { id: `cart_abandoned_72h_${abandonmentLanguage}`, name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
+          { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
+          { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
+          { id: 'cart_abandoned_24h', name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
+          { id: 'cart_abandoned_72h', name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
         ]
       }
   };
@@ -1156,22 +1155,6 @@ ${trustBadgesHtml}
                           value={selectedLanguage}
                           onChange={(e) => setSelectedLanguage(e.target.value)}
                           className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
-                        >
-                          {languageOptions.map(lang => (
-                            <option key={lang.code} value={lang.code}>
-                              {lang.flag} {lang.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-                    {selectedCategory === 'abandonment' && (
-                      <div className="flex items-center gap-2 bg-amber-50 px-3 py-2 rounded-lg border border-amber-200">
-                        <Globe className="w-4 h-4 text-amber-600" />
-                        <select
-                          value={abandonmentLanguage}
-                          onChange={(e) => setAbandonmentLanguage(e.target.value)}
-                          className="bg-transparent border-none text-sm font-semibold text-amber-900 focus:outline-none cursor-pointer"
                         >
                           {languageOptions.map(lang => (
                             <option key={lang.code} value={lang.code}>
