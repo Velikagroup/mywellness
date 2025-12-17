@@ -149,7 +149,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            ${greeting ? `<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>` : ''}
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${greeting}</p>
                             <div style="color: #374151; line-height: 1.7; font-size: 16px; white-space: pre-line;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
