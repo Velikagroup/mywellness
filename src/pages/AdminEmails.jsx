@@ -1468,69 +1468,64 @@ ${trustBadgesHtml}
                         setTestLogs(prev => [...prev, { message, type, timestamp: new Date().toISOString() }]);
                       };
 
-                      try {
-                        const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
-                        addLog(`🔍 Verifica template: ${templateId}`, 'info');
-                        
-                        const templates = await base44.entities.EmailTemplate.filter({ 
-                          template_id: templateId,
-                          is_active: true 
+                      const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
+                      addLog(`🔍 Verifica template: ${templateId}`, 'info');
+                      
+                      const templates = await base44.entities.EmailTemplate.filter({ 
+                        template_id: templateId,
+                        is_active: true 
+                      });
+                      
+                      if (templates.length === 0) {
+                        addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
+                        setTestResult({
+                          success: false,
+                          message: `Template ${templateId} non esiste o non è attivo`
                         });
-                        
-                        if (templates.length === 0) {
-                          addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
-                          setTestResult({
-                            success: false,
-                            message: `Template ${templateId} non esiste o non è attivo`
-                          });
-                          setIsSendingTest(false);
-                          return;
-                        }
-                        
-                        addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
-                        addLog(`📧 Invio email a ${testTargetEmail}...`, 'info');
-                        
-                        const response = await base44.functions.invoke('testLocalizedEmail', {
-                          templateId: templateId,
-                          testEmail: testTargetEmail,
-                          language: testSelectedLanguage
-                        });
+                        setIsSendingTest(false);
+                        return;
+                      }
+                      
+                      addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
+                      addLog(`📧 Invio email a ${testTargetEmail}...`, 'info');
+                      
+                      const response = await base44.functions.invoke('testLocalizedEmail', {
+                        templateId: templateId,
+                        testEmail: testTargetEmail,
+                        language: testSelectedLanguage
+                      });
 
-                        addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
+                      addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
 
-                        if (response.data?.success) {
-                          addLog(`✅ Email inviata con successo!`, 'success');
-                          
-                          addLog(`🔍 Verifica nel log email...`, 'info');
-                          await new Promise(resolve => setTimeout(resolve, 2000));
-                          
-                          const emailLogs = await base44.entities.EmailLog.filter({ 
-                            user_email: testTargetEmail 
-                          }, '-created_date', 1);
-                          
-                          if (emailLogs.length > 0) {
-                            const latestLog = emailLogs[0];
-                            setTestEmailLog(latestLog);
-                            addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
-                            addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
-                          } else {
-                            addLog(`⚠️ Nessun log trovato`, 'warning');
-                          }
-                          
-                          setTestResult({
-                            success: true,
-                            message: `✅ Email inviata a ${testTargetEmail}`
-                          });
+                      if (response.data?.success) {
+                        addLog(`✅ Email inviata con successo!`, 'success');
+                        
+                        addLog(`🔍 Verifica nel log email...`, 'info');
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        
+                        const emailLogs = await base44.entities.EmailLog.filter({ 
+                          user_email: testTargetEmail 
+                        }, '-created_date', 1);
+                        
+                        if (emailLogs.length > 0) {
+                          const latestLog = emailLogs[0];
+                          setTestEmailLog(latestLog);
+                          addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
+                          addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
                         } else {
-                          addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
-                          setTestResult({
-                            success: false,
-                            message: response.data?.error || 'Errore sconosciuto'
-                          });
+                          addLog(`⚠️ Nessun log trovato`, 'warning');
                         }
-                      } catch (error) {
-                        addLog(`❌ Errore: ${error.message}`, 'error');
-                        setTestResult({ success: false, message: error.message });
+                        
+                        setTestResult({
+                          success: true,
+                          message: `✅ Email inviata a ${testTargetEmail}`
+                        });
+                      } else {
+                        addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
+                        setTestResult({
+                          success: false,
+                          message: response.data?.error || 'Errore sconosciuto'
+                        });
                       }
 
                       setIsSendingTest(false);
@@ -1574,69 +1569,64 @@ ${trustBadgesHtml}
                         setTestLogs(prev => [...prev, { message, type, timestamp: new Date().toISOString() }]);
                       };
 
-                      try {
-                        const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
-                        addLog(`🔍 Verifica template: ${templateId}`, 'info');
-                        
-                        const templates = await base44.entities.EmailTemplate.filter({ 
-                          template_id: templateId,
-                          is_active: true 
+                      const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
+                      addLog(`🔍 Verifica template: ${templateId}`, 'info');
+                      
+                      const templates = await base44.entities.EmailTemplate.filter({ 
+                        template_id: templateId,
+                        is_active: true 
+                      });
+                      
+                      if (templates.length === 0) {
+                        addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
+                        setTestResult({
+                          success: false,
+                          message: `Template ${templateId} non esiste o non è attivo`
                         });
-                        
-                        if (templates.length === 0) {
-                          addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
-                          setTestResult({
-                            success: false,
-                            message: `Template ${templateId} non esiste o non è attivo`
-                          });
-                          setIsSendingTest(false);
-                          return;
-                        }
-                        
-                        addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
-                        addLog(`📧 Invio email a ${targetEmail}...`, 'info');
-                        
-                        const response = await base44.functions.invoke('testLocalizedEmail', {
-                          templateId: templateId,
-                          testEmail: targetEmail,
-                          language: testSelectedLanguage
-                        });
+                        setIsSendingTest(false);
+                        return;
+                      }
+                      
+                      addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
+                      addLog(`📧 Invio email a ${targetEmail}...`, 'info');
+                      
+                      const response = await base44.functions.invoke('testLocalizedEmail', {
+                        templateId: templateId,
+                        testEmail: targetEmail,
+                        language: testSelectedLanguage
+                      });
 
-                        addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
+                      addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
 
-                        if (response.data?.success) {
-                          addLog(`✅ Email inviata con successo!`, 'success');
-                          
-                          addLog(`🔍 Verifica nel log email...`, 'info');
-                          await new Promise(resolve => setTimeout(resolve, 2000));
-                          
-                          const emailLogs = await base44.entities.EmailLog.filter({ 
-                            user_email: targetEmail 
-                          }, '-created_date', 1);
-                          
-                          if (emailLogs.length > 0) {
-                            const latestLog = emailLogs[0];
-                            setTestEmailLog(latestLog);
-                            addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
-                            addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
-                          } else {
-                            addLog(`⚠️ Nessun log trovato`, 'warning');
-                          }
-                          
-                          setTestResult({
-                            success: true,
-                            message: `✅ Email inviata a ${targetEmail}`
-                          });
+                      if (response.data?.success) {
+                        addLog(`✅ Email inviata con successo!`, 'success');
+                        
+                        addLog(`🔍 Verifica nel log email...`, 'info');
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        
+                        const emailLogs = await base44.entities.EmailLog.filter({ 
+                          user_email: targetEmail 
+                        }, '-created_date', 1);
+                        
+                        if (emailLogs.length > 0) {
+                          const latestLog = emailLogs[0];
+                          setTestEmailLog(latestLog);
+                          addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
+                          addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
                         } else {
-                          addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
-                          setTestResult({
-                            success: false,
-                            message: response.data?.error || 'Errore sconosciuto'
-                          });
+                          addLog(`⚠️ Nessun log trovato`, 'warning');
                         }
-                      } catch (error) {
-                        addLog(`❌ Errore: ${error.message}`, 'error');
-                        setTestResult({ success: false, message: error.message });
+                        
+                        setTestResult({
+                          success: true,
+                          message: `✅ Email inviata a ${targetEmail}`
+                        });
+                      } else {
+                        addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
+                        setTestResult({
+                          success: false,
+                          message: response.data?.error || 'Errore sconosciuto'
+                        });
                       }
 
                       setIsSendingTest(false);
