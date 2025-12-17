@@ -1675,7 +1675,7 @@ ${trustBadgesHtml}
                           user_name: 'Mario Rossi',
                           user_email: 'mario.rossi@example.com',
                           dashboard_url: 'https://app.base44.com/dashboard',
-                          support_email: 'support@mywellness.com',
+                          support_email: 'info@projectmywellness.com',
                           current_plan: 'Base',
                           renewal_date: '15/01/2025',
                           amount: '€19.00',
