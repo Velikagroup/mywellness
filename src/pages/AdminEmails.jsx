@@ -1386,13 +1386,23 @@ ${trustBadgesHtml}
                     className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
                   >
                     <option value="">Seleziona template...</option>
-                    <option value="standard_free_welcome">Standard Free - Benvenuto (Critical)</option>
-                    <option value="base_welcome">Base - Benvenuto (Critical)</option>
-                    <option value="pro_welcome">Pro - Benvenuto (Critical)</option>
-                    <option value="premium_welcome">Premium - Benvenuto (Critical)</option>
-                    <option value="renewal_confirmation">Conferma Rinnovo (Critical)</option>
-                    <option value="landing_new_user">Landing Offer - Nuovo Utente (Critical)</option>
-                    <option value="landing_existing_user">Landing Offer - Utente Esistente (Critical)</option>
+                    
+                    <optgroup label="🚨 Critical">
+                      <option value="standard_free_welcome">Standard Free - Benvenuto</option>
+                      <option value="base_welcome">Base - Benvenuto</option>
+                      <option value="pro_welcome">Pro - Benvenuto</option>
+                      <option value="premium_welcome">Premium - Benvenuto</option>
+                      <option value="renewal_confirmation">Conferma Rinnovo</option>
+                      <option value="landing_new_user">Landing Offer - Nuovo Utente</option>
+                      <option value="landing_existing_user">Landing Offer - Utente Esistente</option>
+                    </optgroup>
+                    
+                    <optgroup label="🛒 Abbandono">
+                      <option value="quiz_completed_abandoned">Promo Piano Base - Quiz Completato</option>
+                      <option value="cart_checkout_abandoned">Checkout Abbandonato (30 min)</option>
+                      <option value="cart_abandoned_24h">Checkout Abbandonato (24h)</option>
+                      <option value="cart_abandoned_72h">Checkout Abbandonato - ULTIMA (72h)</option>
+                    </optgroup>
                   </select>
                 </div>
 
