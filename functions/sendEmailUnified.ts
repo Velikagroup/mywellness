@@ -474,6 +474,9 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
     console.log('📊 [WEEKLY REPORT] ============ HTML GENERATED ============');
     console.log('📊 [WEEKLY REPORT] HTML length:', html.length);
     console.log('📊 [WEEKLY REPORT] First 500 chars:', html.substring(0, 500));
+    
+    return { html, subject: template.subject || 'Report Settimanale - MyWellness' };
+}
 
     return { html, subject: template.subject };
 }
