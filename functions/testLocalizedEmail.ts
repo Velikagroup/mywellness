@@ -53,11 +53,16 @@ Deno.serve(async (req) => {
 
         // Variabili base
         const baseVariables = {
-            user_name: 'Test User',
+            user_name: 'Mario Rossi',
             plan_name: 'Premium',
             amount: '29.00',
             next_billing_date: '15 Marzo 2025',
-            invoice_url: 'https://example.com/invoice'
+            invoice_url: 'https://example.com/invoice',
+            expiry_date: '31 Gennaio 2025',
+            old_plan: 'Base',
+            new_plan: 'Pro',
+            features_unlocked: 'Allenamenti AI, Analisi Foto Progressi',
+            effective_date: '1 Febbraio 2025'
         };
 
         // Identifica tipo di email
