@@ -999,10 +999,10 @@ ${trustBadgesHtml}
       icon: Shield,
       color: 'blue',
       emails: [
-        { id: 'password_reset_confirmed', name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
-        { id: 'plan_upgrade', name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
-        { id: 'plan_downgrade', name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },
-        { id: 'cancellation_confirmation', name: 'Conferma Cancellazione', trigger: 'Utente cancella abbonamento', function: 'sendCancellationConfirmation' }
+        { id: `password_reset_confirmed_${selectedLanguage}`, name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
+        { id: `plan_upgrade_${selectedLanguage}`, name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
+        { id: `plan_downgrade_${selectedLanguage}`, name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },
+        { id: `cancellation_confirmation_${selectedLanguage}`, name: 'Conferma Cancellazione', trigger: 'Utente cancella abbonamento', function: 'sendCancellationConfirmation' }
       ]
     },
     reporting: {
@@ -1146,7 +1146,7 @@ ${trustBadgesHtml}
                   Email Automatizzate per Categoria
                 </CardTitle>
                 <div className="flex items-center gap-3">
-                  {(selectedCategory === 'critical' || selectedCategory === 'abandonment' || selectedCategory === 'reporting') && (
+                  {(selectedCategory === 'critical' || selectedCategory === 'abandonment' || selectedCategory === 'reporting' || selectedCategory === 'technical') && (
                     <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
                       <Globe className="w-4 h-4 text-blue-600" />
                       <select
