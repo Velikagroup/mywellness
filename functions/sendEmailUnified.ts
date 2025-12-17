@@ -81,9 +81,8 @@ function generateEmailHtml(template, variables, language = 'it') {
     }
     
     // Sostituisci variabili per email di default
-    let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
-
-    // Se greeting è vuoto, aggiungi uno di default basato sulla lingua
+    // Se greeting è vuoto o mancante, aggiungi uno di default basato sulla lingua
+    let greeting = template.greeting || '';
     if (!greeting || greeting.trim() === '') {
         const greetings = {
             'it': `Ciao ${userName},`,
@@ -94,6 +93,8 @@ function generateEmailHtml(template, variables, language = 'it') {
             'fr': `Bonjour ${userName},`
         };
         greeting = greetings[language] || greetings['it'];
+    } else {
+        greeting = greeting.replace(/{user_name}/g, userName);
     }
 
     let mainContent = template.main_content || '';
