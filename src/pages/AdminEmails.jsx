@@ -2456,7 +2456,7 @@ ${trustBadgesHtml}
                                       )}
                                       <div className="pt-3 border-t border-gray-300">
                                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
-                                        <div className="text-sm text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
+                                        <div className="text-base text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
                                           {previewEmail.template.main_content}
                                         </div>
                                       </div>
