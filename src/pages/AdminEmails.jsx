@@ -240,8 +240,8 @@ export default function AdminEmails() {
 
     try {
       const template = previewEmail.template;
-      const fromEmail = template.from_email || 'info@projectmywellness.com';
-      const replyToEmail = template.reply_to_email || 'no-reply@projectmywellness.com';
+      const fromEmail = safeRenderField(template.from_email) || 'info@projectmywellness.com';
+      const replyToEmail = safeRenderField(template.reply_to_email) || 'no-reply@projectmywellness.com';
       const appUrl = 'https://projectmywellness.com';
       
       const variables = {
@@ -261,7 +261,7 @@ export default function AdminEmails() {
         return result;
       };
 
-      const replacedSubject = replaceVars(template.subject || 'Email di Test', variables);
+      const replacedSubject = replaceVars(safeRenderField(template.subject) || 'Email di Test', variables);
       
       // Check if this is a cart abandoned email type (with or without language suffix)
       const emailIdBase = previewEmail.id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
@@ -278,16 +278,16 @@ export default function AdminEmails() {
         htmlBody = generateQuizCompletedTestEmail(template, variables, appUrl);
       } else {
         // Standard email generation
-        const replacedGreeting = replaceVars(template.greeting || 'Ciao {user_name},', variables);
-        const replacedMainContent = replaceVars(template.main_content || '', variables);
-        const replacedCtaUrl = replaceVars(template.call_to_action_url || '', variables);
+        const replacedGreeting = replaceVars(safeRenderField(template.greeting) || 'Ciao {user_name},', variables);
+        const replacedMainContent = replaceVars(safeRenderField(template.main_content) || '', variables);
+        const replacedCtaUrl = replaceVars(safeRenderField(template.call_to_action_url) || '', variables);
 
         const ctaHtml = template.call_to_action_text && template.call_to_action_url ? 
           `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
               <tr>
                   <td align="center">
                       <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                          ${template.call_to_action_text}
+                          ${safeRenderField(template.call_to_action_text)}
                       </a>
                   </td>
               </tr>
