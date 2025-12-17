@@ -2057,7 +2057,10 @@ ${trustBadgesHtml}
                                       )}
 
                                       {/* Sezione Funzionalità - Per cart_checkout_abandoned e simili */}
-                                      {(emailIdBase === 'cart_checkout_abandoned' || emailIdBase === 'cart_abandoned_24h' || emailIdBase === 'cart_abandoned_72h') && (
+                                      {(() => {
+                                        const emailIdBase = previewEmail?.id?.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '') || '';
+                                        return (emailIdBase === 'cart_checkout_abandoned' || emailIdBase === 'cart_abandoned_24h' || emailIdBase === 'cart_abandoned_72h');
+                                      })() && (
                                       <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-4">
                                       <h4 className="font-semibold text-amber-900 flex items-center gap-2">
                                         🛒 Configurazione Email Carrello Abbandonato
