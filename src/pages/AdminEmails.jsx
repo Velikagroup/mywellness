@@ -44,6 +44,16 @@ import {
 } from 'lucide-react';
 import EmailLogsPanel from '@/components/admin/EmailLogsPanel';
 
+// Helper per rendere safe i campi corrotti
+const safeRenderField = (field) => {
+  if (!field) return '';
+  if (typeof field === 'string') return field;
+  if (typeof field === 'object' && field.$replace) {
+    return field.$replace[1] || field.$replace[0] || '';
+  }
+  return '';
+};
+
 export default function AdminEmails() {
   const navigate = useNavigate();
   const [user, setUser] = useState(null);
@@ -139,10 +149,21 @@ export default function AdminEmails() {
 
   const handleOpenPreview = (email) => {
     const template = emailTemplates.find(t => t.template_id === email.id);
-    setPreviewEmail({ ...email, template });
+    // Fix corrupted fields before setting
+    const fixedTemplate = template ? {
+      ...template,
+      main_content: safeRenderField(template.main_content),
+      intro_text: safeRenderField(template.intro_text),
+      second_paragraph: safeRenderField(template.second_paragraph),
+      closing_text: safeRenderField(template.closing_text),
+      urgency_subtitle: safeRenderField(template.urgency_subtitle),
+      footer_text: safeRenderField(template.footer_text),
+      greeting: safeRenderField(template.greeting)
+    } : null;
+    setPreviewEmail({ ...email, template: fixedTemplate });
     setShowEmailPreview(true);
     setIsEditMode(false);
-    setEditingContent(template || {});
+    setEditingContent(fixedTemplate || {});
   };
 
   const handleStartEdit = () => {
@@ -231,7 +252,8 @@ export default function AdminEmails() {
 
       const replaceVars = (text, vars) => {
         if (!text) return '';
-        let result = text;
+        const safeText = safeRenderField(text);
+        let result = safeText;
         Object.keys(vars).forEach(key => {
           const regex = new RegExp(`\\{${key}\\}`, 'g');
           result = result.replace(regex, vars[key] || '');
@@ -462,9 +484,9 @@ ${footerText}
   // Generate full cart abandoned email HTML for testing
   const generateCartAbandonedTestEmail = (template, variables, appUrl, emailType) => {
     const userName = variables.user_name || 'Utente';
-    const greeting = (template.greeting || 'Ciao {user_name},').replace('{user_name}', userName);
-    const introText = template.intro_text || 'Hai fatto il primo passo verso la versione migliore di te stesso...';
-    const secondParagraph = template.second_paragraph || 'Ogni giorno che passa è un giorno in meno verso i tuoi obiettivi.';
+    const greeting = safeRenderField(template.greeting || 'Ciao {user_name},').replace('{user_name}', userName);
+    const introText = safeRenderField(template.intro_text) || 'Hai fatto il primo passo verso la versione migliore di te stesso...';
+    const secondParagraph = safeRenderField(template.second_paragraph) || 'Ogni giorno che passa è un giorno in meno verso i tuoi obiettivi.';
 
     const showFeatures = template.show_features_section !== false;
     const featuresTitle = template.features_section_title || '❌ Ecco cosa ti stai perdendo:';
@@ -481,11 +503,11 @@ ${footerText}
     const feature4Title = template.feature_4_title || 'Lista Spesa Smart';
     const feature4Subtitle = template.feature_4_subtitle || 'Mai più dubbi al supermercato';
 
-    const closingText = template.closing_text || 'Il momento perfetto non esiste, ma il momento giusto è ADESSO.';
+    const closingText = safeRenderField(template.closing_text) || 'Il momento perfetto non esiste, ma il momento giusto è ADESSO.';
 
     const showUrgency = template.show_urgency_box !== false;
-    const urgencyTitle = template.urgency_title || '⏰ Il momento è ADESSO';
-    const urgencySubtitle = template.urgency_subtitle || 'Non rimandare a domani quello che può cambiarti la vita oggi.';
+    const urgencyTitle = safeRenderField(template.urgency_title) || '⏰ Il momento è ADESSO';
+    const urgencySubtitle = safeRenderField(template.urgency_subtitle) || 'Non rimandare a domani quello che può cambiarti la vita oggi.';
 
     const showTrustBadges = template.show_trust_badges !== false;
     const ctaText = template.call_to_action_text || '🚀 Riprendi il Tuo Percorso Ora';
@@ -1682,7 +1704,7 @@ ${trustBadgesHtml}
                           invoice_url: '#'
                         };
 
-                        let htmlContent = template.main_content || template.greeting || 'Preview non disponibile';
+                        let htmlContent = safeRenderField(template.main_content) || safeRenderField(template.greeting) || 'Preview non disponibile';
                         Object.keys(previewData).forEach(key => {
                           const regex = new RegExp(`{${key}}`, 'g');
                           htmlContent = htmlContent.replace(regex, previewData[key]);
@@ -2451,13 +2473,13 @@ ${trustBadgesHtml}
                                       {previewEmail.template.greeting && (
                                         <div className="pt-3 border-t border-gray-300">
                                           <p className="text-xs text-gray-500 mb-1">Saluto:</p>
-                                          <p className="text-base text-gray-900">{previewEmail.template.greeting}</p>
+                                          <p className="text-base text-gray-900">{safeRenderField(previewEmail.template.greeting)}</p>
                                         </div>
                                       )}
                                       <div className="pt-3 border-t border-gray-300">
                                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
                                         <div className="text-base text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
-                                          {previewEmail.template.main_content}
+                                          {safeRenderField(previewEmail.template.main_content)}
                                         </div>
                                       </div>
                       {previewEmail.template.call_to_action_text && (
@@ -2473,7 +2495,7 @@ ${trustBadgesHtml}
                       )}
                       <div className="pt-3 border-t border-gray-300">
                         <p className="text-xs text-gray-500 mb-2">Footer:</p>
-                        <p className="text-sm text-gray-600 italic">{previewEmail.template.footer_text}</p>
+                        <p className="text-sm text-gray-600 italic">{safeRenderField(previewEmail.template.footer_text)}</p>
                       </div>
                     </div>
                   </div>
