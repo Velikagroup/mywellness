@@ -60,6 +60,7 @@ function generateEmailHtml(template, variables, language = 'it') {
     const emailIdBase = templateId.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
     const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(emailIdBase);
     const isQuizCompletedEmail = emailIdBase === 'quiz_completed_abandoned';
+    const isWeeklyReport = emailIdBase === 'weekly_report';
     
     // Sostituisci variabili
     let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
@@ -87,6 +88,8 @@ function generateEmailHtml(template, variables, language = 'it') {
         return generateCartAbandonedHtml(template, variables, appUrl, emailIdBase, language);
     } else if (isQuizCompletedEmail) {
         return generateQuizCompletedHtml(template, variables, appUrl);
+    } else if (isWeeklyReport) {
+        return generateWeeklyReportHtml(template, variables, appUrl, language);
     }
 
     const html = `<!DOCTYPE html>
@@ -307,6 +310,124 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                             <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
                             <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
                             <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>`;
+
+    return { html, subject: template.subject };
+}
+
+function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') {
+    const userName = variables.user_name || 'Utente';
+    const weekRange = variables.week_range || '';
+    const currentWeight = variables.current_weight || 0;
+    const weightChange = variables.weight_change || 0;
+    const avgCalories = variables.avg_calories || 0;
+    const workoutsCompleted = variables.workouts_completed || 0;
+    const adherence = variables.adherence || 0;
+    const progress = variables.progress || 0;
+    const motivationalMessage = variables.motivational_message || '';
+    const weightData = variables.weight_data || [];
+    
+    // Genera i punti del grafico peso
+    const weightChartPoints = weightData.map((point, index) => {
+        const x = 50 + (index * 70);
+        const y = 250 - (point.weight - 65) * 10; // scala y in base al peso
+        return `${x},${y}`;
+    }).join(' ');
+    
+    const html = `<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        @media only screen and (max-width: 600px) {
+            .container { width: 100% !important; border-radius: 0 !important; }
+        }
+    </style>
+</head>
+<body style="margin: 0; padding: 0;">
+    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+        <tr>
+            <td align="center">
+                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+                    <tr>
+                        <td style="padding: 40px 30px 20px 30px;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+                            <h2 style="color: #26847F; margin: 20px 0 10px 0; font-size: 24px;">${template.header_title || 'Report Settimanale'}</h2>
+                            <p style="color: #6b7280; margin: 0; font-size: 14px;">${weekRange}</p>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 0 30px 30px 30px;">
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${template.greeting || 'Ciao {user_name},'}</p>
+                            <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 0 0 25px 0;">${template.intro_text || ''}</p>
+                            
+                            <!-- Grafico Peso -->
+                            <div style="background: #f9fafb; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
+                                <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📊 ${template.weight_card_title || 'Variazione Peso'}</h3>
+                                <svg width="100%" height="200" viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg">
+                                    <polyline points="${weightChartPoints}" fill="none" stroke="#26847F" stroke-width="3" />
+                                    ${weightData.map((point, i) => `
+                                        <circle cx="${50 + i * 70}" cy="${250 - (point.weight - 65) * 10}" r="5" fill="#26847F" />
+                                        <text x="${50 + i * 70}" y="270" text-anchor="middle" font-size="12" fill="#6b7280">${point.date}</text>
+                                    `).join('')}
+                                </svg>
+                                <p style="text-align: center; margin: 15px 0 0 0; font-size: 28px; color: #26847F; font-weight: bold;">${currentWeight} kg</p>
+                                <p style="text-align: center; margin: 5px 0 0 0; font-size: 14px; color: ${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg</p>
+                            </div>
+                            
+                            <!-- Statistiche -->
+                            <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📈 ${template.stats_section_title || 'Le tue statistiche'}</h3>
+                            <table width="100%" cellpadding="0" cellspacing="10" border="0" style="margin-bottom: 25px;">
+                                <tr>
+                                    <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
+                                        <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${avgCalories}</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.calories_stat_label || 'Calorie medie/giorno'}</p>
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
+                                        <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${workoutsCompleted}</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.workouts_stat_label || 'Allenamenti completati'}</p>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
+                                        <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${adherence}%</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.adherence_stat_label || 'Aderenza al piano'}</p>
+                                    </td>
+                                    <td width="4%"></td>
+                                    <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
+                                        <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${progress}%</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.progress_stat_label || 'Progresso obiettivo'}</p>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="color: #26847F; line-height: 1.6; font-size: 16px; margin: 25px 0; font-weight: 600; text-align: center;">${motivationalMessage}</p>
+                            
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">${template.call_to_action_text || 'Vai alla Dashboard'}</a>
+                                    </td>
+                                </tr>
+                            </table>
+                        </td>
+                    </tr>
+                </table>
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px;">
+                    <tr>
+                        <td align="center" style="padding: 20px; color: #999999;">
+                            <p style="margin: 5px 0; font-size: 12px;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St, Sheridan, WY 82801, United States</p>
                         </td>
                     </tr>
                 </table>
