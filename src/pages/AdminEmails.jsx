@@ -217,10 +217,6 @@ export default function AdminEmails() {
       return;
     }
 
-    if (!confirm(`Inviare email di test a ${targetEmail}?`)) {
-      return;
-    }
-
     try {
       const template = previewEmail.template;
       const fromEmail = template.from_email || 'info@projectmywellness.com';
