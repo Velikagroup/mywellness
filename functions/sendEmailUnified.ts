@@ -323,23 +323,31 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
 }
 
 function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') {
+    console.log('📊 Generating Weekly Report HTML');
+    console.log('📊 Variables:', JSON.stringify(variables, null, 2));
+    
     const userName = variables.user_name || 'Utente';
-    const weekRange = variables.week_range || '';
-    const currentWeight = variables.current_weight || 0;
+    const weekRange = variables.week_range || 'Questa settimana';
+    const currentWeight = variables.current_weight || 70;
     const weightChange = variables.weight_change || 0;
     const avgCalories = variables.avg_calories || 0;
     const workoutsCompleted = variables.workouts_completed || 0;
     const adherence = variables.adherence || 0;
     const progress = variables.progress || 0;
-    const motivationalMessage = variables.motivational_message || '';
+    const motivationalMessage = variables.motivational_message || 'Continua così!';
     const weightData = variables.weight_data || [];
     
     // Genera i punti del grafico peso
-    const weightChartPoints = weightData.map((point, index) => {
-        const x = 50 + (index * 70);
-        const y = 250 - (point.weight - 65) * 10; // scala y in base al peso
-        return `${x},${y}`;
-    }).join(' ');
+    let weightChartPoints = '';
+    if (weightData.length > 0) {
+        weightChartPoints = weightData.map((point, index) => {
+            const x = 50 + (index * 70);
+            const y = 250 - ((point.weight - 65) * 10); 
+            return `${x},${y}`;
+        }).join(' ');
+    }
+    
+    console.log('📊 Chart points:', weightChartPoints);
     
     const html = `<!DOCTYPE html>
 <html>
@@ -367,13 +375,14 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
                     </tr>
                     <tr>
                         <td style="padding: 0 30px 30px 30px;">
-                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${template.greeting || 'Ciao {user_name},'}</p>
-                            <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 0 0 25px 0;">${template.intro_text || ''}</p>
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
+                            <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 0 0 25px 0;">Ecco il tuo report settimanale con tutti i progressi che hai fatto questa settimana! 🎯</p>
                             
                             <!-- Grafico Peso -->
+                            ${weightData.length > 0 ? `
                             <div style="background: #f9fafb; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
-                                <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📊 ${template.weight_card_title || 'Variazione Peso'}</h3>
-                                <svg width="100%" height="200" viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg">
+                                <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📊 Variazione Peso</h3>
+                                <svg width="100%" height="200" viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg" style="display: block;">
                                     <polyline points="${weightChartPoints}" fill="none" stroke="#26847F" stroke-width="3" />
                                     ${weightData.map((point, i) => `
                                         <circle cx="${50 + i * 70}" cy="${250 - (point.weight - 65) * 10}" r="5" fill="#26847F" />
@@ -381,32 +390,33 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
                                     `).join('')}
                                 </svg>
                                 <p style="text-align: center; margin: 15px 0 0 0; font-size: 28px; color: #26847F; font-weight: bold;">${currentWeight} kg</p>
-                                <p style="text-align: center; margin: 5px 0 0 0; font-size: 14px; color: ${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg</p>
+                                <p style="text-align: center; margin: 5px 0 0 0; font-size: 14px; color: ${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
                             </div>
+                            ` : ''}
                             
                             <!-- Statistiche -->
-                            <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📈 ${template.stats_section_title || 'Le tue statistiche'}</h3>
+                            <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📈 Le tue statistiche</h3>
                             <table width="100%" cellpadding="0" cellspacing="10" border="0" style="margin-bottom: 25px;">
                                 <tr>
                                     <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
                                         <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${avgCalories}</p>
-                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.calories_stat_label || 'Calorie medie/giorno'}</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Calorie medie/giorno</p>
                                     </td>
                                     <td width="4%"></td>
                                     <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
                                         <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${workoutsCompleted}</p>
-                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.workouts_stat_label || 'Allenamenti completati'}</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Allenamenti completati</p>
                                     </td>
                                 </tr>
                                 <tr>
                                     <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
                                         <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${adherence}%</p>
-                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.adherence_stat_label || 'Aderenza al piano'}</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Aderenza al piano</p>
                                     </td>
                                     <td width="4%"></td>
                                     <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 15px; text-align: center;">
                                         <p style="margin: 0; font-size: 24px; color: #26847F; font-weight: bold;">${progress}%</p>
-                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">${template.progress_stat_label || 'Progresso obiettivo'}</p>
+                                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #6b7280;">Progresso obiettivo</p>
                                     </td>
                                 </tr>
                             </table>
@@ -416,7 +426,7 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0;">
                                 <tr>
                                     <td align="center">
-                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">${template.call_to_action_text || 'Vai alla Dashboard'}</a>
+                                        <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">Vai alla Dashboard</a>
                                     </td>
                                 </tr>
                             </table>
@@ -627,6 +637,9 @@ Deno.serve(async (req) => {
 
         const template = templates[0];
         
+        console.log(`📋 Template ID: ${templateId}, Base ID: ${emailIdBase}`);
+        console.log(`📋 Template fields: ${Object.keys(template).join(', ')}`);
+        
         // Genera HTML
         const { html, subject } = generateEmailHtml(template, {
             user_name: variables.user_name || 'Utente',
@@ -634,6 +647,9 @@ Deno.serve(async (req) => {
             app_url: 'https://projectmywellness.com',
             ...variables
         }, language);
+        
+        console.log(`📧 Generated HTML length: ${html.length} chars`);
+        console.log(`📧 Subject: ${subject}`);
 
         logEntry.subject = subject;
         logEntry.from_email = template.from_email || 'info@projectmywellness.com';
