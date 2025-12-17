@@ -1013,7 +1013,7 @@ ${trustBadgesHtml}
       icon: BarChart3,
       color: 'indigo',
       emails: [
-        { id: `weekly_report_${selectedLanguage}`, name: 'Report Settimanale Progressi', trigger: 'Cron settimanale (ogni Lunedì)', function: 'sendWeeklyReport' }
+        { id: 'weekly_report', name: 'Report Settimanale Progressi', trigger: 'Cron settimanale (ogni Lunedì)', function: 'sendWeeklyReport' }
       ]
     },
     abandonment: {
@@ -1149,7 +1149,7 @@ ${trustBadgesHtml}
                   Email Automatizzate per Categoria
                 </CardTitle>
                 <div className="flex items-center gap-3">
-                  {(selectedCategory === 'critical' || selectedCategory === 'abandonment' || selectedCategory === 'reporting') && (
+                  {(selectedCategory === 'critical' || selectedCategory === 'abandonment') && (
                     <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
                       <Globe className="w-4 h-4 text-blue-600" />
                       <select
