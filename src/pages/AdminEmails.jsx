@@ -244,9 +244,10 @@ export default function AdminEmails() {
 
       const replacedSubject = replaceVars(template.subject || 'Email di Test', variables);
       
-      // Check if this is a cart abandoned email type
-      const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(previewEmail.id);
-      const isQuizCompletedEmail = previewEmail.id === 'quiz_completed_abandoned';
+      // Check if this is a cart abandoned email type (with or without language suffix)
+      const emailIdBase = previewEmail.id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+      const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(emailIdBase);
+      const isQuizCompletedEmail = emailIdBase === 'quiz_completed_abandoned';
       
       let htmlBody;
       
@@ -1020,10 +1021,10 @@ ${trustBadgesHtml}
         icon: ShoppingCart,
         color: 'amber',
         emails: [
-          { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
-          { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
-          { id: 'cart_abandoned_24h', name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
-          { id: 'cart_abandoned_72h', name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
+          { id: `quiz_completed_abandoned_${selectedLanguage}`, name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
+          { id: `cart_checkout_abandoned_${selectedLanguage}`, name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
+          { id: `cart_abandoned_24h_${selectedLanguage}`, name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
+          { id: `cart_abandoned_72h_${selectedLanguage}`, name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
         ]
       }
   };
@@ -1143,38 +1144,38 @@ ${trustBadgesHtml}
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <div className="flex items-center justify-between">
-                  <CardTitle className="flex items-center gap-2">
-                    <Mail className="w-5 h-5" />
-                    Email Automatizzate per Categoria
-                  </CardTitle>
-                  <div className="flex items-center gap-3">
-                    {selectedCategory === 'critical' && (
-                      <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-                        <Globe className="w-4 h-4 text-blue-600" />
-                        <select
-                          value={selectedLanguage}
-                          onChange={(e) => setSelectedLanguage(e.target.value)}
-                          className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
-                        >
-                          {languageOptions.map(lang => (
-                            <option key={lang.code} value={lang.code}>
-                              {lang.flag} {lang.name}
-                            </option>
-                          ))}
-                        </select>
-                      </div>
-                    )}
-                    <select
-                      value={selectedCategory}
-                      onChange={(e) => setSelectedCategory(e.target.value)}
-                      className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
-                    >
-                      <option value="all">Tutte le Categorie</option>
-                      {Object.entries(emailCategories).map(([key, cat]) => (
-                        <option key={key} value={key}>{cat.name}</option>
-                      ))}
-                    </select>
-                  </div>
+                <CardTitle className="flex items-center gap-2">
+                  <Mail className="w-5 h-5" />
+                  Email Automatizzate per Categoria
+                </CardTitle>
+                <div className="flex items-center gap-3">
+                  {(selectedCategory === 'critical' || selectedCategory === 'abandonment') && (
+                    <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                      <Globe className="w-4 h-4 text-blue-600" />
+                      <select
+                        value={selectedLanguage}
+                        onChange={(e) => setSelectedLanguage(e.target.value)}
+                        className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
+                      >
+                        {languageOptions.map(lang => (
+                          <option key={lang.code} value={lang.code}>
+                            {lang.flag} {lang.name}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  )}
+                  <select
+                    value={selectedCategory}
+                    onChange={(e) => setSelectedCategory(e.target.value)}
+                    className="px-4 py-2 border border-gray-200 rounded-lg text-sm font-medium focus:outline-none focus:ring-2 focus:ring-[var(--brand-primary)]"
+                  >
+                    <option value="all">Tutte le Categorie</option>
+                    {Object.entries(emailCategories).map(([key, cat]) => (
+                      <option key={key} value={key}>{cat.name}</option>
+                    ))}
+                  </select>
+                </div>
                 </div>
               </CardHeader>
               <CardContent className="space-y-8">
@@ -2056,7 +2057,7 @@ ${trustBadgesHtml}
                                       )}
 
                                       {/* Sezione Funzionalità - Per cart_checkout_abandoned e simili */}
-                                      {(previewEmail?.id === 'cart_checkout_abandoned' || previewEmail?.id === 'cart_abandoned_24h' || previewEmail?.id === 'cart_abandoned_72h') && (
+                                      {(emailIdBase === 'cart_checkout_abandoned' || emailIdBase === 'cart_abandoned_24h' || emailIdBase === 'cart_abandoned_72h') && (
                                       <div className="p-4 bg-amber-50 rounded-xl border border-amber-200 space-y-4">
                                       <h4 className="font-semibold text-amber-900 flex items-center gap-2">
                                         🛒 Configurazione Email Carrello Abbandonato
