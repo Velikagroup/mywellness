@@ -303,7 +303,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <tr>
 <td class="content-cell">
 <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${replacedGreeting}</p>
-<div style="color: #374151; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
+<div style="color: #374151; font-size: 16px; line-height: 1.6; white-space: pre-wrap;">${replacedMainContent}</div>
 ${ctaHtml}
 </td>
 </tr>
