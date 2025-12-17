@@ -60,8 +60,13 @@ Deno.serve(async (req) => {
             invoice_url: 'https://example.com/invoice'
         };
 
+        // Identifica tipo di email
+        const emailIdBase = templateId.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+        console.log('🧪 Testing email type:', emailIdBase);
+        
         // Se è weekly_report, aggiungi dati per grafici
-        if (templateId.startsWith('weekly_report')) {
+        if (emailIdBase === 'weekly_report') {
+            console.log('📊 Adding weekly report test data');
             baseVariables.week_range = '10-16 Dicembre 2024';
             baseVariables.current_weight = 72.5;
             baseVariables.weight_change = -1.2;
@@ -82,6 +87,7 @@ Deno.serve(async (req) => {
                 { date: '15 Dic', weight: 72.6 },
                 { date: '16 Dic', weight: 72.5 }
             ];
+            console.log('📊 Weight data added:', baseVariables.weight_data.length, 'points');
         }
 
         // Invia email di test

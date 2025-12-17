@@ -334,31 +334,60 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
 }
 
 function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') {
-    console.log('📊 Generating Weekly Report HTML');
-    console.log('📊 Variables:', JSON.stringify(variables, null, 2));
+    console.log('📊 [WEEKLY REPORT] Generating HTML');
+    console.log('📊 [WEEKLY REPORT] Template:', template?.template_id);
+    console.log('📊 [WEEKLY REPORT] Variables received:', Object.keys(variables));
+    console.log('📊 [WEEKLY REPORT] Full variables:', JSON.stringify(variables, null, 2));
     
     const userName = variables.user_name || 'Utente';
     const weekRange = variables.week_range || 'Questa settimana';
     const currentWeight = variables.current_weight || 70;
     const weightChange = variables.weight_change || 0;
-    const avgCalories = variables.avg_calories || 0;
-    const workoutsCompleted = variables.workouts_completed || 0;
-    const adherence = variables.adherence || 0;
-    const progress = variables.progress || 0;
+    const avgCalories = variables.avg_calories || 1800;
+    const workoutsCompleted = variables.workouts_completed || 3;
+    const adherence = variables.adherence || 75;
+    const progress = variables.progress || 60;
     const motivationalMessage = variables.motivational_message || 'Continua così!';
     const weightData = variables.weight_data || [];
     
+    console.log('📊 [WEEKLY REPORT] Parsed data:', {
+        userName,
+        weekRange,
+        currentWeight,
+        weightChange,
+        avgCalories,
+        workoutsCompleted,
+        adherence,
+        progress,
+        hasWeightData: weightData.length > 0
+    });
+    
     // Genera i punti del grafico peso
     let weightChartPoints = '';
+    let weightChartSvg = '';
     if (weightData.length > 0) {
         weightChartPoints = weightData.map((point, index) => {
             const x = 50 + (index * 70);
             const y = 250 - ((point.weight - 65) * 10); 
             return `${x},${y}`;
         }).join(' ');
+        
+        const circles = weightData.map((point, i) => {
+            const x = 50 + i * 70;
+            const y = 250 - ((point.weight - 65) * 10);
+            return `<circle cx="${x}" cy="${y}" r="5" fill="#26847F" /><text x="${x}" y="270" text-anchor="middle" font-size="12" fill="#6b7280">${point.date}</text>`;
+        }).join('');
+        
+        weightChartSvg = `
+            <svg width="100%" height="200" viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg" style="display: block;">
+                <polyline points="${weightChartPoints}" fill="none" stroke="#26847F" stroke-width="3" />
+                ${circles}
+            </svg>`;
+        
+        console.log('📊 [WEEKLY REPORT] Generated chart with', weightData.length, 'points');
+    } else {
+        console.log('⚠️ [WEEKLY REPORT] No weight data provided');
     }
-    
-    console.log('📊 Chart points:', weightChartPoints);
     
     const html = `<!DOCTYPE html>
 <html>
@@ -380,7 +409,7 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
                     <tr>
                         <td style="padding: 40px 30px 20px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
-                            <h2 style="color: #26847F; margin: 20px 0 10px 0; font-size: 24px;">${template.header_title || 'Report Settimanale'}</h2>
+                            <h2 style="color: #26847F; margin: 20px 0 10px 0; font-size: 24px;">Report Settimanale</h2>
                             <p style="color: #6b7280; margin: 0; font-size: 14px;">${weekRange}</p>
                         </td>
                     </tr>
@@ -389,23 +418,15 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
                             <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
                             <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 0 0 25px 0;">Ecco il tuo report settimanale con tutti i progressi che hai fatto questa settimana! 🎯</p>
                             
-                            <!-- Grafico Peso -->
                             ${weightData.length > 0 ? `
                             <div style="background: #f9fafb; border-radius: 12px; padding: 20px; margin-bottom: 20px;">
                                 <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📊 Variazione Peso</h3>
-                                <svg width="100%" height="200" viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg" style="display: block;">
-                                    <polyline points="${weightChartPoints}" fill="none" stroke="#26847F" stroke-width="3" />
-                                    ${weightData.map((point, i) => `
-                                        <circle cx="${50 + i * 70}" cy="${250 - (point.weight - 65) * 10}" r="5" fill="#26847F" />
-                                        <text x="${50 + i * 70}" y="270" text-anchor="middle" font-size="12" fill="#6b7280">${point.date}</text>
-                                    `).join('')}
-                                </svg>
+                                ${weightChartSvg}
                                 <p style="text-align: center; margin: 15px 0 0 0; font-size: 28px; color: #26847F; font-weight: bold;">${currentWeight} kg</p>
                                 <p style="text-align: center; margin: 5px 0 0 0; font-size: 14px; color: ${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
                             </div>
                             ` : ''}
                             
-                            <!-- Statistiche -->
                             <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📈 Le tue statistiche</h3>
                             <table width="100%" cellpadding="0" cellspacing="10" border="0" style="margin-bottom: 25px;">
                                 <tr>
@@ -457,6 +478,8 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
     </table>
 </body>
 </html>`;
+
+    console.log('📊 [WEEKLY REPORT] HTML generated, length:', html.length);
 
     return { html, subject: template.subject };
 }
