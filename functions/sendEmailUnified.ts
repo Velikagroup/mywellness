@@ -56,11 +56,17 @@ function generateEmailHtml(template, variables, language = 'it') {
     const userName = variables.user_name || 'Utente';
     const templateId = template.template_id || '';
     
+    console.log('🔍 generateEmailHtml - templateId:', templateId);
+    
     // Check if this is a cart abandoned email
     const emailIdBase = templateId.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+    console.log('🔍 emailIdBase:', emailIdBase);
+    
     const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(emailIdBase);
     const isQuizCompletedEmail = emailIdBase === 'quiz_completed_abandoned';
     const isWeeklyReport = emailIdBase === 'weekly_report';
+    
+    console.log('🔍 Email type checks:', { isCartAbandonedEmail, isQuizCompletedEmail, isWeeklyReport });
     
     // Sostituisci variabili
     let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
@@ -85,12 +91,17 @@ function generateEmailHtml(template, variables, language = 'it') {
     
     // Generate HTML based on email type
     if (isCartAbandonedEmail) {
+        console.log('📧 Generating Cart Abandoned HTML');
         return generateCartAbandonedHtml(template, variables, appUrl, emailIdBase, language);
     } else if (isQuizCompletedEmail) {
+        console.log('📧 Generating Quiz Completed HTML');
         return generateQuizCompletedHtml(template, variables, appUrl);
     } else if (isWeeklyReport) {
+        console.log('📧 Generating Weekly Report HTML');
         return generateWeeklyReportHtml(template, variables, appUrl, language);
     }
+    
+    console.log('📧 Generating Default HTML');
 
     const html = `<!DOCTYPE html>
 <html>
