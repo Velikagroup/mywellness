@@ -959,9 +959,9 @@ ${trustBadgesHtml}
       icon: Clock,
       color: 'orange',
       emails: [
-        { id: `renewal_7_days_${selectedLanguage}`, name: 'Reminder Rinnovo - 7 Giorni', trigger: 'Cron (7 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
-        { id: `renewal_3_days_${selectedLanguage}`, name: 'Reminder Rinnovo - 3 Giorni', trigger: 'Cron (3 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
-        { id: `renewal_1_day_${selectedLanguage}`, name: 'Reminder Rinnovo - 1 Giorno', trigger: 'Cron (1 giorno prima scadenza, con cancellazione)', function: 'sendRenewalReminders' }
+        { id: 'renewal_7_days', name: 'Reminder Rinnovo - 7 Giorni', trigger: 'Cron (7 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
+        { id: 'renewal_3_days', name: 'Reminder Rinnovo - 3 Giorni', trigger: 'Cron (3 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
+        { id: 'renewal_1_day', name: 'Reminder Rinnovo - 1 Giorno', trigger: 'Cron (1 giorno prima scadenza, con cancellazione)', function: 'sendRenewalReminders' }
       ]
     },
     winback: {
@@ -969,9 +969,9 @@ ${trustBadgesHtml}
       icon: Heart,
       color: 'pink',
       emails: [
-        { id: `subscription_expired_${selectedLanguage}`, name: 'Abbonamento Scaduto', trigger: 'Cron - Subscription status = expired', function: 'sendSubscriptionExpired' },
-        { id: `standard_upgrade_invite_${selectedLanguage}`, name: 'Invito Upgrade da Standard', trigger: 'Cron - Utente Standard Free da 7+ giorni', function: 'sendStandardUpgradeInvite' },
-        { id: `standard_limits_reached_${selectedLanguage}`, name: 'Limiti Piano Standard Raggiunti', trigger: 'Utente Standard raggiunge limiti funzionalità', function: 'sendStandardLimitsReached' }
+        { id: 'subscription_expired', name: 'Abbonamento Scaduto', trigger: 'Cron - Subscription status = expired', function: 'sendSubscriptionExpired' },
+        { id: 'standard_upgrade_invite', name: 'Invito Upgrade da Standard', trigger: 'Cron - Utente Standard Free da 7+ giorni', function: 'sendStandardUpgradeInvite' },
+        { id: 'standard_limits_reached', name: 'Limiti Piano Standard Raggiunti', trigger: 'Utente Standard raggiunge limiti funzionalità', function: 'sendStandardLimitsReached' }
       ]
     },
     engagement: {
@@ -979,12 +979,12 @@ ${trustBadgesHtml}
       icon: TrendingUp,
       color: 'green',
       emails: [
-        { id: `goal_weight_achieved_${selectedLanguage}`, name: 'Obiettivo Peso Raggiunto', trigger: 'current_weight raggiunge target_weight', function: 'sendGoalWeightAchieved' },
-        { id: `milestone_30_days_${selectedLanguage}`, name: 'Milestone - 30 Giorni', trigger: 'Cron - 30 giorni dall\'iscrizione', function: 'sendMilestones' },
-        { id: `milestone_60_days_${selectedLanguage}`, name: 'Milestone - 60 Giorni', trigger: 'Cron - 60 giorni dall\'iscrizione', function: 'sendMilestones' },
-        { id: `milestone_90_days_${selectedLanguage}`, name: 'Milestone - 90 Giorni (+ Reward)', trigger: 'Cron - 90 giorni dall\'iscrizione', function: 'sendMilestones' },
-        { id: `workout_streak_7_days_${selectedLanguage}`, name: 'Streak Allenamenti 7 Giorni', trigger: '7 workout consecutivi', function: 'sendWorkoutStreak7Days' },
-        { id: `no_workout_week_${selectedLanguage}`, name: 'Nessun Workout Questa Settimana', trigger: 'Cron Lunedì - 0 workout settimana', function: 'sendNoWorkoutWeek' }
+        { id: 'goal_weight_achieved', name: 'Obiettivo Peso Raggiunto', trigger: 'current_weight raggiunge target_weight', function: 'sendGoalWeightAchieved' },
+        { id: 'milestone_30_days', name: 'Milestone - 30 Giorni', trigger: 'Cron - 30 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: 'milestone_60_days', name: 'Milestone - 60 Giorni', trigger: 'Cron - 60 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: 'milestone_90_days', name: 'Milestone - 90 Giorni (+ Reward)', trigger: 'Cron - 90 giorni dall\'iscrizione', function: 'sendMilestones' },
+        { id: 'workout_streak_7_days', name: 'Streak Allenamenti 7 Giorni', trigger: '7 workout consecutivi', function: 'sendWorkoutStreak7Days' },
+        { id: 'no_workout_week', name: 'Nessun Workout Questa Settimana', trigger: 'Cron Lunedì - 0 workout settimana', function: 'sendNoWorkoutWeek' }
       ]
     },
     motivational: {
@@ -992,8 +992,8 @@ ${trustBadgesHtml}
       icon: Zap,
       color: 'purple',
       emails: [
-        { id: `inactive_user_7_days_${selectedLanguage}`, name: 'Utente Inattivo 7 Giorni', trigger: 'Cron - Nessun login per 7 giorni', function: 'sendInactiveUserReminder' },
-        { id: `feedback_request_${selectedLanguage}`, name: 'Richiesta Feedback', trigger: 'Cron - 14 giorni di utilizzo', function: 'sendFeedbackRequest' }
+        { id: 'inactive_user_7_days', name: 'Utente Inattivo 7 Giorni', trigger: 'Cron - Nessun login per 7 giorni', function: 'sendInactiveUserReminder' },
+        { id: 'feedback_request', name: 'Richiesta Feedback', trigger: 'Cron - 14 giorni di utilizzo', function: 'sendFeedbackRequest' }
       ]
     },
     technical: {
@@ -1001,10 +1001,10 @@ ${trustBadgesHtml}
       icon: Shield,
       color: 'blue',
       emails: [
-        { id: `password_reset_confirmed_${selectedLanguage}`, name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
-        { id: `plan_upgrade_${selectedLanguage}`, name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
-        { id: `plan_downgrade_${selectedLanguage}`, name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },
-        { id: `cancellation_confirmation_${selectedLanguage}`, name: 'Conferma Cancellazione', trigger: 'Utente cancella abbonamento', function: 'sendCancellationConfirmation' }
+        { id: 'password_reset_confirmed', name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
+        { id: 'plan_upgrade', name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
+        { id: 'plan_downgrade', name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },
+        { id: 'cancellation_confirmation', name: 'Conferma Cancellazione', trigger: 'Utente cancella abbonamento', function: 'sendCancellationConfirmation' }
       ]
     },
     reporting: {
@@ -1012,7 +1012,7 @@ ${trustBadgesHtml}
       icon: BarChart3,
       color: 'indigo',
       emails: [
-        { id: `weekly_report_${selectedLanguage}`, name: 'Report Settimanale Progressi', trigger: 'Cron settimanale (ogni Lunedì)', function: 'sendWeeklyReport' }
+        { id: 'weekly_report', name: 'Report Settimanale Progressi', trigger: 'Cron settimanale (ogni Lunedì)', function: 'sendWeeklyReport' }
       ]
     },
     abandonment: {
@@ -1020,10 +1020,10 @@ ${trustBadgesHtml}
         icon: ShoppingCart,
         color: 'amber',
         emails: [
-          { id: `quiz_completed_abandoned_${selectedLanguage}`, name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
-          { id: `cart_checkout_abandoned_${selectedLanguage}`, name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
-          { id: `cart_abandoned_24h_${selectedLanguage}`, name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
-          { id: `cart_abandoned_72h_${selectedLanguage}`, name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
+          { id: 'quiz_completed_abandoned', name: 'Promo Piano Base - Quiz Completato', trigger: 'Cron - 24h dopo quiz completato senza acquisto', function: 'sendQuizReminderNoPlan' },
+          { id: 'cart_checkout_abandoned', name: 'Checkout Abbandonato (30 min)', trigger: 'Cron - 30 min dopo inizio checkout', function: 'sendCartCheckoutAbandoned', hasFullEditor: true },
+          { id: 'cart_abandoned_24h', name: 'Checkout Abbandonato (24h)', trigger: 'Cron - 24h dopo inizio checkout', function: 'sendCartAbandoned24h', hasFullEditor: true },
+          { id: 'cart_abandoned_72h', name: 'Checkout Abbandonato - ULTIMA (72h)', trigger: 'Cron - 72h dopo inizio checkout (ultima email)', function: 'sendCartAbandoned72h', hasFullEditor: true }
         ]
       }
   };
@@ -1148,20 +1148,22 @@ ${trustBadgesHtml}
                     Email Automatizzate per Categoria
                   </CardTitle>
                   <div className="flex items-center gap-3">
-                    <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
-                      <Globe className="w-4 h-4 text-blue-600" />
-                      <select
-                        value={selectedLanguage}
-                        onChange={(e) => setSelectedLanguage(e.target.value)}
-                        className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
-                      >
-                        {languageOptions.map(lang => (
-                          <option key={lang.code} value={lang.code}>
-                            {lang.flag} {lang.name}
-                          </option>
-                        ))}
-                      </select>
-                    </div>
+                    {selectedCategory === 'critical' && (
+                      <div className="flex items-center gap-2 bg-blue-50 px-3 py-2 rounded-lg border border-blue-200">
+                        <Globe className="w-4 h-4 text-blue-600" />
+                        <select
+                          value={selectedLanguage}
+                          onChange={(e) => setSelectedLanguage(e.target.value)}
+                          className="bg-transparent border-none text-sm font-semibold text-blue-900 focus:outline-none cursor-pointer"
+                        >
+                          {languageOptions.map(lang => (
+                            <option key={lang.code} value={lang.code}>
+                              {lang.flag} {lang.name}
+                            </option>
+                          ))}
+                        </select>
+                      </div>
+                    )}
                     <select
                       value={selectedCategory}
                       onChange={(e) => setSelectedCategory(e.target.value)}
@@ -1372,7 +1374,7 @@ ${trustBadgesHtml}
                   <Zap className="w-5 h-5 text-[#26847F]" />
                   🧪 Test Email Localizzate
                 </CardTitle>
-                <p className="text-sm text-gray-600">Testa tutte le email in tutte le lingue</p>
+                <p className="text-sm text-gray-600">Testa le email Critical in tutte le lingue</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
@@ -1383,60 +1385,13 @@ ${trustBadgesHtml}
                     className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
                   >
                     <option value="">Seleziona template...</option>
-                    
-                    <optgroup label="🚨 Critical">
-                      <option value="standard_free_welcome">Standard Free - Benvenuto</option>
-                      <option value="base_welcome">Base - Benvenuto</option>
-                      <option value="pro_welcome">Pro - Benvenuto</option>
-                      <option value="premium_welcome">Premium - Benvenuto</option>
-                      <option value="renewal_confirmation">Conferma Rinnovo</option>
-                      <option value="landing_new_user">Landing Offer - Nuovo Utente</option>
-                      <option value="landing_existing_user">Landing Offer - Utente Esistente</option>
-                    </optgroup>
-                    
-                    <optgroup label="⏰ Renewal">
-                      <option value="renewal_7_days">Reminder Rinnovo - 7 Giorni</option>
-                      <option value="renewal_3_days">Reminder Rinnovo - 3 Giorni</option>
-                      <option value="renewal_1_day">Reminder Rinnovo - 1 Giorno</option>
-                    </optgroup>
-                    
-                    <optgroup label="💖 Win-Back">
-                      <option value="subscription_expired">Abbonamento Scaduto</option>
-                      <option value="standard_upgrade_invite">Invito Upgrade da Standard</option>
-                      <option value="standard_limits_reached">Limiti Piano Standard</option>
-                    </optgroup>
-                    
-                    <optgroup label="📈 Engagement">
-                      <option value="goal_weight_achieved">Obiettivo Peso Raggiunto</option>
-                      <option value="milestone_30_days">Milestone 30 Giorni</option>
-                      <option value="milestone_60_days">Milestone 60 Giorni</option>
-                      <option value="milestone_90_days">Milestone 90 Giorni + Reward</option>
-                      <option value="workout_streak_7_days">Streak Allenamenti 7 Giorni</option>
-                      <option value="no_workout_week">Nessun Workout Settimana</option>
-                    </optgroup>
-                    
-                    <optgroup label="⚡ Motivational">
-                      <option value="inactive_user_7_days">Utente Inattivo 7 Giorni</option>
-                      <option value="feedback_request">Richiesta Feedback</option>
-                    </optgroup>
-                    
-                    <optgroup label="🛡️ Technical">
-                      <option value="password_reset_confirmed">Password Reset Completato</option>
-                      <option value="plan_upgrade">Upgrade Piano</option>
-                      <option value="plan_downgrade">Downgrade Piano</option>
-                      <option value="cancellation_confirmation">Conferma Cancellazione</option>
-                    </optgroup>
-                    
-                    <optgroup label="📊 Reporting">
-                      <option value="weekly_report">Report Settimanale</option>
-                    </optgroup>
-                    
-                    <optgroup label="🛒 Abandonment">
-                      <option value="quiz_completed_abandoned">Quiz Completato - Promo Base</option>
-                      <option value="cart_checkout_abandoned">Checkout Abbandonato 30min</option>
-                      <option value="cart_abandoned_24h">Checkout Abbandonato 24h</option>
-                      <option value="cart_abandoned_72h">Checkout Abbandonato 72h - ULTIMA</option>
-                    </optgroup>
+                    <option value="standard_free_welcome">Standard Free - Benvenuto (Critical)</option>
+                    <option value="base_welcome">Base - Benvenuto (Critical)</option>
+                    <option value="pro_welcome">Pro - Benvenuto (Critical)</option>
+                    <option value="premium_welcome">Premium - Benvenuto (Critical)</option>
+                    <option value="renewal_confirmation">Conferma Rinnovo (Critical)</option>
+                    <option value="landing_new_user">Landing Offer - Nuovo Utente (Critical)</option>
+                    <option value="landing_existing_user">Landing Offer - Utente Esistente (Critical)</option>
                   </select>
                 </div>
 
@@ -1575,108 +1530,21 @@ ${trustBadgesHtml}
                   </Button>
                   
                   <Button
-                    onClick={async () => {
-                      if (!testSelectedTemplate || !testSelectedLanguage) {
-                        setTestResult({ success: false, message: 'Seleziona template e lingua' });
-                        return;
-                      }
-
-                      const targetEmail = user?.email;
-                      if (!targetEmail) {
-                        setTestResult({ success: false, message: 'Email utente non disponibile' });
-                        return;
-                      }
-
-                      setIsSendingTest(true);
-                      setTestResult(null);
-                      setTestLogs([]);
-                      setTestEmailLog(null);
-
-                      const addLog = (message, type = 'info') => {
-                        setTestLogs(prev => [...prev, { message, type, timestamp: new Date().toISOString() }]);
-                      };
-
-                      try {
-                        const templateId = `${testSelectedTemplate}_${testSelectedLanguage}`;
-                        addLog(`🔍 Verifica template: ${templateId}`, 'info');
-                        
-                        const templates = await base44.entities.EmailTemplate.filter({ 
-                          template_id: templateId,
-                          is_active: true 
-                        });
-                        
-                        if (templates.length === 0) {
-                          addLog(`❌ Template ${templateId} NON TROVATO nel database`, 'error');
-                          setTestResult({
-                            success: false,
-                            message: `Template ${templateId} non esiste o non è attivo`
-                          });
-                          setIsSendingTest(false);
-                          return;
+                    onClick={() => {
+                      setTestTargetEmail(user?.email || '');
+                      setTimeout(() => {
+                        if (testSelectedTemplate && testSelectedLanguage && user?.email) {
+                          document.querySelector('[value="test"] ~ div button[class*="bg-\\[\\#26847F\\]"]')?.click();
                         }
-                        
-                        addLog(`✅ Template trovato: ${templates[0].name}`, 'success');
-                        addLog(`📧 Invio email a ${targetEmail}...`, 'info');
-                        
-                        const response = await base44.functions.invoke('testLocalizedEmail', {
-                          templateId: templateId,
-                          testEmail: targetEmail,
-                          language: testSelectedLanguage
-                        });
-
-                        addLog(`📬 Risposta ricevuta dalla funzione`, 'info');
-
-                        if (response.data?.success) {
-                          addLog(`✅ Email inviata con successo!`, 'success');
-                          
-                          addLog(`🔍 Verifica nel log email...`, 'info');
-                          await new Promise(resolve => setTimeout(resolve, 2000));
-                          
-                          const emailLogs = await base44.entities.EmailLog.filter({ 
-                            user_email: targetEmail 
-                          }, '-created_date', 1);
-                          
-                          if (emailLogs.length > 0) {
-                            const latestLog = emailLogs[0];
-                            setTestEmailLog(latestLog);
-                            addLog(`✅ Email registrata nel log (ID: ${latestLog.id})`, 'success');
-                            addLog(`📊 Status: ${latestLog.status}`, latestLog.status === 'sent' ? 'success' : 'error');
-                          } else {
-                            addLog(`⚠️ Nessun log trovato`, 'warning');
-                          }
-                          
-                          setTestResult({
-                            success: true,
-                            message: `✅ Email inviata a ${targetEmail}`
-                          });
-                        } else {
-                          addLog(`❌ Invio fallito: ${response.data?.error}`, 'error');
-                          setTestResult({
-                            success: false,
-                            message: response.data?.error || 'Errore sconosciuto'
-                          });
-                        }
-                      } catch (error) {
-                        addLog(`❌ Errore: ${error.message}`, 'error');
-                        setTestResult({ success: false, message: error.message });
-                      }
-
-                      setIsSendingTest(false);
+                      }, 100);
                     }}
                     disabled={isSendingTest || !testSelectedTemplate || !testSelectedLanguage}
                     className="flex-1 bg-blue-600 hover:bg-blue-700 text-white"
                   >
-                    {isSendingTest ? (
-                      <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        <span>Invio...</span>
-                      </div>
-                    ) : (
-                      <div className="flex items-center gap-2">
-                        <Mail className="w-4 h-4" />
-                        <span>A Me Stesso</span>
-                      </div>
-                    )}
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4" />
+                      <span>A Me Stesso</span>
+                    </div>
                   </Button>
 
                   <Button
