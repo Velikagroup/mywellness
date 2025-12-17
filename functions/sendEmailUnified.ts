@@ -68,7 +68,19 @@ function generateEmailHtml(template, variables, language = 'it') {
     
     console.log('🔍 Email type checks:', { isCartAbandonedEmail, isQuizCompletedEmail, isWeeklyReport });
     
-    // Sostituisci variabili
+    // Generate HTML based on email type FIRST
+    if (isWeeklyReport) {
+        console.log('📧 Generating Weekly Report HTML');
+        return generateWeeklyReportHtml(template, variables, appUrl, language);
+    } else if (isCartAbandonedEmail) {
+        console.log('📧 Generating Cart Abandoned HTML');
+        return generateCartAbandonedHtml(template, variables, appUrl, emailIdBase, language);
+    } else if (isQuizCompletedEmail) {
+        console.log('📧 Generating Quiz Completed HTML');
+        return generateQuizCompletedHtml(template, variables, appUrl);
+    }
+    
+    // Sostituisci variabili per email di default
     let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
     let mainContent = template.main_content || '';
     let subject = template.subject || 'MyWellness';
@@ -88,18 +100,6 @@ function generateEmailHtml(template, variables, language = 'it') {
     // Sostituisci {app_url}
     mainContent = mainContent.replace(/\{app_url\}/g, appUrl);
     ctaUrl = ctaUrl.replace(/\{app_url\}/g, appUrl);
-    
-    // Generate HTML based on email type
-    if (isCartAbandonedEmail) {
-        console.log('📧 Generating Cart Abandoned HTML');
-        return generateCartAbandonedHtml(template, variables, appUrl, emailIdBase, language);
-    } else if (isQuizCompletedEmail) {
-        console.log('📧 Generating Quiz Completed HTML');
-        return generateQuizCompletedHtml(template, variables, appUrl);
-    } else if (isWeeklyReport) {
-        console.log('📧 Generating Weekly Report HTML');
-        return generateWeeklyReportHtml(template, variables, appUrl, language);
-    }
     
     console.log('📧 Generating Default HTML');
 
