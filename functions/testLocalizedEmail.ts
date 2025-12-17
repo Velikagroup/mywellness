@@ -51,18 +51,45 @@ Deno.serve(async (req) => {
 
         const template = templates[0];
 
+        // Variabili base
+        const baseVariables = {
+            user_name: 'Test User',
+            plan_name: 'Premium',
+            amount: '29.00',
+            next_billing_date: '15 Marzo 2025',
+            invoice_url: 'https://example.com/invoice'
+        };
+
+        // Se è weekly_report, aggiungi dati per grafici
+        if (templateId.startsWith('weekly_report')) {
+            baseVariables.week_range = '10-16 Dicembre 2024';
+            baseVariables.current_weight = 72.5;
+            baseVariables.weight_change = -1.2;
+            baseVariables.start_weight = 80.0;
+            baseVariables.target_weight = 65.0;
+            baseVariables.distance_remaining = 7.5;
+            baseVariables.avg_calories = 1850;
+            baseVariables.workouts_completed = 4;
+            baseVariables.adherence = 85;
+            baseVariables.progress = 65;
+            baseVariables.motivational_message = 'Ottimo lavoro questa settimana! Continua così!';
+            baseVariables.weight_data = [
+                { date: '10 Dic', weight: 73.7 },
+                { date: '11 Dic', weight: 73.5 },
+                { date: '12 Dic', weight: 73.2 },
+                { date: '13 Dic', weight: 73.0 },
+                { date: '14 Dic', weight: 72.8 },
+                { date: '15 Dic', weight: 72.6 },
+                { date: '16 Dic', weight: 72.5 }
+            ];
+        }
+
         // Invia email di test
         const response = await base44.functions.invoke('sendEmailUnified', {
             userId: user.id,
             userEmail: testEmail,
             templateId: templateId,
-            variables: {
-                user_name: 'Test User',
-                plan_name: 'Premium',
-                amount: '29.00',
-                next_billing_date: '15 Marzo 2025',
-                invoice_url: 'https://example.com/invoice'
-            },
+            variables: baseVariables,
             language: language || 'it',
             triggerSource: 'testLocalizedEmail'
         });
