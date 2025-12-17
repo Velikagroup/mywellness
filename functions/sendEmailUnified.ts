@@ -82,6 +82,20 @@ function generateEmailHtml(template, variables, language = 'it') {
     
     // Sostituisci variabili per email di default
     let greeting = (template.greeting || '').replace(/{user_name}/g, userName);
+
+    // Se greeting è vuoto, aggiungi uno di default basato sulla lingua
+    if (!greeting || greeting.trim() === '') {
+        const greetings = {
+            'it': `Ciao ${userName},`,
+            'en': `Hi ${userName},`,
+            'es': `Hola ${userName},`,
+            'pt': `Olá ${userName},`,
+            'de': `Hallo ${userName},`,
+            'fr': `Bonjour ${userName},`
+        };
+        greeting = greetings[language] || greetings['it'];
+    }
+
     let mainContent = template.main_content || '';
     let subject = template.subject || 'MyWellness';
     let ctaUrl = template.call_to_action_url || `${appUrl}/login`;
