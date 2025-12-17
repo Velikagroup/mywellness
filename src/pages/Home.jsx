@@ -59,6 +59,27 @@ function HomeContent() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
+    // Rileva se siamo in app iOS/Android (Capacitor)
+    const isCapacitor = window.location.protocol === 'capacitor:' || 
+                        window.Capacitor !== undefined;
+    
+    if (isCapacitor) {
+      // Se è app nativa, redirect diretto a Dashboard o Quiz
+      base44.auth.me()
+        .then(user => {
+          if (user && user.quiz_completed) {
+            navigate(createPageUrl('Dashboard'), { replace: true });
+          } else {
+            navigate(createPageUrl('Quiz'), { replace: true });
+          }
+        })
+        .catch(() => {
+          // Non loggato, vai al quiz
+          navigate(createPageUrl('Quiz'), { replace: true });
+        });
+      return;
+    }
+
     // Cattura codice affiliato dall'URL
     const urlParams = new URLSearchParams(window.location.search);
     const affiliateCode = urlParams.get('affiliate');
@@ -72,7 +93,7 @@ function HomeContent() {
       setShowQuizPopup(true);
     }, 5000);
     return () => clearTimeout(timer);
-  }, []);
+  }, [navigate]);
 
   // Removed automatic redirect to Quiz - let users browse the Home page freely
 
