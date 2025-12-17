@@ -1999,6 +1999,17 @@ ${trustBadgesHtml}
                                     />
                                   </div>
 
+                                  <div>
+                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto</Label>
+                                    <Textarea
+                                      value={editingContent.main_content || ''}
+                                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
+                                      placeholder="Scrivi il contenuto principale dell'email qui..."
+                                      rows={8}
+                                      className="text-sm"
+                                    />
+                                  </div>
+
                                   {/* Sezione Grafici/Statistiche - Solo per weekly_report */}
                                   {previewEmail?.id?.startsWith('weekly_report') && (
                                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 space-y-4">
