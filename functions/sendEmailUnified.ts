@@ -100,64 +100,70 @@ function generateEmailHtml(template, variables, language = 'it') {
     // Sostituisci {app_url}
     mainContent = mainContent.replace(/\{app_url\}/g, appUrl);
     ctaUrl = ctaUrl.replace(/\{app_url\}/g, appUrl);
-    
+
     console.log('📧 Generating Default HTML');
 
     const html = `<!DOCTYPE html>
-<html>
-<head>
+    <html>
+    <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+        .logo-cell { padding: 60px 30px 24px 30px; }
+        .content-cell { padding: 40px 30px; }
+        @media only screen and (min-width: 600px) {
+            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .content-cell { padding: 60px 60px 40px 60px !important; }
+        }
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
-            .content { padding: 30px 20px !important; }
-            .outer-table { padding: 0 !important; }
+            .outer-wrapper { padding: 0 !important; }
         }
     </style>
-</head>
-<body style="margin: 0; padding: 0;">
-    <table class="outer-table" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+    </head>
+    <body style="margin: 0; padding: 0;">
+    <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
         <tr>
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="padding: 0;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/13f8dafa2_ImmagineWelcome.png" alt="Welcome to MyWellness" style="width: 100%; height: auto; display: block;">
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="background: white; padding: 40px 30px 16px 30px;">
+                        <td class="logo-cell">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
-                        <td class="content" style="padding: 40px 30px;">
-                            <div style="color: #1f2937; line-height: 1.8; font-size: 16px; white-space: pre-line;">${mainContent}</div>
+                        <td class="content-cell">
+                            ${greeting ? `<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>` : ''}
+                            <div style="color: #374151; line-height: 1.7; font-size: 16px; white-space: pre-line;">${mainContent}</div>
                             ${template.call_to_action_text ? `
-                            <div style="text-align: center; margin: 30px 0;">
-                                <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
-                                    ${template.call_to_action_text}
-                                </a>
-                            </div>` : ''}
+                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+                                <tr>
+                                    <td align="center">
+                                        <a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: white !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                                            ${template.call_to_action_text}
+                                        </a>
+                                    </td>
+                                </tr>
+                            </table>` : ''}
                             ${footerText ? `<p style="color: #6b7280; margin-top: 30px; font-size: 14px;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
-                <table width="100%" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
                     <tr>
                         <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
-                            <p style="margin: 5px 0; font-size: 12px;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
-                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St, Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+                            <p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+                            <p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
                         </td>
                     </tr>
                 </table>
             </td>
         </tr>
     </table>
-</body>
-</html>`;
+    </body>
+    </html>`;
 
     return { html, subject };
 }
