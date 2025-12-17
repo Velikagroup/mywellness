@@ -78,6 +78,7 @@ export default function AdminEmails() {
   const [testEmailAddress, setTestEmailAddress] = useState('');
   
   // Test Email states
+  const [testSelectedCategory, setTestSelectedCategory] = useState('');
   const [testSelectedTemplate, setTestSelectedTemplate] = useState('');
   const [testSelectedLanguage, setTestSelectedLanguage] = useState('it');
   const [testTargetEmail, setTestTargetEmail] = useState('');
@@ -1375,36 +1376,46 @@ ${trustBadgesHtml}
                   <Zap className="w-5 h-5 text-[#26847F]" />
                   🧪 Test Email Localizzate
                 </CardTitle>
-                <p className="text-sm text-gray-600">Testa le email Critical in tutte le lingue</p>
+                <p className="text-sm text-gray-600">Testa le email in tutte le lingue</p>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label>Template Email</Label>
+                  <Label>Categoria Email</Label>
                   <select
-                    value={testSelectedTemplate}
-                    onChange={(e) => setTestSelectedTemplate(e.target.value)}
+                    value={testSelectedCategory}
+                    onChange={(e) => {
+                      setTestSelectedCategory(e.target.value);
+                      setTestSelectedTemplate('');
+                    }}
                     className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
                   >
-                    <option value="">Seleziona template...</option>
-                    
-                    <optgroup label="🚨 Critical">
-                      <option value="standard_free_welcome">Standard Free - Benvenuto</option>
-                      <option value="base_welcome">Base - Benvenuto</option>
-                      <option value="pro_welcome">Pro - Benvenuto</option>
-                      <option value="premium_welcome">Premium - Benvenuto</option>
-                      <option value="renewal_confirmation">Conferma Rinnovo</option>
-                      <option value="landing_new_user">Landing Offer - Nuovo Utente</option>
-                      <option value="landing_existing_user">Landing Offer - Utente Esistente</option>
-                    </optgroup>
-                    
-                    <optgroup label="🛒 Abbandono">
-                      <option value="quiz_completed_abandoned">Promo Piano Base - Quiz Completato</option>
-                      <option value="cart_checkout_abandoned">Checkout Abbandonato (30 min)</option>
-                      <option value="cart_abandoned_24h">Checkout Abbandonato (24h)</option>
-                      <option value="cart_abandoned_72h">Checkout Abbandonato - ULTIMA (72h)</option>
-                    </optgroup>
+                    <option value="">Seleziona categoria...</option>
+                    {Object.entries(emailCategories).map(([key, cat]) => (
+                      <option key={key} value={key}>{cat.name}</option>
+                    ))}
                   </select>
                 </div>
+
+                {testSelectedCategory && (
+                  <div className="space-y-2">
+                    <Label>Template Email</Label>
+                    <select
+                      value={testSelectedTemplate}
+                      onChange={(e) => setTestSelectedTemplate(e.target.value)}
+                      className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
+                    >
+                      <option value="">Seleziona template...</option>
+                      {emailCategories[testSelectedCategory].emails.map(email => {
+                        const baseId = email.id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+                        return (
+                          <option key={email.id} value={baseId}>
+                            {email.name}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+                )}
 
                 <div className="space-y-2">
                   <Label>Lingua</Label>
