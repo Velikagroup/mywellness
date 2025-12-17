@@ -334,9 +334,10 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
 }
 
 function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') {
-    console.log('📊 [WEEKLY REPORT] ============ START GENERATION ============');
+    console.log('📊📊📊 [WEEKLY REPORT] ============ START GENERATION ============');
+    console.log('📊 [WEEKLY REPORT] Template:', template ? 'EXISTS' : 'NULL');
     console.log('📊 [WEEKLY REPORT] Template ID:', template?.template_id);
-    console.log('📊 [WEEKLY REPORT] Variables:', JSON.stringify(variables, null, 2));
+    console.log('📊 [WEEKLY REPORT] Variables keys:', Object.keys(variables));
     
     // Valori hardcoded come fallback
     const userName = variables.user_name || 'Utente';
@@ -387,95 +388,77 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
         return `<circle cx="${x}" cy="${y}" r="5" fill="#26847F" /><text x="${x}" y="270" text-anchor="middle" font-size="12" fill="#6b7280">${point.date}</text>`;
     }).join('');
     
+    // HTML super semplificato - NO SVG per ora
     const html = `<!DOCTYPE html>
 <html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-</head>
-<body style="margin:0;padding:0;font-family:Arial,sans-serif;">
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color:#fafafa;padding:20px 0;">
-        <tr>
-            <td align="center">
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;background:white;border-radius:16px;">
-                    <tr>
-                        <td style="padding:40px 30px 20px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height:48px;width:auto;">
-                            <h2 style="color:#26847F;margin:20px 0 10px 0;font-size:24px;">Report Settimanale</h2>
-                            <p style="color:#6b7280;margin:0;font-size:14px;">${weekRange}</p>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td style="padding:0 30px 30px 30px;">
-                            <p style="color:#374151;font-size:16px;margin:0 0 20px 0;">Ciao ${userName},</p>
-                            <p style="color:#374151;line-height:1.6;font-size:16px;margin:0 0 25px 0;">Ecco il tuo report settimanale con tutti i progressi che hai fatto questa settimana! 🎯</p>
-                            
-                            <div style="background:#f9fafb;border-radius:12px;padding:20px;margin-bottom:20px;">
-                                <h3 style="color:#374151;margin:0 0 15px 0;font-size:16px;">📊 Variazione Peso</h3>
-                                <svg width="100%" height="200" viewBox="0 0 540 280" xmlns="http://www.w3.org/2000/svg">
-                                    <polyline points="${weightChartPoints}" fill="none" stroke="#26847F" stroke-width="3"/>
-                                    ${circles}
-                                </svg>
-                                <p style="text-align:center;margin:15px 0 0 0;font-size:28px;color:#26847F;font-weight:bold;">${currentWeight} kg</p>
-                                <p style="text-align:center;margin:5px 0 0 0;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
-                            </div>
-                            
-                            <h3 style="color:#374151;margin:0 0 15px 0;font-size:16px;">📈 Le tue statistiche</h3>
-                            <table width="100%" cellpadding="0" cellspacing="10" border="0" style="margin-bottom:25px;">
-                                <tr>
-                                    <td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-                                        <p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${avgCalories}</p>
-                                        <p style="margin:5px 0 0 0;font-size:12px;color:#6b7280;">Calorie medie/giorno</p>
-                                    </td>
-                                    <td width="4%"></td>
-                                    <td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-                                        <p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${workoutsCompleted}</p>
-                                        <p style="margin:5px 0 0 0;font-size:12px;color:#6b7280;">Allenamenti completati</p>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-                                        <p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${adherence}%</p>
-                                        <p style="margin:5px 0 0 0;font-size:12px;color:#6b7280;">Aderenza al piano</p>
-                                    </td>
-                                    <td width="4%"></td>
-                                    <td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
-                                        <p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${progress}%</p>
-                                        <p style="margin:5px 0 0 0;font-size:12px;color:#6b7280;">Progresso obiettivo</p>
-                                    </td>
-                                </tr>
-                            </table>
-                            
-                            <p style="color:#26847F;line-height:1.6;font-size:16px;margin:25px 0;font-weight:600;text-align:center;">${motivationalMessage}</p>
-                            
-                            <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin:25px 0;">
-                                <tr>
-                                    <td align="center">
-                                        <a href="${appUrl}/Dashboard" style="display:inline-block;background:linear-gradient(135deg,#26847F 0%,#1f6b66 100%);color:#ffffff!important;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:bold;font-size:16px;">Vai alla Dashboard</a>
-                                    </td>
-                                </tr>
-                            </table>
-                        </td>
-                    </tr>
-                </table>
-                <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width:600px;margin-top:20px;">
-                    <tr>
-                        <td align="center" style="padding:20px;color:#999999;">
-                            <p style="margin:5px 0;font-size:12px;">© VELIKA GROUP LLC</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0;padding:0;font-family:Arial,sans-serif;background:#fafafa;">
+<table width="100%" cellpadding="20">
+<tr><td align="center">
+<table style="max-width:600px;background:white;padding:30px;border-radius:12px;">
+<tr><td>
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="48" alt="MyWellness">
+<h2 style="color:#26847F;margin:20px 0 10px;">Report Settimanale</h2>
+<p style="color:#6b7280;font-size:14px;">${weekRange}</p>
+<hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
+<p style="font-size:16px;">Ciao ${userName},</p>
+<p style="line-height:1.6;">Ecco il tuo report settimanale! 🎯</p>
+
+<div style="background:#f9fafb;padding:20px;border-radius:12px;margin:20px 0;">
+<h3 style="color:#374151;margin:0 0 15px;font-size:16px;">📊 Peso Attuale</h3>
+<p style="text-align:center;font-size:32px;color:#26847F;font-weight:bold;margin:10px 0;">${currentWeight} kg</p>
+<p style="text-align:center;font-size:14px;color:${weightChange < 0 ? '#10b981' : '#ef4444'};">${weightChange > 0 ? '+' : ''}${weightChange} kg questa settimana</p>
+</div>
+
+<h3 style="color:#374151;margin:20px 0 15px;font-size:16px;">📈 Le tue statistiche</h3>
+
+<table width="100%" cellpadding="10" cellspacing="10">
+<tr>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${avgCalories}</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Calorie medie/giorno</p>
+</td>
+<td width="4%"></td>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${workoutsCompleted}</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Allenamenti</p>
+</td>
+</tr>
+<tr>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${adherence}%</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Aderenza</p>
+</td>
+<td width="4%"></td>
+<td width="48%" style="background:#f9fafb;border-radius:12px;padding:15px;text-align:center;">
+<p style="margin:0;font-size:24px;color:#26847F;font-weight:bold;">${progress}%</p>
+<p style="margin:5px 0 0;font-size:12px;color:#6b7280;">Progresso</p>
+</td>
+</tr>
+</table>
+
+<p style="color:#26847F;text-align:center;font-weight:600;margin:25px 0;">${motivationalMessage}</p>
+
+<div style="text-align:center;margin:25px 0;">
+<a href="${appUrl}/Dashboard" style="display:inline-block;background:#26847F;color:white;text-decoration:none;padding:16px 32px;border-radius:12px;font-weight:bold;">Vai alla Dashboard</a>
+</div>
+
+<p style="text-align:center;color:#999;font-size:12px;margin-top:30px;">© VELIKA GROUP LLC</p>
+</td></tr>
+</table>
+</td></tr>
+</table>
 </body>
 </html>`;
 
-    console.log('📊 [WEEKLY REPORT] ============ HTML GENERATED ============');
-    console.log('📊 [WEEKLY REPORT] HTML length:', html.length);
-    console.log('📊 [WEEKLY REPORT] First 500 chars:', html.substring(0, 500));
+    const returnValue = { html, subject: template.subject || 'Report Settimanale - MyWellness' };
     
-    return { html, subject: template.subject || 'Report Settimanale - MyWellness' };
+    console.log('📊📊📊 [WEEKLY REPORT] ============ RETURNING ============');
+    console.log('📊 [WEEKLY REPORT] HTML length:', html.length);
+    console.log('📊 [WEEKLY REPORT] Subject:', returnValue.subject);
+    console.log('📊 [WEEKLY REPORT] Return value keys:', Object.keys(returnValue));
+    
+    return returnValue;
 }
 
     return { html, subject: template.subject };
@@ -672,15 +655,25 @@ Deno.serve(async (req) => {
         console.log(`📋 Template fields: ${Object.keys(template).join(', ')}`);
         
         // Genera HTML
-        const { html, subject } = generateEmailHtml(template, {
+        console.log('🔧 BEFORE generateEmailHtml - template_id:', templateId);
+        const result = generateEmailHtml(template, {
             user_name: variables.user_name || 'Utente',
             user_email: userEmail,
             app_url: 'https://projectmywellness.com',
             ...variables
         }, language);
-        
+
+        console.log('🔧 AFTER generateEmailHtml - result:', result ? 'EXISTS' : 'NULL');
+
+        if (!result || !result.html) {
+            throw new Error('generateEmailHtml returned null or empty');
+        }
+
+        const { html, subject } = result;
+
         console.log(`📧 Generated HTML length: ${html.length} chars`);
         console.log(`📧 Subject: ${subject}`);
+        console.log(`📧 HTML preview (first 200 chars):`, html.substring(0, 200));
 
         logEntry.subject = subject;
         logEntry.from_email = template.from_email || 'info@projectmywellness.com';
