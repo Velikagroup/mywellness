@@ -1991,7 +1991,7 @@ ${trustBadgesHtml}
                                   </div>
 
                                   {/* Sezione Grafici/Statistiche - Solo per weekly_report */}
-                                  {previewEmail?.id === 'weekly_report' && (
+                                  {previewEmail?.id?.startsWith('weekly_report') && (
                                     <div className="p-4 bg-blue-50 rounded-xl border border-blue-200 space-y-4">
                                       <h4 className="font-semibold text-blue-900 flex items-center gap-2">
                                         📊 Configurazione Grafici Email
