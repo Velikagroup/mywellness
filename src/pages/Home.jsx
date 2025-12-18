@@ -69,28 +69,18 @@ function HomeContent() {
       return;
     }
 
-    // ✅ Se siamo su mobile browser dopo OAuth, prova a riaprire l'app
+    // ✅ Se siamo su mobile browser dopo OAuth redirect (solo se viene da auth-callback)
     const isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    if (isMobileBrowser) {
+    const urlParams = new URLSearchParams(window.location.search);
+    const fromOAuth = urlParams.get('oauth_redirect') === 'true';
+
+    if (isMobileBrowser && fromOAuth) {
       base44.auth.me()
         .then(user => {
           if (user) {
-            console.log('✅ Login completato! Tentativo di riapertura app...');
             // Autenticato! Prova ad aprire l'app
             const appScheme = 'mywellness://auth-callback?login=success';
-
-            // Prova a riaprire l'app
             window.location.href = appScheme;
-
-            // Se dopo 1.5 secondi siamo ancora qui, mostra messaggio guida
-            setTimeout(() => {
-              const msg = '✅ Login completato con successo!\n\n' +
-                         '🔄 Se l\'app non si è aperta automaticamente:\n' +
-                         '1. Torna alla schermata Home del tuo iPhone\n' +
-                         '2. Apri manualmente l\'app MyWellness\n' +
-                         '3. Sarai già loggato!';
-              alert(msg);
-            }, 1500);
           }
         })
         .catch(() => {
