@@ -48,18 +48,6 @@ import esquiz from './pages/esquiz';
 import ptquiz from './pages/ptquiz';
 import dequiz from './pages/dequiz';
 import frquiz from './pages/frquiz';
-import itprivacy from './pages/itprivacy';
-import enprivacy from './pages/enprivacy';
-import esprivacy from './pages/esprivacy';
-import ptprivacy from './pages/ptprivacy';
-import deprivacy from './pages/deprivacy';
-import frprivacy from './pages/frprivacy';
-import itterms from './pages/itterms';
-import enterms from './pages/enterms';
-import esterms from './pages/esterms';
-import ptterms from './pages/ptterms';
-import determs from './pages/determs';
-import frterms from './pages/frterms';
 import it from './pages/it';
 import es from './pages/es';
 import pt from './pages/pt';
@@ -130,18 +118,6 @@ export const PAGES = {
     "ptquiz": ptquiz,
     "dequiz": dequiz,
     "frquiz": frquiz,
-    "itprivacy": itprivacy,
-    "enprivacy": enprivacy,
-    "esprivacy": esprivacy,
-    "ptprivacy": ptprivacy,
-    "deprivacy": deprivacy,
-    "frprivacy": frprivacy,
-    "itterms": itterms,
-    "enterms": enterms,
-    "esterms": esterms,
-    "ptterms": ptterms,
-    "determs": determs,
-    "frterms": frterms,
     "it": it,
     "es": es,
     "pt": pt,
