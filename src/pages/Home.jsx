@@ -1479,9 +1479,15 @@ export default function Home() {
   React.useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Se siamo su /, mostra versione inglese (no redirect)
+    // Rileva lingua del browser
+    const browserLang = navigator.language.toLowerCase().split('-')[0];
+    const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+    const detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+    
+    // Se siamo su /, redirect alla versione localizzata
     if (window.location.pathname === '/' || window.location.pathname === createPageUrl('Home')) {
-      localStorage.setItem('preferred_language', 'en');
+      localStorage.setItem('preferred_language', detectedLang);
+      navigate(createPageUrl(detectedLang), { replace: true });
     }
   }, [navigate]);
 
