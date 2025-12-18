@@ -75,14 +75,22 @@ function HomeContent() {
       base44.auth.me()
         .then(user => {
           if (user) {
+            console.log('✅ Login completato! Tentativo di riapertura app...');
             // Autenticato! Prova ad aprire l'app
-            const appScheme = 'mywellness://';
+            const appScheme = 'mywellness://auth-callback?login=success';
+
+            // Prova a riaprire l'app
             window.location.href = appScheme;
-            
-            // Se dopo 2 secondi siamo ancora qui, mostra il messaggio
+
+            // Se dopo 1.5 secondi siamo ancora qui, mostra messaggio guida
             setTimeout(() => {
-              alert('✅ Login completato!\n\nApri manualmente l\'app MyWellness per continuare.');
-            }, 2000);
+              const msg = '✅ Login completato con successo!\n\n' +
+                         '🔄 Se l\'app non si è aperta automaticamente:\n' +
+                         '1. Torna alla schermata Home del tuo iPhone\n' +
+                         '2. Apri manualmente l\'app MyWellness\n' +
+                         '3. Sarai già loggato!';
+              alert(msg);
+            }, 1500);
           }
         })
         .catch(() => {
