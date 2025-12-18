@@ -72,18 +72,17 @@ function HomeContent() {
           } else if (user) {
             navigate(createPageUrl('Quiz'), { replace: true });
           } else {
-            // Non autenticato - apri browser esterno per login
-            const loginUrl = 'https://app.base44.com';
+            // Non autenticato - apri browser esterno per login con redirect all'app
+            const redirectUrl = 'mywellness://auth-callback';
+            const loginUrl = `https://app.base44.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
             window.open(loginUrl, '_system');
-            // Poi chiudi l'app o mostra un messaggio
-            alert('Per favore completa il login nel browser, poi riapri l\'app MyWellness');
           }
         })
         .catch(() => {
-          // Non loggato - apri browser esterno per login
-          const loginUrl = 'https://app.base44.com';
+          // Non loggato - apri browser esterno per login con redirect all'app
+          const redirectUrl = 'mywellness://auth-callback';
+          const loginUrl = `https://app.base44.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
           window.open(loginUrl, '_system');
-          alert('Per favore completa il login nel browser, poi riapri l\'app MyWellness');
         });
       return;
     }
