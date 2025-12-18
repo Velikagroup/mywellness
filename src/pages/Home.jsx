@@ -290,16 +290,8 @@ function HomeContent() {
   };
 
   const handleLogin = async () => {
-    const quizPages = {
-      'en': 'enquiz',
-      'it': 'itquiz',
-      'es': 'esquiz',
-      'pt': 'ptquiz',
-      'de': 'dequiz',
-      'fr': 'frquiz'
-    };
-    const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
-    await base44.auth.redirectToLogin(quizUrl);
+    const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
+    await base44.auth.redirectToSsoProvider('google', callbackUrl);
   };
 
   return (
