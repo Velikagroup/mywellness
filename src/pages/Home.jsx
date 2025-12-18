@@ -74,14 +74,14 @@ function HomeContent() {
           } else {
             // Non autenticato - apri browser esterno per login con redirect all'app
             const redirectUrl = 'mywellness://auth-callback';
-            const loginUrl = `https://app.base44.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
+            const loginUrl = `https://projectmywellness.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
             window.open(loginUrl, '_system');
           }
         })
         .catch(() => {
           // Non loggato - apri browser esterno per login con redirect all'app
           const redirectUrl = 'mywellness://auth-callback';
-          const loginUrl = `https://app.base44.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
+          const loginUrl = `https://projectmywellness.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
           window.open(loginUrl, '_system');
         });
       return;
