@@ -154,22 +154,218 @@ const CONTENT = {
   es: {
     title: "Términos y Condiciones",
     lastUpdated: "Última actualización: Enero 2025",
-    content: `<h2>1. Aceptación de los Términos</h2><p>Al acceder y utilizar MyWellness...</p>`
+    content: `
+      <h2>1. Aceptación de los Términos</h2>
+      <p>Al acceder y utilizar MyWellness (el "Servicio"), operado por VELIKA GROUP LLC ("nosotros", "nuestro"), el usuario ("tú", "tu") acepta estar sujeto a estos Términos y Condiciones. Si no aceptas estos términos, no utilices el Servicio.</p>
+
+      <h2>2. Descripción del Servicio</h2>
+      <p>MyWellness proporciona planes nutricionales y de entrenamiento personalizados generados mediante inteligencia artificial. El Servicio incluye análisis corporal, seguimiento de progreso, recetas personalizadas y rutinas de entrenamiento.</p>
+
+      <h2>3. Suscripciones y Pagos</h2>
+      <p><strong>3.1 Período de Prueba:</strong> Ofrecemos un período de prueba gratuito de 3 días. Durante este período, no se realizarán cargos. Puedes cancelar en cualquier momento antes de que expire el período de prueba.</p>
+      <p><strong>3.2 Renovación Automática:</strong> Al final del período de prueba, la suscripción se renovará automáticamente al plan seleccionado (Base, Pro o Premium) con facturación mensual o anual según tu elección.</p>
+      <p><strong>3.3 Precios:</strong> Los precios se muestran en Euros (€) y pueden variar. El precio aplicable es el que se muestra en el momento de la compra.</p>
+      <p><strong>3.4 Cancelación:</strong> Puedes cancelar tu suscripción en cualquier momento a través de la configuración de tu cuenta. La cancelación tendrá efecto al final del período de facturación actual.</p>
+
+      <h2>4. Cuenta de Usuario</h2>
+      <p><strong>4.1 Registro:</strong> Para utilizar el Servicio, debes crear una cuenta proporcionando información precisa y completa.</p>
+      <p><strong>4.2 Seguridad:</strong> Eres responsable de la seguridad de tu cuenta y de la confidencialidad de tus credenciales de inicio de sesión.</p>
+      <p><strong>4.3 Edad Mínima:</strong> Debes tener al menos 18 años para utilizar el Servicio.</p>
+
+      <h2>5. Uso Aceptable</h2>
+      <p>Te comprometes a:</p>
+      <ul>
+        <li>Utilizar el Servicio solo para fines personales y no comerciales</li>
+        <li>Proporcionar información precisa sobre tu perfil de salud</li>
+        <li>No compartir tu cuenta con otras personas</li>
+        <li>No utilizar el Servicio para actividades ilegales o no autorizadas</li>
+        <li>No intentar violar la seguridad del Servicio</li>
+      </ul>
+
+      <h2>6. Exención de Responsabilidad Médica</h2>
+      <p><strong>IMPORTANTE:</strong> MyWellness NO proporciona asesoramiento médico. Los planes nutricionales y de entrenamiento son generados por inteligencia artificial y son solo para fines informativos y educativos.</p>
+      <p>Antes de comenzar cualquier programa nutricional o de ejercicio, consulta a tu médico o a un profesional de la salud calificado.</p>
+
+      <h2>7. Propiedad Intelectual</h2>
+      <p>Todo el contenido, software, código, diseño, gráficos, logotipos y materiales presentes en el Servicio son propiedad exclusiva de VELIKA GROUP LLC.</p>
+
+      <h2>8. Limitación de Responsabilidad</h2>
+      <p>En la máxima medida permitida por la ley, VELIKA GROUP LLC no será responsable de:</p>
+      <ul>
+        <li>Daños directos, indirectos, incidentales, consecuentes o punitivos</li>
+        <li>Pérdida de beneficios, datos u oportunidades comerciales</li>
+        <li>Lesiones físicas o daños a la salud resultantes del uso del Servicio</li>
+      </ul>
+
+      <h2>9. Contacto</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+      </div>
+    `
   },
   pt: {
     title: "Termos e Condições",
     lastUpdated: "Última atualização: Janeiro 2025",
-    content: `<h2>1. Aceitação dos Termos</h2><p>Ao acessar e usar MyWellness...</p>`
+    content: `
+      <h2>1. Aceitação dos Termos</h2>
+      <p>Ao acessar e usar MyWellness (o "Serviço"), operado pela VELIKA GROUP LLC ("nós", "nosso"), o usuário ("você", "seu") concorda em estar vinculado a estes Termos e Condições. Se você não aceitar estes termos, não use o Serviço.</p>
+
+      <h2>2. Descrição do Serviço</h2>
+      <p>MyWellness fornece planos nutricionais e de treino personalizados gerados através de inteligência artificial. O Serviço inclui análise corporal, acompanhamento de progresso, receitas personalizadas e rotinas de treino.</p>
+
+      <h2>3. Assinaturas e Pagamentos</h2>
+      <p><strong>3.1 Período de Teste:</strong> Oferecemos um período de teste gratuito de 3 dias. Durante este período, não serão feitas cobranças. Você pode cancelar a qualquer momento antes que o período de teste expire.</p>
+      <p><strong>3.2 Renovação Automática:</strong> Ao final do período de teste, a assinatura será renovada automaticamente para o plano selecionado (Base, Pro ou Premium) com faturamento mensal ou anual de acordo com sua escolha.</p>
+      <p><strong>3.3 Preços:</strong> Os preços são mostrados em Euros (€) e podem variar. O preço aplicável é o exibido no momento da compra.</p>
+      <p><strong>3.4 Cancelamento:</strong> Você pode cancelar sua assinatura a qualquer momento através das configurações da sua conta. O cancelamento terá efeito no final do período de faturamento atual.</p>
+
+      <h2>4. Conta de Usuário</h2>
+      <p><strong>4.1 Registro:</strong> Para usar o Serviço, você deve criar uma conta fornecendo informações precisas e completas.</p>
+      <p><strong>4.2 Segurança:</strong> Você é responsável pela segurança da sua conta e pela confidencialidade das suas credenciais de login.</p>
+      <p><strong>4.3 Idade Mínima:</strong> Você deve ter pelo menos 18 anos para usar o Serviço.</p>
+
+      <h2>5. Uso Aceitável</h2>
+      <p>Você concorda em:</p>
+      <ul>
+        <li>Usar o Serviço apenas para fins pessoais e não comerciais</li>
+        <li>Fornecer informações precisas sobre seu perfil de saúde</li>
+        <li>Não compartilhar sua conta com outras pessoas</li>
+        <li>Não usar o Serviço para atividades ilegais ou não autorizadas</li>
+        <li>Não tentar violar a segurança do Serviço</li>
+      </ul>
+
+      <h2>6. Isenção de Responsabilidade Médica</h2>
+      <p><strong>IMPORTANTE:</strong> MyWellness NÃO fornece aconselhamento médico. Os planos nutricionais e de treino são gerados por inteligência artificial e são apenas para fins informativos e educacionais.</p>
+      <p>Antes de iniciar qualquer programa nutricional ou de exercícios, consulte seu médico ou um profissional de saúde qualificado.</p>
+
+      <h2>7. Propriedade Intelectual</h2>
+      <p>Todo o conteúdo, software, código, design, gráficos, logotipos e materiais presentes no Serviço são propriedade exclusiva da VELIKA GROUP LLC.</p>
+
+      <h2>8. Limitação de Responsabilidade</h2>
+      <p>Na máxima extensão permitida por lei, a VELIKA GROUP LLC não será responsável por:</p>
+      <ul>
+        <li>Danos diretos, indiretos, incidentais, consequenciais ou punitivos</li>
+        <li>Perda de lucros, dados ou oportunidades comerciais</li>
+        <li>Lesões físicas ou danos à saúde resultantes do uso do Serviço</li>
+      </ul>
+
+      <h2>9. Contato</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+      </div>
+    `
   },
   de: {
     title: "Allgemeine Geschäftsbedingungen",
     lastUpdated: "Letzte Aktualisierung: Januar 2025",
-    content: `<h2>1. Annahme der Bedingungen</h2><p>Durch den Zugriff und die Nutzung von MyWellness...</p>`
+    content: `
+      <h2>1. Annahme der Bedingungen</h2>
+      <p>Durch den Zugriff und die Nutzung von MyWellness (der "Dienst"), betrieben von VELIKA GROUP LLC ("wir", "unser"), stimmt der Nutzer ("Sie", "Ihr") zu, an diese Allgemeinen Geschäftsbedingungen gebunden zu sein. Wenn Sie diese Bedingungen nicht akzeptieren, nutzen Sie den Dienst nicht.</p>
+
+      <h2>2. Beschreibung des Dienstes</h2>
+      <p>MyWellness bietet personalisierte Ernährungs- und Trainingspläne, die durch künstliche Intelligenz generiert werden. Der Dienst umfasst Körperanalyse, Fortschrittsverfolgung, personalisierte Rezepte und Trainingsroutinen.</p>
+
+      <h2>3. Abonnements und Zahlungen</h2>
+      <p><strong>3.1 Testzeitraum:</strong> Wir bieten einen 3-tägigen kostenlosen Testzeitraum an. Während dieses Zeitraums werden keine Gebühren erhoben. Sie können jederzeit vor Ablauf des Testzeitraums kündigen.</p>
+      <p><strong>3.2 Automatische Verlängerung:</strong> Am Ende des Testzeitraums verlängert sich das Abonnement automatisch auf den gewählten Plan (Base, Pro oder Premium) mit monatlicher oder jährlicher Abrechnung gemäß Ihrer Wahl.</p>
+      <p><strong>3.3 Preise:</strong> Die Preise werden in Euro (€) angezeigt und können variieren. Der gültige Preis ist der zum Zeitpunkt des Kaufs angezeigte.</p>
+      <p><strong>3.4 Kündigung:</strong> Sie können Ihr Abonnement jederzeit über Ihre Kontoeinstellungen kündigen. Die Kündigung wird am Ende des aktuellen Abrechnungszeitraums wirksam.</p>
+
+      <h2>4. Benutzerkonto</h2>
+      <p><strong>4.1 Registrierung:</strong> Um den Dienst zu nutzen, müssen Sie ein Konto erstellen und genaue und vollständige Informationen angeben.</p>
+      <p><strong>4.2 Sicherheit:</strong> Sie sind für die Sicherheit Ihres Kontos und die Vertraulichkeit Ihrer Anmeldedaten verantwortlich.</p>
+      <p><strong>4.3 Mindestalter:</strong> Sie müssen mindestens 18 Jahre alt sein, um den Dienst zu nutzen.</p>
+
+      <h2>5. Akzeptable Nutzung</h2>
+      <p>Sie verpflichten sich:</p>
+      <ul>
+        <li>Den Dienst nur für persönliche und nicht-kommerzielle Zwecke zu nutzen</li>
+        <li>Genaue Informationen über Ihr Gesundheitsprofil anzugeben</li>
+        <li>Ihr Konto nicht mit anderen Personen zu teilen</li>
+        <li>Den Dienst nicht für illegale oder nicht autorisierte Aktivitäten zu nutzen</li>
+        <li>Nicht zu versuchen, die Sicherheit des Dienstes zu verletzen</li>
+      </ul>
+
+      <h2>6. Medizinischer Haftungsausschluss</h2>
+      <p><strong>WICHTIG:</strong> MyWellness bietet KEINE medizinische Beratung. Die Ernährungs- und Trainingspläne werden durch künstliche Intelligenz generiert und dienen nur zu Informations- und Bildungszwecken.</p>
+      <p>Konsultieren Sie vor Beginn eines Ernährungs- oder Trainingsprogramms Ihren Arzt oder einen qualifizierten Gesundheitsexperten.</p>
+
+      <h2>7. Geistiges Eigentum</h2>
+      <p>Alle Inhalte, Software, Code, Design, Grafiken, Logos und Materialien, die im Dienst vorhanden sind, sind ausschließliches Eigentum von VELIKA GROUP LLC.</p>
+
+      <h2>8. Haftungsbeschränkung</h2>
+      <p>Im maximal gesetzlich zulässigen Umfang haftet VELIKA GROUP LLC nicht für:</p>
+      <ul>
+        <li>Direkte, indirekte, zufällige, Folge- oder Strafschäden</li>
+        <li>Verlust von Gewinnen, Daten oder Geschäftsmöglichkeiten</li>
+        <li>Körperliche Verletzungen oder Gesundheitsschäden durch die Nutzung des Dienstes</li>
+      </ul>
+
+      <h2>9. Kontakt</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | E-Mail: velika.03@outlook.it</p>
+      </div>
+    `
   },
   fr: {
     title: "Termes et Conditions",
     lastUpdated: "Dernière mise à jour: Janvier 2025",
-    content: `<h2>1. Acceptation des Conditions</h2><p>En accédant et en utilisant MyWellness...</p>`
+    content: `
+      <h2>1. Acceptation des Conditions</h2>
+      <p>En accédant et en utilisant MyWellness (le "Service"), exploité par VELIKA GROUP LLC ("nous", "notre"), l'utilisateur ("vous", "votre") accepte d'être lié par ces Termes et Conditions. Si vous n'acceptez pas ces conditions, n'utilisez pas le Service.</p>
+
+      <h2>2. Description du Service</h2>
+      <p>MyWellness fournit des plans nutritionnels et d'entraînement personnalisés générés par intelligence artificielle. Le Service comprend l'analyse corporelle, le suivi des progrès, des recettes personnalisées et des routines d'entraînement.</p>
+
+      <h2>3. Abonnements et Paiements</h2>
+      <p><strong>3.1 Période d'Essai:</strong> Nous offrons une période d'essai gratuite de 3 jours. Pendant cette période, aucun frais ne sera facturé. Vous pouvez annuler à tout moment avant l'expiration de la période d'essai.</p>
+      <p><strong>3.2 Renouvellement Automatique:</strong> À la fin de la période d'essai, l'abonnement se renouvellera automatiquement au plan sélectionné (Base, Pro ou Premium) avec facturation mensuelle ou annuelle selon votre choix.</p>
+      <p><strong>3.3 Prix:</strong> Les prix sont affichés en Euros (€) et peuvent varier. Le prix applicable est celui affiché au moment de l'achat.</p>
+      <p><strong>3.4 Annulation:</strong> Vous pouvez annuler votre abonnement à tout moment via les paramètres de votre compte. L'annulation prendra effet à la fin de la période de facturation en cours.</p>
+
+      <h2>4. Compte Utilisateur</h2>
+      <p><strong>4.1 Inscription:</strong> Pour utiliser le Service, vous devez créer un compte en fournissant des informations précises et complètes.</p>
+      <p><strong>4.2 Sécurité:</strong> Vous êtes responsable de la sécurité de votre compte et de la confidentialité de vos identifiants de connexion.</p>
+      <p><strong>4.3 Âge Minimum:</strong> Vous devez avoir au moins 18 ans pour utiliser le Service.</p>
+
+      <h2>5. Utilisation Acceptable</h2>
+      <p>Vous acceptez de:</p>
+      <ul>
+        <li>Utiliser le Service uniquement à des fins personnelles et non commerciales</li>
+        <li>Fournir des informations précises sur votre profil de santé</li>
+        <li>Ne pas partager votre compte avec d'autres personnes</li>
+        <li>Ne pas utiliser le Service pour des activités illégales ou non autorisées</li>
+        <li>Ne pas tenter de violer la sécurité du Service</li>
+      </ul>
+
+      <h2>6. Avertissement Médical</h2>
+      <p><strong>IMPORTANT:</strong> MyWellness ne fournit PAS de conseils médicaux. Les plans nutritionnels et d'entraînement sont générés par intelligence artificielle et sont uniquement à des fins informatives et éducatives.</p>
+      <p>Avant de commencer tout programme nutritionnel ou d'exercice, consultez votre médecin ou un professionnel de santé qualifié.</p>
+
+      <h2>7. Propriété Intellectuelle</h2>
+      <p>Tout le contenu, logiciel, code, design, graphiques, logos et matériaux présents dans le Service sont la propriété exclusive de VELIKA GROUP LLC.</p>
+
+      <h2>8. Limitation de Responsabilité</h2>
+      <p>Dans la mesure maximale permise par la loi, VELIKA GROUP LLC ne sera pas responsable de:</p>
+      <ul>
+        <li>Dommages directs, indirects, accessoires, consécutifs ou punitifs</li>
+        <li>Perte de profits, de données ou d'opportunités commerciales</li>
+        <li>Blessures physiques ou dommages à la santé résultant de l'utilisation du Service</li>
+      </ul>
+
+      <h2>9. Contact</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | E-mail: velika.03@outlook.it</p>
+      </div>
+    `
   }
 };
 

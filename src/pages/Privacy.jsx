@@ -314,22 +314,442 @@ const CONTENT = {
   es: {
     title: "Política de Privacidad",
     lastUpdated: "Última actualización: Enero 2025",
-    content: `<h2>1. Introducción</h2><p>VELIKA GROUP LLC ("nosotros", "nuestro") respeta tu privacidad...</p>`
+    content: `
+      <h2>1. Introducción</h2>
+      <p>VELIKA GROUP LLC ("nosotros", "nuestro") respeta tu privacidad y se compromete a proteger tus datos personales. Esta Política de Privacidad explica cómo recopilamos, usamos, almacenamos y protegemos tu información cuando utilizas MyWellness (el "Servicio").</p>
+
+      <h2>2. Información que Recopilamos</h2>
+      <h3>2.1 Información Proporcionada por Ti</h3>
+      <ul>
+        <li><strong>Datos de Registro:</strong> nombre, apellido, correo electrónico, contraseña</li>
+        <li><strong>Datos de Pago:</strong> información de tarjeta de crédito (procesada de forma segura por Stripe)</li>
+        <li><strong>Datos de Facturación:</strong> nombre/razón social, dirección, número de identificación fiscal</li>
+        <li><strong>Datos de Contacto:</strong> número de teléfono</li>
+        <li><strong>Datos de Perfil:</strong> fecha de nacimiento, edad, género, altura, peso, medidas corporales</li>
+        <li><strong>Datos de Objetivos:</strong> peso objetivo, tipo de cuerpo deseado, áreas a mejorar</li>
+        <li><strong>Datos de Estilo de Vida:</strong> nivel de actividad física, experiencia fitness, preferencias alimentarias, alergias</li>
+        <li><strong>Fotos:</strong> imágenes de comidas y fotos de progreso cargadas por ti</li>
+      </ul>
+
+      <h3>2.2 Información Recopilada Automáticamente</h3>
+      <ul>
+        <li>Dirección IP</li>
+        <li>Tipo de navegador y dispositivo</li>
+        <li>Sistema operativo</li>
+        <li>Páginas visitadas y tiempo de permanencia</li>
+        <li>Fecha y hora de acceso</li>
+        <li>Cookies y tecnologías similares</li>
+      </ul>
+
+      <h2>3. Cómo Utilizamos tu Información</h2>
+      <p>Utilizamos tus datos para:</p>
+      <ul>
+        <li>Proporcionar y mejorar el Servicio</li>
+        <li>Crear planes nutricionales y de entrenamiento personalizados</li>
+        <li>Procesar pagos y gestionar suscripciones</li>
+        <li>Enviar confirmaciones, facturas y comunicaciones importantes</li>
+        <li>Analizar el progreso y proporcionar retroalimentación</li>
+        <li>Mejorar nuestros algoritmos de inteligencia artificial</li>
+        <li>Prevenir fraudes y garantizar la seguridad</li>
+        <li>Responder a solicitudes de soporte</li>
+        <li>Enviar comunicaciones de marketing (solo si has dado consentimiento)</li>
+        <li>Cumplir con obligaciones legales</li>
+      </ul>
+
+      <h2>4. Base Legal para el Tratamiento (GDPR)</h2>
+      <p>Para usuarios en la Unión Europea, procesamos datos personales basados en:</p>
+      <ul>
+        <li><strong>Consentimiento:</strong> para marketing y cookies no esenciales</li>
+        <li><strong>Ejecución del Contrato:</strong> para proporcionar el Servicio</li>
+        <li><strong>Obligación Legal:</strong> para cumplimiento fiscal y legal</li>
+        <li><strong>Interés Legítimo:</strong> para mejorar el Servicio y prevenir fraudes</li>
+      </ul>
+
+      <h2>5. Acceso mediante Google (Google Sign-In)</h2>
+      <p>Si eliges acceder a MyWellness usando tu cuenta de Google, recopilamos la siguiente información de tu perfil de Google:</p>
+      <ul>
+        <li><strong>Nombre completo:</strong> para personalizar tu experiencia</li>
+        <li><strong>Dirección de correo electrónico:</strong> para identificar tu cuenta y enviarte comunicaciones importantes</li>
+        <li><strong>Foto de perfil:</strong> para mostrarla en tu cuenta (opcional)</li>
+      </ul>
+      <p><strong>NO</strong> accedemos a tus contactos de Google, historial de navegación, archivos de Google Drive u otros datos de tu cuenta de Google. El acceso se limita exclusivamente a la información básica del perfil necesaria para la autenticación.</p>
+
+      <h2>6. Compartir Datos</h2>
+      <p>Podemos compartir tus datos con:</p>
+      <h3>6.1 Proveedores de Servicios</h3>
+      <ul>
+        <li><strong>Stripe:</strong> para procesamiento de pagos</li>
+        <li><strong>Proveedores de Hosting:</strong> para almacenar datos</li>
+        <li><strong>Servicios de Email:</strong> para enviar comunicaciones</li>
+        <li><strong>Servicios de IA:</strong> para generar planes personalizados y analizar fotos</li>
+      </ul>
+      <p><strong>NO</strong> vendemos tus datos personales a terceros con fines de marketing.</p>
+
+      <h2>7. Seguridad de Datos</h2>
+      <p>Implementamos medidas de seguridad técnicas y organizativas para proteger tus datos:</p>
+      <ul>
+        <li>Cifrado SSL/TLS para todas las transmisiones</li>
+        <li>Almacenamiento seguro de datos en servidores protegidos</li>
+        <li>Acceso limitado a datos personales solo para personal autorizado</li>
+        <li>Monitoreo regular para detectar vulnerabilidades</li>
+        <li>Copias de seguridad regulares de datos</li>
+      </ul>
+
+      <h2>8. Retención de Datos</h2>
+      <p>Conservamos tus datos personales el tiempo necesario para proporcionar el Servicio:</p>
+      <ul>
+        <li><strong>Cuentas Activas:</strong> durante la duración de la suscripción</li>
+        <li><strong>Cuentas Canceladas:</strong> 90 días después de la cancelación, luego se eliminan los datos</li>
+        <li><strong>Datos de Facturación:</strong> 10 años por obligaciones fiscales</li>
+      </ul>
+
+      <h2>9. Tus Derechos</h2>
+      <p>De acuerdo con el GDPR y otras leyes de privacidad, tienes los siguientes derechos:</p>
+      <ul>
+        <li><strong>Acceso:</strong> solicitar una copia de tus datos personales</li>
+        <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos</li>
+        <li><strong>Supresión:</strong> solicitar la eliminación de tus datos</li>
+        <li><strong>Portabilidad:</strong> recibir tus datos en formato estructurado</li>
+      </ul>
+      <p>Para ejercer estos derechos, contáctanos en: velika.03@outlook.it</p>
+
+      <h2>10. Contacto</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+      </div>
+    `
   },
   pt: {
     title: "Política de Privacidade",
     lastUpdated: "Última atualização: Janeiro 2025",
-    content: `<h2>1. Introdução</h2><p>VELIKA GROUP LLC ("nós", "nosso") respeita sua privacidade...</p>`
+    content: `
+      <h2>1. Introdução</h2>
+      <p>VELIKA GROUP LLC ("nós", "nosso") respeita sua privacidade e está comprometido em proteger seus dados pessoais. Esta Política de Privacidade explica como coletamos, usamos, armazenamos e protegemos suas informações quando você usa o MyWellness (o "Serviço").</p>
+
+      <h2>2. Informações que Coletamos</h2>
+      <h3>2.1 Informações Fornecidas por Você</h3>
+      <ul>
+        <li><strong>Dados de Registro:</strong> nome, sobrenome, e-mail, senha</li>
+        <li><strong>Dados de Pagamento:</strong> informações do cartão de crédito (processadas com segurança pela Stripe)</li>
+        <li><strong>Dados de Faturamento:</strong> nome/razão social, endereço, número de identificação fiscal</li>
+        <li><strong>Dados de Contato:</strong> número de telefone</li>
+        <li><strong>Dados de Perfil:</strong> data de nascimento, idade, gênero, altura, peso, medidas corporais</li>
+        <li><strong>Dados de Objetivos:</strong> peso alvo, tipo de corpo desejado, áreas a melhorar</li>
+        <li><strong>Dados de Estilo de Vida:</strong> nível de atividade física, experiência fitness, preferências alimentares, alergias</li>
+        <li><strong>Fotos:</strong> imagens de refeições e fotos de progresso carregadas por você</li>
+      </ul>
+
+      <h3>2.2 Informações Coletadas Automaticamente</h3>
+      <ul>
+        <li>Endereço IP</li>
+        <li>Tipo de navegador e dispositivo</li>
+        <li>Sistema operacional</li>
+        <li>Páginas visitadas e tempo de permanência</li>
+        <li>Data e hora de acesso</li>
+        <li>Cookies e tecnologias similares</li>
+      </ul>
+
+      <h2>3. Como Usamos suas Informações</h2>
+      <p>Usamos seus dados para:</p>
+      <ul>
+        <li>Fornecer e melhorar o Serviço</li>
+        <li>Criar planos nutricionais e de treino personalizados</li>
+        <li>Processar pagamentos e gerenciar assinaturas</li>
+        <li>Enviar confirmações, faturas e comunicações importantes</li>
+        <li>Analisar o progresso e fornecer feedback</li>
+        <li>Melhorar nossos algoritmos de inteligência artificial</li>
+        <li>Prevenir fraudes e garantir segurança</li>
+        <li>Responder a solicitações de suporte</li>
+        <li>Enviar comunicações de marketing (apenas se você consentiu)</li>
+        <li>Cumprir obrigações legais</li>
+      </ul>
+
+      <h2>4. Base Legal para o Processamento (GDPR)</h2>
+      <p>Para usuários na União Europeia, processamos dados pessoais com base em:</p>
+      <ul>
+        <li><strong>Consentimento:</strong> para marketing e cookies não essenciais</li>
+        <li><strong>Execução do Contrato:</strong> para fornecer o Serviço</li>
+        <li><strong>Obrigação Legal:</strong> para conformidade fiscal e legal</li>
+        <li><strong>Interesse Legítimo:</strong> para melhorar o Serviço e prevenir fraudes</li>
+      </ul>
+
+      <h2>5. Acesso via Google (Google Sign-In)</h2>
+      <p>Se você escolher acessar o MyWellness usando sua conta do Google, coletamos as seguintes informações do seu perfil do Google:</p>
+      <ul>
+        <li><strong>Nome completo:</strong> para personalizar sua experiência</li>
+        <li><strong>Endereço de e-mail:</strong> para identificar sua conta e enviar comunicações importantes</li>
+        <li><strong>Foto de perfil:</strong> para exibi-la em sua conta (opcional)</li>
+      </ul>
+      <p><strong>NÃO</strong> acessamos seus contatos do Google, histórico de navegação, arquivos do Google Drive ou outros dados da sua conta do Google. O acesso é limitado exclusivamente às informações básicas de perfil necessárias para autenticação.</p>
+
+      <h2>6. Compartilhamento de Dados</h2>
+      <p>Podemos compartilhar seus dados com:</p>
+      <h3>6.1 Provedores de Serviços</h3>
+      <ul>
+        <li><strong>Stripe:</strong> para processamento de pagamentos</li>
+        <li><strong>Provedores de Hospedagem:</strong> para armazenar dados</li>
+        <li><strong>Serviços de E-mail:</strong> para enviar comunicações</li>
+        <li><strong>Serviços de IA:</strong> para gerar planos personalizados e analisar fotos</li>
+      </ul>
+      <p><strong>NÃO</strong> vendemos seus dados pessoais a terceiros para fins de marketing.</p>
+
+      <h2>7. Segurança de Dados</h2>
+      <p>Implementamos medidas de segurança técnicas e organizacionais para proteger seus dados:</p>
+      <ul>
+        <li>Criptografia SSL/TLS para todas as transmissões</li>
+        <li>Armazenamento seguro de dados em servidores protegidos</li>
+        <li>Acesso limitado a dados pessoais apenas para pessoal autorizado</li>
+        <li>Monitoramento regular para detectar vulnerabilidades</li>
+        <li>Backups regulares de dados</li>
+      </ul>
+
+      <h2>8. Retenção de Dados</h2>
+      <p>Retemos seus dados pessoais pelo tempo necessário para fornecer o Serviço:</p>
+      <ul>
+        <li><strong>Contas Ativas:</strong> durante a duração da assinatura</li>
+        <li><strong>Contas Canceladas:</strong> 90 dias após o cancelamento, depois os dados são excluídos</li>
+        <li><strong>Dados de Faturamento:</strong> 10 anos por obrigações fiscais</li>
+      </ul>
+
+      <h2>9. Seus Direitos</h2>
+      <p>De acordo com o GDPR e outras leis de privacidade, você tem os seguintes direitos:</p>
+      <ul>
+        <li><strong>Acesso:</strong> solicitar uma cópia de seus dados pessoais</li>
+        <li><strong>Retificação:</strong> corrigir dados imprecisos ou incompletos</li>
+        <li><strong>Exclusão:</strong> solicitar a exclusão de seus dados</li>
+        <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado</li>
+      </ul>
+      <p>Para exercer esses direitos, entre em contato: velika.03@outlook.it</p>
+
+      <h2>10. Contato</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+      </div>
+    `
   },
   de: {
     title: "Datenschutzerklärung",
     lastUpdated: "Letzte Aktualisierung: Januar 2025",
-    content: `<h2>1. Einführung</h2><p>VELIKA GROUP LLC ("wir", "unser") respektiert Ihre Privatsphäre...</p>`
+    content: `
+      <h2>1. Einführung</h2>
+      <p>VELIKA GROUP LLC ("wir", "unser") respektiert Ihre Privatsphäre und verpflichtet sich, Ihre personenbezogenen Daten zu schützen. Diese Datenschutzerklärung erklärt, wie wir Ihre Informationen sammeln, verwenden, speichern und schützen, wenn Sie MyWellness (den "Dienst") nutzen.</p>
+
+      <h2>2. Informationen, die wir sammeln</h2>
+      <h3>2.1 Von Ihnen bereitgestellte Informationen</h3>
+      <ul>
+        <li><strong>Registrierungsdaten:</strong> Vorname, Nachname, E-Mail, Passwort</li>
+        <li><strong>Zahlungsdaten:</strong> Kreditkarteninformationen (sicher verarbeitet durch Stripe)</li>
+        <li><strong>Rechnungsdaten:</strong> Name/Firmenname, Adresse, Steuernummer</li>
+        <li><strong>Kontaktdaten:</strong> Telefonnummer</li>
+        <li><strong>Profildaten:</strong> Geburtsdatum, Alter, Geschlecht, Größe, Gewicht, Körpermaße</li>
+        <li><strong>Zieldaten:</strong> Zielgewicht, gewünschter Körpertyp, zu verbessernde Bereiche</li>
+        <li><strong>Lifestyle-Daten:</strong> körperliche Aktivität, Fitness-Erfahrung, Ernährungspräferenzen, Allergien</li>
+        <li><strong>Fotos:</strong> Mahlzeitenbilder und Fortschrittsfotos, die von Ihnen hochgeladen wurden</li>
+      </ul>
+
+      <h3>2.2 Automatisch gesammelte Informationen</h3>
+      <ul>
+        <li>IP-Adresse</li>
+        <li>Browser-Typ und Gerät</li>
+        <li>Betriebssystem</li>
+        <li>Besuchte Seiten und Verweildauer</li>
+        <li>Datum und Uhrzeit des Zugriffs</li>
+        <li>Cookies und ähnliche Technologien</li>
+      </ul>
+
+      <h2>3. Wie wir Ihre Informationen verwenden</h2>
+      <p>Wir verwenden Ihre Daten, um:</p>
+      <ul>
+        <li>Den Dienst bereitzustellen und zu verbessern</li>
+        <li>Personalisierte Ernährungs- und Trainingspläne zu erstellen</li>
+        <li>Zahlungen zu verarbeiten und Abonnements zu verwalten</li>
+        <li>Bestätigungen, Rechnungen und wichtige Mitteilungen zu senden</li>
+        <li>Fortschritte zu analysieren und Feedback zu geben</li>
+        <li>Unsere KI-Algorithmen zu verbessern</li>
+        <li>Betrug zu verhindern und Sicherheit zu gewährleisten</li>
+        <li>Auf Support-Anfragen zu antworten</li>
+        <li>Marketing-Kommunikation zu senden (nur mit Ihrer Zustimmung)</li>
+        <li>Rechtliche Verpflichtungen zu erfüllen</li>
+      </ul>
+
+      <h2>4. Rechtsgrundlage für die Verarbeitung (DSGVO)</h2>
+      <p>Für Nutzer in der Europäischen Union verarbeiten wir personenbezogene Daten auf der Grundlage von:</p>
+      <ul>
+        <li><strong>Einwilligung:</strong> für Marketing und nicht-essenzielle Cookies</li>
+        <li><strong>Vertragserfüllung:</strong> zur Bereitstellung des Dienstes</li>
+        <li><strong>Rechtliche Verpflichtung:</strong> für steuerliche und rechtliche Compliance</li>
+        <li><strong>Berechtigtes Interesse:</strong> zur Verbesserung des Dienstes und Betrugsprävention</li>
+      </ul>
+
+      <h2>5. Zugriff über Google (Google Sign-In)</h2>
+      <p>Wenn Sie sich für den Zugriff auf MyWellness mit Ihrem Google-Konto entscheiden, sammeln wir folgende Informationen aus Ihrem Google-Profil:</p>
+      <ul>
+        <li><strong>Vollständiger Name:</strong> zur Personalisierung Ihrer Erfahrung</li>
+        <li><strong>E-Mail-Adresse:</strong> zur Identifizierung Ihres Kontos und zum Versenden wichtiger Mitteilungen</li>
+        <li><strong>Profilbild:</strong> zur Anzeige in Ihrem Konto (optional)</li>
+      </ul>
+      <p>Wir greifen <strong>NICHT</strong> auf Ihre Google-Kontakte, Ihren Browserverlauf, Google Drive-Dateien oder andere Daten Ihres Google-Kontos zu. Der Zugriff beschränkt sich ausschließlich auf grundlegende Profilinformationen, die für die Authentifizierung erforderlich sind.</p>
+
+      <h2>6. Datenweitergabe</h2>
+      <p>Wir können Ihre Daten weitergeben an:</p>
+      <h3>6.1 Dienstleister</h3>
+      <ul>
+        <li><strong>Stripe:</strong> für Zahlungsabwicklung</li>
+        <li><strong>Hosting-Anbieter:</strong> zur Datenspeicherung</li>
+        <li><strong>E-Mail-Dienste:</strong> zum Versenden von Mitteilungen</li>
+        <li><strong>KI-Dienste:</strong> zur Erstellung personalisierter Pläne und Fotoanalyse</li>
+      </ul>
+      <p>Wir verkaufen Ihre personenbezogenen Daten <strong>NICHT</strong> an Dritte für Marketingzwecke.</p>
+
+      <h2>7. Datensicherheit</h2>
+      <p>Wir implementieren technische und organisatorische Sicherheitsmaßnahmen zum Schutz Ihrer Daten:</p>
+      <ul>
+        <li>SSL/TLS-Verschlüsselung für alle Übertragungen</li>
+        <li>Sichere Datenspeicherung auf geschützten Servern</li>
+        <li>Begrenzter Zugriff auf personenbezogene Daten nur für autorisiertes Personal</li>
+        <li>Regelmäßige Überwachung zur Erkennung von Schwachstellen</li>
+        <li>Regelmäßige Datensicherungen</li>
+      </ul>
+
+      <h2>8. Datenspeicherung</h2>
+      <p>Wir speichern Ihre personenbezogenen Daten so lange, wie es zur Bereitstellung des Dienstes erforderlich ist:</p>
+      <ul>
+        <li><strong>Aktive Konten:</strong> für die Dauer des Abonnements</li>
+        <li><strong>Gekündigte Konten:</strong> 90 Tage nach Kündigung, danach werden Daten gelöscht</li>
+        <li><strong>Rechnungsdaten:</strong> 10 Jahre aufgrund steuerlicher Verpflichtungen</li>
+      </ul>
+
+      <h2>9. Ihre Rechte</h2>
+      <p>Gemäß DSGVO und anderen Datenschutzgesetzen haben Sie folgende Rechte:</p>
+      <ul>
+        <li><strong>Zugriff:</strong> eine Kopie Ihrer personenbezogenen Daten anfordern</li>
+        <li><strong>Berichtigung:</strong> ungenaue oder unvollständige Daten korrigieren</li>
+        <li><strong>Löschung:</strong> die Löschung Ihrer Daten beantragen</li>
+        <li><strong>Datenübertragbarkeit:</strong> Ihre Daten in strukturiertem Format erhalten</li>
+      </ul>
+      <p>Um diese Rechte auszuüben, kontaktieren Sie uns unter: velika.03@outlook.it</p>
+
+      <h2>10. Kontakt</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | E-Mail: velika.03@outlook.it</p>
+      </div>
+    `
   },
   fr: {
     title: "Politique de Confidentialité",
     lastUpdated: "Dernière mise à jour: Janvier 2025",
-    content: `<h2>1. Introduction</h2><p>VELIKA GROUP LLC ("nous", "notre") respecte votre vie privée...</p>`
+    content: `
+      <h2>1. Introduction</h2>
+      <p>VELIKA GROUP LLC ("nous", "notre") respecte votre vie privée et s'engage à protéger vos données personnelles. Cette Politique de Confidentialité explique comment nous collectons, utilisons, stockons et protégeons vos informations lorsque vous utilisez MyWellness (le "Service").</p>
+
+      <h2>2. Informations que nous collectons</h2>
+      <h3>2.1 Informations fournies par vous</h3>
+      <ul>
+        <li><strong>Données d'inscription:</strong> prénom, nom, e-mail, mot de passe</li>
+        <li><strong>Données de paiement:</strong> informations de carte de crédit (traitées en toute sécurité par Stripe)</li>
+        <li><strong>Données de facturation:</strong> nom/raison sociale, adresse, numéro d'identification fiscale</li>
+        <li><strong>Données de contact:</strong> numéro de téléphone</li>
+        <li><strong>Données de profil:</strong> date de naissance, âge, genre, taille, poids, mesures corporelles</li>
+        <li><strong>Données d'objectifs:</strong> poids cible, type de corps souhaité, zones à améliorer</li>
+        <li><strong>Données de style de vie:</strong> niveau d'activité physique, expérience fitness, préférences alimentaires, allergies</li>
+        <li><strong>Photos:</strong> images de repas et photos de progrès téléchargées par vous</li>
+      </ul>
+
+      <h3>2.2 Informations collectées automatiquement</h3>
+      <ul>
+        <li>Adresse IP</li>
+        <li>Type de navigateur et appareil</li>
+        <li>Système d'exploitation</li>
+        <li>Pages visitées et temps de visite</li>
+        <li>Date et heure d'accès</li>
+        <li>Cookies et technologies similaires</li>
+      </ul>
+
+      <h2>3. Comment nous utilisons vos informations</h2>
+      <p>Nous utilisons vos données pour:</p>
+      <ul>
+        <li>Fournir et améliorer le Service</li>
+        <li>Créer des plans nutritionnels et d'entraînement personnalisés</li>
+        <li>Traiter les paiements et gérer les abonnements</li>
+        <li>Envoyer des confirmations, factures et communications importantes</li>
+        <li>Analyser les progrès et fournir des commentaires</li>
+        <li>Améliorer nos algorithmes d'intelligence artificielle</li>
+        <li>Prévenir la fraude et assurer la sécurité</li>
+        <li>Répondre aux demandes de support</li>
+        <li>Envoyer des communications marketing (uniquement avec votre consentement)</li>
+        <li>Respecter les obligations légales</li>
+      </ul>
+
+      <h2>4. Base légale du traitement (RGPD)</h2>
+      <p>Pour les utilisateurs dans l'Union européenne, nous traitons les données personnelles sur la base de:</p>
+      <ul>
+        <li><strong>Consentement:</strong> pour le marketing et les cookies non essentiels</li>
+        <li><strong>Exécution du contrat:</strong> pour fournir le Service</li>
+        <li><strong>Obligation légale:</strong> pour la conformité fiscale et légale</li>
+        <li><strong>Intérêt légitime:</strong> pour améliorer le Service et prévenir la fraude</li>
+      </ul>
+
+      <h2>5. Accès via Google (Google Sign-In)</h2>
+      <p>Si vous choisissez d'accéder à MyWellness en utilisant votre compte Google, nous collectons les informations suivantes de votre profil Google:</p>
+      <ul>
+        <li><strong>Nom complet:</strong> pour personnaliser votre expérience</li>
+        <li><strong>Adresse e-mail:</strong> pour identifier votre compte et envoyer des communications importantes</li>
+        <li><strong>Photo de profil:</strong> pour l'afficher dans votre compte (facultatif)</li>
+      </ul>
+      <p>Nous n'accédons <strong>PAS</strong> à vos contacts Google, à votre historique de navigation, à vos fichiers Google Drive ou à d'autres données de votre compte Google. L'accès est limité exclusivement aux informations de profil de base nécessaires pour l'authentification.</p>
+
+      <h2>6. Partage des données</h2>
+      <p>Nous pouvons partager vos données avec:</p>
+      <h3>6.1 Fournisseurs de services</h3>
+      <ul>
+        <li><strong>Stripe:</strong> pour le traitement des paiements</li>
+        <li><strong>Fournisseurs d'hébergement:</strong> pour stocker les données</li>
+        <li><strong>Services d'e-mail:</strong> pour envoyer des communications</li>
+        <li><strong>Services d'IA:</strong> pour générer des plans personnalisés et analyser les photos</li>
+      </ul>
+      <p>Nous ne vendons <strong>PAS</strong> vos données personnelles à des tiers à des fins de marketing.</p>
+
+      <h2>7. Sécurité des données</h2>
+      <p>Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles pour protéger vos données:</p>
+      <ul>
+        <li>Chiffrement SSL/TLS pour toutes les transmissions</li>
+        <li>Stockage sécurisé des données sur des serveurs protégés</li>
+        <li>Accès limité aux données personnelles uniquement au personnel autorisé</li>
+        <li>Surveillance régulière pour détecter les vulnérabilités</li>
+        <li>Sauvegardes régulières des données</li>
+      </ul>
+
+      <h2>8. Conservation des données</h2>
+      <p>Nous conservons vos données personnelles aussi longtemps que nécessaire pour fournir le Service:</p>
+      <ul>
+        <li><strong>Comptes actifs:</strong> pendant la durée de l'abonnement</li>
+        <li><strong>Comptes annulés:</strong> 90 jours après l'annulation, puis les données sont supprimées</li>
+        <li><strong>Données de facturation:</strong> 10 ans pour obligations fiscales</li>
+      </ul>
+
+      <h2>9. Vos droits</h2>
+      <p>Conformément au RGPD et à d'autres lois sur la confidentialité, vous disposez des droits suivants:</p>
+      <ul>
+        <li><strong>Accès:</strong> demander une copie de vos données personnelles</li>
+        <li><strong>Rectification:</strong> corriger les données inexactes ou incomplètes</li>
+        <li><strong>Suppression:</strong> demander la suppression de vos données</li>
+        <li><strong>Portabilité:</strong> recevoir vos données dans un format structuré</li>
+      </ul>
+      <p>Pour exercer ces droits, contactez-nous à: velika.03@outlook.it</p>
+
+      <h2>10. Contact</h2>
+      <div class="contact-box">
+        <p><strong>VELIKA GROUP LLC</strong></p>
+        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800 | E-mail: velika.03@outlook.it</p>
+      </div>
+    `
   }
 };
 
