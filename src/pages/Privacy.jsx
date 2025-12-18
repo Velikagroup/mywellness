@@ -930,6 +930,28 @@ export default function Privacy() {
           --brand-primary-hover: #1f6b66;
           --brand-primary-light: #e9f6f5;
         }
+        
+        @keyframes gradientShift {
+          0% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
+          33% { background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%; }
+          66% { background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%; }
+          100% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
+        }
+        
+        .animated-gradient-bg {
+          background: #f9fafb;
+          background-image: 
+            radial-gradient(circle at 10% 20%, #f5f9ff 0%, transparent 50%),
+            radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
+            radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
+            radial-gradient(circle at 70% 60%, #d4bbff 0%, transparent 50%),
+            radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
+            radial-gradient(circle at 90% 85%, #e0ccff 0%, transparent 50%);
+          background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
+          animation: gradientShift 45s ease-in-out infinite;
+          background-attachment: fixed;
+        }
+        
         .water-glass-effect {
           backdrop-filter: blur(12px) saturate(180%);
           background: linear-gradient(135deg, rgba(249, 250, 251, 0.75) 0%, rgba(243, 244, 246, 0.65) 50%, rgba(249, 250, 251, 0.75) 100%);
