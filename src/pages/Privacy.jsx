@@ -366,13 +366,20 @@ const CONTENT = {
       </ul>
 
       <h2>5. Acceso mediante Google (Google Sign-In)</h2>
-      <p>Si eliges acceder a MyWellness usando tu cuenta de Google, recopilamos la siguiente información de tu perfil de Google:</p>
+      <p>Si eliges acceder a MyWellness usando tu cuenta de Google ("Iniciar sesión con Google"), recopilamos la siguiente información de tu perfil de Google:</p>
       <ul>
         <li><strong>Nombre completo:</strong> para personalizar tu experiencia</li>
         <li><strong>Dirección de correo electrónico:</strong> para identificar tu cuenta y enviarte comunicaciones importantes</li>
         <li><strong>Foto de perfil:</strong> para mostrarla en tu cuenta (opcional)</li>
       </ul>
+      <p><strong>Cómo usamos estos datos:</strong></p>
+      <ul>
+        <li>Para crear y gestionar tu cuenta MyWellness</li>
+        <li>Para autenticarte de forma segura sin tener que crear una nueva contraseña</li>
+        <li>Para personalizar tu experiencia dentro de la aplicación</li>
+      </ul>
       <p><strong>NO</strong> accedemos a tus contactos de Google, historial de navegación, archivos de Google Drive u otros datos de tu cuenta de Google. El acceso se limita exclusivamente a la información básica del perfil necesaria para la autenticación.</p>
+      <p>Puedes revocar el acceso de MyWellness a tu cuenta de Google en cualquier momento desde la configuración de seguridad de tu cuenta de Google en: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
 
       <h2>6. Compartir Datos</h2>
       <p>Podemos compartir tus datos con:</p>
@@ -383,6 +390,10 @@ const CONTENT = {
         <li><strong>Servicios de Email:</strong> para enviar comunicaciones</li>
         <li><strong>Servicios de IA:</strong> para generar planes personalizados y analizar fotos</li>
       </ul>
+      <h3>6.2 Autoridades Legales</h3>
+      <p>Cuando lo requiera la ley o para proteger nuestros derechos.</p>
+      <h3>6.3 Transferencias Empresariales</h3>
+      <p>En caso de fusión, adquisición o venta de activos.</p>
       <p><strong>NO</strong> vendemos tus datos personales a terceros con fines de marketing.</p>
 
       <h2>7. Seguridad de Datos</h2>
@@ -394,13 +405,15 @@ const CONTENT = {
         <li>Monitoreo regular para detectar vulnerabilidades</li>
         <li>Copias de seguridad regulares de datos</li>
       </ul>
+      <p>Sin embargo, ningún método de transmisión por Internet es completamente seguro. No podemos garantizar la seguridad absoluta de tus datos.</p>
 
       <h2>8. Retención de Datos</h2>
-      <p>Conservamos tus datos personales el tiempo necesario para proporcionar el Servicio:</p>
+      <p>Conservamos tus datos personales el tiempo necesario para proporcionar el Servicio y cumplir con obligaciones legales:</p>
       <ul>
         <li><strong>Cuentas Activas:</strong> durante la duración de la suscripción</li>
-        <li><strong>Cuentas Canceladas:</strong> 90 días después de la cancelación, luego se eliminan los datos</li>
+        <li><strong>Cuentas Canceladas:</strong> 90 días después de la cancelación (para permitir reactivación), luego los datos se eliminan</li>
         <li><strong>Datos de Facturación:</strong> 10 años por obligaciones fiscales</li>
+        <li><strong>Registros de Seguridad:</strong> hasta 12 meses</li>
       </ul>
 
       <h2>9. Tus Derechos</h2>
@@ -408,16 +421,42 @@ const CONTENT = {
       <ul>
         <li><strong>Acceso:</strong> solicitar una copia de tus datos personales</li>
         <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos</li>
-        <li><strong>Supresión:</strong> solicitar la eliminación de tus datos</li>
+        <li><strong>Supresión:</strong> solicitar la eliminación de tus datos ("derecho al olvido")</li>
+        <li><strong>Restricción:</strong> restringir el procesamiento de tus datos</li>
         <li><strong>Portabilidad:</strong> recibir tus datos en formato estructurado</li>
+        <li><strong>Oposición:</strong> oponerse al procesamiento de tus datos</li>
+        <li><strong>Revocación del Consentimiento:</strong> revocar el consentimiento dado anteriormente</li>
+        <li><strong>Reclamación:</strong> presentar una reclamación ante la autoridad de control</li>
       </ul>
       <p>Para ejercer estos derechos, contáctanos en: velika.03@outlook.it</p>
 
-      <h2>10. Contacto</h2>
+      <h2>10. Cookies</h2>
+      <p>Utilizamos cookies y tecnologías similares para:</p>
+      <ul>
+        <li><strong>Cookies Esenciales:</strong> necesarias para el funcionamiento del Servicio</li>
+        <li><strong>Cookies Analíticas:</strong> para comprender cómo usas el Servicio</li>
+        <li><strong>Cookies de Marketing:</strong> para personalizar anuncios (solo con consentimiento)</li>
+      </ul>
+      <p>Puedes gestionar las preferencias de cookies en la configuración de tu navegador.</p>
+
+      <h2>11. Privacidad de Menores</h2>
+      <p>El Servicio no está destinado a menores de 18 años. No recopilamos conscientemente datos personales de menores de 18 años. Si descubrimos que hemos recopilado datos de un menor, los eliminaremos inmediatamente.</p>
+
+      <h2>12. Transferencias Internacionales</h2>
+      <p>Tus datos pueden ser transferidos y almacenados en servidores en Estados Unidos y otros países. Implementamos salvaguardias apropiadas para garantizar que tus datos estén protegidos de acuerdo con esta Política de Privacidad y las leyes aplicables.</p>
+
+      <h2>13. Cambios a la Política de Privacidad</h2>
+      <p>Podemos actualizar esta Política de Privacidad periódicamente. Te notificaremos de cambios sustanciales por correo electrónico o notificación en el Servicio. El uso continuado del Servicio después de los cambios constituye aceptación de la nueva Política de Privacidad.</p>
+
+      <h2>14. Contacto</h2>
+      <p>Para preguntas sobre privacidad o para ejercer tus derechos, contáctanos:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+        <p><strong>Data Protection Officer</strong></p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>Email: velika.03@outlook.it</p>
       </div>
     `
   },
@@ -476,13 +515,20 @@ const CONTENT = {
       </ul>
 
       <h2>5. Acesso via Google (Google Sign-In)</h2>
-      <p>Se você escolher acessar o MyWellness usando sua conta do Google, coletamos as seguintes informações do seu perfil do Google:</p>
+      <p>Se você escolher acessar o MyWellness usando sua conta do Google ("Entrar com Google"), coletamos as seguintes informações do seu perfil do Google:</p>
       <ul>
         <li><strong>Nome completo:</strong> para personalizar sua experiência</li>
         <li><strong>Endereço de e-mail:</strong> para identificar sua conta e enviar comunicações importantes</li>
         <li><strong>Foto de perfil:</strong> para exibi-la em sua conta (opcional)</li>
       </ul>
+      <p><strong>Como usamos esses dados:</strong></p>
+      <ul>
+        <li>Para criar e gerenciar sua conta MyWellness</li>
+        <li>Para autenticá-lo com segurança sem precisar criar uma nova senha</li>
+        <li>Para personalizar sua experiência dentro do aplicativo</li>
+      </ul>
       <p><strong>NÃO</strong> acessamos seus contatos do Google, histórico de navegação, arquivos do Google Drive ou outros dados da sua conta do Google. O acesso é limitado exclusivamente às informações básicas de perfil necessárias para autenticação.</p>
+      <p>Você pode revogar o acesso do MyWellness à sua conta do Google a qualquer momento nas configurações de segurança da sua conta do Google em: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
 
       <h2>6. Compartilhamento de Dados</h2>
       <p>Podemos compartilhar seus dados com:</p>
@@ -493,6 +539,10 @@ const CONTENT = {
         <li><strong>Serviços de E-mail:</strong> para enviar comunicações</li>
         <li><strong>Serviços de IA:</strong> para gerar planos personalizados e analisar fotos</li>
       </ul>
+      <h3>6.2 Autoridades Legais</h3>
+      <p>Quando exigido por lei ou para proteger nossos direitos.</p>
+      <h3>6.3 Transferências Empresariais</h3>
+      <p>Em caso de fusão, aquisição ou venda de ativos.</p>
       <p><strong>NÃO</strong> vendemos seus dados pessoais a terceiros para fins de marketing.</p>
 
       <h2>7. Segurança de Dados</h2>
@@ -504,13 +554,15 @@ const CONTENT = {
         <li>Monitoramento regular para detectar vulnerabilidades</li>
         <li>Backups regulares de dados</li>
       </ul>
+      <p>No entanto, nenhum método de transmissão pela Internet é completamente seguro. Não podemos garantir a segurança absoluta dos seus dados.</p>
 
       <h2>8. Retenção de Dados</h2>
-      <p>Retemos seus dados pessoais pelo tempo necessário para fornecer o Serviço:</p>
+      <p>Retemos seus dados pessoais pelo tempo necessário para fornecer o Serviço e cumprir obrigações legais:</p>
       <ul>
         <li><strong>Contas Ativas:</strong> durante a duração da assinatura</li>
-        <li><strong>Contas Canceladas:</strong> 90 dias após o cancelamento, depois os dados são excluídos</li>
+        <li><strong>Contas Canceladas:</strong> 90 dias após o cancelamento (para permitir reativação), depois os dados são excluídos</li>
         <li><strong>Dados de Faturamento:</strong> 10 anos por obrigações fiscais</li>
+        <li><strong>Logs de Segurança:</strong> até 12 meses</li>
       </ul>
 
       <h2>9. Seus Direitos</h2>
@@ -518,16 +570,42 @@ const CONTENT = {
       <ul>
         <li><strong>Acesso:</strong> solicitar uma cópia de seus dados pessoais</li>
         <li><strong>Retificação:</strong> corrigir dados imprecisos ou incompletos</li>
-        <li><strong>Exclusão:</strong> solicitar a exclusão de seus dados</li>
+        <li><strong>Exclusão:</strong> solicitar a exclusão de seus dados ("direito ao esquecimento")</li>
+        <li><strong>Restrição:</strong> restringir o processamento de seus dados</li>
         <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado</li>
+        <li><strong>Objeção:</strong> objetar ao processamento de seus dados</li>
+        <li><strong>Revogação do Consentimento:</strong> revogar o consentimento dado anteriormente</li>
+        <li><strong>Reclamação:</strong> apresentar reclamação à autoridade supervisora</li>
       </ul>
       <p>Para exercer esses direitos, entre em contato: velika.03@outlook.it</p>
 
-      <h2>10. Contato</h2>
+      <h2>10. Cookies</h2>
+      <p>Usamos cookies e tecnologias similares para:</p>
+      <ul>
+        <li><strong>Cookies Essenciais:</strong> necessários para o funcionamento do Serviço</li>
+        <li><strong>Cookies Analíticos:</strong> para entender como você usa o Serviço</li>
+        <li><strong>Cookies de Marketing:</strong> para personalizar anúncios (apenas com consentimento)</li>
+      </ul>
+      <p>Você pode gerenciar as preferências de cookies nas configurações do seu navegador.</p>
+
+      <h2>11. Privacidade de Menores</h2>
+      <p>O Serviço não é destinado a menores de 18 anos. Não coletamos intencionalmente dados pessoais de menores de 18 anos. Se descobrirmos que coletamos dados de um menor, os excluiremos imediatamente.</p>
+
+      <h2>12. Transferências Internacionais</h2>
+      <p>Seus dados podem ser transferidos e armazenados em servidores nos Estados Unidos e outros países. Implementamos salvaguardas apropriadas para garantir que seus dados sejam protegidos de acordo com esta Política de Privacidade e leis aplicáveis.</p>
+
+      <h2>13. Alterações na Política de Privacidade</h2>
+      <p>Podemos atualizar esta Política de Privacidade periodicamente. Notificaremos você sobre mudanças substanciais por e-mail ou notificação no Serviço. O uso continuado do Serviço após as alterações constitui aceitação da nova Política de Privacidade.</p>
+
+      <h2>14. Contato</h2>
+      <p>Para questões sobre privacidade ou para exercer seus direitos, entre em contato conosco:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+        <p><strong>Data Protection Officer</strong></p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>Email: velika.03@outlook.it</p>
       </div>
     `
   },
@@ -586,13 +664,20 @@ const CONTENT = {
       </ul>
 
       <h2>5. Zugriff über Google (Google Sign-In)</h2>
-      <p>Wenn Sie sich für den Zugriff auf MyWellness mit Ihrem Google-Konto entscheiden, sammeln wir folgende Informationen aus Ihrem Google-Profil:</p>
+      <p>Wenn Sie sich für den Zugriff auf MyWellness mit Ihrem Google-Konto entscheiden ("Mit Google anmelden"), sammeln wir folgende Informationen aus Ihrem Google-Profil:</p>
       <ul>
         <li><strong>Vollständiger Name:</strong> zur Personalisierung Ihrer Erfahrung</li>
         <li><strong>E-Mail-Adresse:</strong> zur Identifizierung Ihres Kontos und zum Versenden wichtiger Mitteilungen</li>
         <li><strong>Profilbild:</strong> zur Anzeige in Ihrem Konto (optional)</li>
       </ul>
+      <p><strong>Wie wir diese Daten verwenden:</strong></p>
+      <ul>
+        <li>Um Ihr MyWellness-Konto zu erstellen und zu verwalten</li>
+        <li>Um Sie sicher zu authentifizieren, ohne ein neues Passwort erstellen zu müssen</li>
+        <li>Um Ihre Erfahrung innerhalb der App zu personalisieren</li>
+      </ul>
       <p>Wir greifen <strong>NICHT</strong> auf Ihre Google-Kontakte, Ihren Browserverlauf, Google Drive-Dateien oder andere Daten Ihres Google-Kontos zu. Der Zugriff beschränkt sich ausschließlich auf grundlegende Profilinformationen, die für die Authentifizierung erforderlich sind.</p>
+      <p>Sie können den Zugriff von MyWellness auf Ihr Google-Konto jederzeit in den Sicherheitseinstellungen Ihres Google-Kontos widerrufen unter: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
 
       <h2>6. Datenweitergabe</h2>
       <p>Wir können Ihre Daten weitergeben an:</p>
@@ -603,6 +688,10 @@ const CONTENT = {
         <li><strong>E-Mail-Dienste:</strong> zum Versenden von Mitteilungen</li>
         <li><strong>KI-Dienste:</strong> zur Erstellung personalisierter Pläne und Fotoanalyse</li>
       </ul>
+      <h3>6.2 Rechtsbehörden</h3>
+      <p>Wenn gesetzlich vorgeschrieben oder zum Schutz unserer Rechte.</p>
+      <h3>6.3 Unternehmensübertragungen</h3>
+      <p>Im Falle einer Fusion, Übernahme oder Veräußerung von Vermögenswerten.</p>
       <p>Wir verkaufen Ihre personenbezogenen Daten <strong>NICHT</strong> an Dritte für Marketingzwecke.</p>
 
       <h2>7. Datensicherheit</h2>
@@ -614,13 +703,15 @@ const CONTENT = {
         <li>Regelmäßige Überwachung zur Erkennung von Schwachstellen</li>
         <li>Regelmäßige Datensicherungen</li>
       </ul>
+      <p>Allerdings ist keine Übertragungsmethode über das Internet vollständig sicher. Wir können die absolute Sicherheit Ihrer Daten nicht garantieren.</p>
 
       <h2>8. Datenspeicherung</h2>
-      <p>Wir speichern Ihre personenbezogenen Daten so lange, wie es zur Bereitstellung des Dienstes erforderlich ist:</p>
+      <p>Wir speichern Ihre personenbezogenen Daten so lange, wie es zur Bereitstellung des Dienstes und zur Erfüllung rechtlicher Verpflichtungen erforderlich ist:</p>
       <ul>
         <li><strong>Aktive Konten:</strong> für die Dauer des Abonnements</li>
-        <li><strong>Gekündigte Konten:</strong> 90 Tage nach Kündigung, danach werden Daten gelöscht</li>
+        <li><strong>Gekündigte Konten:</strong> 90 Tage nach Kündigung (um Reaktivierung zu ermöglichen), danach werden Daten gelöscht</li>
         <li><strong>Rechnungsdaten:</strong> 10 Jahre aufgrund steuerlicher Verpflichtungen</li>
+        <li><strong>Sicherheitsprotokolle:</strong> bis zu 12 Monate</li>
       </ul>
 
       <h2>9. Ihre Rechte</h2>
@@ -628,16 +719,42 @@ const CONTENT = {
       <ul>
         <li><strong>Zugriff:</strong> eine Kopie Ihrer personenbezogenen Daten anfordern</li>
         <li><strong>Berichtigung:</strong> ungenaue oder unvollständige Daten korrigieren</li>
-        <li><strong>Löschung:</strong> die Löschung Ihrer Daten beantragen</li>
+        <li><strong>Löschung:</strong> die Löschung Ihrer Daten beantragen ("Recht auf Vergessenwerden")</li>
+        <li><strong>Einschränkung:</strong> die Verarbeitung Ihrer Daten einschränken</li>
         <li><strong>Datenübertragbarkeit:</strong> Ihre Daten in strukturiertem Format erhalten</li>
+        <li><strong>Widerspruch:</strong> der Verarbeitung Ihrer Daten widersprechen</li>
+        <li><strong>Widerruf der Einwilligung:</strong> zuvor erteilte Einwilligung widerrufen</li>
+        <li><strong>Beschwerde:</strong> Beschwerde bei der Aufsichtsbehörde einreichen</li>
       </ul>
       <p>Um diese Rechte auszuüben, kontaktieren Sie uns unter: velika.03@outlook.it</p>
 
-      <h2>10. Kontakt</h2>
+      <h2>10. Cookies</h2>
+      <p>Wir verwenden Cookies und ähnliche Technologien für:</p>
+      <ul>
+        <li><strong>Essentielle Cookies:</strong> notwendig für den Betrieb des Dienstes</li>
+        <li><strong>Analyse-Cookies:</strong> um zu verstehen, wie Sie den Dienst nutzen</li>
+        <li><strong>Marketing-Cookies:</strong> um Anzeigen zu personalisieren (nur mit Zustimmung)</li>
+      </ul>
+      <p>Sie können Cookie-Präferenzen in Ihren Browser-Einstellungen verwalten.</p>
+
+      <h2>11. Datenschutz für Minderjährige</h2>
+      <p>Der Dienst ist nicht für Minderjährige unter 18 Jahren bestimmt. Wir sammeln nicht wissentlich personenbezogene Daten von Minderjährigen unter 18 Jahren. Wenn wir feststellen, dass wir Daten von einem Minderjährigen gesammelt haben, werden wir diese sofort löschen.</p>
+
+      <h2>12. Internationale Übertragungen</h2>
+      <p>Ihre Daten können auf Server in den Vereinigten Staaten und anderen Ländern übertragen und gespeichert werden. Wir implementieren geeignete Schutzmaßnahmen, um sicherzustellen, dass Ihre Daten gemäß dieser Datenschutzerklärung und geltenden Gesetzen geschützt sind.</p>
+
+      <h2>13. Änderungen der Datenschutzerklärung</h2>
+      <p>Wir können diese Datenschutzerklärung regelmäßig aktualisieren. Wir werden Sie über wesentliche Änderungen per E-Mail oder Benachrichtigung im Dienst informieren. Die fortgesetzte Nutzung des Dienstes nach Änderungen stellt die Akzeptanz der neuen Datenschutzerklärung dar.</p>
+
+      <h2>14. Kontakt</h2>
+      <p>Bei Fragen zum Datenschutz oder zur Ausübung Ihrer Rechte kontaktieren Sie uns:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | E-Mail: velika.03@outlook.it</p>
+        <p><strong>Datenschutzbeauftragter</strong></p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>E-Mail: velika.03@outlook.it</p>
       </div>
     `
   },
@@ -696,13 +813,20 @@ const CONTENT = {
       </ul>
 
       <h2>5. Accès via Google (Google Sign-In)</h2>
-      <p>Si vous choisissez d'accéder à MyWellness en utilisant votre compte Google, nous collectons les informations suivantes de votre profil Google:</p>
+      <p>Si vous choisissez d'accéder à MyWellness en utilisant votre compte Google ("Se connecter avec Google"), nous collectons les informations suivantes de votre profil Google:</p>
       <ul>
         <li><strong>Nom complet:</strong> pour personnaliser votre expérience</li>
         <li><strong>Adresse e-mail:</strong> pour identifier votre compte et envoyer des communications importantes</li>
         <li><strong>Photo de profil:</strong> pour l'afficher dans votre compte (facultatif)</li>
       </ul>
+      <p><strong>Comment nous utilisons ces données:</strong></p>
+      <ul>
+        <li>Pour créer et gérer votre compte MyWellness</li>
+        <li>Pour vous authentifier en toute sécurité sans avoir à créer un nouveau mot de passe</li>
+        <li>Pour personnaliser votre expérience au sein de l'application</li>
+      </ul>
       <p>Nous n'accédons <strong>PAS</strong> à vos contacts Google, à votre historique de navigation, à vos fichiers Google Drive ou à d'autres données de votre compte Google. L'accès est limité exclusivement aux informations de profil de base nécessaires pour l'authentification.</p>
+      <p>Vous pouvez révoquer l'accès de MyWellness à votre compte Google à tout moment depuis les paramètres de sécurité de votre compte Google à l'adresse: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
 
       <h2>6. Partage des données</h2>
       <p>Nous pouvons partager vos données avec:</p>
@@ -713,6 +837,10 @@ const CONTENT = {
         <li><strong>Services d'e-mail:</strong> pour envoyer des communications</li>
         <li><strong>Services d'IA:</strong> pour générer des plans personnalisés et analyser les photos</li>
       </ul>
+      <h3>6.2 Autorités légales</h3>
+      <p>Lorsque requis par la loi ou pour protéger nos droits.</p>
+      <h3>6.3 Transferts d'entreprise</h3>
+      <p>En cas de fusion, d'acquisition ou de vente d'actifs.</p>
       <p>Nous ne vendons <strong>PAS</strong> vos données personnelles à des tiers à des fins de marketing.</p>
 
       <h2>7. Sécurité des données</h2>
@@ -724,13 +852,15 @@ const CONTENT = {
         <li>Surveillance régulière pour détecter les vulnérabilités</li>
         <li>Sauvegardes régulières des données</li>
       </ul>
+      <p>Cependant, aucune méthode de transmission sur Internet n'est totalement sécurisée. Nous ne pouvons pas garantir la sécurité absolue de vos données.</p>
 
       <h2>8. Conservation des données</h2>
-      <p>Nous conservons vos données personnelles aussi longtemps que nécessaire pour fournir le Service:</p>
+      <p>Nous conservons vos données personnelles aussi longtemps que nécessaire pour fournir le Service et respecter les obligations légales:</p>
       <ul>
         <li><strong>Comptes actifs:</strong> pendant la durée de l'abonnement</li>
-        <li><strong>Comptes annulés:</strong> 90 jours après l'annulation, puis les données sont supprimées</li>
+        <li><strong>Comptes annulés:</strong> 90 jours après l'annulation (pour permettre la réactivation), puis les données sont supprimées</li>
         <li><strong>Données de facturation:</strong> 10 ans pour obligations fiscales</li>
+        <li><strong>Journaux de sécurité:</strong> jusqu'à 12 mois</li>
       </ul>
 
       <h2>9. Vos droits</h2>
@@ -738,16 +868,42 @@ const CONTENT = {
       <ul>
         <li><strong>Accès:</strong> demander une copie de vos données personnelles</li>
         <li><strong>Rectification:</strong> corriger les données inexactes ou incomplètes</li>
-        <li><strong>Suppression:</strong> demander la suppression de vos données</li>
+        <li><strong>Suppression:</strong> demander la suppression de vos données ("droit à l'oubli")</li>
+        <li><strong>Limitation:</strong> limiter le traitement de vos données</li>
         <li><strong>Portabilité:</strong> recevoir vos données dans un format structuré</li>
+        <li><strong>Opposition:</strong> s'opposer au traitement de vos données</li>
+        <li><strong>Retrait du consentement:</strong> retirer le consentement précédemment donné</li>
+        <li><strong>Réclamation:</strong> déposer une plainte auprès de l'autorité de contrôle</li>
       </ul>
       <p>Pour exercer ces droits, contactez-nous à: velika.03@outlook.it</p>
 
-      <h2>10. Contact</h2>
+      <h2>10. Cookies</h2>
+      <p>Nous utilisons des cookies et technologies similaires pour:</p>
+      <ul>
+        <li><strong>Cookies essentiels:</strong> nécessaires au fonctionnement du Service</li>
+        <li><strong>Cookies analytiques:</strong> pour comprendre comment vous utilisez le Service</li>
+        <li><strong>Cookies marketing:</strong> pour personnaliser les publicités (uniquement avec consentement)</li>
+      </ul>
+      <p>Vous pouvez gérer les préférences de cookies dans les paramètres de votre navigateur.</p>
+
+      <h2>11. Confidentialité des mineurs</h2>
+      <p>Le Service n'est pas destiné aux mineurs de moins de 18 ans. Nous ne collectons pas sciemment de données personnelles de mineurs de moins de 18 ans. Si nous découvrons que nous avons collecté des données d'un mineur, nous les supprimerons immédiatement.</p>
+
+      <h2>12. Transferts internationaux</h2>
+      <p>Vos données peuvent être transférées et stockées sur des serveurs aux États-Unis et dans d'autres pays. Nous mettons en œuvre des garanties appropriées pour assurer que vos données soient protégées conformément à cette Politique de Confidentialité et aux lois applicables.</p>
+
+      <h2>13. Modifications de la Politique de Confidentialité</h2>
+      <p>Nous pouvons mettre à jour cette Politique de Confidentialité périodiquement. Nous vous informerons des modifications substantielles par e-mail ou notification dans le Service. L'utilisation continue du Service après les modifications constitue l'acceptation de la nouvelle Politique de Confidentialité.</p>
+
+      <h2>14. Contact</h2>
+      <p>Pour des questions sur la confidentialité ou pour exercer vos droits, contactez-nous:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | E-mail: velika.03@outlook.it</p>
+        <p><strong>Délégué à la Protection des Données</strong></p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>E-mail: velika.03@outlook.it</p>
       </div>
     `
   }

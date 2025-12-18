@@ -170,7 +170,7 @@ const CONTENT = {
       <h2>4. Cuenta de Usuario</h2>
       <p><strong>4.1 Registro:</strong> Para utilizar el Servicio, debes crear una cuenta proporcionando información precisa y completa.</p>
       <p><strong>4.2 Seguridad:</strong> Eres responsable de la seguridad de tu cuenta y de la confidencialidad de tus credenciales de inicio de sesión.</p>
-      <p><strong>4.3 Edad Mínima:</strong> Debes tener al menos 18 años para utilizar el Servicio.</p>
+      <p><strong>4.3 Edad Mínima:</strong> Debes tener al menos 18 años para utilizar el Servicio. Si tienes menos de 18 años, debes obtener el consentimiento de un padre o tutor.</p>
 
       <h2>5. Uso Aceptable</h2>
       <p>Te comprometes a:</p>
@@ -184,10 +184,11 @@ const CONTENT = {
 
       <h2>6. Exención de Responsabilidad Médica</h2>
       <p><strong>IMPORTANTE:</strong> MyWellness NO proporciona asesoramiento médico. Los planes nutricionales y de entrenamiento son generados por inteligencia artificial y son solo para fines informativos y educativos.</p>
-      <p>Antes de comenzar cualquier programa nutricional o de ejercicio, consulta a tu médico o a un profesional de la salud calificado.</p>
+      <p>Antes de comenzar cualquier programa nutricional o de ejercicio, consulta a tu médico o a un profesional de la salud calificado, especialmente si tienes condiciones médicas preexistentes, estás embarazada, amamantando o tomando medicamentos.</p>
+      <p>El uso del Servicio es bajo tu propio riesgo y responsabilidad.</p>
 
       <h2>7. Propiedad Intelectual</h2>
-      <p>Todo el contenido, software, código, diseño, gráficos, logotipos y materiales presentes en el Servicio son propiedad exclusiva de VELIKA GROUP LLC.</p>
+      <p>Todo el contenido, software, código, diseño, gráficos, logotipos y materiales presentes en el Servicio son propiedad exclusiva de VELIKA GROUP LLC y están protegidos por derechos de autor, marcas registradas y otras leyes de propiedad intelectual.</p>
 
       <h2>8. Limitación de Responsabilidad</h2>
       <p>En la máxima medida permitida por la ley, VELIKA GROUP LLC no será responsable de:</p>
@@ -195,13 +196,27 @@ const CONTENT = {
         <li>Daños directos, indirectos, incidentales, consecuentes o punitivos</li>
         <li>Pérdida de beneficios, datos u oportunidades comerciales</li>
         <li>Lesiones físicas o daños a la salud resultantes del uso del Servicio</li>
+        <li>Interrupciones o errores en el Servicio</li>
+        <li>Contenido o comportamiento de terceros</li>
       </ul>
 
-      <h2>9. Contacto</h2>
+      <h2>9. Modificaciones a los Términos</h2>
+      <p>Nos reservamos el derecho de modificar estos Términos y Condiciones en cualquier momento. Los cambios serán efectivos inmediatamente después de su publicación. El uso continuado del Servicio después de los cambios constituye aceptación de los nuevos términos.</p>
+
+      <h2>10. Terminación</h2>
+      <p>Nos reservamos el derecho de suspender o terminar tu cuenta en caso de violación de estos Términos, sin previo aviso y sin reembolso.</p>
+
+      <h2>11. Ley Aplicable</h2>
+      <p>Estos Términos se rigen por las leyes del Estado de Wyoming, Estados Unidos, sin consideración a los principios de conflictos de leyes.</p>
+
+      <h2>12. Contacto</h2>
+      <p>Para preguntas sobre estos Términos y Condiciones, contáctanos:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>Email: velika.03@outlook.it</p>
       </div>
     `
   },
@@ -224,7 +239,7 @@ const CONTENT = {
       <h2>4. Conta de Usuário</h2>
       <p><strong>4.1 Registro:</strong> Para usar o Serviço, você deve criar uma conta fornecendo informações precisas e completas.</p>
       <p><strong>4.2 Segurança:</strong> Você é responsável pela segurança da sua conta e pela confidencialidade das suas credenciais de login.</p>
-      <p><strong>4.3 Idade Mínima:</strong> Você deve ter pelo menos 18 anos para usar o Serviço.</p>
+      <p><strong>4.3 Idade Mínima:</strong> Você deve ter pelo menos 18 anos para usar o Serviço. Se você tiver menos de 18 anos, deve obter o consentimento de um pai ou responsável.</p>
 
       <h2>5. Uso Aceitável</h2>
       <p>Você concorda em:</p>
@@ -238,10 +253,11 @@ const CONTENT = {
 
       <h2>6. Isenção de Responsabilidade Médica</h2>
       <p><strong>IMPORTANTE:</strong> MyWellness NÃO fornece aconselhamento médico. Os planos nutricionais e de treino são gerados por inteligência artificial e são apenas para fins informativos e educacionais.</p>
-      <p>Antes de iniciar qualquer programa nutricional ou de exercícios, consulte seu médico ou um profissional de saúde qualificado.</p>
+      <p>Antes de iniciar qualquer programa nutricional ou de exercícios, consulte seu médico ou um profissional de saúde qualificado, especialmente se você tiver condições médicas preexistentes, estiver grávida, amamentando ou tomando medicamentos.</p>
+      <p>O uso do Serviço é por sua conta e risco.</p>
 
       <h2>7. Propriedade Intelectual</h2>
-      <p>Todo o conteúdo, software, código, design, gráficos, logotipos e materiais presentes no Serviço são propriedade exclusiva da VELIKA GROUP LLC.</p>
+      <p>Todo o conteúdo, software, código, design, gráficos, logotipos e materiais presentes no Serviço são propriedade exclusiva da VELIKA GROUP LLC e são protegidos por direitos autorais, marcas registradas e outras leis de propriedade intelectual.</p>
 
       <h2>8. Limitação de Responsabilidade</h2>
       <p>Na máxima extensão permitida por lei, a VELIKA GROUP LLC não será responsável por:</p>
@@ -249,13 +265,27 @@ const CONTENT = {
         <li>Danos diretos, indiretos, incidentais, consequenciais ou punitivos</li>
         <li>Perda de lucros, dados ou oportunidades comerciais</li>
         <li>Lesões físicas ou danos à saúde resultantes do uso do Serviço</li>
+        <li>Interrupções ou erros no Serviço</li>
+        <li>Conteúdo ou comportamento de terceiros</li>
       </ul>
 
-      <h2>9. Contato</h2>
+      <h2>9. Modificações aos Termos</h2>
+      <p>Reservamo-nos o direito de modificar estes Termos e Condições a qualquer momento. As alterações serão efetivas imediatamente após a publicação. O uso continuado do Serviço após as alterações constitui aceitação dos novos termos.</p>
+
+      <h2>10. Rescisão</h2>
+      <p>Reservamo-nos o direito de suspender ou encerrar sua conta em caso de violação destes Termos, sem aviso prévio e sem reembolso.</p>
+
+      <h2>11. Lei Aplicável</h2>
+      <p>Estes Termos são regidos pelas leis do Estado de Wyoming, Estados Unidos, sem considerar os princípios de conflito de leis.</p>
+
+      <h2>12. Contato</h2>
+      <p>Para perguntas sobre estes Termos e Condições, entre em contato conosco:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | Email: velika.03@outlook.it</p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>Email: velika.03@outlook.it</p>
       </div>
     `
   },
@@ -278,7 +308,7 @@ const CONTENT = {
       <h2>4. Benutzerkonto</h2>
       <p><strong>4.1 Registrierung:</strong> Um den Dienst zu nutzen, müssen Sie ein Konto erstellen und genaue und vollständige Informationen angeben.</p>
       <p><strong>4.2 Sicherheit:</strong> Sie sind für die Sicherheit Ihres Kontos und die Vertraulichkeit Ihrer Anmeldedaten verantwortlich.</p>
-      <p><strong>4.3 Mindestalter:</strong> Sie müssen mindestens 18 Jahre alt sein, um den Dienst zu nutzen.</p>
+      <p><strong>4.3 Mindestalter:</strong> Sie müssen mindestens 18 Jahre alt sein, um den Dienst zu nutzen. Wenn Sie unter 18 Jahre alt sind, müssen Sie die Zustimmung eines Elternteils oder Erziehungsberechtigten einholen.</p>
 
       <h2>5. Akzeptable Nutzung</h2>
       <p>Sie verpflichten sich:</p>
@@ -292,10 +322,11 @@ const CONTENT = {
 
       <h2>6. Medizinischer Haftungsausschluss</h2>
       <p><strong>WICHTIG:</strong> MyWellness bietet KEINE medizinische Beratung. Die Ernährungs- und Trainingspläne werden durch künstliche Intelligenz generiert und dienen nur zu Informations- und Bildungszwecken.</p>
-      <p>Konsultieren Sie vor Beginn eines Ernährungs- oder Trainingsprogramms Ihren Arzt oder einen qualifizierten Gesundheitsexperten.</p>
+      <p>Konsultieren Sie vor Beginn eines Ernährungs- oder Trainingsprogramms Ihren Arzt oder einen qualifizierten Gesundheitsexperten, insbesondere wenn Sie bereits bestehende Erkrankungen haben, schwanger sind, stillen oder Medikamente einnehmen.</p>
+      <p>Die Nutzung des Dienstes erfolgt auf eigenes Risiko und eigene Verantwortung.</p>
 
       <h2>7. Geistiges Eigentum</h2>
-      <p>Alle Inhalte, Software, Code, Design, Grafiken, Logos und Materialien, die im Dienst vorhanden sind, sind ausschließliches Eigentum von VELIKA GROUP LLC.</p>
+      <p>Alle Inhalte, Software, Code, Design, Grafiken, Logos und Materialien, die im Dienst vorhanden sind, sind ausschließliches Eigentum von VELIKA GROUP LLC und sind durch Urheberrechte, Marken und andere Gesetze zum Schutz geistigen Eigentums geschützt.</p>
 
       <h2>8. Haftungsbeschränkung</h2>
       <p>Im maximal gesetzlich zulässigen Umfang haftet VELIKA GROUP LLC nicht für:</p>
@@ -303,13 +334,27 @@ const CONTENT = {
         <li>Direkte, indirekte, zufällige, Folge- oder Strafschäden</li>
         <li>Verlust von Gewinnen, Daten oder Geschäftsmöglichkeiten</li>
         <li>Körperliche Verletzungen oder Gesundheitsschäden durch die Nutzung des Dienstes</li>
+        <li>Unterbrechungen oder Fehler im Dienst</li>
+        <li>Inhalte oder Verhalten Dritter</li>
       </ul>
 
-      <h2>9. Kontakt</h2>
+      <h2>9. Änderungen der Bedingungen</h2>
+      <p>Wir behalten uns das Recht vor, diese Allgemeinen Geschäftsbedingungen jederzeit zu ändern. Änderungen werden sofort nach Veröffentlichung wirksam. Die fortgesetzte Nutzung des Dienstes nach Änderungen stellt die Akzeptanz der neuen Bedingungen dar.</p>
+
+      <h2>10. Beendigung</h2>
+      <p>Wir behalten uns das Recht vor, Ihr Konto bei Verstoß gegen diese Bedingungen ohne Vorankündigung und ohne Rückerstattung zu sperren oder zu kündigen.</p>
+
+      <h2>11. Anwendbares Recht</h2>
+      <p>Diese Bedingungen unterliegen den Gesetzen des Staates Wyoming, Vereinigte Staaten, ohne Berücksichtigung von Kollisionsnormen.</p>
+
+      <h2>12. Kontakt</h2>
+      <p>Bei Fragen zu diesen Allgemeinen Geschäftsbedingungen kontaktieren Sie uns:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | E-Mail: velika.03@outlook.it</p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>E-Mail: velika.03@outlook.it</p>
       </div>
     `
   },
@@ -332,7 +377,7 @@ const CONTENT = {
       <h2>4. Compte Utilisateur</h2>
       <p><strong>4.1 Inscription:</strong> Pour utiliser le Service, vous devez créer un compte en fournissant des informations précises et complètes.</p>
       <p><strong>4.2 Sécurité:</strong> Vous êtes responsable de la sécurité de votre compte et de la confidentialité de vos identifiants de connexion.</p>
-      <p><strong>4.3 Âge Minimum:</strong> Vous devez avoir au moins 18 ans pour utiliser le Service.</p>
+      <p><strong>4.3 Âge Minimum:</strong> Vous devez avoir au moins 18 ans pour utiliser le Service. Si vous avez moins de 18 ans, vous devez obtenir le consentement d'un parent ou tuteur.</p>
 
       <h2>5. Utilisation Acceptable</h2>
       <p>Vous acceptez de:</p>
@@ -346,10 +391,11 @@ const CONTENT = {
 
       <h2>6. Avertissement Médical</h2>
       <p><strong>IMPORTANT:</strong> MyWellness ne fournit PAS de conseils médicaux. Les plans nutritionnels et d'entraînement sont générés par intelligence artificielle et sont uniquement à des fins informatives et éducatives.</p>
-      <p>Avant de commencer tout programme nutritionnel ou d'exercice, consultez votre médecin ou un professionnel de santé qualifié.</p>
+      <p>Avant de commencer tout programme nutritionnel ou d'exercice, consultez votre médecin ou un professionnel de santé qualifié, en particulier si vous avez des conditions médicales préexistantes, êtes enceinte, allaitez ou prenez des médicaments.</p>
+      <p>L'utilisation du Service est à vos propres risques et responsabilités.</p>
 
       <h2>7. Propriété Intellectuelle</h2>
-      <p>Tout le contenu, logiciel, code, design, graphiques, logos et matériaux présents dans le Service sont la propriété exclusive de VELIKA GROUP LLC.</p>
+      <p>Tout le contenu, logiciel, code, design, graphiques, logos et matériaux présents dans le Service sont la propriété exclusive de VELIKA GROUP LLC et sont protégés par les droits d'auteur, marques et autres lois sur la propriété intellectuelle.</p>
 
       <h2>8. Limitation de Responsabilité</h2>
       <p>Dans la mesure maximale permise par la loi, VELIKA GROUP LLC ne sera pas responsable de:</p>
@@ -357,13 +403,27 @@ const CONTENT = {
         <li>Dommages directs, indirects, accessoires, consécutifs ou punitifs</li>
         <li>Perte de profits, de données ou d'opportunités commerciales</li>
         <li>Blessures physiques ou dommages à la santé résultant de l'utilisation du Service</li>
+        <li>Interruptions ou erreurs dans le Service</li>
+        <li>Contenu ou comportement de tiers</li>
       </ul>
 
-      <h2>9. Contact</h2>
+      <h2>9. Modifications des Conditions</h2>
+      <p>Nous nous réservons le droit de modifier ces Termes et Conditions à tout moment. Les modifications seront effectives immédiatement après publication. L'utilisation continue du Service après les modifications constitue l'acceptation des nouvelles conditions.</p>
+
+      <h2>10. Résiliation</h2>
+      <p>Nous nous réservons le droit de suspendre ou de résilier votre compte en cas de violation de ces Conditions, sans préavis et sans remboursement.</p>
+
+      <h2>11. Loi Applicable</h2>
+      <p>Ces Conditions sont régies par les lois de l'État du Wyoming, États-Unis, sans égard aux principes de conflits de lois.</p>
+
+      <h2>12. Contact</h2>
+      <p>Pour des questions sur ces Termes et Conditions, contactez-nous:</p>
       <div class="contact-box">
         <p><strong>VELIKA GROUP LLC</strong></p>
-        <p>30 N Gould St 32651, Sheridan, WY 82801, United States</p>
-        <p>EIN: 36-5141800 | E-mail: velika.03@outlook.it</p>
+        <p>30 N Gould St 32651</p>
+        <p>Sheridan, WY 82801, United States</p>
+        <p>EIN: 36-5141800</p>
+        <p>E-mail: velika.03@outlook.it</p>
       </div>
     `
   }
