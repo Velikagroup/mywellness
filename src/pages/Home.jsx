@@ -80,6 +80,27 @@ function HomeContent() {
       return;
     }
 
+    // ✅ Se siamo su mobile browser dopo OAuth, prova a riaprire l'app
+    const isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    if (isMobileBrowser) {
+      base44.auth.me()
+        .then(user => {
+          if (user) {
+            // Autenticato! Prova ad aprire l'app
+            const appScheme = 'mywellness://';
+            window.location.href = appScheme;
+            
+            // Se dopo 2 secondi siamo ancora qui, mostra il messaggio
+            setTimeout(() => {
+              alert('✅ Login completato!\n\nApri manualmente l\'app MyWellness per continuare.');
+            }, 2000);
+          }
+        })
+        .catch(() => {
+          // Non autenticato, continua normale
+        });
+    }
+
     // Cattura codice affiliato dall'URL
     const urlParams = new URLSearchParams(window.location.search);
     const affiliateCode = urlParams.get('affiliate');
