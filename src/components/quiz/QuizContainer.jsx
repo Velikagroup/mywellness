@@ -250,6 +250,13 @@ export default function QuizContainer({ translations, language = 'it' }) {
       } catch (error) {
         if (error?.response?.status === 401 || error?.message?.includes('401')) {
           setUser(null);
+          // ✅ Se non autenticato da app iOS, apri browser esterno per login
+          const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
+          if (isCapacitor) {
+            console.log('📱 App iOS - apertura browser per login');
+            const quizUrl = 'https://projectmywellness.com' + createPageUrl('Quiz');
+            window.open(quizUrl, '_system');
+          }
         } else {
           console.error('Error loading user:', error);
           setUser(null);
