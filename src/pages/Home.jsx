@@ -69,9 +69,11 @@ function HomeContent() {
       return;
     }
 
+    // Gestione URL parameters
+    const urlParams = new URLSearchParams(window.location.search);
+    
     // ✅ Se siamo su mobile browser dopo OAuth redirect (solo se viene da auth-callback)
     const isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const urlParams = new URLSearchParams(window.location.search);
     const fromOAuth = urlParams.get('oauth_redirect') === 'true';
 
     if (isMobileBrowser && fromOAuth) {
@@ -89,7 +91,6 @@ function HomeContent() {
     }
 
     // Cattura codice affiliato dall'URL
-    const urlParams = new URLSearchParams(window.location.search);
     const affiliateCode = urlParams.get('affiliate');
     if (affiliateCode) {
       localStorage.setItem('affiliateCode', affiliateCode.toUpperCase());
