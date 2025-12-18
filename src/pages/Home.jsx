@@ -64,18 +64,26 @@ function HomeContent() {
                         window.Capacitor !== undefined;
     
     if (isCapacitor) {
-      // Se è app nativa, redirect diretto a Dashboard o Quiz
+      // Se è app nativa, controlla autenticazione
       base44.auth.me()
         .then(user => {
           if (user && user.quiz_completed) {
             navigate(createPageUrl('Dashboard'), { replace: true });
-          } else {
+          } else if (user) {
             navigate(createPageUrl('Quiz'), { replace: true });
+          } else {
+            // Non autenticato - apri browser esterno per login
+            const loginUrl = 'https://app.base44.com';
+            window.open(loginUrl, '_system');
+            // Poi chiudi l'app o mostra un messaggio
+            alert('Per favore completa il login nel browser, poi riapri l\'app MyWellness');
           }
         })
         .catch(() => {
-          // Non loggato, vai al quiz
-          navigate(createPageUrl('Quiz'), { replace: true });
+          // Non loggato - apri browser esterno per login
+          const loginUrl = 'https://app.base44.com';
+          window.open(loginUrl, '_system');
+          alert('Per favore completa il login nel browser, poi riapri l\'app MyWellness');
         });
       return;
     }
