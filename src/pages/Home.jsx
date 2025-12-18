@@ -64,26 +64,8 @@ function HomeContent() {
                         window.Capacitor !== undefined;
     
     if (isCapacitor) {
-      // Se è app nativa, controlla autenticazione
-      base44.auth.me()
-        .then(user => {
-          if (user && user.quiz_completed) {
-            navigate(createPageUrl('Dashboard'), { replace: true });
-          } else if (user) {
-            navigate(createPageUrl('Quiz'), { replace: true });
-          } else {
-            // Non autenticato - apri browser esterno per login con redirect all'app
-            const redirectUrl = 'mywellness://auth-callback';
-            const loginUrl = `https://projectmywellness.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
-            window.open(loginUrl, '_system');
-          }
-        })
-        .catch(() => {
-          // Non loggato - apri browser esterno per login con redirect all'app
-          const redirectUrl = 'mywellness://auth-callback';
-          const loginUrl = `https://projectmywellness.com?nextUrl=${encodeURIComponent(redirectUrl)}`;
-          window.open(loginUrl, '_system');
-        });
+      // Se è app nativa, vai SEMPRE al Quiz - gestisce tutto lui
+      navigate(createPageUrl('Quiz'), { replace: true });
       return;
     }
 
