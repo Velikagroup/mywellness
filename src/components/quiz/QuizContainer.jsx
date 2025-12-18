@@ -422,8 +422,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
       localStorage.setItem('needsTrialSetup', 'true');
       localStorage.setItem('preferred_language', language);
       
-      const quizUrl = window.location.origin + window.location.pathname;
-      await base44.auth.redirectToLogin(quizUrl);
+      // Redirect a pagina callback dedicata dopo login
+      const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
+      await base44.auth.redirectToLogin(callbackUrl);
       return;
     }
     

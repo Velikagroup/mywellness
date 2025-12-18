@@ -75,6 +75,7 @@ import decheckout from './pages/decheckout';
 import frcheckout from './pages/frcheckout';
 import TikTokTest from './pages/TikTokTest';
 import AdminEmailTest from './pages/AdminEmailTest';
+import AuthCallback from './pages/AuthCallback';
 import __Layout from './Layout.jsx';
 
 
@@ -156,6 +157,7 @@ export const PAGES = {
     "frcheckout": frcheckout,
     "TikTokTest": TikTokTest,
     "AdminEmailTest": AdminEmailTest,
+    "AuthCallback": AuthCallback,
 }
 
 export const pagesConfig = {

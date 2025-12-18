@@ -92,6 +92,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     createPageUrl('Privacy'),
     createPageUrl('ApplePayVerification'),
     createPageUrl('NotFound'),
+    createPageUrl('AuthCallback'),
     // Checkout pages
     createPageUrl('itcheckout'),
     createPageUrl('encheckout'),
