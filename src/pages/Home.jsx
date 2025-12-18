@@ -1349,12 +1349,12 @@ function HomeContent() {
           <div className="text-center space-y-4">
             <div className="flex items-center justify-center gap-6 mb-4">
               <a
-                href="https://projectmywellness.com/Privacy"
+                href={`https://projectmywellness.com/${language === 'en' ? '' : language}privacy`}
                 className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
                 {t('common.privacyPolicy')}
               </a>
               <a
-                href="https://projectmywellness.com/Terms"
+                href={`https://projectmywellness.com/${language === 'en' ? '' : language}terms`}
                 className="text-sm text-gray-600 hover:text-[var(--brand-primary)] transition-colors underline">
                 {t('common.termsConditions')}
               </a>
