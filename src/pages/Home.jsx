@@ -294,11 +294,11 @@ function HomeContent() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-      // Per mobile, usa AuthCallback come nextUrl
+      // Per mobile, usa AuthCallback come nextUrl con SSO Google diretto
       const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
-      await base44.auth.redirectToLogin(callbackUrl);
+      await base44.auth.redirectToSsoProvider('google', callbackUrl);
     } else {
-      // Per web, usa Quiz come nextUrl
+      // Per web, usa Quiz come nextUrl con SSO Google diretto
       const quizPages = {
         'en': 'enquiz',
         'it': 'itquiz',
@@ -308,7 +308,7 @@ function HomeContent() {
         'fr': 'frquiz'
       };
       const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
-      await base44.auth.redirectToLogin(quizUrl);
+      await base44.auth.redirectToSsoProvider('google', quizUrl);
     }
   };
 
