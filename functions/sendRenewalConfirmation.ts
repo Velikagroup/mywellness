@@ -25,6 +25,37 @@ Deno.serve(async (req) => {
         console.log(`📬 Sending renewal confirmation to ${user.email}`);
 
         // Carica template localizzato
+        // Usa sendEmailUnified
+        await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+            userId: userId,
+            userEmail: user.email,
+            templateId: 'renewal_confirmation',
+            variables: {
+                user_name: user.full_name || 'Utente',
+                plan_name: user.subscription_plan || 'Premium',
+                amount: amount || user.subscription_amount || '€0.00',
+                next_billing_date: nextRenewalDate
+            },
+            language: userLanguage,
+            triggerSource: 'sendRenewalConfirmation'
+        });
+
+        console.log('✅ Renewal confirmation email sent successfully');
+
+        return Response.json({ 
+            success: true,
+            message: 'Renewal confirmation email sent'
+        });
+    } catch (error) {
+        console.error('❌ Error sending renewal confirmation email:', error);
+        return Response.json({ 
+            error: error.message 
+        }, { status: 500 });
+    }
+});
+
+/*
+OLD HARDCODED VERSION:
         const templateId = `renewal_confirmation_${userLanguage}`;
         const templates = await base44.asServiceRole.entities.EmailTemplate.filter({ 
             template_id: templateId,

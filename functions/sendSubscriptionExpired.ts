@@ -53,13 +53,21 @@ Deno.serve(async (req) => {
                 const daysActive = Math.floor((today - new Date(user.created_date)) / (1000 * 60 * 60 * 24));
                 const workoutsCompleted = workoutLogs.filter(w => w.completed).length;
 
-                const emailBody = generateExpiredEmail(user, weightChange, daysActive, workoutsCompleted, appUrl);
+                // Rileva lingua utente
+                const userLanguage = user.preferred_language || 'it';
 
-                await base44.asServiceRole.integrations.Core.SendEmail({
-                    to: user.email,
-                    from_name: `MyWellness Team <${fromEmail}>`,
-                    subject: '⏰ Il tuo abbonamento MyWellness è scaduto',
-                    body: emailBody
+                // Usa sendEmailUnified
+                await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                    userId: user.id,
+                    userEmail: user.email,
+                    templateId: 'subscription_expired',
+                    variables: {
+                        user_name: user.full_name || 'Utente',
+                        expiry_date: yesterday.toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' }),
+                        user_stats: `• Peso perso: ${weightChange > 0 ? weightChange : '0'} kg\n• Giorni attivi: ${daysActive}\n• Allenamenti completati: ${workoutsCompleted}`
+                    },
+                    language: userLanguage,
+                    triggerSource: 'sendSubscriptionExpired_cron'
                 });
 
                 sentCount++;

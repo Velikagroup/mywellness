@@ -18,15 +18,45 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'User not found or no email' }, { status: 404 });
         }
 
-        console.log(`📬 Sending cancellation confirmation to ${user.email}`);
-
-        const fromEmail = Deno.env.get('FROM_EMAIL') || 'info@projectmywellness.com';
-        const appUrl = Deno.env.get('APP_URL') || 'https://app.mywellness.it';
+        // Rileva lingua utente
+        const userLanguage = user.preferred_language || 'it';
+        console.log(`📬 Sending cancellation confirmation to ${user.email} (lang: ${userLanguage})`);
         
         const expiryDate = user.subscription_period_end 
             ? new Date(user.subscription_period_end).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
             : 'non disponibile';
 
+        // Usa sendEmailUnified
+        await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+            userId: userId,
+            userEmail: user.email,
+            templateId: 'cancellation_confirmation',
+            variables: {
+                user_name: user.full_name || 'Utente',
+                expiry_date: expiryDate,
+                plan_name: user.subscription_plan || 'Premium'
+            },
+            language: userLanguage,
+            triggerSource: 'sendCancellationConfirmation'
+        });
+
+        console.log('✅ Cancellation confirmation email sent');
+
+        return Response.json({ 
+            success: true,
+            message: 'Cancellation confirmation email sent'
+        });
+
+    } catch (error) {
+        console.error('❌ Error sending cancellation confirmation:', error);
+        return Response.json({ 
+            error: error.message 
+        }, { status: 500 });
+    }
+});
+
+/*
+OLD HARDCODED VERSION:
         const emailBody = `
 <!DOCTYPE html>
 <html>
@@ -129,14 +159,7 @@ Deno.serve(async (req) => {
     </table>
 </body>
 </html>
-        `;
-
-        await base44.asServiceRole.integrations.Core.SendEmail({
-            to: user.email,
-            from_name: `MyWellness <${fromEmail}>`,
-            subject: '✅ Cancellazione Rinnovo Confermata - MyWellness',
-            body: emailBody
-        });
+*/
 
         console.log('✅ Cancellation confirmation email sent');
 
