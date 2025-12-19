@@ -299,9 +299,9 @@ function HomeContent() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-      // Per mobile, usa AuthCallback come nextUrl con SSO Google diretto
+      // Per mobile, usa redirectToLogin con AuthCallback esplicito
       const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
-      await base44.auth.redirectToSsoProvider('google', callbackUrl);
+      await base44.auth.redirectToLogin(callbackUrl);
     } else {
       // Per web, usa Quiz come nextUrl con SSO Google diretto
       const quizPages = {
