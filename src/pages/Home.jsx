@@ -299,18 +299,11 @@ function HomeContent() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-      // Per mobile, crea un link temporaneo che forza apertura Safari
-      const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
-      const ssoUrl = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(callbackUrl)}`;
+      // Per mobile, usa AuthCallback con parametro esplicito
+      const callbackUrl = `${window.location.origin}${createPageUrl('AuthCallback')}`;
       
-      // Crea link temporaneo e cliccalo
-      const link = document.createElement('a');
-      link.href = ssoUrl;
-      link.target = '_system'; // Forza browser esterno su mobile
-      link.rel = 'noopener noreferrer';
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
+      // Usa redirectToSsoProvider direttamente con callback esplicito
+      window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(callbackUrl)}`;
     } else {
       // Per web, usa Quiz come nextUrl con SSO Google diretto
       const quizPages = {
