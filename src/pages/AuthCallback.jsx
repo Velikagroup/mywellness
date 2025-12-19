@@ -14,9 +14,16 @@ export default function AuthCallback() {
         if (user) {
           setStatus('success');
           
-          // Prova ad aprire l'app iOS
-          console.log('✅ Login verificato, apertura app...');
-          window.location.href = 'mywellness://auth-callback?login=success';
+          // Controlla se ha quiz completato e subscription attiva
+          if (user.quiz_completed && (user.subscription_status === 'active' || user.subscription_status === 'trial')) {
+            // Utente completo - prova ad aprire Dashboard nell'app
+            console.log('✅ Utente completo, apertura Dashboard app...');
+            window.location.href = 'mywellness://dashboard';
+          } else {
+            // Utente nuovo/incompleto - prova ad aprire Quiz nell'app
+            console.log('✅ Utente nuovo, apertura Quiz app...');
+            window.location.href = 'mywellness://quiz';
+          }
           
           // Dopo 2 secondi, se non si è aperta, mostra istruzioni
           setTimeout(() => {
