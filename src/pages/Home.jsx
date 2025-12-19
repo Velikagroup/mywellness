@@ -295,17 +295,19 @@ function HomeContent() {
   };
 
   const handleLogin = async () => {
-    // Rileva se siamo su mobile iOS/Android
-    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    // Rileva se siamo in app Capacitor
+    const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
     
-    if (isMobile) {
-      // Per mobile, usa AuthCallback con parametro esplicito
-      const callbackUrl = `${window.location.origin}${createPageUrl('AuthCallback')}`;
+    if (isCapacitor) {
+      // In app iOS/Android - l'app deve gestire questo click e aprire Safari esterno
+      // L'app iOS intercetta questo attributo data-auth-action e apre Safari esterno
+      console.log('🔐 Capacitor app detected - iOS should handle this');
       
-      // Usa redirectToSsoProvider direttamente con callback esplicito
+      // Fallback se l'app non intercetta - apri URL diretto
+      const callbackUrl = `${window.location.origin}${createPageUrl('AuthCallback')}`;
       window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(callbackUrl)}`;
     } else {
-      // Per web, usa Quiz come nextUrl con SSO Google diretto
+      // Browser web normale - usa metodo Base44 standard
       const quizPages = {
         'en': 'enquiz',
         'it': 'itquiz',
