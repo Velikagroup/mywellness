@@ -72,17 +72,22 @@ function HomeContent() {
     // Gestione URL parameters
     const urlParams = new URLSearchParams(window.location.search);
     
-    // ✅ Se siamo su mobile browser dopo OAuth redirect (solo se viene da auth-callback)
+    // ✅ CRITICAL FIX: Se siamo su mobile browser, controlla sempre se l'utente è loggato
     const isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    const fromOAuth = urlParams.get('oauth_redirect') === 'true';
-
-    if (isMobileBrowser && fromOAuth) {
+    
+    if (isMobileBrowser) {
       base44.auth.me()
         .then(user => {
           if (user) {
-            // Autenticato! Prova ad aprire l'app
-            const appScheme = 'mywellness://auth-callback?login=success';
-            window.location.href = appScheme;
+            // Utente autenticato su mobile! Apri l'app
+            console.log('✅ Mobile user logged in, opening app...');
+            
+            // Controlla se ha quiz completato e subscription
+            if (user.quiz_completed && (user.subscription_status === 'active' || user.subscription_status === 'trial')) {
+              window.location.href = 'mywellness://dashboard';
+            } else {
+              window.location.href = 'mywellness://quiz';
+            }
           }
         })
         .catch(() => {
