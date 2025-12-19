@@ -290,16 +290,26 @@ function HomeContent() {
   };
 
   const handleLogin = async () => {
-    const quizPages = {
-      'en': 'enquiz',
-      'it': 'itquiz',
-      'es': 'esquiz',
-      'pt': 'ptquiz',
-      'de': 'dequiz',
-      'fr': 'frquiz'
-    };
-    const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
-    await base44.auth.redirectToLogin(quizUrl);
+    // Rileva se siamo su mobile iOS/Android
+    const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+    
+    if (isMobile) {
+      // Per mobile, usa AuthCallback come nextUrl
+      const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
+      await base44.auth.redirectToLogin(callbackUrl);
+    } else {
+      // Per web, usa Quiz come nextUrl
+      const quizPages = {
+        'en': 'enquiz',
+        'it': 'itquiz',
+        'es': 'esquiz',
+        'pt': 'ptquiz',
+        'de': 'dequiz',
+        'fr': 'frquiz'
+      };
+      const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
+      await base44.auth.redirectToLogin(quizUrl);
+    }
   };
 
   return (
