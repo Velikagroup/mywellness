@@ -299,9 +299,12 @@ function HomeContent() {
     const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
     
     if (isMobile) {
-      // Per mobile, usa redirectToLogin con AuthCallback esplicito
+      // Per mobile, usa SSO Google con AuthCallback - questo apre Safari esterno
       const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
-      await base44.auth.redirectToLogin(callbackUrl);
+      
+      // Forza apertura Safari esterno invece del browser in-app
+      const ssoUrl = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(callbackUrl)}`;
+      window.open(ssoUrl, '_blank');
     } else {
       // Per web, usa Quiz come nextUrl con SSO Google diretto
       const quizPages = {
