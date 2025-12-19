@@ -299,13 +299,11 @@ function HomeContent() {
     const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
     
     if (isCapacitor) {
-      // In app iOS/Android - l'app deve gestire questo click e aprire Safari esterno
-      // L'app iOS intercetta questo attributo data-auth-action e apre Safari esterno
-      console.log('🔐 Capacitor app detected - iOS should handle this');
+      // In app iOS/Android - usa deep link per callback
+      console.log('🔐 Capacitor app detected - using deep link callback');
       
-      // Fallback se l'app non intercetta - apri URL diretto
-      const callbackUrl = `${window.location.origin}${createPageUrl('AuthCallback')}`;
-      window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(callbackUrl)}`;
+      const nextUrl = 'mywellness://auth/callback';
+      window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
     } else {
       // Browser web normale - usa metodo Base44 standard
       const quizPages = {
