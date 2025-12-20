@@ -15,33 +15,44 @@ const MAX_RETRIES = 3;
 const RETRY_DELAYS = [5000, 15000, 30000]; // 5s, 15s, 30s
 
 async function sendViaSendGrid(apiKey, emailData) {
+    const payload = {
+        personalizations: [{
+            to: [{ email: emailData.to, name: emailData.toName || emailData.to }]
+        }],
+        from: {
+            email: emailData.from || 'info@projectmywellness.com',
+            name: 'MyWellness'
+        },
+        reply_to: {
+            email: emailData.replyTo || 'info@projectmywellness.com'
+        },
+        subject: emailData.subject,
+        content: [{
+            type: 'text/html',
+            value: emailData.html
+        }]
+    };
+    
+    console.log('📤 SendGrid Request:', {
+        to: emailData.to,
+        from: emailData.from,
+        subject: emailData.subject,
+        htmlLength: emailData.html?.length
+    });
+    
     const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
         method: 'POST',
         headers: {
             'Authorization': `Bearer ${apiKey}`,
             'Content-Type': 'application/json'
         },
-        body: JSON.stringify({
-            personalizations: [{
-                to: [{ email: emailData.to, name: emailData.toName || emailData.to }]
-            }],
-            from: {
-                email: emailData.from || 'info@projectmywellness.com',
-                name: 'MyWellness'
-            },
-            reply_to: {
-                email: emailData.replyTo || 'info@projectmywellness.com'
-            },
-            subject: emailData.subject,
-            content: [{
-                type: 'text/html',
-                value: emailData.html
-            }]
-        })
+        body: JSON.stringify(payload)
     });
 
     if (!response.ok) {
         const errorText = await response.text();
+        console.error('❌ SendGrid Error Response:', errorText);
+        console.error('📧 Failed payload:', JSON.stringify(payload, null, 2));
         throw new Error(`SendGrid API error (${response.status}): ${errorText}`);
     }
 
