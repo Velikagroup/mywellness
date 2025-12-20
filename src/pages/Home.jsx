@@ -306,7 +306,7 @@ function HomeContent() {
         const nextUrl = 'mywellness://auth/callback';
         window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
       } else {
-        // Browser web normale - usa metodo Base44 standard
+        // Browser web normale - redirect alla pagina login di Base44
         const quizPages = {
           'en': 'enquiz',
           'it': 'itquiz',
@@ -315,8 +315,8 @@ function HomeContent() {
           'de': 'dequiz',
           'fr': 'frquiz'
         };
-        const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
-        base44.auth.redirectToSsoProvider('google', quizUrl);
+        const nextUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
+        base44.auth.redirectToLogin(nextUrl);
       }
     } catch (error) {
       console.error('❌ Login error:', error);
