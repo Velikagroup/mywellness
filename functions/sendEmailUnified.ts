@@ -701,7 +701,7 @@ Deno.serve(async (req) => {
 
         // Tentativo di invio con retry
         let lastError = null;
-        let result = null;
+        let sendResult = null;
 
         for (let attempt = 0; attempt < MAX_RETRIES; attempt++) {
             logEntry.retry_count = attempt;
@@ -709,7 +709,7 @@ Deno.serve(async (req) => {
             try {
                 console.log(`📤 Attempt ${attempt + 1}/${MAX_RETRIES} sending to ${userEmail}`);
                 
-                result = await sendViaSendGrid(sendGridApiKey, {
+                sendResult = await sendViaSendGrid(sendGridApiKey, {
                     to: userEmail,
                     toName: variables.user_name,
                     from: template.from_email || 'info@projectmywellness.com',
@@ -733,15 +733,15 @@ Deno.serve(async (req) => {
             }
         }
 
-        if (!result) {
+        if (!sendResult) {
             throw lastError || new Error('All retry attempts failed');
         }
 
         // Salva log SUCCESS
         logEntry.status = 'sent';
         logEntry.sent_at = new Date().toISOString();
-        logEntry.sendgrid_message_id = result.messageId;
-        logEntry.provider = result.provider;
+        logEntry.sendgrid_message_id = sendResult.messageId;
+        logEntry.provider = sendResult.provider;
 
         try {
             await base44.asServiceRole.entities.EmailLog.create(logEntry);
@@ -750,13 +750,13 @@ Deno.serve(async (req) => {
             console.error('⚠️ Failed to save email log:', logError);
         }
 
-        console.log(`✅ Email sent successfully to ${userEmail} (ID: ${result.messageId})`);
+        console.log(`✅ Email sent successfully to ${userEmail} (ID: ${sendResult.messageId})`);
 
         return Response.json({ 
             success: true,
             message: 'Email sent successfully',
-            messageId: result.messageId,
-            provider: result.provider,
+            messageId: sendResult.messageId,
+            provider: sendResult.provider,
             retryCount: logEntry.retry_count
         });
 
