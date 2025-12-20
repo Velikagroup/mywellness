@@ -294,28 +294,33 @@ function HomeContent() {
     setShowQuizPopup(false);
   };
 
-  const handleLogin = async () => {
-    // Rileva se siamo in app Capacitor
-    const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
-    
-    if (isCapacitor) {
-      // In app iOS/Android - usa deep link per callback
-      console.log('🔐 Capacitor app detected - using deep link callback');
+  const handleLogin = () => {
+    try {
+      // Rileva se siamo in app Capacitor
+      const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
       
-      const nextUrl = 'mywellness://auth/callback';
-      window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
-    } else {
-      // Browser web normale - usa metodo Base44 standard
-      const quizPages = {
-        'en': 'enquiz',
-        'it': 'itquiz',
-        'es': 'esquiz',
-        'pt': 'ptquiz',
-        'de': 'dequiz',
-        'fr': 'frquiz'
-      };
-      const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
-      await base44.auth.redirectToSsoProvider('google', quizUrl);
+      if (isCapacitor) {
+        // In app iOS/Android - usa deep link per callback
+        console.log('🔐 Capacitor app detected - using deep link callback');
+        
+        const nextUrl = 'mywellness://auth/callback';
+        window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
+      } else {
+        // Browser web normale - usa metodo Base44 standard
+        const quizPages = {
+          'en': 'enquiz',
+          'it': 'itquiz',
+          'es': 'esquiz',
+          'pt': 'ptquiz',
+          'de': 'dequiz',
+          'fr': 'frquiz'
+        };
+        const quizUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
+        base44.auth.redirectToSsoProvider('google', quizUrl);
+      }
+    } catch (error) {
+      console.error('❌ Login error:', error);
+      alert('Errore durante il login. Riprova.');
     }
   };
 
