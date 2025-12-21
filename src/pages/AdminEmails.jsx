@@ -312,7 +312,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .content-cell { padding: 15px 30px; }
 @media only screen and (min-width: 600px) {
 .logo-cell { padding: 60px 60px 10px 60px !important; }
-.content-cell { padding: 60px 60px 15px 60px !important; }
+.content-cell { padding: 15px 60px 60px 60px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
@@ -621,7 +621,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .content-cell { padding: 15px 30px; }
 @media only screen and (min-width: 600px) {
 .logo-cell { padding: 60px 60px 10px 60px !important; }
-.content-cell { padding: 60px 60px 15px 60px !important; }
+.content-cell { padding: 15px 60px 60px 60px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
