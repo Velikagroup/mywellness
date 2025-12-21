@@ -422,9 +422,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
       localStorage.setItem('needsTrialSetup', 'true');
       localStorage.setItem('preferred_language', language);
       
-      // Redirect a Google OAuth per login
-      const callbackUrl = window.location.origin + createPageUrl('AuthCallback');
-      await base44.auth.redirectToSsoProvider('google', callbackUrl);
+      // Redirect to login
+      const nextUrl = window.location.origin + createPageUrl('Quiz');
+      base44.auth.redirectToLogin(nextUrl);
       return;
     }
     

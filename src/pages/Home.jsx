@@ -1388,6 +1388,7 @@ function HomeContent() {
       {/* Quiz Pop-up */}
       <Dialog open={showQuizPopup} onOpenChange={handleQuizPopupClose}>
         <DialogContent 
+          hideClose={false}
           className="sm:max-w-lg rounded-3xl border-0 shadow-2xl p-0 overflow-hidden"
           style={{
             background: '#f9fafb',
@@ -1491,41 +1492,22 @@ export default function Home() {
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
-    
+
     // Se siamo su /, redirect alla versione localizzata basata sulla location
     if (window.location.pathname === '/' || window.location.pathname === createPageUrl('Home')) {
-      // Rileva location geografica
-      fetch('https://ipapi.co/json/')
-        .then(res => res.json())
-        .then(data => {
-          const countryCode = data.country_code?.toLowerCase();
-          
-          // Mappa paese -> lingua
-          const countryToLang = {
-            'it': 'it',
-            'es': 'es',
-            'pt': 'pt',
-            'br': 'pt',
-            'de': 'de',
-            'at': 'de',
-            'ch': 'de',
-            'fr': 'fr',
-            'be': 'fr',
-            'ca': 'fr'
-          };
-          
-          const detectedLang = countryToLang[countryCode] || 'en';
-          localStorage.setItem('preferred_language', detectedLang);
-          navigate(createPageUrl(detectedLang), { replace: true });
-        })
-        .catch(() => {
-          // Fallback a lingua browser se geolocation fallisce
-          const browserLang = navigator.language.toLowerCase().split('-')[0];
-          const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-          const detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
-          localStorage.setItem('preferred_language', detectedLang);
-          navigate(createPageUrl(detectedLang), { replace: true });
-        });
+      // Prima controlla se c'è già una lingua salvata
+      const savedLang = localStorage.getItem('preferred_language');
+      if (savedLang && ['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
+        navigate(createPageUrl(savedLang), { replace: true });
+        return;
+      }
+
+      // Altrimenti usa lingua browser direttamente (no geolocation che causa timeout)
+      const browserLang = navigator.language.toLowerCase().split('-')[0];
+      const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+      const detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+      localStorage.setItem('preferred_language', detectedLang);
+      navigate(createPageUrl(detectedLang), { replace: true });
     }
   }, [navigate]);
 

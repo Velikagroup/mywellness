@@ -1,139 +1,145 @@
-import Dashboard from './pages/Dashboard';
-import Quiz from './pages/Quiz';
-import Meals from './pages/Meals';
-import Workouts from './pages/Workouts';
-import Home from './pages/Home';
-import pricing from './pages/pricing';
-import TrialSetup from './pages/TrialSetup';
-import AdminCoupons from './pages/AdminCoupons';
-import Blog from './pages/Blog';
-import BlogArticle from './pages/BlogArticle';
-import AdminBlog from './pages/AdminBlog';
-import Landing from './pages/Landing';
-import OneTimeOffer from './pages/OneTimeOffer';
-import Terms from './pages/Terms';
-import Privacy from './pages/Privacy';
-import LandingCheckout from './pages/LandingCheckout';
-import ThankYou from './pages/ThankYou';
-import ResetPassword from './pages/ResetPassword';
-import NotFound from './pages/NotFound';
-import AdminEmails from './pages/AdminEmails';
+import _404 from './pages/404';
 import AdminAnalytics from './pages/AdminAnalytics';
+import AdminBlog from './pages/AdminBlog';
+import AdminClients from './pages/AdminClients';
+import AdminCoupons from './pages/AdminCoupons';
+import AdminEmailTest from './pages/AdminEmailTest';
+import AdminEmails from './pages/AdminEmails';
+import AdminFeedbackon from './pages/AdminFeedbackon';
+import AdminFeedback from './pages/AdminFeedback';
 import AdminMarketing from './pages/AdminMarketing';
 import AdminSalesTax from './pages/AdminSalesTax';
-import AdminClients from './pages/AdminClients';
-import Settings from './pages/Settings';
 import AdminSupportTickets from './pages/AdminSupportTickets';
-import AdminFeedback from './pages/AdminFeedback';
+import AuthCallback from './pages/AuthCallback';
+import Blog from './pages/Blog';
+import BlogArticle from './pages/BlogArticle';
 import Checkout from './pages/Checkout';
-import itpricing from './pages/itpricing';
-import espricing from './pages/espricing';
-import ptpricing from './pages/ptpricing';
-import depricing from './pages/depricing';
-import frpricing from './pages/frpricing';
-import itblog from './pages/itblog';
-import esblog from './pages/esblog';
-import ptblog from './pages/ptblog';
-import deblog from './pages/deblog';
-import frblog from './pages/frblog';
-import itblogarticle from './pages/itblogarticle';
-import esblogarticle from './pages/esblogarticle';
-import ptblogarticle from './pages/ptblogarticle';
-import deblogarticle from './pages/deblogarticle';
-import frblogarticle from './pages/frblogarticle';
+import Dashboard from './pages/Dashboard';
+import Home from './pages/Home';
+import Landing from './pages/Landing';
+import LandingCheckout from './pages/LandingCheckout';
+import Meals from './pages/Meals';
+import NotFound from './pages/NotFound';
+import OneTimeOffer from './pages/OneTimeOffer';
+import Privacy from './pages/Privacy';
+import Quiz from './pages/Quiz';
+import ResetPassword from './pages/ResetPassword';
+import Settings from './pages/Settings';
+import Sfondo from './pages/Sfondo';
+import Terms from './pages/Terms';
+import ThankYou from './pages/ThankYou';
+import TikTokTest from './pages/TikTokTest';
+import TrialSetup from './pages/TrialSetup';
+import Video from './pages/Video';
+import Workouts from './pages/Workouts';
 import blogarticle from './pages/blogarticle';
-import itquiz from './pages/itquiz';
-import enquiz from './pages/enquiz';
-import esquiz from './pages/esquiz';
-import ptquiz from './pages/ptquiz';
+import de from './pages/de';
+import deblog from './pages/deblog';
+import deblogarticle from './pages/deblogarticle';
+import decheckout from './pages/decheckout';
+import depricing from './pages/depricing';
 import dequiz from './pages/dequiz';
+import en from './pages/en';
+import encheckout from './pages/encheckout';
+import enquiz from './pages/enquiz';
+import es from './pages/es';
+import esblog from './pages/esblog';
+import esblogarticle from './pages/esblogarticle';
+import escheckout from './pages/escheckout';
+import espricing from './pages/espricing';
+import esquiz from './pages/esquiz';
+import fr from './pages/fr';
+import frblog from './pages/frblog';
+import frblogarticle from './pages/frblogarticle';
+import frcheckout from './pages/frcheckout';
+import frpricing from './pages/frpricing';
 import frquiz from './pages/frquiz';
 import it from './pages/it';
-import es from './pages/es';
-import pt from './pages/pt';
-import de from './pages/de';
-import fr from './pages/fr';
-import en from './pages/en';
-import Video from './pages/Video';
+import itblog from './pages/itblog';
+import itblogarticle from './pages/itblogarticle';
 import itcheckout from './pages/itcheckout';
-import encheckout from './pages/encheckout';
-import escheckout from './pages/escheckout';
+import itpricing from './pages/itpricing';
+import itquiz from './pages/itquiz';
+import pricing from './pages/pricing';
+import pt from './pages/pt';
+import ptblog from './pages/ptblog';
+import ptblogarticle from './pages/ptblogarticle';
 import ptcheckout from './pages/ptcheckout';
-import decheckout from './pages/decheckout';
-import frcheckout from './pages/frcheckout';
-import TikTokTest from './pages/TikTokTest';
-import AdminEmailTest from './pages/AdminEmailTest';
-import AuthCallback from './pages/AuthCallback';
+import ptpricing from './pages/ptpricing';
+import ptquiz from './pages/ptquiz';
 import __Layout from './Layout.jsx';
 
 
 export const PAGES = {
-    "Dashboard": Dashboard,
-    "Quiz": Quiz,
-    "Meals": Meals,
-    "Workouts": Workouts,
-    "Home": Home,
-    "pricing": pricing,
-    "TrialSetup": TrialSetup,
-    "AdminCoupons": AdminCoupons,
-    "Blog": Blog,
-    "BlogArticle": BlogArticle,
-    "AdminBlog": AdminBlog,
-    "Landing": Landing,
-    "OneTimeOffer": OneTimeOffer,
-    "Terms": Terms,
-    "Privacy": Privacy,
-    "LandingCheckout": LandingCheckout,
-    "ThankYou": ThankYou,
-    "ResetPassword": ResetPassword,
-    "NotFound": NotFound,
-    "AdminEmails": AdminEmails,
+    "404": _404,
     "AdminAnalytics": AdminAnalytics,
+    "AdminBlog": AdminBlog,
+    "AdminClients": AdminClients,
+    "AdminCoupons": AdminCoupons,
+    "AdminEmailTest": AdminEmailTest,
+    "AdminEmails": AdminEmails,
+    "AdminFeedbackon": AdminFeedbackon,
+    "AdminFeedback": AdminFeedback,
     "AdminMarketing": AdminMarketing,
     "AdminSalesTax": AdminSalesTax,
-    "AdminClients": AdminClients,
-    "Settings": Settings,
     "AdminSupportTickets": AdminSupportTickets,
-    "AdminFeedback": AdminFeedback,
+    "AuthCallback": AuthCallback,
+    "Blog": Blog,
+    "BlogArticle": BlogArticle,
     "Checkout": Checkout,
-    "itpricing": itpricing,
-    "espricing": espricing,
-    "ptpricing": ptpricing,
-    "depricing": depricing,
-    "frpricing": frpricing,
-    "itblog": itblog,
-    "esblog": esblog,
-    "ptblog": ptblog,
-    "deblog": deblog,
-    "frblog": frblog,
-    "itblogarticle": itblogarticle,
-    "esblogarticle": esblogarticle,
-    "ptblogarticle": ptblogarticle,
-    "deblogarticle": deblogarticle,
-    "frblogarticle": frblogarticle,
+    "Dashboard": Dashboard,
+    "Home": Home,
+    "Landing": Landing,
+    "LandingCheckout": LandingCheckout,
+    "Meals": Meals,
+    "NotFound": NotFound,
+    "OneTimeOffer": OneTimeOffer,
+    "Privacy": Privacy,
+    "Quiz": Quiz,
+    "ResetPassword": ResetPassword,
+    "Settings": Settings,
+    "Sfondo": Sfondo,
+    "Terms": Terms,
+    "ThankYou": ThankYou,
+    "TikTokTest": TikTokTest,
+    "TrialSetup": TrialSetup,
+    "Video": Video,
+    "Workouts": Workouts,
     "blogarticle": blogarticle,
-    "itquiz": itquiz,
-    "enquiz": enquiz,
-    "esquiz": esquiz,
-    "ptquiz": ptquiz,
+    "de": de,
+    "deblog": deblog,
+    "deblogarticle": deblogarticle,
+    "decheckout": decheckout,
+    "depricing": depricing,
     "dequiz": dequiz,
+    "en": en,
+    "encheckout": encheckout,
+    "enquiz": enquiz,
+    "es": es,
+    "esblog": esblog,
+    "esblogarticle": esblogarticle,
+    "escheckout": escheckout,
+    "espricing": espricing,
+    "esquiz": esquiz,
+    "fr": fr,
+    "frblog": frblog,
+    "frblogarticle": frblogarticle,
+    "frcheckout": frcheckout,
+    "frpricing": frpricing,
     "frquiz": frquiz,
     "it": it,
-    "es": es,
-    "pt": pt,
-    "de": de,
-    "fr": fr,
-    "en": en,
-    "Video": Video,
+    "itblog": itblog,
+    "itblogarticle": itblogarticle,
     "itcheckout": itcheckout,
-    "encheckout": encheckout,
-    "escheckout": escheckout,
+    "itpricing": itpricing,
+    "itquiz": itquiz,
+    "pricing": pricing,
+    "pt": pt,
+    "ptblog": ptblog,
+    "ptblogarticle": ptblogarticle,
     "ptcheckout": ptcheckout,
-    "decheckout": decheckout,
-    "frcheckout": frcheckout,
-    "TikTokTest": TikTokTest,
-    "AdminEmailTest": AdminEmailTest,
-    "AuthCallback": AuthCallback,
+    "ptpricing": ptpricing,
+    "ptquiz": ptquiz,
 }
 
 export const pagesConfig = {
