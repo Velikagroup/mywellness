@@ -11,6 +11,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
 import ReactQuill from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
 import {
   Dialog,
   DialogContent,
@@ -2040,25 +2041,27 @@ ${trustBadgesHtml}
                                     />
                                   </div>
 
-                                  <div>
-                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto</Label>
-                                    <ReactQuill
-                                      value={editingContent.main_content || ''}
-                                      onChange={(value) => setEditingContent({...editingContent, main_content: value})}
-                                      placeholder="Scrivi il contenuto principale dell'email qui..."
-                                      className="bg-white rounded-lg"
-                                      style={{ minHeight: '200px' }}
-                                      modules={{
-                                        toolbar: [
-                                          [{ 'header': [1, 2, 3, false] }],
-                                          ['bold', 'italic', 'underline', 'strike'],
-                                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                          [{ 'align': [] }],
-                                          ['link'],
-                                          ['clean']
-                                        ]
-                                      }}
-                                    />
+                                  <div className="space-y-2">
+                                    <Label className="text-sm font-semibold text-gray-700">Contenuto</Label>
+                                    <div className="border rounded-lg overflow-hidden">
+                                      <ReactQuill
+                                        value={editingContent.main_content || ''}
+                                        onChange={(value) => setEditingContent({...editingContent, main_content: value})}
+                                        theme="snow"
+                                        placeholder="Scrivi il contenuto principale dell'email qui..."
+                                        modules={{
+                                          toolbar: [
+                                            [{ 'header': [1, 2, 3, false] }],
+                                            ['bold', 'italic', 'underline', 'strike'],
+                                            [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                            [{ 'align': [] }],
+                                            ['link'],
+                                            ['clean']
+                                          ]
+                                        }}
+                                        style={{ height: '300px', marginBottom: '50px' }}
+                                      />
+                                    </div>
                                   </div>
 
                                   {/* Sezione Grafici/Statistiche - Solo per weekly_report */}
@@ -2229,40 +2232,44 @@ ${trustBadgesHtml}
                                       </h4>
 
                                       {/* Intro Text */}
-                                      <div>
-                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Introduttivo</Label>
-                                        <ReactQuill
-                                          value={editingContent.intro_text || ''}
-                                          onChange={(value) => setEditingContent({...editingContent, intro_text: value})}
-                                          placeholder="Hai fatto il primo passo verso la versione migliore di te stesso..."
-                                          className="bg-white rounded-lg"
-                                          style={{ minHeight: '100px' }}
-                                          modules={{
-                                            toolbar: [
-                                              ['bold', 'italic', 'underline', 'strike'],
-                                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                              ['clean']
-                                            ]
-                                          }}
-                                        />
+                                      <div className="space-y-2">
+                                        <Label className="text-sm font-semibold text-gray-700">Testo Introduttivo</Label>
+                                        <div className="border rounded-lg overflow-hidden">
+                                          <ReactQuill
+                                            value={editingContent.intro_text || ''}
+                                            onChange={(value) => setEditingContent({...editingContent, intro_text: value})}
+                                            theme="snow"
+                                            placeholder="Hai fatto il primo passo verso la versione migliore di te stesso..."
+                                            modules={{
+                                              toolbar: [
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                ['clean']
+                                              ]
+                                            }}
+                                            style={{ height: '150px', marginBottom: '50px' }}
+                                          />
+                                        </div>
                                       </div>
 
-                                      <div>
-                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Secondo Paragrafo</Label>
-                                        <ReactQuill
-                                          value={editingContent.second_paragraph || ''}
-                                          onChange={(value) => setEditingContent({...editingContent, second_paragraph: value})}
-                                          placeholder="Ogni giorno che passa è un giorno in meno..."
-                                          className="bg-white rounded-lg"
-                                          style={{ minHeight: '120px' }}
-                                          modules={{
-                                            toolbar: [
-                                              ['bold', 'italic', 'underline', 'strike'],
-                                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                              ['clean']
-                                            ]
-                                          }}
-                                        />
+                                      <div className="space-y-2">
+                                        <Label className="text-sm font-semibold text-gray-700">Secondo Paragrafo</Label>
+                                        <div className="border rounded-lg overflow-hidden">
+                                          <ReactQuill
+                                            value={editingContent.second_paragraph || ''}
+                                            onChange={(value) => setEditingContent({...editingContent, second_paragraph: value})}
+                                            theme="snow"
+                                            placeholder="Ogni giorno che passa è un giorno in meno..."
+                                            modules={{
+                                              toolbar: [
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                ['clean']
+                                              ]
+                                            }}
+                                            style={{ height: '180px', marginBottom: '50px' }}
+                                          />
+                                        </div>
                                       </div>
 
                                       {/* Sezione Features */}
@@ -2375,22 +2382,24 @@ ${trustBadgesHtml}
                                       )}
 
                                       {/* Closing Text */}
-                                      <div>
-                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo di Chiusura</Label>
-                                        <ReactQuill
-                                          value={editingContent.closing_text || ''}
-                                          onChange={(value) => setEditingContent({...editingContent, closing_text: value})}
-                                          placeholder="Immagina tra 30 giorni: guardarti allo specchio..."
-                                          className="bg-white rounded-lg"
-                                          style={{ minHeight: '120px' }}
-                                          modules={{
-                                            toolbar: [
-                                              ['bold', 'italic', 'underline', 'strike'],
-                                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                                              ['clean']
-                                            ]
-                                          }}
-                                        />
+                                      <div className="space-y-2">
+                                        <Label className="text-sm font-semibold text-gray-700">Testo di Chiusura</Label>
+                                        <div className="border rounded-lg overflow-hidden">
+                                          <ReactQuill
+                                            value={editingContent.closing_text || ''}
+                                            onChange={(value) => setEditingContent({...editingContent, closing_text: value})}
+                                            theme="snow"
+                                            placeholder="Immagina tra 30 giorni: guardarti allo specchio..."
+                                            modules={{
+                                              toolbar: [
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                                ['clean']
+                                              ]
+                                            }}
+                                            style={{ height: '180px', marginBottom: '50px' }}
+                                          />
+                                        </div>
                                       </div>
 
                                       {/* Urgency Box */}
@@ -2411,19 +2420,21 @@ ${trustBadgesHtml}
                                             placeholder="⏰ Il momento è ADESSO"
                                             className="h-10"
                                           />
-                                          <ReactQuill
-                                            value={editingContent.urgency_subtitle || ''}
-                                            onChange={(value) => setEditingContent({...editingContent, urgency_subtitle: value})}
-                                            placeholder="Non rimandare a domani quello che può cambiarti la vita oggi."
-                                            className="bg-white rounded-lg"
-                                            style={{ minHeight: '80px' }}
-                                            modules={{
-                                              toolbar: [
-                                                ['bold', 'italic', 'underline', 'strike'],
-                                                ['clean']
-                                              ]
-                                            }}
-                                          />
+                                          <div className="border rounded-lg overflow-hidden">
+                                            <ReactQuill
+                                              value={editingContent.urgency_subtitle || ''}
+                                              onChange={(value) => setEditingContent({...editingContent, urgency_subtitle: value})}
+                                              theme="snow"
+                                              placeholder="Non rimandare a domani quello che può cambiarti la vita oggi."
+                                              modules={{
+                                                toolbar: [
+                                                  ['bold', 'italic', 'underline', 'strike'],
+                                                  ['clean']
+                                                ]
+                                              }}
+                                              style={{ height: '120px', marginBottom: '50px' }}
+                                            />
+                                          </div>
                                         </div>
                                       )}
 
@@ -2862,28 +2873,30 @@ ${trustBadgesHtml}
               <p className="text-xs text-gray-500 mt-1">Appare sotto l'oggetto prima di aprire l'email</p>
             </div>
 
-            <div>
-              <Label className="text-sm font-semibold text-gray-700 mb-2 block">
+            <div className="space-y-2">
+              <Label className="text-sm font-semibold text-gray-700">
                 Contenuto Principale <span className="text-red-500">*</span>
               </Label>
-              <ReactQuill
-                value={broadcastData.main_content}
-                onChange={(value) => setBroadcastData({...broadcastData, main_content: value})}
-                placeholder="Scrivi il contenuto dell'email qui..."
-                className="bg-white rounded-lg"
-                style={{ minHeight: '250px' }}
-                modules={{
-                  toolbar: [
-                    [{ 'header': [1, 2, 3, false] }],
-                    ['bold', 'italic', 'underline', 'strike'],
-                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
-                    [{ 'align': [] }],
-                    ['link'],
-                    ['clean']
-                  ]
-                }}
-              />
-              <p className="text-xs text-gray-500 mt-2">
+              <div className="border rounded-lg overflow-hidden">
+                <ReactQuill
+                  value={broadcastData.main_content}
+                  onChange={(value) => setBroadcastData({...broadcastData, main_content: value})}
+                  theme="snow"
+                  placeholder="Scrivi il contenuto dell'email qui..."
+                  modules={{
+                    toolbar: [
+                      [{ 'header': [1, 2, 3, false] }],
+                      ['bold', 'italic', 'underline', 'strike'],
+                      [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                      [{ 'align': [] }],
+                      ['link'],
+                      ['clean']
+                    ]
+                  }}
+                  style={{ height: '350px', marginBottom: '50px' }}
+                />
+              </div>
+              <p className="text-xs text-gray-500">
                 Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
               </p>
             </div>
