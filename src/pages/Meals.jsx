@@ -178,10 +178,10 @@ const GenerateMealPlan = ({ generationProgress, generationStatus, nutritionData,
               {t('meals.loadingDesc')}
             </p>
             <p className="text-xs text-amber-600 text-center mt-3 font-semibold">
-              ⏱️ Questa operazione richiederà alcuni minuti
+              ⏱️ {t('workouts.timeWarning')}
             </p>
             <p className="text-xs text-red-600 text-center mt-2 font-bold">
-              ⚠️ Non cambiare pagina durante la generazione
+              ⚠️ {t('workouts.dontLeavePage')}
             </p>
           </CardHeader>
           
@@ -1253,6 +1253,12 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
             // ✅ MATCH ingredienti con dispensa + NORMALIZZA NOMI
             const normalizedIngredients = new Map();
             
+            // ✅ FIX: Verifica che ingredients esista prima di forEach
+            if (!mealData.ingredients || !Array.isArray(mealData.ingredients)) {
+              console.error(`❌ ${day} ${mealType}: ingredients è undefined o non è un array`, mealData);
+              continue; // Salta questo pasto
+            }
+            
             mealData.ingredients.forEach(ing => {
               const normalizedName = ing.name.toLowerCase().trim();
               
@@ -1491,6 +1497,12 @@ Diet: ${generationPrefs.diet_type}. ${cookingTimeContext}${recoveryIntolerancesT
               
               // ✅ NORMALIZZA ingredienti per evitare duplicati
               const normalizedIngredients = new Map();
+              
+              // ✅ FIX: Verifica che ingredients esista prima di forEach
+              if (!mealData.ingredients || !Array.isArray(mealData.ingredients)) {
+                console.error(`❌ Recovery ${day} ${mealData.meal_type}: ingredients è undefined`, mealData);
+                continue; // Salta questo pasto di recovery
+              }
               
               mealData.ingredients.forEach(ing => {
                 const normalizedName = ing.name.toLowerCase().trim();

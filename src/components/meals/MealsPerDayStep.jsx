@@ -28,9 +28,9 @@ export default function MealsPerDayStep({ onDataChange, onNext, dailyCalories })
       2: [60, 40], // 2 pasti
       3: [30, 40, 30], // colazione, pranzo, cena
       4: [25, 35, 10, 30], // colazione, pranzo, snack, cena
-      5: [20, 30, 10, 30, 10], // colazione, pranzo, snack1, cena, snack2
-      6: [18, 28, 8, 28, 10, 8], // +snack mattina
-      7: [15, 25, 8, 25, 10, 8, 9] // +snack serale
+      5: [25, 30, 10, 30, 5], // colazione, pranzo, snack1, cena, snack2
+      6: [25, 10, 28, 10, 22, 5], // colazione, snack1, pranzo, snack2, cena, snack3
+      7: [22, 8, 25, 8, 25, 7, 5] // colazione, snack1, pranzo, snack2, cena, snack3, snack4
     };
     
     const percentages = distributions[numMeals] || Array(numMeals).fill(100 / numMeals);
