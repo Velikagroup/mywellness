@@ -81,9 +81,9 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
   }, [location.pathname, forcedLanguage, language]);
 
-  // Translation function - uses state for reactivity
+  // Translation function - no dependencies, reads from ref directly
   const t = React.useCallback((key, params = {}) => {
-    const currentLang = languageRef.current || language || DEFAULT_LANGUAGE;
+    const currentLang = languageRef.current;
     const keys = key.split('.');
     let value = translations[currentLang];
     
@@ -92,14 +92,14 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
     
     if (typeof value !== 'string') {
-      console.warn(`Translation missing for key "${key}" in language "${currentLang}"`, value, translations);
+      console.warn(`Translation missing for key "${key}" in language "${currentLang}"`, value);
       return key;
     }
     
     return value.replace(/\{(\w+)\}/g, (match, paramName) => {
       return params[paramName] !== undefined ? params[paramName] : match;
     });
-  }, [language]);
+  }, []);
 
   const setLanguage = React.useCallback((newLang) => {
     if (!SUPPORTED_LANGUAGES.some(l => l.code === newLang)) return;
