@@ -309,10 +309,10 @@ export default function AdminEmails() {
 <style>
 body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .logo-cell { padding: 60px 30px 10px 30px; }
-.content-cell { padding: 40px 30px; }
+.content-cell { padding: 15px 30px; }
 @media only screen and (min-width: 600px) {
 .logo-cell { padding: 60px 60px 10px 60px !important; }
-.content-cell { padding: 60px 60px 40px 60px !important; }
+.content-cell { padding: 60px 60px 15px 60px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
@@ -412,7 +412,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 </td>
 </tr>
 <tr>
-<td style="padding: 40px 30px 40px 30px;">
+<td style="padding: 15px 30px 40px 30px;">
 <!-- Hero Card -->
 <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 25px;">
 <p style="font-size: 48px; margin: 0 0 10px 0;">🎯</p>
@@ -618,10 +618,10 @@ ${footerText}
 <style>
 body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .logo-cell { padding: 60px 30px 10px 30px; }
-.content-cell { padding: 40px 30px; }
+.content-cell { padding: 15px 30px; }
 @media only screen and (min-width: 600px) {
 .logo-cell { padding: 60px 60px 10px 60px !important; }
-.content-cell { padding: 60px 60px 40px 60px !important; }
+.content-cell { padding: 60px 60px 15px 60px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }

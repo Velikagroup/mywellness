@@ -527,7 +527,7 @@ function generateQuizCompletedHtml(template, variables, appUrl) {
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 40px 30px 40px 30px;">
+                        <td style="padding: 15px 30px 40px 30px;">
                             <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 25px;">
                                 <p style="font-size: 48px; margin: 0 0 10px 0;">🎯</p>
                                 <h1 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">Quiz Completato!</h1>
