@@ -335,11 +335,11 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>
-                            <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 20px 0;">${introText}</p>
-                            <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 20px 0;">${secondParagraph}</p>
+                            <p style="color: #374151; font-size: 16px; margin: 0 0 12px 0;">${greeting}</p>
+                            <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${introText}</div>
+                            <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${secondParagraph}</div>
                             ${featuresHtml}
-                            <p style="color: #374151; line-height: 1.7; font-size: 16px; margin: 0 0 25px 0;">${closingText}</p>
+                            <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 20px 0;">${closingText}</div>
                             ${urgencyHtml}
                             ${trustBadgesHtml}
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
