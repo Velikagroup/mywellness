@@ -164,7 +164,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                     <tr>
                         <td class="content-cell">
                             <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${greeting}</p>
-                            <div style="color: #374151; line-height: 1.5; font-size: 16px;">${mainContent}</div>
+                            <div style="color: #374151; line-height: 0.7; font-size: 16px;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
@@ -336,10 +336,10 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                     <tr>
                         <td class="content-cell">
                             <p style="color: #374151; font-size: 16px; margin: 0 0 12px 0;">${greeting}</p>
-                            <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${introText}</div>
-                            <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${secondParagraph}</div>
+                            <div style="color: #374151; line-height: 0.7; font-size: 16px; margin: 0 0 12px 0;">${introText}</div>
+                            <div style="color: #374151; line-height: 0.7; font-size: 16px; margin: 0 0 12px 0;">${secondParagraph}</div>
                             ${featuresHtml}
-                            <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 20px 0;">${closingText}</div>
+                            <div style="color: #374151; line-height: 0.7; font-size: 16px; margin: 0 0 20px 0;">${closingText}</div>
                             ${urgencyHtml}
                             ${trustBadgesHtml}
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
