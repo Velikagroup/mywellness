@@ -407,20 +407,7 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
         weightDataPoints: weightData.length
     });
     
-    // Genera grafico SVG
-    const weightChartPoints = weightData.map((point, index) => {
-        const x = 50 + (index * 70);
-        const y = 250 - ((point.weight - 65) * 10); 
-        return `${x},${y}`;
-    }).join(' ');
-    
-    const circles = weightData.map((point, i) => {
-        const x = 50 + i * 70;
-        const y = 250 - ((point.weight - 65) * 10);
-        return `<circle cx="${x}" cy="${y}" r="5" fill="#26847F" /><text x="${x}" y="270" text-anchor="middle" font-size="12" fill="#6b7280">${point.date}</text>`;
-    }).join('');
-    
-    // HTML super semplificato - NO SVG per ora
+    // HTML super semplificato
     const html = `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
@@ -430,7 +417,7 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
 <table style="max-width:600px;background:white;padding:30px;border-radius:12px;">
 <tr><td>
 <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="30" alt="MyWellness">
-<h2 style="color:#26847F;margin:20px 0 10px;">Report Settimanale</h2>
+<h2 style="color:#26847F;margin:10px 0 10px;">Report Settimanale</h2>
 <p style="color:#6b7280;font-size:14px;">${weekRange}</p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
 <p style="font-size:16px;">Ciao ${userName},</p>
@@ -491,9 +478,6 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
     console.log('📊 [WEEKLY REPORT] Return value keys:', Object.keys(returnValue));
     
     return returnValue;
-}
-
-    return { html, subject: template.subject };
 }
 
 function generateQuizCompletedHtml(template, variables, appUrl) {
@@ -597,7 +581,7 @@ function generateQuizCompletedHtml(template, variables, appUrl) {
 </body>
 </html>`;
 
-    return { html, subject: template.subject };
+    return { html, subject: template.subject || 'Report Settimanale - MyWellness' };
 }
 
 Deno.serve(async (req) => {
@@ -682,9 +666,6 @@ Deno.serve(async (req) => {
         }
 
         const template = templates[0];
-        
-        console.log(`📋 Template ID: ${templateId}, Base ID: ${emailIdBase}`);
-        console.log(`📋 Template fields: ${Object.keys(template).join(', ')}`);
         
         // Genera HTML
         console.log('🔧 BEFORE generateEmailHtml - template_id:', templateId);
