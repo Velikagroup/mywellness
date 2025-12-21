@@ -1590,12 +1590,12 @@ export const translations = {
       close: "Chiudi"
     },
     photoMealAnalyzer: {
-      title: "Analisi Scientifica Pasto AI",
-      subtitle: "Analisi dimensionale e calcolo preciso ingrediente per ingrediente",
-      uploadMealPhoto: "Carica foto del tuo pasto",
-      uploadInfo: "L'AI analizzerà e calcolerà peso e nutrienti con precisione scientifica",
+      title: "Analisi Pasto con Foto",
+      subtitle: "Carica una foto per analizzare calorie e nutrienti",
+      uploadMealPhoto: "📸 Carica Foto del Pasto",
+      uploadInfo: "Scatta o seleziona una foto per analizzare il pasto",
       takePhoto: "Scatta Foto",
-      selectFromGallery: "Carica da Galleria",
+      selectFromGallery: "Seleziona dalla Galleria",
       analyzing: "Analizzando...",
       analysisComplete: "Analisi Completata",
       photosUploaded: "Foto Caricate",
