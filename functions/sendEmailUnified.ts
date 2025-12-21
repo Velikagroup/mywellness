@@ -138,9 +138,9 @@ function generateEmailHtml(template, variables, language = 'it') {
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
         .logo-cell { padding: 60px 30px 10px 30px; }
         .content-cell { padding: 15px 30px; }
-        .content-cell p { margin: 8px 0; line-height: 1.2; }
-        .content-cell ul, .content-cell ol { margin: 8px 0; padding-left: 20px; line-height: 1.2; }
-        .content-cell li { margin: 4px 0; }
+        .content-cell p { margin: 6px 0; line-height: 1.5; }
+        .content-cell ul, .content-cell ol { margin: 6px 0; padding-left: 20px; line-height: 1.5; }
+        .content-cell li { margin: 3px 0; }
         @media only screen and (min-width: 600px) {
             .logo-cell { padding: 60px 60px 10px 60px !important; }
             .content-cell { padding: 15px 60px 60px 60px !important; }
@@ -164,7 +164,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                     <tr>
                         <td class="content-cell">
                             <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${greeting}</p>
-                            <div style="color: #374151; line-height: 1.2; font-size: 16px;">${mainContent}</div>
+                            <div style="color: #374151; line-height: 1.5; font-size: 16px;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
@@ -310,9 +310,9 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
         .logo-cell { padding: 60px 30px 10px 30px; }
         .content-cell { padding: 15px 30px; }
-        .content-cell p { margin: 8px 0; line-height: 1.2; }
-        .content-cell ul, .content-cell ol { margin: 8px 0; padding-left: 20px; line-height: 1.2; }
-        .content-cell li { margin: 4px 0; }
+        .content-cell p { margin: 6px 0; line-height: 1.5; }
+        .content-cell ul, .content-cell ol { margin: 6px 0; padding-left: 20px; line-height: 1.5; }
+        .content-cell li { margin: 3px 0; }
         @media only screen and (min-width: 600px) {
             .logo-cell { padding: 60px 60px 10px 60px !important; }
             .content-cell { padding: 15px 60px 60px 60px !important; }
@@ -336,10 +336,10 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                         <tr>
                             <td class="content-cell">
                                 <p style="color: #374151; font-size: 16px; margin: 0 0 12px 0;">${greeting}</p>
-                                <div style="color: #374151; line-height: 1.2; font-size: 16px; margin: 0 0 12px 0;">${introText}</div>
-                                <div style="color: #374151; line-height: 1.2; font-size: 16px; margin: 0 0 12px 0;">${secondParagraph}</div>
+                                <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${introText}</div>
+                                <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${secondParagraph}</div>
                                 ${featuresHtml}
-                                <div style="color: #374151; line-height: 1.2; font-size: 16px; margin: 0 0 20px 0;">${closingText}</div>
+                                <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 20px 0;">${closingText}</div>
                             ${urgencyHtml}
                             ${trustBadgesHtml}
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
