@@ -85,6 +85,7 @@ export default function Workouts() {
   const [showAssessment, setShowAssessment] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
   const [trainingData, setTrainingData] = useState({});
+  const [wizardInitialized, setWizardInitialized] = useState(false);
 
   const [showAdjustmentDialog, setShowAdjustmentDialog] = useState(false);
   const [adjustmentProblem, setAdjustmentProblem] = useState("");
@@ -243,7 +244,7 @@ export default function Workouts() {
           workout_days_selected: currentUser.workout_days_selected
         });
         
-        setTrainingData({
+        const userData = {
           user_id: currentUser.id,
           subscription_plan: currentUser.subscription_plan,
           joint_pain: currentUser.joint_pain || [],
@@ -262,7 +263,24 @@ export default function Workouts() {
           current_weight: currentUser.current_weight,
           strength_level: currentUser.strength_level || 'moderate',
           weight_guidance: currentUser.weight_guidance
-        });
+        };
+        
+        setTrainingData(userData);
+        
+        // Verifica se l'utente ha già dati completi per saltare il wizard
+        const hasCompleteData = 
+          userData.fitness_goal &&
+          userData.workout_days &&
+          userData.workout_days_selected?.length > 0 &&
+          userData.session_duration &&
+          userData.workout_location &&
+          userData.equipment?.length > 0;
+        
+        if (hasCompleteData) {
+          console.log('✅ Utente ha già dati completi - wizard inizializzato all\'ultimo step');
+          setCurrentStep(TRAINING_STEPS.length - 1);
+          setWizardInitialized(true);
+        }
 
         await checkForCheats(currentUser.id);
       } catch (error) {
@@ -382,6 +400,25 @@ export default function Workouts() {
   const handleStepData = (stepData) => setTrainingData(prev => ({ ...prev, ...stepData }));
   const nextStep = () => { if (currentStep < TRAINING_STEPS.length - 1) setCurrentStep(currentStep + 1); };
   const prevStep = () => { if (currentStep > 0) setCurrentStep(currentStep - 1); };
+  
+  // Auto-avanza allo step finale se l'utente ha già tutti i dati
+  React.useEffect(() => {
+    if (!wizardInitialized && trainingData.user_id) {
+      const hasCompleteData = 
+        trainingData.fitness_goal &&
+        trainingData.workout_days &&
+        trainingData.workout_days_selected?.length > 0 &&
+        trainingData.session_duration &&
+        trainingData.workout_location &&
+        trainingData.equipment?.length > 0;
+      
+      if (hasCompleteData && TRAINING_STEPS.length > 0) {
+        console.log('✅ Auto-avanzamento all\'ultimo step - dati già completi');
+        setCurrentStep(TRAINING_STEPS.length - 1);
+        setWizardInitialized(true);
+      }
+    }
+  }, [trainingData, wizardInitialized, TRAINING_STEPS.length]);
 
   const startGeneration = async () => {
     // Controlla limite generazioni

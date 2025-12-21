@@ -1502,41 +1502,44 @@ export default function Home() {
         return;
       }
 
-      // Rileva la lingua tramite geolocalizzazione con timeout
+      // Rileva la lingua tramite timezone e browser language
       const detectLanguageByLocation = async () => {
         try {
-          // Usa API gratuita per rilevare paese da IP con timeout di 2 secondi
-          const controller = new AbortController();
-          const timeoutId = setTimeout(() => controller.abort(), 2000);
-          
-          const response = await fetch('https://ipapi.co/json/', { 
-            signal: controller.signal 
-          });
-          clearTimeout(timeoutId);
-          
-          const data = await response.json();
-          const countryCode = data.country_code?.toUpperCase();
-          
-          // Mappa paesi -> lingue
-          const countryToLanguage = {
-            'IT': 'it', 'SM': 'it', 'VA': 'it', 'CH': 'it',
-            'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es', 'PE': 'es', 'VE': 'es', 'CL': 'es', 'EC': 'es', 'GT': 'es', 'CU': 'es', 'BO': 'es', 'DO': 'es', 'HN': 'es', 'PY': 'es', 'SV': 'es', 'NI': 'es', 'CR': 'es', 'PA': 'es', 'UY': 'es', 'PR': 'es', 'GQ': 'es',
-            'BR': 'pt', 'PT': 'pt', 'AO': 'pt', 'MZ': 'pt', 'CV': 'pt', 'GW': 'pt', 'ST': 'pt', 'TL': 'pt',
-            'DE': 'de', 'AT': 'de', 'LI': 'de', 'LU': 'de',
-            'FR': 'fr', 'BE': 'fr', 'MC': 'fr', 'CD': 'fr', 'CI': 'fr', 'CM': 'fr', 'BF': 'fr', 'NE': 'fr', 'SN': 'fr', 'ML': 'fr', 'RW': 'fr', 'BI': 'fr', 'TG': 'fr', 'BJ': 'fr', 'HT': 'fr', 'DJ': 'fr', 'GA': 'fr', 'CG': 'fr', 'GN': 'fr', 'TD': 'fr', 'CF': 'fr'
+          // Metodo 1: Timezone-based detection (più affidabile)
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const timezoneToLanguage = {
+            // Italia
+            'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
+            // Spagna e paesi di lingua spagnola
+            'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
+            'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
+            // Brasile e Portogallo
+            'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
+            // Germania e Austria
+            'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
+            // Francia
+            'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr'
           };
           
-          const detectedLang = countryToLanguage[countryCode] || 'en';
+          let detectedLang = timezoneToLanguage[timezone];
+          
+          // Metodo 2: Browser language se timezone non ha match
+          if (!detectedLang) {
+            const browserLang = navigator.language.toLowerCase();
+            // Estrai la lingua principale (es: 'pt-BR' -> 'pt')
+            const langCode = browserLang.split('-')[0];
+            const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+            detectedLang = supportedLangs.includes(langCode) ? langCode : 'en';
+          }
+          
           localStorage.setItem('preferred_language', detectedLang);
           navigate(createPageUrl(detectedLang), { replace: true });
           
         } catch (error) {
-          // Fallback: usa lingua browser
-          const browserLang = navigator.language.toLowerCase().split('-')[0];
-          const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-          const detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
-          localStorage.setItem('preferred_language', detectedLang);
-          navigate(createPageUrl(detectedLang), { replace: true });
+          console.error('Language detection error:', error);
+          // Fallback finale: English
+          localStorage.setItem('preferred_language', 'en');
+          navigate(createPageUrl('en'), { replace: true });
         }
       };
 

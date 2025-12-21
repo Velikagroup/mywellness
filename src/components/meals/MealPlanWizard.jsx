@@ -15,12 +15,12 @@ export default function MealPlanWizard({ user, onComplete, onCancel }) {
   const [currentStep, setCurrentStep] = useState(0);
   const [wizardData, setWizardData] = useState({
     diet_type: user?.diet_type || 'mediterranean',
-    intolerances: [],
-    intermittent_fasting: false,
-    meals_per_day: 5,
-    if_skip_meal: null,
-    if_meals_count: 2,
-    cooking_time_preference: 'moderate'
+    intolerances: user?.intolerances || [],
+    intermittent_fasting: user?.intermittent_fasting || false,
+    meals_per_day: user?.meals_per_day || 5,
+    if_skip_meal: user?.if_skip_meal || null,
+    if_meals_count: user?.if_meals_count || 2,
+    cooking_time_preference: user?.cooking_time_preference || 'moderate'
   });
 
   const handleDataChange = (data) => {
