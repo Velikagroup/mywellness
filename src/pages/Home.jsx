@@ -1489,6 +1489,7 @@ function HomeContent() {
 
 export default function Home() {
   const navigate = useNavigate();
+  const [isRedirecting, setIsRedirecting] = React.useState(true);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -1498,57 +1499,63 @@ export default function Home() {
       // Prima controlla se c'è già una lingua salvata
       const savedLang = localStorage.getItem('preferred_language');
       if (savedLang && ['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
-        navigate(createPageUrl(savedLang), { replace: true });
+        window.location.replace(window.location.origin + createPageUrl(savedLang));
         return;
       }
 
       // Rileva la lingua tramite timezone e browser language
-      const detectLanguageByLocation = async () => {
-        try {
-          // Metodo 1: Timezone-based detection (più affidabile)
-          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const timezoneToLanguage = {
-            // Italia
-            'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
-            // Spagna e paesi di lingua spagnola
-            'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
-            'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
-            // Brasile e Portogallo
-            'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
-            // Germania e Austria
-            'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
-            // Francia
-            'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr'
-          };
-          
-          let detectedLang = timezoneToLanguage[timezone];
-          
-          // Metodo 2: Browser language se timezone non ha match
-          if (!detectedLang) {
-            const browserLang = navigator.language.toLowerCase();
-            // Estrai la lingua principale (es: 'pt-BR' -> 'pt')
-            const langCode = browserLang.split('-')[0];
-            const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-            detectedLang = supportedLangs.includes(langCode) ? langCode : 'en';
-          }
-          
-          localStorage.setItem('preferred_language', detectedLang);
-          navigate(createPageUrl(detectedLang), { replace: true });
-          
-        } catch (error) {
-          console.error('Language detection error:', error);
-          // Fallback finale: English
-          localStorage.setItem('preferred_language', 'en');
-          navigate(createPageUrl('en'), { replace: true });
+      try {
+        // Metodo 1: Timezone-based detection
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const timezoneToLanguage = {
+          'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
+          'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
+          'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
+          'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
+          'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
+          'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
+          'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
+          'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
+          'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
+        };
+        
+        let detectedLang = timezoneToLanguage[timezone];
+        
+        // Metodo 2: Browser language se timezone non ha match
+        if (!detectedLang) {
+          const browserLang = navigator.language.toLowerCase();
+          const langCode = browserLang.split('-')[0];
+          const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+          detectedLang = supportedLangs.includes(langCode) ? langCode : 'en';
         }
-      };
-
-      detectLanguageByLocation();
+        
+        console.log('🌍 Detected language:', detectedLang, 'from timezone:', timezone);
+        localStorage.setItem('preferred_language', detectedLang);
+        window.location.replace(window.location.origin + createPageUrl(detectedLang));
+        
+      } catch (error) {
+        console.error('Language detection error:', error);
+        localStorage.setItem('preferred_language', 'en');
+        window.location.replace(window.location.origin + createPageUrl('en'));
+      }
+    } else {
+      setIsRedirecting(false);
     }
   }, [navigate]);
 
+  if (isRedirecting) {
+    return (
+      <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-[#26847F] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <LanguageProvider forcedLanguage="en">
+    <LanguageProvider>
       <HomeContent />
     </LanguageProvider>
   );
