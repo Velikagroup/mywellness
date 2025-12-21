@@ -1502,12 +1502,45 @@ export default function Home() {
         return;
       }
 
-      // Altrimenti usa lingua browser direttamente (no geolocation che causa timeout)
-      const browserLang = navigator.language.toLowerCase().split('-')[0];
-      const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-      const detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
-      localStorage.setItem('preferred_language', detectedLang);
-      navigate(createPageUrl(detectedLang), { replace: true });
+      // Rileva la lingua tramite geolocalizzazione con timeout
+      const detectLanguageByLocation = async () => {
+        try {
+          // Usa API gratuita per rilevare paese da IP con timeout di 2 secondi
+          const controller = new AbortController();
+          const timeoutId = setTimeout(() => controller.abort(), 2000);
+          
+          const response = await fetch('https://ipapi.co/json/', { 
+            signal: controller.signal 
+          });
+          clearTimeout(timeoutId);
+          
+          const data = await response.json();
+          const countryCode = data.country_code?.toUpperCase();
+          
+          // Mappa paesi -> lingue
+          const countryToLanguage = {
+            'IT': 'it', 'SM': 'it', 'VA': 'it', 'CH': 'it',
+            'ES': 'es', 'MX': 'es', 'AR': 'es', 'CO': 'es', 'PE': 'es', 'VE': 'es', 'CL': 'es', 'EC': 'es', 'GT': 'es', 'CU': 'es', 'BO': 'es', 'DO': 'es', 'HN': 'es', 'PY': 'es', 'SV': 'es', 'NI': 'es', 'CR': 'es', 'PA': 'es', 'UY': 'es', 'PR': 'es', 'GQ': 'es',
+            'BR': 'pt', 'PT': 'pt', 'AO': 'pt', 'MZ': 'pt', 'CV': 'pt', 'GW': 'pt', 'ST': 'pt', 'TL': 'pt',
+            'DE': 'de', 'AT': 'de', 'LI': 'de', 'LU': 'de',
+            'FR': 'fr', 'BE': 'fr', 'MC': 'fr', 'CD': 'fr', 'CI': 'fr', 'CM': 'fr', 'BF': 'fr', 'NE': 'fr', 'SN': 'fr', 'ML': 'fr', 'RW': 'fr', 'BI': 'fr', 'TG': 'fr', 'BJ': 'fr', 'HT': 'fr', 'DJ': 'fr', 'GA': 'fr', 'CG': 'fr', 'GN': 'fr', 'TD': 'fr', 'CF': 'fr'
+          };
+          
+          const detectedLang = countryToLanguage[countryCode] || 'en';
+          localStorage.setItem('preferred_language', detectedLang);
+          navigate(createPageUrl(detectedLang), { replace: true });
+          
+        } catch (error) {
+          // Fallback: usa lingua browser
+          const browserLang = navigator.language.toLowerCase().split('-')[0];
+          const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+          const detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+          localStorage.setItem('preferred_language', detectedLang);
+          navigate(createPageUrl(detectedLang), { replace: true });
+        }
+      };
+
+      detectLanguageByLocation();
     }
   }, [navigate]);
 
