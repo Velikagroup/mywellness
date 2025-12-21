@@ -138,6 +138,9 @@ function generateEmailHtml(template, variables, language = 'it') {
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
         .logo-cell { padding: 60px 30px 10px 30px; }
         .content-cell { padding: 15px 30px; }
+        .content-cell p { margin: 8px 0; line-height: 1.5; }
+        .content-cell ul, .content-cell ol { margin: 8px 0; padding-left: 20px; line-height: 1.5; }
+        .content-cell li { margin: 4px 0; }
         @media only screen and (min-width: 600px) {
             .logo-cell { padding: 60px 60px 10px 60px !important; }
             .content-cell { padding: 15px 60px 60px 60px !important; }
@@ -307,6 +310,9 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
         .logo-cell { padding: 60px 30px 10px 30px; }
         .content-cell { padding: 15px 30px; }
+        .content-cell p { margin: 8px 0; line-height: 1.5; }
+        .content-cell ul, .content-cell ol { margin: 8px 0; padding-left: 20px; line-height: 1.5; }
+        .content-cell li { margin: 4px 0; }
         @media only screen and (min-width: 600px) {
             .logo-cell { padding: 60px 60px 10px 60px !important; }
             .content-cell { padding: 15px 60px 60px 60px !important; }
