@@ -137,10 +137,10 @@ function generateEmailHtml(template, variables, language = 'it') {
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
         .logo-cell { padding: 60px 30px 10px 30px; }
-        .content-cell { padding: 40px 30px; }
+        .content-cell { padding: 15px 30px; }
         @media only screen and (min-width: 600px) {
             .logo-cell { padding: 60px 60px 10px 60px !important; }
-            .content-cell { padding: 60px 60px 40px 60px !important; }
+            .content-cell { padding: 60px 60px 15px 60px !important; }
         }
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
@@ -306,10 +306,10 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
         .logo-cell { padding: 60px 30px 10px 30px; }
-        .content-cell { padding: 40px 30px; }
+        .content-cell { padding: 15px 30px; }
         @media only screen and (min-width: 600px) {
             .logo-cell { padding: 60px 60px 10px 60px !important; }
-            .content-cell { padding: 60px 60px 40px 60px !important; }
+            .content-cell { padding: 60px 60px 15px 60px !important; }
         }
         @media only screen and (max-width: 600px) {
             .container { width: 100% !important; border-radius: 0 !important; }
