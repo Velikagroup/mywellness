@@ -8,7 +8,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
 
 export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded }) {
-  const { t, language } = useLanguage();
+  const languageContext = useLanguage();
+  const t = languageContext?.t || ((key) => key);
+  const language = languageContext?.language || 'it';
   const [photos, setPhotos] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
