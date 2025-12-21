@@ -20,6 +20,33 @@ Deno.serve(async (req) => {
 
         console.log(`📬 Sending test email to ${to} from ${from_email}`);
 
+        const payload = {
+            personalizations: [{
+                to: [{ email: to }]
+            }],
+            from: {
+                email: from_email,
+                name: from_name || 'MyWellness'
+            },
+            reply_to: reply_to ? {
+                email: reply_to
+            } : undefined,
+            subject: subject,
+            content: [{
+                type: 'text/html',
+                value: html
+            }]
+        };
+
+        console.log('📤 SendGrid Payload:', JSON.stringify({
+            to,
+            from_email,
+            from_name,
+            reply_to,
+            subject,
+            htmlLength: html?.length
+        }));
+
         // Chiama direttamente l'API SendGrid
         const sendgridResponse = await fetch('https://api.sendgrid.com/v3/mail/send', {
             method: 'POST',
@@ -27,31 +54,34 @@ Deno.serve(async (req) => {
                 'Authorization': `Bearer ${sendgridApiKey}`,
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                personalizations: [{
-                    to: [{ email: to }]
-                }],
-                from: {
-                    email: from_email,
-                    name: from_name || 'MyWellness'
-                },
-                reply_to: reply_to ? {
-                    email: reply_to
-                } : undefined,
-                subject: subject,
-                content: [{
-                    type: 'text/html',
-                    value: html
-                }]
-            })
+            body: JSON.stringify(payload)
         });
 
         if (!sendgridResponse.ok) {
             const errorText = await sendgridResponse.text();
-            console.error('❌ SendGrid API error:', errorText);
+            console.error('❌ SendGrid API error response:', errorText);
+            console.error('❌ Failed payload:', JSON.stringify(payload, null, 2));
+            console.error('❌ Status code:', sendgridResponse.status);
+            
+            let errorDetails = errorText;
+            try {
+                const errorJson = JSON.parse(errorText);
+                errorDetails = JSON.stringify(errorJson, null, 2);
+            } catch (e) {
+                // errorText is not JSON, keep as is
+            }
+            
             return Response.json({ 
-                error: 'SendGrid API error',
-                details: errorText 
+                success: false,
+                error: `SendGrid API error (${sendgridResponse.status})`,
+                details: errorDetails,
+                debugInfo: {
+                    to,
+                    from_email,
+                    subject,
+                    hasHtml: !!html,
+                    htmlLength: html?.length
+                }
             }, { status: sendgridResponse.status });
         }
 
