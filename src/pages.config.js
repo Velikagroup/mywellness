@@ -6,7 +6,6 @@ import AdminCoupons from './pages/AdminCoupons';
 import AdminEmailTest from './pages/AdminEmailTest';
 import AdminEmails from './pages/AdminEmails';
 import AdminFeedbackon from './pages/AdminFeedbackon';
-import AdminFeedback from './pages/AdminFeedback';
 import AdminMarketing from './pages/AdminMarketing';
 import AdminSalesTax from './pages/AdminSalesTax';
 import AdminSupportTickets from './pages/AdminSupportTickets';
@@ -79,7 +78,6 @@ export const PAGES = {
     "AdminEmailTest": AdminEmailTest,
     "AdminEmails": AdminEmails,
     "AdminFeedbackon": AdminFeedbackon,
-    "AdminFeedback": AdminFeedback,
     "AdminMarketing": AdminMarketing,
     "AdminSalesTax": AdminSalesTax,
     "AdminSupportTickets": AdminSupportTickets,
