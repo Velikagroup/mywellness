@@ -136,10 +136,10 @@ function generateEmailHtml(template, variables, language = 'it') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        .logo-cell { padding: 60px 30px 12px 30px; }
+        .logo-cell { padding: 60px 30px 10px 30px; }
         .content-cell { padding: 40px 30px; }
         @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 12px 60px !important; }
+            .logo-cell { padding: 60px 60px 10px 60px !important; }
             .content-cell { padding: 60px 60px 40px 60px !important; }
         }
         @media only screen and (max-width: 600px) {
@@ -155,7 +155,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
                         <td class="logo-cell">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 38px; width: auto; display: block;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
@@ -305,10 +305,10 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        .logo-cell { padding: 60px 30px 12px 30px; }
+        .logo-cell { padding: 60px 30px 10px 30px; }
         .content-cell { padding: 40px 30px; }
         @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 12px 60px !important; }
+            .logo-cell { padding: 60px 60px 10px 60px !important; }
             .content-cell { padding: 60px 60px 40px 60px !important; }
         }
         @media only screen and (max-width: 600px) {
@@ -324,7 +324,7 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
                         <td class="logo-cell">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 38px; width: auto; display: block;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
@@ -429,7 +429,7 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
 <tr><td align="center">
 <table style="max-width:600px;background:white;padding:30px;border-radius:12px;">
 <tr><td>
-<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="38" alt="MyWellness">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" height="30" alt="MyWellness">
 <h2 style="color:#26847F;margin:20px 0 10px;">Report Settimanale</h2>
 <p style="color:#6b7280;font-size:14px;">${weekRange}</p>
 <hr style="border:none;border-top:1px solid #e5e7eb;margin:20px 0;">
@@ -523,7 +523,7 @@ function generateQuizCompletedHtml(template, variables, appUrl) {
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
                         <td style="background: white; padding: 40px 30px 10px 30px;">
-                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 38px; width: auto; display: block;">
+                            <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
