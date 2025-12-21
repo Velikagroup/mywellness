@@ -522,12 +522,12 @@ function generateQuizCompletedHtml(template, variables, appUrl) {
             <td align="center">
                 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
                     <tr>
-                        <td style="background: white; padding: 40px 30px 10px 30px;">
+                        <td style="background: white; padding: 60px 30px 10px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
                         </td>
                     </tr>
                     <tr>
-                        <td style="padding: 20px 30px 40px 30px;">
+                        <td style="padding: 40px 30px 40px 30px;">
                             <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 25px;">
                                 <p style="font-size: 48px; margin: 0 0 10px 0;">🎯</p>
                                 <h1 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">Quiz Completato!</h1>
