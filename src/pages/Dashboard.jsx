@@ -29,7 +29,7 @@ import { useLanguage } from "../components/i18n/LanguageContext";
 
 export default function Dashboard() {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const [user, setUser] = useState(null);
   const [todayMeals, setTodayMeals] = useState([]);
   const [todayWorkout, setTodayWorkout] = useState(null);
@@ -775,6 +775,8 @@ export default function Dashboard() {
           user={user}
           onClose={handlePhotoAnalyzeCloseActual}
           onRebalanceNeeded={handleRebalanceNeeded}
+          language={language}
+          t={t}
         />
       )}
       {showProgressPhoto && (

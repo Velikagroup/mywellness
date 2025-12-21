@@ -7,10 +7,10 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
 
-export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded }) {
-  const languageContext = useLanguage();
-  const t = languageContext?.t || ((key) => key);
-  const language = languageContext?.language || 'it';
+export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded, language: propLanguage, t: propT }) {
+  const contextLang = useLanguage();
+  const t = propT || contextLang?.t || ((key) => key);
+  const language = propLanguage || contextLang?.language || 'it';
   const [photos, setPhotos] = useState([]);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
