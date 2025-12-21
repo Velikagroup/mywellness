@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
         }
 
         // Invia email di test
-        const response = await base44.functions.invoke('sendEmailUnified', {
+        const response = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
             userId: user.id,
             userEmail: testEmail,
             templateId: templateId,
