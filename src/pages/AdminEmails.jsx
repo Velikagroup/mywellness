@@ -308,10 +308,10 @@ export default function AdminEmails() {
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-.logo-cell { padding: 60px 30px 24px 30px; }
+.logo-cell { padding: 60px 30px 10px 30px; }
 .content-cell { padding: 40px 30px; }
 @media only screen and (min-width: 600px) {
-.logo-cell { padding: 60px 60px 24px 60px !important; }
+.logo-cell { padding: 60px 60px 10px 60px !important; }
 .content-cell { padding: 60px 60px 40px 60px !important; }
 }
 @media only screen and (max-width: 600px) {
@@ -327,7 +327,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
 <tr>
 <td class="logo-cell">
-<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px;">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px;">
 </td>
 </tr>
 <tr>
@@ -407,12 +407,12 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <td align="center">
 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
 <tr>
-<td style="background: white; padding: 40px 30px 10px 30px;">
-<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+<td style="background: white; padding: 60px 30px 10px 30px;">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
 </td>
 </tr>
 <tr>
-<td style="padding: 20px 30px 40px 30px;">
+<td style="padding: 40px 30px 40px 30px;">
 <!-- Hero Card -->
 <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 16px; padding: 30px; text-align: center; margin-bottom: 25px;">
 <p style="font-size: 48px; margin: 0 0 10px 0;">🎯</p>
@@ -617,10 +617,10 @@ ${footerText}
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-.logo-cell { padding: 60px 30px 24px 30px; }
+.logo-cell { padding: 60px 30px 10px 30px; }
 .content-cell { padding: 40px 30px; }
 @media only screen and (min-width: 600px) {
-.logo-cell { padding: 60px 60px 24px 60px !important; }
+.logo-cell { padding: 60px 60px 10px 60px !important; }
 .content-cell { padding: 60px 60px 40px 60px !important; }
 }
 @media only screen and (max-width: 600px) {
@@ -636,7 +636,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
 <tr>
 <td class="logo-cell">
-<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
 </td>
 </tr>
 <tr>
