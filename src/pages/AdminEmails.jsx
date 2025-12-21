@@ -10,6 +10,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Checkbox } from '@/components/ui/checkbox';
+import ReactQuill from 'react-quill';
 import {
   Dialog,
   DialogContent,
@@ -2041,12 +2042,22 @@ ${trustBadgesHtml}
 
                                   <div>
                                     <Label className="text-sm font-semibold text-gray-700 mb-2 block">Contenuto</Label>
-                                    <Textarea
+                                    <ReactQuill
                                       value={editingContent.main_content || ''}
-                                      onChange={(e) => setEditingContent({...editingContent, main_content: e.target.value})}
+                                      onChange={(value) => setEditingContent({...editingContent, main_content: value})}
                                       placeholder="Scrivi il contenuto principale dell'email qui..."
-                                      rows={8}
-                                      className="text-sm"
+                                      className="bg-white rounded-lg"
+                                      style={{ minHeight: '200px' }}
+                                      modules={{
+                                        toolbar: [
+                                          [{ 'header': [1, 2, 3, false] }],
+                                          ['bold', 'italic', 'underline', 'strike'],
+                                          [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                          [{ 'align': [] }],
+                                          ['link'],
+                                          ['clean']
+                                        ]
+                                      }}
                                     />
                                   </div>
 
@@ -2220,21 +2231,37 @@ ${trustBadgesHtml}
                                       {/* Intro Text */}
                                       <div>
                                         <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Introduttivo</Label>
-                                        <Textarea
+                                        <ReactQuill
                                           value={editingContent.intro_text || ''}
-                                          onChange={(e) => setEditingContent({...editingContent, intro_text: e.target.value})}
+                                          onChange={(value) => setEditingContent({...editingContent, intro_text: value})}
                                           placeholder="Hai fatto il primo passo verso la versione migliore di te stesso..."
-                                          rows={2}
+                                          className="bg-white rounded-lg"
+                                          style={{ minHeight: '100px' }}
+                                          modules={{
+                                            toolbar: [
+                                              ['bold', 'italic', 'underline', 'strike'],
+                                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                              ['clean']
+                                            ]
+                                          }}
                                         />
                                       </div>
 
                                       <div>
                                         <Label className="text-sm font-semibold text-gray-700 mb-2 block">Secondo Paragrafo</Label>
-                                        <Textarea
+                                        <ReactQuill
                                           value={editingContent.second_paragraph || ''}
-                                          onChange={(e) => setEditingContent({...editingContent, second_paragraph: e.target.value})}
+                                          onChange={(value) => setEditingContent({...editingContent, second_paragraph: value})}
                                           placeholder="Ogni giorno che passa è un giorno in meno..."
-                                          rows={3}
+                                          className="bg-white rounded-lg"
+                                          style={{ minHeight: '120px' }}
+                                          modules={{
+                                            toolbar: [
+                                              ['bold', 'italic', 'underline', 'strike'],
+                                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                              ['clean']
+                                            ]
+                                          }}
                                         />
                                       </div>
 
@@ -2350,11 +2377,19 @@ ${trustBadgesHtml}
                                       {/* Closing Text */}
                                       <div>
                                         <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo di Chiusura</Label>
-                                        <Textarea
+                                        <ReactQuill
                                           value={editingContent.closing_text || ''}
-                                          onChange={(e) => setEditingContent({...editingContent, closing_text: e.target.value})}
+                                          onChange={(value) => setEditingContent({...editingContent, closing_text: value})}
                                           placeholder="Immagina tra 30 giorni: guardarti allo specchio..."
-                                          rows={3}
+                                          className="bg-white rounded-lg"
+                                          style={{ minHeight: '120px' }}
+                                          modules={{
+                                            toolbar: [
+                                              ['bold', 'italic', 'underline', 'strike'],
+                                              [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                                              ['clean']
+                                            ]
+                                          }}
                                         />
                                       </div>
 
@@ -2376,11 +2411,18 @@ ${trustBadgesHtml}
                                             placeholder="⏰ Il momento è ADESSO"
                                             className="h-10"
                                           />
-                                          <Textarea
+                                          <ReactQuill
                                             value={editingContent.urgency_subtitle || ''}
-                                            onChange={(e) => setEditingContent({...editingContent, urgency_subtitle: e.target.value})}
+                                            onChange={(value) => setEditingContent({...editingContent, urgency_subtitle: value})}
                                             placeholder="Non rimandare a domani quello che può cambiarti la vita oggi."
-                                            rows={2}
+                                            className="bg-white rounded-lg"
+                                            style={{ minHeight: '80px' }}
+                                            modules={{
+                                              toolbar: [
+                                                ['bold', 'italic', 'underline', 'strike'],
+                                                ['clean']
+                                              ]
+                                            }}
                                           />
                                         </div>
                                       )}
@@ -2824,12 +2866,22 @@ ${trustBadgesHtml}
               <Label className="text-sm font-semibold text-gray-700 mb-2 block">
                 Contenuto Principale <span className="text-red-500">*</span>
               </Label>
-              <Textarea
+              <ReactQuill
                 value={broadcastData.main_content}
-                onChange={(e) => setBroadcastData({...broadcastData, main_content: e.target.value})}
-                rows={12}
+                onChange={(value) => setBroadcastData({...broadcastData, main_content: value})}
                 placeholder="Scrivi il contenuto dell'email qui..."
-                className="text-sm"
+                className="bg-white rounded-lg"
+                style={{ minHeight: '250px' }}
+                modules={{
+                  toolbar: [
+                    [{ 'header': [1, 2, 3, false] }],
+                    ['bold', 'italic', 'underline', 'strike'],
+                    [{ 'list': 'ordered'}, { 'list': 'bullet' }],
+                    [{ 'align': [] }],
+                    ['link'],
+                    ['clean']
+                  ]
+                }}
               />
               <p className="text-xs text-gray-500 mt-2">
                 Variabili disponibili: {'{'}user_name{'}'}, {'{'}user_email{'}'}, {'{'}app_url{'}'}
