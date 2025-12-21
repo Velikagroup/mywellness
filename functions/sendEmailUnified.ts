@@ -136,10 +136,10 @@ function generateEmailHtml(template, variables, language = 'it') {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
         body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        .logo-cell { padding: 60px 30px 24px 30px; }
+        .logo-cell { padding: 60px 30px 12px 30px; }
         .content-cell { padding: 40px 30px; }
         @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .logo-cell { padding: 60px 60px 12px 60px !important; }
             .content-cell { padding: 60px 60px 40px 60px !important; }
         }
         @media only screen and (max-width: 600px) {
@@ -308,7 +308,7 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
         .logo-cell { padding: 60px 30px 24px 30px; }
         .content-cell { padding: 40px 30px; }
         @media only screen and (min-width: 600px) {
-            .logo-cell { padding: 60px 60px 24px 60px !important; }
+            .logo-cell { padding: 60px 60px 12px 60px !important; }
             .content-cell { padding: 60px 60px 40px 60px !important; }
         }
         @media only screen and (max-width: 600px) {
