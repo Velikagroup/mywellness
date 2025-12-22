@@ -339,7 +339,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${replacedGreeting}</p>
 <div style="color: #374151; font-size: 16px; line-height: 1.5;">${replacedMainContent}</div>
 ${ctaHtml}
-${footerText ? `<p style="color: #26847F; text-align: center; font-size: 16px; margin: 25px 0 15px 0; font-style: italic;">${footerText}</p>` : ''}
+${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">${footerText}</p>` : ''}
 </td>
 </tr>
 </table>
@@ -660,7 +660,8 @@ ${trustBadgesHtml}
 </td>
 </tr>
 </table>
-<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>
+${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">${footerText}</p>` : ''}
+${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>` : ''}
 </td>
 </tr>
 </table>
