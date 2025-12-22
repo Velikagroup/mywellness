@@ -1487,73 +1487,41 @@ function HomeContent() {
   );
 }
 
-export default function Home() {
-  const navigate = useNavigate();
-  const [isRedirecting, setIsRedirecting] = React.useState(true);
-
-  React.useEffect(() => {
-    window.scrollTo(0, 0);
-
-    // Se siamo su /, redirect alla versione localizzata basata sulla location
-    if (window.location.pathname === '/' || window.location.pathname === createPageUrl('Home')) {
-      // Prima controlla se c'è già una lingua salvata
-      const savedLang = localStorage.getItem('preferred_language');
-      if (savedLang && ['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
-        window.location.replace(window.location.origin + createPageUrl(savedLang));
-        return;
-      }
-
-      // Rileva la lingua tramite timezone e browser language
-      try {
-        // Metodo 1: Timezone-based detection
-        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-        const timezoneToLanguage = {
-          'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
-          'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
-          'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
-          'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
-          'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
-          'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
-          'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
-          'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
-          'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
-        };
-        
-        let detectedLang = timezoneToLanguage[timezone];
-        
-        // Metodo 2: Browser language se timezone non ha match
-        if (!detectedLang) {
-          const browserLang = navigator.language.toLowerCase();
-          const langCode = browserLang.split('-')[0];
-          const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-          detectedLang = supportedLangs.includes(langCode) ? langCode : 'en';
-        }
-        
-        console.log('🌍 Detected language:', detectedLang, 'from timezone:', timezone);
-        localStorage.setItem('preferred_language', detectedLang);
-        window.location.replace(window.location.origin + createPageUrl(detectedLang));
-        
-      } catch (error) {
-        console.error('Language detection error:', error);
-        localStorage.setItem('preferred_language', 'en');
-        window.location.replace(window.location.origin + createPageUrl('en'));
-      }
-    } else {
-      setIsRedirecting(false);
+// Redirect IMMEDIATO prima del render - deve essere SINCRONO
+if (typeof window !== 'undefined' && (window.location.pathname === '/' || window.location.pathname === '/Home')) {
+  const savedLang = localStorage.getItem('preferred_language');
+  
+  if (!savedLang) {
+    // Rileva lingua
+    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    const timezoneToLanguage = {
+      'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
+      'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
+      'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
+      'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
+      'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
+      'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
+      'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
+      'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
+      'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
+    };
+    
+    let detectedLang = timezoneToLanguage[timezone];
+    
+    if (!detectedLang) {
+      const browserLang = navigator.language.toLowerCase().split('-')[0];
+      const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+      detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
     }
-  }, [navigate]);
-
-  if (isRedirecting) {
-    return (
-      <div className="min-h-screen flex items-center justify-center animated-gradient-bg">
-        <div className="text-center">
-          <div className="w-16 h-16 border-4 border-[#26847F] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading...</p>
-        </div>
-      </div>
-    );
+    
+    localStorage.setItem('preferred_language', detectedLang);
+    window.location.href = '/' + detectedLang;
+  } else if (['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
+    window.location.href = '/' + savedLang;
   }
+}
 
+export default function Home() {
   return (
     <LanguageProvider>
       <HomeContent />
