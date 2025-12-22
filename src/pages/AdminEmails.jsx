@@ -2549,8 +2549,8 @@ ${trustBadgesHtml}
                                       )}
                                       <div className="pt-3 border-t border-gray-300">
                                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
-                                        <div className="text-base text-gray-900 whitespace-pre-wrap bg-white p-4 rounded border border-gray-200">
-                                          {safeRenderField(previewEmail.template.main_content)}
+                                        <div className="text-base text-gray-900 bg-white p-4 rounded border border-gray-200 leading-relaxed max-h-96 overflow-auto" style={{ lineHeight: '1.8' }}>
+                                          <div dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.main_content) }} />
                                         </div>
                                       </div>
                       {previewEmail.template.call_to_action_text && (
