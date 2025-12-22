@@ -341,7 +341,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <tr>
 <td class="content-cell">
 <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${replacedGreeting}</p>
-<div style="color: #374151; font-size: 16px; line-height: 1.08;">${replacedMainContent}</div>
+<div style="color: #374151; font-size: 16px; line-height: 1.5;">${replacedMainContent}</div>
 ${ctaHtml}
 ${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 20px 0 0 0; font-style: italic;" class="footer-text">${footerText}</p>` : ''}
 </td>
@@ -431,7 +431,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 
 <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
 
-<p style="color: #374151; line-height: 1.08; font-size: 16px; margin: 0 0 17px 0;">
+<p style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 17px 0;">
 Complimenti per aver completato il quiz! 🎉 Abbiamo analizzato le tue risposte e calcolato il tuo profilo metabolico completo.
 </p>
 
@@ -655,10 +655,10 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <tr>
 <td class="content-cell">
 <p style="color: #374151; font-size: 16px; margin: 0 0 12px 0;">${greeting}</p>
-<div style="color: #374151; line-height: 1.08; font-size: 16px; margin: 0 0 8px 0;">${introText}</div>
-<div style="color: #374151; line-height: 1.08; font-size: 16px; margin: 0 0 8px 0;">${secondParagraph}</div>
+<div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 8px 0;">${introText}</div>
+<div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 8px 0;">${secondParagraph}</div>
 ${featuresHtml}
-<div style="color: #374151; line-height: 1.08; font-size: 16px; margin: 0 0 14px 0;">${closingText}</div>
+<div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 14px 0;">${closingText}</div>
 ${urgencyHtml}
 ${trustBadgesHtml}
 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;" class="cta-button-table">
