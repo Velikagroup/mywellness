@@ -317,10 +317,12 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 @media only screen and (min-width: 600px) {
 .logo-cell { padding: 60px 60px 10px 60px !important; }
 .content-cell { padding: 15px 60px 60px 60px !important; }
+.footer-text { margin-top: 20px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
 .outer-wrapper { padding: 0 !important; }
+.footer-text { margin-top: 40px !important; }
 }
 </style>
 </head>
@@ -339,7 +341,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${replacedGreeting}</p>
 <div style="color: #374151; font-size: 16px; line-height: 1.5;">${replacedMainContent}</div>
 ${ctaHtml}
-${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">${footerText}</p>` : ''}
+${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 20px 0 0 0; font-style: italic;" class="footer-text">${footerText}</p>` : ''}
 </td>
 </tr>
 </table>
@@ -627,10 +629,12 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 @media only screen and (min-width: 600px) {
 .logo-cell { padding: 60px 60px 10px 60px !important; }
 .content-cell { padding: 15px 60px 60px 60px !important; }
+.footer-text { margin-top: 20px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
 .outer-wrapper { padding: 0 !important; }
+.footer-text { margin-top: 40px !important; }
 }
 </style>
 </head>
@@ -660,7 +664,7 @@ ${trustBadgesHtml}
 </td>
 </tr>
 </table>
-${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">${footerText}</p>` : ''}
+${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 20px 0 0 0; font-style: italic;" class="footer-text">${footerText}</p>` : ''}
 ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>` : ''}
 </td>
 </tr>
