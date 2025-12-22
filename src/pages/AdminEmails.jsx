@@ -277,6 +277,7 @@ export default function AdminEmails() {
       const emailIdBase = previewEmail.id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
       const isCartAbandonedEmail = ['cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h'].includes(emailIdBase);
       const isQuizCompletedEmail = emailIdBase === 'quiz_completed_abandoned';
+      const isWeeklyReportEmail = emailIdBase === 'weekly_report';
       
       let htmlBody;
       
@@ -286,6 +287,9 @@ export default function AdminEmails() {
       } else if (isQuizCompletedEmail) {
         // Generate quiz completed abandoned email HTML
         htmlBody = generateQuizCompletedTestEmail(template, variables, appUrl);
+      } else if (isWeeklyReportEmail) {
+        // Generate weekly report email HTML with charts
+        htmlBody = generateWeeklyReportTestEmail(template, variables, appUrl);
       } else {
         // Standard email generation
         const replacedGreeting = replaceVars(safeRenderField(template.greeting) || 'Ciao {user_name},', variables);
@@ -387,6 +391,217 @@ ${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; m
       console.error('Error details:', error.response?.data);
       alert('❌ Errore durante l\'invio dell\'email di test: ' + (error.response?.data?.error || error.message));
     }
+  };
+
+  // Generate weekly report email HTML for testing (matches sendWeeklyReport)
+  const generateWeeklyReportTestEmail = (template, variables, appUrl) => {
+    const userName = variables.user_name || 'Mario Rossi';
+    const greeting = template?.greeting !== undefined && template?.greeting !== null
+      ? template.greeting.replace('{user_name}', userName)
+      : `Ciao ${userName},`;
+    
+    // Mock stats for preview
+    const stats = {
+      weekRange: '15 Dic - 22 Dic',
+      weightChange: -0.8,
+      weightTrend: 'down',
+      currentWeight: 79.2,
+      targetWeight: 75.0,
+      avgCalories: 1850,
+      workoutsCompleted: 3,
+      plannedWorkouts: 4,
+      adherence: 85,
+      progressPercentage: 62,
+      distanceRemaining: 4.2
+    };
+
+    const headerTitle = template?.header_title 
+      ? template.header_title.replace('{week_range}', stats.weekRange)
+      : 'Report Settimanale';
+    const headerSubtitle = template?.header_subtitle 
+      ? template.header_subtitle.replace('{week_range}', stats.weekRange)
+      : stats.weekRange;
+    const ctaText = template?.call_to_action_text || '📊 Vedi Dashboard Completa';
+    const ctaUrl = (template?.call_to_action_url || '{app_url}/Dashboard').replace('{app_url}', appUrl);
+    const footerText = template?.footer_text || 'Continua così! La costanza è la chiave del successo 🌟';
+
+    const weightEmoji = stats.weightTrend === 'down' ? '📉' : stats.weightTrend === 'up' ? '📈' : '➡️';
+    const weightColor = stats.weightTrend === 'down' ? '#10b981' : stats.weightTrend === 'up' ? '#ef4444' : '#6b7280';
+    const adherenceColor = stats.adherence >= 80 ? '#10b981' : stats.adherence >= 50 ? '#f59e0b' : '#ef4444';
+
+    const showWeightCard = template?.show_weight_card !== false;
+    const weightCardTitle = template?.weight_card_title || 'Variazione Peso';
+    const showStatsSection = template?.show_stats_section !== false;
+    const statsSectionTitle = template?.stats_section_title || '📈 Le tue statistiche';
+    const showCaloriesStat = template?.show_calories_stat !== false;
+    const caloriesStatLabel = template?.calories_stat_label || 'Calorie medie/giorno';
+    const showWorkoutsStat = template?.show_workouts_stat !== false;
+    const workoutsStatLabel = template?.workouts_stat_label || 'Allenamenti completati';
+    const showAdherenceStat = template?.show_adherence_stat !== false;
+    const adherenceStatLabel = template?.adherence_stat_label || 'Aderenza al piano';
+    const showProgressStat = template?.show_progress_stat !== false;
+    const progressStatLabel = template?.progress_stat_label || 'Progresso obiettivo';
+    const showProgressBar = template?.show_progress_bar !== false;
+    const progressBarTitle = template?.progress_bar_title || '🎯 Progresso verso l\'obiettivo';
+    const progressBarSubtitle = template?.progress_bar_subtitle 
+      ? template.progress_bar_subtitle.replace('{distance_remaining}', stats.distanceRemaining)
+      : `Rimangono ${stats.distanceRemaining} kg al tuo obiettivo!`;
+
+    const weightCardHtml = showWeightCard ? `
+      <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: 10px 0 20px 0; text-align: center;">
+        <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} ${weightCardTitle}</h2>
+        <p style="margin: 0; font-size: 36px; font-weight: bold; color: ${weightColor};">
+          ${stats.weightChange > 0 ? '+' : ''}${stats.weightChange} kg
+        </p>
+        <p style="margin: 10px 0 0 0; color: #6b7280; font-size: 14px;">
+          Peso attuale: ${stats.currentWeight} kg · Target: ${stats.targetWeight} kg
+        </p>
+      </div>
+    ` : '';
+
+    let statsHtml = '';
+    if (showStatsSection) {
+      const statsRows = [];
+      const row1Stats = [];
+      if (showCaloriesStat) {
+        row1Stats.push(`
+          <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+            <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🍽️</p>
+            <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.avgCalories}</p>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">${caloriesStatLabel}</p>
+          </td>
+        `);
+      }
+      if (showWorkoutsStat) {
+        row1Stats.push(`
+          <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+            <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">💪</p>
+            <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.workoutsCompleted}/${stats.plannedWorkouts}</p>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">${workoutsStatLabel}</p>
+          </td>
+        `);
+      }
+      if (row1Stats.length > 0) {
+        statsRows.push(`<tr>${row1Stats.join('<td width="4%"></td>')}</tr>`);
+      }
+
+      statsRows.push(`<tr><td colspan="3" style="height: 8px;"></td></tr>`);
+
+      const row2Stats = [];
+      if (showAdherenceStat) {
+        row2Stats.push(`
+          <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+            <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: ${adherenceColor};">✓</p>
+            <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.adherence}%</p>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">${adherenceStatLabel}</p>
+          </td>
+        `);
+      }
+      if (showProgressStat) {
+        row2Stats.push(`
+          <td width="48%" style="background: #f9fafb; border-radius: 12px; padding: 20px; text-align: center; border: 2px solid #e5e7eb;">
+            <p style="margin: 0 0 5px 0; font-size: 32px; font-weight: bold; color: #26847F;">🎯</p>
+            <p style="font-size: 24px; font-weight: bold; color: #111827; margin: 10px 0;">${stats.progressPercentage}%</p>
+            <p style="margin: 0; color: #6b7280; font-size: 14px;">${progressStatLabel}</p>
+          </td>
+        `);
+      }
+      if (row2Stats.length > 0) {
+        statsRows.push(`<tr>${row2Stats.join('<td width="4%"></td>')}</tr>`);
+      }
+
+      if (statsRows.length > 0) {
+        statsHtml = `
+          <h3 style="color: #111827; margin: 30px 0 15px 0;">${statsSectionTitle}</h3>
+          <table width="100%" cellpadding="0" cellspacing="0" border="0" style="table-layout: fixed; border-spacing: 8px;">
+            ${statsRows.join('')}
+          </table>
+        `;
+      }
+    }
+
+    const progressBarHtml = showProgressBar ? `
+      <h3 style="color: #111827; margin: 30px 0 10px 0;">${progressBarTitle}</h3>
+      <div style="background: #e5e7eb; height: 24px; border-radius: 12px; overflow: hidden; margin: 10px 0;">
+        <div style="background: linear-gradient(90deg, #26847F 0%, #1f6b66 100%); height: 100%; width: ${Math.min(stats.progressPercentage, 100)}%; display: flex; align-items: center; justify-content: center; color: white; font-weight: bold; font-size: 12px;">
+          ${stats.progressPercentage}%
+        </div>
+      </div>
+      <p style="text-align: center; color: #6b7280; font-size: 14px; margin: 5px 0 0 0;">
+        ${progressBarSubtitle}
+      </p>
+    ` : '';
+
+    const motivationalHtml = `
+      <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
+        <p style="margin: 0; color: #92400e; font-weight: 600;">
+          💪 <strong>Ottimo lavoro!</strong> La tua costanza sta dando risultati. Mantieni questo ritmo!
+        </p>
+      </div>
+    `;
+
+    return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
+@media only screen and (max-width: 600px) {
+.container { width: 100% !important; border-radius: 0 !important; }
+.content { padding: 30px 20px !important; }
+.outer-wrapper { padding: 0 !important; }
+}
+</style>
+</head>
+<body style="margin: 0; padding: 0;">
+<table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
+<tr>
+<td align="center">
+<table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
+<tr>
+<td style="background: white; padding: 40px 30px 10px 30px;">
+<img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 48px; width: auto; display: block;">
+<h1 style="color: #26847F; margin: 20px 0 5px 0; font-size: 28px;">${headerTitle}</h1>
+<p style="color: #6b7280; margin: 0; font-size: 16px;">${headerSubtitle}</p>
+</td>
+</tr>
+<tr>
+<td class="content" style="padding: 20px 30px 40px 30px;">
+${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 15px 0;">${greeting}</p>` : ''}
+${weightCardHtml}
+${statsHtml}
+${progressBarHtml}
+${motivationalHtml}
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+<tr>
+<td align="center">
+<a href="${ctaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+${ctaText}
+</a>
+</td>
+</tr>
+</table>
+<p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
+${footerText}
+</p>
+</td>
+</tr>
+</table>
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
+<tr>
+<td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
+<p style="margin: 5px 0; font-size: 12px; font-weight: 600;">© VELIKA GROUP LLC. All Rights Reserved.</p>
+<p style="margin: 5px 0; font-size: 11px;">30 N Gould St 32651 Sheridan, WY 82801, United States</p>
+<p style="margin: 5px 0; font-size: 11px;">EIN: 36-5141800 - velika.03@outlook.it</p>
+</td>
+</tr>
+</table>
+</td>
+</tr>
+</table>
+</body>
+</html>`;
   };
 
   // Generate quiz completed abandoned email HTML for testing (matches sendQuizReminderNoPlan)
