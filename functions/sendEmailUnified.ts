@@ -212,6 +212,7 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
     const ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
     const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace(/{app_url}/g, appUrl);
     const footerQuote = template.footer_quote || '';
+    const footerText = template.footer_text || '';
     
     // Trust badges translations
     const trustBadgeTranslations = {
@@ -349,7 +350,8 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                                     </td>
                                 </tr>
                             </table>
-                            <p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>
+                            ${footerText ? `<p style="color: #26847F; text-align: center; font-size: 16px; margin: 20px 0 10px 0; font-style: italic;">${footerText}</p>` : ''}
+                            ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>` : ''}
                         </td>
                     </tr>
                 </table>
