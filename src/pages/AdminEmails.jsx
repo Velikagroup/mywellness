@@ -481,7 +481,7 @@ ${ctaText}
 </tr>
 </table>
 
-<p style="color: #26847F; text-align: center; font-size: 16px; margin: 15px 0 0 0;">
+<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">
 ${footerText}
 </p>
 </td>
