@@ -175,7 +175,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                                     </td>
                                 </tr>
                             </table>` : ''}
-                            ${footerText ? `<p style="color: #6b7280; margin-top: 30px; font-size: 14px;">${footerText}</p>` : ''}
+                            ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 35px 0 10px 0; font-style: italic;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
@@ -350,7 +350,7 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                                     </td>
                                 </tr>
                             </table>
-                            ${footerText ? `<p style="color: #26847F; text-align: center; font-size: 16px; margin: 20px 0 10px 0; font-style: italic;">${footerText}</p>` : ''}
+                            ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 35px 0 10px 0; font-style: italic;">${footerText}</p>` : ''}
                             ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>` : ''}
                         </td>
                     </tr>
