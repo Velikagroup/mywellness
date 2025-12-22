@@ -318,11 +318,13 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .logo-cell { padding: 60px 60px 10px 60px !important; }
 .content-cell { padding: 15px 60px 60px 60px !important; }
 .footer-text { margin-top: 20px !important; }
+.cta-button-table { margin-bottom: 5px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
 .outer-wrapper { padding: 0 !important; }
 .footer-text { margin-top: 40px !important; }
+.cta-button-table { margin-bottom: 30px !important; }
 }
 </style>
 </head>
@@ -630,11 +632,13 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .logo-cell { padding: 60px 60px 10px 60px !important; }
 .content-cell { padding: 15px 60px 60px 60px !important; }
 .footer-text { margin-top: 20px !important; }
+.cta-button-table { margin-bottom: 5px !important; }
 }
 @media only screen and (max-width: 600px) {
 .container { width: 100% !important; border-radius: 0 !important; }
 .outer-wrapper { padding: 0 !important; }
 .footer-text { margin-top: 40px !important; }
+.cta-button-table { margin-bottom: 30px !important; }
 }
 </style>
 </head>
@@ -657,7 +661,7 @@ ${featuresHtml}
 <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 20px 0;">${closingText}</div>
 ${urgencyHtml}
 ${trustBadgesHtml}
-<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;">
+<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 25px 0 15px 0;" class="cta-button-table">
 <tr>
 <td align="center">
 <a href="${ctaUrl}" style="display: inline-block; background: ${buttonGradient}; color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">${ctaText}</a>
