@@ -31,7 +31,7 @@ async function loadEmailTemplate(base44, templateId) {
         const templates = await base44.asServiceRole.entities.EmailTemplate.filter({
             template_id: templateId,
             is_active: true
-        });
+        }, '-updated_date', 1);
         return templates.length > 0 ? templates[0] : null;
     } catch (error) {
         console.error('Error loading template:', error);
@@ -41,6 +41,8 @@ async function loadEmailTemplate(base44, templateId) {
 
 function replaceVariables(text, variables) {
     if (!text) return '';
+    // Se text è un oggetto, non è una stringa valida - ritorna stringa vuota
+    if (typeof text === 'object') return '';
     let result = text;
     Object.keys(variables).forEach(key => {
         const regex = new RegExp(`\\{${key}\\}`, 'g');
@@ -259,24 +261,28 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
     const headerSubtitle = template?.header_subtitle 
         ? replaceVariables(template.header_subtitle, variables) 
         : stats.weekRange;
-    // Se greeting è stringa vuota o non definita, non mostrare nulla
-    const greeting = template?.greeting !== undefined && template?.greeting !== null && template?.greeting !== ''
+    // Helper per verificare se un campo è una stringa valida e non vuota
+    const isValidString = (val) => val && typeof val === 'string' && val.trim() !== '';
+    
+    const greeting = isValidString(template?.greeting) 
         ? replaceVariables(template.greeting, variables) 
         : '';
-    const introText = template?.intro_text 
+    const introText = isValidString(template?.intro_text)
         ? replaceVariables(template.intro_text, variables)
         : '';
-    const mainContent = template?.main_content
+    const mainContent = isValidString(template?.main_content)
         ? replaceVariables(template.main_content, variables)
         : '';
-    const ctaText = template?.call_to_action_text || '📊 Vedi Dashboard Completa';
-    const ctaUrl = template?.call_to_action_url 
+    const ctaText = isValidString(template?.call_to_action_text) 
+        ? template.call_to_action_text 
+        : '📊 Vedi Dashboard Completa';
+    const ctaUrl = isValidString(template?.call_to_action_url)
         ? replaceVariables(template.call_to_action_url, variables) 
         : (Deno.env.get('APP_URL') || 'https://projectmywellness.com') + '/Dashboard';
-    const footerText = template?.footer_text 
+    const footerText = isValidString(template?.footer_text)
         ? replaceVariables(template.footer_text, variables)
         : '';
-    const showFooter = template?.footer_text !== undefined && template?.footer_text !== null && template?.footer_text !== '';
+    const showFooter = isValidString(template?.footer_text);
 
     // Configurazione grafici/sezioni dall'admin
     const showWeightCard = template?.show_weight_card !== false;
