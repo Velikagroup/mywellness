@@ -298,37 +298,14 @@ function HomeContent() {
     try {
       // Rileva se siamo in app Capacitor
       const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
-      
+
       if (isCapacitor) {
-        // In app iOS/Android - usa in-app browser se disponibile
-        console.log('🔐 Capacitor app detected - using in-app browser');
-        
-        // Controlla se Capacitor Browser è disponibile
-        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
-          const { Browser } = window.Capacitor.Plugins;
-          
-          const nextUrl = window.location.origin + '/auth-callback';
-          const loginUrl = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
-          
-          await Browser.open({ 
-            url: loginUrl,
-            presentationStyle: 'popover'
-          });
-          
-          // Listener per quando il browser si chiude
-          Browser.addListener('browserFinished', () => {
-            console.log('✅ Browser closed, checking auth...');
-            // Ricarica per verificare lo stato di autenticazione
-            window.location.reload();
-          });
-        } else {
-          // Fallback: apri Safari esterno con deep link
-          console.log('⚠️ Browser plugin not available, using external browser');
-          const nextUrl = 'mywellness://auth-callback';
-          window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
-        }
+        // In app iOS/Android - usa base44.auth.redirectToLogin che gestisce tutto
+        console.log('🔐 Capacitor app detected');
+        const nextUrl = 'mywellness://auth-callback';
+        base44.auth.redirectToLogin(nextUrl);
       } else {
-        // Browser web normale - redirect alla pagina login di Base44
+        // Browser web normale - redirect alla pagina login
         const quizPages = {
           'en': 'enquiz',
           'it': 'itquiz',
