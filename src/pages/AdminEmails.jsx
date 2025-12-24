@@ -2764,20 +2764,23 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                                           <p className="text-sm text-gray-600">{previewEmail.template.header_subtitle}</p>
                                         </div>
                                       )}
-                                      {previewEmail.template.greeting && (
+                                      {previewEmail.template.greeting && safeRenderField(previewEmail.template.greeting).trim() && (
                                         <div className="pt-3 border-t border-gray-300">
                                           <p className="text-xs text-gray-500 mb-1">Saluto:</p>
                                           <p className="text-base text-gray-900">{safeRenderField(previewEmail.template.greeting)}</p>
                                         </div>
                                       )}
-                                      {(previewEmail.template.intro_text || previewEmail.template.main_content) && (
+                                      {(
+                                        (previewEmail.template.intro_text && safeRenderField(previewEmail.template.intro_text).trim()) || 
+                                        (previewEmail.template.main_content && safeRenderField(previewEmail.template.main_content).trim())
+                                      ) && (
                                       <div className="pt-3 border-t border-gray-300">
                                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
                                         <div className="text-base text-gray-900 bg-white p-4 rounded border border-gray-200 leading-relaxed max-h-96 overflow-auto" style={{ lineHeight: '1.8' }}>
-                                          {previewEmail.template.intro_text && (
+                                          {previewEmail.template.intro_text && safeRenderField(previewEmail.template.intro_text).trim() && (
                                             <div dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.intro_text) }} />
                                           )}
-                                          {previewEmail.template.main_content && (
+                                          {previewEmail.template.main_content && safeRenderField(previewEmail.template.main_content).trim() && (
                                             <div dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.main_content) }} />
                                           )}
                                         </div>
