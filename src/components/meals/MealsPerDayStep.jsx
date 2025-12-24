@@ -27,10 +27,10 @@ export default function MealsPerDayStep({ onDataChange, onNext, dailyCalories })
       1: [100], // 1 pasto = 100%
       2: [60, 40], // 2 pasti
       3: [30, 40, 30], // colazione, pranzo, cena
-      4: [25, 35, 10, 30], // colazione, pranzo, snack, cena
-      5: [25, 30, 10, 30, 5], // colazione, pranzo, snack1, cena, snack2
-      6: [25, 10, 28, 10, 22, 5], // colazione, snack1, pranzo, snack2, cena, snack3
-      7: [22, 8, 25, 8, 25, 7, 5] // colazione, snack1, pranzo, snack2, cena, snack3, snack4
+      4: [25, 10, 35, 30], // colazione, snack1, pranzo, cena
+      5: [25, 10, 30, 10, 25], // colazione, snack1, pranzo, snack2, cena
+      6: [20, 10, 25, 10, 25, 10], // colazione, snack1, pranzo, snack2, cena, snack3
+      7: [20, 8, 25, 8, 25, 7, 7] // colazione, snack1, pranzo, snack2, cena, snack3, snack4
     };
     
     const percentages = distributions[numMeals] || Array(numMeals).fill(100 / numMeals);
@@ -82,8 +82,8 @@ export default function MealsPerDayStep({ onDataChange, onNext, dailyCalories })
                   1: [t('meals.lunch')],
                   2: [t('meals.lunch'), t('meals.dinner')],
                   3: [t('meals.breakfast'), t('meals.lunch'), t('meals.dinner')],
-                  4: [t('meals.breakfast'), t('meals.lunch'), t('meals.snack1'), t('meals.dinner')],
-                  5: [t('meals.breakfast'), t('meals.lunch'), t('meals.snack1'), t('meals.dinner'), t('meals.snack2')],
+                  4: [t('meals.breakfast'), t('meals.snack1'), t('meals.lunch'), t('meals.dinner')],
+                  5: [t('meals.breakfast'), t('meals.snack1'), t('meals.lunch'), t('meals.snack2'), t('meals.dinner')],
                   6: [t('meals.breakfast'), t('meals.snack1'), t('meals.lunch'), t('meals.snack2'), t('meals.dinner'), t('meals.snack3')],
                   7: [t('meals.breakfast'), t('meals.snack1'), t('meals.lunch'), t('meals.snack2'), t('meals.dinner'), t('meals.snack3'), t('meals.snack4')]
                 };

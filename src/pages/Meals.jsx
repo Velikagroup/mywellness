@@ -879,7 +879,7 @@ STRICT RULES:
           }`
         : '';
 
-      // ✅ FIX CRITICO: Se digiuno intermittente SALTA COLAZIONE, usa solo pasti pomeridiani
+      // ✅ FIX CRITICO: Struttura pasti in base al numero selezionato
       let mealStructure;
       
       if (generationPrefs.intermittent_fasting && generationPrefs.if_skip_meal === 'breakfast') {
@@ -893,9 +893,22 @@ STRICT RULES:
         mealStructure = morningMeals.slice(0, mealsPerDay);
         console.log(`🍽️ IF SKIP DINNER: usando pasti mattutini →`, mealStructure);
       } else {
-        // ✅ NORMALE: tutti i pasti
-        const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
-        mealStructure = allMealTypes.slice(0, mealsPerDay);
+        // ✅ NORMALE: struttura pasti in base al numero
+        if (mealsPerDay === 3) {
+          mealStructure = ['breakfast', 'lunch', 'dinner'];
+        } else if (mealsPerDay === 4) {
+          mealStructure = ['breakfast', 'snack1', 'lunch', 'dinner'];
+        } else if (mealsPerDay === 5) {
+          mealStructure = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner'];
+        } else if (mealsPerDay === 6) {
+          mealStructure = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3'];
+        } else if (mealsPerDay === 7) {
+          mealStructure = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
+        } else {
+          // Default: tutti i pasti disponibili
+          const allMealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
+          mealStructure = allMealTypes.slice(0, mealsPerDay);
+        }
         console.log(`🍽️ PASTI NORMALI (${mealsPerDay}) →`, mealStructure);
       }
       
@@ -907,7 +920,16 @@ STRICT RULES:
       
       const mealCalorieDistribution = {};
       
-      if (mealsPerDay === 5) {
+      if (mealsPerDay === 3) {
+        mealCalorieDistribution.breakfast = Math.round(dailyCalories * 0.30);
+        mealCalorieDistribution.lunch = Math.round(dailyCalories * 0.40);
+        mealCalorieDistribution.dinner = Math.round(dailyCalories * 0.30);
+      } else if (mealsPerDay === 4) {
+        mealCalorieDistribution.breakfast = Math.round(dailyCalories * 0.25);
+        mealCalorieDistribution.snack1 = Math.round(dailyCalories * 0.10);
+        mealCalorieDistribution.lunch = Math.round(dailyCalories * 0.35);
+        mealCalorieDistribution.dinner = Math.round(dailyCalories * 0.30);
+      } else if (mealsPerDay === 5) {
         mealCalorieDistribution.breakfast = Math.round(dailyCalories * 0.25);
         mealCalorieDistribution.snack1 = Math.round(dailyCalories * 0.10);
         mealCalorieDistribution.lunch = Math.round(dailyCalories * 0.30);
