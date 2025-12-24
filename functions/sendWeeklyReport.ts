@@ -260,16 +260,23 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
         ? replaceVariables(template.header_subtitle, variables) 
         : stats.weekRange;
     // Se greeting è stringa vuota o non definita, non mostrare nulla
-    const greeting = template?.greeting !== undefined && template?.greeting !== null
+    const greeting = template?.greeting !== undefined && template?.greeting !== null && template?.greeting !== ''
         ? replaceVariables(template.greeting, variables) 
-        : `Ciao ${user.full_name || 'Utente'},`;
+        : '';
+    const introText = template?.intro_text 
+        ? replaceVariables(template.intro_text, variables)
+        : '';
+    const mainContent = template?.main_content
+        ? replaceVariables(template.main_content, variables)
+        : '';
     const ctaText = template?.call_to_action_text || '📊 Vedi Dashboard Completa';
     const ctaUrl = template?.call_to_action_url 
         ? replaceVariables(template.call_to_action_url, variables) 
         : (Deno.env.get('APP_URL') || 'https://projectmywellness.com') + '/Dashboard';
     const footerText = template?.footer_text 
         ? replaceVariables(template.footer_text, variables)
-        : 'Continua così! La costanza è la chiave del successo 🌟';
+        : '';
+    const showFooter = template?.footer_text !== undefined && template?.footer_text !== null && template?.footer_text !== '';
 
     // Configurazione grafici/sezioni dall'admin
     const showWeightCard = template?.show_weight_card !== false;
@@ -416,7 +423,11 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
                     </tr>
                     <tr>
                         <td class="content" style="padding: 20px 30px 40px 30px;">
-                            ${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 15px 0;">${greeting}</p>` : ''}
+                            ${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 15px 0; font-weight: 600;">${greeting}</p>` : ''}
+                            
+                            ${introText ? `<p style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${introText}</p>` : ''}
+                            
+                            ${mainContent ? `<div style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${mainContent}</div>` : ''}
 
                             ${weightCardHtml}
 
@@ -436,13 +447,12 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
                                 </tr>
                             </table>
 
-                            <p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
-                                ${footerText}
-                            </p>
+                            ${showFooter ? `<p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
                 
+                ${showFooter ? `
                 <table width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; margin-top: 20px; background-color: #fafafa;">
                     <tr>
                         <td align="center" style="padding: 20px; color: #999999; background-color: #fafafa;">
@@ -452,6 +462,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
                         </td>
                     </tr>
                 </table>
+                ` : ''}
             </td>
         </tr>
     </table>
