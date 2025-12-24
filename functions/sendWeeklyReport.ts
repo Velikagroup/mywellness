@@ -416,6 +416,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
     </style>
 </head>
 <body style="margin: 0; padding: 0;">
+    ${template?.preview_text ? `<div style="display:none;max-height:0px;overflow:hidden;">${replaceVariables(template.preview_text, variables)}</div>` : ''}
     <table class="outer-wrapper" width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
         <tr>
             <td align="center">
