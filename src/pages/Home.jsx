@@ -300,20 +300,12 @@ function HomeContent() {
       const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
 
       if (isCapacitor) {
-        console.log('🔐 Capacitor app - opening in-app browser');
+        // Mostra un messaggio che il login deve essere fatto da web
+        alert('⚠️ Per effettuare il login, ti reindirizzeremo al browser web. Dopo il login, riapri l\'app MyWellness.');
 
-        // Import Browser plugin
-        const { Browser } = window.Capacitor.Plugins;
-
-        // URL di callback dell'app
-        const nextUrl = 'mywellness://auth-callback';
-        const ssoUrl = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
-
-        // Apri in-app browser
-        await Browser.open({ 
-          url: ssoUrl,
-          presentationStyle: 'popover'
-        });
+        // Apri Safari con l'URL di login web
+        const webLoginUrl = 'https://projectmywellness.com/it?login=true';
+        window.location.href = webLoginUrl;
       } else {
         // Browser web normale
         const quizPages = {
