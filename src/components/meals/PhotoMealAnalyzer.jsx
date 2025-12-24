@@ -442,10 +442,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
         rebalanced: false
       });
 
-      await base44.entities.MealPlan.update(meal.id, {
-        image_url: analysisResult.photo_urls[0],
-        name: analysisResult.suggested_meal_name
-      });
+      // ✅ NON modificare il MealPlan ufficiale - lascialo invariato per le prossime settimane
 
       if (Math.abs(analysisResult.delta_calories) > 50) {
         onRebalanceNeeded(analysisResult.delta_calories, meal.meal_type);
@@ -480,10 +477,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
         rebalanced: true
       });
 
-      await base44.entities.MealPlan.update(meal.id, {
-        image_url: analysisResult.photo_urls[0],
-        name: analysisResult.suggested_meal_name
-      });
+      // ✅ NON modificare il MealPlan ufficiale - lascialo invariato per le prossime settimane
       
       onClose();
     } catch (error) {
