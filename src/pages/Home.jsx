@@ -300,13 +300,22 @@ function HomeContent() {
       const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
 
       if (isCapacitor) {
-        // In app iOS/Android - usa URL SSO diretto
-        console.log('🔐 Capacitor app detected - using direct SSO URL');
+        console.log('🔐 Capacitor app - opening in-app browser');
+
+        // Import Browser plugin
+        const { Browser } = window.Capacitor.Plugins;
+
+        // URL di callback dell'app
         const nextUrl = 'mywellness://auth-callback';
         const ssoUrl = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
-        window.location.href = ssoUrl;
+
+        // Apri in-app browser
+        await Browser.open({ 
+          url: ssoUrl,
+          presentationStyle: 'popover'
+        });
       } else {
-        // Browser web normale - redirect alla pagina login
+        // Browser web normale
         const quizPages = {
           'en': 'enquiz',
           'it': 'itquiz',
