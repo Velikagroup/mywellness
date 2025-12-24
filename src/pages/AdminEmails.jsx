@@ -1223,16 +1223,6 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
           { id: `renewal_confirmation_${selectedLanguage}`, name: 'Conferma Rinnovo Automatico', trigger: 'Rinnovo automatico abbonamento (Stripe webhook)', function: 'sendRenewalConfirmation' }
         ]
       },
-    renewal: {
-      name: 'Renewal',
-      icon: Clock,
-      color: 'orange',
-      emails: [
-        { id: 'renewal_7_days', name: 'Reminder Rinnovo - 7 Giorni', trigger: 'Cron (7 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
-        { id: 'renewal_3_days', name: 'Reminder Rinnovo - 3 Giorni', trigger: 'Cron (3 giorni prima scadenza, con cancellazione)', function: 'sendRenewalReminders' },
-        { id: 'renewal_1_day', name: 'Reminder Rinnovo - 1 Giorno', trigger: 'Cron (1 giorno prima scadenza, con cancellazione)', function: 'sendRenewalReminders' }
-      ]
-    },
     winback: {
       name: 'Win-Back',
       icon: Heart,
