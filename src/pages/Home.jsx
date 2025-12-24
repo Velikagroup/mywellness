@@ -300,10 +300,11 @@ function HomeContent() {
       const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
 
       if (isCapacitor) {
-        // In app iOS/Android - usa base44.auth.redirectToLogin che gestisce tutto
-        console.log('🔐 Capacitor app detected');
+        // In app iOS/Android - usa URL SSO diretto
+        console.log('🔐 Capacitor app detected - using direct SSO URL');
         const nextUrl = 'mywellness://auth-callback';
-        base44.auth.redirectToLogin(nextUrl);
+        const ssoUrl = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
+        window.location.href = ssoUrl;
       } else {
         // Browser web normale - redirect alla pagina login
         const quizPages = {
