@@ -294,17 +294,39 @@ function HomeContent() {
     setShowQuizPopup(false);
   };
 
-  const handleLogin = () => {
+  const handleLogin = async () => {
     try {
       // Rileva se siamo in app Capacitor
       const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
       
       if (isCapacitor) {
-        // In app iOS/Android - usa deep link per callback
-        console.log('🔐 Capacitor app detected - using deep link callback');
+        // In app iOS/Android - usa in-app browser se disponibile
+        console.log('🔐 Capacitor app detected - using in-app browser');
         
-        const nextUrl = 'mywellness://auth/callback';
-        window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
+        // Controlla se Capacitor Browser è disponibile
+        if (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.Browser) {
+          const { Browser } = window.Capacitor.Plugins;
+          
+          const nextUrl = window.location.origin + '/auth-callback';
+          const loginUrl = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
+          
+          await Browser.open({ 
+            url: loginUrl,
+            presentationStyle: 'popover'
+          });
+          
+          // Listener per quando il browser si chiude
+          Browser.addListener('browserFinished', () => {
+            console.log('✅ Browser closed, checking auth...');
+            // Ricarica per verificare lo stato di autenticazione
+            window.location.reload();
+          });
+        } else {
+          // Fallback: apri Safari esterno con deep link
+          console.log('⚠️ Browser plugin not available, using external browser');
+          const nextUrl = 'mywellness://auth-callback';
+          window.location.href = `https://app.base44.com/api/auth/sso/google?nextUrl=${encodeURIComponent(nextUrl)}`;
+        }
       } else {
         // Browser web normale - redirect alla pagina login di Base44
         const quizPages = {
