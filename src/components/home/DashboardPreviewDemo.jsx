@@ -198,22 +198,6 @@ export default function DashboardPreviewDemo() {
         }
       `}</style>
 
-      {/* TITOLO DASHBOARD CIENTÍFICO */}
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-2 px-4 py-2 bg-[var(--brand-primary)]/10 rounded-full mb-3">
-          <Activity className="w-4 h-4 text-[var(--brand-primary)]" />
-          <span className="text-sm font-semibold text-[var(--brand-primary)]">
-            {tr.scientificAnalysis}
-          </span>
-        </div>
-        <h2 className="text-3xl font-black text-gray-900 mb-2">
-          {tr.scientificDashboard}
-        </h2>
-        <p className="text-gray-600 max-w-2xl mx-auto">
-          {tr.subtitle}
-        </p>
-      </div>
-      
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-4">
       {/* Colonna Sinistra - 8 colonne */}
       <div className="lg:col-span-8 space-y-4">
