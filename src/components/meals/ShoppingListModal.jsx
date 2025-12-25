@@ -452,7 +452,15 @@ CRITICAL: Write explanation in ${langName.toUpperCase()}. Explain nutritional co
   const organizedItems = shoppingList?.items.reduce((acc, item) => {
     const category = normalizeCategory(item.category);
     if (!acc[category]) acc[category] = [];
-    acc[category].push(item);
+    
+    // Arrotonda le uova a numeri interi
+    const processedItem = { ...item };
+    if (item.unit && item.unit.toLowerCase() === 'uova' || 
+        item.name && item.name.toLowerCase().includes('uov')) {
+      processedItem.quantity = Math.round(item.quantity);
+    }
+    
+    acc[category].push(processedItem);
     return acc;
   }, {}) || {};
 

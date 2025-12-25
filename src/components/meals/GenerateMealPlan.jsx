@@ -280,12 +280,24 @@ Dieta: ${user.diet_type}`;
 
         // SALVA
         for (const meal of validMeals) {
+          // Arrotonda le uova a numeri interi
+          const processedIngredients = meal.ingredients.map(ing => {
+            if (ing.unit && ing.unit.toLowerCase() === 'uova' || 
+                ing.name && ing.name.toLowerCase().includes('uov')) {
+              return {
+                ...ing,
+                quantity: Math.round(ing.quantity)
+              };
+            }
+            return ing;
+          });
+
           await MealPlan.create({
             user_id: user.id,
             day_of_week: day,
             meal_type: meal.meal_type,
             name: meal.name,
-            ingredients: meal.ingredients,
+            ingredients: processedIngredients,
             instructions: meal.instructions || ["Preparare secondo indicazioni"],
             total_calories: Math.round(meal.total_calories),
             total_protein: Math.round(meal.total_protein),
