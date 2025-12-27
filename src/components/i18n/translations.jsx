@@ -35,7 +35,7 @@ export const translations = {
       aiPowered: "Alimentato dall'Intelligenza Artificiale",
       heroTitle1: "Il tuo percorso",
       heroTitle2: "Wellness",
-      heroTitle3: " guidato dall'",
+      heroTitle3: "guidato dall'",
       heroTitle4: "AI",
       heroSubtitle: "Piani nutrizionali e di allenamento personalizzati, creati dall'intelligenza artificiale e adattati in tempo reale ai tuoi progressi.",
       freeQuiz: "Quiz Gratuito",
