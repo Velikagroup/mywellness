@@ -53,7 +53,7 @@ export const translations = {
       step1Tag2: "🎯 100% Personalizzato",
       
       step2Badge: "📊 Analisi Scientifica",
-      step2Title: "Dashboard Scientifico",
+      step2Title: "Dashboard Scientifica",
       step2Desc: "Visualizza BMR, fabbisogno calorico, massa grassa e proiezioni degli obiettivi in tempo reale.",
       step2Tag1: "🔬 Calcoli Precisi",
       step2Tag2: "📈 Monitoraggio Live",
