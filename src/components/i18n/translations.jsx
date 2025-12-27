@@ -33,7 +33,7 @@ export const translations = {
     },
     home: {
       aiPowered: "Alimentato dall'Intelligenza Artificiale",
-      heroTitle1: "Il tuo percorso",
+      heroTitle1: "Il tuo viaggio",
       heroTitle2: "Wellness",
       heroTitle3: " guidato dall'",
       heroTitle4: "IA",
