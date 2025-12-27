@@ -733,7 +733,7 @@ function HomeContent() {
           </div>
           
           <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-6 tracking-tight leading-[1.1] px-2 mt-16 md:-mt-48">
-            {t('home.heroTitle1')} <span className="animated-text-gradient">{t('home.heroTitle2')}</span>, {t('home.heroTitle3')}<span className="animated-text-gradient">{t('home.heroTitle4')}</span>
+            {t('home.heroTitle1')} <span className="animated-text-gradient">{t('home.heroTitle2')}</span> {t('home.heroTitle3')}<span className="animated-text-gradient">{t('home.heroTitle4')}</span>
           </h1>
           
           <p className="text-base md:text-xl text-gray-500 mb-10 max-w-2xl mx-auto leading-relaxed px-2">
