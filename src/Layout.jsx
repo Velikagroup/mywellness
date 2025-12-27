@@ -17,30 +17,6 @@ function LayoutContent({ children }) {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
-  // Set favicon for mobile
-  React.useEffect(() => {
-    const setFavicon = () => {
-      // Remove existing favicons
-      const existingIcons = document.querySelectorAll('link[rel*="icon"]');
-      existingIcons.forEach(icon => icon.remove());
-
-      // Add MyWellness logo as favicon
-      const favicon = document.createElement('link');
-      favicon.rel = 'icon';
-      favicon.type = 'image/png';
-      favicon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png';
-      document.head.appendChild(favicon);
-
-      // Add Apple Touch Icon for iOS
-      const appleTouchIcon = document.createElement('link');
-      appleTouchIcon.rel = 'apple-touch-icon';
-      appleTouchIcon.href = 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png';
-      document.head.appendChild(appleTouchIcon);
-    };
-
-    setFavicon();
-  }, []);
-
   // TikTok Pixel
   React.useEffect(() => {
     !function (w, d, t) {
