@@ -33,7 +33,7 @@ export const translations = {
     },
     home: {
       aiPowered: "Alimentato dall'Intelligenza Artificiale",
-      heroTitle1: "Il tuo viaggio",
+      heroTitle1: "Il tuo percorso",
       heroTitle2: "Wellness",
       heroTitle3: " guidato dall'",
       heroTitle4: "IA",
@@ -664,7 +664,7 @@ export const translations = {
       quizHeightTitle: "Qual è la tua altezza?",
       quizHeightSubtitle: "Necessaria per calcolare BMR e massa grassa",
       quizCurrentWeightTitle: "Qual è il tuo peso attuale?",
-      quizCurrentWeightSubtitle: "Sii onesto, è il punto di partenza del tuo viaggio!",
+      quizCurrentWeightSubtitle: "Sii onesto, è il punto di partenza del tuo percorso!",
       quizTargetWeightTitle: "Qual è il tuo peso obiettivo?",
       quizTargetWeightSubtitle: "L'obiettivo che vuoi raggiungere",
       quizNeckTitle: "Circonferenza del collo",
