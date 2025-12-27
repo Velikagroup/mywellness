@@ -71,29 +71,6 @@ function HomeContent() {
 
     // Gestione URL parameters
     const urlParams = new URLSearchParams(window.location.search);
-    
-    // ✅ CRITICAL FIX: Se siamo su mobile browser, controlla sempre se l'utente è loggato
-    const isMobileBrowser = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-    
-    if (isMobileBrowser) {
-      base44.auth.me()
-        .then(user => {
-          if (user) {
-            // Utente autenticato su mobile! Apri l'app
-            console.log('✅ Mobile user logged in, opening app...');
-            
-            // Controlla se ha quiz completato e subscription
-            if (user.quiz_completed && (user.subscription_status === 'active' || user.subscription_status === 'trial')) {
-              window.location.href = 'mywellness://dashboard';
-            } else {
-              window.location.href = 'mywellness://quiz';
-            }
-          }
-        })
-        .catch(() => {
-          // Non autenticato, continua normale
-        });
-    }
 
     // Cattura codice affiliato dall'URL
     const affiliateCode = urlParams.get('affiliate');
