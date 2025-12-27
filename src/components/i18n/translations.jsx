@@ -48,7 +48,7 @@ export const translations = {
       
       step1Badge: "📋 Valutazione Iniziale",
       step1Title: "Quiz Personalizzato",
-      step1Desc: "Rispondi a domande mirate su peso, altezza, obiettivi e preferenze. L'IA crea il tuo profilo metabolico completo.",
+      step1Desc: "Rispondi a domande mirate su peso, altezza, obiettivi e preferenze. L'AI crea il tuo profilo metabolico completo.",
       step1Tag1: "⚡ 3 minuti",
       step1Tag2: "🎯 100% Personalizzato",
       
