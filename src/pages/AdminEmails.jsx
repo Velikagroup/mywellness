@@ -1216,8 +1216,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
           { id: `pro_welcome_${selectedLanguage}`, name: 'Benvenuto Piano Pro', trigger: 'Acquisto piano Pro €29/mese', function: 'sendPlanWelcome' },
           { id: `premium_welcome_${selectedLanguage}`, name: 'Benvenuto Piano Premium', trigger: 'Acquisto piano Premium €39/mese', function: 'sendPlanWelcome' },
           { id: `landing_new_user_${selectedLanguage}`, name: 'Landing Offer - Nuovo Utente', trigger: 'Acquisto Landing Offer (nuovo utente)', function: 'stripeCreateOneTimePayment' },
-          { id: `landing_existing_user_${selectedLanguage}`, name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' },
-          { id: `renewal_confirmation_${selectedLanguage}`, name: 'Conferma Rinnovo Automatico', trigger: 'Rinnovo automatico abbonamento (Stripe webhook)', function: 'sendRenewalConfirmation' }
+          { id: `landing_existing_user_${selectedLanguage}`, name: 'Landing Offer - Utente Esistente', trigger: 'Acquisto Landing Offer (utente esistente)', function: 'stripeCreateOneTimePayment' }
         ]
       },
     winback: {

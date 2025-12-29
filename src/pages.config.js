@@ -4,7 +4,6 @@ import AdminBlog from './pages/AdminBlog';
 import AdminClients from './pages/AdminClients';
 import AdminCoupons from './pages/AdminCoupons';
 import AdminEmailTest from './pages/AdminEmailTest';
-import AdminEmails from './pages/AdminEmails';
 import AdminMarketing from './pages/AdminMarketing';
 import AdminSalesTax from './pages/AdminSalesTax';
 import AdminSupportTickets from './pages/AdminSupportTickets';
@@ -65,6 +64,7 @@ import ptblogarticle from './pages/ptblogarticle';
 import ptcheckout from './pages/ptcheckout';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
+import AdminEmails from './pages/AdminEmails';
 import __Layout from './Layout.jsx';
 
 
@@ -75,7 +75,6 @@ export const PAGES = {
     "AdminClients": AdminClients,
     "AdminCoupons": AdminCoupons,
     "AdminEmailTest": AdminEmailTest,
-    "AdminEmails": AdminEmails,
     "AdminMarketing": AdminMarketing,
     "AdminSalesTax": AdminSalesTax,
     "AdminSupportTickets": AdminSupportTickets,
@@ -136,6 +135,7 @@ export const PAGES = {
     "ptcheckout": ptcheckout,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
+    "AdminEmails": AdminEmails,
 }
 
 export const pagesConfig = {
