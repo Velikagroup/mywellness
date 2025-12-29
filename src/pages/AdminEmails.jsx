@@ -446,7 +446,7 @@ ${ctaHtml}
       : `Rimangono ${stats.distanceRemaining} kg al tuo obiettivo!`;
 
     const weightCardHtml = showWeightCard ? `
-      <div style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: -20px 0 20px 0; text-align: center;">
+      <div class="weight-card" style="background: linear-gradient(135deg, #e9f6f5 0%, #d4f1ed 100%); border: 2px solid #26847F; border-radius: 12px; padding: 20px; margin: -20px 0 20px 0; text-align: center;">
         <h2 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">${weightEmoji} ${weightCardTitle}</h2>
         <p style="margin: 0; font-size: 36px; font-weight: bold; color: ${weightColor};">
           ${stats.weightChange > 0 ? '+' : ''}${stats.weightChange} kg
@@ -549,6 +549,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .container { width: 100% !important; border-radius: 0 !important; }
 .content { padding: 30px 20px !important; }
 .outer-wrapper { padding: 0 !important; }
+.weight-card { margin-top: -20px !important; }
 }
 </style>
 </head>
