@@ -567,7 +567,6 @@ ${template?.preview_text ? `<div style="display:none;max-height:0px;overflow:hid
 </tr>
 <tr>
 <td class="content" style="padding: 20px 30px 40px 30px;">
-${greeting ? `<p style="color: #111827; font-size: 16px; margin: 0 0 15px 0; font-weight: 600;">${greeting}</p>` : ''}
 ${template?.intro_text ? `<p style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${template.intro_text}</p>` : ''}
 ${template?.main_content ? `<div style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${template.main_content}</div>` : ''}
 ${weightCardHtml}
