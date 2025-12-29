@@ -412,6 +412,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
             .content { padding: 30px 20px !important; }
             .stat-table { width: 100% !important; }
             .outer-wrapper { padding: 0 !important; }
+            .weight-card { margin-top: -40px !important; }
         }
     </style>
 </head>
