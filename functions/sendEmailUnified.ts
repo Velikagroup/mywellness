@@ -188,7 +188,7 @@ function generateEmailHtml(template, variables, language = 'it') {
 
 function generateCartAbandonedHtml(template, variables, appUrl, emailType, language = 'it') {
     const userName = variables.user_name || 'Utente';
-    const greeting = (template.greeting || 'Ciao {user_name},').replace(/{user_name}/g, userName);
+    const greeting = template.greeting ? template.greeting.replace(/{user_name}/g, userName) : '';
     const introText = template.intro_text || '';
     const secondParagraph = template.second_paragraph || '';
     const showFeatures = template.show_features_section !== false;
@@ -326,7 +326,7 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                         </tr>
                         <tr>
                             <td class="content-cell">
-                                <p style="color: #374151; font-size: 16px; margin: 0 0 12px 0;">${greeting}</p>
+                                ${greeting ? `<p style="color: #374151; font-size: 16px; margin: 0 0 12px 0;">${greeting}</p>` : ''}
                                 <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${introText}</div>
                                 <div style="color: #374151; line-height: 1.5; font-size: 16px; margin: 0 0 12px 0;">${secondParagraph}</div>
                                 ${featuresHtml}
@@ -480,6 +480,7 @@ function generateWeeklyReportHtml(template, variables, appUrl, language = 'it') 
 
 function generateQuizCompletedHtml(template, variables, appUrl) {
     const userName = variables.user_name || 'Utente';
+    const greeting = template.greeting ? template.greeting.replace(/{user_name}/g, userName) : '';
     const ctaText = template.call_to_action_text || 'Attiva Piano Base - €19/mese';
     const ctaUrl = (template.call_to_action_url || `${appUrl}/pricing`).replace(/{app_url}/g, appUrl);
     const footerText = template.footer_text || 'Il tuo piano personalizzato ti aspetta';
@@ -516,7 +517,7 @@ function generateQuizCompletedHtml(template, variables, appUrl) {
                                 <h1 style="color: #26847F; margin: 0 0 10px 0; font-size: 24px;">Quiz Completato!</h1>
                                 <p style="color: #374151; margin: 0; font-size: 16px;">Il tuo piano personalizzato è pronto</p>
                             </div>
-                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">Ciao ${userName},</p>
+                            ${greeting ? `<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0;">${greeting}</p>` : ''}
                             <p style="color: #374151; line-height: 1.6; font-size: 16px; margin: 0 0 25px 0;">${template.intro_text || 'Complimenti per aver completato il quiz!'}</p>
                             <h3 style="color: #374151; margin: 0 0 15px 0; font-size: 16px;">📊 Cosa abbiamo calcolato per te:</h3>
                             <table class="feature-table" width="100%" cellpadding="0" cellspacing="8" border="0" style="table-layout: fixed; margin-bottom: 25px;">
