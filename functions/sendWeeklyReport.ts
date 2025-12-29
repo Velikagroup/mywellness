@@ -425,7 +425,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
                         <td style="background: white; padding: 40px 30px 0px 30px;">
                             <img src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/2e82f3cae_IconaMyWellness.png" alt="MyWellness" style="height: 30px; width: auto; display: block;">
                             <h1 style="color: #26847F; margin: 20px 0 5px 0; font-size: 28px;">${headerTitle}</h1>
-                            <p style="color: #6b7280; margin: 0 0 15px 0; font-size: 16px;">${headerSubtitle}</p>
+                            <p style="color: #6b7280; margin: 0 0 5px 0; font-size: 16px;">${headerSubtitle}</p>
                         </td>
                     </tr>
                     <tr>
