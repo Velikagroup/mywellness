@@ -292,7 +292,6 @@ export default function AdminEmails() {
         htmlBody = generateWeeklyReportTestEmail(template, variables, appUrl);
       } else {
         // Standard email generation
-        const replacedGreeting = replaceVars(safeRenderField(template.greeting) || 'Ciao {user_name},', variables);
         const replacedMainContent = replaceVars(safeRenderField(template.main_content) || '', variables);
         const replacedCtaUrl = replaceVars(safeRenderField(template.call_to_action_url) || '', variables);
 
@@ -345,7 +344,6 @@ ${template?.preview_text ? `<div style="display:none;max-height:0px;overflow:hid
 </tr>
 <tr>
 <td class="content-cell">
-<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${replacedGreeting}</p>
 <div style="color: #374151; font-size: 16px; line-height: 1.5;">${replacedMainContent}</div>
 ${ctaHtml}
 ${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 20px 0 0 0; font-style: italic;" class="footer-text">${footerText}</p>` : ''}
@@ -2254,24 +2252,15 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                                     <p className="text-xs text-gray-500 mt-1">Sottotitolo sotto il titolo principale</p>
                                   </div>
 
-                                  <div>
-                                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Saluto Iniziale</Label>
-                                    <Input
-                                      value={editingContent.greeting || ''}
-                                      onChange={(e) => setEditingContent({...editingContent, greeting: e.target.value})}
-                                      placeholder="Es: Ciao {user_name},"
-                                      className="h-12"
-                                    />
-                                  </div>
-
                                   <div className="space-y-2">
                                     <Label className="text-sm font-semibold text-gray-700">Contenuto</Label>
+                                    <p className="text-xs text-gray-500 mb-2">Includi il saluto iniziale e il contenuto dell'email in un unico campo. Es: "Ciao {'{'}user_name{'}'},&lt;br&gt;&lt;br&gt;Il tuo percorso verso il benessere inizia qui..."</p>
                                     <div className="border rounded-lg overflow-hidden">
                                       <ReactQuill
                                         value={editingContent.main_content || ''}
                                         onChange={(value) => setEditingContent({...editingContent, main_content: value})}
                                         theme="snow"
-                                        placeholder="Scrivi il contenuto principale dell'email qui..."
+                                        placeholder="Scrivi il contenuto principale dell'email qui (includi saluto iniziale)..."
                                         modules={{
                                           toolbar: [
                                             [{ 'header': [1, 2, 3, false] }],
@@ -2764,25 +2753,11 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                                           <p className="text-sm text-gray-600">{previewEmail.template.header_subtitle}</p>
                                         </div>
                                       )}
-                                      {previewEmail.template.greeting && safeRenderField(previewEmail.template.greeting).trim() && (
-                                        <div className="pt-3 border-t border-gray-300">
-                                          <p className="text-xs text-gray-500 mb-1">Saluto:</p>
-                                          <p className="text-base text-gray-900">{safeRenderField(previewEmail.template.greeting)}</p>
-                                        </div>
-                                      )}
-                                      {(
-                                        (previewEmail.template.intro_text && safeRenderField(previewEmail.template.intro_text).trim()) || 
-                                        (previewEmail.template.main_content && safeRenderField(previewEmail.template.main_content).trim())
-                                      ) && (
+                                      {previewEmail.template.main_content && safeRenderField(previewEmail.template.main_content).trim() && (
                                       <div className="pt-3 border-t border-gray-300">
                                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
                                         <div className="text-base text-gray-900 bg-white p-4 rounded border border-gray-200 leading-relaxed max-h-96 overflow-auto" style={{ lineHeight: '1.8' }}>
-                                          {previewEmail.template.intro_text && safeRenderField(previewEmail.template.intro_text).trim() && (
-                                            <div dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.intro_text) }} />
-                                          )}
-                                          {previewEmail.template.main_content && safeRenderField(previewEmail.template.main_content).trim() && (
-                                            <div dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.main_content) }} />
-                                          )}
+                                          <div dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.main_content) }} />
                                         </div>
                                       </div>
                                       )}
