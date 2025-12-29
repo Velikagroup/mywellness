@@ -549,7 +549,7 @@ body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
 .container { width: 100% !important; border-radius: 0 !important; }
 .content { padding: 30px 20px !important; }
 .outer-wrapper { padding: 0 !important; }
-.weight-card { margin-top: -20px !important; }
+.weight-card { margin-top: -40px !important; }
 }
 </style>
 </head>
