@@ -96,7 +96,6 @@ function generateEmailHtml(template, variables, language = 'it') {
     let mainContent = template.main_content || '';
     let subject = template.subject || 'MyWellness';
     let ctaUrl = template.call_to_action_url || `${appUrl}/login`;
-    let footerText = template.footer_text || '';
 
     // Sostituisci placeholder nelle variabili
     greeting = greeting.replace(/{user_name}/g, userName);
@@ -108,7 +107,6 @@ function generateEmailHtml(template, variables, language = 'it') {
         mainContent = mainContent.replace(regex, value);
         subject = subject.replace(regex, value);
         ctaUrl = ctaUrl.replace(regex, value);
-        footerText = footerText.replace(regex, value);
     });
 
     // Sostituisci {app_url}
@@ -164,7 +162,6 @@ function generateEmailHtml(template, variables, language = 'it') {
                                     </td>
                                 </tr>
                             </table>` : ''}
-                            ${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
@@ -201,7 +198,6 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
     const ctaText = template.call_to_action_text || '🚀 Completa il Checkout Ora';
     const ctaUrl = (template.call_to_action_url || `${appUrl}/TrialSetup`).replace(/{app_url}/g, appUrl);
     const footerQuote = template.footer_quote || '';
-    const footerText = template.footer_text || '';
     
     // Trust badges translations
     const trustBadgeTranslations = {
@@ -340,7 +336,6 @@ function generateCartAbandonedHtml(template, variables, appUrl, emailType, langu
                                     </td>
                                 </tr>
                             </table>
-                            ${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">${footerText}</p>` : ''}
                             ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 15px 0 0 0; font-style: italic;">${footerQuote}</p>` : ''}
                         </td>
                     </tr>
@@ -483,7 +478,6 @@ function generateQuizCompletedHtml(template, variables, appUrl) {
     const greeting = template.greeting ? template.greeting.replace(/{user_name}/g, userName) : '';
     const ctaText = template.call_to_action_text || 'Attiva Piano Base - €19/mese';
     const ctaUrl = (template.call_to_action_url || `${appUrl}/pricing`).replace(/{app_url}/g, appUrl);
-    const footerText = template.footer_text || 'Il tuo piano personalizzato ti aspetta';
 
     const html = `<!DOCTYPE html>
 <html>
@@ -562,7 +556,6 @@ function generateQuizCompletedHtml(template, variables, appUrl) {
                                     </td>
                                 </tr>
                             </table>
-                            <p style="color: #26847F; text-align: center; font-size: 16px; margin: 15px 0 0 0;">${footerText}</p>
                         </td>
                     </tr>
                 </table>

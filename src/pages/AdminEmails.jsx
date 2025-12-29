@@ -346,7 +346,6 @@ ${template?.preview_text ? `<div style="display:none;max-height:0px;overflow:hid
 <td class="content-cell">
 <div style="color: #374151; font-size: 16px; line-height: 1.5;">${replacedMainContent}</div>
 ${ctaHtml}
-${footerText ? `<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 20px 0 0 0; font-style: italic;" class="footer-text">${footerText}</p>` : ''}
 </td>
 </tr>
 </table>
@@ -584,9 +583,6 @@ ${ctaText}
 </td>
 </tr>
 </table>
-<p style="color: #6b7280; font-size: 14px; text-align: center; margin: 20px 0;">
-${footerText}
-</p>
 </td>
 </tr>
 </table>
@@ -703,9 +699,6 @@ ${ctaText}
 </tr>
 </table>
 
-<p style="color: #9ca3af; text-align: center; font-size: 13px; margin: 35px 0 0 0; font-style: italic;">
-${footerText}
-</p>
 </td>
 </tr>
 </table>
@@ -2693,15 +2686,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                     />
                   </div>
 
-                  <div>
-                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">Footer</Label>
-                    <Input
-                      value={editingContent.footer_text || ''}
-                      onChange={(e) => setEditingContent({...editingContent, footer_text: e.target.value})}
-                      placeholder="Il tuo percorso verso il benessere"
-                      className="h-12"
-                    />
-                  </div>
+
 
                   <div className="flex gap-3 pt-4">
                     <Button
@@ -2772,10 +2757,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                           </div>
                         </div>
                       )}
-                      <div className="pt-3 border-t border-gray-300">
-                        <p className="text-xs text-gray-500 mb-2">Footer:</p>
-                        <p className="text-sm text-gray-600 italic">{safeRenderField(previewEmail.template.footer_text)}</p>
-                      </div>
+
                     </div>
                   </div>
 
@@ -3131,15 +3113,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
               </div>
             </div>
 
-            <div>
-              <Label className="text-sm font-semibold text-gray-700 mb-2 block">Footer (Opzionale)</Label>
-              <Input
-                value={broadcastData.footer_text}
-                onChange={(e) => setBroadcastData({...broadcastData, footer_text: e.target.value})}
-                placeholder="Il tuo percorso verso il benessere"
-                className="h-12"
-              />
-            </div>
+
 
             <div>
               <Label className="text-sm font-semibold text-gray-700 mb-2 block">
