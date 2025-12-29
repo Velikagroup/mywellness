@@ -79,11 +79,15 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shoppingLists'] }),
   });
 
-  const toggleItem = async (itemIndex) => {
+  const toggleItem = async (itemName) => {
     if (!shoppingList) return;
     
-    const updatedItems = [...shoppingList.items];
-    updatedItems[itemIndex].checked = !updatedItems[itemIndex].checked;
+    const updatedItems = shoppingList.items.map(item => {
+      if (item.name === itemName) {
+        return { ...item, checked: !item.checked };
+      }
+      return item;
+    });
     
     // Aggiorna localmente per feedback immediato
     setShoppingList(prev => ({
@@ -549,7 +553,7 @@ CRITICAL: Write explanation in ${langName.toUpperCase()}. Explain nutritional co
                       >
                         <div className="flex items-center gap-3 flex-1">
                           <button
-                            onClick={() => toggleItem(shoppingList.items.indexOf(item))}
+                            onClick={() => toggleItem(item.name)}
                             className={`w-5 h-5 rounded border-2 flex items-center justify-center transition-colors ${
                               item.checked
                                 ? 'bg-[var(--brand-primary)] border-[var(--brand-primary)]'
