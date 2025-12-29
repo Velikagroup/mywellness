@@ -175,13 +175,135 @@ export default function AdminEmails() {
 
   const handleSaveEdit = async () => {
     try {
+      const languages = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+      const currentTemplateId = previewEmail?.template?.id ? previewEmail.template.template_id : previewEmail?.id;
+      
+      // Estrai lingua corrente dal template_id (es: weekly_report_it -> it)
+      const currentLang = currentTemplateId?.match(/_(it|en|es|pt|de|fr)$/)?.[1] || 'it';
+      const baseTemplateId = currentTemplateId?.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '') || currentTemplateId;
+      
+      // Determina quali email devono essere tradotte (solo quelle multilingua)
+      const isMultilingualEmail = ['weekly_report', 'cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h', 
+                                    'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome',
+                                    'landing_new_user', 'landing_existing_user', 'password_reset_confirmed',
+                                    'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned'].includes(baseTemplateId);
+      
       if (previewEmail?.template?.id) {
+        // Update del template corrente
         await base44.entities.EmailTemplate.update(previewEmail.template.id, editingContent);
-        alert('✅ Email modificata con successo!');
+        
+        // Se è un'email multilingua, traduci e salva anche nelle altre lingue
+        if (isMultilingualEmail) {
+          const otherLanguages = languages.filter(lang => lang !== currentLang);
+          
+          for (const targetLang of otherLanguages) {
+            try {
+              // Traduci tutti i campi testuali
+              const translatedContent = await base44.integrations.Core.InvokeLLM({
+                prompt: `Traduci questo template email dall'${currentLang === 'it' ? 'italiano' : currentLang === 'en' ? 'inglese' : currentLang === 'es' ? 'spagnolo' : currentLang === 'pt' ? 'portoghese' : currentLang === 'de' ? 'tedesco' : 'francese'} in ${targetLang === 'it' ? 'italiano' : targetLang === 'en' ? 'inglese' : targetLang === 'es' ? 'spagnolo' : targetLang === 'pt' ? 'portoghese' : targetLang === 'de' ? 'tedesco' : 'francese'}.
+                
+IMPORTANTE: 
+- Mantieni le variabili tra parentesi graffe ESATTAMENTE come sono (es: {user_name}, {week_range})
+- Mantieni tag HTML se presenti
+- Traduci SOLO il testo, non modificare la struttura
+- Mantieni gli emoji
+
+Template da tradurre:
+${JSON.stringify(editingContent, null, 2)}`,
+                response_json_schema: {
+                  type: "object",
+                  properties: {
+                    subject: { type: "string" },
+                    preview_text: { type: "string" },
+                    header_title: { type: "string" },
+                    header_subtitle: { type: "string" },
+                    greeting: { type: "string" },
+                    intro_text: { type: "string" },
+                    main_content: { type: "string" },
+                    second_paragraph: { type: "string" },
+                    features_section_title: { type: "string" },
+                    feature_1_title: { type: "string" },
+                    feature_1_subtitle: { type: "string" },
+                    feature_2_title: { type: "string" },
+                    feature_2_subtitle: { type: "string" },
+                    feature_3_title: { type: "string" },
+                    feature_3_subtitle: { type: "string" },
+                    feature_4_title: { type: "string" },
+                    feature_4_subtitle: { type: "string" },
+                    closing_text: { type: "string" },
+                    urgency_title: { type: "string" },
+                    urgency_subtitle: { type: "string" },
+                    call_to_action_text: { type: "string" },
+                    footer_text: { type: "string" },
+                    footer_quote: { type: "string" },
+                    weight_card_title: { type: "string" },
+                    stats_section_title: { type: "string" },
+                    calories_stat_label: { type: "string" },
+                    workouts_stat_label: { type: "string" },
+                    adherence_stat_label: { type: "string" },
+                    progress_stat_label: { type: "string" },
+                    progress_bar_title: { type: "string" },
+                    progress_bar_subtitle: { type: "string" }
+                  }
+                }
+              });
+              
+              const targetTemplateId = `${baseTemplateId}_${targetLang}`;
+              
+              // Cerca se esiste già il template tradotto
+              const existingTranslated = await base44.entities.EmailTemplate.filter({ 
+                template_id: targetTemplateId 
+              });
+              
+              const translatedData = {
+                ...editingContent,
+                ...translatedContent,
+                template_id: targetTemplateId,
+                name: previewEmail.name,
+                call_to_action_url: editingContent.call_to_action_url, // URL non tradotto
+                from_email: editingContent.from_email,
+                reply_to_email: editingContent.reply_to_email,
+                // Mantieni impostazioni booleane
+                show_weight_card: editingContent.show_weight_card,
+                show_stats_section: editingContent.show_stats_section,
+                show_calories_stat: editingContent.show_calories_stat,
+                show_workouts_stat: editingContent.show_workouts_stat,
+                show_adherence_stat: editingContent.show_adherence_stat,
+                show_progress_stat: editingContent.show_progress_stat,
+                show_progress_bar: editingContent.show_progress_bar,
+                show_motivational_message: editingContent.show_motivational_message,
+                show_features_section: editingContent.show_features_section,
+                show_urgency_box: editingContent.show_urgency_box,
+                show_trust_badges: editingContent.show_trust_badges,
+                // Mantieni emoji (non tradotti)
+                feature_1_emoji: editingContent.feature_1_emoji,
+                feature_2_emoji: editingContent.feature_2_emoji,
+                feature_3_emoji: editingContent.feature_3_emoji,
+                feature_4_emoji: editingContent.feature_4_emoji
+              };
+              
+              if (existingTranslated.length > 0) {
+                await base44.entities.EmailTemplate.update(existingTranslated[0].id, translatedData);
+              } else {
+                await base44.entities.EmailTemplate.create(translatedData);
+              }
+              
+              console.log(`✅ Tradotto e salvato template in ${targetLang}`);
+            } catch (error) {
+              console.error(`❌ Errore traduzione ${targetLang}:`, error);
+            }
+          }
+        }
+        
+        alert(isMultilingualEmail ? 
+          '✅ Email modificata e tradotta in tutte le 6 lingue con successo!' : 
+          '✅ Email modificata con successo!');
         await loadEmailTemplates();
         setIsEditMode(false);
         setShowEmailPreview(false);
+        
       } else if (previewEmail?.id && !previewEmail?.template?.id) {
+        // Creazione nuovo template
         const newTemplateData = {
           template_id: previewEmail.id,
           name: previewEmail.name,
@@ -192,10 +314,96 @@ export default function AdminEmails() {
           main_content: editingContent.main_content || 'Contenuto predefinito dell\'email.',
           call_to_action_text: editingContent.call_to_action_text || '',
           call_to_action_url: editingContent.call_to_action_url || '',
-          footer_text: editingContent.footer_text || 'Il tuo percorso verso il benessere'
+          footer_text: editingContent.footer_text || 'Il tuo percorso verso il benessere',
+          ...editingContent
         };
         await base44.entities.EmailTemplate.create(newTemplateData);
-        alert('✅ Nuovo template creato e salvato con successo!');
+        
+        // Traduci anche per creazione nuova se multilingua
+        const baseId = previewEmail.id.replace(/_it$|_en$|_es$|_pt$|_de$|_fr$/, '');
+        const currentLangNew = previewEmail.id.match(/_(it|en|es|pt|de|fr)$/)?.[1] || 'it';
+        const isMultilingualNew = ['weekly_report', 'cart_checkout_abandoned', 'cart_abandoned_24h', 'cart_abandoned_72h',
+                                     'base_welcome', 'pro_welcome', 'premium_welcome', 'standard_free_welcome',
+                                     'landing_new_user', 'landing_existing_user', 'password_reset_confirmed',
+                                     'plan_upgrade', 'plan_downgrade', 'cancellation_confirmation', 'quiz_completed_abandoned'].includes(baseId);
+        
+        if (isMultilingualNew) {
+          const otherLangsNew = languages.filter(lang => lang !== currentLangNew);
+          
+          for (const targetLang of otherLangsNew) {
+            try {
+              const translatedContent = await base44.integrations.Core.InvokeLLM({
+                prompt: `Traduci questo template email dall'${currentLangNew === 'it' ? 'italiano' : currentLangNew === 'en' ? 'inglese' : currentLangNew === 'es' ? 'spagnolo' : currentLangNew === 'pt' ? 'portoghese' : currentLangNew === 'de' ? 'tedesco' : 'francese'} in ${targetLang === 'it' ? 'italiano' : targetLang === 'en' ? 'inglese' : targetLang === 'es' ? 'spagnolo' : targetLang === 'pt' ? 'portoghese' : targetLang === 'de' ? 'tedesco' : 'francese'}.
+                
+IMPORTANTE: 
+- Mantieni le variabili tra parentesi graffe ESATTAMENTE come sono (es: {user_name}, {week_range})
+- Mantieni tag HTML se presenti
+- Traduci SOLO il testo, non modificare la struttura
+- Mantieni gli emoji
+
+Template da tradurre:
+${JSON.stringify(newTemplateData, null, 2)}`,
+                response_json_schema: {
+                  type: "object",
+                  properties: {
+                    subject: { type: "string" },
+                    preview_text: { type: "string" },
+                    header_title: { type: "string" },
+                    header_subtitle: { type: "string" },
+                    greeting: { type: "string" },
+                    intro_text: { type: "string" },
+                    main_content: { type: "string" },
+                    second_paragraph: { type: "string" },
+                    features_section_title: { type: "string" },
+                    feature_1_title: { type: "string" },
+                    feature_1_subtitle: { type: "string" },
+                    feature_2_title: { type: "string" },
+                    feature_2_subtitle: { type: "string" },
+                    feature_3_title: { type: "string" },
+                    feature_3_subtitle: { type: "string" },
+                    feature_4_title: { type: "string" },
+                    feature_4_subtitle: { type: "string" },
+                    closing_text: { type: "string" },
+                    urgency_title: { type: "string" },
+                    urgency_subtitle: { type: "string" },
+                    call_to_action_text: { type: "string" },
+                    footer_text: { type: "string" },
+                    footer_quote: { type: "string" },
+                    weight_card_title: { type: "string" },
+                    stats_section_title: { type: "string" },
+                    calories_stat_label: { type: "string" },
+                    workouts_stat_label: { type: "string" },
+                    adherence_stat_label: { type: "string" },
+                    progress_stat_label: { type: "string" },
+                    progress_bar_title: { type: "string" },
+                    progress_bar_subtitle: { type: "string" }
+                  }
+                }
+              });
+              
+              await base44.entities.EmailTemplate.create({
+                ...newTemplateData,
+                ...translatedContent,
+                template_id: `${baseId}_${targetLang}`,
+                call_to_action_url: newTemplateData.call_to_action_url,
+                from_email: newTemplateData.from_email,
+                reply_to_email: newTemplateData.reply_to_email,
+                feature_1_emoji: newTemplateData.feature_1_emoji,
+                feature_2_emoji: newTemplateData.feature_2_emoji,
+                feature_3_emoji: newTemplateData.feature_3_emoji,
+                feature_4_emoji: newTemplateData.feature_4_emoji
+              });
+              
+              console.log(`✅ Creato e tradotto template in ${targetLang}`);
+            } catch (error) {
+              console.error(`❌ Errore traduzione ${targetLang}:`, error);
+            }
+          }
+        }
+        
+        alert(isMultilingualNew ? 
+          '✅ Nuovo template creato e tradotto in tutte le 6 lingue con successo!' : 
+          '✅ Nuovo template creato e salvato con successo!');
         await loadEmailTemplates();
         setIsEditMode(false);
         setShowEmailPreview(false);
