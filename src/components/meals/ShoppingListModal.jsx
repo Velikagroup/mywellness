@@ -76,7 +76,31 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
 
   const updateShoppingListMutation = useMutation({
     mutationFn: ({ id, data }) => base44.entities.ShoppingList.update(id, data),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['shoppingLists'] }),
+    onMutate: async ({ id, data }) => {
+      // Cancel any outgoing refetches
+      await queryClient.cancelQueries({ queryKey: ['shoppingLists', user?.id, startOfWeek] });
+
+      // Snapshot the previous value
+      const previousLists = queryClient.getQueryData(['shoppingLists', user?.id, startOfWeek]);
+
+      // Optimistically update to the new value
+      queryClient.setQueryData(['shoppingLists', user?.id, startOfWeek], (old) => {
+        if (!old || !Array.isArray(old)) return old;
+        return old.map(list => list.id === id ? { ...list, ...data } : list);
+      });
+
+      // Return a context object with the snapshotted value
+      return { previousLists };
+    },
+    onError: (err, variables, context) => {
+      // If the mutation fails, use the context returned from onMutate to roll back
+      if (context?.previousLists) {
+        queryClient.setQueryData(['shoppingLists', user?.id, startOfWeek], context.previousLists);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['shoppingLists'] });
+    },
   });
 
   const toggleItem = async (itemName) => {
@@ -89,28 +113,13 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
       return item;
     });
     
-    // Aggiorna localmente per feedback immediato
-    setShoppingList(prev => ({
-      ...prev,
-      items: updatedItems
-    }));
-    
-    try {
-      await updateShoppingListMutation.mutateAsync({
-        id: shoppingList.id,
-        data: {
-          items: updatedItems,
-          last_updated: new Date().toISOString()
-        }
-      });
-    } catch (error) {
-      // Rollback in caso di errore
-      console.error('Error toggling item:', error);
-      setShoppingList(prev => ({
-        ...prev,
-        items: [...shoppingList.items]
-      }));
-    }
+    await updateShoppingListMutation.mutateAsync({
+      id: shoppingList.id,
+      data: {
+        items: updatedItems,
+        last_updated: new Date().toISOString()
+      }
+    });
   };
 
   const clearList = async () => {
