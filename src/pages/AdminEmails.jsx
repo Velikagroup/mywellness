@@ -566,7 +566,7 @@ ${template?.preview_text ? `<div style="display:none;max-height:0px;overflow:hid
 </td>
 </tr>
 <tr>
-<td class="content" style="padding: 5px 30px 40px 30px;">
+<td class="content" style="padding: 0px 30px 40px 30px;">
 ${template?.intro_text ? `<p style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${template.intro_text}</p>` : ''}
 ${template?.main_content ? `<div style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${template.main_content}</div>` : ''}
 ${weightCardHtml}

@@ -429,7 +429,7 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
                         </td>
                     </tr>
                     <tr>
-                        <td class="content" style="padding: 5px 30px 40px 30px;">
+                        <td class="content" style="padding: 0px 30px 40px 30px;">
                             ${introText ? `<p style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${introText}</p>` : ''}
                             ${mainContent ? `<div style="color: #374151; font-size: 15px; margin: 0 0 20px 0; line-height: 1.6;">${mainContent}</div>` : ''}
 
