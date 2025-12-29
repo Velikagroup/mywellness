@@ -293,6 +293,20 @@ export default function AdminEmails() {
       } else {
         // Standard email generation
         const replacedMainContent = replaceVars(safeRenderField(template.main_content) || '', variables);
+        const replacedCtaUrl = replaceVars(safeRenderField(template.call_to_action_url) || '', variables);
+
+        const ctaHtml = template.call_to_action_text && template.call_to_action_url ? 
+          `<table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
+              <tr>
+                  <td align="center">
+                      <a href="${replacedCtaUrl}" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">
+                          ${safeRenderField(template.call_to_action_text)}
+                      </a>
+                  </td>
+              </tr>
+          </table>` : '';
+
+        const footerText = safeRenderField(template.footer_text) || '';
         
         htmlBody = `<!DOCTYPE html>
 <html>
@@ -331,6 +345,7 @@ ${template?.preview_text ? `<div style="display:none;max-height:0px;overflow:hid
 <tr>
 <td class="content-cell">
 <div style="color: #374151; font-size: 16px; line-height: 1.5;">${replacedMainContent}</div>
+${ctaHtml}
 </td>
 </tr>
 </table>
@@ -2232,33 +2247,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
 
                                   <div className="space-y-2">
                                     <Label className="text-sm font-semibold text-gray-700">Contenuto</Label>
-                                    <p className="text-xs text-gray-500 mb-2">Scrivi il contenuto completo dell'email. Usa gli snippet sotto per inserire pulsanti dove vuoi.</p>
-                                    
-                                    {/* HTML Snippets */}
-                                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mb-2">
-                                      <p className="text-xs font-semibold text-blue-900 mb-2">📦 Snippets HTML - Copia e Incolla nell'Editor:</p>
-                                      <div className="space-y-2">
-                                        <div className="bg-white rounded p-2">
-                                          <p className="text-xs text-blue-800 font-semibold mb-1">Pulsante CTA Verde:</p>
-                                          <code className="text-xs text-gray-700 block overflow-x-auto">
-                                            {`<div style="text-align: center; margin: 25px 0;"><a href="{app_url}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">📊 Vai alla Dashboard</a></div>`}
-                                          </code>
-                                        </div>
-                                        <div className="bg-white rounded p-2">
-                                          <p className="text-xs text-blue-800 font-semibold mb-1">Pulsante Rosso Urgente:</p>
-                                          <code className="text-xs text-gray-700 block overflow-x-auto">
-                                            {`<div style="text-align: center; margin: 25px 0;"><a href="{app_url}/pricing" style="display: inline-block; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">🚀 Inizia Ora</a></div>`}
-                                          </code>
-                                        </div>
-                                        <div className="bg-white rounded p-2">
-                                          <p className="text-xs text-blue-800 font-semibold mb-1">Pulsante Outline:</p>
-                                          <code className="text-xs text-gray-700 block overflow-x-auto">
-                                            {`<div style="text-align: center; margin: 25px 0;"><a href="{app_url}/blog" style="display: inline-block; background: white; color: #26847F !important; text-decoration: none; padding: 14px 28px; border-radius: 12px; font-weight: bold; font-size: 14px; border: 2px solid #26847F;">Leggi il Blog</a></div>`}
-                                          </code>
-                                        </div>
-                                      </div>
-                                    </div>
-                                    
+                                    <p className="text-xs text-gray-500 mb-2">Includi il saluto iniziale e il contenuto dell'email in un unico campo. Es: "Ciao {'{'}user_name{'}'},&lt;br&gt;&lt;br&gt;Il tuo percorso verso il benessere inizia qui..."</p>
                                     <div className="border rounded-lg overflow-hidden">
                                       <ReactQuill
                                         value={editingContent.main_content || ''}
@@ -2666,16 +2655,36 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
 
                                       {/* Footer Quote */}
                                       <div>
-                                       <Label className="text-sm font-semibold text-gray-700 mb-2 block">Citazione Finale (in corsivo)</Label>
-                                       <Input
-                                         value={editingContent.footer_quote || ''}
-                                         onChange={(e) => setEditingContent({...editingContent, footer_quote: e.target.value})}
-                                         placeholder="Il miglior momento per iniziare era ieri. Il secondo miglior momento è adesso."
-                                         className="h-10"
-                                       />
+                                        <Label className="text-sm font-semibold text-gray-700 mb-2 block">Citazione Finale (in corsivo)</Label>
+                                        <Input
+                                          value={editingContent.footer_quote || ''}
+                                          onChange={(e) => setEditingContent({...editingContent, footer_quote: e.target.value})}
+                                          placeholder="Il miglior momento per iniziare era ieri. Il secondo miglior momento è adesso."
+                                          className="h-10"
+                                        />
                                       </div>
                                       </div>
                                       )}
+
+                                      <div>
+                                      <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA</Label>
+                    <Input
+                      value={editingContent.call_to_action_text || ''}
+                      onChange={(e) => setEditingContent({...editingContent, call_to_action_text: e.target.value})}
+                      placeholder="Vai alla Dashboard"
+                      className="h-12"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-sm font-semibold text-gray-700 mb-2 block">URL Pulsante CTA</Label>
+                    <Input
+                      value={editingContent.call_to_action_url || ''}
+                      onChange={(e) => setEditingContent({...editingContent, call_to_action_url: e.target.value})}
+                      placeholder="{app_url}/Dashboard"
+                      className="h-12"
+                    />
+                  </div>
 
 
 
@@ -2737,7 +2746,17 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                                         </div>
                                       </div>
                                       )}
-
+                      {previewEmail.template.call_to_action_text && (
+                        <div className="pt-3 border-t border-gray-300">
+                          <p className="text-xs text-gray-500 mb-2">Pulsante CTA:</p>
+                          <div className="bg-white p-4 rounded border border-gray-200">
+                            <p className="text-sm font-semibold text-[var(--brand-primary)] mb-1">
+                              📍 {previewEmail.template.call_to_action_text}
+                            </p>
+                            <p className="text-xs text-gray-500">→ {previewEmail.template.call_to_action_url}</p>
+                          </div>
+                        </div>
+                      )}
 
                     </div>
                   </div>
@@ -3048,26 +3067,6 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
               <Label className="text-sm font-semibold text-gray-700">
                 Contenuto Principale <span className="text-red-500">*</span>
               </Label>
-              
-              {/* HTML Snippets */}
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-3">
-                <p className="text-xs font-semibold text-blue-900 mb-2">📦 Snippets HTML - Copia e Incolla dove vuoi:</p>
-                <div className="space-y-2">
-                  <div className="bg-white rounded p-2">
-                    <p className="text-xs text-blue-800 font-semibold mb-1">Pulsante Verde:</p>
-                    <code className="text-xs text-gray-700 block overflow-x-auto">
-                      {`<div style="text-align: center; margin: 25px 0;"><a href="{app_url}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #1f6b66 100%); color: #ffffff !important; text-decoration: none; padding: 16px 32px; border-radius: 12px; font-weight: bold; font-size: 16px;">📊 Testo Pulsante</a></div>`}
-                    </code>
-                  </div>
-                  <div className="bg-white rounded p-2">
-                    <p className="text-xs text-blue-800 font-semibold mb-1">Pulsante Rosso:</p>
-                    <code className="text-xs text-gray-700 block overflow-x-auto">
-                      {`<div style="text-align: center; margin: 25px 0;"><a href="{app_url}/pricing" style="display: inline-block; background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%); color: #ffffff !important; text-decoration: none; padding: 18px 40px; border-radius: 12px; font-weight: bold; font-size: 16px;">🚀 Testo Pulsante</a></div>`}
-                    </code>
-                  </div>
-                </div>
-              </div>
-              
               <div className="border rounded-lg overflow-hidden">
                 <ReactQuill
                   value={broadcastData.main_content}
@@ -3092,7 +3091,27 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
               </p>
             </div>
 
-
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">Testo Pulsante CTA (Opzionale)</Label>
+                <Input
+                  value={broadcastData.call_to_action_text}
+                  onChange={(e) => setBroadcastData({...broadcastData, call_to_action_text: e.target.value})}
+                  placeholder="Es: Vai alla Dashboard"
+                  className="h-12"
+                />
+              </div>
+              
+              <div>
+                <Label className="text-sm font-semibold text-gray-700 mb-2 block">URL Pulsante CTA</Label>
+                <Input
+                  value={broadcastData.call_to_action_url}
+                  onChange={(e) => setBroadcastData({...broadcastData, call_to_action_url: e.target.value})}
+                  placeholder="{app_url}/Dashboard"
+                  className="h-12"
+                />
+              </div>
+            </div>
 
 
 
