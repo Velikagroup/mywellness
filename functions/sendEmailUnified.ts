@@ -92,27 +92,15 @@ function generateEmailHtml(template, variables, language = 'it') {
     }
     
     // Sostituisci variabili per email di default
-    // Se greeting è vuoto o mancante, aggiungi uno di default basato sulla lingua
     let greeting = template.greeting || '';
-    if (!greeting || greeting.trim() === '') {
-        const greetings = {
-            'it': `Ciao ${userName},`,
-            'en': `Hi ${userName},`,
-            'es': `Hola ${userName},`,
-            'pt': `Olá ${userName},`,
-            'de': `Hallo ${userName},`,
-            'fr': `Bonjour ${userName},`
-        };
-        greeting = greetings[language] || greetings['it'];
-    } else {
-        greeting = greeting.replace(/{user_name}/g, userName);
-    }
-
     let mainContent = template.main_content || '';
     let subject = template.subject || 'MyWellness';
     let ctaUrl = template.call_to_action_url || `${appUrl}/login`;
     let footerText = template.footer_text || '';
 
+    // Sostituisci placeholder nelle variabili
+    greeting = greeting.replace(/{user_name}/g, userName);
+    
     Object.keys(variables).forEach(key => {
         const value = variables[key] || '';
         const regex = new RegExp(`\\{${key}\\}`, 'g');
@@ -164,7 +152,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                     </tr>
                     <tr>
                         <td class="content-cell">
-                            <p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${greeting}</p>
+                            ${greeting ? `<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${greeting}</p>` : ''}
                             <div style="color: #374151; line-height: 1.5; font-size: 16px;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
