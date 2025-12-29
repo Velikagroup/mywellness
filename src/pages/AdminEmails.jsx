@@ -2949,7 +2949,31 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                                       <div className="pt-3 border-t border-gray-300">
                                         <p className="text-xs text-gray-500 mb-2">Contenuto:</p>
                                         <div className="text-base text-gray-900 bg-white p-4 rounded border border-gray-200 leading-relaxed max-h-96 overflow-auto" style={{ lineHeight: '1.8' }}>
-                                          <div dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.main_content) }} />
+                                          <style>{`
+                                            .email-preview-content ul {
+                                              list-style-type: disc;
+                                              margin-left: 20px;
+                                              margin-top: 10px;
+                                              margin-bottom: 10px;
+                                            }
+                                            .email-preview-content li {
+                                              margin-bottom: 8px;
+                                              line-height: 1.6;
+                                            }
+                                            .email-preview-content ol {
+                                              list-style-type: decimal;
+                                              margin-left: 20px;
+                                              margin-top: 10px;
+                                              margin-bottom: 10px;
+                                            }
+                                            .email-preview-content p {
+                                              margin-bottom: 12px;
+                                            }
+                                            .email-preview-content strong {
+                                              font-weight: 600;
+                                            }
+                                          `}</style>
+                                          <div className="email-preview-content" dangerouslySetInnerHTML={{ __html: safeRenderField(previewEmail.template.main_content) }} />
                                         </div>
                                       </div>
                                       )}
