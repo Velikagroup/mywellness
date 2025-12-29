@@ -85,13 +85,28 @@ export default function ShoppingListModal({ isOpen, user, onClose }) {
     const updatedItems = [...shoppingList.items];
     updatedItems[itemIndex].checked = !updatedItems[itemIndex].checked;
     
-    await updateShoppingListMutation.mutateAsync({
-      id: shoppingList.id,
-      data: {
-        items: updatedItems,
-        last_updated: new Date().toISOString()
-      }
-    });
+    // Aggiorna localmente per feedback immediato
+    setShoppingList(prev => ({
+      ...prev,
+      items: updatedItems
+    }));
+    
+    try {
+      await updateShoppingListMutation.mutateAsync({
+        id: shoppingList.id,
+        data: {
+          items: updatedItems,
+          last_updated: new Date().toISOString()
+        }
+      });
+    } catch (error) {
+      // Rollback in caso di errore
+      console.error('Error toggling item:', error);
+      setShoppingList(prev => ({
+        ...prev,
+        items: [...shoppingList.items]
+      }));
+    }
   };
 
   const clearList = async () => {
