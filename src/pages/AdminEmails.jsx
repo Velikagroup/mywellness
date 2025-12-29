@@ -3085,7 +3085,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                         key={status.value}
                         onClick={() => toggleSubscriptionStatus(status.value)}
                         className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                          broadcastData.filters.subscription_status?.includes(status.value)
+                          broadcastData?.filters?.subscription_status?.includes(status.value)
                             ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
                             : 'bg-white text-gray-700 border-gray-200 hover:border-[var(--brand-primary)]'
                         }`}
@@ -3112,7 +3112,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                         key={plan.value}
                         onClick={() => toggleSubscriptionPlan(plan.value)}
                         className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                          broadcastData.filters.subscription_plan?.includes(plan.value)
+                          broadcastData?.filters?.subscription_plan?.includes(plan.value)
                             ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
                             : 'bg-white text-gray-700 border-gray-200 hover:border-[var(--brand-primary)]'
                         }`}
@@ -3142,7 +3142,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                         key={lang.value}
                         onClick={() => toggleLanguage(lang.value)}
                         className={`p-3 rounded-lg border-2 cursor-pointer transition-all ${
-                          broadcastData.filters.languages?.includes(lang.value)
+                          broadcastData?.filters?.languages?.includes(lang.value)
                             ? 'bg-[var(--brand-primary)] text-white border-[var(--brand-primary)]'
                             : 'bg-white text-gray-700 border-gray-200 hover:border-[var(--brand-primary)]'
                         }`}
@@ -3171,7 +3171,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                       <div key={filter.key} className="flex items-center space-x-2 p-3 bg-white rounded-lg border">
                         <Checkbox
                           id={filter.key}
-                          checked={!!broadcastData.filters[filter.key]}
+                          checked={!!(broadcastData?.filters?.[filter.key])}
                           onCheckedChange={(checked) => handleCheckboxFilterChange(filter.key, checked)}
                         />
                         <Label htmlFor={filter.key} className="text-sm font-medium cursor-pointer">
@@ -3191,7 +3191,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                     <Input
                       type="number"
                       placeholder="Es: 7"
-                      value={broadcastData.filters.inactive_days || ''}
+                      value={broadcastData?.filters?.inactive_days || ''}
                       onChange={(e) => handleFilterChange('inactive_days', e.target.value ? parseInt(e.target.value) : undefined)}
                       className="h-10"
                     />
@@ -3202,7 +3202,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
                       🔄 Giorni al Rinnovo
                     </Label>
                     <select
-                      value={broadcastData.filters.renewal_days || ''}
+                      value={broadcastData?.filters?.renewal_days || ''}
                       onChange={(e) => handleFilterChange('renewal_days', e.target.value ? parseInt(e.target.value) : undefined)}
                       className="w-full h-10 px-3 border border-gray-200 rounded-lg text-sm"
                     >
