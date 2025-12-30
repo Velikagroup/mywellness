@@ -132,10 +132,29 @@ export default function AdminClients() {
       const response = await base44.functions.invoke('adminListAllUsers', {});
       console.log('🔍 Raw response:', response);
       const allClients = response.data?.users || response?.users || [];
-      console.log('📊 Loaded clients:', allClients.length, allClients);
-      setClients(allClients);
-      setFilteredClients(allClients);
-      calculateStats(allClients);
+      
+      // Carica i guadagni da affiliazione per ogni cliente
+      const affiliateLinks = await base44.entities.AffiliateLink.list();
+      const affiliateCredits = await base44.entities.AffiliateCredit.list();
+      
+      const clientsWithAffiliateRevenue = allClients.map(client => {
+        const clientLink = affiliateLinks.find(link => link.user_id === client.id);
+        const totalRevenue = clientLink 
+          ? affiliateCredits
+              .filter(credit => credit.affiliate_link_id === clientLink.id)
+              .reduce((sum, credit) => sum + (credit.commission_amount || 0), 0)
+          : 0;
+        
+        return {
+          ...client,
+          affiliate_revenue: totalRevenue
+        };
+      });
+      
+      console.log('📊 Loaded clients:', clientsWithAffiliateRevenue.length, clientsWithAffiliateRevenue);
+      setClients(clientsWithAffiliateRevenue);
+      setFilteredClients(clientsWithAffiliateRevenue);
+      calculateStats(clientsWithAffiliateRevenue);
     } catch (error) {
       console.error('Error loading clients:', error);
       alert('Errore caricamento clienti: ' + error.message);
