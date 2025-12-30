@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import OnboardingTour from "../components/onboarding/OnboardingTour";
 import CalorieMeter from "../components/dashboard/CalorieMeter";
 import NutritionUnlockPrompt from "../components/dashboard/NutritionUnlockPrompt";
+import TikTokStatsCard from "../components/dashboard/TikTokStatsCard";
 import { useLanguage } from "../components/i18n/LanguageContext";
 
 export default function Dashboard() {
@@ -701,6 +702,8 @@ export default function Dashboard() {
             </div>
 
             <div className="space-y-4 sm:space-y-6 onboarding-technical-stats-wrapper">
+             <TikTokStatsCard />
+
              <div className="relative">
               <TechnicalStatsCard
                 title={t('dashboard.targetCalories')}
