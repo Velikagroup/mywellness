@@ -204,8 +204,22 @@ export default function AdminClients() {
       filtered = filtered.filter(c => c.subscription_plan === filterPlan);
     }
 
+    // Ordinamento
+    if (sortField) {
+      filtered = [...filtered].sort((a, b) => {
+        let aVal = a[sortField] || 0;
+        let bVal = b[sortField] || 0;
+        
+        if (sortDirection === 'asc') {
+          return aVal - bVal;
+        } else {
+          return bVal - aVal;
+        }
+      });
+    }
+
     setFilteredClients(filtered);
-  }, [searchQuery, filterStatus, filterPlan, clients]);
+  }, [searchQuery, filterStatus, filterPlan, clients, sortField, sortDirection]);
 
   const handleClientClick = (client) => {
     setSelectedClient(client);
