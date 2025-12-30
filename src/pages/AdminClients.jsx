@@ -764,9 +764,41 @@ export default function AdminClients() {
 
         <Card className="water-glass-effect border-gray-200/30">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Users className="w-5 h-5" />
-              Lista Clienti ({filteredClients.length})
+            <CardTitle className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <Users className="w-5 h-5" />
+                Lista Clienti ({filteredClients.length})
+              </div>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant={sortField === 'affiliate_revenue' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => {
+                    if (sortField === 'affiliate_revenue') {
+                      setSortDirection(sortDirection === 'desc' ? 'asc' : 'desc');
+                    } else {
+                      setSortField('affiliate_revenue');
+                      setSortDirection('desc');
+                    }
+                  }}
+                  className="flex items-center gap-2"
+                >
+                  <DollarSign className="w-4 h-4" />
+                  Guadagni Affiliazione
+                  {sortField === 'affiliate_revenue' && (
+                    <span className="text-xs">{sortDirection === 'desc' ? '↓' : '↑'}</span>
+                  )}
+                </Button>
+                {sortField && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setSortField('')}
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
             </CardTitle>
           </CardHeader>
           <CardContent>
