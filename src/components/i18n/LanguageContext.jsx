@@ -74,12 +74,22 @@ export function LanguageProvider({ children, forcedLanguage = null }) {
     }
     
     const urlLang = getLanguageFromPath(location.pathname);
-    if (urlLang && urlLang !== language) {
-      languageRef.current = urlLang;
-      setLanguageState(urlLang);
-      localStorage.setItem('preferred_language', urlLang);
+    if (urlLang) {
+      // Always update if URL has a language prefix
+      if (languageRef.current !== urlLang) {
+        languageRef.current = urlLang;
+        setLanguageState(urlLang);
+        localStorage.setItem('preferred_language', urlLang);
+      }
+    } else {
+      // If no language in URL, check localStorage
+      const storedLang = localStorage.getItem('preferred_language');
+      if (storedLang && SUPPORTED_LANGUAGES.some(l => l.code === storedLang) && languageRef.current !== storedLang) {
+        languageRef.current = storedLang;
+        setLanguageState(storedLang);
+      }
     }
-  }, [location.pathname, forcedLanguage, language]);
+  }, [location.pathname, forcedLanguage]);
 
   // Translation function - no dependencies, reads from ref directly
   const t = React.useCallback((key, params = {}) => {
