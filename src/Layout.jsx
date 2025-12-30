@@ -17,6 +17,17 @@ function LayoutContent({ children }) {
     window.scrollTo(0, 0);
   }, [location.pathname]);
 
+  // Google Site Verification
+  React.useEffect(() => {
+    const metaTag = document.querySelector('meta[name="google-site-verification"]');
+    if (!metaTag) {
+      const meta = document.createElement('meta');
+      meta.name = 'google-site-verification';
+      meta.content = 'HIVm6RjR7Ub9yG8cK48AmslrI781E3Z6IKUtqUV7ao0';
+      document.head.appendChild(meta);
+    }
+  }, []);
+
   // TikTok Pixel
   React.useEffect(() => {
     !function (w, d, t) {
