@@ -847,11 +847,21 @@ export default function AdminClients() {
                     </div>
                   </div>
 
-                  <div className="text-right">
-                    <p className="text-sm text-gray-500 mb-1">Spesa Totale</p>
-                    <p className="text-xl font-bold text-[var(--brand-primary)]">
-                      €{(client.last_payment_amount || 0).toFixed(2)}
-                    </p>
+                  <div className="text-right space-y-3">
+                    <div>
+                      <p className="text-sm text-gray-500 mb-1">Spesa Totale</p>
+                      <p className="text-xl font-bold text-[var(--brand-primary)]">
+                        €{(client.last_payment_amount || 0).toFixed(2)}
+                      </p>
+                    </div>
+                    {client.affiliate_revenue > 0 && (
+                      <div>
+                        <p className="text-sm text-gray-500 mb-1">Guadagni Affiliazione</p>
+                        <p className="text-lg font-bold text-green-600">
+                          €{client.affiliate_revenue.toFixed(2)}
+                        </p>
+                      </div>
+                    )}
                     <Button
                       variant="ghost"
                       size="sm"
