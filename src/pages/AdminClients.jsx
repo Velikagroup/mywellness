@@ -134,16 +134,12 @@ export default function AdminClients() {
       const allClients = response.data?.users || response?.users || [];
       
       // Carica i guadagni da affiliazione per ogni cliente
-      const affiliateLinks = await base44.entities.AffiliateLink.list();
       const affiliateCredits = await base44.entities.AffiliateCredit.list();
       
       const clientsWithAffiliateRevenue = allClients.map(client => {
-        const clientLink = affiliateLinks.find(link => link.user_id === client.id);
-        const totalRevenue = clientLink 
-          ? affiliateCredits
-              .filter(credit => credit.affiliate_link_id === clientLink.id)
-              .reduce((sum, credit) => sum + (credit.commission_amount || 0), 0)
-          : 0;
+        const totalRevenue = affiliateCredits
+          .filter(credit => credit.affiliate_user_id === client.id)
+          .reduce((sum, credit) => sum + (credit.commission_amount || 0), 0);
         
         return {
           ...client,
