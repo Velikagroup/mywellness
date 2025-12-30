@@ -65,6 +65,7 @@ import ptblogarticle from './pages/ptblogarticle';
 import ptcheckout from './pages/ptcheckout';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
+import googleb7182768ce8e527a from './pages/googleb7182768ce8e527a';
 import __Layout from './Layout.jsx';
 
 
@@ -136,6 +137,7 @@ export const PAGES = {
     "ptcheckout": ptcheckout,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
+    "googleb7182768ce8e527a": googleb7182768ce8e527a,
 }
 
 export const pagesConfig = {
