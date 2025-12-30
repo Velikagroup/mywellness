@@ -60,6 +60,8 @@ export default function AdminClients() {
   });
   const [filterStatus, setFilterStatus] = useState('all');
   const [filterPlan, setFilterPlan] = useState('all');
+  const [sortField, setSortField] = useState('');
+  const [sortDirection, setSortDirection] = useState('desc');
 
   // Campi raggruppati logicamente
   const fieldGroups = {
