@@ -133,24 +133,30 @@ export default function AdminClients() {
       console.log('🔍 Raw response:', response);
       const allClients = response.data?.users || response?.users || [];
       
-      // Carica i guadagni da affiliazione per ogni cliente
+      // Carica i dati affiliazione completi per ogni cliente
       const affiliateCredits = await base44.entities.AffiliateCredit.list();
+      const affiliateLinks = await base44.entities.AffiliateLink.list();
       
-      const clientsWithAffiliateRevenue = allClients.map(client => {
+      const clientsWithAffiliateData = allClients.map(client => {
+        const affiliateLink = affiliateLinks.find(link => link.user_id === client.id);
         const totalRevenue = affiliateCredits
           .filter(credit => credit.affiliate_user_id === client.id)
           .reduce((sum, credit) => sum + (credit.commission_amount || 0), 0);
         
         return {
           ...client,
-          affiliate_revenue: totalRevenue
+          affiliate_revenue: totalRevenue,
+          affiliate_available_balance: affiliateLink?.available_balance || 0,
+          affiliate_total_earned: affiliateLink?.total_earned || 0,
+          affiliate_total_referrals: affiliateLink?.total_referrals || 0,
+          affiliate_code: affiliateLink?.affiliate_code || null
         };
       });
       
-      console.log('📊 Loaded clients:', clientsWithAffiliateRevenue.length, clientsWithAffiliateRevenue);
-      setClients(clientsWithAffiliateRevenue);
-      setFilteredClients(clientsWithAffiliateRevenue);
-      calculateStats(clientsWithAffiliateRevenue);
+      console.log('📊 Loaded clients:', clientsWithAffiliateData.length, clientsWithAffiliateData);
+      setClients(clientsWithAffiliateData);
+      setFilteredClients(clientsWithAffiliateData);
+      calculateStats(clientsWithAffiliateData);
     } catch (error) {
       console.error('Error loading clients:', error);
       alert('Errore caricamento clienti: ' + error.message);
@@ -850,12 +856,30 @@ export default function AdminClients() {
                         €{(client.last_payment_amount || 0).toFixed(2)}
                       </p>
                     </div>
-                    {client.affiliate_revenue > 0 && (
-                      <div>
-                        <p className="text-sm text-gray-500 mb-1">Guadagni Affiliazione</p>
-                        <p className="text-lg font-bold text-green-600">
-                          €{client.affiliate_revenue.toFixed(2)}
-                        </p>
+                    {client.affiliate_code && (
+                      <div className="space-y-2 pt-2 border-t border-gray-200">
+                        <div className="flex items-center justify-between gap-2">
+                          <span className="text-xs text-gray-500">Codice:</span>
+                          <span className="text-xs font-mono font-bold text-purple-600">{client.affiliate_code}</span>
+                        </div>
+                        <div className="grid grid-cols-2 gap-2 text-xs">
+                          <div>
+                            <p className="text-gray-500">Guadagno Tot.</p>
+                            <p className="font-bold text-green-600">€{client.affiliate_total_earned.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Disponibile</p>
+                            <p className="font-bold text-blue-600">€{client.affiliate_available_balance.toFixed(2)}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Referral</p>
+                            <p className="font-bold text-purple-600">{client.affiliate_total_referrals}</p>
+                          </div>
+                          <div>
+                            <p className="text-gray-500">Commissioni</p>
+                            <p className="font-bold text-orange-600">€{client.affiliate_revenue.toFixed(2)}</p>
+                          </div>
+                        </div>
                       </div>
                     )}
                     <Button
