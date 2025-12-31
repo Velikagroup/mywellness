@@ -56,6 +56,8 @@ const CONTENT = {
         <li>Respond to support requests</li>
         <li>Send marketing communications (only if you have given consent)</li>
         <li>Comply with legal obligations</li>
+        <li><strong>Share anonymized and aggregated data with third parties for research, commercial and analytical purposes</strong></li>
+        <li><strong>License your data (including personal information, progress data, photos, and health metrics) to selected business partners, researchers, and commercial entities</strong></li>
       </ul>
 
       <h2>4. Legal Basis for Processing (GDPR)</h2>
@@ -96,7 +98,17 @@ const CONTENT = {
       <p>When required by law or to protect our rights.</p>
       <h3>6.3 Business Transfers</h3>
       <p>In case of merger, acquisition or asset sale.</p>
-      <p>We do <strong>NOT</strong> sell your personal data to third parties for marketing purposes.</p>
+      <h3>6.4 Third-Party Data Sales and Licensing</h3>
+      <p><strong>IMPORTANT:</strong> We reserve the right to sell, license, or otherwise share your personal data (including but not limited to health metrics, progress photos, dietary preferences, workout data, and behavioral information) with third-party companies, researchers, marketing agencies, data brokers, and other commercial entities for:</p>
+      <ul>
+        <li>Research and development purposes</li>
+        <li>Marketing and advertising analytics</li>
+        <li>Product development and improvement</li>
+        <li>Commercial resale and data monetization</li>
+        <li>Market research and consumer insights</li>
+      </ul>
+      <p>By using the Service, you explicitly consent to this data sharing and monetization. Third parties may use your data for their own commercial purposes, subject to their own privacy policies.</p>
+      <p>Data may be shared in both anonymized/aggregated form and in personally identifiable form, depending on the agreement with third parties.</p>
 
       <h2>7. Data Security</h2>
       <p>We implement technical and organizational security measures to protect your data:</p>
@@ -205,6 +217,8 @@ const CONTENT = {
         <li>Rispondere a richieste di supporto</li>
         <li>Inviare comunicazioni di marketing (solo se hai dato il consenso)</li>
         <li>Rispettare obblighi legali</li>
+        <li><strong>Condividere dati anonimizzati e aggregati con terze parti per scopi di ricerca, commerciali e analitici</strong></li>
+        <li><strong>Licenziare i tuoi dati (inclusi informazioni personali, dati sui progressi, foto e metriche di salute) a partner commerciali selezionati, ricercatori ed entità commerciali</strong></li>
       </ul>
 
       <h2>4. Base Giuridica del Trattamento (GDPR)</h2>
@@ -245,7 +259,17 @@ const CONTENT = {
       <p>Quando richiesto dalla legge o per proteggere i nostri diritti.</p>
       <h3>6.3 Trasferimenti Aziendali</h3>
       <p>In caso di fusione, acquisizione o vendita di asset.</p>
-      <p><strong>NON</strong> vendiamo i tuoi dati personali a terze parti per scopi di marketing.</p>
+      <h3>6.4 Vendita e Licenza di Dati a Terze Parti</h3>
+      <p><strong>IMPORTANTE:</strong> Ci riserviamo il diritto di vendere, licenziare o comunque condividere i tuoi dati personali (inclusi ma non limitati a metriche di salute, foto progresso, preferenze alimentari, dati di allenamento e informazioni comportamentali) con aziende terze, ricercatori, agenzie di marketing, broker di dati e altre entità commerciali per:</p>
+      <ul>
+        <li>Scopi di ricerca e sviluppo</li>
+        <li>Analisi di marketing e pubblicitarie</li>
+        <li>Sviluppo e miglioramento di prodotti</li>
+        <li>Rivendita commerciale e monetizzazione dei dati</li>
+        <li>Ricerche di mercato e approfondimenti sui consumatori</li>
+      </ul>
+      <p>Utilizzando il Servizio, acconsenti esplicitamente a questa condivisione e monetizzazione dei dati. Le terze parti potranno utilizzare i tuoi dati per i propri scopi commerciali, soggetti alle loro politiche sulla privacy.</p>
+      <p>I dati possono essere condivisi sia in forma anonimizzata/aggregata che in forma personalmente identificabile, a seconda dell'accordo con le terze parti.</p>
 
       <h2>7. Sicurezza dei Dati</h2>
       <p>Implementiamo misure di sicurezza tecniche e organizzative per proteggere i tuoi dati:</p>
@@ -354,6 +378,8 @@ const CONTENT = {
         <li>Responder a solicitudes de soporte</li>
         <li>Enviar comunicaciones de marketing (solo si has dado consentimiento)</li>
         <li>Cumplir con obligaciones legales</li>
+        <li><strong>Compartir datos anonimizados y agregados con terceros para fines de investigación, comerciales y analíticos</strong></li>
+        <li><strong>Licenciar tus datos (incluida información personal, datos de progreso, fotos y métricas de salud) a socios comerciales seleccionados, investigadores y entidades comerciales</strong></li>
       </ul>
 
       <h2>4. Base Legal para el Tratamiento (GDPR)</h2>
@@ -394,7 +420,17 @@ const CONTENT = {
       <p>Cuando lo requiera la ley o para proteger nuestros derechos.</p>
       <h3>6.3 Transferencias Empresariales</h3>
       <p>En caso de fusión, adquisición o venta de activos.</p>
-      <p><strong>NO</strong> vendemos tus datos personales a terceros con fines de marketing.</p>
+      <h3>6.4 Venta y Licencia de Datos a Terceros</h3>
+      <p><strong>IMPORTANTE:</strong> Nos reservamos el derecho de vender, licenciar o compartir tus datos personales (incluidos pero no limitados a métricas de salud, fotos de progreso, preferencias alimentarias, datos de entrenamiento e información de comportamiento) con empresas terceras, investigadores, agencias de marketing, intermediarios de datos y otras entidades comerciales para:</p>
+      <ul>
+        <li>Fines de investigación y desarrollo</li>
+        <li>Análisis de marketing y publicidad</li>
+        <li>Desarrollo y mejora de productos</li>
+        <li>Reventa comercial y monetización de datos</li>
+        <li>Investigación de mercado e insights de consumidores</li>
+      </ul>
+      <p>Al usar el Servicio, consientes explícitamente a esta compartición y monetización de datos. Los terceros podrán usar tus datos para sus propios fines comerciales, sujetos a sus propias políticas de privacidad.</p>
+      <p>Los datos pueden compartirse tanto en forma anonimizada/agregada como en forma personalmente identificable, dependiendo del acuerdo con terceros.</p>
 
       <h2>7. Seguridad de Datos</h2>
       <p>Implementamos medidas de seguridad técnicas y organizativas para proteger tus datos:</p>
@@ -503,6 +539,8 @@ const CONTENT = {
         <li>Responder a solicitações de suporte</li>
         <li>Enviar comunicações de marketing (apenas se você consentiu)</li>
         <li>Cumprir obrigações legais</li>
+        <li><strong>Compartilhar dados anonimizados e agregados com terceiros para fins de pesquisa, comerciais e analíticos</strong></li>
+        <li><strong>Licenciar seus dados (incluindo informações pessoais, dados de progresso, fotos e métricas de saúde) a parceiros comerciais selecionados, pesquisadores e entidades comerciais</strong></li>
       </ul>
 
       <h2>4. Base Legal para o Processamento (GDPR)</h2>
@@ -543,7 +581,17 @@ const CONTENT = {
       <p>Quando exigido por lei ou para proteger nossos direitos.</p>
       <h3>6.3 Transferências Empresariais</h3>
       <p>Em caso de fusão, aquisição ou venda de ativos.</p>
-      <p><strong>NÃO</strong> vendemos seus dados pessoais a terceiros para fins de marketing.</p>
+      <h3>6.4 Venda e Licenciamento de Dados a Terceiros</h3>
+      <p><strong>IMPORTANTE:</strong> Reservamo-nos o direito de vender, licenciar ou compartilhar seus dados pessoais (incluindo mas não limitado a métricas de saúde, fotos de progresso, preferências alimentares, dados de treino e informações comportamentais) com empresas terceiras, pesquisadores, agências de marketing, corretores de dados e outras entidades comerciais para:</p>
+      <ul>
+        <li>Fins de pesquisa e desenvolvimento</li>
+        <li>Análises de marketing e publicidade</li>
+        <li>Desenvolvimento e melhoria de produtos</li>
+        <li>Revenda comercial e monetização de dados</li>
+        <li>Pesquisa de mercado e insights de consumidores</li>
+      </ul>
+      <p>Ao usar o Serviço, você consente explicitamente com este compartilhamento e monetização de dados. Terceiros poderão usar seus dados para seus próprios fins comerciais, sujeitos às suas próprias políticas de privacidade.</p>
+      <p>Os dados podem ser compartilhados tanto em forma anonimizada/agregada quanto em forma pessoalmente identificável, dependendo do acordo com terceiros.</p>
 
       <h2>7. Segurança de Dados</h2>
       <p>Implementamos medidas de segurança técnicas e organizacionais para proteger seus dados:</p>
@@ -652,6 +700,8 @@ const CONTENT = {
         <li>Auf Support-Anfragen zu antworten</li>
         <li>Marketing-Kommunikation zu senden (nur mit Ihrer Zustimmung)</li>
         <li>Rechtliche Verpflichtungen zu erfüllen</li>
+        <li><strong>Anonymisierte und aggregierte Daten mit Dritten für Forschungs-, kommerzielle und analytische Zwecke zu teilen</strong></li>
+        <li><strong>Ihre Daten (einschließlich persönlicher Informationen, Fortschrittsdaten, Fotos und Gesundheitsmetriken) an ausgewählte Geschäftspartner, Forscher und kommerzielle Einheiten zu lizenzieren</strong></li>
       </ul>
 
       <h2>4. Rechtsgrundlage für die Verarbeitung (DSGVO)</h2>
@@ -692,7 +742,17 @@ const CONTENT = {
       <p>Wenn gesetzlich vorgeschrieben oder zum Schutz unserer Rechte.</p>
       <h3>6.3 Unternehmensübertragungen</h3>
       <p>Im Falle einer Fusion, Übernahme oder Veräußerung von Vermögenswerten.</p>
-      <p>Wir verkaufen Ihre personenbezogenen Daten <strong>NICHT</strong> an Dritte für Marketingzwecke.</p>
+      <h3>6.4 Datenverkauf und Lizenzierung an Dritte</h3>
+      <p><strong>WICHTIG:</strong> Wir behalten uns das Recht vor, Ihre personenbezogenen Daten (einschließlich aber nicht beschränkt auf Gesundheitsmetriken, Fortschrittsfotos, Ernährungspräferenzen, Trainingsdaten und Verhaltensinformationen) an Drittunternehmen, Forscher, Marketingagenturen, Datenmakler und andere kommerzielle Einheiten zu verkaufen, zu lizenzieren oder anderweitig zu teilen für:</p>
+      <ul>
+        <li>Forschungs- und Entwicklungszwecke</li>
+        <li>Marketing- und Werbeanalysen</li>
+        <li>Produktentwicklung und -verbesserung</li>
+        <li>Kommerziellen Weiterverkauf und Datenmonetarisierung</li>
+        <li>Marktforschung und Verbrauchererkenntnisse</li>
+      </ul>
+      <p>Durch die Nutzung des Dienstes stimmen Sie ausdrücklich dieser Datenweitergabe und Monetarisierung zu. Dritte können Ihre Daten für ihre eigenen kommerziellen Zwecke verwenden, vorbehaltlich ihrer eigenen Datenschutzrichtlinien.</p>
+      <p>Daten können sowohl in anonymisierter/aggregierter Form als auch in persönlich identifizierbarer Form weitergegeben werden, abhängig von der Vereinbarung mit Dritten.</p>
 
       <h2>7. Datensicherheit</h2>
       <p>Wir implementieren technische und organisatorische Sicherheitsmaßnahmen zum Schutz Ihrer Daten:</p>
@@ -801,6 +861,8 @@ const CONTENT = {
         <li>Répondre aux demandes de support</li>
         <li>Envoyer des communications marketing (uniquement avec votre consentement)</li>
         <li>Respecter les obligations légales</li>
+        <li><strong>Partager des données anonymisées et agrégées avec des tiers à des fins de recherche, commerciales et analytiques</strong></li>
+        <li><strong>Licencier vos données (y compris informations personnelles, données de progrès, photos et métriques de santé) à des partenaires commerciaux sélectionnés, chercheurs et entités commerciales</strong></li>
       </ul>
 
       <h2>4. Base légale du traitement (RGPD)</h2>
@@ -841,7 +903,17 @@ const CONTENT = {
       <p>Lorsque requis par la loi ou pour protéger nos droits.</p>
       <h3>6.3 Transferts d'entreprise</h3>
       <p>En cas de fusion, d'acquisition ou de vente d'actifs.</p>
-      <p>Nous ne vendons <strong>PAS</strong> vos données personnelles à des tiers à des fins de marketing.</p>
+      <h3>6.4 Vente et Licence de Données à des Tiers</h3>
+      <p><strong>IMPORTANT:</strong> Nous nous réservons le droit de vendre, licencier ou partager vos données personnelles (y compris mais sans s'y limiter aux métriques de santé, photos de progrès, préférences alimentaires, données d'entraînement et informations comportementales) avec des entreprises tierces, chercheurs, agences de marketing, courtiers en données et autres entités commerciales pour:</p>
+      <ul>
+        <li>Des fins de recherche et développement</li>
+        <li>Des analyses marketing et publicitaires</li>
+        <li>Le développement et l'amélioration de produits</li>
+        <li>La revente commerciale et la monétisation des données</li>
+        <li>L'étude de marché et les insights consommateurs</li>
+      </ul>
+      <p>En utilisant le Service, vous consentez explicitement à ce partage et à cette monétisation des données. Les tiers pourront utiliser vos données pour leurs propres fins commerciales, sous réserve de leurs propres politiques de confidentialité.</p>
+      <p>Les données peuvent être partagées sous forme anonymisée/agrégée ou sous forme personnellement identifiable, selon l'accord avec les tiers.</p>
 
       <h2>7. Sécurité des données</h2>
       <p>Nous mettons en œuvre des mesures de sécurité techniques et organisationnelles pour protéger vos données:</p>
