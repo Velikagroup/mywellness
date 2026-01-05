@@ -18,7 +18,7 @@ const CONTENT = {
     lastUpdated: "Last updated: January 2025",
     content: `
       <h2>1. Introduction</h2>
-      <p>VELIKA GROUP LLC ("we", "our") respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, store and protect your information when you use MyWellness (the "Service").</p>
+      <p>VELIKA GROUP LLC (&quot;we&quot;, &quot;our&quot;) respects your privacy and is committed to protecting your personal data. This Privacy Policy explains how we collect, use, store and protect your information when you use MyWellness (the &quot;Service&quot;).</p>
 
       <h2>2. Information We Collect</h2>
       <h3>2.1 Information Provided by You</h3>
@@ -70,7 +70,7 @@ const CONTENT = {
       </ul>
 
       <h2>5. Access via Google (Google Sign-In)</h2>
-      <p>If you choose to access MyWellness using your Google account ("Sign in with Google"), we collect the following information from your Google profile:</p>
+      <p>If you choose to access MyWellness using your Google account (&quot;Sign in with Google&quot;), we collect the following information from your Google profile:</p>
       <ul>
         <li><strong>Full name:</strong> to personalize your experience</li>
         <li><strong>Email address:</strong> to identify your account and send you important communications</li>
@@ -135,7 +135,7 @@ const CONTENT = {
       <ul>
         <li><strong>Access:</strong> request a copy of your personal data</li>
         <li><strong>Rectification:</strong> correct inaccurate or incomplete data</li>
-        <li><strong>Deletion:</strong> request deletion of your data ("right to be forgotten")</li>
+        <li><strong>Deletion:</strong> request deletion of your data (&quot;right to be forgotten&quot;)</li>
         <li><strong>Restriction:</strong> restrict processing of your data</li>
         <li><strong>Portability:</strong> receive your data in structured format</li>
         <li><strong>Objection:</strong> object to processing of your data</li>
@@ -179,7 +179,7 @@ const CONTENT = {
     lastUpdated: "Ultimo aggiornamento: Gennaio 2025",
     content: `
       <h2>1. Introduzione</h2>
-      <p>VELIKA GROUP LLC ("noi", "nostro") rispetta la tua privacy e si impegna a proteggere i tuoi dati personali. Questa Privacy Policy spiega come raccogliamo, utilizziamo, conserviamo e proteggiamo le tue informazioni quando utilizzi MyWellness (il "Servizio").</p>
+      <p>VELIKA GROUP LLC (&quot;noi&quot;, &quot;nostro&quot;) rispetta la tua privacy e si impegna a proteggere i tuoi dati personali. Questa Privacy Policy spiega come raccogliamo, utilizziamo, conserviamo e proteggiamo le tue informazioni quando utilizzi MyWellness (il &quot;Servizio&quot;).</p>
 
       <h2>2. Informazioni che Raccogliamo</h2>
       <h3>2.1 Informazioni Fornite da Te</h3>
@@ -231,7 +231,7 @@ const CONTENT = {
       </ul>
 
       <h2>5. Accesso tramite Google (Google Sign-In)</h2>
-      <p>Se scegli di accedere a MyWellness utilizzando il tuo account Google ("Accedi con Google"), raccogliamo le seguenti informazioni dal tuo profilo Google:</p>
+      <p>Se scegli di accedere a MyWellness utilizzando il tuo account Google (&quot;Accedi con Google&quot;), raccogliamo le seguenti informazioni dal tuo profilo Google:</p>
       <ul>
         <li><strong>Nome completo:</strong> per personalizzare la tua esperienza</li>
         <li><strong>Indirizzo email:</strong> per identificare il tuo account e inviarti comunicazioni importanti</li>
@@ -340,7 +340,7 @@ const CONTENT = {
     lastUpdated: "Última actualización: Enero 2025",
     content: `
       <h2>1. Introducción</h2>
-      <p>VELIKA GROUP LLC ("nosotros", "nuestro") respeta tu privacidad y se compromete a proteger tus datos personales. Esta Política de Privacidad explica cómo recopilamos, usamos, almacenamos y protegemos tu información cuando utilizas MyWellness (el "Servicio").</p>
+      <p>VELIKA GROUP LLC (&quot;nosotros&quot;, &quot;nuestro&quot;) respeta tu privacidad y se compromete a proteger tus datos personales. Esta Política de Privacidad explica cómo recopilamos, usamos, almacenamos y protegemos tu información cuando utilizas MyWellness (el &quot;Servicio&quot;).</p>
 
       <h2>2. Información que Recopilamos</h2>
       <h3>2.1 Información Proporcionada por Ti</h3>
@@ -392,7 +392,7 @@ const CONTENT = {
       </ul>
 
       <h2>5. Acceso mediante Google (Google Sign-In)</h2>
-      <p>Si eliges acceder a MyWellness usando tu cuenta de Google ("Iniciar sesión con Google"), recopilamos la siguiente información de tu perfil de Google:</p>
+      <p>Si eliges acceder a MyWellness usando tu cuenta de Google (&quot;Iniciar sesión con Google&quot;), recopilamos la siguiente información de tu perfil de Google:</p>
       <ul>
         <li><strong>Nombre completo:</strong> para personalizar tu experiencia</li>
         <li><strong>Dirección de correo electrónico:</strong> para identificar tu cuenta y enviarte comunicaciones importantes</li>
@@ -457,7 +457,7 @@ const CONTENT = {
       <ul>
         <li><strong>Acceso:</strong> solicitar una copia de tus datos personales</li>
         <li><strong>Rectificación:</strong> corregir datos inexactos o incompletos</li>
-        <li><strong>Supresión:</strong> solicitar la eliminación de tus datos ("derecho al olvido")</li>
+        <li><strong>Supresión:</strong> solicitar la eliminación de tus datos (&quot;derecho al olvido&quot;)</li>
         <li><strong>Restricción:</strong> restringir el procesamiento de tus datos</li>
         <li><strong>Portabilidad:</strong> recibir tus datos en formato estructurado</li>
         <li><strong>Oposición:</strong> oponerse al procesamiento de tus datos</li>
@@ -501,7 +501,7 @@ const CONTENT = {
     lastUpdated: "Última atualização: Janeiro 2025",
     content: `
       <h2>1. Introdução</h2>
-      <p>VELIKA GROUP LLC ("nós", "nosso") respeita sua privacidade e está comprometido em proteger seus dados pessoais. Esta Política de Privacidade explica como coletamos, usamos, armazenamos e protegemos suas informações quando você usa o MyWellness (o "Serviço").</p>
+      <p>VELIKA GROUP LLC (&quot;nós&quot;, &quot;nosso&quot;) respeita sua privacidade e está comprometido em proteger seus dados pessoais. Esta Política de Privacidade explica como coletamos, usamos, armazenamos e protegemos suas informações quando você usa o MyWellness (o &quot;Serviço&quot;).</p>
 
       <h2>2. Informações que Coletamos</h2>
       <h3>2.1 Informações Fornecidas por Você</h3>
@@ -553,7 +553,7 @@ const CONTENT = {
       </ul>
 
       <h2>5. Acesso via Google (Google Sign-In)</h2>
-      <p>Se você escolher acessar o MyWellness usando sua conta do Google ("Entrar com Google"), coletamos as seguintes informações do seu perfil do Google:</p>
+      <p>Se você escolher acessar o MyWellness usando sua conta do Google (&quot;Entrar com Google&quot;), coletamos as seguintes informações do seu perfil do Google:</p>
       <ul>
         <li><strong>Nome completo:</strong> para personalizar sua experiência</li>
         <li><strong>Endereço de e-mail:</strong> para identificar sua conta e enviar comunicações importantes</li>
@@ -618,7 +618,7 @@ const CONTENT = {
       <ul>
         <li><strong>Acesso:</strong> solicitar uma cópia de seus dados pessoais</li>
         <li><strong>Retificação:</strong> corrigir dados imprecisos ou incompletos</li>
-        <li><strong>Exclusão:</strong> solicitar a exclusão de seus dados ("direito ao esquecimento")</li>
+        <li><strong>Exclusão:</strong> solicitar a exclusão de seus dados (&quot;direito ao esquecimento&quot;)</li>
         <li><strong>Restrição:</strong> restringir o processamento de seus dados</li>
         <li><strong>Portabilidade:</strong> receber seus dados em formato estruturado</li>
         <li><strong>Objeção:</strong> objetar ao processamento de seus dados</li>
@@ -662,7 +662,7 @@ const CONTENT = {
     lastUpdated: "Letzte Aktualisierung: Januar 2025",
     content: `
       <h2>1. Einführung</h2>
-      <p>VELIKA GROUP LLC ("wir", "unser") respektiert Ihre Privatsphäre und verpflichtet sich, Ihre personenbezogenen Daten zu schützen. Diese Datenschutzerklärung erklärt, wie wir Ihre Informationen sammeln, verwenden, speichern und schützen, wenn Sie MyWellness (den "Dienst") nutzen.</p>
+      <p>VELIKA GROUP LLC (&quot;wir&quot;, &quot;unser&quot;) respektiert Ihre Privatsphäre und verpflichtet sich, Ihre personenbezogenen Daten zu schützen. Diese Datenschutzerklärung erklärt, wie wir Ihre Informationen sammeln, verwenden, speichern und schützen, wenn Sie MyWellness (den &quot;Dienst&quot;) nutzen.</p>
 
       <h2>2. Informationen, die wir sammeln</h2>
       <h3>2.1 Von Ihnen bereitgestellte Informationen</h3>
@@ -714,7 +714,7 @@ const CONTENT = {
       </ul>
 
       <h2>5. Zugriff über Google (Google Sign-In)</h2>
-      <p>Wenn Sie sich für den Zugriff auf MyWellness mit Ihrem Google-Konto entscheiden ("Mit Google anmelden"), sammeln wir folgende Informationen aus Ihrem Google-Profil:</p>
+      <p>Wenn Sie sich für den Zugriff auf MyWellness mit Ihrem Google-Konto entscheiden (&quot;Mit Google anmelden&quot;), sammeln wir folgende Informationen aus Ihrem Google-Profil:</p>
       <ul>
         <li><strong>Vollständiger Name:</strong> zur Personalisierung Ihrer Erfahrung</li>
         <li><strong>E-Mail-Adresse:</strong> zur Identifizierung Ihres Kontos und zum Versenden wichtiger Mitteilungen</li>
@@ -779,7 +779,7 @@ const CONTENT = {
       <ul>
         <li><strong>Zugriff:</strong> eine Kopie Ihrer personenbezogenen Daten anfordern</li>
         <li><strong>Berichtigung:</strong> ungenaue oder unvollständige Daten korrigieren</li>
-        <li><strong>Löschung:</strong> die Löschung Ihrer Daten beantragen ("Recht auf Vergessenwerden")</li>
+        <li><strong>Löschung:</strong> die Löschung Ihrer Daten beantragen (&quot;Recht auf Vergessenwerden&quot;)</li>
         <li><strong>Einschränkung:</strong> die Verarbeitung Ihrer Daten einschränken</li>
         <li><strong>Datenübertragbarkeit:</strong> Ihre Daten in strukturiertem Format erhalten</li>
         <li><strong>Widerspruch:</strong> der Verarbeitung Ihrer Daten widersprechen</li>
@@ -823,7 +823,7 @@ const CONTENT = {
     lastUpdated: "Dernière mise à jour: Janvier 2025",
     content: `
       <h2>1. Introduction</h2>
-      <p>VELIKA GROUP LLC ("nous", "notre") respecte votre vie privée et s'engage à protéger vos données personnelles. Cette Politique de Confidentialité explique comment nous collectons, utilisons, stockons et protégeons vos informations lorsque vous utilisez MyWellness (le "Service").</p>
+      <p>VELIKA GROUP LLC (&quot;nous&quot;, &quot;notre&quot;) respecte votre vie privée et s&apos;engage à protéger vos données personnelles. Cette Politique de Confidentialité explique comment nous collectons, utilisons, stockons et protégeons vos informations lorsque vous utilisez MyWellness (le &quot;Service&quot;).</p>
 
       <h2>2. Informations que nous collectons</h2>
       <h3>2.1 Informations fournies par vous</h3>
@@ -875,7 +875,7 @@ const CONTENT = {
       </ul>
 
       <h2>5. Accès via Google (Google Sign-In)</h2>
-      <p>Si vous choisissez d'accéder à MyWellness en utilisant votre compte Google ("Se connecter avec Google"), nous collectons les informations suivantes de votre profil Google:</p>
+      <p>Si vous choisissez d&apos;accéder à MyWellness en utilisant votre compte Google (&quot;Se connecter avec Google&quot;), nous collectons les informations suivantes de votre profil Google:</p>
       <ul>
         <li><strong>Nom complet:</strong> pour personnaliser votre expérience</li>
         <li><strong>Adresse e-mail:</strong> pour identifier votre compte et envoyer des communications importantes</li>
