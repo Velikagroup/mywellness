@@ -1469,41 +1469,45 @@ function HomeContent() {
   );
 }
 
-// Redirect IMMEDIATO prima del render - deve essere SINCRONO
-if (typeof window !== 'undefined' && (window.location.pathname === '/' || window.location.pathname === '/Home')) {
-  const savedLang = localStorage.getItem('preferred_language');
-  
-  if (!savedLang) {
-    // Rileva lingua
-    const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-    const timezoneToLanguage = {
-      'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
-      'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
-      'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
-      'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
-      'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
-      'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
-      'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
-      'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
-      'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
-    };
-    
-    let detectedLang = timezoneToLanguage[timezone];
-    
-    if (!detectedLang) {
-      const browserLang = navigator.language.toLowerCase().split('-')[0];
-      const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-      detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
-    }
-    
-    localStorage.setItem('preferred_language', detectedLang);
-    window.location.href = '/' + detectedLang;
-  } else if (['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
-    window.location.href = '/' + savedLang;
-  }
-}
-
 export default function Home() {
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    // Redirect usando React Router invece di window.location per compatibilità preview
+    if (window.location.pathname === '/' || window.location.pathname === '/Home') {
+      const savedLang = localStorage.getItem('preferred_language');
+      
+      if (!savedLang) {
+        // Rileva lingua
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        const timezoneToLanguage = {
+          'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
+          'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
+          'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
+          'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
+          'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
+          'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
+          'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
+          'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
+          'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
+        };
+        
+        let detectedLang = timezoneToLanguage[timezone];
+        
+        if (!detectedLang) {
+          const browserLang = navigator.language.toLowerCase().split('-')[0];
+          const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+          detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+        }
+        
+        localStorage.setItem('preferred_language', detectedLang);
+        navigate(createPageUrl(detectedLang), { replace: true });
+      } else if (['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
+        navigate(createPageUrl(savedLang), { replace: true });
+      }
+    }
+  }, [navigate]);
+
   return (
     <LanguageProvider>
       <HomeContent />
