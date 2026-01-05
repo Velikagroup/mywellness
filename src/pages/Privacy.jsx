@@ -296,7 +296,7 @@ const CONTENT = {
       <ul>
         <li><strong>Accesso:</strong> richiedere una copia dei tuoi dati personali</li>
         <li><strong>Rettifica:</strong> correggere dati inesatti o incompleti</li>
-        <li><strong>Cancellazione:</strong> richiedere la cancellazione dei tuoi dati ("diritto all&apos;oblio")</li>
+        <li><strong>Cancellazione:</strong> richiedere la cancellazione dei tuoi dati ("diritto all'oblio")</li>
         <li><strong>Limitazione:</strong> limitare il trattamento dei tuoi dati</li>
         <li><strong>Portabilità:</strong> ricevere i tuoi dati in formato strutturato</li>
         <li><strong>Opposizione:</strong> opporti al trattamento dei tuoi dati</li>
@@ -321,7 +321,7 @@ const CONTENT = {
       <p>I tuoi dati possono essere trasferiti e archiviati su server negli Stati Uniti e in altri paesi. Implementiamo salvaguardie appropriate per garantire che i tuoi dati siano protetti in conformità a questa Privacy Policy e alle leggi applicabili.</p>
 
       <h2>13. Modifiche alla Privacy Policy</h2>
-      <p>Potremmo aggiornare questa Privacy Policy periodicamente. Ti informeremo di modifiche sostanziali tramite email o notifica nel Servizio. L&apos;uso continuato del Servizio dopo le modifiche costituisce accettazione della nuova Privacy Policy.</p>
+      <p>Potremmo aggiornare questa Privacy Policy periodicamente. Ti informeremo di modifiche sostanziali tramite email o notifica nel Servizio. L'uso continuato del Servizio dopo le modifiche costituisce accettazione della nuova Privacy Policy.</p>
 
       <h2>14. Contatti</h2>
       <p>Per domande sulla privacy o per esercitare i tuoi diritti, contattaci:</p>
@@ -940,7 +940,7 @@ const CONTENT = {
       <ul>
         <li><strong>Accès:</strong> demander une copie de vos données personnelles</li>
         <li><strong>Rectification:</strong> corriger les données inexactes ou incomplètes</li>
-        <li><strong>Suppression:</strong> demander la suppression de vos données ("droit à l&apos;oubli")</li>
+        <li><strong>Suppression:</strong> demander la suppression de vos données ("droit à l'oubli")</li>
         <li><strong>Limitation:</strong> limiter le traitement de vos données</li>
         <li><strong>Portabilité:</strong> recevoir vos données dans un format structuré</li>
         <li><strong>Opposition:</strong> s'opposer au traitement de vos données</li>
