@@ -243,8 +243,8 @@ const CONTENT = {
         <li>Per autenticarti in modo sicuro senza dover creare una nuova password</li>
         <li>Per personalizzare la tua esperienza all'interno dell'app</li>
       </ul>
-      <p><strong>NON</strong> accediamo ai tuoi contatti Google, alla tua cronologia di navigazione, ai tuoi file Google Drive o ad altri dati del tuo account Google. L'accesso è limitato esclusivamente alle informazioni di profilo di base necessarie per l'autenticazione.</p>
-      <p>Puoi revocare l'accesso di MyWellness al tuo account Google in qualsiasi momento dalle impostazioni di sicurezza del tuo account Google all'indirizzo: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
+      <p><strong>NON</strong> accediamo ai tuoi contatti Google, alla tua cronologia di navigazione, ai tuoi file Google Drive o ad altri dati del tuo account Google. L&apos;accesso è limitato esclusivamente alle informazioni di profilo di base necessarie per l&apos;autenticazione.</p>
+      <p>Puoi revocare l&apos;accesso di MyWellness al tuo account Google in qualsiasi momento dalle impostazioni di sicurezza del tuo account Google all&apos;indirizzo: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
 
       <h2>6. Condivisione dei Dati</h2>
       <p>Potremmo condividere i tuoi dati con:</p>
@@ -296,7 +296,7 @@ const CONTENT = {
       <ul>
         <li><strong>Accesso:</strong> richiedere una copia dei tuoi dati personali</li>
         <li><strong>Rettifica:</strong> correggere dati inesatti o incompleti</li>
-        <li><strong>Cancellazione:</strong> richiedere la cancellazione dei tuoi dati ("diritto all'oblio")</li>
+        <li><strong>Cancellazione:</strong> richiedere la cancellazione dei tuoi dati ("diritto all&apos;oblio")</li>
         <li><strong>Limitazione:</strong> limitare il trattamento dei tuoi dati</li>
         <li><strong>Portabilità:</strong> ricevere i tuoi dati in formato strutturato</li>
         <li><strong>Opposizione:</strong> opporti al trattamento dei tuoi dati</li>
@@ -321,7 +321,7 @@ const CONTENT = {
       <p>I tuoi dati possono essere trasferiti e archiviati su server negli Stati Uniti e in altri paesi. Implementiamo salvaguardie appropriate per garantire che i tuoi dati siano protetti in conformità a questa Privacy Policy e alle leggi applicabili.</p>
 
       <h2>13. Modifiche alla Privacy Policy</h2>
-      <p>Potremmo aggiornare questa Privacy Policy periodicamente. Ti informeremo di modifiche sostanziali tramite email o notifica nel Servizio. L'uso continuato del Servizio dopo le modifiche costituisce accettazione della nuova Privacy Policy.</p>
+      <p>Potremmo aggiornare questa Privacy Policy periodicamente. Ti informeremo di modifiche sostanziali tramite email o notifica nel Servizio. L&apos;uso continuato del Servizio dopo le modifiche costituisce accettazione della nuova Privacy Policy.</p>
 
       <h2>14. Contatti</h2>
       <p>Per domande sulla privacy o per esercitare i tuoi diritti, contattaci:</p>
@@ -887,8 +887,8 @@ const CONTENT = {
         <li>Pour vous authentifier en toute sécurité sans avoir à créer un nouveau mot de passe</li>
         <li>Pour personnaliser votre expérience au sein de l'application</li>
       </ul>
-      <p>Nous n'accédons <strong>PAS</strong> à vos contacts Google, à votre historique de navigation, à vos fichiers Google Drive ou à d'autres données de votre compte Google. L'accès est limité exclusivement aux informations de profil de base nécessaires pour l'authentification.</p>
-      <p>Vous pouvez révoquer l'accès de MyWellness à votre compte Google à tout moment depuis les paramètres de sécurité de votre compte Google à l'adresse: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
+      <p>Nous n&apos;accédons <strong>PAS</strong> à vos contacts Google, à votre historique de navigation, à vos fichiers Google Drive ou à d&apos;autres données de votre compte Google. L&apos;accès est limité exclusivement aux informations de profil de base nécessaires pour l&apos;authentification.</p>
+      <p>Vous pouvez révoquer l&apos;accès de MyWellness à votre compte Google à tout moment depuis les paramètres de sécurité de votre compte Google à l&apos;adresse: <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer">https://myaccount.google.com/permissions</a></p>
 
       <h2>6. Partage des données</h2>
       <p>Nous pouvons partager vos données avec:</p>
@@ -924,7 +924,7 @@ const CONTENT = {
         <li>Surveillance régulière pour détecter les vulnérabilités</li>
         <li>Sauvegardes régulières des données</li>
       </ul>
-      <p>Cependant, aucune méthode de transmission sur Internet n'est totalement sécurisée. Nous ne pouvons pas garantir la sécurité absolue de vos données.</p>
+      <p>Cependant, aucune méthode de transmission sur Internet n&apos;est totalement sécurisée. Nous ne pouvons pas garantir la sécurité absolue de vos données.</p>
 
       <h2>8. Conservation des données</h2>
       <p>Nous conservons vos données personnelles aussi longtemps que nécessaire pour fournir le Service et respecter les obligations légales:</p>
@@ -940,7 +940,7 @@ const CONTENT = {
       <ul>
         <li><strong>Accès:</strong> demander une copie de vos données personnelles</li>
         <li><strong>Rectification:</strong> corriger les données inexactes ou incomplètes</li>
-        <li><strong>Suppression:</strong> demander la suppression de vos données ("droit à l'oubli")</li>
+        <li><strong>Suppression:</strong> demander la suppression de vos données ("droit à l&apos;oubli")</li>
         <li><strong>Limitation:</strong> limiter le traitement de vos données</li>
         <li><strong>Portabilité:</strong> recevoir vos données dans un format structuré</li>
         <li><strong>Opposition:</strong> s'opposer au traitement de vos données</li>
@@ -959,13 +959,13 @@ const CONTENT = {
       <p>Vous pouvez gérer les préférences de cookies dans les paramètres de votre navigateur.</p>
 
       <h2>11. Confidentialité des mineurs</h2>
-      <p>Le Service n'est pas destiné aux mineurs de moins de 18 ans. Nous ne collectons pas sciemment de données personnelles de mineurs de moins de 18 ans. Si nous découvrons que nous avons collecté des données d'un mineur, nous les supprimerons immédiatement.</p>
+      <p>Le Service n&apos;est pas destiné aux mineurs de moins de 18 ans. Nous ne collectons pas sciemment de données personnelles de mineurs de moins de 18 ans. Si nous découvrons que nous avons collecté des données d&apos;un mineur, nous les supprimerons immédiatement.</p>
 
       <h2>12. Transferts internationaux</h2>
       <p>Vos données peuvent être transférées et stockées sur des serveurs aux États-Unis et dans d'autres pays. Nous mettons en œuvre des garanties appropriées pour assurer que vos données soient protégées conformément à cette Politique de Confidentialité et aux lois applicables.</p>
 
       <h2>13. Modifications de la Politique de Confidentialité</h2>
-      <p>Nous pouvons mettre à jour cette Politique de Confidentialité périodiquement. Nous vous informerons des modifications substantielles par e-mail ou notification dans le Service. L'utilisation continue du Service après les modifications constitue l'acceptation de la nouvelle Politique de Confidentialité.</p>
+      <p>Nous pouvons mettre à jour cette Politique de Confidentialité périodiquement. Nous vous informerons des modifications substantielles par e-mail ou notification dans le Service. L&apos;utilisation continue du Service après les modifications constitue l&apos;acceptation de la nouvelle Politique de Confidentialité.</p>
 
       <h2>14. Contact</h2>
       <p>Pour des questions sur la confidentialité ou pour exercer vos droits, contactez-nous:</p>
