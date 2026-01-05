@@ -18,7 +18,7 @@ const CONTENT = {
     lastUpdated: "Last updated: January 2025",
     content: `
       <h2>1. Acceptance of Terms</h2>
-      <p>By accessing and using MyWellness (the &quot;Service&quot;), operated by VELIKA GROUP LLC (&quot;we&quot;, &quot;our&quot;), the user (&quot;you&quot;, &quot;your&quot;) agrees to be bound by these Terms and Conditions. If you do not accept these terms, do not use the Service.</p>
+      <p>By accessing and using MyWellness (the "Service"), operated by VELIKA GROUP LLC ("we", "our"), the user ("you", "your") agrees to be bound by these Terms and Conditions. If you do not accept these terms, do not use the Service.</p>
 
       <h2>2. Service Description</h2>
       <p>MyWellness provides personalized nutrition and workout plans generated through artificial intelligence. The Service includes body analysis, progress tracking, personalized recipes and workout routines.</p>
@@ -98,7 +98,7 @@ const CONTENT = {
     lastUpdated: "Ultimo aggiornamento: Gennaio 2025",
     content: `
       <h2>1. Accettazione dei Termini</h2>
-      <p>Accedendo e utilizzando MyWellness (il &quot;Servizio&quot;), gestito da VELIKA GROUP LLC (&quot;noi&quot;, &quot;nostro&quot;), l&apos;utente (&quot;tu&quot;, &quot;tuo&quot;) accetta di essere vincolato da questi Termini e Condizioni. Se non accetti questi termini, non utilizzare il Servizio.</p>
+      <p>Accedendo e utilizzando MyWellness (il "Servizio"), gestito da VELIKA GROUP LLC ("noi", "nostro"), l'utente ("tu", "tuo") accetta di essere vincolato da questi Termini e Condizioni. Se non accetti questi termini, non utilizzare il Servizio.</p>
 
       <h2>2. Descrizione del Servizio</h2>
       <p>MyWellness fornisce piani nutrizionali e di allenamento personalizzati generati tramite intelligenza artificiale. Il Servizio include analisi del corpo, monitoraggio dei progressi, ricette personalizzate e schede di allenamento.</p>
@@ -138,7 +138,7 @@ const CONTENT = {
       <h2>6. Disclaimer Medico</h2>
       <p><strong>IMPORTANTE:</strong> MyWellness NON fornisce consulenza medica. I piani nutrizionali e di allenamento sono generati da intelligenza artificiale e hanno esclusivamente scopo informativo ed educativo.</p>
       <p>Prima di iniziare qualsiasi programma nutrizionale o di esercizio fisico, consulta il tuo medico o un professionista sanitario qualificato, specialmente se hai condizioni mediche preesistenti, sei in gravidanza, allatti o assumi farmaci.</p>
-      <p>L&apos;uso del Servizio è a tuo esclusivo rischio e responsabilità.</p>
+      <p>L'uso del Servizio è a tuo esclusivo rischio e responsabilità.</p>
 
       <h2>7. Proprietà Intellettuale</h2>
       <p>Tutti i contenuti, software, codice, design, grafica, logo e materiali presenti nel Servizio sono di proprietà esclusiva di VELIKA GROUP LLC e sono protetti da copyright, marchi e altre leggi sulla proprietà intellettuale.</p>
@@ -154,7 +154,7 @@ const CONTENT = {
       </ul>
 
       <h2>9. Modifiche ai Termini</h2>
-      <p>Ci riserviamo il diritto di modificare questi Termini e Condizioni in qualsiasi momento. Le modifiche saranno effettive immediatamente dopo la pubblicazione. L&apos;uso continuato del Servizio dopo le modifiche costituisce accettazione dei nuovi termini.</p>
+      <p>Ci riserviamo il diritto di modificare questi Termini e Condizioni in qualsiasi momento. Le modifiche saranno effettive immediatamente dopo la pubblicazione. L'uso continuato del Servizio dopo le modifiche costituisce accettazione dei nuovi termini.</p>
 
       <h2>10. Risoluzione</h2>
       <p>Ci riserviamo il diritto di sospendere o terminare il tuo account in caso di violazione di questi Termini, senza preavviso e senza rimborso.</p>
@@ -178,7 +178,7 @@ const CONTENT = {
     lastUpdated: "Última actualización: Enero 2025",
     content: `
       <h2>1. Aceptación de los Términos</h2>
-      <p>Al acceder y utilizar MyWellness (el &quot;Servicio&quot;), operado por VELIKA GROUP LLC (&quot;nosotros&quot;, &quot;nuestro&quot;), el usuario (&quot;tú&quot;, &quot;tu&quot;) acepta estar sujeto a estos Términos y Condiciones. Si no aceptas estos términos, no utilices el Servicio.</p>
+      <p>Al acceder y utilizar MyWellness (el "Servicio"), operado por VELIKA GROUP LLC ("nosotros", "nuestro"), el usuario ("tú", "tu") acepta estar sujeto a estos Términos y Condiciones. Si no aceptas estos términos, no utilices el Servicio.</p>
 
       <h2>2. Descripción del Servicio</h2>
       <p>MyWellness proporciona planes nutricionales y de entrenamiento personalizados generados mediante inteligencia artificial. El Servicio incluye análisis corporal, seguimiento de progreso, recetas personalizadas y rutinas de entrenamiento.</p>
@@ -258,7 +258,7 @@ const CONTENT = {
     lastUpdated: "Última atualização: Janeiro 2025",
     content: `
       <h2>1. Aceitação dos Termos</h2>
-      <p>Ao acessar e usar MyWellness (o &quot;Serviço&quot;), operado pela VELIKA GROUP LLC (&quot;nós&quot;, &quot;nosso&quot;), o usuário (&quot;você&quot;, &quot;seu&quot;) concorda em estar vinculado a estes Termos e Condições. Se você não aceitar estes termos, não use o Serviço.</p>
+      <p>Ao acessar e usar MyWellness (o "Serviço"), operado pela VELIKA GROUP LLC ("nós", "nosso"), o usuário ("você", "seu") concorda em estar vinculado a estes Termos e Condições. Se você não aceitar estes termos, não use o Serviço.</p>
 
       <h2>2. Descrição do Serviço</h2>
       <p>MyWellness fornece planos nutricionais e de treino personalizados gerados através de inteligência artificial. O Serviço inclui análise corporal, acompanhamento de progresso, receitas personalizadas e rotinas de treino.</p>
@@ -338,7 +338,7 @@ const CONTENT = {
     lastUpdated: "Letzte Aktualisierung: Januar 2025",
     content: `
       <h2>1. Annahme der Bedingungen</h2>
-      <p>Durch den Zugriff und die Nutzung von MyWellness (der &quot;Dienst&quot;), betrieben von VELIKA GROUP LLC (&quot;wir&quot;, &quot;unser&quot;), stimmt der Nutzer (&quot;Sie&quot;, &quot;Ihr&quot;) zu, an diese Allgemeinen Geschäftsbedingungen gebunden zu sein. Wenn Sie diese Bedingungen nicht akzeptieren, nutzen Sie den Dienst nicht.</p>
+      <p>Durch den Zugriff und die Nutzung von MyWellness (der "Dienst"), betrieben von VELIKA GROUP LLC ("wir", "unser"), stimmt der Nutzer ("Sie", "Ihr") zu, an diese Allgemeinen Geschäftsbedingungen gebunden zu sein. Wenn Sie diese Bedingungen nicht akzeptieren, nutzen Sie den Dienst nicht.</p>
 
       <h2>2. Beschreibung des Dienstes</h2>
       <p>MyWellness bietet personalisierte Ernährungs- und Trainingspläne, die durch künstliche Intelligenz generiert werden. Der Dienst umfasst Körperanalyse, Fortschrittsverfolgung, personalisierte Rezepte und Trainingsroutinen.</p>
@@ -418,7 +418,7 @@ const CONTENT = {
     lastUpdated: "Dernière mise à jour: Janvier 2025",
     content: `
       <h2>1. Acceptation des Conditions</h2>
-      <p>En accédant et en utilisant MyWellness (le &quot;Service&quot;), exploité par VELIKA GROUP LLC (&quot;nous&quot;, &quot;notre&quot;), l&apos;utilisateur (&quot;vous&quot;, &quot;votre&quot;) accepte d&apos;être lié par ces Termes et Conditions. Si vous n&apos;acceptez pas ces conditions, n&apos;utilisez pas le Service.</p>
+      <p>En accédant et en utilisant MyWellness (le "Service"), exploité par VELIKA GROUP LLC ("nous", "notre"), l'utilisateur ("vous", "votre") accepte d'être lié par ces Termes et Conditions. Si vous n'acceptez pas ces conditions, n'utilisez pas le Service.</p>
 
       <h2>2. Description du Service</h2>
       <p>MyWellness fournit des plans nutritionnels et d'entraînement personnalisés générés par intelligence artificielle. Le Service comprend l'analyse corporelle, le suivi des progrès, des recettes personnalisées et des routines d'entraînement.</p>
@@ -457,30 +457,30 @@ const CONTENT = {
 
       <h2>6. Avertissement Médical</h2>
       <p><strong>IMPORTANT:</strong> MyWellness ne fournit PAS de conseils médicaux. Les plans nutritionnels et d'entraînement sont générés par intelligence artificielle et sont uniquement à des fins informatives et éducatives.</p>
-      <p>Avant de commencer tout programme nutritionnel ou d&apos;exercice, consultez votre médecin ou un professionnel de santé qualifié, en particulier si vous avez des conditions médicales préexistantes, êtes enceinte, allaitez ou prenez des médicaments.</p>
-      <p>L&apos;utilisation du Service est à vos propres risques et responsabilités.</p>
+      <p>Avant de commencer tout programme nutritionnel ou d'exercice, consultez votre médecin ou un professionnel de santé qualifié, en particulier si vous avez des conditions médicales préexistantes, êtes enceinte, allaitez ou prenez des médicaments.</p>
+      <p>L'utilisation du Service est à vos propres risques et responsabilités.</p>
 
       <h2>7. Propriété Intellectuelle</h2>
-      <p>Tout le contenu, logiciel, code, design, graphiques, logos et matériaux présents dans le Service sont la propriété exclusive de VELIKA GROUP LLC et sont protégés par les droits d&apos;auteur, marques et autres lois sur la propriété intellectuelle.</p>
+      <p>Tout le contenu, logiciel, code, design, graphiques, logos et matériaux présents dans le Service sont la propriété exclusive de VELIKA GROUP LLC et sont protégés par les droits d'auteur, marques et autres lois sur la propriété intellectuelle.</p>
 
       <h2>8. Limitation de Responsabilité</h2>
       <p>Dans la mesure maximale permise par la loi, VELIKA GROUP LLC ne sera pas responsable de:</p>
       <ul>
         <li>Dommages directs, indirects, accessoires, consécutifs ou punitifs</li>
-        <li>Perte de profits, de données ou d&apos;opportunités commerciales</li>
-        <li>Blessures physiques ou dommages à la santé résultant de l&apos;utilisation du Service</li>
+        <li>Perte de profits, de données ou d'opportunités commerciales</li>
+        <li>Blessures physiques ou dommages à la santé résultant de l'utilisation du Service</li>
         <li>Interruptions ou erreurs dans le Service</li>
         <li>Contenu ou comportement de tiers</li>
       </ul>
 
       <h2>9. Modifications des Conditions</h2>
-      <p>Nous nous réservons le droit de modifier ces Termes et Conditions à tout moment. Les modifications seront effectives immédiatement après publication. L&apos;utilisation continue du Service après les modifications constitue l&apos;acceptation des nouvelles conditions.</p>
+      <p>Nous nous réservons le droit de modifier ces Termes et Conditions à tout moment. Les modifications seront effectives immédiatement après publication. L'utilisation continue du Service après les modifications constitue l'acceptation des nouvelles conditions.</p>
 
       <h2>10. Résiliation</h2>
       <p>Nous nous réservons le droit de suspendre ou de résilier votre compte en cas de violation de ces Conditions, sans préavis et sans remboursement.</p>
 
       <h2>11. Loi Applicable</h2>
-      <p>Ces Conditions sont régies par les lois de l&apos;État du Wyoming, États-Unis, sans égard aux principes de conflits de lois.</p>
+      <p>Ces Conditions sont régies par les lois de l'État du Wyoming, États-Unis, sans égard aux principes de conflits de lois.</p>
 
       <h2>12. Contact</h2>
       <p>Pour des questions sur ces Termes et Conditions, contactez-nous:</p>
