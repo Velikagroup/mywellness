@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { base44 } from "@/api/base44Client";
 import { Loader2, CheckCircle, Smartphone } from 'lucide-react';
+import { Preferences } from '@capacitor/preferences';
 
 export default function AuthCallback() {
   const [status, setStatus] = useState('checking'); // checking, success, error, manual
@@ -12,10 +13,14 @@ export default function AuthCallback() {
         const user = await base44.auth.me();
         
         if (user) {
-          // ✅ Salva sessione persistente (localStorage funziona anche in Capacitor)
+          // ✅ Salva sessione persistente (localStorage + Preferences per Capacitor)
           try {
             localStorage.setItem('user_authenticated', 'true');
             localStorage.setItem('user_id', user.id);
+            
+            await Preferences.set({ key: 'mw_has_session', value: 'true' });
+            await Preferences.set({ key: 'mw_user_id', value: String(user.id || '') });
+            
             console.log('✅ Sessione salvata');
           } catch (storageError) {
             console.error('❌ Errore salvataggio sessione:', storageError);
