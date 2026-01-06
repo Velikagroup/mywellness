@@ -1510,21 +1510,14 @@ export default function Home() {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    console.log('🔍 Home effect running, path:', window.location.pathname);
-    
-    // Rileva se siamo in ambiente Capacitor
-    const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
     const currentPath = window.location.pathname.toLowerCase();
     
-    console.log('📱 isCapacitor:', isCapacitor, 'currentPath:', currentPath);
-
-    // Solo per web: redirect automatico alla lingua
-    if (!isCapacitor && (currentPath === '/' || currentPath === '/home')) {
+    // Redirect solo se siamo esattamente su '/' o '/home'
+    if (currentPath === '/' || currentPath === '/home') {
       const savedLang = localStorage.getItem('preferred_language');
-      console.log('🌍 savedLang:', savedLang);
 
       if (!savedLang) {
-        // Rileva lingua
+        // Rileva lingua da timezone
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
         const timezoneToLanguage = {
           'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
@@ -1547,14 +1540,10 @@ export default function Home() {
         }
 
         localStorage.setItem('preferred_language', detectedLang);
-        console.log('🚀 Redirecting to:', '/' + detectedLang);
         window.location.href = '/' + detectedLang;
       } else if (['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
-        console.log('🚀 Redirecting to saved lang:', '/' + savedLang);
         window.location.href = '/' + savedLang;
       }
-    } else {
-      console.log('❌ No redirect - isCapacitor:', isCapacitor, 'currentPath:', currentPath);
     }
   }, [navigate]);
 
