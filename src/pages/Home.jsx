@@ -1512,9 +1512,10 @@ export default function Home() {
   React.useEffect(() => {
     // Rileva se siamo in ambiente Capacitor
     const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
+    const currentPath = window.location.pathname.toLowerCase();
 
     // Solo per web: redirect automatico alla lingua
-    if (!isCapacitor && (window.location.pathname === '/' || window.location.pathname === '/Home')) {
+    if (!isCapacitor && (currentPath === '/' || currentPath === '/home')) {
       const savedLang = localStorage.getItem('preferred_language');
 
       if (!savedLang) {
@@ -1541,9 +1542,9 @@ export default function Home() {
         }
 
         localStorage.setItem('preferred_language', detectedLang);
-        navigate(createPageUrl(detectedLang), { replace: true });
+        window.location.href = '/' + detectedLang;
       } else if (['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
-        navigate(createPageUrl(savedLang), { replace: true });
+        window.location.href = '/' + savedLang;
       }
     }
   }, [navigate]);
