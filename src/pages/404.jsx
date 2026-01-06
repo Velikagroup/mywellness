@@ -9,44 +9,49 @@ export default function NotFound() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log('🔍 404 - Current path:', window.location.pathname);
     window.scrollTo(0, 0);
     
     // Se siamo su `/` redirect alla lingua dell'utente
-    if (window.location.pathname === '/') {
-      try {
-        let lang = localStorage.getItem('preferred_language');
+    if (window.location.pathname === '/' || window.location.pathname === '') {
+      console.log('🌍 Root path detected, redirecting...');
+      
+      let lang = localStorage.getItem('preferred_language');
+      console.log('💾 Stored language:', lang);
+      
+      if (!lang) {
+        // Rileva lingua da timezone
+        const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+        console.log('🌐 Timezone:', timezone);
+        
+        const timezoneToLanguage = {
+          'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
+          'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
+          'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
+          'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
+          'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
+          'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
+          'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
+          'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
+          'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
+        };
+        
+        lang = timezoneToLanguage[timezone];
         
         if (!lang) {
-          // Rileva lingua da timezone
-          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
-          const timezoneToLanguage = {
-            'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
-            'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
-            'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
-            'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
-            'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
-            'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
-            'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
-            'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
-            'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
-          };
-          
-          lang = timezoneToLanguage[timezone];
-          
-          if (!lang) {
-            const browserLang = navigator.language.toLowerCase().split('-')[0];
-            const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-            lang = supportedLangs.includes(browserLang) ? browserLang : 'en';
-          }
-          
-          localStorage.setItem('preferred_language', lang);
+          const browserLang = navigator.language.toLowerCase().split('-')[0];
+          console.log('🗣️ Browser language:', browserLang);
+          const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+          lang = supportedLangs.includes(browserLang) ? browserLang : 'en';
         }
         
-        window.location.replace('/' + lang);
-      } catch (error) {
-        console.error('Redirect error:', error);
-        window.location.replace('/en');
+        console.log('✅ Detected language:', lang);
+        localStorage.setItem('preferred_language', lang);
       }
+      
+      console.log('🚀 Redirecting to:', '/' + lang);
+      window.location.href = '/' + lang;
+      return;
     }
   }, []);
 
