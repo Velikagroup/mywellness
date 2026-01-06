@@ -28,7 +28,6 @@ import {
 import { motion, useScroll, useTransform } from "framer-motion";
 import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
 import { translations } from '@/components/i18n/translations';
-import { Preferences } from '@capacitor/preferences';
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
 import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
@@ -65,9 +64,10 @@ function HomeContent() {
                         window.Capacitor !== undefined;
     
     if (isCapacitor) {
-      // ✅ Bootstrap: controlla se c'è sessione salvata
+      // ✅ Bootstrap: controlla se c'è sessione salvata (solo in Capacitor)
       const checkSavedSession = async () => {
         try {
+          const { Preferences } = await import('@capacitor/preferences');
           const { value: isAuth } = await Preferences.get({ key: 'user_authenticated' });
           
           if (isAuth === 'true') {
