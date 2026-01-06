@@ -3,6 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Preferences } from '@capacitor/preferences';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -466,8 +467,20 @@ Be concise but detailed (max 200 words).`,
 
   const handleLogout = async () => {
     try {
+      await base44.auth.logout();
+      
+      // Pulisci Preferences e localStorage
+      await Preferences.remove({ key: 'mw_has_session' });
+      await Preferences.remove({ key: 'mw_user_id' });
+      
+      try {
+        localStorage.removeItem('user_authenticated');
+        localStorage.removeItem('user_id');
+      } catch {}
+      
+      // Vai alla home
       const homeUrl = window.location.origin + createPageUrl('Home');
-      await base44.auth.logout(homeUrl);
+      window.location.href = homeUrl;
     } catch (error) {
       console.error("Errore durante il logout:", error);
     }
