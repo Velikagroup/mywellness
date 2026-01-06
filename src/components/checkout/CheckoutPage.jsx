@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X } from "lucide-react";
+import { CreditCard, CheckCircle, Sparkles, Shield, FileText, Check, ChevronsUpDown, Briefcase, Tag, X, ArrowLeft } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
@@ -597,7 +597,13 @@ export default function CheckoutPage() {
       `}</style>
 
       <div className="max-w-2xl mx-auto water-glass-effect rounded-3xl overflow-hidden">
-        <div className="text-center pb-6 pt-8 px-8">
+        <div className="relative text-center pb-6 pt-8 px-8">
+          <button
+            onClick={() => navigate(createPageUrl('Dashboard'))}
+            className="absolute left-6 top-8 flex items-center gap-2 text-gray-600 hover:text-[#26847F] transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+          </button>
           <div className="w-20 h-20 bg-gradient-to-br from-[#26847F] to-teal-500 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-xl">
             <Sparkles className="w-10 h-10 text-white" />
           </div>
