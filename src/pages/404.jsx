@@ -11,16 +11,41 @@ export default function NotFound() {
   useEffect(() => {
     window.scrollTo(0, 0);
     
-    // Se siamo su `/` redirect alla lingua italiana di default
+    // Se siamo su `/` redirect alla lingua dell'utente
     if (window.location.pathname === '/') {
       try {
-        const savedLang = localStorage.getItem('preferred_language') || 'it';
-        const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
-        const lang = supportedLangs.includes(savedLang) ? savedLang : 'it';
+        let lang = localStorage.getItem('preferred_language');
+        
+        if (!lang) {
+          // Rileva lingua da timezone
+          const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+          const timezoneToLanguage = {
+            'Europe/Rome': 'it', 'Europe/Vatican': 'it', 'Europe/San_Marino': 'it',
+            'Europe/Madrid': 'es', 'America/Mexico_City': 'es', 'America/Buenos_Aires': 'es', 
+            'America/Bogota': 'es', 'America/Lima': 'es', 'America/Santiago': 'es',
+            'America/Caracas': 'es', 'America/Guayaquil': 'es', 'America/La_Paz': 'es',
+            'America/Sao_Paulo': 'pt', 'Europe/Lisbon': 'pt', 'Atlantic/Azores': 'pt',
+            'America/Rio_Branco': 'pt', 'America/Fortaleza': 'pt',
+            'Europe/Berlin': 'de', 'Europe/Vienna': 'de', 'Europe/Zurich': 'de',
+            'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
+            'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
+          };
+          
+          lang = timezoneToLanguage[timezone];
+          
+          if (!lang) {
+            const browserLang = navigator.language.toLowerCase().split('-')[0];
+            const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
+            lang = supportedLangs.includes(browserLang) ? browserLang : 'en';
+          }
+          
+          localStorage.setItem('preferred_language', lang);
+        }
+        
         window.location.replace('/' + lang);
       } catch (error) {
         console.error('Redirect error:', error);
-        window.location.replace('/it');
+        window.location.replace('/en');
       }
     }
   }, []);
