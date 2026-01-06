@@ -1510,10 +1510,13 @@ export default function Home() {
   const navigate = useNavigate();
 
   React.useEffect(() => {
-    // Redirect usando React Router invece di window.location per compatibilità preview
-    if (window.location.pathname === '/' || window.location.pathname === '/Home') {
+    // Rileva se siamo in ambiente Capacitor
+    const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
+
+    // Solo per web: redirect automatico alla lingua
+    if (!isCapacitor && (window.location.pathname === '/' || window.location.pathname === '/Home')) {
       const savedLang = localStorage.getItem('preferred_language');
-      
+
       if (!savedLang) {
         // Rileva lingua
         const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
@@ -1528,15 +1531,15 @@ export default function Home() {
           'Europe/Paris': 'fr', 'Europe/Brussels': 'fr', 'Europe/Luxembourg': 'fr',
           'Africa/Abidjan': 'fr', 'Africa/Dakar': 'fr', 'America/Montreal': 'fr'
         };
-        
+
         let detectedLang = timezoneToLanguage[timezone];
-        
+
         if (!detectedLang) {
           const browserLang = navigator.language.toLowerCase().split('-')[0];
           const supportedLangs = ['it', 'en', 'es', 'pt', 'de', 'fr'];
           detectedLang = supportedLangs.includes(browserLang) ? browserLang : 'en';
         }
-        
+
         localStorage.setItem('preferred_language', detectedLang);
         navigate(createPageUrl(detectedLang), { replace: true });
       } else if (['it', 'en', 'es', 'pt', 'de', 'fr'].includes(savedLang)) {
