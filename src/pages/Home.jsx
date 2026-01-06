@@ -98,8 +98,8 @@ function HomeContent() {
           console.error('❌ Errore controllo sessione:', error);
         }
 
-        // Se non c'è sessione o è scaduta, vai al Quiz
-        navigate(createPageUrl('Quiz'), { replace: true });
+        // ✅ Se non c'è sessione valida in Capacitor, mostra comunque la home
+        console.log('ℹ️ Nessuna sessione valida, rimani sulla home');
       };
 
       checkSavedSession();

@@ -468,15 +468,20 @@ Be concise but detailed (max 200 words).`,
   const handleLogout = async () => {
     try {
       // Pulisci Preferences e localStorage PRIMA del logout
-      await Preferences.remove({ key: 'mw_has_session' });
-      await Preferences.remove({ key: 'mw_user_id' });
+      try {
+        await Preferences.remove({ key: 'mw_has_session' });
+        await Preferences.remove({ key: 'mw_user_id' });
+      } catch {}
       
       try {
         localStorage.removeItem('user_authenticated');
         localStorage.removeItem('user_id');
       } catch {}
       
-      // Vai alla home nella lingua corretta (non al Quiz)
+      // Effettua logout Base44
+      await base44.auth.logout();
+      
+      // Redirect manuale alla home nella lingua corretta
       const homePages = {
         'en': 'en',
         'it': 'it',
@@ -485,13 +490,9 @@ Be concise but detailed (max 200 words).`,
         'de': 'de',
         'fr': 'fr'
       };
-      const homeUrl = window.location.origin + '/' + (homePages[language] || 'it');
-      
-      // Logout e redirect
-      await base44.auth.logout(homeUrl);
+      window.location.href = window.location.origin + '/' + (homePages[language] || 'it');
     } catch (error) {
       console.error("Errore durante il logout:", error);
-      // Fallback: vai comunque alla home
       window.location.href = window.location.origin;
     }
   };
