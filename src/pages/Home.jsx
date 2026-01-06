@@ -28,6 +28,7 @@ import {
 import { motion, useScroll, useTransform } from "framer-motion";
 import { LanguageProvider, useLanguage, SUPPORTED_LANGUAGES } from '@/components/i18n/LanguageContext';
 import { translations } from '@/components/i18n/translations';
+import { Preferences } from '@capacitor/preferences';
 import WorkoutPreviewDemo from "../components/home/WorkoutPreviewDemo";
 import MealPlanPreviewDemo from "../components/home/MealPlanPreviewDemo";
 import PhotoAnalyzerPreviewDemo from "../components/home/PhotoAnalyzerPreviewDemo";
