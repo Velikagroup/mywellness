@@ -64,11 +64,10 @@ function HomeContent() {
                         window.Capacitor !== undefined;
     
     if (isCapacitor) {
-      // ✅ Bootstrap: controlla se c'è sessione salvata (solo in Capacitor)
+      // ✅ Bootstrap: controlla se c'è sessione salvata
       const checkSavedSession = async () => {
         try {
-          const { Preferences } = await import(/* @vite-ignore */ '@capacitor/preferences');
-          const { value: isAuth } = await Preferences.get({ key: 'user_authenticated' });
+          const isAuth = localStorage.getItem('user_authenticated');
           
           if (isAuth === 'true') {
             console.log('✅ Sessione trovata, verifica autenticazione...');
@@ -86,8 +85,8 @@ function HomeContent() {
               }
             } catch (authError) {
               console.log('❌ Sessione scaduta, pulizia...');
-              await Preferences.remove({ key: 'user_authenticated' });
-              await Preferences.remove({ key: 'user_id' });
+              localStorage.removeItem('user_authenticated');
+              localStorage.removeItem('user_id');
             }
           }
         } catch (error) {

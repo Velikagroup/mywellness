@@ -12,22 +12,13 @@ export default function AuthCallback() {
         const user = await base44.auth.me();
         
         if (user) {
-          // ✅ Salva sessione persistente per Capacitor (solo se disponibile)
-          if (window.Capacitor) {
-            try {
-              const { Preferences } = await import(/* @vite-ignore */ '@capacitor/preferences');
-              await Preferences.set({ 
-                key: 'user_authenticated', 
-                value: 'true' 
-              });
-              await Preferences.set({ 
-                key: 'user_id', 
-                value: user.id 
-              });
-              console.log('✅ Sessione salvata in Capacitor Preferences');
-            } catch (prefError) {
-              console.error('❌ Errore salvataggio Preferences:', prefError);
-            }
+          // ✅ Salva sessione persistente (localStorage funziona anche in Capacitor)
+          try {
+            localStorage.setItem('user_authenticated', 'true');
+            localStorage.setItem('user_id', user.id);
+            console.log('✅ Sessione salvata');
+          } catch (storageError) {
+            console.error('❌ Errore salvataggio sessione:', storageError);
           }
           
           setStatus('success');
