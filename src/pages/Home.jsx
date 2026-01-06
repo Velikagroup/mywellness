@@ -5,6 +5,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
+import { Preferences } from '@capacitor/preferences';
 import {
   Sparkles,
   Target,
@@ -64,13 +65,13 @@ function HomeContent() {
                         window.Capacitor !== undefined;
     
     if (isCapacitor) {
-      // ✅ Bootstrap: controlla se c'è sessione salvata
+      // ✅ Bootstrap: controlla se c'è sessione salvata con Preferences
       const checkSavedSession = async () => {
         try {
-          const isAuth = localStorage.getItem('user_authenticated');
-          
-          if (isAuth === 'true') {
-            console.log('✅ Sessione trovata, verifica autenticazione...');
+          const { value: hasSession } = await Preferences.get({ key: 'mw_has_session' });
+
+          if (hasSession === 'true') {
+            console.log('✅ Sessione trovata in Preferences, verifica autenticazione...');
             try {
               const user = await base44.auth.me();
               if (user) {
@@ -85,18 +86,22 @@ function HomeContent() {
               }
             } catch (authError) {
               console.log('❌ Sessione scaduta, pulizia...');
-              localStorage.removeItem('user_authenticated');
-              localStorage.removeItem('user_id');
+              await Preferences.remove({ key: 'mw_has_session' });
+              await Preferences.remove({ key: 'mw_user_id' });
+              try {
+                localStorage.removeItem('user_authenticated');
+                localStorage.removeItem('user_id');
+              } catch {}
             }
           }
         } catch (error) {
           console.error('❌ Errore controllo sessione:', error);
         }
-        
+
         // Se non c'è sessione o è scaduta, vai al Quiz
         navigate(createPageUrl('Quiz'), { replace: true });
       };
-      
+
       checkSavedSession();
       return;
     }
