@@ -65,8 +65,40 @@ function HomeContent() {
                         window.Capacitor !== undefined;
     
     if (isCapacitor) {
-      // Se è app nativa, vai SEMPRE al Quiz - gestisce tutto lui
-      navigate(createPageUrl('Quiz'), { replace: true });
+      // ✅ Bootstrap: controlla se c'è sessione salvata
+      const checkSavedSession = async () => {
+        try {
+          const { value: isAuth } = await Preferences.get({ key: 'user_authenticated' });
+          
+          if (isAuth === 'true') {
+            console.log('✅ Sessione trovata, verifica autenticazione...');
+            try {
+              const user = await base44.auth.me();
+              if (user) {
+                console.log('✅ Utente ancora autenticato:', user.id);
+                // Vai alla pagina giusta in base allo stato utente
+                if (user.quiz_completed && (user.subscription_status === 'active' || user.subscription_status === 'trial')) {
+                  navigate(createPageUrl('Dashboard'), { replace: true });
+                } else {
+                  navigate(createPageUrl('Quiz'), { replace: true });
+                }
+                return;
+              }
+            } catch (authError) {
+              console.log('❌ Sessione scaduta, pulizia...');
+              await Preferences.remove({ key: 'user_authenticated' });
+              await Preferences.remove({ key: 'user_id' });
+            }
+          }
+        } catch (error) {
+          console.error('❌ Errore controllo sessione:', error);
+        }
+        
+        // Se non c'è sessione o è scaduta, vai al Quiz
+        navigate(createPageUrl('Quiz'), { replace: true });
+      };
+      
+      checkSavedSession();
       return;
     }
 
