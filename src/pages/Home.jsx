@@ -67,7 +67,7 @@ function HomeContent() {
       // ✅ Bootstrap: controlla se c'è sessione salvata (solo in Capacitor)
       const checkSavedSession = async () => {
         try {
-          const { Preferences } = await import('@capacitor/preferences');
+          const { Preferences } = await import(/* @vite-ignore */ '@capacitor/preferences');
           const { value: isAuth } = await Preferences.get({ key: 'user_authenticated' });
           
           if (isAuth === 'true') {

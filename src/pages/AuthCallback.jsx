@@ -15,7 +15,7 @@ export default function AuthCallback() {
           // ✅ Salva sessione persistente per Capacitor (solo se disponibile)
           if (window.Capacitor) {
             try {
-              const { Preferences } = await import('@capacitor/preferences');
+              const { Preferences } = await import(/* @vite-ignore */ '@capacitor/preferences');
               await Preferences.set({ 
                 key: 'user_authenticated', 
                 value: 'true' 
