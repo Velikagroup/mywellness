@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { base44 } from "@/api/base44Client";
 import { Loader2, CheckCircle, Smartphone } from 'lucide-react';
+import { Preferences } from '@capacitor/preferences';
 
 export default function AuthCallback() {
   const [status, setStatus] = useState('checking'); // checking, success, error, manual
@@ -12,6 +13,22 @@ export default function AuthCallback() {
         const user = await base44.auth.me();
         
         if (user) {
+          // ✅ Salva sessione persistente per Capacitor
+          try {
+            // Base44 gestisce i token internamente, salviamo l'utente per bootstrap
+            await Preferences.set({ 
+              key: 'user_authenticated', 
+              value: 'true' 
+            });
+            await Preferences.set({ 
+              key: 'user_id', 
+              value: user.id 
+            });
+            console.log('✅ Sessione salvata in Preferences');
+          } catch (prefError) {
+            console.error('❌ Errore salvataggio Preferences:', prefError);
+          }
+          
           setStatus('success');
           
           // Controlla se ha quiz completato e subscription attiva
