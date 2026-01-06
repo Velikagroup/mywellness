@@ -280,6 +280,13 @@ export const translations = {
       demoCook5to7: "Cuoci 5-7 minuti mescolando",
       demoGarnishBanana: "Guarnisci con banana e mirtilli",
       demoProteins: "Proteine",
+      demoKcalPerDay: "kcal/giorno",
+      demoDietMediterranean: "Mediterranea",
+      demoDietKeto: "Keto",
+      demoDietVegetarian: "Vegetariana",
+      demoDietVegan: "Vegana",
+      demoDietLowCarb: "Low Carb",
+      demoDietPaleo: "Paleo",
       
       // Dashboard Demo
       dashboardStartWeight: "Peso Iniziale",
