@@ -309,34 +309,16 @@ function HomeContent() {
   };
 
   const handleLogin = async () => {
-    try {
-      // Rileva se siamo in app Capacitor
-      const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
-
-      if (isCapacitor) {
-        // Mostra un messaggio che il login deve essere fatto da web
-        alert('⚠️ Per effettuare il login, ti reindirizzeremo al browser web. Dopo il login, riapri l\'app MyWellness.');
-
-        // Apri Safari con l'URL di login web
-        const webLoginUrl = 'https://projectmywellness.com/it?login=true';
-        window.location.href = webLoginUrl;
-      } else {
-        // Browser web normale
-        const quizPages = {
-          'en': 'enquiz',
-          'it': 'itquiz',
-          'es': 'esquiz',
-          'pt': 'ptquiz',
-          'de': 'dequiz',
-          'fr': 'frquiz'
-        };
-        const nextUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
-        base44.auth.redirectToLogin(nextUrl);
-      }
-    } catch (error) {
-      console.error('❌ Login error:', error);
-      alert('Errore durante il login. Riprova.');
-    }
+    const quizPages = {
+      'en': 'enquiz',
+      'it': 'itquiz',
+      'es': 'esquiz',
+      'pt': 'ptquiz',
+      'de': 'dequiz',
+      'fr': 'frquiz'
+    };
+    const nextUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
+    base44.auth.redirectToLogin(nextUrl);
   };
 
   return (
