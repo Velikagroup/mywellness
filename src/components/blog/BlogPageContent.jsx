@@ -253,8 +253,8 @@ export default function BlogPageContent() {
   const loadPosts = async () => {
     setIsLoading(true);
     try {
-      // Try direct fetch without any filtering first
-      const allPosts = await base44.entities.BlogPost.list('-created_date', 500);
+      // Use updated_date to get recently modified posts (like those just fixed with language='it')
+      const allPosts = await base44.entities.BlogPost.list('-updated_date', 500);
       
       console.log('🔍 RAW API Response:', allPosts.length, 'posts');
       console.log('🔍 Current language:', language);
