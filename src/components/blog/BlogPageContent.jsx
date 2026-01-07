@@ -280,11 +280,22 @@ export default function BlogPageContent() {
       });
       
       // Normalize and filter
-      const normalized = allPosts.map(p => ({
-        id: p.id,
-        created_date: p.created_date,
-        ...(p.data || p)
-      }));
+      const normalized = allPosts.map(p => {
+        const postData = p.data || p;
+        return {
+          id: p.id,
+          created_date: p.created_date,
+          title: postData.title,
+          slug: postData.slug,
+          meta_description: postData.meta_description,
+          category: postData.category,
+          language: postData.language,
+          original_article_id: postData.original_article_id,
+          reading_time: postData.reading_time,
+          published: postData.published,
+          views: postData.views
+        };
+      });
       
       const publishedOnly = normalized.filter(p => p.published === true);
       console.log('📚 Published posts:', publishedOnly.length);
