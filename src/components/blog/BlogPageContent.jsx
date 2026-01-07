@@ -300,13 +300,17 @@ export default function BlogPageContent() {
       const publishedOnly = normalized.filter(p => p.published === true);
       console.log('📚 Published posts:', publishedOnly.length);
       
-      // Debug language values
-      publishedOnly.forEach(p => {
-        console.log('📋 Post language check:', {
+      // Debug language values - show first 5 in detail
+      console.log('🔬 Detailed language check for first 5 posts:');
+      publishedOnly.slice(0, 5).forEach(p => {
+        console.log({
           title: p.title,
           language: p.language,
-          languageMatch: p.language === language,
-          isOriginal: !p.original_article_id
+          languageType: typeof p.language,
+          languageJSON: JSON.stringify(p.language),
+          currentLang: language,
+          strictMatch: p.language === language,
+          looseMatch: p.language == language
         });
       });
       
