@@ -27,19 +27,6 @@ function PricingPageContent() {
   const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
-    // Load user for Dashboard button
-    const loadUser = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-      } catch (error) {
-        setUser(null);
-      }
-    };
-    loadUser();
-  }, []);
-
-  React.useEffect(() => {
     window.scrollTo(0, 0);
     
     const urlParams = new URLSearchParams(window.location.search);
@@ -51,6 +38,7 @@ function PricingPageContent() {
     const loadUser = async () => {
       try {
         const currentUser = await base44.auth.me();
+        setUser(currentUser);
         setUserEmail(currentUser.email);
         
         if (couponParam && currentUser.email) {
