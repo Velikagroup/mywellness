@@ -253,48 +253,52 @@ export default function BlogPageContent() {
   const loadPosts = async () => {
     setIsLoading(true);
     try {
-      // Get all posts using list instead of filter
-      const allPosts = await base44.entities.BlogPost.list('-created_date', 200);
+      // Try direct fetch without any filtering first
+      const allPosts = await base44.entities.BlogPost.list('-created_date', 500);
       
-      console.log('🔍 Total posts from API:', allPosts.length);
-      if (allPosts.length > 0) {
-        console.log('🔍 First post structure:', JSON.stringify(allPosts[0], null, 2));
+      console.log('🔍 RAW API Response:', allPosts.length, 'posts');
+      console.log('🔍 Current language:', language);
+      
+      if (allPosts.length === 0) {
+        console.error('❌ NO POSTS RETURNED FROM API');
+        setPosts([]);
+        setIsLoading(false);
+        return;
       }
       
-      // Normalize data structure and filter by language AND published
-      const normalizedPosts = allPosts
-        .filter(p => {
-          const postData = p.data || p;
-          return postData.published === true;
-        })
-        .map(p => {
-          const normalized = {
-            id: p.id,
-            ...(p.data || p)
-          };
-          console.log('✅ Normalized post:', { 
-            id: normalized.id, 
-            title: normalized.title, 
-            language: normalized.language,
-            published: normalized.published 
-          });
-          return normalized;
+      // Log first few posts to see structure
+      allPosts.slice(0, 3).forEach((post, idx) => {
+        console.log(`📄 Post ${idx + 1}:`, {
+          id: post.id,
+          hasData: !!post.data,
+          language: post.data?.language || post.language,
+          published: post.data?.published || post.published,
+          title: post.data?.title || post.title
         });
+      });
       
-      console.log('🔍 Language filter:', language);
+      // Normalize and filter
+      const normalized = allPosts.map(p => ({
+        id: p.id,
+        created_date: p.created_date,
+        ...(p.data || p)
+      }));
       
-      let filteredPosts;
+      const publishedOnly = normalized.filter(p => p.published === true);
+      console.log('📚 Published posts:', publishedOnly.length);
+      
+      let filtered;
       if (language === 'it') {
-        filteredPosts = normalizedPosts.filter(p => !p.language || p.language === 'it');
+        filtered = publishedOnly.filter(p => !p.language || p.language === 'it');
       } else {
-        filteredPosts = normalizedPosts.filter(p => p.language === language);
+        filtered = publishedOnly.filter(p => p.language === language);
       }
       
-      console.log('✅ Filtered posts count:', filteredPosts.length);
+      console.log('✅ FINAL filtered posts for', language, ':', filtered.length);
       
-      setPosts(filteredPosts);
+      setPosts(filtered);
     } catch (error) {
-      console.error('❌ Error loading posts:', error);
+      console.error('❌ ERROR loading posts:', error);
       setPosts([]);
     }
     setIsLoading(false);
