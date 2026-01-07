@@ -60,56 +60,8 @@ function HomeContent() {
   useEffect(() => {
     window.scrollTo(0, 0);
 
-    // Rileva se siamo in app iOS/Android (Capacitor)
-    const isCapacitor = window.location.protocol === 'capacitor:' || 
-                        window.Capacitor !== undefined;
-    
-    if (isCapacitor) {
-      // ✅ Bootstrap: controlla se c'è sessione salvata con Preferences
-      const checkSavedSession = async () => {
-        try {
-          const { value: hasSession } = await Preferences.get({ key: 'mw_has_session' });
-
-          if (hasSession === 'true') {
-            console.log('✅ Sessione trovata in Preferences, verifica autenticazione...');
-            try {
-              const user = await base44.auth.me();
-              if (user) {
-                console.log('✅ Utente ancora autenticato:', user.id);
-                // Vai alla pagina giusta in base allo stato utente
-                if (user.quiz_completed && (user.subscription_status === 'active' || user.subscription_status === 'trial')) {
-                  navigate(createPageUrl('Dashboard'), { replace: true });
-                } else {
-                  navigate(createPageUrl('Quiz'), { replace: true });
-                }
-                return;
-              }
-            } catch (authError) {
-              console.log('❌ Sessione scaduta, pulizia...');
-              await Preferences.remove({ key: 'mw_has_session' });
-              await Preferences.remove({ key: 'mw_user_id' });
-              try {
-                localStorage.removeItem('user_authenticated');
-                localStorage.removeItem('user_id');
-              } catch {}
-            }
-          }
-        } catch (error) {
-          console.error('❌ Errore controllo sessione:', error);
-        }
-
-        // ✅ Se non c'è sessione valida in Capacitor, mostra comunque la home
-        console.log('ℹ️ Nessuna sessione valida, rimani sulla home');
-      };
-
-      checkSavedSession();
-      return;
-    }
-
-    // Gestione URL parameters
-    const urlParams = new URLSearchParams(window.location.search);
-
     // Cattura codice affiliato dall'URL
+    const urlParams = new URLSearchParams(window.location.search);
     const affiliateCode = urlParams.get('affiliate');
     if (affiliateCode) {
       localStorage.setItem('affiliateCode', affiliateCode.toUpperCase());
