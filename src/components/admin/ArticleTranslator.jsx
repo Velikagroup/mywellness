@@ -27,11 +27,11 @@ export default function ArticleTranslator({ posts, onRefresh }) {
   const [translatingArticle, setTranslatingArticle] = useState(null);
   const [translationProgress, setTranslationProgress] = useState(0);
   const [translationStatus, setTranslationStatus] = useState('');
-  const [selectedLanguages, setSelectedLanguages] = useState(['it', 'en', 'es', 'pt', 'de', 'fr']);
+  const [selectedLanguages, setSelectedLanguages] = useState(['en', 'es', 'pt', 'de', 'fr']); // Italiano escluso di default
   const [searchQuery, setSearchQuery] = useState('');
 
-  // Get only Italian articles (original articles)
-  const italianArticles = posts.filter((p) => p.language === 'it' || !p.language);
+  // Filtra SOLO articoli originali (senza original_article_id)
+  const italianArticles = posts.filter((p) => !p.original_article_id);
 
   // Get translations for an article
   const getTranslationsForArticle = (articleId) => {
@@ -110,7 +110,7 @@ export default function ArticleTranslator({ posts, onRefresh }) {
   };
 
   const translateArticle = async (article, targetLang) => {
-    const langName = LANGUAGES.find((l) => l.code === targetLang)?.name || targetLang;
+    const langName = TRANSLATION_LANGUAGES.find((l) => l.code === targetLang)?.name || targetLang;
 
     try {
       const translationPrompt = `Traduci questo articolo di blog in ${langName}.
@@ -184,7 +184,7 @@ IMPORTANTE:
 
     for (let i = 0; i < languagesToTranslate.length; i++) {
       const lang = languagesToTranslate[i];
-      const langName = LANGUAGES.find((l) => l.code === lang)?.name;
+      const langName = TRANSLATION_LANGUAGES.find((l) => l.code === lang)?.name;
 
       setTranslationStatus(`Traduzione in ${langName}... (${i + 1}/${languagesToTranslate.length})`);
       setTranslationProgress(Math.round((i + 1) / languagesToTranslate.length * 100));
@@ -253,7 +253,7 @@ IMPORTANTE:
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">Lingue target:</span>
-            {LANGUAGES.map((lang) =>
+            {TRANSLATION_LANGUAGES.map((lang) =>
             <button
               key={lang.code}
               onClick={() => {
@@ -276,7 +276,7 @@ IMPORTANTE:
           </div>
         </div>
         <p className="text-sm text-gray-500 mt-2">
-          Gestisci le traduzioni degli articoli in 6 lingue. Gli articoli originali sono in italiano.
+          Gestisci le traduzioni degli articoli in 5 lingue. Gli articoli originali (italiano) non vengono tradotti.
         </p>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -321,7 +321,7 @@ IMPORTANTE:
                           </h3>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          {LANGUAGES.map((lang) =>
+                          {TRANSLATION_LANGUAGES.map((lang) =>
                         <span
                           key={lang.code}
                           className={`text-lg ${
@@ -334,9 +334,9 @@ IMPORTANTE:
                               {lang.flag}
                             </span>
                         )}
-                          <span className={`text-xs ml-2 ${translations.length > 6 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
-                            {getUniqueTranslationsCount(article.id)}/6 traduzioni
-                            {translations.length > 6 && ` (${translations.length - getUniqueTranslationsCount(article.id)} duplicati)`}
+                          <span className={`text-xs ml-2 ${translations.length > 5 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
+                            {getUniqueTranslationsCount(article.id)}/5 traduzioni
+                            {translations.length > 5 && ` (${translations.length - getUniqueTranslationsCount(article.id)} duplicati)`}
                           </span>
                         </div>
                       </div>
@@ -365,7 +365,7 @@ IMPORTANTE:
                           }}
                           size="sm" className="bg-slate-900 text-primary-foreground px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-8 hover:bg-[var(--brand-primary-hover)]"
 
-                          disabled={getUniqueTranslationsCount(article.id) >= 6}>
+                          disabled={getUniqueTranslationsCount(article.id) >= 5}>
 
                               <Languages className="w-4 h-4 mr-1" />
                               Traduci Tutte
