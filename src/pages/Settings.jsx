@@ -473,19 +473,11 @@ Be concise but detailed (max 200 words).`,
       // Effettua logout Base44
       await base44.auth.logout();
       
-      // Redirect manuale alla home nella lingua corretta
-      const homePages = {
-        'en': 'en',
-        'it': 'it',
-        'es': 'es',
-        'pt': 'pt',
-        'de': 'de',
-        'fr': 'fr'
-      };
-      window.location.href = window.location.origin + '/' + (homePages[language] || 'it');
+      // Redirect alla pagina di login
+      window.location.href = 'https://projectmywellness.com/login';
     } catch (error) {
       console.error("Errore durante il logout:", error);
-      window.location.href = window.location.origin;
+      window.location.href = 'https://projectmywellness.com/login';
     }
   };
 
