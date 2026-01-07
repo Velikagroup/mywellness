@@ -295,19 +295,6 @@ function HomeContent() {
     setShowQuizPopup(false);
   };
 
-  const handleLogin = async () => {
-    const quizPages = {
-      'en': 'enquiz',
-      'it': 'itquiz',
-      'es': 'esquiz',
-      'pt': 'ptquiz',
-      'de': 'dequiz',
-      'fr': 'frquiz'
-    };
-    const nextUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
-    base44.auth.redirectToLogin(nextUrl);
-  };
-
   return (
     <div className="min-h-screen animated-gradient-bg overflow-x-hidden">
       <style>{`
