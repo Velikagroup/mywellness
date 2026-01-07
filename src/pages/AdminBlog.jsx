@@ -8,7 +8,7 @@ import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { Plus, Trash2, Edit, Eye, EyeOff, Loader2, Check, Upload, Globe } from 'lucide-react';
+import { Plus, Trash2, Edit, Eye, EyeOff, Loader2, Check, Upload, Globe, CheckCircle } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
