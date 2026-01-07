@@ -74,6 +74,7 @@ export default function PricingPageContent() {
   const [userEmail, setUserEmail] = React.useState(null);
   const [pricingTracked, setPricingTracked] = React.useState(false);
   const [selectedPlan, setSelectedPlan] = React.useState(null);
+  const [user, setUser] = React.useState(null);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -87,6 +88,7 @@ export default function PricingPageContent() {
     const loadUser = async () => {
       try {
         const currentUser = await base44.auth.me();
+        setUser(currentUser);
         setUserEmail(currentUser.email);
         
         if (couponParam && currentUser.email) {
@@ -783,11 +785,19 @@ export default function PricingPageContent() {
               )}
             </div>
             
-            <button
-              onClick={handleLogin}
-              className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
-              {t('nav.login')}
-            </button>
+            {user ? (
+              <button
+                onClick={() => navigate(createPageUrl('Dashboard'))}
+                className="text-sm text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
+                Dashboard
+              </button>
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
+                {t('nav.login')}
+              </button>
+            )}
             
             <button
               onClick={() => navigate(createPageUrl(getQuizPageName(language)))}
@@ -873,15 +883,26 @@ export default function PricingPageContent() {
               </button>
               
               <div className="border-t border-gray-200/50 pt-3 mt-3">
-                <button
-                  onClick={() => {
-                    handleLogin();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                  {t('nav.login')}
-                </button>
-                <button
+                {user ? (
+                  <button
+                    onClick={() => {
+                      navigate(createPageUrl('Dashboard'));
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2">
+                    Dashboard
+                  </button>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        handleLogin();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
+                      {t('nav.login')}
+                    </button>
+                    <button
                   onClick={() => {
                     navigate(createPageUrl(getQuizPageName(language)));
                     setMobileMenuOpen(false);
@@ -889,6 +910,8 @@ export default function PricingPageContent() {
                   className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
                   {t('pricing.freeQuiz')}
                 </button>
+                  </>
+                )}
               </div>
             </div>
           </div>
