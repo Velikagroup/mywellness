@@ -127,6 +127,9 @@ export default function Dashboard() {
   }, [navigate]);
 
   useEffect(() => {
+    // Imposta il titolo della pagina
+    document.title = 'Dashboard | MyWellness';
+    
     loadUserData();
     
     // Genera remember me token dopo login
