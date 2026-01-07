@@ -253,21 +253,33 @@ export default function BlogPageContent() {
   const loadPosts = async () => {
     setIsLoading(true);
     try {
-      // Get all published posts
-      const allPosts = await base44.entities.BlogPost.filter({ published: true }, '-created_date', 200);
+      // Get all posts using list instead of filter
+      const allPosts = await base44.entities.BlogPost.list('-created_date', 200);
       
       console.log('🔍 Total posts from API:', allPosts.length);
-      console.log('🔍 First post structure:', allPosts[0]);
+      if (allPosts.length > 0) {
+        console.log('🔍 First post structure:', JSON.stringify(allPosts[0], null, 2));
+      }
       
-      // Normalize data structure and filter by language
-      const normalizedPosts = allPosts.map(p => {
-        const normalized = {
-          id: p.id,
-          ...(p.data || p)
-        };
-        console.log('✅ Normalized post:', { id: normalized.id, title: normalized.title, language: normalized.language });
-        return normalized;
-      });
+      // Normalize data structure and filter by language AND published
+      const normalizedPosts = allPosts
+        .filter(p => {
+          const postData = p.data || p;
+          return postData.published === true;
+        })
+        .map(p => {
+          const normalized = {
+            id: p.id,
+            ...(p.data || p)
+          };
+          console.log('✅ Normalized post:', { 
+            id: normalized.id, 
+            title: normalized.title, 
+            language: normalized.language,
+            published: normalized.published 
+          });
+          return normalized;
+        });
       
       console.log('🔍 Language filter:', language);
       
@@ -282,7 +294,7 @@ export default function BlogPageContent() {
       
       setPosts(filteredPosts);
     } catch (error) {
-      console.error('Error loading posts:', error);
+      console.error('❌ Error loading posts:', error);
       setPosts([]);
     }
     setIsLoading(false);
