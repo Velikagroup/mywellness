@@ -394,8 +394,8 @@ export default function PricingPageContent() {
   };
 
   const handleLogin = async () => {
-    const pricingUrl = window.location.origin + createPageUrl(getPricingPageName(language));
-    await base44.auth.redirectToLogin(pricingUrl);
+    const dashboardUrl = window.location.origin + createPageUrl('Dashboard');
+    await base44.auth.redirectToLogin(dashboardUrl);
   };
 
   const handleLanguageChange = (newLang) => {
