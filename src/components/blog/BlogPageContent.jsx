@@ -289,8 +289,13 @@ export default function BlogPageContent() {
       const publishedOnly = normalized.filter(p => p.published === true);
       console.log('📚 Published posts:', publishedOnly.length);
       
-      // All languages use the same logic: filter by language field
-      const filtered = publishedOnly.filter(p => p.language === language);
+      // Special handling for Italian - show both language='it' AND originals without language
+      const filtered = language === 'it' 
+        ? publishedOnly.filter(p => 
+            p.language === 'it' || 
+            (!p.language && !p.original_article_id)
+          )
+        : publishedOnly.filter(p => p.language === language);
       
       console.log('✅ FINAL filtered posts for', language, ':', filtered.length);
       
