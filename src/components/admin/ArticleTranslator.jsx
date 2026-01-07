@@ -7,12 +7,13 @@ import { Progress } from '@/components/ui/progress';
 import { Loader2, Languages, Check, X, Globe, ChevronDown, ChevronUp, Trash2 } from 'lucide-react';
 
 const LANGUAGES = [
-{ code: 'it', name: 'Italiano', flag: '🇮🇹' },
-{ code: 'en', name: 'English', flag: '🇬🇧' },
-{ code: 'es', name: 'Español', flag: '🇪🇸' },
-{ code: 'pt', name: 'Português', flag: '🇧🇷' },
-{ code: 'de', name: 'Deutsch', flag: '🇩🇪' },
-{ code: 'fr', name: 'Français', flag: '🇫🇷' }];
+  { code: 'it', name: 'Italiano', flag: '🇮🇹' },
+  { code: 'en', name: 'English', flag: '🇬🇧' },
+  { code: 'es', name: 'Español', flag: '🇪🇸' },
+  { code: 'pt', name: 'Português', flag: '🇧🇷' },
+  { code: 'de', name: 'Deutsch', flag: '🇩🇪' },
+  { code: 'fr', name: 'Français', flag: '🇫🇷' }
+];
 
 
 export default function ArticleTranslator({ posts, onRefresh }) {
@@ -20,7 +21,7 @@ export default function ArticleTranslator({ posts, onRefresh }) {
   const [translatingArticle, setTranslatingArticle] = useState(null);
   const [translationProgress, setTranslationProgress] = useState(0);
   const [translationStatus, setTranslationStatus] = useState('');
-  const [selectedLanguages, setSelectedLanguages] = useState(['en', 'es', 'pt', 'de', 'fr']);
+  const [selectedLanguages, setSelectedLanguages] = useState(['it', 'en', 'es', 'pt', 'de', 'fr']);
   const [searchQuery, setSearchQuery] = useState('');
 
   // Get only Italian articles (original articles)
@@ -161,7 +162,7 @@ IMPORTANTE:
   const translateToAllLanguages = async (article) => {
     const existingTranslations = getTranslatedLanguages(article.id);
     const languagesToTranslate = selectedLanguages.filter(
-      (lang) => !existingTranslations.includes(lang) && lang !== 'it'
+      (lang) => !existingTranslations.includes(lang)
     );
 
     if (languagesToTranslate.length === 0) {
@@ -246,7 +247,7 @@ IMPORTANTE:
           </div>
           <div className="flex items-center gap-2">
             <span className="text-sm text-gray-500">Lingue target:</span>
-            {LANGUAGES.filter((l) => l.code !== 'it').map((lang) =>
+            {LANGUAGES.map((lang) =>
             <button
               key={lang.code}
               onClick={() => {
@@ -314,7 +315,7 @@ IMPORTANTE:
                           </h3>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          {LANGUAGES.filter((l) => l.code !== 'it').map((lang) =>
+                          {LANGUAGES.map((lang) =>
                         <span
                           key={lang.code}
                           className={`text-lg ${
@@ -327,9 +328,9 @@ IMPORTANTE:
                               {lang.flag}
                             </span>
                         )}
-                          <span className={`text-xs ml-2 ${translations.length > 5 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
-                            {getUniqueTranslationsCount(article.id)}/5 traduzioni
-                            {translations.length > 5 && ` (${translations.length - getUniqueTranslationsCount(article.id)} duplicati)`}
+                          <span className={`text-xs ml-2 ${translations.length > 6 ? 'text-red-500 font-bold' : 'text-gray-500'}`}>
+                            {getUniqueTranslationsCount(article.id)}/6 traduzioni
+                            {translations.length > 6 && ` (${translations.length - getUniqueTranslationsCount(article.id)} duplicati)`}
                           </span>
                         </div>
                       </div>
@@ -358,7 +359,7 @@ IMPORTANTE:
                           }}
                           size="sm" className="bg-slate-900 text-primary-foreground px-3 text-xs font-medium rounded-md inline-flex items-center justify-center gap-2 whitespace-nowrap transition-colors focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 shadow h-8 hover:bg-[var(--brand-primary-hover)]"
 
-                          disabled={getUniqueTranslationsCount(article.id) >= 5}>
+                          disabled={getUniqueTranslationsCount(article.id) >= 6}>
 
                               <Languages className="w-4 h-4 mr-1" />
                               Traduci Tutte
@@ -386,8 +387,8 @@ IMPORTANTE:
                   {isExpanded && !isTranslating &&
                 <div className="border-t bg-gray-50/50 p-4">
                       <p className="text-sm font-medium text-gray-700 mb-3">Gestione Traduzioni:</p>
-                      <div className="grid grid-cols-1 md:grid-cols-5 gap-3">
-                        {LANGUAGES.filter((l) => l.code !== 'it').map((lang) => {
+                      <div className="grid grid-cols-1 md:grid-cols-6 gap-3">
+                        {LANGUAGES.map((lang) => {
                       const translation = translations.find((t) => t.language === lang.code);
                       const hasTranslation = !!translation;
 
