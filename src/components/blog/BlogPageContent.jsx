@@ -300,13 +300,25 @@ export default function BlogPageContent() {
       const publishedOnly = normalized.filter(p => p.published === true);
       console.log('📚 Published posts:', publishedOnly.length);
       
-      // Special handling for Italian - show both language='it' AND originals without language
-      const filtered = language === 'it' 
-        ? publishedOnly.filter(p => 
-            p.language === 'it' || 
-            (!p.language && !p.original_article_id)
-          )
-        : publishedOnly.filter(p => p.language === language);
+      // Debug language values
+      publishedOnly.forEach(p => {
+        console.log('📋 Post language check:', {
+          title: p.title,
+          language: p.language,
+          languageMatch: p.language === language,
+          isOriginal: !p.original_article_id
+        });
+      });
+      
+      // Show all posts for the current language
+      const filtered = publishedOnly.filter(p => p.language === language);
+      
+      // For Italian, also include originals without explicit language
+      if (language === 'it') {
+        const italianOriginals = publishedOnly.filter(p => !p.language && !p.original_article_id);
+        console.log('🇮🇹 Adding Italian originals:', italianOriginals.length);
+        filtered.push(...italianOriginals);
+      }
       
       console.log('✅ FINAL filtered posts for', language, ':', filtered.length);
       
