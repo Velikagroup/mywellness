@@ -56,6 +56,21 @@ function HomeContent() {
   const [liveStats, setLiveStats] = useState({ users: 0, totalKg: 0 });
   const [isLoading, setIsLoading] = useState(false);
   const [showQuizPopup, setShowQuizPopup] = useState(false);
+  const [user, setUser] = useState(null);
+
+  useEffect(() => {
+    // Carica l'utente corrente per verificare se è loggato
+    const loadCurrentUser = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+      } catch (error) {
+        // User not logged in
+        setUser(null);
+      }
+    };
+    loadCurrentUser();
+  }, []);
 
   useEffect(() => {
     window.scrollTo(0, 0);
@@ -538,11 +553,19 @@ function HomeContent() {
               )}
             </div>
             
-            <button
-              onClick={handleLogin}
-              className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
-              {t('nav.login')}
-            </button>
+            {user ? (
+              <button
+                onClick={() => navigate(createPageUrl('Dashboard'))}
+                className="text-sm text-white bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] h-auto py-2 px-4 font-semibold whitespace-nowrap rounded-full transition-colors">
+                Dashboard
+              </button>
+            ) : (
+              <button
+                onClick={handleLogin}
+                className="text-sm text-gray-600 hover:text-gray-900 hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
+                {t('nav.login')}
+              </button>
+            )}
             
             {showNavQuizButton &&
             <Button
@@ -647,20 +670,33 @@ function HomeContent() {
               </button>
 
               <div className="border-t border-gray-200/50 pt-3 mt-3">
-                <button
-                  onClick={() => {
-                    handleLogin();
-                    setMobileMenuOpen(false);
-                  }}
-                  className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
-                  {t('nav.login')}
-                </button>
-                <Button
-                  onClick={handleGetStarted}
-                  disabled={isLoading}
-                  className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
-                  {t('home.freeQuiz')}
-                </Button>
+                {user ? (
+                  <Button
+                    onClick={() => {
+                      navigate(createPageUrl('Dashboard'));
+                      setMobileMenuOpen(false);
+                    }}
+                    className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2">
+                    Dashboard
+                  </Button>
+                ) : (
+                  <>
+                    <button
+                      onClick={() => {
+                        handleLogin();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="block w-full text-left text-base text-gray-700 hover:text-gray-900 font-semibold py-2">
+                      {t('nav.login')}
+                    </button>
+                    <Button
+                      onClick={handleGetStarted}
+                      disabled={isLoading}
+                      className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white text-base font-medium rounded-full py-2 mt-2">
+                      {t('home.freeQuiz')}
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>
