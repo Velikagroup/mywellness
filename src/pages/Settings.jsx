@@ -3,7 +3,7 @@ import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Preferences } from '@capacitor/preferences';
+import { rememberMeManager } from '../components/utils/rememberMeManager';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -467,16 +467,8 @@ Be concise but detailed (max 200 words).`,
 
   const handleLogout = async () => {
     try {
-      // Pulisci Preferences e localStorage PRIMA del logout
-      try {
-        await Preferences.remove({ key: 'mw_has_session' });
-        await Preferences.remove({ key: 'mw_user_id' });
-      } catch {}
-      
-      try {
-        localStorage.removeItem('user_authenticated');
-        localStorage.removeItem('user_id');
-      } catch {}
+      // Pulisci remember me token
+      rememberMeManager.clearToken();
       
       // Effettua logout Base44
       await base44.auth.logout();

@@ -26,6 +26,7 @@ import OnboardingTour from "../components/onboarding/OnboardingTour";
 import CalorieMeter from "../components/dashboard/CalorieMeter";
 import NutritionUnlockPrompt from "../components/dashboard/NutritionUnlockPrompt";
 import { useLanguage } from "../components/i18n/LanguageContext";
+import { rememberMeManager } from "../components/utils/rememberMeManager";
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -127,6 +128,19 @@ export default function Dashboard() {
 
   useEffect(() => {
     loadUserData();
+    
+    // Genera remember me token dopo login
+    const generateToken = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        if (currentUser) {
+          await rememberMeManager.saveToken();
+        }
+      } catch (error) {
+        console.log('Could not generate remember me token:', error);
+      }
+    };
+    generateToken();
   }, [loadUserData]);
 
   // Carica le foto progresso quando l'utente è disponibile
