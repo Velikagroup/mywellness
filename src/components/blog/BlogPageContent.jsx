@@ -267,13 +267,15 @@ export default function BlogPageContent() {
       }
       
       // Log first few posts to see structure
-      allPosts.slice(0, 3).forEach((post, idx) => {
+      allPosts.slice(0, 5).forEach((post, idx) => {
+        const lang = post.data?.language || post.language;
         console.log(`📄 Post ${idx + 1}:`, {
           id: post.id,
-          hasData: !!post.data,
-          language: post.data?.language || post.language,
-          published: post.data?.published || post.published,
-          title: post.data?.title || post.title
+          title: post.data?.title || post.title,
+          language: lang,
+          languageType: typeof lang,
+          languageValue: JSON.stringify(lang),
+          published: post.data?.published || post.published
         });
       });
       
