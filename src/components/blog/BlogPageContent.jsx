@@ -657,38 +657,41 @@ export default function BlogPageContent() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {filteredPosts.map((post) => (
-                <article
-                  key={post.id}
-                  onClick={() => handleArticleClick(post)}
-                  className="water-glass-effect rounded-2xl overflow-hidden border border-white/40 hover:border-white/60 transition-all hover:shadow-xl cursor-pointer group"
-                >
-                  <div className="p-6">
-                    <div className="flex items-center gap-2 mb-4">
-                      <span className="px-3 py-1 bg-[var(--brand-primary-light)] text-[var(--brand-primary)] rounded-full text-xs font-semibold">
-                        {t.categories[post.category] || post.category}
-                      </span>
-                      <span className="flex items-center gap-1 text-xs text-gray-500">
-                        <Clock className="w-3 h-3" />
-                        {post.reading_time} {t.minRead}
-                      </span>
+              {filteredPosts.map((post) => {
+                const postData = post.data || post;
+                return (
+                  <article
+                    key={post.id}
+                    onClick={() => handleArticleClick(postData)}
+                    className="water-glass-effect rounded-2xl overflow-hidden border border-white/40 hover:border-white/60 transition-all hover:shadow-xl cursor-pointer group"
+                  >
+                    <div className="p-6">
+                      <div className="flex items-center gap-2 mb-4">
+                        <span className="px-3 py-1 bg-[var(--brand-primary-light)] text-[var(--brand-primary)] rounded-full text-xs font-semibold">
+                          {t.categories[postData.category] || postData.category}
+                        </span>
+                        <span className="flex items-center gap-1 text-xs text-gray-500">
+                          <Clock className="w-3 h-3" />
+                          {postData.reading_time} {t.minRead}
+                        </span>
+                      </div>
+                      
+                      <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[var(--brand-primary)] transition-colors line-clamp-2">
+                        {postData.title}
+                      </h2>
+                      
+                      <p className="text-gray-600 text-sm mb-4 line-clamp-3">
+                        {postData.meta_description}
+                      </p>
+                      
+                      <div className="flex items-center text-[var(--brand-primary)] font-semibold text-sm group-hover:gap-2 transition-all">
+                        {t.readMore}
+                        <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
+                      </div>
                     </div>
-                    
-                    <h2 className="text-xl font-bold text-gray-900 mb-3 group-hover:text-[var(--brand-primary)] transition-colors line-clamp-2">
-                      {post.title}
-                    </h2>
-                    
-                    <p className="text-gray-600 text-sm mb-4 line-clamp-3">
-                      {post.meta_description}
-                    </p>
-                    
-                    <div className="flex items-center text-[var(--brand-primary)] font-semibold text-sm group-hover:gap-2 transition-all">
-                      {t.readMore}
-                      <ArrowRight className="w-4 h-4 ml-1 group-hover:translate-x-1 transition-transform" />
-                    </div>
-                  </div>
-                </article>
-              ))}
+                  </article>
+                );
+              })}
             </div>
           )}
         </div>
