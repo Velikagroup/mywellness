@@ -556,7 +556,7 @@ function HomeContent() {
             {user ? (
               <button
                 onClick={() => navigate(createPageUrl('Dashboard'))}
-                className="text-sm text-white bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] h-auto py-2 px-4 font-semibold whitespace-nowrap rounded-full transition-colors">
+                className="text-sm text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
                 Dashboard
               </button>
             ) : (
