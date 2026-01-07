@@ -256,12 +256,18 @@ export default function BlogPageContent() {
       // Get all published posts
       const allPosts = await base44.entities.BlogPost.filter({ published: true }, '-created_date', 200);
       
-      // Filter by language - for Italian, include posts without language field (legacy)
+      // Filter by language - access nested data property
       let filteredPosts;
       if (language === 'it') {
-        filteredPosts = allPosts.filter(p => !p.language || p.language === 'it');
+        filteredPosts = allPosts.filter(p => {
+          const lang = p.data?.language || p.language;
+          return !lang || lang === 'it';
+        });
       } else {
-        filteredPosts = allPosts.filter(p => p.language === language);
+        filteredPosts = allPosts.filter(p => {
+          const lang = p.data?.language || p.language;
+          return lang === language;
+        });
       }
       
       setPosts(filteredPosts);
