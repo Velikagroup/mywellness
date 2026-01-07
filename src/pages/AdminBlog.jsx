@@ -225,6 +225,30 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
     setIsLoading(false);
   };
 
+  const fixItalianLanguage = async () => {
+    if (!confirm('Vuoi impostare language="it" su tutti gli articoli originali italiani?')) {
+      return;
+    }
+    
+    setIsLoading(true);
+    const italianOriginals = posts.filter(p => !p.original_article_id && (!p.language || p.language === 'it'));
+    
+    console.log(`Trovati ${italianOriginals.length} articoli originali da aggiornare`);
+    
+    for (const post of italianOriginals) {
+      try {
+        await base44.entities.BlogPost.update(post.id, { language: 'it' });
+        console.log(`Aggiornato: ${post.title}`);
+      } catch (error) {
+        console.error(`Errore aggiornamento ${post.title}:`, error);
+      }
+    }
+    
+    alert(`✅ Aggiornati ${italianOriginals.length} articoli con language="it"!`);
+    await loadPosts();
+    setIsLoading(false);
+  };
+
   const handleEditPost = (post) => {
     setEditingPost(post);
   };
@@ -298,6 +322,10 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
             <p className="text-gray-600">Gestisci articoli e traduzioni del blog</p>
           </div>
           <div className="flex gap-3">
+            <Button onClick={fixItalianLanguage} variant="outline" className="text-green-600 hover:bg-green-50">
+              <CheckCircle className="w-4 h-4 mr-2" />
+              Fix Language IT
+            </Button>
             <Button onClick={deleteItalianDuplicates} variant="outline" className="text-red-600 hover:bg-red-50">
               <Trash2 className="w-4 h-4 mr-2" />
               Elimina Duplicati IT
