@@ -289,9 +289,19 @@ export default function BlogPageContent() {
       const publishedOnly = normalized.filter(p => p.published === true);
       console.log('📚 Published posts:', publishedOnly.length);
       
+      // Count posts by language
+      const langCounts = {};
+      publishedOnly.forEach(p => {
+        const lang = p.language || 'no-lang';
+        langCounts[lang] = (langCounts[lang] || 0) + 1;
+      });
+      console.log('📊 Posts by language:', langCounts);
+      
       let filtered;
       if (language === 'it') {
         filtered = publishedOnly.filter(p => !p.language || p.language === 'it');
+        console.log('🇮🇹 Italian filter: posts without language =', publishedOnly.filter(p => !p.language).length);
+        console.log('🇮🇹 Italian filter: posts with language=it =', publishedOnly.filter(p => p.language === 'it').length);
       } else {
         filtered = publishedOnly.filter(p => p.language === language);
       }
