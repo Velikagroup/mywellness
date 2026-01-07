@@ -289,10 +289,22 @@ export default function BlogPageContent() {
       const publishedOnly = normalized.filter(p => p.published === true);
       console.log('📚 Published posts:', publishedOnly.length);
       
+      // Check original_article_id values
+      const originals = publishedOnly.filter(p => !p.original_article_id || p.original_article_id === '');
+      console.log('📄 Original articles (no original_article_id):', originals.length);
+      if (originals.length > 0) {
+        console.log('📄 First 3 originals:', originals.slice(0, 3).map(p => ({
+          id: p.id,
+          title: p.title,
+          original_article_id: p.original_article_id,
+          language: p.language
+        })));
+      }
+      
       let filtered;
       if (language === 'it') {
-        // Italian = original articles (without original_article_id)
-        filtered = publishedOnly.filter(p => !p.original_article_id);
+        // Italian = original articles (without original_article_id or empty string)
+        filtered = publishedOnly.filter(p => !p.original_article_id || p.original_article_id === '');
       } else {
         // Other languages = translations with matching language field
         filtered = publishedOnly.filter(p => p.language === language);
