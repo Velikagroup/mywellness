@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -459,16 +458,32 @@ export default function Landing() {
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
-            className="h-5 flex-shrink-0"
+            className="h-5 flex-shrink-0 cursor-pointer"
+            onClick={() => navigate(createPageUrl('Home'))}
           />
+          {user && (
+            <button
+              onClick={() => navigate(createPageUrl('Dashboard'))}
+              className="text-sm text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] hover:bg-white/50 h-auto py-2 px-3 font-semibold whitespace-nowrap rounded-full transition-colors">
+              Dashboard
+            </button>
+          )}
         </div>
         
-        <div className="md:hidden water-glass-effect rounded-full px-6 py-3">
+        <div className="md:hidden water-glass-effect rounded-full px-6 py-3 flex items-center justify-between">
           <img
             src="https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/c3567e77e_MyWellnesslogo.png"
             alt="MyWellness"
-            className="h-6"
+            className="h-6 cursor-pointer"
+            onClick={() => navigate(createPageUrl('Home'))}
           />
+          {user && (
+            <button
+              onClick={() => navigate(createPageUrl('Dashboard'))}
+              className="text-sm text-[var(--brand-primary)] hover:text-[var(--brand-primary-hover)] font-semibold whitespace-nowrap transition-colors">
+              Dashboard
+            </button>
+          )}
         </div>
       </nav>
 
