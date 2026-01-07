@@ -5,7 +5,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
-import { Preferences } from '@capacitor/preferences';
+import { rememberMeManager } from '../components/utils/rememberMeManager';
 import {
   Sparkles,
   Target,
@@ -59,6 +59,28 @@ function HomeContent() {
 
   useEffect(() => {
     window.scrollTo(0, 0);
+
+    // Verifica remember me token all'avvio
+    const checkRememberMe = async () => {
+      const result = await rememberMeManager.checkToken();
+      if (result.valid) {
+        console.log('✅ Auto-login con remember me token');
+        // Token valido, l'utente è già loggato via Base44
+        // Naviga alla dashboard se ha completato quiz e ha subscription
+        try {
+          const currentUser = await base44.auth.me();
+          if (currentUser && currentUser.quiz_completed && 
+              (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial')) {
+            navigate(createPageUrl('Dashboard'), { replace: true });
+            return;
+          }
+        } catch (error) {
+          console.log('User not fully authenticated yet');
+        }
+      }
+    };
+
+    checkRememberMe();
 
     // Cattura codice affiliato dall'URL
     const urlParams = new URLSearchParams(window.location.search);
@@ -239,6 +261,19 @@ function HomeContent() {
       navigate(createPageUrl(quizPages[language] || 'Quiz'));
     }
     setIsLoading(false);
+  };
+
+  const handleLogin = async () => {
+    const quizPages = {
+      'en': 'enquiz',
+      'it': 'itquiz',
+      'es': 'esquiz',
+      'pt': 'ptquiz',
+      'de': 'dequiz',
+      'fr': 'frquiz'
+    };
+    const nextUrl = window.location.origin + createPageUrl(quizPages[language] || 'Quiz');
+    base44.auth.redirectToLogin(nextUrl);
   };
 
   const handleQuizPopupStart = (gender) => {
