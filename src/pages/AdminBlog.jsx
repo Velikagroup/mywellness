@@ -201,6 +201,30 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
     }
   };
 
+  const deleteItalianDuplicates = async () => {
+    if (!confirm('Vuoi eliminare tutte le traduzioni italiane duplicate? (articoli con language=it E original_article_id)')) {
+      return;
+    }
+    
+    setIsLoading(true);
+    const italianDuplicates = posts.filter(p => p.language === 'it' && p.original_article_id);
+    
+    console.log(`Trovati ${italianDuplicates.length} duplicati italiani da eliminare`);
+    
+    for (const post of italianDuplicates) {
+      try {
+        await base44.entities.BlogPost.delete(post.id);
+        console.log(`Eliminato: ${post.title}`);
+      } catch (error) {
+        console.error(`Errore eliminazione ${post.title}:`, error);
+      }
+    }
+    
+    alert(`✅ Eliminati ${italianDuplicates.length} duplicati italiani!`);
+    await loadPosts();
+    setIsLoading(false);
+  };
+
   const handleEditPost = (post) => {
     setEditingPost(post);
   };
@@ -274,6 +298,10 @@ IMPORTANTE: Il contenuto deve essere UNICO, ORIGINALE e di ALTA QUALITÀ.`;
             <p className="text-gray-600">Gestisci articoli e traduzioni del blog</p>
           </div>
           <div className="flex gap-3">
+            <Button onClick={deleteItalianDuplicates} variant="outline" className="text-red-600 hover:bg-red-50">
+              <Trash2 className="w-4 h-4 mr-2" />
+              Elimina Duplicati IT
+            </Button>
             <Button onClick={() => navigate(createPageUrl('itblog'))} variant="outline">
               <Eye className="w-4 h-4 mr-2" />
               Vedi Blog IT
