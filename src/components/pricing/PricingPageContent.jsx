@@ -394,8 +394,8 @@ export default function PricingPageContent() {
   };
 
   const handleLogin = async () => {
-    const checkoutUrl = window.location.origin + createPageUrl('Checkout') + '?plan=base';
-    await base44.auth.redirectToLogin(checkoutUrl);
+    const pricingUrl = window.location.origin + createPageUrl(getPricingPageName(language));
+    await base44.auth.redirectToLogin(pricingUrl);
   };
 
   const handleLanguageChange = (newLang) => {
