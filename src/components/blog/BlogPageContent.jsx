@@ -256,11 +256,20 @@ export default function BlogPageContent() {
       // Get all published posts
       const allPosts = await base44.entities.BlogPost.filter({ published: true }, '-created_date', 200);
       
+      console.log('🔍 Total posts from API:', allPosts.length);
+      console.log('🔍 First post structure:', allPosts[0]);
+      
       // Normalize data structure and filter by language
-      const normalizedPosts = allPosts.map(p => ({
-        id: p.id,
-        ...(p.data || p)
-      }));
+      const normalizedPosts = allPosts.map(p => {
+        const normalized = {
+          id: p.id,
+          ...(p.data || p)
+        };
+        console.log('✅ Normalized post:', { id: normalized.id, title: normalized.title, language: normalized.language });
+        return normalized;
+      });
+      
+      console.log('🔍 Language filter:', language);
       
       let filteredPosts;
       if (language === 'it') {
@@ -268,6 +277,8 @@ export default function BlogPageContent() {
       } else {
         filteredPosts = normalizedPosts.filter(p => p.language === language);
       }
+      
+      console.log('✅ Filtered posts count:', filteredPosts.length);
       
       setPosts(filteredPosts);
     } catch (error) {
