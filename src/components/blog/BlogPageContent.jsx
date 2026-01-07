@@ -256,18 +256,17 @@ export default function BlogPageContent() {
       // Get all published posts
       const allPosts = await base44.entities.BlogPost.filter({ published: true }, '-created_date', 200);
       
-      // Filter by language - access nested data property
+      // Normalize data structure and filter by language
+      const normalizedPosts = allPosts.map(p => ({
+        id: p.id,
+        ...(p.data || p)
+      }));
+      
       let filteredPosts;
       if (language === 'it') {
-        filteredPosts = allPosts.filter(p => {
-          const lang = p.data?.language || p.language;
-          return !lang || lang === 'it';
-        });
+        filteredPosts = normalizedPosts.filter(p => !p.language || p.language === 'it');
       } else {
-        filteredPosts = allPosts.filter(p => {
-          const lang = p.data?.language || p.language;
-          return lang === language;
-        });
+        filteredPosts = normalizedPosts.filter(p => p.language === language);
       }
       
       setPosts(filteredPosts);
