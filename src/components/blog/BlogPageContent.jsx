@@ -279,9 +279,10 @@ export default function BlogPageContent() {
   };
 
   const filteredPosts = posts.filter(post => {
-    const matchesSearch = post.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          post.meta_description?.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = selectedCategory === 'all' || post.category === selectedCategory;
+    const postData = post.data || post;
+    const matchesSearch = postData.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          postData.meta_description?.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCategory = selectedCategory === 'all' || postData.category === selectedCategory;
     return matchesSearch && matchesCategory;
   });
 
