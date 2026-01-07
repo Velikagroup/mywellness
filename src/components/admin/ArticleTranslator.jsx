@@ -161,8 +161,16 @@ IMPORTANTE:
 
   const translateToAllLanguages = async (article) => {
     const existingTranslations = getTranslatedLanguages(article.id);
+    const isItalianOriginal = !article.language || article.language === 'it';
+    
     const languagesToTranslate = selectedLanguages.filter(
-      (lang) => !existingTranslations.includes(lang)
+      (lang) => {
+        // Skip if already translated
+        if (existingTranslations.includes(lang)) return false;
+        // Skip Italian if this is an Italian original
+        if (isItalianOriginal && lang === 'it') return false;
+        return true;
+      }
     );
 
     if (languagesToTranslate.length === 0) {
@@ -201,6 +209,12 @@ IMPORTANTE:
   };
 
   const translateSingleLanguage = async (article, targetLang) => {
+    const isItalianOriginal = !article.language || article.language === 'it';
+    if (isItalianOriginal && targetLang === 'it') {
+      alert('Non puoi tradurre in italiano un articolo già in italiano!');
+      return;
+    }
+    
     setTranslatingArticle(article.id);
     setTranslationStatus(`Traduzione in ${LANGUAGES.find((l) => l.code === targetLang)?.name}...`);
     setTranslationProgress(50);
@@ -391,6 +405,8 @@ IMPORTANTE:
                         {LANGUAGES.map((lang) => {
                       const translation = translations.find((t) => t.language === lang.code);
                       const hasTranslation = !!translation;
+                      const isItalianOriginal = !article.language || article.language === 'it';
+                      const skipItalian = isItalianOriginal && lang.code === 'it';
 
                       return (
                         <div
@@ -411,7 +427,9 @@ IMPORTANTE:
                               </div>
                               <p className="text-xs font-medium text-gray-700">{lang.name}</p>
                               
-                              {hasTranslation ?
+                              {skipItalian ? (
+                                <p className="text-xs text-gray-500 mt-2">Originale</p>
+                              ) : hasTranslation ?
                           <div className="mt-2 space-y-1">
                                   <Button
                               onClick={() => window.open(`/${lang.code}blog/${translation.slug}`, '_blank')}
