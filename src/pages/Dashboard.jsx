@@ -61,6 +61,7 @@ export default function Dashboard() {
   const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState('base');
   const [checkoutBilling, setCheckoutBilling] = useState('monthly');
+  const [isRedirecting, setIsRedirecting] = useState(false);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -116,8 +117,11 @@ export default function Dashboard() {
       console.log('✅ Dashboard data updated');
 
     } catch (error) {
-      if (error?.response?.status === 401 || error?.message?.includes('401')) {
-        console.warn("Authentication error (401), redirecting to Login.");
+      if (error?.response?.status === 401 || 
+          error?.message?.includes('401') || 
+          error?.message?.includes('Authentication required')) {
+        console.warn("Authentication error, redirecting to Login.");
+        setIsRedirecting(true);
         const dashboardUrl = window.location.origin + createPageUrl('Dashboard');
         base44.auth.redirectToLogin(dashboardUrl);
         return;
@@ -546,7 +550,7 @@ export default function Dashboard() {
     navigate(createPageUrl("Quiz") + "?mode=recap&from=dashboard");
   };
 
-  if (isLoading || isRebalancing) {
+  if (isLoading || isRebalancing || isRedirecting || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{
         background: '#f9fafb',
@@ -563,7 +567,7 @@ export default function Dashboard() {
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#26847F]"></div>
           <p className="text-gray-600 font-medium">
-            {isRebalancing ? t('common.loading') : t('common.loading')}
+            {isRedirecting ? 'Reindirizzamento...' : (isRebalancing ? t('common.loading') : t('common.loading'))}
           </p>
         </div>
       </div>
