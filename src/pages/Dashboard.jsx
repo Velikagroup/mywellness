@@ -117,8 +117,10 @@ export default function Dashboard() {
 
     } catch (error) {
       if (error?.response?.status === 401 || error?.message?.includes('401')) {
-        console.warn("Authentication error (401), redirecting to Home.");
-        navigate(createPageUrl('Home'));
+        console.warn("Authentication error (401), redirecting to Login.");
+        const dashboardUrl = window.location.origin + createPageUrl('Dashboard');
+        base44.auth.redirectToLogin(dashboardUrl);
+        return;
       } else {
         console.error("Errore nel caricamento dati:", error);
       }
