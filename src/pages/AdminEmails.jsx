@@ -1464,6 +1464,7 @@ ${footerQuote ? `<p style="color: #6b7280; text-align: center; font-size: 13px; 
       icon: Shield,
       color: 'blue',
       emails: [
+        { id: `set_password_${selectedLanguage}`, name: 'Imposta Password (Google OAuth)', trigger: 'Utente Google richiede password', function: 'sendSetPasswordEmail' },
         { id: `password_reset_confirmed_${selectedLanguage}`, name: 'Password Reset Completato', trigger: 'Reset password completato', function: 'sendPasswordResetConfirmed' },
         { id: `plan_upgrade_${selectedLanguage}`, name: 'Upgrade Piano', trigger: 'Cambio piano a tier superiore', function: 'sendPlanChange' },
         { id: `plan_downgrade_${selectedLanguage}`, name: 'Downgrade Piano', trigger: 'Cambio piano a tier inferiore', function: 'sendPlanChange' },

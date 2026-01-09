@@ -702,14 +702,36 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
-            {!user?.email?.includes('@') || !user?.email?.includes('google') ? (
-              <Card className="bg-blue-50 border-blue-200">
-                <CardContent className="pt-6">
-                  <div className="flex items-center gap-3">
-                    <CheckCircle className="w-5 h-5 text-blue-600" />
-                    <p className="text-blue-900">
-                      {t('settings.googleOAuth')}
+            {user?.sso_provider === 'google' ? (
+              <Card className="water-glass-effect border-gray-200/30">
+                <CardHeader>
+                  <CardTitle>Imposta Password</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <div className="flex items-center gap-3 mb-3">
+                      <CheckCircle className="w-5 h-5 text-blue-600" />
+                      <p className="text-sm font-semibold text-blue-900">
+                        Accesso attuale: Google OAuth
+                      </p>
+                    </div>
+                    <p className="text-sm text-blue-800 mb-3">
+                      Vuoi accedere anche con email e password? (Utile per app mobile iOS)
                     </p>
+                    <Button
+                      onClick={async () => {
+                        try {
+                          await base44.functions.invoke('sendSetPasswordEmail');
+                          alert('✅ Email inviata! Controlla la tua casella e clicca sul link per impostare la password.');
+                        } catch (error) {
+                          console.error('Error sending password setup email:', error);
+                          alert('❌ Errore durante l\'invio dell\'email');
+                        }
+                      }}
+                      className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                    >
+                      📧 Invia Email per Impostare Password
+                    </Button>
                   </div>
                 </CardContent>
               </Card>
