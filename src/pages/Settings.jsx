@@ -731,7 +731,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   onClick={async () => {
                     try {
                       setIsUpdatingPassword(true);
-                      await base44.functions.invoke('sendSetPasswordEmail');
+                      await base44.functions.invoke('requestPasswordSetup');
                       alert('✅ Email inviata! Controlla la tua casella di posta e clicca sul link per impostare la password.');
                     } catch (error) {
                       console.error('Error sending email:', error);
