@@ -212,38 +212,51 @@ export default function CalorieBalanceChart({ user }) {
               <ArrowUp className={data.isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
               Calorie Assunte
             </span>
-            <span className={data.isWeightLoss ? "font-bold text-red-600" : "font-bold text-green-600"}>{data.consumedCalories} / {data.plannedCalories} kcal</span>
+            <span className={data.isWeightLoss ? "font-bold text-red-600" : "font-bold text-green-600"}>{data.consumedCalories} kcal</span>
           </div>
           <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className={`h-full transition-all ${consumedPercent > 100 ? 'bg-red-500' : (data.isWeightLoss ? 'bg-red-500' : 'bg-green-500')}`}
-              style={{ width: `${Math.min(consumedPercent, 100)}%` }}
+              className={`h-full transition-all ${data.isWeightLoss ? 'bg-red-500' : 'bg-green-500'}`}
+              style={{ width: `${(data.consumedCalories / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
             />
           </div>
         </div>
 
-        {/* Progress Bar Calorie Bruciate */}
+        {/* Progress Bar BMR */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
               <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
-              Calorie Bruciate
+              BMR (Metabolismo Basale)
             </span>
-            <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.totalBurned} kcal</span>
+            <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.bmr} kcal</span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden flex">
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
             <div 
               className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
-              style={{ width: `${(data.bmr / data.totalBurned) * 100}%` }}
-              title={`BMR: ${data.bmr} kcal`}
-            />
-            <div 
-              className={data.isWeightLoss ? "h-full bg-green-400" : "h-full bg-red-400"}
-              style={{ width: `${(data.neat / data.totalBurned) * 100}%` }}
-              title={`NEAT: ${data.neat} kcal`}
+              style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
             />
           </div>
-          <div className="grid grid-cols-2 gap-3 mt-3">
+        </div>
+
+        {/* Progress Bar NEAT */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium text-gray-700 flex items-center gap-2">
+              <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-400" : "w-4 h-4 text-red-400"} />
+              NEAT (Attività)
+            </span>
+            <span className={data.isWeightLoss ? "font-bold text-green-400" : "font-bold text-red-400"}>{data.neat} kcal</span>
+          </div>
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className={data.isWeightLoss ? "h-full bg-green-400" : "h-full bg-red-400"}
+              style={{ width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 mt-3">
             <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
               <p className="text-xs text-gray-600 mb-1">Metabolismo Basale</p>
               <p className="text-lg font-bold text-amber-700">{data.bmr} kcal</p>
