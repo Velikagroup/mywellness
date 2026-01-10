@@ -214,11 +214,12 @@ export default function CalorieBalanceChart({ user }) {
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.consumedCalories} / {data.plannedCalories} kcal</span>
           </div>
-          <Progress 
-            value={consumedPercent} 
-            className="h-3 bg-gray-200"
-            indicatorClassName={consumedPercent > 100 ? 'bg-red-500' : (data.isWeightLoss ? 'bg-green-500' : 'bg-red-500')}
-          />
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className={`h-full transition-all ${consumedPercent > 100 ? 'bg-red-500' : (data.isWeightLoss ? 'bg-green-500' : 'bg-red-500')}`}
+              style={{ width: `${Math.min(consumedPercent, 100)}%` }}
+            />
+          </div>
         </div>
 
         {/* Progress Bar Calorie Bruciate */}
@@ -230,11 +231,11 @@ export default function CalorieBalanceChart({ user }) {
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.totalBurned} kcal</span>
           </div>
-          <Progress 
-            value={burnedPercent} 
-            className="h-3 bg-gray-200"
-            indicatorClassName={data.isWeightLoss ? "bg-gradient-to-r from-green-500 to-green-600" : "bg-gradient-to-r from-red-500 to-red-600"}
-          />
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className={data.isWeightLoss ? "h-full w-full bg-gradient-to-r from-green-500 to-green-600" : "h-full w-full bg-gradient-to-r from-red-500 to-red-600"}
+            />
+          </div>
           <div className="grid grid-cols-2 gap-3 mt-3">
             <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
               <p className="text-xs text-gray-600 mb-1">Metabolismo Basale</p>
