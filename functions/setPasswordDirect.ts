@@ -17,12 +17,33 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        // Rimuovi sso_provider e imposta la password
-        // Questo fa sì che l'utente possa fare login con email/password
+        // Genera un token di reset password
+        const resetToken = crypto.randomUUID();
+        const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minuti
+
+        // Salva il token
         await base44.asServiceRole.entities.User.update(user.id, {
-            password: newPassword,
-            sso_provider: null
+            password_reset_token: resetToken,
+            password_reset_expires: expiresAt.toISOString(),
+            sso_provider: null // Rimuovi Google OAuth
         });
+
+        // Usa l'endpoint di reset password di Base44 per impostare la password
+        const resetResponse = await fetch(`https://base44.app/api/apps/${Deno.env.get('BASE44_APP_ID')}/auth/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: resetToken,
+                new_password: newPassword
+            })
+        });
+
+        if (!resetResponse.ok) {
+            const error = await resetResponse.text();
+            throw new Error(`Password reset failed: ${error}`);
+        }
 
         return Response.json({ 
             success: true,
