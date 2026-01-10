@@ -7,24 +7,40 @@ import { Flame, ArrowUp, ArrowDown } from 'lucide-react';
 export default function CalorieBalanceChart({ user }) {
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [onboardingData, setOnboardingData] = useState(null);
 
   useEffect(() => {
     loadData();
   }, [user]);
 
-  const calculateBMR = (user) => {
-    if (!user?.gender || !user?.weight || !user?.height || !user?.age) return 0;
+  const calculateBMR = (onboarding) => {
+    if (!onboarding?.gender || !onboarding?.current_weight || !onboarding?.height) return 0;
+    
+    // Calcola età dalla data di nascita
+    let age = 30; // default
+    if (onboarding.birthdate) {
+      const birthDate = new Date(onboarding.birthdate);
+      const today = new Date();
+      age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+    }
     
     // Mifflin-St Jeor formula
-    if (user.gender === 'male') {
-      return (10 * user.weight) + (6.25 * user.height) - (5 * user.age) + 5;
+    const weight = onboarding.current_weight;
+    const height = onboarding.height;
+    
+    if (onboarding.gender === 'male') {
+      return (10 * weight) + (6.25 * height) - (5 * age) + 5;
     } else {
-      return (10 * user.weight) + (6.25 * user.height) - (5 * user.age) - 161;
+      return (10 * weight) + (6.25 * height) - (5 * age) - 161;
     }
   };
 
-  const calculateNEAT = (user) => {
-    const bmr = calculateBMR(user);
+  const calculateNEAT = (onboarding) => {
+    const bmr = calculateBMR(onboarding);
     const activityMultipliers = {
       sedentary: 0.2,
       light: 0.375,
@@ -33,7 +49,7 @@ export default function CalorieBalanceChart({ user }) {
       very_active: 0.9
     };
     
-    const multiplier = activityMultipliers[user?.activity_level] || 0.375;
+    const multiplier = activityMultipliers[onboarding?.activity_level] || 0.375;
     return bmr * multiplier;
   };
 
@@ -50,6 +66,25 @@ export default function CalorieBalanceChart({ user }) {
       const dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][new Date().getDay()];
 
       console.log('📅 Today:', today, 'Day:', dayOfWeek);
+
+      // Carica dati onboarding dell'utente
+      const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
+      const onboarding = onboardingRecords[0];
+      
+      if (!onboarding) {
+        console.warn('⚠️ No onboarding data found');
+        setIsLoading(false);
+        return;
+      }
+      
+      console.log('📋 Onboarding data:', { 
+        gender: onboarding.gender, 
+        weight: onboarding.current_weight, 
+        height: onboarding.height,
+        activity: onboarding.activity_level 
+      });
+
+      setOnboardingData(onboarding);
 
       // Carica piano nutrizionale di oggi
       const mealPlans = await base44.entities.MealPlan.filter({
@@ -72,8 +107,8 @@ export default function CalorieBalanceChart({ user }) {
       const consumedCalories = mealLogs.reduce((sum, log) => sum + (log.actual_calories || 0), 0);
 
       // Calcola metabolismo basale e NEAT
-      const bmr = calculateBMR(user);
-      const neat = calculateNEAT(user);
+      const bmr = calculateBMR(onboarding);
+      const neat = calculateNEAT(onboarding);
       const totalBurned = bmr + neat;
 
       console.log('💪 BMR:', bmr, 'NEAT:', neat, 'Total burned:', totalBurned);
