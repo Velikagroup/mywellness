@@ -17,44 +17,21 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        console.log('Using Base44 change password API for OAuth user:', user.email);
+        console.log('Hashing password with bcrypt for:', user.email);
         
-        // Prima rimuovi Google OAuth
+        // Hash password con bcrypt
+        const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts');
+        const hashedPassword = await bcrypt.hash(newPassword);
+        
+        console.log('Updating user with hashed password and removing OAuth');
+        
+        // Aggiorna user: rimuovi OAuth e imposta password hashata
         await base44.asServiceRole.entities.User.update(user.id, {
-            sso_provider: null
+            sso_provider: null,
+            password_hash: hashedPassword
         });
         
-        // Usa l'endpoint di cambio password di Base44 che hasha correttamente
-        const appId = Deno.env.get('BASE44_APP_ID');
-        const changePasswordUrl = `https://base44.app/api/apps/${appId}/auth/change-password`;
-        
-        const changeResponse = await fetch(changePasswordUrl, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${req.headers.get('Authorization')?.replace('Bearer ', '')}`
-            },
-            body: JSON.stringify({
-                userId: user.id,
-                newPassword: newPassword
-            })
-        });
-        
-        if (!changeResponse.ok) {
-            const errorText = await changeResponse.text();
-            console.error('Change password error:', changeResponse.status, errorText);
-            
-            // Fallback: hasha manualmente con Deno crypto
-            console.log('Fallback: manual bcrypt hash');
-            const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts');
-            const hashedPassword = await bcrypt.hash(newPassword);
-            
-            await base44.asServiceRole.entities.User.update(user.id, {
-                password_hash: hashedPassword
-            });
-        }
-        
-        console.log('Password set, verifying...');
+        console.log('Password set successfully, verifying...');
         const updatedUser = await base44.asServiceRole.entities.User.filter({ id: user.id });
         console.log('sso_provider:', updatedUser[0]?.sso_provider);
         console.log('has password_hash:', !!updatedUser[0]?.password_hash);
