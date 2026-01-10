@@ -105,13 +105,17 @@ export default function CalorieBalanceChart({ user }) {
       // Calcola bilancio
       const balance = consumedCalories - totalBurned;
 
+      // Determina se obiettivo è dimagrimento o aumento massa
+      const isWeightLoss = user.target_weight < user.current_weight;
+
       setData({
         plannedCalories: Math.round(plannedCalories),
         consumedCalories: Math.round(consumedCalories),
         bmr: Math.round(bmr),
         neat: Math.round(neat),
         totalBurned: Math.round(totalBurned),
-        balance: Math.round(balance)
+        balance: Math.round(balance),
+        isWeightLoss
       });
 
       console.log('✅ CalorieBalanceChart: Data loaded successfully');
@@ -149,6 +153,15 @@ export default function CalorieBalanceChart({ user }) {
   const consumedPercent = Math.min((data.consumedCalories / data.plannedCalories) * 100, 100);
   const burnedPercent = 100;
 
+  // Logica colori basata su obiettivo peso
+  const consumedColor = data.isWeightLoss ? 'green' : 'red';
+  const burnedColor = data.isWeightLoss ? 'green' : 'red';
+  
+  // Deficit: negativo = buono per dimagrimento, positivo = buono per aumento
+  const isBalanceGood = data.isWeightLoss 
+    ? data.balance < 0  // Dimagrimento: deficit è buono
+    : data.balance > 0; // Aumento massa: surplus è buono
+
   return (
     <Card className="water-glass-effect border-gray-200/30">
       <CardHeader className="pb-3">
@@ -159,29 +172,36 @@ export default function CalorieBalanceChart({ user }) {
       <CardContent className="space-y-6">
         {/* DEFICIT/SURPLUS - GROSSO E IN EVIDENZA */}
         <div className={`rounded-xl p-6 text-center border-2 ${
-          data.balance < 0 
+          isBalanceGood
             ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200' 
             : 'bg-gradient-to-br from-red-50 to-orange-50 border-red-200'
         }`}>
           <p className="text-sm font-medium text-gray-600 mb-2">BILANCIO GIORNALIERO</p>
           <div className="flex items-center justify-center gap-3">
-            {data.balance < 0 ? (
+            {isBalanceGood ? (
               <ArrowDown className="w-8 h-8 text-green-600" />
             ) : (
               <ArrowUp className="w-8 h-8 text-red-600" />
             )}
-            <p className={`text-5xl font-bold ${data.balance < 0 ? 'text-green-600' : 'text-red-600'}`}>
+            <p className={`text-5xl font-bold ${isBalanceGood ? 'text-green-600' : 'text-red-600'}`}>
               {data.balance > 0 ? '+' : ''}{data.balance}
             </p>
             <span className="text-2xl font-semibold text-gray-600">kcal</span>
           </div>
           <p className="text-sm text-gray-600 mt-2 font-medium">
-            {data.balance < 0 
-              ? `🎯 Deficit di ${Math.abs(data.balance)} kcal - Perfetto per dimagrire!`
-              : data.balance === 0
-              ? '⚖️ Mantenimento perfetto'
-              : `⚠️ Surplus di ${data.balance} kcal`
-            }
+            {data.isWeightLoss ? (
+              data.balance < 0 
+                ? `🎯 Deficit di ${Math.abs(data.balance)} kcal - Perfetto per dimagrire!`
+                : data.balance === 0
+                ? '⚖️ Mantenimento'
+                : `⚠️ Surplus di ${data.balance} kcal - Rallenta il dimagrimento`
+            ) : (
+              data.balance > 0
+                ? `💪 Surplus di ${data.balance} kcal - Perfetto per massa!`
+                : data.balance === 0
+                ? '⚖️ Mantenimento'
+                : `⚠️ Deficit di ${Math.abs(data.balance)} kcal - Rallenta l'aumento`
+            )}
           </p>
         </div>
 
@@ -189,15 +209,15 @@ export default function CalorieBalanceChart({ user }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
-              <ArrowUp className="w-4 h-4 text-green-600" />
+              <ArrowUp className={`w-4 h-4 text-${consumedColor}-600`} />
               Calorie Assunte
             </span>
-            <span className="font-bold text-green-600">{data.consumedCalories} / {data.plannedCalories} kcal</span>
+            <span className={`font-bold text-${consumedColor}-600`}>{data.consumedCalories} / {data.plannedCalories} kcal</span>
           </div>
           <Progress 
             value={consumedPercent} 
             className="h-3 bg-gray-200"
-            indicatorClassName={consumedPercent > 100 ? 'bg-red-500' : 'bg-green-500'}
+            indicatorClassName={consumedPercent > 100 ? 'bg-red-500' : `bg-${consumedColor}-500`}
           />
         </div>
 
@@ -205,15 +225,15 @@ export default function CalorieBalanceChart({ user }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
-              <Flame className="w-4 h-4 text-orange-600" />
+              <Flame className={`w-4 h-4 text-${burnedColor}-600`} />
               Calorie Bruciate
             </span>
-            <span className="font-bold text-orange-600">{data.totalBurned} kcal</span>
+            <span className={`font-bold text-${burnedColor}-600`}>{data.totalBurned} kcal</span>
           </div>
           <Progress 
             value={burnedPercent} 
             className="h-3 bg-gray-200"
-            indicatorClassName="bg-gradient-to-r from-orange-500 to-red-500"
+            indicatorClassName={`bg-gradient-to-r from-${burnedColor}-500 to-${burnedColor}-600`}
           />
           <div className="grid grid-cols-2 gap-3 mt-3">
             <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
