@@ -256,17 +256,6 @@ export default function CalorieBalanceChart({ user }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 gap-3 mt-3">
-            <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
-              <p className="text-xs text-gray-600 mb-1">Metabolismo Basale</p>
-              <p className="text-lg font-bold text-amber-700">{data.bmr} kcal</p>
-            </div>
-            <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
-              <p className="text-xs text-gray-600 mb-1">NEAT (Attività)</p>
-              <p className="text-lg font-bold text-orange-700">{data.neat} kcal</p>
-            </div>
-          </div>
-        </div>
       </CardContent>
     </Card>
   );
