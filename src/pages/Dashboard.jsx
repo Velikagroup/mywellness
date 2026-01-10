@@ -25,6 +25,7 @@ import { Label } from "@/components/ui/label";
 import OnboardingTour from "../components/onboarding/OnboardingTour";
 import CalorieMeter from "../components/dashboard/CalorieMeter";
 import NutritionUnlockPrompt from "../components/dashboard/NutritionUnlockPrompt";
+import CalorieBalanceChart from "../components/dashboard/CalorieBalanceChart";
 import { useLanguage } from "../components/i18n/LanguageContext";
 import { rememberMeManager } from "../components/utils/rememberMeManager";
 
@@ -676,13 +677,16 @@ export default function Dashboard() {
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
             <div className="lg:col-span-2 space-y-6 sm:space-y-8 onboarding-dashboard-overview">
-              <div className="progress-chart-section">
-                <AdvancedProgressChart 
-                  user={user} 
-                  weightHistory={weightHistory} 
-                  onWeightLogged={loadUserData}
-                  isMobile={isMobile}
-                />
+              <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
+                <div className="progress-chart-section">
+                  <AdvancedProgressChart 
+                    user={user} 
+                    weightHistory={weightHistory} 
+                    onWeightLogged={loadUserData}
+                    isMobile={isMobile}
+                  />
+                </div>
+                <CalorieBalanceChart user={user} />
               </div>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 dashboard-stats-section">
