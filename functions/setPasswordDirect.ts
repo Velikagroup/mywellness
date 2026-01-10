@@ -18,14 +18,21 @@ Deno.serve(async (req) => {
         }
 
         console.log('Setting password for user:', user.email);
+        console.log('Current sso_provider:', user.sso_provider);
 
-        // Semplicemente imposta la password - Base44 fa l'hashing automaticamente
+        // Imposta la password E rimuovi sso_provider per permettere login con password
         await base44.asServiceRole.entities.User.update(user.id, {
             password: newPassword,
-            sso_provider: null
+            sso_provider: null,
+            password_hash: undefined // Forza Base44 a ricalcolare l'hash
         });
 
         console.log('Password set successfully for:', user.email);
+        
+        // Verifica che sia stato salvato correttamente
+        const updatedUser = await base44.asServiceRole.entities.User.filter({ id: user.id });
+        console.log('Updated user sso_provider:', updatedUser[0]?.sso_provider);
+        console.log('Updated user has password_hash:', !!updatedUser[0]?.password_hash);
 
         return Response.json({ 
             success: true,
