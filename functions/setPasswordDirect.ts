@@ -24,8 +24,10 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        // Imposta la password usando il metodo di Base44
-        await base44.auth.updatePassword(newPassword);
+        // Imposta la password direttamente nell'entità User
+        await base44.asServiceRole.entities.User.update(user.id, {
+            password: newPassword
+        });
 
         return Response.json({ 
             success: true,
