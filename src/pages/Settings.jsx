@@ -713,65 +713,77 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 <CardHeader>
                   <CardTitle>Imposta Password</CardTitle>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-center gap-3 mb-3">
+                <CardContent>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                    <div className="flex items-center gap-3 mb-2">
                       <CheckCircle className="w-5 h-5 text-blue-600" />
                       <p className="text-sm font-semibold text-blue-900">
                         Accesso attuale: Google OAuth
                       </p>
                     </div>
-                    <p className="text-sm text-blue-800 mb-3">
-                      Vuoi accedere anche con email e password? (Utile per app mobile iOS)
+                    <p className="text-sm text-blue-800">
+                      Imposta una password per accedere anche con email e password (utile per app mobile iOS)
                     </p>
-                    <Button
-                      onClick={async () => {
-                        try {
-                          await base44.functions.invoke('sendSetPasswordEmail');
-                          alert('✅ Email inviata! Controlla la tua casella e clicca sul link per impostare la password.');
-                        } catch (error) {
-                          console.error('Error sending password setup email:', error);
-                          alert('❌ Errore durante l\'invio dell\'email');
-                        }
-                      }}
-                      className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                    >
-                      📧 Invia Email per Impostare Password
-                    </Button>
                   </div>
-                </CardContent>
-              </Card>
-            ) : user?.sso_provider ? (
-              <Card className="water-glass-effect border-gray-200/30">
-                <CardHeader>
-                  <CardTitle>Imposta Password</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                    <div className="flex items-center gap-3 mb-3">
-                      <CheckCircle className="w-5 h-5 text-blue-600" />
-                      <p className="text-sm font-semibold text-blue-900">
-                        Accesso attuale: {user.sso_provider} SSO
-                      </p>
+                  <form onSubmit={async (e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.target);
+                    const newPassword = formData.get('newPassword');
+                    const confirmPassword = formData.get('confirmPassword');
+
+                    if (newPassword !== confirmPassword) {
+                      alert('Le password non coincidono');
+                      return;
+                    }
+
+                    if (newPassword.length < 8) {
+                      alert('La password deve essere di almeno 8 caratteri');
+                      return;
+                    }
+
+                    try {
+                      setIsUpdatingPassword(true);
+                      await base44.functions.invoke('setPasswordDirect', { newPassword });
+                      alert('✅ Password impostata con successo!');
+                      await loadUserData();
+                      e.target.reset();
+                    } catch (error) {
+                      console.error('Error setting password:', error);
+                      alert('❌ Errore durante l\'impostazione della password');
+                    } finally {
+                      setIsUpdatingPassword(false);
+                    }
+                  }} className="space-y-4">
+                    <div>
+                      <Label htmlFor="newPassword">Nuova Password</Label>
+                      <Input
+                        id="newPassword"
+                        name="newPassword"
+                        type="password"
+                        required
+                        minLength={8}
+                        placeholder="Almeno 8 caratteri"
+                      />
                     </div>
-                    <p className="text-sm text-blue-800 mb-3">
-                      Vuoi accedere anche con email e password? (Utile per app mobile iOS)
-                    </p>
+                    <div>
+                      <Label htmlFor="confirmPassword">Conferma Password</Label>
+                      <Input
+                        id="confirmPassword"
+                        name="confirmPassword"
+                        type="password"
+                        required
+                        minLength={8}
+                        placeholder="Ripeti la password"
+                      />
+                    </div>
                     <Button
-                      onClick={async () => {
-                        try {
-                          await base44.functions.invoke('sendSetPasswordEmail');
-                          alert('✅ Email inviata! Controlla la tua casella e clicca sul link per impostare la password.');
-                        } catch (error) {
-                          console.error('Error sending password setup email:', error);
-                          alert('❌ Errore durante l\'invio dell\'email');
-                        }
-                      }}
+                      type="submit"
+                      disabled={isUpdatingPassword}
                       className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
                     >
-                      📧 Invia Email per Impostare Password
+                      {isUpdatingPassword ? 'Salvataggio...' : '🔐 Imposta Password'}
                     </Button>
-                  </div>
+                  </form>
                 </CardContent>
               </Card>
             ) : (
