@@ -209,14 +209,14 @@ export default function CalorieBalanceChart({ user }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
-              <ArrowUp className={data.isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
+              <ArrowUp className={data.isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
               Calorie Assunte
             </span>
-            <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.consumedCalories} / {data.plannedCalories} kcal</span>
+            <span className={data.isWeightLoss ? "font-bold text-red-600" : "font-bold text-green-600"}>{data.consumedCalories} / {data.plannedCalories} kcal</span>
           </div>
           <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className={`h-full transition-all ${consumedPercent > 100 ? 'bg-red-500' : (data.isWeightLoss ? 'bg-green-500' : 'bg-red-500')}`}
+              className={`h-full transition-all ${consumedPercent > 100 ? 'bg-red-500' : (data.isWeightLoss ? 'bg-red-500' : 'bg-green-500')}`}
               style={{ width: `${Math.min(consumedPercent, 100)}%` }}
             />
           </div>
@@ -226,14 +226,14 @@ export default function CalorieBalanceChart({ user }) {
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
-              <Flame className={data.isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
+              <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
               Calorie Bruciate
             </span>
-            <span className={data.isWeightLoss ? "font-bold text-red-600" : "font-bold text-green-600"}>{data.totalBurned} kcal</span>
+            <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.totalBurned} kcal</span>
           </div>
           <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
             <div 
-              className={data.isWeightLoss ? "h-full w-full bg-gradient-to-r from-red-500 to-red-600" : "h-full w-full bg-gradient-to-r from-green-500 to-green-600"}
+              className={data.isWeightLoss ? "h-full w-full bg-gradient-to-r from-green-500 to-green-600" : "h-full w-full bg-gradient-to-r from-red-500 to-red-600"}
             />
           </div>
           <div className="grid grid-cols-2 gap-3 mt-3">
