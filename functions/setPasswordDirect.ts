@@ -17,30 +17,48 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        console.log('Step 1: Removing sso_provider for user:', user.email);
+        // STRATEGIA: Usa l'API reset password di Base44 che gestisce tutto correttamente
+        console.log('Using Base44 reset password API for:', user.email);
         
-        // STEP 1: Prima rimuovi sso_provider
+        // Genera un token temporaneo
+        const resetToken = crypto.randomUUID();
+        
+        // Salva il token (valido solo 5 minuti)
         await base44.asServiceRole.entities.User.update(user.id, {
-            sso_provider: null
+            password_reset_token: resetToken,
+            password_reset_expires: new Date(Date.now() + 5 * 60 * 1000).toISOString(),
+            sso_provider: null // Rimuovi Google OAuth
         });
         
-        console.log('Step 2: Setting password (Base44 will hash it)');
+        console.log('Token generated, calling reset password API');
         
-        // STEP 2: Setta la password - Base44 la hasherà automaticamente
-        // Uso una seconda chiamata separata per assicurarmi che sso_provider sia già null
-        await new Promise(resolve => setTimeout(resolve, 100)); // Piccolo delay
-        
-        await base44.asServiceRole.entities.User.update(user.id, {
-            password: newPassword
+        // Usa l'API di reset password di Base44
+        const resetResponse = await fetch(`https://base44.app/api/apps/${Deno.env.get('BASE44_APP_ID')}/auth/reset-password`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                token: resetToken,
+                newPassword: newPassword
+            })
         });
-
-        console.log('Step 3: Verifying changes');
         
-        // STEP 3: Verifica
+        if (!resetResponse.ok) {
+            const errorText = await resetResponse.text();
+            console.error('Reset password API error:', errorText);
+            return Response.json({ 
+                error: 'Failed to set password via Base44 API',
+                details: errorText
+            }, { status: 500 });
+        }
+        
+        console.log('Password set successfully via Base44 API');
+        
+        // Verifica finale
         const updatedUser = await base44.asServiceRole.entities.User.filter({ id: user.id });
         console.log('Final sso_provider:', updatedUser[0]?.sso_provider);
         console.log('Has password_hash:', !!updatedUser[0]?.password_hash);
-        console.log('Password hash (first 20 chars):', updatedUser[0]?.password_hash?.substring(0, 20));
 
         return Response.json({ 
             success: true,
