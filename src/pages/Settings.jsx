@@ -711,39 +711,28 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>{user?.password_hash ? 'Cambia Password' : 'Imposta Password'}</CardTitle>
+                <CardTitle>Password</CardTitle>
               </CardHeader>
               <CardContent>
-                {!user?.password_hash && (
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                    <div className="flex items-center gap-3 mb-2">
-                      <CheckCircle className="w-5 h-5 text-blue-600" />
-                      <p className="text-sm font-semibold text-blue-900">
-                        Accesso attuale: Google OAuth
-                      </p>
-                    </div>
-                    <p className="text-sm text-blue-800">
-                      Clicca il pulsante sotto per ricevere un'email con il link per impostare la password
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                  <div className="flex items-center gap-3 mb-2">
+                    <CheckCircle className="w-5 h-5 text-blue-600" />
+                    <p className="text-sm font-semibold text-blue-900">
+                      Password configurata ✓
                     </p>
                   </div>
-                )}
+                  <p className="text-sm text-blue-800">
+                    Per cambiare la password, usa il link "Password dimenticata?" dalla pagina di login.
+                  </p>
+                </div>
                 <Button
-                  onClick={async () => {
-                    try {
-                      setIsUpdatingPassword(true);
-                      await base44.functions.invoke('requestPasswordSetup');
-                      alert('✅ Email inviata! Controlla la tua casella di posta e clicca sul link per impostare la password.');
-                    } catch (error) {
-                      console.error('Error sending email:', error);
-                      alert('❌ Errore durante l\'invio dell\'email');
-                    } finally {
-                      setIsUpdatingPassword(false);
-                    }
+                  onClick={() => {
+                    window.open('https://projectmywellness.com/reset-password', '_blank');
                   }}
-                  disabled={isUpdatingPassword}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                  variant="outline"
+                  className="w-full"
                 >
-                  {isUpdatingPassword ? 'Invio...' : (user?.password_hash ? '📧 Reset Password via Email' : '📧 Ricevi Link per Impostare Password')}
+                  🔗 Vai al Reset Password
                 </Button>
               </CardContent>
             </Card>
