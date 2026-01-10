@@ -708,7 +708,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
-            {(user?.sso_provider?.toLowerCase().includes('google') || user?.email?.includes('@')) && !user?.password_hash ? (
+            {!user?.password_hash ? (
               <Card className="water-glass-effect border-gray-200/30">
                 <CardHeader>
                   <CardTitle>Imposta Password</CardTitle>
