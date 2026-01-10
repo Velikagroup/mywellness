@@ -13,12 +13,8 @@ Deno.serve(async (req) => {
         console.log('🔍 User SSO provider:', user.sso_provider);
         console.log('🔍 User has password_hash:', !!user.password_hash);
 
-        // ✅ Se l'utente ha già una password, non serve impostarne una nuova
-        if (user.password_hash) {
-            return Response.json({ 
-                error: 'You already have a password set. Use the change password form instead.' 
-            }, { status: 400 });
-        }
+        // ✅ Permetti sempre agli utenti OAuth di impostare/reimpostare password
+        // Non bloccare se hanno già password_hash ma hanno sso_provider impostato
 
         // Genera token reset password (usa l'endpoint esistente di Base44)
         const resetToken = crypto.randomUUID();
