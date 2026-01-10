@@ -131,9 +131,11 @@ export default function Settings() {
     try {
       const currentUser = await base44.auth.me();
       
-      // 🔍 DEBUG: Controlla provider SSO
+      // 🔍 DEBUG: Controlla provider SSO e password
       console.log('🔍 SSO Provider:', currentUser?.sso_provider);
-      console.log('🔍 User keys:', Object.keys(currentUser || {}));
+      console.log('🔍 Has password_hash:', !!currentUser?.password_hash);
+      console.log('🔍 User email:', currentUser?.email);
+      console.log('🔍 All user data:', currentUser);
       
       // ✅ Se l'utente non ha subscription, rimanda al quiz
       if (!currentUser.subscription_status || 
