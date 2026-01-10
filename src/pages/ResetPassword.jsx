@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -11,25 +10,49 @@ import { Lock, Eye, EyeOff } from "lucide-react";
 
 export default function ResetPassword() {
   const navigate = useNavigate();
+  const [step, setStep] = useState('request'); // 'request' o 'reset'
   const [email, setEmail] = useState('');
-  const [tempPassword, setTempPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [showTempPassword, setShowTempPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
+  const [token, setToken] = useState('');
 
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
+    const tokenParam = urlParams.get('token');
     const emailParam = urlParams.get('email');
-    if (emailParam) {
-      setEmail(emailParam);
+    
+    if (tokenParam) {
+      setToken(tokenParam);
+      setStep('reset');
+      if (emailParam) {
+        setEmail(emailParam);
+      }
     }
   }, []);
 
-  const handleSubmit = async (e) => {
+  const handleRequestReset = async (e) => {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setIsLoading(true);
+
+    try {
+      await base44.auth.requestPasswordReset(email);
+      setSuccess('✅ Email inviata! Controlla la tua casella di posta e clicca sul link per reimpostare la password.');
+    } catch (error) {
+      console.error('Error:', error);
+      setError('Errore nell\'invio dell\'email. Riprova.');
+    }
+
+    setIsLoading(false);
+  };
+
+  const handleResetPassword = async (e) => {
     e.preventDefault();
     setError('');
 
@@ -46,18 +69,12 @@ export default function ResetPassword() {
     setIsLoading(true);
 
     try {
-      // 1. Login con password temporanea
-      await base44.auth.login(email, tempPassword);
-      
-      // 2. Cambia password
-      await base44.auth.updatePassword(newPassword);
-      
-      // 3. Vai al quiz
-      navigate(createPageUrl('Quiz'), { replace: true });
-
+      await base44.auth.resetPassword(token, newPassword);
+      alert('✅ Password reimpostata con successo!');
+      navigate('https://projectmywellness.com/login', { replace: true });
     } catch (error) {
       console.error('Error:', error);
-      setError('Password temporanea non corretta o già utilizzata');
+      setError('Token non valido o scaduto. Richiedi un nuovo link.');
     }
 
     setIsLoading(false);
@@ -139,123 +156,142 @@ export default function ResetPassword() {
             <Lock className="w-8 h-8 text-white" />
           </div>
           <CardTitle className="text-3xl font-bold text-gray-900 mb-3">
-            Crea la tua Password
+            {step === 'request' ? 'Reset Password' : 'Crea Nuova Password'}
           </CardTitle>
           <p className="text-gray-600">
-            Inserisci la password temporanea ricevuta via email e crea la tua nuova password personale
+            {step === 'request' 
+              ? 'Inserisci la tua email per ricevere il link di reset password'
+              : 'Crea la tua nuova password sicura'
+            }
           </p>
         </CardHeader>
 
         <CardContent className="px-8 pb-8">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <Label htmlFor="email" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Email
-              </Label>
-              <Input
-                id="email"
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                className="h-12 text-base"
-                required
-                disabled={!!new URLSearchParams(window.location.search).get('email')}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="tempPassword" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Password Temporanea
-              </Label>
-              <div className="relative">
+          {step === 'request' ? (
+            <form onSubmit={handleRequestReset} className="space-y-6">
+              <div>
+                <Label htmlFor="email" className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Email
+                </Label>
                 <Input
-                  id="tempPassword"
-                  type={showTempPassword ? "text" : "password"}
-                  value={tempPassword}
-                  onChange={(e) => setTempPassword(e.target.value)}
-                  className="h-12 text-base pr-12"
-                  placeholder="Copia dalla tua email"
+                  id="email"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="h-12 text-base"
+                  placeholder="tua@email.com"
                   required
                 />
-                <button
-                  type="button"
-                  onClick={() => setShowTempPassword(!showTempPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showTempPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
               </div>
-            </div>
 
-            <div>
-              <Label htmlFor="newPassword" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Nuova Password
-              </Label>
-              <div className="relative">
-                <Input
-                  id="newPassword"
-                  type={showNewPassword ? "text" : "password"}
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  className="h-12 text-base pr-12"
-                  placeholder="Minimo 8 caratteri"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowNewPassword(!showNewPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Conferma Password
-              </Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type={showConfirmPassword ? "text" : "password"}
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="h-12 text-base pr-12"
-                  placeholder="Ripeti la password"
-                  required
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                >
-                  {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                </button>
-              </div>
-            </div>
-
-            {error && (
-              <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                <p className="text-red-600 text-sm">{error}</p>
-              </div>
-            )}
-
-            <Button
-              type="submit"
-              disabled={isLoading}
-              className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all"
-            >
-              {isLoading ? (
-                <div className="flex items-center gap-2">
-                  <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                  Caricamento...
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-600 text-sm">{error}</p>
                 </div>
-              ) : (
-                'Imposta Password e Continua'
               )}
-            </Button>
-          </form>
+
+              {success && (
+                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                  <p className="text-green-700 text-sm">{success}</p>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all"
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Invio...
+                  </div>
+                ) : (
+                  'Invia Link Reset'
+                )}
+              </Button>
+
+              <div className="text-center pt-4">
+                <a 
+                  href="https://projectmywellness.com/login" 
+                  className="text-sm text-[var(--brand-primary)] hover:underline"
+                >
+                  Torna al Login
+                </a>
+              </div>
+            </form>
+          ) : (
+            <form onSubmit={handleResetPassword} className="space-y-6">
+              <div>
+                <Label htmlFor="newPassword" className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Nuova Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="newPassword"
+                    type={showNewPassword ? "text" : "password"}
+                    value={newPassword}
+                    onChange={(e) => setNewPassword(e.target.value)}
+                    className="h-12 text-base pr-12"
+                    placeholder="Minimo 8 caratteri"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowNewPassword(!showNewPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showNewPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              <div>
+                <Label htmlFor="confirmPassword" className="text-sm font-semibold text-gray-700 mb-2 block">
+                  Conferma Password
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="h-12 text-base pr-12"
+                    placeholder="Ripeti la password"
+                    required
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                  >
+                    {showConfirmPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                  </button>
+                </div>
+              </div>
+
+              {error && (
+                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                  <p className="text-red-600 text-sm">{error}</p>
+                </div>
+              )}
+
+              <Button
+                type="submit"
+                disabled={isLoading}
+                className="w-full h-14 text-lg font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white rounded-xl shadow-xl hover:shadow-2xl transition-all"
+              >
+                {isLoading ? (
+                  <div className="flex items-center gap-2">
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    Salvataggio...
+                  </div>
+                ) : (
+                  'Reimposta Password'
+                )}
+              </Button>
+            </form>
+          )}
         </CardContent>
       </Card>
     </div>
