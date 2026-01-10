@@ -711,22 +711,17 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
-                <CardTitle>Gestione Password</CardTitle>
+                <CardTitle>Password</CardTitle>
               </CardHeader>
               <CardContent>
-                <div className="bg-gray-50 border border-gray-200 rounded-lg p-4 mb-4">
-                  <p className="text-sm text-gray-700">
-                    Per impostare o cambiare la tua password, usa la pagina di reset password ufficiale.
+                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-sm text-blue-900 font-semibold mb-2">
+                    ℹ️ Accesso con Google OAuth
+                  </p>
+                  <p className="text-sm text-blue-800">
+                    Per impostare una password e accedere anche con email/password, usa il link "Password dimenticata?" dalla pagina di login.
                   </p>
                 </div>
-                <Button
-                  onClick={() => {
-                    window.open('https://projectmywellness.com/reset-password', '_blank');
-                  }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                >
-                  🔐 Reset Password
-                </Button>
               </CardContent>
             </Card>
 
