@@ -1,4 +1,5 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
+import * as bcrypt from 'https://deno.land/x/bcrypt@v0.4.1/mod.ts';
 
 Deno.serve(async (req) => {
     try {
@@ -20,10 +21,10 @@ Deno.serve(async (req) => {
         console.log('Hashing password with bcrypt for:', user.email);
         
         // Hash password con bcrypt
-        const bcrypt = await import('https://deno.land/x/bcrypt@v0.4.1/mod.ts');
         const hashedPassword = await bcrypt.hash(newPassword);
         
-        console.log('Updating user with hashed password and removing OAuth');
+        console.log('Hashed password generated, updating user...');
+        console.log('Removing OAuth provider and setting password hash');
         
         // Aggiorna user: rimuovi OAuth e imposta password hashata
         await base44.asServiceRole.entities.User.update(user.id, {
@@ -43,8 +44,10 @@ Deno.serve(async (req) => {
 
     } catch (error) {
         console.error('Error in setPasswordDirect:', error);
+        console.error('Error stack:', error.stack);
         return Response.json({ 
-            error: error.message 
+            error: error.message,
+            details: error.stack
         }, { status: 500 });
     }
 });
