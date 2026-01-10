@@ -129,8 +129,7 @@ export default function CalorieBalanceChart({ user }) {
   return (
     <Card className="water-glass-effect border-gray-200/30">
       <CardHeader className="pb-3">
-        <CardTitle className="flex items-center gap-2 text-lg">
-          <Flame className="w-4 h-4 text-orange-600" />
+        <CardTitle className="text-lg">
           Bilancio Calorie Oggi
         </CardTitle>
       </CardHeader>
@@ -193,9 +192,15 @@ export default function CalorieBalanceChart({ user }) {
             className="h-3 bg-gray-200"
             indicatorClassName="bg-gradient-to-r from-orange-500 to-red-500"
           />
-          <div className="flex justify-between text-xs text-gray-500 px-1">
-            <span>BMR: {data.bmr}</span>
-            <span>NEAT: {data.neat}</span>
+          <div className="grid grid-cols-2 gap-3 mt-3">
+            <div className="bg-amber-50 rounded-lg p-3 border border-amber-200">
+              <p className="text-xs text-gray-600 mb-1">Metabolismo Basale</p>
+              <p className="text-lg font-bold text-amber-700">{data.bmr} kcal</p>
+            </div>
+            <div className="bg-orange-50 rounded-lg p-3 border border-orange-200">
+              <p className="text-xs text-gray-600 mb-1">NEAT (Attività)</p>
+              <p className="text-lg font-bold text-orange-700">{data.neat} kcal</p>
+            </div>
           </div>
         </div>
       </CardContent>
