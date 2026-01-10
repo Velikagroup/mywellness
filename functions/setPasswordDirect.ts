@@ -24,9 +24,11 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        // Usa il campo 'password' che Base44 gestisce automaticamente con hashing
+        // Rimuovi sso_provider e imposta la password
+        // Questo fa sì che l'utente possa fare login con email/password
         await base44.asServiceRole.entities.User.update(user.id, {
-            password: newPassword
+            password: newPassword,
+            sso_provider: null
         });
 
         return Response.json({ 
