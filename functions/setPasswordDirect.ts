@@ -24,29 +24,23 @@ Deno.serve(async (req) => {
             sso_provider: null
         });
         
-        console.log('Step 2: Hashing password manually');
+        console.log('Step 2: Setting password (Base44 will hash it)');
         
-        // STEP 2: Hash password manualmente con bcrypt
-        const encoder = new TextEncoder();
-        const data = encoder.encode(newPassword);
-        const hashBuffer = await crypto.subtle.digest('SHA-256', data);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+        // STEP 2: Setta la password - Base44 la hasherà automaticamente
+        // Uso una seconda chiamata separata per assicurarmi che sso_provider sia già null
+        await new Promise(resolve => setTimeout(resolve, 100)); // Piccolo delay
         
-        console.log('Step 3: Setting password_hash directly');
-        
-        // STEP 3: Setta password_hash direttamente
         await base44.asServiceRole.entities.User.update(user.id, {
-            password_hash: hashHex
+            password: newPassword
         });
 
-        console.log('Step 4: Verifying changes');
+        console.log('Step 3: Verifying changes');
         
-        // STEP 4: Verifica
+        // STEP 3: Verifica
         const updatedUser = await base44.asServiceRole.entities.User.filter({ id: user.id });
         console.log('Final sso_provider:', updatedUser[0]?.sso_provider);
         console.log('Has password_hash:', !!updatedUser[0]?.password_hash);
-        console.log('Password hash length:', updatedUser[0]?.password_hash?.length);
+        console.log('Password hash (first 20 chars):', updatedUser[0]?.password_hash?.substring(0, 20));
 
         return Response.json({ 
             success: true,
