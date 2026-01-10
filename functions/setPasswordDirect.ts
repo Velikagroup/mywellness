@@ -9,13 +9,6 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        // Se l'utente ha già una password, non può usare questa funzione
-        if (user.password_hash) {
-            return Response.json({ 
-                error: 'You already have a password. Use the change password form instead.' 
-            }, { status: 400 });
-        }
-
         const { newPassword } = await req.json();
 
         if (!newPassword || newPassword.length < 8) {
