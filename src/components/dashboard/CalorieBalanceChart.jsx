@@ -38,24 +38,32 @@ export default function CalorieBalanceChart({ user }) {
   };
 
   const loadData = async () => {
-    if (!user?.id) return;
+    if (!user?.id) {
+      console.log('⚠️ CalorieBalanceChart: No user ID');
+      return;
+    }
     
+    console.log('🔄 CalorieBalanceChart: Loading data for user', user.id);
     setIsLoading(true);
     try {
       const today = new Date().toISOString().split('T')[0];
       const dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][new Date().getDay()];
+
+      console.log('📅 Today:', today, 'Day:', dayOfWeek);
 
       // Carica piano nutrizionale di oggi
       const mealPlans = await base44.entities.MealPlan.filter({
         user_id: user.id,
         day_of_week: dayOfWeek
       });
+      console.log('🍽️ Meal plans loaded:', mealPlans.length);
 
       // Carica pasti loggati di oggi
       const mealLogs = await base44.entities.MealLog.filter({
         user_id: user.id,
         date: today
       });
+      console.log('📊 Meal logs loaded:', mealLogs.length);
 
       // Calcola calorie dal piano
       const plannedCalories = mealPlans.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
@@ -67,6 +75,9 @@ export default function CalorieBalanceChart({ user }) {
       const bmr = calculateBMR(user);
       const neat = calculateNEAT(user);
       const totalBurned = bmr + neat;
+
+      console.log('💪 BMR:', bmr, 'NEAT:', neat, 'Total burned:', totalBurned);
+      console.log('🍴 Planned:', plannedCalories, 'Consumed:', consumedCalories);
 
       // Calcola bilancio
       const balance = consumedCalories - totalBurned;
@@ -80,8 +91,10 @@ export default function CalorieBalanceChart({ user }) {
         balance: Math.round(balance)
       });
 
+      console.log('✅ CalorieBalanceChart: Data loaded successfully');
+
     } catch (error) {
-      console.error('Error loading calorie data:', error);
+      console.error('❌ Error loading calorie data:', error);
     }
     setIsLoading(false);
   };
