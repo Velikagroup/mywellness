@@ -48,6 +48,7 @@ export default function Settings() {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
+  const [isUpdatingPassword, setIsUpdatingPassword] = useState(false);
   const [transactions, setTransactions] = useState([]);
   const [supportTickets, setSupportTickets] = useState([]);
 
