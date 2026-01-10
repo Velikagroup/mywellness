@@ -227,7 +227,7 @@ export default function CalorieBalanceChart({ user }) {
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
               <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
-              BMR (Metabolismo Basale)
+              Calorie Bruciate - BMR (Metabolismo Basale)
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.bmr} kcal</span>
           </div>
@@ -244,7 +244,7 @@ export default function CalorieBalanceChart({ user }) {
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
               <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-400" : "w-4 h-4 text-red-400"} />
-              NEAT (Attività)
+              Calorie Bruciate - NEAT (Attività)
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-400" : "font-bold text-red-400"}>{data.neat} kcal</span>
           </div>
