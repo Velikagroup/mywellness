@@ -231,9 +231,16 @@ export default function CalorieBalanceChart({ user }) {
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.totalBurned} kcal</span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden flex">
             <div 
-              className={data.isWeightLoss ? "h-full w-full bg-gradient-to-r from-green-500 to-green-600" : "h-full w-full bg-gradient-to-r from-red-500 to-red-600"}
+              className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
+              style={{ width: `${(data.bmr / data.totalBurned) * 100}%` }}
+              title={`BMR: ${data.bmr} kcal`}
+            />
+            <div 
+              className={data.isWeightLoss ? "h-full bg-green-400" : "h-full bg-red-400"}
+              style={{ width: `${(data.neat / data.totalBurned) * 100}%` }}
+              title={`NEAT: ${data.neat} kcal`}
             />
           </div>
           <div className="grid grid-cols-2 gap-3 mt-3">
