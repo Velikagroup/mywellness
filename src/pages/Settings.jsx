@@ -709,12 +709,12 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
-            {!user?.password_hash ? (
-              <Card className="water-glass-effect border-gray-200/30">
-                <CardHeader>
-                  <CardTitle>Imposta Password</CardTitle>
-                </CardHeader>
-                <CardContent>
+            <Card className="water-glass-effect border-gray-200/30">
+              <CardHeader>
+                <CardTitle>{user?.password_hash ? 'Cambia Password' : 'Imposta Password'}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                {!user?.password_hash && (
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
                     <div className="flex items-center gap-3 mb-2">
                       <CheckCircle className="w-5 h-5 text-blue-600" />
@@ -726,113 +726,68 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       Imposta una password per accedere anche con email e password (utile per app mobile iOS)
                     </p>
                   </div>
-                  <form onSubmit={async (e) => {
-                    e.preventDefault();
-                    const formData = new FormData(e.target);
-                    const newPassword = formData.get('newPassword');
-                    const confirmPassword = formData.get('confirmPassword');
+                )}
+                <form onSubmit={async (e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.target);
+                  const newPassword = formData.get('newPassword');
+                  const confirmPassword = formData.get('confirmPassword');
 
-                    if (newPassword !== confirmPassword) {
-                      alert('Le password non coincidono');
-                      return;
-                    }
+                  if (newPassword !== confirmPassword) {
+                    alert('Le password non coincidono');
+                    return;
+                  }
 
-                    if (newPassword.length < 8) {
-                      alert('La password deve essere di almeno 8 caratteri');
-                      return;
-                    }
+                  if (newPassword.length < 8) {
+                    alert('La password deve essere di almeno 8 caratteri');
+                    return;
+                  }
 
-                    try {
-                      setIsUpdatingPassword(true);
-                      await base44.functions.invoke('setPasswordDirect', { newPassword });
-                      alert('✅ Password impostata con successo!');
-                      await loadUserData();
-                      e.target.reset();
-                    } catch (error) {
-                      console.error('Error setting password:', error);
-                      alert('❌ Errore durante l\'impostazione della password');
-                    } finally {
-                      setIsUpdatingPassword(false);
-                    }
-                  }} className="space-y-4">
-                    <div>
-                      <Label htmlFor="newPassword">Nuova Password</Label>
-                      <Input
-                        id="newPassword"
-                        name="newPassword"
-                        type="password"
-                        required
-                        minLength={8}
-                        placeholder="Almeno 8 caratteri"
-                      />
-                    </div>
-                    <div>
-                      <Label htmlFor="confirmPassword">Conferma Password</Label>
-                      <Input
-                        id="confirmPassword"
-                        name="confirmPassword"
-                        type="password"
-                        required
-                        minLength={8}
-                        placeholder="Ripeti la password"
-                      />
-                    </div>
-                    <Button
-                      type="submit"
-                      disabled={isUpdatingPassword}
-                      className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                    >
-                      {isUpdatingPassword ? 'Salvataggio...' : '🔐 Imposta Password'}
-                    </Button>
-                  </form>
-                </CardContent>
-              </Card>
-            ) : (
-              <Card className="water-glass-effect border-gray-200/30">
-                <CardHeader>
-                  <CardTitle>{t('settings.changePassword')}</CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
+                  try {
+                    setIsUpdatingPassword(true);
+                    await base44.functions.invoke('setPasswordDirect', { newPassword });
+                    alert('✅ Password impostata con successo!');
+                    await loadUserData();
+                    e.target.reset();
+                  } catch (error) {
+                    console.error('Error setting password:', error);
+                    alert('❌ Errore durante l\'impostazione della password');
+                  } finally {
+                    setIsUpdatingPassword(false);
+                  }
+                }} className="space-y-4">
                   <div>
-                    <Label htmlFor="currentPassword">{t('settings.currentPassword')}</Label>
-                    <Input
-                      id="currentPassword"
-                      type="password"
-                      value={currentPassword}
-                      onChange={(e) => setCurrentPassword(e.target.value)}
-                      className="bg-white"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="newPassword">{t('settings.newPassword')}</Label>
+                    <Label htmlFor="newPassword">Nuova Password</Label>
                     <Input
                       id="newPassword"
+                      name="newPassword"
                       type="password"
-                      value={newPassword}
-                      onChange={(e) => setNewPassword(e.target.value)}
-                      className="bg-white"
+                      required
+                      minLength={8}
+                      placeholder="Almeno 8 caratteri"
                     />
                   </div>
                   <div>
-                    <Label htmlFor="confirmPassword">{t('settings.confirmPassword')}</Label>
+                    <Label htmlFor="confirmPassword">Conferma Password</Label>
                     <Input
                       id="confirmPassword"
+                      name="confirmPassword"
                       type="password"
-                      value={confirmPassword}
-                      onChange={(e) => setConfirmPassword(e.target.value)}
-                      className="bg-white"
+                      required
+                      minLength={8}
+                      placeholder="Ripeti la password"
                     />
                   </div>
                   <Button
-                    onClick={handleChangePassword}
-                    disabled={isSaving}
-                    variant="outline"
+                    type="submit"
+                    disabled={isUpdatingPassword}
+                    className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
                   >
-                    {isSaving ? t('settings.saving') : t('settings.changePassword')}
+                    {isUpdatingPassword ? 'Salvataggio...' : (user?.password_hash ? '🔐 Cambia Password' : '🔐 Imposta Password')}
                   </Button>
-                </CardContent>
-              </Card>
-            )}
+                </form>
+              </CardContent>
+            </Card>
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardContent className="pt-6">
