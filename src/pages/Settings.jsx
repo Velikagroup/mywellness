@@ -723,69 +723,28 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                       </p>
                     </div>
                     <p className="text-sm text-blue-800">
-                      Imposta una password per accedere anche con email e password (utile per app mobile iOS)
+                      Clicca il pulsante sotto per ricevere un'email con il link per impostare la password
                     </p>
                   </div>
                 )}
-                <form onSubmit={async (e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.target);
-                  const newPassword = formData.get('newPassword');
-                  const confirmPassword = formData.get('confirmPassword');
-
-                  if (newPassword !== confirmPassword) {
-                    alert('Le password non coincidono');
-                    return;
-                  }
-
-                  if (newPassword.length < 8) {
-                    alert('La password deve essere di almeno 8 caratteri');
-                    return;
-                  }
-
-                  try {
-                    setIsUpdatingPassword(true);
-                    await base44.functions.invoke('setPasswordDirect', { newPassword });
-                    alert('✅ Password impostata con successo!');
-                    await loadUserData();
-                    e.target.reset();
-                  } catch (error) {
-                    console.error('Error setting password:', error);
-                    alert('❌ Errore durante l\'impostazione della password');
-                  } finally {
-                    setIsUpdatingPassword(false);
-                  }
-                }} className="space-y-4">
-                  <div>
-                    <Label htmlFor="newPassword">Nuova Password</Label>
-                    <Input
-                      id="newPassword"
-                      name="newPassword"
-                      type="password"
-                      required
-                      minLength={8}
-                      placeholder="Almeno 8 caratteri"
-                    />
-                  </div>
-                  <div>
-                    <Label htmlFor="confirmPassword">Conferma Password</Label>
-                    <Input
-                      id="confirmPassword"
-                      name="confirmPassword"
-                      type="password"
-                      required
-                      minLength={8}
-                      placeholder="Ripeti la password"
-                    />
-                  </div>
-                  <Button
-                    type="submit"
-                    disabled={isUpdatingPassword}
-                    className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                  >
-                    {isUpdatingPassword ? 'Salvataggio...' : (user?.password_hash ? '🔐 Cambia Password' : '🔐 Imposta Password')}
-                  </Button>
-                </form>
+                <Button
+                  onClick={async () => {
+                    try {
+                      setIsUpdatingPassword(true);
+                      await base44.functions.invoke('sendSetPasswordEmail');
+                      alert('✅ Email inviata! Controlla la tua casella di posta e clicca sul link per impostare la password.');
+                    } catch (error) {
+                      console.error('Error sending email:', error);
+                      alert('❌ Errore durante l\'invio dell\'email');
+                    } finally {
+                      setIsUpdatingPassword(false);
+                    }
+                  }}
+                  disabled={isUpdatingPassword}
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                >
+                  {isUpdatingPassword ? 'Invio...' : (user?.password_hash ? '📧 Reset Password via Email' : '📧 Ricevi Link per Impostare Password')}
+                </Button>
               </CardContent>
             </Card>
 
