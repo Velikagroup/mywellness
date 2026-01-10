@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Cell } from 'recharts';
-import { Flame, TrendingUp, TrendingDown } from 'lucide-react';
+import { Progress } from "@/components/ui/progress";
+import { Flame, ArrowUp, ArrowDown } from 'lucide-react';
 
 export default function CalorieBalanceChart({ user }) {
   const [data, setData] = useState(null);
@@ -123,33 +123,8 @@ export default function CalorieBalanceChart({ user }) {
     );
   }
 
-  const chartData = [
-    {
-      name: 'Calorie',
-      'Piano Nutrizionale': data.plannedCalories,
-      'Calorie Assunte': data.consumedCalories,
-      'Metabolismo Basale': data.bmr,
-      'NEAT': data.neat
-    }
-  ];
-
-  const CustomTooltip = ({ active, payload }) => {
-    if (active && payload && payload.length) {
-      return (
-        <div className="bg-white p-3 rounded-lg shadow-lg border border-gray-200">
-          {payload.map((entry, index) => (
-            <div key={index} className="text-sm">
-              <span className="font-semibold" style={{ color: entry.color }}>
-                {entry.name}:
-              </span>
-              <span className="ml-2">{entry.value} kcal</span>
-            </div>
-          ))}
-        </div>
-      );
-    }
-    return null;
-  };
+  const consumedPercent = Math.min((data.consumedCalories / data.plannedCalories) * 100, 100);
+  const burnedPercent = 100;
 
   return (
     <Card className="water-glass-effect border-gray-200/30">
