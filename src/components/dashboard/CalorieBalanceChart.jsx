@@ -159,67 +159,68 @@ export default function CalorieBalanceChart({ user }) {
           Bilancio Calorie Oggi
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-4">
-        {/* Grafico Mini */}
-        <ResponsiveContainer width="100%" height={180}>
-          <BarChart data={chartData} barGap={4}>
-            <XAxis dataKey="name" hide />
-            <YAxis hide />
-            <Tooltip content={<CustomTooltip />} />
-            
-            <Bar dataKey="Piano Nutrizionale" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
-            <Bar dataKey="Calorie Assunte" radius={[6, 6, 0, 0]}>
-              {chartData.map((entry, index) => (
-                <Cell 
-                  key={`cell-${index}`} 
-                  fill={entry['Calorie Assunte'] > entry['Piano Nutrizionale'] ? '#ef4444' : '#10b981'} 
-                />
-              ))}
-            </Bar>
-            <Bar dataKey="Metabolismo Basale" fill="#f59e0b" radius={[6, 6, 0, 0]} />
-            <Bar dataKey="NEAT" fill="#fb923c" radius={[6, 6, 0, 0]} />
-          </BarChart>
-        </ResponsiveContainer>
-
-        {/* Bilancio */}
-        <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg p-4 border border-gray-200">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-xs text-gray-500">Bilancio</p>
-              <div className="flex items-center gap-1">
-                {data.balance < 0 ? (
-                  <TrendingDown className="w-4 h-4 text-green-600" />
-                ) : (
-                  <TrendingUp className="w-4 h-4 text-red-600" />
-                )}
-                <p className={`text-xl font-bold ${data.balance < 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {data.balance > 0 ? '+' : ''}{data.balance}
-                </p>
-              </div>
-            </div>
-            
-            <div className="text-right text-xs space-y-1">
-              <div className="flex items-center gap-2">
-                <span className="text-gray-500">In:</span>
-                <span className="font-semibold text-green-600">+{data.consumedCalories}</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <span className="text-gray-500">Out:</span>
-                <span className="font-semibold text-orange-600">-{data.totalBurned}</span>
-              </div>
-            </div>
+      <CardContent className="space-y-6">
+        {/* DEFICIT/SURPLUS - GROSSO E IN EVIDENZA */}
+        <div className={`rounded-xl p-6 text-center border-2 ${
+          data.balance < 0 
+            ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200' 
+            : 'bg-gradient-to-br from-red-50 to-orange-50 border-red-200'
+        }`}>
+          <p className="text-sm font-medium text-gray-600 mb-2">BILANCIO GIORNALIERO</p>
+          <div className="flex items-center justify-center gap-3">
+            {data.balance < 0 ? (
+              <ArrowDown className="w-8 h-8 text-green-600" />
+            ) : (
+              <ArrowUp className="w-8 h-8 text-red-600" />
+            )}
+            <p className={`text-5xl font-bold ${data.balance < 0 ? 'text-green-600' : 'text-red-600'}`}>
+              {data.balance > 0 ? '+' : ''}{data.balance}
+            </p>
+            <span className="text-2xl font-semibold text-gray-600">kcal</span>
           </div>
+          <p className="text-sm text-gray-600 mt-2 font-medium">
+            {data.balance < 0 
+              ? `🎯 Deficit di ${Math.abs(data.balance)} kcal - Perfetto per dimagrire!`
+              : data.balance === 0
+              ? '⚖️ Mantenimento perfetto'
+              : `⚠️ Surplus di ${data.balance} kcal`
+            }
+          </p>
         </div>
 
-        {/* Dettaglio mini */}
-        <div className="grid grid-cols-2 gap-2 text-xs">
-          <div className="flex justify-between">
-            <span className="text-gray-500">BMR:</span>
-            <span className="font-semibold">{data.bmr}</span>
+        {/* Progress Bar Calorie Assunte */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium text-gray-700 flex items-center gap-2">
+              <ArrowUp className="w-4 h-4 text-green-600" />
+              Calorie Assunte
+            </span>
+            <span className="font-bold text-green-600">{data.consumedCalories} / {data.plannedCalories} kcal</span>
           </div>
-          <div className="flex justify-between">
-            <span className="text-gray-500">NEAT:</span>
-            <span className="font-semibold">{data.neat}</span>
+          <Progress 
+            value={consumedPercent} 
+            className="h-3 bg-gray-200"
+            indicatorClassName={consumedPercent > 100 ? 'bg-red-500' : 'bg-green-500'}
+          />
+        </div>
+
+        {/* Progress Bar Calorie Bruciate */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium text-gray-700 flex items-center gap-2">
+              <Flame className="w-4 h-4 text-orange-600" />
+              Calorie Bruciate
+            </span>
+            <span className="font-bold text-orange-600">{data.totalBurned} kcal</span>
+          </div>
+          <Progress 
+            value={burnedPercent} 
+            className="h-3 bg-gray-200"
+            indicatorClassName="bg-gradient-to-r from-orange-500 to-red-500"
+          />
+          <div className="flex justify-between text-xs text-gray-500 px-1">
+            <span>BMR: {data.bmr}</span>
+            <span>NEAT: {data.neat}</span>
           </div>
         </div>
       </CardContent>
