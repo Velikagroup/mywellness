@@ -153,92 +153,73 @@ export default function CalorieBalanceChart({ user }) {
 
   return (
     <Card className="water-glass-effect border-gray-200/30">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Flame className="w-5 h-5 text-orange-600" />
-          Bilancio Calorico Giornaliero
+      <CardHeader className="pb-3">
+        <CardTitle className="flex items-center gap-2 text-lg">
+          <Flame className="w-4 h-4 text-orange-600" />
+          Bilancio Calorie Oggi
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        {/* Grafico */}
-        <div className="mb-6">
-          <ResponsiveContainer width="100%" height={300}>
-            <BarChart data={chartData} barGap={8}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#e5e7eb" />
-              <XAxis dataKey="name" stroke="#6b7280" />
-              <YAxis stroke="#6b7280" label={{ value: 'kcal', angle: -90, position: 'insideLeft' }} />
-              <Tooltip content={<CustomTooltip />} />
-              <Legend />
-              
-              {/* Calorie in entrata */}
-              <Bar dataKey="Piano Nutrizionale" fill="#94a3b8" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="Calorie Assunte" fill="#10b981" radius={[8, 8, 0, 0]}>
-                {chartData.map((entry, index) => (
-                  <Cell 
-                    key={`cell-${index}`} 
-                    fill={entry['Calorie Assunte'] > entry['Piano Nutrizionale'] ? '#ef4444' : '#10b981'} 
-                  />
-                ))}
-              </Bar>
-              
-              {/* Calorie in uscita */}
-              <Bar dataKey="Metabolismo Basale" fill="#f59e0b" radius={[8, 8, 0, 0]} />
-              <Bar dataKey="NEAT" fill="#f97316" radius={[8, 8, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
-        </div>
+      <CardContent className="space-y-4">
+        {/* Grafico Mini */}
+        <ResponsiveContainer width="100%" height={180}>
+          <BarChart data={chartData} barGap={4}>
+            <XAxis dataKey="name" hide />
+            <YAxis hide />
+            <Tooltip content={<CustomTooltip />} />
+            
+            <Bar dataKey="Piano Nutrizionale" fill="#cbd5e1" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="Calorie Assunte" radius={[6, 6, 0, 0]}>
+              {chartData.map((entry, index) => (
+                <Cell 
+                  key={`cell-${index}`} 
+                  fill={entry['Calorie Assunte'] > entry['Piano Nutrizionale'] ? '#ef4444' : '#10b981'} 
+                />
+              ))}
+            </Bar>
+            <Bar dataKey="Metabolismo Basale" fill="#f59e0b" radius={[6, 6, 0, 0]} />
+            <Bar dataKey="NEAT" fill="#fb923c" radius={[6, 6, 0, 0]} />
+          </BarChart>
+        </ResponsiveContainer>
 
-        {/* Bilancio Giornaliero */}
-        <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-xl p-6 border border-gray-200">
+        {/* Bilancio */}
+        <div className="bg-gradient-to-r from-slate-50 to-gray-50 rounded-lg p-4 border border-gray-200">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-sm text-gray-600 mb-1">Bilancio Giornaliero</p>
-              <div className="flex items-center gap-2">
+              <p className="text-xs text-gray-500">Bilancio</p>
+              <div className="flex items-center gap-1">
                 {data.balance < 0 ? (
-                  <TrendingDown className="w-6 h-6 text-green-600" />
+                  <TrendingDown className="w-4 h-4 text-green-600" />
                 ) : (
-                  <TrendingUp className="w-6 h-6 text-red-600" />
+                  <TrendingUp className="w-4 h-4 text-red-600" />
                 )}
-                <p className={`text-3xl font-bold ${data.balance < 0 ? 'text-green-600' : 'text-red-600'}`}>
-                  {data.balance > 0 ? '+' : ''}{data.balance} kcal
+                <p className={`text-xl font-bold ${data.balance < 0 ? 'text-green-600' : 'text-red-600'}`}>
+                  {data.balance > 0 ? '+' : ''}{data.balance}
                 </p>
               </div>
-              <p className="text-xs text-gray-500 mt-1">
-                {data.balance < 0 
-                  ? `Deficit di ${Math.abs(data.balance)} kcal - Ottimo per perdere peso!`
-                  : data.balance === 0
-                  ? 'In mantenimento perfetto'
-                  : `Surplus di ${data.balance} kcal - Rischi di ingrassare`
-                }
-              </p>
             </div>
             
-            <div className="text-right">
-              <div className="space-y-2">
-                <div>
-                  <p className="text-xs text-gray-500">Entrate</p>
-                  <p className="text-lg font-bold text-green-600">+{data.consumedCalories} kcal</p>
-                </div>
-                <div>
-                  <p className="text-xs text-gray-500">Uscite</p>
-                  <p className="text-lg font-bold text-orange-600">-{data.totalBurned} kcal</p>
-                </div>
+            <div className="text-right text-xs space-y-1">
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500">In:</span>
+                <span className="font-semibold text-green-600">+{data.consumedCalories}</span>
+              </div>
+              <div className="flex items-center gap-2">
+                <span className="text-gray-500">Out:</span>
+                <span className="font-semibold text-orange-600">-{data.totalBurned}</span>
               </div>
             </div>
           </div>
+        </div>
 
-          {/* Dettaglio Uscite */}
-          <div className="mt-4 pt-4 border-t border-gray-200">
-            <div className="grid grid-cols-2 gap-4 text-sm">
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">Metabolismo Basale:</span>
-                <span className="font-semibold text-amber-600">{data.bmr} kcal</span>
-              </div>
-              <div className="flex items-center justify-between">
-                <span className="text-gray-600">NEAT (Attività):</span>
-                <span className="font-semibold text-orange-600">{data.neat} kcal</span>
-              </div>
-            </div>
+        {/* Dettaglio mini */}
+        <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="flex justify-between">
+            <span className="text-gray-500">BMR:</span>
+            <span className="font-semibold">{data.bmr}</span>
+          </div>
+          <div className="flex justify-between">
+            <span className="text-gray-500">NEAT:</span>
+            <span className="font-semibold">{data.neat}</span>
           </div>
         </div>
       </CardContent>
