@@ -1,5 +1,4 @@
 import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
-import * as bcrypt from "https://deno.land/x/bcrypt@v0.4.1/mod.ts";
 
 Deno.serve(async (req) => {
     try {
@@ -25,12 +24,9 @@ Deno.serve(async (req) => {
             }, { status: 400 });
         }
 
-        // Hash della password con bcrypt
-        const hashedPassword = await bcrypt.hash(newPassword);
-
-        // Salva la password hashata nell'entità User
+        // Usa il campo 'password' che Base44 gestisce automaticamente con hashing
         await base44.asServiceRole.entities.User.update(user.id, {
-            password_hash: hashedPassword
+            password: newPassword
         });
 
         return Response.json({ 
