@@ -9,10 +9,14 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        // Verifica che l'utente abbia Google SSO
-        if (user.sso_provider !== 'google') {
+        // 🔍 DEBUG
+        console.log('🔍 User SSO provider:', user.sso_provider);
+        console.log('🔍 User has password_hash:', !!user.password_hash);
+
+        // ✅ Se l'utente ha già una password, non serve impostarne una nuova
+        if (user.password_hash) {
             return Response.json({ 
-                error: 'This feature is only for Google OAuth users' 
+                error: 'You already have a password set. Use the change password form instead.' 
             }, { status: 400 });
         }
 
