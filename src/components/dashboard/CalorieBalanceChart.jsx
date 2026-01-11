@@ -287,7 +287,7 @@ export default function CalorieBalanceChart({ user }) {
           </div>
 
           {/* Progress Bar BMR */}
-          <div className="space-y-2 pl-4">
+          <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-gray-600">
                 {t('dashboard.caloriesBurnedBMR')}
@@ -303,7 +303,7 @@ export default function CalorieBalanceChart({ user }) {
           </div>
 
           {/* Progress Bar NEAT - allineato con BMR */}
-          <div className="space-y-2 pl-4">
+          <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-gray-600">
                 {t('dashboard.caloriesBurnedNEAT')}
