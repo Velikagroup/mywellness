@@ -2,16 +2,19 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Flame, ArrowUp, ArrowDown, Watch } from 'lucide-react';
+import { Flame, ArrowUp, ArrowDown, Watch, Crown } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
+import { hasFeatureAccess } from '../utils/subscriptionPlans';
+import UpgradeModal from '../meals/UpgradeModal';
 
 export default function CalorieBalanceChart({ user }) {
   const { t } = useLanguage();
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showDeviceModal, setShowDeviceModal] = useState(false);
+  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -313,13 +316,30 @@ export default function CalorieBalanceChart({ user }) {
                 <span className="font-medium text-gray-600">
                   {t('dashboard.caloriesBurnedNEAT')}
                 </span>
-                <button
-                  onClick={() => setShowDeviceModal(true)}
-                  className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
-                >
-                  <Watch className="w-3 h-3" />
-                  <span>Connetti</span>
-                </button>
+                <div className="flex items-center gap-1">
+                  <button
+                    onClick={() => {
+                      if (hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync')) {
+                        setShowDeviceModal(true);
+                      } else {
+                        setShowUpgradeModal(true);
+                      }
+                    }}
+                    className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
+                  >
+                    <Watch className="w-3 h-3" />
+                    <span>Connetti</span>
+                  </button>
+                  {!hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') && (
+                    <button
+                      onClick={() => setShowUpgradeModal(true)}
+                      className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-semibold rounded-full hover:from-amber-500 hover:to-orange-600 transition-all shadow-sm"
+                    >
+                      <Crown className="w-3 h-3" />
+                      <span>Premium</span>
+                    </button>
+                  )}
+                </div>
               </div>
               <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
             </div>
@@ -393,6 +413,15 @@ export default function CalorieBalanceChart({ user }) {
             </div>
           </DialogContent>
           </Dialog>
+          )}
+
+          {showUpgradeModal && (
+          <UpgradeModal
+          isOpen={showUpgradeModal}
+          onClose={() => setShowUpgradeModal(false)}
+          currentPlan={user?.subscription_plan}
+          targetPlan="premium"
+          />
           )}
           </>
           );
