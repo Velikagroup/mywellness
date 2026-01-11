@@ -69,6 +69,8 @@ export const PLAN_FEATURES = {
     workout_modification: false,
     progress_photo_analysis: false,
     priority_support: false,
+    calorie_balance: true,
+    smartwatch_sync: false,
     meal_plan_generations_per_month: 8,
     workout_plan_generations_per_month: 4
   },
