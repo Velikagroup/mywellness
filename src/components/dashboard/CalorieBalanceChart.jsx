@@ -2,19 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Flame, ArrowUp, ArrowDown, Watch, Crown } from 'lucide-react';
-import { useLanguage } from '../i18n/LanguageContext';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { hasFeatureAccess } from '../utils/subscriptionPlans';
-import UpgradeModal from '../meals/UpgradeModal';
+import { Flame, ArrowUp, ArrowDown } from 'lucide-react';
 
 export default function CalorieBalanceChart({ user }) {
-  const { t } = useLanguage();
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [showDeviceModal, setShowDeviceModal] = useState(false);
-  const [showUpgradeModal, setShowUpgradeModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -99,30 +91,8 @@ export default function CalorieBalanceChart({ user }) {
       // Calcola calorie dal piano
       const plannedCalories = mealPlans.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
 
-      // Calcola calorie consumate: per ogni pasto pianificato, usa il log se esiste, altrimenti usa il piano
-      let consumedCalories = 0;
-      const loggedMealTypes = new Set(mealLogs.map(log => log.meal_type));
-      
-      // Crea array di pasti con info se sono stati loggati o meno
-      const mealSegments = mealPlans
-        .sort((a, b) => {
-          const order = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
-          return order.indexOf(a.meal_type) - order.indexOf(b.meal_type);
-        })
-        .map(meal => {
-          const isLogged = loggedMealTypes.has(meal.meal_type);
-          const calories = isLogged 
-            ? mealLogs.find(log => log.meal_type === meal.meal_type)?.actual_calories || 0
-            : meal.total_calories || 0;
-          
-          consumedCalories += calories;
-          
-          return {
-            meal_type: meal.meal_type,
-            calories,
-            isLogged
-          };
-        });
+      // Calcola calorie consumate
+      const consumedCalories = mealLogs.reduce((sum, log) => sum + (log.actual_calories || 0), 0);
 
       // Calcola metabolismo basale e NEAT dai dati utente
       const bmr = calculateBMR(user);
@@ -141,7 +111,6 @@ export default function CalorieBalanceChart({ user }) {
       setData({
         plannedCalories: Math.round(plannedCalories),
         consumedCalories: Math.round(consumedCalories),
-        mealSegments,
         bmr: Math.round(bmr),
         neat: Math.round(neat),
         totalBurned: Math.round(totalBurned),
@@ -194,11 +163,10 @@ export default function CalorieBalanceChart({ user }) {
     : data.balance > 0; // Aumento massa: surplus è buono
 
   return (
-    <>
     <Card className="water-glass-effect border-gray-200/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg">
-          {t('dashboard.calorieBalanceToday')}
+          Bilancio Calorie Oggi
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -208,7 +176,7 @@ export default function CalorieBalanceChart({ user }) {
             ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200' 
             : 'bg-gradient-to-br from-red-50 to-orange-50 border-red-200'
         }`}>
-          <p className="text-sm font-medium text-gray-600 mb-2">{t('dashboard.dailyBalance').toUpperCase()}</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">BILANCIO GIORNALIERO</p>
           <div className="flex items-center justify-center gap-3">
             {isBalanceGood ? (
               <ArrowDown className="w-8 h-8 text-green-600" />
@@ -223,209 +191,72 @@ export default function CalorieBalanceChart({ user }) {
           <p className="text-sm text-gray-600 mt-2 font-medium">
             {data.isWeightLoss ? (
               data.balance < 0 
-                ? t('dashboard.deficitPerfect').replace('{amount}', Math.abs(data.balance))
+                ? `🎯 Deficit di ${Math.abs(data.balance)} kcal - Perfetto per dimagrire!`
                 : data.balance === 0
-                ? t('dashboard.maintenance')
-                : t('dashboard.surplusSlowsLoss').replace('{amount}', data.balance)
+                ? '⚖️ Mantenimento'
+                : `⚠️ Surplus di ${data.balance} kcal - Rallenta il dimagrimento`
             ) : (
               data.balance > 0
-                ? t('dashboard.surplusPerfect').replace('{amount}', data.balance)
+                ? `💪 Surplus di ${data.balance} kcal - Perfetto per massa!`
                 : data.balance === 0
-                ? t('dashboard.maintenance')
-                : t('dashboard.deficitSlowsGain').replace('{amount}', Math.abs(data.balance))
+                ? '⚖️ Mantenimento'
+                : `⚠️ Deficit di ${Math.abs(data.balance)} kcal - Rallenta l'aumento`
             )}
           </p>
         </div>
 
-        {/* Progress Bar Calorie Assunte con segmenti per pasto */}
+        {/* Progress Bar Calorie Assunte */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
               <ArrowUp className={data.isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
-              {t('dashboard.caloriesConsumed')}
+              Calorie Assunte
             </span>
             <span className={data.isWeightLoss ? "font-bold text-red-600" : "font-bold text-green-600"}>{data.consumedCalories} kcal</span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-            <div className="h-full flex">
-              {data.mealSegments?.map((segment, index) => {
-                const segmentWidth = (segment.calories / Math.max(data.consumedCalories, data.totalBurned)) * 100;
-                const baseColor = data.isWeightLoss ? 'red' : 'green';
-                
-                return (
-                  <React.Fragment key={segment.meal_type}>
-                    <div 
-                      className={`h-full transition-all ${
-                        segment.isLogged 
-                          ? (baseColor === 'red' ? 'bg-red-500' : 'bg-green-500')
-                          : (baseColor === 'red' ? 'bg-red-300' : 'bg-green-300')
-                      } ${!segment.isLogged ? 'opacity-60' : ''}`}
-                      style={{ 
-                        width: `${segmentWidth}%`,
-                        backgroundImage: !segment.isLogged 
-                          ? 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px)'
-                          : 'none'
-                      }}
-                    />
-                    {index < data.mealSegments.length - 1 && (
-                      <div className="w-[2px] h-full bg-white opacity-80" />
-                    )}
-                  </React.Fragment>
-                );
-              })}
-            </div>
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className={`h-full transition-all ${data.isWeightLoss ? 'bg-red-500' : 'bg-green-500'}`}
+              style={{ width: `${(data.consumedCalories / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+            />
           </div>
-          <p className="text-xs text-gray-500 mt-1">
-            {t('dashboard.plannedMealsNote')}
-          </p>
         </div>
 
-        {/* Calorie Bruciate - Raggruppate */}
-        <div className="space-y-3">
-          {/* Titolo principale con totale */}
-          <div className="flex items-center justify-between text-sm pb-2 border-b border-gray-200">
-            <span className="font-bold text-gray-900 flex items-center gap-2">
-              <Flame className={data.isWeightLoss ? "w-5 h-5 text-green-600" : "w-5 h-5 text-red-600"} />
-              {t('dashboard.caloriesBurned')}
+        {/* Progress Bar BMR */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium text-gray-700 flex items-center gap-2">
+              <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
+              Calorie Bruciate - BMR (Metabolismo Basale)
             </span>
-            <span className={data.isWeightLoss ? "font-bold text-lg text-green-600" : "font-bold text-lg text-red-600"}>
-              {data.totalBurned} kcal
+            <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.bmr} kcal</span>
+          </div>
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
+              style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+            />
+          </div>
+        </div>
+
+        {/* Progress Bar NEAT */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium text-gray-700 flex items-center gap-2">
+              <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-400" : "w-4 h-4 text-red-400"} />
+              Calorie Bruciate - NEAT (Attività)
             </span>
+            <span className={data.isWeightLoss ? "font-bold text-green-400" : "font-bold text-red-400"}>{data.neat} kcal</span>
           </div>
-
-          {/* Progress Bar BMR */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-600">
-                {t('dashboard.caloriesBurnedBMR')}
-              </span>
-              <span className={data.isWeightLoss ? "font-semibold text-green-600" : "font-semibold text-red-600"}>{data.bmr} kcal</span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
-                style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
-              />
-            </div>
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+            <div 
+              className={data.isWeightLoss ? "h-full bg-green-400" : "h-full bg-red-400"}
+              style={{ width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+            />
           </div>
+        </div>
 
-          {/* Progress Bar NEAT - allineato con BMR */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-600">
-                  {t('dashboard.caloriesBurnedNEAT')}
-                </span>
-                <div className="relative">
-                  {hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') ? (
-                    <button
-                      onClick={() => setShowDeviceModal(true)}
-                      className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
-                    >
-                      <Watch className="w-3 h-3" />
-                      <span>Connetti</span>
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => setShowUpgradeModal(true)}
-                        className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-300/50 text-gray-500 rounded-md cursor-pointer"
-                      >
-                        <Watch className="w-3 h-3" />
-                        <span>Connetti</span>
-                      </button>
-                      <button
-                        onClick={() => setShowUpgradeModal(true)}
-                        className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-purple-500 text-white text-[10px] font-bold rounded-full hover:bg-purple-600 transition-all shadow-md z-10"
-                      >
-                        <span>Premium</span>
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
-              <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-              <div 
-                className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
-                style={{ 
-                  left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
-                  width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` 
-                }}
-              />
-            </div>
-          </div>
-          </div>
-
-          </CardContent>
-          </Card>
-
-          {showDeviceModal && (
-          <Dialog open={showDeviceModal} onOpenChange={setShowDeviceModal}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                <Watch className="w-6 h-6 text-[#26847F]" />
-                Connetti Dispositivo
-              </DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4 pt-4">
-              <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                <p className="text-sm text-blue-900 font-medium">
-                  📱 Questa funzione è disponibile solo sull'app mobile MyWellness
-                </p>
-              </div>
-
-              <div className="space-y-3">
-                <p className="text-sm text-gray-700">
-                  Per connettere il tuo smartwatch e sincronizzare automaticamente i dati di attività:
-                </p>
-
-                <div className="space-y-2">
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="text-lg">🍎</span>
-                    <div>
-                      <p className="font-semibold text-sm text-gray-900">iOS (Apple Watch)</p>
-                      <p className="text-xs text-gray-600">Scarica l'app mobile e sincronizza con Apple Health</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
-                    <span className="text-lg">🤖</span>
-                    <div>
-                      <p className="font-semibold text-sm text-gray-900">Android (Wear OS, Samsung Health)</p>
-                      <p className="text-xs text-gray-600">Scarica l'app mobile e sincronizza con Google Fit</p>
-                    </div>
-                  </div>
-                </div>
-
-                <div className="pt-4 border-t border-gray-200">
-                  <p className="text-xs text-gray-500 text-center">
-                    💡 Una volta connesso, i tuoi dati di attività verranno aggiornati automaticamente per calcolare le calorie bruciate in modo più preciso
-                  </p>
-                </div>
-              </div>
-
-              <Button
-                onClick={() => setShowDeviceModal(false)}
-                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
-              >
-                Ho Capito
-              </Button>
-            </div>
-          </DialogContent>
-          </Dialog>
-          )}
-
-          {showUpgradeModal && (
-          <UpgradeModal
-          isOpen={showUpgradeModal}
-          onClose={() => setShowUpgradeModal(false)}
-          currentPlan={user?.subscription_plan}
-          targetPlan="premium"
-          />
-          )}
-          </>
-          );
-          }
+      </CardContent>
+    </Card>
+  );
+}
