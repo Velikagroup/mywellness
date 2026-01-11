@@ -15,6 +15,8 @@ export default function CalorieBalanceChart({ user }) {
   const [isLoading, setIsLoading] = useState(true);
   const [showDeviceModal, setShowDeviceModal] = useState(false);
   const [showUpgradeModal, setShowUpgradeModal] = useState(false);
+  const [healthKitData, setHealthKitData] = useState(null);
+  const [deviceConnected, setDeviceConnected] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -96,6 +98,22 @@ export default function CalorieBalanceChart({ user }) {
       });
       console.log('📊 Meal logs loaded:', mealLogs.length);
 
+      // Carica dati HealthKit per oggi
+      const healthKitSync = await base44.entities.HealthKitSync.filter({
+        user_id: user.id,
+        date: today
+      });
+      console.log('🍎 HealthKit data loaded:', healthKitSync.length);
+      
+      if (healthKitSync.length > 0) {
+        setHealthKitData(healthKitSync[0]);
+        setDeviceConnected(true);
+        console.log('✅ Device connected with HealthKit data');
+      } else if (user.healthkit_connected) {
+        setDeviceConnected(true);
+        console.log('✅ Device connected (no data for today yet)');
+      }
+
       // Calcola calorie dal piano
       const plannedCalories = mealPlans.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
 
@@ -124,9 +142,18 @@ export default function CalorieBalanceChart({ user }) {
           };
         });
 
-      // Calcola metabolismo basale e NEAT dai dati utente
+      // Calcola metabolismo basale e NEAT
       const bmr = calculateBMR(user);
-      const neat = calculateNEAT(user);
+      
+      // Usa dati HealthKit se disponibili, altrimenti calcolo automatico
+      let neat = calculateNEAT(user);
+      if (healthKitSync.length > 0 && healthKitSync[0].active_energy_burned_kcal) {
+        neat = healthKitSync[0].active_energy_burned_kcal;
+        console.log('🍎 Using HealthKit NEAT:', neat);
+      } else {
+        console.log('📊 Using calculated NEAT:', neat);
+      }
+      
       const totalBurned = bmr + neat;
 
       console.log('💪 BMR:', bmr, 'NEAT:', neat, 'Total burned:', totalBurned);
@@ -202,13 +229,27 @@ export default function CalorieBalanceChart({ user }) {
             {t('dashboard.calorieBalanceToday')}
           </CardTitle>
           {hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') ? (
-            <button
-              onClick={() => setShowDeviceModal(true)}
-              className="flex items-center gap-1 px-3 py-1.5 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors font-medium"
-            >
-              <Watch className="w-3.5 h-3.5" />
-              <span>Connetti dispositivo</span>
-            </button>
+            deviceConnected ? (
+              <div className="flex items-center gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 border border-green-200 rounded-md">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs font-medium text-green-700">Dispositivo connesso</span>
+                </div>
+                {healthKitData?.last_sync_at && (
+                  <span className="text-xs text-gray-500">
+                    {new Date(healthKitData.last_sync_at).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+                  </span>
+                )}
+              </div>
+            ) : (
+              <button
+                onClick={() => setShowDeviceModal(true)}
+                className="flex items-center gap-1 px-3 py-1.5 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors font-medium"
+              >
+                <Watch className="w-3.5 h-3.5" />
+                <span>Connetti dispositivo</span>
+              </button>
+            )
           ) : (
             <div className="relative">
               <button
@@ -339,9 +380,16 @@ export default function CalorieBalanceChart({ user }) {
           {/* Progress Bar NEAT - allineato con BMR */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-600">
-                NEAT (Attività) / Dispositivo Salute
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-gray-600">
+                  NEAT (Attività) / Dispositivo Salute
+                </span>
+                {healthKitData && (
+                  <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+                    HealthKit
+                  </span>
+                )}
+              </div>
               <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
             </div>
             <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
