@@ -279,7 +279,7 @@ export default function CalorieBalanceChart({ user }) {
           <div className="flex items-center justify-between text-sm pb-2 border-b border-gray-200">
             <span className="font-bold text-gray-900 flex items-center gap-2">
               <Flame className={data.isWeightLoss ? "w-5 h-5 text-green-600" : "w-5 h-5 text-red-600"} />
-              Calorie Bruciate
+              {t('dashboard.caloriesBurned')}
             </span>
             <span className={data.isWeightLoss ? "font-bold text-lg text-green-600" : "font-bold text-lg text-red-600"}>
               {data.totalBurned} kcal
