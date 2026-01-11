@@ -336,10 +336,9 @@ export default function CalorieBalanceChart({ user }) {
                       </button>
                       <button
                         onClick={() => setShowUpgradeModal(true)}
-                        className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold rounded-full hover:from-purple-600 hover:to-pink-600 transition-all shadow-md z-10"
+                        className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-purple-500 text-white text-[10px] font-bold rounded-full hover:bg-purple-600 transition-all shadow-md z-10"
                       >
-                        <Crown className="w-2.5 h-2.5" />
-                        <span>PRO</span>
+                        <span>Premium</span>
                       </button>
                     </>
                   )}
