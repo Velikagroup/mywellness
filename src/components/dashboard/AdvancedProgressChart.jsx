@@ -10,6 +10,7 @@ import { Link } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from '../i18n/LanguageContext';
+import CalorieBalanceChart from './CalorieBalanceChart';
 
 const KCAL_PER_KG = 7700;
 
@@ -396,6 +397,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               💡 {t('progressChart.calorieCalc')} <span className="font-semibold text-gray-700">7700 kcal = 1 kg</span> {t('progressChart.perKg')}
             </p>
           </div>
+        </div>
+
+        {/* Bilancio Calorie Oggi */}
+        <div className="mt-6">
+          <CalorieBalanceChart user={user} />
         </div>
       </CardContent>
     </Card>
