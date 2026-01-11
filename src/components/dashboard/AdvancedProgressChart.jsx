@@ -68,9 +68,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const [weight, setWeight] = useState('');
   const [isSaving, setIsSaving] = useState(false);
   const [todayCalorieBalance, setTodayCalorieBalance] = useState(null);
+  const [accumulatedCalories, setAccumulatedCalories] = useState(0);
 
   useEffect(() => {
-    const loadTodayCalories = async () => {
+    const loadCalorieData = async () => {
       if (!user?.id) return;
       
       try {
@@ -106,13 +107,46 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         const balance = consumedCalories - totalBurned;
 
         setTodayCalorieBalance(balance);
+
+        // Carica l'accumulo dai CalorieBalance records dopo l'ultima registrazione peso
+        const lastWeightLog = weightHistory.length > 0 ? weightHistory[0] : null;
+        const lastWeightDate = lastWeightLog?.date || lastWeightLog?.created_date?.split('T')[0];
+
+        if (lastWeightDate) {
+          // Carica tutti i CalorieBalance DOPO l'ultima registrazione peso
+          const calorieBalances = await base44.entities.CalorieBalance.filter({
+            user_id: user.id
+          }, '-date', 1000);
+
+          // Filtra solo quelli dopo l'ultima registrazione peso
+          const balancesAfterWeight = calorieBalances.filter(b => b.date > lastWeightDate);
+          
+          // Prendi l'ultimo accumulo (il più recente)
+          const latestBalance = balancesAfterWeight.length > 0 ? balancesAfterWeight[0] : null;
+          
+          if (latestBalance) {
+            setAccumulatedCalories(latestBalance.accumulated_balance || 0);
+          } else {
+            setAccumulatedCalories(0);
+          }
+        } else {
+          // Nessuna registrazione peso, usa l'ultimo accumulo totale
+          const calorieBalances = await base44.entities.CalorieBalance.filter({
+            user_id: user.id
+          }, '-date', 1);
+
+          if (calorieBalances.length > 0) {
+            setAccumulatedCalories(calorieBalances[0].accumulated_balance || 0);
+          }
+        }
+
       } catch (error) {
-        console.error('Error loading today calories:', error);
+        console.error('Error loading calorie data:', error);
       }
     };
 
-    loadTodayCalories();
-  }, [user]);
+    loadCalorieData();
+  }, [user, weightHistory]);
 
   const lineData = useMemo(() => {
     console.log('📈 lineData calculation - weightHistory:', weightHistory?.length, 'entries');
@@ -289,6 +323,15 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   // Se il progresso è negativo (regresso), le kcal completate sono 0 e le restanti aumentano
   const isRegressing = weightProgressTowardsGoal < 0;
   let kcalCompleted = isRegressing ? 0 : Math.abs(weightProgressTowardsGoal) * KCAL_PER_KG;
+  
+  // Aggiungi l'accumulo dei deficit calorici dal cron DOPO l'ultima registrazione peso
+  if (accumulatedCalories !== 0) {
+    const accumulatedContribution = isWeightLoss
+      ? Math.max(0, -accumulatedCalories)  // Per dimagrimento: solo deficit negativi
+      : Math.max(0, accumulatedCalories);   // Per aumento: solo surplus positivi
+    
+    kcalCompleted += accumulatedContribution;
+  }
   
   // Aggiungi il contributo di oggi se l'obiettivo è coerente con il balance
   if (todayCalorieBalance !== null) {
