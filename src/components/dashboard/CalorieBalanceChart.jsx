@@ -2,13 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Flame, ArrowUp, ArrowDown } from 'lucide-react';
+import { Flame, ArrowUp, ArrowDown, Watch } from 'lucide-react';
 import { useLanguage } from '../i18n/LanguageContext';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Button } from "@/components/ui/button";
 
 export default function CalorieBalanceChart({ user }) {
   const { t } = useLanguage();
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [showDeviceModal, setShowDeviceModal] = useState(false);
 
   useEffect(() => {
     loadData();
@@ -305,9 +308,18 @@ export default function CalorieBalanceChart({ user }) {
           {/* Progress Bar NEAT - allineato con BMR */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-600">
-                {t('dashboard.caloriesBurnedNEAT')}
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-medium text-gray-600">
+                  {t('dashboard.caloriesBurnedNEAT')}
+                </span>
+                <button
+                  onClick={() => setShowDeviceModal(true)}
+                  className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
+                >
+                  <Watch className="w-3 h-3" />
+                  <span>Connetti</span>
+                </button>
+              </div>
               <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
             </div>
             <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
@@ -324,5 +336,61 @@ export default function CalorieBalanceChart({ user }) {
 
       </CardContent>
     </Card>
+
+    <Dialog open={showDeviceModal} onOpenChange={setShowDeviceModal}>
+      <DialogContent className="max-w-md">
+        <DialogHeader>
+          <DialogTitle className="text-xl font-bold text-gray-900 flex items-center gap-2">
+            <Watch className="w-6 h-6 text-[#26847F]" />
+            Connetti Dispositivo
+          </DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4 pt-4">
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+            <p className="text-sm text-blue-900 font-medium">
+              📱 Questa funzione è disponibile solo sull'app mobile MyWellness
+            </p>
+          </div>
+
+          <div className="space-y-3">
+            <p className="text-sm text-gray-700">
+              Per connettere il tuo smartwatch e sincronizzare automaticamente i dati di attività:
+            </p>
+            
+            <div className="space-y-2">
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <span className="text-lg">🍎</span>
+                <div>
+                  <p className="font-semibold text-sm text-gray-900">iOS (Apple Watch)</p>
+                  <p className="text-xs text-gray-600">Scarica l'app mobile e sincronizza con Apple Health</p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-3 p-3 bg-gray-50 rounded-lg">
+                <span className="text-lg">🤖</span>
+                <div>
+                  <p className="font-semibold text-sm text-gray-900">Android (Wear OS, Samsung Health)</p>
+                  <p className="text-xs text-gray-600">Scarica l'app mobile e sincronizza con Google Fit</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="pt-4 border-t border-gray-200">
+              <p className="text-xs text-gray-500 text-center">
+                💡 Una volta connesso, i tuoi dati di attività verranno aggiornati automaticamente per calcolare le calorie bruciate in modo più preciso
+              </p>
+            </div>
+          </div>
+
+          <Button
+            onClick={() => setShowDeviceModal(false)}
+            className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
+          >
+            Ho Capito
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
+  </div>
   );
 }
