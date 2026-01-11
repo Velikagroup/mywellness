@@ -317,27 +317,31 @@ export default function CalorieBalanceChart({ user }) {
                   {t('dashboard.caloriesBurnedNEAT')}
                 </span>
                 <div className="relative">
-                  <button
-                    onClick={() => {
-                      if (hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync')) {
-                        setShowDeviceModal(true);
-                      } else {
-                        setShowUpgradeModal(true);
-                      }
-                    }}
-                    className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
-                  >
-                    <Watch className="w-3 h-3" />
-                    <span>Connetti</span>
-                  </button>
-                  {!hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') && (
+                  {hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') ? (
                     <button
-                      onClick={() => setShowUpgradeModal(true)}
-                      className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold rounded-full hover:from-purple-600 hover:to-pink-600 transition-all shadow-md z-10"
+                      onClick={() => setShowDeviceModal(true)}
+                      className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
                     >
-                      <Crown className="w-2.5 h-2.5" />
-                      <span>PRO</span>
+                      <Watch className="w-3 h-3" />
+                      <span>Connetti</span>
                     </button>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => setShowUpgradeModal(true)}
+                        className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-300/50 text-gray-500 rounded-md cursor-pointer"
+                      >
+                        <Watch className="w-3 h-3" />
+                        <span>Connetti</span>
+                      </button>
+                      <button
+                        onClick={() => setShowUpgradeModal(true)}
+                        className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold rounded-full hover:from-purple-600 hover:to-pink-600 transition-all shadow-md z-10"
+                      >
+                        <Crown className="w-2.5 h-2.5" />
+                        <span>PRO</span>
+                      </button>
+                    </>
                   )}
                 </div>
               </div>
