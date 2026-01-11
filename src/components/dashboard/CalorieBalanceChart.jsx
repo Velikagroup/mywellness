@@ -340,7 +340,7 @@ export default function CalorieBalanceChart({ user }) {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <span className="font-medium text-gray-600">
-                NEAT / Dispositivo Salute
+                NEAT (Attività) / Dispositivo Salute
               </span>
               <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
             </div>
