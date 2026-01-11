@@ -25,10 +25,94 @@ const getActivityMultiplier = (activityLevel) => {
   return multipliers[activityLevel] || 1.2;
 };
 
+const calculateBMR = (userData) => {
+  if (!userData?.gender || !userData?.current_weight || !userData?.height) return 0;
+  
+  let age = 30;
+  if (userData.birthdate) {
+    const birthDate = new Date(userData.birthdate);
+    const today = new Date();
+    age = today.getFullYear() - birthDate.getFullYear();
+    const monthDiff = today.getMonth() - birthDate.getMonth();
+    if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+      age--;
+    }
+  }
+  
+  const weight = userData.current_weight;
+  const height = userData.height;
+  
+  if (userData.gender === 'male') {
+    return (10 * weight) + (6.25 * height) - (5 * age) + 5;
+  } else {
+    return (10 * weight) + (6.25 * height) - (5 * age) - 161;
+  }
+};
+
+const calculateNEAT = (userData) => {
+  const bmr = calculateBMR(userData);
+  const activityMultipliers = {
+    sedentary: 0.2,
+    light: 0.375,
+    moderate: 0.55,
+    active: 0.725,
+    very_active: 0.9
+  };
+  
+  const multiplier = activityMultipliers[userData?.activity_level] || 0.375;
+  return bmr * multiplier;
+};
+
 export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false }) {
   const { t } = useLanguage();
   const [weight, setWeight] = useState('');
   const [isSaving, setIsSaving] = useState(false);
+  const [todayCalorieBalance, setTodayCalorieBalance] = useState(null);
+
+  useEffect(() => {
+    const loadTodayCalories = async () => {
+      if (!user?.id) return;
+      
+      try {
+        const today = new Date().toISOString().split('T')[0];
+        const dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][new Date().getDay()];
+
+        const mealPlans = await base44.entities.MealPlan.filter({
+          user_id: user.id,
+          day_of_week: dayOfWeek
+        });
+
+        const mealLogs = await base44.entities.MealLog.filter({
+          user_id: user.id,
+          date: today
+        });
+
+        const plannedCalories = mealPlans.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
+
+        let consumedCalories = 0;
+        const loggedMealTypes = new Set(mealLogs.map(log => log.meal_type));
+        
+        consumedCalories += mealLogs.reduce((sum, log) => sum + (log.actual_calories || 0), 0);
+        
+        mealPlans.forEach(meal => {
+          if (!loggedMealTypes.has(meal.meal_type)) {
+            consumedCalories += (meal.total_calories || 0);
+          }
+        });
+
+        const bmr = calculateBMR(user);
+        const neat = calculateNEAT(user);
+        const totalBurned = bmr + neat;
+        const balance = consumedCalories - totalBurned;
+
+        setTodayCalorieBalance(balance);
+      } catch (error) {
+        console.error('Error loading today calories:', error);
+      }
+    };
+
+    loadTodayCalories();
+  }, [user]);
 
   const lineData = useMemo(() => {
     console.log('📈 lineData calculation - weightHistory:', weightHistory?.length, 'entries');
@@ -204,10 +288,20 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   
   // Se il progresso è negativo (regresso), le kcal completate sono 0 e le restanti aumentano
   const isRegressing = weightProgressTowardsGoal < 0;
-  const kcalCompleted = isRegressing ? 0 : Math.abs(weightProgressTowardsGoal) * KCAL_PER_KG;
+  let kcalCompleted = isRegressing ? 0 : Math.abs(weightProgressTowardsGoal) * KCAL_PER_KG;
+  
+  // Aggiungi il contributo di oggi se l'obiettivo è coerente con il balance
+  if (todayCalorieBalance !== null) {
+    const todayContribution = isWeightLoss 
+      ? Math.max(0, -todayCalorieBalance)  // Per dimagrimento: solo se deficit (negativo)
+      : Math.max(0, todayCalorieBalance);   // Per aumento: solo se surplus (positivo)
+    
+    kcalCompleted += todayContribution;
+  }
+  
   const kcalRemaining = isRegressing 
-    ? totalKcalToChange + Math.abs(weightProgressTowardsGoal) * KCAL_PER_KG  // Aggiungi le kcal perse
-    : totalKcalToChange - kcalCompleted;
+    ? totalKcalToChange + Math.abs(weightProgressTowardsGoal) * KCAL_PER_KG
+    : Math.max(0, totalKcalToChange - kcalCompleted);
 
   const pieData = [
     { name: t('progressChart.completedLabel'), value: kcalCompleted },
