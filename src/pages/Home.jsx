@@ -64,12 +64,6 @@ function HomeContent() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
-        
-        // ✅ Se loggato con quiz completato e subscription attiva, vai alla Dashboard
-        if (currentUser && currentUser.quiz_completed && 
-            (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial')) {
-          navigate(createPageUrl('Dashboard'), { replace: true });
-        }
       } catch (error) {
         // User not logged in
         setUser(null);
