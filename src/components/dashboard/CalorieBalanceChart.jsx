@@ -3,8 +3,10 @@ import { base44 } from '@/api/base44Client';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Flame, ArrowUp, ArrowDown } from 'lucide-react';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function CalorieBalanceChart({ user }) {
+  const { t } = useLanguage();
   const [data, setData] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -166,7 +168,7 @@ export default function CalorieBalanceChart({ user }) {
     <Card className="water-glass-effect border-gray-200/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg">
-          Bilancio Calorie Oggi
+          {t('dashboard.calorieBalanceToday')}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-6">
@@ -176,7 +178,7 @@ export default function CalorieBalanceChart({ user }) {
             ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200' 
             : 'bg-gradient-to-br from-red-50 to-orange-50 border-red-200'
         }`}>
-          <p className="text-sm font-medium text-gray-600 mb-2">BILANCIO GIORNALIERO</p>
+          <p className="text-sm font-medium text-gray-600 mb-2">{t('dashboard.dailyBalance').toUpperCase()}</p>
           <div className="flex items-center justify-center gap-3">
             {isBalanceGood ? (
               <ArrowDown className="w-8 h-8 text-green-600" />
@@ -210,7 +212,7 @@ export default function CalorieBalanceChart({ user }) {
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
               <ArrowUp className={data.isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
-              Calorie Assunte
+              {t('dashboard.caloriesConsumed')}
             </span>
             <span className={data.isWeightLoss ? "font-bold text-red-600" : "font-bold text-green-600"}>{data.consumedCalories} kcal</span>
           </div>
@@ -227,7 +229,7 @@ export default function CalorieBalanceChart({ user }) {
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
               <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
-              Calorie Bruciate - BMR (Metabolismo Basale)
+              {t('dashboard.caloriesBurnedBMR')}
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.bmr} kcal</span>
           </div>
@@ -244,7 +246,7 @@ export default function CalorieBalanceChart({ user }) {
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
               <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-400" : "w-4 h-4 text-red-400"} />
-              Calorie Bruciate - NEAT (Attività)
+              {t('dashboard.caloriesBurnedNEAT')}
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-400" : "font-bold text-red-400"}>{data.neat} kcal</span>
           </div>

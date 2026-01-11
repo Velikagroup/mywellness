@@ -971,7 +971,12 @@ export const translations = {
       bmr: "Metabolismo Basale (BMR)",
       bodyFat: "Massa Grassa",
       workoutDays: "Giorni di Allenamento",
-      daysPerWeek: "giorni/sett"
+      daysPerWeek: "giorni/sett",
+      calorieBalanceToday: "Bilancio Calorie Oggi",
+      dailyBalance: "Bilancio Giornaliero",
+      caloriesConsumed: "Calorie Assunte",
+      caloriesBurnedBMR: "Calorie Bruciate - BMR (Metabolismo Basale)",
+      caloriesBurnedNEAT: "Calorie Bruciate - NEAT (Attività)"
     },
     settings: {
       title: "Impostazioni Account",
@@ -3013,7 +3018,12 @@ export const translations = {
       bmr: "Basal Metabolic Rate (BMR)",
       bodyFat: "Body Fat",
       workoutDays: "Workout Days",
-      daysPerWeek: "days/week"
+      daysPerWeek: "days/week",
+      calorieBalanceToday: "Calorie Balance Today",
+      dailyBalance: "Daily Balance",
+      caloriesConsumed: "Calories Consumed",
+      caloriesBurnedBMR: "Calories Burned - BMR (Basal Metabolism)",
+      caloriesBurnedNEAT: "Calories Burned - NEAT (Activity)"
     },
     settings: {
       title: "Account Settings",
@@ -4966,7 +4976,12 @@ export const translations = {
       bmr: "Metabolismo Basal (BMR)",
       bodyFat: "Grasa Corporal",
       workoutDays: "Días de Entrenamiento",
-      daysPerWeek: "días/sem"
+      daysPerWeek: "días/sem",
+      calorieBalanceToday: "Balance Calórico Hoy",
+      dailyBalance: "Balance Diario",
+      caloriesConsumed: "Calorías Consumidas",
+      caloriesBurnedBMR: "Calorías Quemadas - BMR (Metabolismo Basal)",
+      caloriesBurnedNEAT: "Calorías Quemadas - NEAT (Actividad)"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -6937,7 +6952,12 @@ export const translations = {
       bmr: "Taxa Metabólica Basal (TMB)",
       bodyFat: "Gordura Corporal",
       workoutDays: "Dias de Treino",
-      daysPerWeek: "dias/sem"
+      daysPerWeek: "dias/sem",
+      calorieBalanceToday: "Balanço Calórico Hoje",
+      dailyBalance: "Balanço Diário",
+      caloriesConsumed: "Calorias Consumidas",
+      caloriesBurnedBMR: "Calorias Queimadas - TMB (Metabolismo Basal)",
+      caloriesBurnedNEAT: "Calorias Queimadas - NEAT (Atividade)"
     },
     settings: {
       title: "Configurações da Conta",
@@ -8908,7 +8928,12 @@ export const translations = {
       bmr: "Grundumsatz (BMR)",
       bodyFat: "Körperfett",
       workoutDays: "Trainingstage",
-      daysPerWeek: "Tage/Woche"
+      daysPerWeek: "Tage/Woche",
+      calorieBalanceToday: "Kalorienbilanz Heute",
+      dailyBalance: "Tagesbilanz",
+      caloriesConsumed: "Verbrauchte Kalorien",
+      caloriesBurnedBMR: "Verbrannte Kalorien - BMR (Grundumsatz)",
+      caloriesBurnedNEAT: "Verbrannte Kalorien - NEAT (Aktivität)"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -10879,7 +10904,12 @@ export const translations = {
       bmr: "Métabolisme de Base (BMR)",
       bodyFat: "Masse Grasse",
       workoutDays: "Jours d'Entraînement",
-      daysPerWeek: "jours/sem"
+      daysPerWeek: "jours/sem",
+      calorieBalanceToday: "Bilan Calorique Aujourd'hui",
+      dailyBalance: "Bilan Journalier",
+      caloriesConsumed: "Calories Consommées",
+      caloriesBurnedBMR: "Calories Brûlées - MB (Métabolisme de Base)",
+      caloriesBurnedNEAT: "Calories Brûlées - NEAT (Activité)"
     },
     settings: {
       title: "Paramètres du Compte",
