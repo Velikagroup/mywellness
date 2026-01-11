@@ -299,7 +299,7 @@ export default function CalorieBalanceChart({ user }) {
             </span>
             <span className={data.isWeightLoss ? "font-bold text-green-400" : "font-bold text-red-400"}>{data.neat} kcal</span>
           </div>
-          <div className="w-full h-3 bg-transparent rounded-full overflow-hidden relative">
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
             <div 
               className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
               style={{ 
