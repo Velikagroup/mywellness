@@ -273,40 +273,52 @@ export default function CalorieBalanceChart({ user }) {
           </p>
         </div>
 
-        {/* Progress Bar BMR */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-gray-700 flex items-center gap-2">
-              <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
-              {t('dashboard.caloriesBurnedBMR')}
+        {/* Calorie Bruciate - Raggruppate */}
+        <div className="space-y-3">
+          {/* Titolo principale con totale */}
+          <div className="flex items-center justify-between text-sm pb-2 border-b border-gray-200">
+            <span className="font-bold text-gray-900 flex items-center gap-2">
+              <Flame className={data.isWeightLoss ? "w-5 h-5 text-green-600" : "w-5 h-5 text-red-600"} />
+              Calorie Bruciate
             </span>
-            <span className={data.isWeightLoss ? "font-bold text-green-600" : "font-bold text-red-600"}>{data.bmr} kcal</span>
+            <span className={data.isWeightLoss ? "font-bold text-lg text-green-600" : "font-bold text-lg text-red-600"}>
+              {data.totalBurned} kcal
+            </span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
-              style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
-            />
-          </div>
-        </div>
 
-        {/* Progress Bar NEAT - allineato con BMR */}
-        <div className="space-y-2">
-          <div className="flex items-center justify-between text-sm">
-            <span className="font-medium text-gray-700 flex items-center gap-2">
-              <Flame className={data.isWeightLoss ? "w-4 h-4 text-green-400" : "w-4 h-4 text-red-400"} />
-              {t('dashboard.caloriesBurnedNEAT')}
-            </span>
-            <span className={data.isWeightLoss ? "font-bold text-green-400" : "font-bold text-red-400"}>{data.neat} kcal</span>
+          {/* Progress Bar BMR */}
+          <div className="space-y-2 pl-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-gray-600">
+                {t('dashboard.caloriesBurnedBMR')}
+              </span>
+              <span className={data.isWeightLoss ? "font-semibold text-green-600" : "font-semibold text-red-600"}>{data.bmr} kcal</span>
+            </div>
+            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+              <div 
+                className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
+                style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+              />
+            </div>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-            <div 
-              className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
-              style={{ 
-                left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
-                width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` 
-              }}
-            />
+
+          {/* Progress Bar NEAT - allineato con BMR */}
+          <div className="space-y-2 pl-4">
+            <div className="flex items-center justify-between text-sm">
+              <span className="font-medium text-gray-600">
+                {t('dashboard.caloriesBurnedNEAT')}
+              </span>
+              <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
+            </div>
+            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+              <div 
+                className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
+                style={{ 
+                  left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
+                  width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` 
+                }}
+              />
+            </div>
           </div>
         </div>
 
