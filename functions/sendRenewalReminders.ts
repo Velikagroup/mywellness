@@ -1,4 +1,3 @@
-
 import { createClientFromRequest } from 'npm:@base44/sdk@0.7.1';
 
 Deno.serve(async (req) => {
@@ -6,14 +5,6 @@ Deno.serve(async (req) => {
     
     try {
         const base44 = createClientFromRequest(req);
-        
-        // Verifica autenticazione cron
-        const cronSecret = Deno.env.get('CRON_SECRET');
-        const authHeader = req.headers.get('Authorization');
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-            console.error('Unauthorized cron call');
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
 
         const today = new Date();
         const in7Days = new Date(today);
