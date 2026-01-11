@@ -323,7 +323,7 @@ export default function CalorieBalanceChart({ user }) {
                       className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
                     >
                       <Watch className="w-3 h-3" />
-                      <span>Connetti</span>
+                      <span>Connetti dispositivo</span>
                     </button>
                   ) : (
                     <>
@@ -332,7 +332,7 @@ export default function CalorieBalanceChart({ user }) {
                         className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-300/50 text-gray-500 rounded-md cursor-pointer"
                       >
                         <Watch className="w-3 h-3" />
-                        <span>Connetti</span>
+                        <span>Connetti dispositivo</span>
                       </button>
                       <button
                         onClick={() => setShowUpgradeModal(true)}
