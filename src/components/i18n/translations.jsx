@@ -976,7 +976,12 @@ export const translations = {
       dailyBalance: "Bilancio Giornaliero",
       caloriesConsumed: "Calorie Assunte",
       caloriesBurnedBMR: "Calorie Bruciate - BMR (Metabolismo Basale)",
-      caloriesBurnedNEAT: "Calorie Bruciate - NEAT (Attività)"
+      caloriesBurnedNEAT: "Calorie Bruciate - NEAT (Attività)",
+      deficitPerfect: "🎯 Deficit di {amount} kcal - Perfetto per dimagrire!",
+      maintenance: "⚖️ Mantenimento",
+      surplusSlowsLoss: "⚠️ Surplus di {amount} kcal - Rallenta il dimagrimento",
+      surplusPerfect: "💪 Surplus di {amount} kcal - Perfetto per massa!",
+      deficitSlowsGain: "⚠️ Deficit di {amount} kcal - Rallenta l'aumento"
     },
     settings: {
       title: "Impostazioni Account",
@@ -3023,7 +3028,12 @@ export const translations = {
       dailyBalance: "Daily Balance",
       caloriesConsumed: "Calories Consumed",
       caloriesBurnedBMR: "Calories Burned - BMR (Basal Metabolism)",
-      caloriesBurnedNEAT: "Calories Burned - NEAT (Activity)"
+      caloriesBurnedNEAT: "Calories Burned - NEAT (Activity)",
+      deficitPerfect: "🎯 {amount} kcal deficit - Perfect for weight loss!",
+      maintenance: "⚖️ Maintenance",
+      surplusSlowsLoss: "⚠️ {amount} kcal surplus - Slows weight loss",
+      surplusPerfect: "💪 {amount} kcal surplus - Perfect for mass gain!",
+      deficitSlowsGain: "⚠️ {amount} kcal deficit - Slows muscle gain"
     },
     settings: {
       title: "Account Settings",
@@ -4981,7 +4991,12 @@ export const translations = {
       dailyBalance: "Balance Diario",
       caloriesConsumed: "Calorías Consumidas",
       caloriesBurnedBMR: "Calorías Quemadas - BMR (Metabolismo Basal)",
-      caloriesBurnedNEAT: "Calorías Quemadas - NEAT (Actividad)"
+      caloriesBurnedNEAT: "Calorías Quemadas - NEAT (Actividad)",
+      deficitPerfect: "🎯 Déficit de {amount} kcal - ¡Perfecto para adelgazar!",
+      maintenance: "⚖️ Mantenimiento",
+      surplusSlowsLoss: "⚠️ Superávit de {amount} kcal - Ralentiza la pérdida de peso",
+      surplusPerfect: "💪 Superávit de {amount} kcal - ¡Perfecto para ganar masa!",
+      deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Ralentiza el aumento"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -6957,7 +6972,12 @@ export const translations = {
       dailyBalance: "Balanço Diário",
       caloriesConsumed: "Calorias Consumidas",
       caloriesBurnedBMR: "Calorias Queimadas - TMB (Metabolismo Basal)",
-      caloriesBurnedNEAT: "Calorias Queimadas - NEAT (Atividade)"
+      caloriesBurnedNEAT: "Calorias Queimadas - NEAT (Atividade)",
+      deficitPerfect: "🎯 Déficit de {amount} kcal - Perfeito para emagrecer!",
+      maintenance: "⚖️ Manutenção",
+      surplusSlowsLoss: "⚠️ Superávit de {amount} kcal - Retarda o emagrecimento",
+      surplusPerfect: "💪 Superávit de {amount} kcal - Perfeito para ganhar massa!",
+      deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Retarda o ganho"
     },
     settings: {
       title: "Configurações da Conta",
@@ -8933,7 +8953,12 @@ export const translations = {
       dailyBalance: "Tagesbilanz",
       caloriesConsumed: "Verbrauchte Kalorien",
       caloriesBurnedBMR: "Verbrannte Kalorien - BMR (Grundumsatz)",
-      caloriesBurnedNEAT: "Verbrannte Kalorien - NEAT (Aktivität)"
+      caloriesBurnedNEAT: "Verbrannte Kalorien - NEAT (Aktivität)",
+      deficitPerfect: "🎯 {amount} kcal Defizit - Perfekt zum Abnehmen!",
+      maintenance: "⚖️ Erhaltung",
+      surplusSlowsLoss: "⚠️ {amount} kcal Überschuss - Verlangsamt Gewichtsverlust",
+      surplusPerfect: "💪 {amount} kcal Überschuss - Perfekt für Muskelaufbau!",
+      deficitSlowsGain: "⚠️ {amount} kcal Defizit - Verlangsamt Muskelzuwachs"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -10909,7 +10934,12 @@ export const translations = {
       dailyBalance: "Bilan Journalier",
       caloriesConsumed: "Calories Consommées",
       caloriesBurnedBMR: "Calories Brûlées - MB (Métabolisme de Base)",
-      caloriesBurnedNEAT: "Calories Brûlées - NEAT (Activité)"
+      caloriesBurnedNEAT: "Calories Brûlées - NEAT (Activité)",
+      deficitPerfect: "🎯 Déficit de {amount} kcal - Parfait pour maigrir!",
+      maintenance: "⚖️ Maintien",
+      surplusSlowsLoss: "⚠️ Surplus de {amount} kcal - Ralentit la perte de poids",
+      surplusPerfect: "💪 Surplus de {amount} kcal - Parfait pour la masse!",
+      deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Ralentit la prise de masse"
     },
     settings: {
       title: "Paramètres du Compte",

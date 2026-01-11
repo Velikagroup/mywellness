@@ -193,16 +193,16 @@ export default function CalorieBalanceChart({ user }) {
           <p className="text-sm text-gray-600 mt-2 font-medium">
             {data.isWeightLoss ? (
               data.balance < 0 
-                ? `🎯 Deficit di ${Math.abs(data.balance)} kcal - Perfetto per dimagrire!`
+                ? t('dashboard.deficitPerfect').replace('{amount}', Math.abs(data.balance))
                 : data.balance === 0
-                ? '⚖️ Mantenimento'
-                : `⚠️ Surplus di ${data.balance} kcal - Rallenta il dimagrimento`
+                ? t('dashboard.maintenance')
+                : t('dashboard.surplusSlowsLoss').replace('{amount}', data.balance)
             ) : (
               data.balance > 0
-                ? `💪 Surplus di ${data.balance} kcal - Perfetto per massa!`
+                ? t('dashboard.surplusPerfect').replace('{amount}', data.balance)
                 : data.balance === 0
-                ? '⚖️ Mantenimento'
-                : `⚠️ Deficit di ${Math.abs(data.balance)} kcal - Rallenta l'aumento`
+                ? t('dashboard.maintenance')
+                : t('dashboard.deficitSlowsGain').replace('{amount}', Math.abs(data.balance))
             )}
           </p>
         </div>
