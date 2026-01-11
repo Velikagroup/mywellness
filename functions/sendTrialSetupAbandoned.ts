@@ -5,13 +5,6 @@ Deno.serve(async (req) => {
     
     try {
         const base44 = createClientFromRequest(req);
-        
-        const cronSecret = Deno.env.get('CRON_SECRET');
-        const authHeader = req.headers.get('Authorization');
-        if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
-            console.error('Unauthorized cron call');
-            return Response.json({ error: 'Unauthorized' }, { status: 401 });
-        }
 
         const now = new Date();
         const oneHourAgo = new Date(now.getTime() - (1 * 60 * 60 * 1000));
