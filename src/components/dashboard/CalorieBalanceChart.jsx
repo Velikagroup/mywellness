@@ -339,38 +339,9 @@ export default function CalorieBalanceChart({ user }) {
           {/* Progress Bar NEAT - allineato con BMR */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-600">
-                  {t('dashboard.caloriesBurnedNEAT')}
-                </span>
-                <div className="relative">
-                  {hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') ? (
-                    <button
-                      onClick={() => setShowDeviceModal(true)}
-                      className="flex items-center gap-1 px-2 py-1 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors"
-                    >
-                      <Watch className="w-3 h-3" />
-                      <span>Connetti dispositivo</span>
-                    </button>
-                  ) : (
-                    <>
-                      <button
-                        onClick={() => setShowUpgradeModal(true)}
-                        className="flex items-center gap-1 px-2 py-1 text-xs bg-gray-300/50 text-gray-500 rounded-md cursor-pointer"
-                      >
-                        <Watch className="w-3 h-3" />
-                        <span>Connetti dispositivo</span>
-                      </button>
-                      <button
-                        onClick={() => setShowUpgradeModal(true)}
-                        className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-purple-500 text-white text-[10px] font-bold rounded-full hover:bg-purple-600 transition-all shadow-md z-10"
-                      >
-                        <span>Premium</span>
-                      </button>
-                    </>
-                  )}
-                </div>
-              </div>
+              <span className="font-medium text-gray-600">
+                {t('dashboard.caloriesBurnedNEAT')}
+              </span>
               <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
             </div>
             <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
