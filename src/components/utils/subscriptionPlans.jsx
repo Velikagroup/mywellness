@@ -46,25 +46,13 @@ export const PLAN_FEATURES = {
     meal_plan_generations_per_month: 0,
     workout_plan_generations_per_month: 0
   },
-  [PLANS.BASE]: {
-    name: 'Base',
-    dashboard: true,
-    meal_plan: true,
-    recipes_with_images: true,
-    bmr_calculation: true,
-    shopping_list: true,
-    weight_tracking: true,
-    ingredient_substitution: true,
-    workout_plan: false,
-    meal_photo_analysis: false,
-    auto_rebalance: false,
-    workout_tracking: false,
-    workout_modification: false,
-    progress_photo_analysis: false,
-    priority_support: false,
-    meal_plan_generations_per_month: 4,
-    workout_plan_generations_per_month: 0
-  },
+  <div className="space-y-2">
+    <div className="flex items-center justify-between text-sm">
+      <span className="font-medium text-gray-600">
+        NEAT (Attività)
+      </span>
+      <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
+    </div>
   [PLANS.PRO]: {
     name: 'Pro',
     dashboard: true,
