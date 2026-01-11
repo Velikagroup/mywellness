@@ -191,6 +191,7 @@ export default function CalorieBalanceChart({ user }) {
     : data.balance > 0; // Aumento massa: surplus è buono
 
   return (
+    <>
     <Card className="water-glass-effect border-gray-200/30">
       <CardHeader className="pb-3">
         <CardTitle className="text-lg">
@@ -393,6 +394,6 @@ export default function CalorieBalanceChart({ user }) {
           </DialogContent>
           </Dialog>
           )}
-          </div>
+          </>
           );
           }
