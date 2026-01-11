@@ -95,8 +95,6 @@ function HomeContent() {
       }
     };
 
-    checkRememberMe();
-
     // Cattura codice affiliato dall'URL
     const urlParams = new URLSearchParams(window.location.search);
     const affiliateCode = urlParams.get('affiliate');
@@ -110,7 +108,7 @@ function HomeContent() {
       setShowQuizPopup(true);
     }, 5000);
     return () => clearTimeout(timer);
-  }, [navigate]);
+  }, []);
 
   // Removed automatic redirect to Quiz - let users browse the Home page freely
 
