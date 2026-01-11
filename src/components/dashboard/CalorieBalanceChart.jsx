@@ -93,8 +93,19 @@ export default function CalorieBalanceChart({ user }) {
       // Calcola calorie dal piano
       const plannedCalories = mealPlans.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
 
-      // Calcola calorie consumate
-      const consumedCalories = mealLogs.reduce((sum, log) => sum + (log.actual_calories || 0), 0);
+      // Calcola calorie consumate: per ogni pasto pianificato, usa il log se esiste, altrimenti usa il piano
+      let consumedCalories = 0;
+      const loggedMealTypes = new Set(mealLogs.map(log => log.meal_type));
+      
+      // Aggiungi calorie dai meal logs effettivi
+      consumedCalories += mealLogs.reduce((sum, log) => sum + (log.actual_calories || 0), 0);
+      
+      // Per i pasti NON loggati, assumi che l'utente abbia mangiato come pianificato
+      mealPlans.forEach(meal => {
+        if (!loggedMealTypes.has(meal.meal_type)) {
+          consumedCalories += (meal.total_calories || 0);
+        }
+      });
 
       // Calcola metabolismo basale e NEAT dai dati utente
       const bmr = calculateBMR(user);
