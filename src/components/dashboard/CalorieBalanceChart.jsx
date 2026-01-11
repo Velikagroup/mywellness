@@ -316,7 +316,7 @@ export default function CalorieBalanceChart({ user }) {
                 <span className="font-medium text-gray-600">
                   {t('dashboard.caloriesBurnedNEAT')}
                 </span>
-                <div className="flex items-center gap-1">
+                <div className="relative">
                   <button
                     onClick={() => {
                       if (hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync')) {
@@ -333,10 +333,10 @@ export default function CalorieBalanceChart({ user }) {
                   {!hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') && (
                     <button
                       onClick={() => setShowUpgradeModal(true)}
-                      className="flex items-center gap-1 px-2 py-0.5 bg-gradient-to-r from-amber-400 to-orange-500 text-white text-xs font-semibold rounded-full hover:from-amber-500 hover:to-orange-600 transition-all shadow-sm"
+                      className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-gradient-to-r from-purple-500 to-pink-500 text-white text-[10px] font-bold rounded-full hover:from-purple-600 hover:to-pink-600 transition-all shadow-md z-10"
                     >
-                      <Crown className="w-3 h-3" />
-                      <span>Premium</span>
+                      <Crown className="w-2.5 h-2.5" />
+                      <span>PRO</span>
                     </button>
                   )}
                 </div>
