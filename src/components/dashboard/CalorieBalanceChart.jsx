@@ -197,9 +197,36 @@ export default function CalorieBalanceChart({ user }) {
     <>
     <Card className="water-glass-effect border-gray-200/30">
       <CardHeader className="pb-3">
-        <CardTitle className="text-lg">
-          {t('dashboard.calorieBalanceToday')}
-        </CardTitle>
+        <div className="flex items-center justify-between">
+          <CardTitle className="text-lg">
+            {t('dashboard.calorieBalanceToday')}
+          </CardTitle>
+          {hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync') ? (
+            <button
+              onClick={() => setShowDeviceModal(true)}
+              className="flex items-center gap-1 px-3 py-1.5 text-xs bg-[#26847F]/10 hover:bg-[#26847F]/20 text-[#26847F] rounded-md transition-colors font-medium"
+            >
+              <Watch className="w-3.5 h-3.5" />
+              <span>Connetti dispositivo</span>
+            </button>
+          ) : (
+            <div className="relative">
+              <button
+                onClick={() => setShowUpgradeModal(true)}
+                className="flex items-center gap-1 px-3 py-1.5 text-xs bg-gray-300/50 text-gray-500 rounded-md cursor-pointer font-medium"
+              >
+                <Watch className="w-3.5 h-3.5" />
+                <span>Connetti dispositivo</span>
+              </button>
+              <button
+                onClick={() => setShowUpgradeModal(true)}
+                className="absolute -top-2 -right-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-purple-500 text-white text-[10px] font-bold rounded-full hover:bg-purple-600 transition-all shadow-md z-10"
+              >
+                <span>Premium</span>
+              </button>
+            </div>
+          )}
+        </div>
       </CardHeader>
       <CardContent className="space-y-6">
         {/* DEFICIT/SURPLUS - GROSSO E IN EVIDENZA */}
