@@ -1169,6 +1169,13 @@ export default function PricingPageContent() {
                       <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableCalorieBalance')}</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableWorkoutPlan')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
@@ -1205,6 +1212,13 @@ export default function PricingPageContent() {
                     </tr>
                     <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
                       <td className="p-4 text-sm text-gray-700">{t('pricing.tableLabelScanning')}</td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
+                      <td className="p-4 text-center"><Check className="w-5 h-5 text-green-600 mx-auto" /></td>
+                    </tr>
+                    <tr className="border-b border-gray-200/30 hover:bg-white/20 transition-colors">
+                      <td className="p-4 text-sm text-gray-700">{t('pricing.tableSmartwatchSync')}</td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
                       <td className="p-4 text-center"><X className="w-5 h-5 text-red-400 mx-auto" /></td>
@@ -1254,6 +1268,9 @@ export default function PricingPageContent() {
                       <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableShoppingList')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableCalorieBalance')}</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
                       <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableWorkoutPlan')}</span>
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
@@ -1270,6 +1287,9 @@ export default function PricingPageContent() {
                     </div>
                     <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
                       <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableLabelScanning')}</span>
+                    </div>
+                    <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center">
+                      <span className="text-xs text-gray-700 leading-tight">{t('pricing.tableSmartwatchSync')}</span>
                     </div>
                     <div className="p-3 min-h-[60px] flex items-center">
                       <span className="text-xs text-gray-700 leading-tight">{t('pricing.tablePrioritySupport')}</span>
@@ -1299,6 +1319,7 @@ export default function PricingPageContent() {
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                       </div>
                       
@@ -1313,11 +1334,13 @@ export default function PricingPageContent() {
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-gray-900">4</span></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs text-gray-500">-</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
@@ -1336,6 +1359,7 @@ export default function PricingPageContent() {
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-gray-900">8</span></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
@@ -1343,6 +1367,7 @@ export default function PricingPageContent() {
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-gray-900">4</span></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
                         <div className="p-3 min-h-[60px] flex items-center justify-center"><X className="w-4 h-4 text-red-400" /></div>
@@ -1359,11 +1384,13 @@ export default function PricingPageContent() {
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
-                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</span></div>
-                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
-                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><span className="text-xs font-semibold text-[var(--brand-primary)]">{t('pricing.unlimited')}</span></div>
+                        <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
                         <div className="border-b border-gray-200/30 p-3 min-h-[60px] flex items-center justify-center"><Check className="w-4 h-4 text-green-600" /></div>
