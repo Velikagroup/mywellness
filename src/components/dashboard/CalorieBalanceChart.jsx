@@ -97,15 +97,26 @@ export default function CalorieBalanceChart({ user }) {
       let consumedCalories = 0;
       const loggedMealTypes = new Set(mealLogs.map(log => log.meal_type));
       
-      // Aggiungi calorie dai meal logs effettivi
-      consumedCalories += mealLogs.reduce((sum, log) => sum + (log.actual_calories || 0), 0);
-      
-      // Per i pasti NON loggati, assumi che l'utente abbia mangiato come pianificato
-      mealPlans.forEach(meal => {
-        if (!loggedMealTypes.has(meal.meal_type)) {
-          consumedCalories += (meal.total_calories || 0);
-        }
-      });
+      // Crea array di pasti con info se sono stati loggati o meno
+      const mealSegments = mealPlans
+        .sort((a, b) => {
+          const order = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner', 'snack3', 'snack4'];
+          return order.indexOf(a.meal_type) - order.indexOf(b.meal_type);
+        })
+        .map(meal => {
+          const isLogged = loggedMealTypes.has(meal.meal_type);
+          const calories = isLogged 
+            ? mealLogs.find(log => log.meal_type === meal.meal_type)?.actual_calories || 0
+            : meal.total_calories || 0;
+          
+          consumedCalories += calories;
+          
+          return {
+            meal_type: meal.meal_type,
+            calories,
+            isLogged
+          };
+        });
 
       // Calcola metabolismo basale e NEAT dai dati utente
       const bmr = calculateBMR(user);
@@ -124,6 +135,7 @@ export default function CalorieBalanceChart({ user }) {
       setData({
         plannedCalories: Math.round(plannedCalories),
         consumedCalories: Math.round(consumedCalories),
+        mealSegments,
         bmr: Math.round(bmr),
         neat: Math.round(neat),
         totalBurned: Math.round(totalBurned),
@@ -218,7 +230,7 @@ export default function CalorieBalanceChart({ user }) {
           </p>
         </div>
 
-        {/* Progress Bar Calorie Assunte */}
+        {/* Progress Bar Calorie Assunte con segmenti per pasto */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
             <span className="font-medium text-gray-700 flex items-center gap-2">
@@ -227,12 +239,38 @@ export default function CalorieBalanceChart({ user }) {
             </span>
             <span className={data.isWeightLoss ? "font-bold text-red-600" : "font-bold text-green-600"}>{data.consumedCalories} kcal</span>
           </div>
-          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className={`h-full transition-all ${data.isWeightLoss ? 'bg-red-500' : 'bg-green-500'}`}
-              style={{ width: `${(data.consumedCalories / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
-            />
+          <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+            <div className="h-full flex">
+              {data.mealSegments?.map((segment, index) => {
+                const segmentWidth = (segment.calories / Math.max(data.consumedCalories, data.totalBurned)) * 100;
+                const baseColor = data.isWeightLoss ? 'red' : 'green';
+                
+                return (
+                  <React.Fragment key={segment.meal_type}>
+                    <div 
+                      className={`h-full transition-all ${
+                        segment.isLogged 
+                          ? (baseColor === 'red' ? 'bg-red-500' : 'bg-green-500')
+                          : (baseColor === 'red' ? 'bg-red-300' : 'bg-green-300')
+                      } ${!segment.isLogged ? 'opacity-60' : ''}`}
+                      style={{ 
+                        width: `${segmentWidth}%`,
+                        backgroundImage: !segment.isLogged 
+                          ? 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px)'
+                          : 'none'
+                      }}
+                    />
+                    {index < data.mealSegments.length - 1 && (
+                      <div className="w-[2px] h-full bg-white opacity-80" />
+                    )}
+                  </React.Fragment>
+                );
+              })}
+            </div>
           </div>
+          <p className="text-xs text-gray-500 mt-1">
+            {t('dashboard.plannedMealsNote')}
+          </p>
         </div>
 
         {/* Progress Bar BMR */}
