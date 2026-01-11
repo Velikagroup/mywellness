@@ -159,7 +159,8 @@ function PricingPageContent() {
         t('pricing.featureBase4'),
         t('pricing.featureBase5'),
         t('pricing.featureBase6'), 
-        t('pricing.featureBase7')
+        t('pricing.featureBase7'),
+        t('pricing.tableCalorieBalance')
       ],
       cta: t('pricing.startFree'),
       popular: false
@@ -184,7 +185,8 @@ function PricingPageContent() {
         t('pricing.featurePro6'),
         t('pricing.featurePro7'),
         t('pricing.featurePro8'),
-        t('pricing.featurePro9')
+        t('pricing.featurePro9'),
+        t('pricing.tableCalorieBalance')
       ],
       cta: t('pricing.startFree'),
       popular: true
@@ -207,7 +209,8 @@ function PricingPageContent() {
         t('pricing.featurePremium4'),
         t('pricing.featurePremium5'),
         t('pricing.featurePremium6'),
-        t('pricing.featurePremium7')
+        t('pricing.featurePremium7'),
+        t('pricing.tableSmartwatchSync')
       ],
       cta: t('pricing.startFree'),
       popular: false
