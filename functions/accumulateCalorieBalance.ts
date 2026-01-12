@@ -66,14 +66,30 @@ Deno.serve(async (req) => {
     console.log(`👥 Found ${activeUsers.length} active users with valid subscription`);
 
     const results = [];
+    const now = new Date();
 
     for (const user of activeUsers) {
       try {
-        // Calcola la data di "ieri" per l'utente (poiché il cron gira a mezzanotte UTC)
-        const yesterday = new Date();
-        yesterday.setDate(yesterday.getDate() - 1);
-        const dateStr = yesterday.toISOString().split('T')[0];
-        const dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][yesterday.getDay()];
+        // Ottieni il timezone dell'utente (default: Europe/Rome se non impostato)
+        const userTimezone = user.timezone || 'Europe/Rome';
+        
+        // Calcola l'ora locale dell'utente
+        const userLocalTime = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
+        const userHour = userLocalTime.getHours();
+        
+        // Verifica se per l'utente è mezzanotte (00:xx)
+        if (userHour !== 0) {
+          console.log(`⏭️ Skipping ${user.email} - local time is ${userHour}:xx (not midnight)`);
+          continue;
+        }
+
+        console.log(`🌙 Midnight for user ${user.email} (timezone: ${userTimezone})`);
+
+        // Calcola la data di "ieri" per l'utente nel suo timezone
+        const yesterdayLocal = new Date(userLocalTime);
+        yesterdayLocal.setDate(yesterdayLocal.getDate() - 1);
+        const dateStr = yesterdayLocal.toISOString().split('T')[0];
+        const dayOfWeek = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'][yesterdayLocal.getDay()];
 
         console.log(`📊 Processing user ${user.email} for date ${dateStr} (${dayOfWeek})`);
 
