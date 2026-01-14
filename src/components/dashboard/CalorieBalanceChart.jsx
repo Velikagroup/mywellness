@@ -377,24 +377,19 @@ export default function CalorieBalanceChart({ user }) {
             </div>
           </div>
 
-          {/* Progress Bar NEAT - allineato con BMR */}
+          {/* Progress Bar NEAT - stima */}
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900">
-                  {t('dashboard.neatActivity')}
+                <span className="font-medium text-gray-600">
+                  {t('dashboard.estimatedNeat')}
                 </span>
-                {healthKitData && (
-                  <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
-                    HealthKit
-                  </span>
-                )}
               </div>
-              <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
+              <span className="font-semibold text-gray-500">{data.neat} kcal</span>
             </div>
             <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
               <div 
-                className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
+                className="h-full bg-gray-400 absolute top-0"
                 style={{ 
                   left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
                   width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` 
@@ -402,6 +397,32 @@ export default function CalorieBalanceChart({ user }) {
               />
             </div>
           </div>
+          
+          {/* Progress Bar Attività da Dispositivo */}
+          {data.activeEnergy > 0 && (
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <div className="flex items-center gap-2">
+                  <span className="font-medium text-gray-900">
+                    {t('dashboard.deviceActivity')}
+                  </span>
+                  <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+                    HealthKit
+                  </span>
+                </div>
+                <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.activeEnergy} kcal</span>
+              </div>
+              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+                <div 
+                  className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
+                  style={{ 
+                    left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
+                    width: `${(data.activeEnergy / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` 
+                  }}
+                />
+              </div>
+            </div>
+          )}
           </div>
 
           </CardContent>
