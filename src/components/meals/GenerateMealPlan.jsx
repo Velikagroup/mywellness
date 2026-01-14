@@ -75,20 +75,18 @@ export default function GenerateMealPlan({ user, onComplete }) {
     setProgress(0);
 
     try {
-      // 🔥 FETCH AGGIORNATO: Leggi i dati utente correnti dal database
+      // 🔄 Fetch dati utente aggiornati
       const { User } = await import('@/entities/User');
       const currentUser = await User.get(user.id);
-
-      // Usa SOLO il target calorico aggiornato dal database
       const dailyCalories = currentUser.daily_calorie_target;
 
       if (!dailyCalories) {
-        alert("Errore: target calorico non trovato. Completa prima il quiz!");
+        alert("Errore: target calorico non trovato!");
         setIsGenerating(false);
         return;
       }
 
-      console.log('🔄 Target calorico dal database:', dailyCalories);
+      console.log(`🎯 Target giornaliero: ${dailyCalories} kcal`);
       
       const existingMeals = await MealPlan.filter({ user_id: user.id });
       await Promise.all(existingMeals.map(meal => MealPlan.delete(meal.id)));
