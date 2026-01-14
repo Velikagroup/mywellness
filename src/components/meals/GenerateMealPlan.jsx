@@ -269,91 +269,100 @@ Esempio breakfast:
               banana: { cal: 89, protein: 1.1, fat: 0.3, carbs: 23 }
             };
 
+            // STEP 1: Calcola quantità base per ogni pasto
             for (const meal of response.meals) {
               const targetCal = calorieTargets[meal.meal_type];
               
-              // Calcola quantità per ogni ingrediente
-              const calculatedIngredients = [];
-              let accumulatedCalories = 0;
-              
-              for (let i = 0; i < meal.ingredients.length; i++) {
-                const ing = meal.ingredients[i];
+              meal.ingredients = meal.ingredients.map(ing => {
                 const ingName = ing.name.toLowerCase().trim();
                 const nutritionData = nutritionDB[ingName] || { cal: 100, protein: 5, fat: 3, carbs: 15 };
                 
-                let quantity, actualCalories, actualProtein, actualFat, actualCarbs;
+                const ingCalories = targetCal * ing.proportion;
                 
-                // 🔥 ULTIMO INGREDIENTE: prende ESATTAMENTE le calorie rimanenti
-                if (i === meal.ingredients.length - 1) {
-                  const remainingCalories = targetCal - accumulatedCalories;
-                  
-                  if (nutritionData.unit === 'uova') {
-                    quantity = Math.max(1, Math.round((remainingCalories / nutritionData.cal) * 2));
-                    actualCalories = (quantity / 2) * nutritionData.cal;
-                    actualProtein = (quantity / 2) * nutritionData.protein;
-                    actualFat = (quantity / 2) * nutritionData.fat;
-                    actualCarbs = (quantity / 2) * nutritionData.carbs;
-                  } else if (nutritionData.unit === 'ml') {
-                    quantity = Math.max(10, Math.round(remainingCalories / (nutritionData.cal / 100)));
-                    actualCalories = (quantity / 100) * nutritionData.cal;
-                    actualProtein = (quantity / 100) * nutritionData.protein;
-                    actualFat = (quantity / 100) * nutritionData.fat;
-                    actualCarbs = (quantity / 100) * nutritionData.carbs;
-                  } else {
-                    quantity = Math.max(5, Math.round(remainingCalories / (nutritionData.cal / 100)));
-                    actualCalories = (quantity / 100) * nutritionData.cal;
-                    actualProtein = (quantity / 100) * nutritionData.protein;
-                    actualFat = (quantity / 100) * nutritionData.fat;
-                    actualCarbs = (quantity / 100) * nutritionData.carbs;
-                  }
+                let quantity;
+                if (nutritionData.unit === 'uova') {
+                  quantity = Math.round((ingCalories / nutritionData.cal) * 2);
+                } else if (nutritionData.unit === 'ml') {
+                  quantity = Math.round(ingCalories / (nutritionData.cal / 100));
                 } else {
-                  // Altri ingredienti: calcolo normale
-                  const ingCalories = targetCal * ing.proportion;
-                  
-                  if (nutritionData.unit === 'uova') {
-                    quantity = Math.round((ingCalories / nutritionData.cal) * 2);
-                    actualCalories = (quantity / 2) * nutritionData.cal;
-                    actualProtein = (quantity / 2) * nutritionData.protein;
-                    actualFat = (quantity / 2) * nutritionData.fat;
-                    actualCarbs = (quantity / 2) * nutritionData.carbs;
-                  } else if (nutritionData.unit === 'ml') {
-                    quantity = Math.round(ingCalories / (nutritionData.cal / 100));
-                    actualCalories = (quantity / 100) * nutritionData.cal;
-                    actualProtein = (quantity / 100) * nutritionData.protein;
-                    actualFat = (quantity / 100) * nutritionData.fat;
-                    actualCarbs = (quantity / 100) * nutritionData.carbs;
-                  } else {
-                    quantity = Math.round(ingCalories / (nutritionData.cal / 100));
-                    actualCalories = (quantity / 100) * nutritionData.cal;
-                    actualProtein = (quantity / 100) * nutritionData.protein;
-                    actualFat = (quantity / 100) * nutritionData.fat;
-                    actualCarbs = (quantity / 100) * nutritionData.carbs;
-                  }
-                  
-                  accumulatedCalories += actualCalories;
+                  quantity = Math.round(ingCalories / (nutritionData.cal / 100));
                 }
                 
-                calculatedIngredients.push({
+                return {
                   name: ing.name,
-                  quantity: Math.max(1, Math.round(quantity)),
+                  quantity: Math.max(1, quantity),
                   unit: nutritionData.unit || 'g',
+                  nutritionData: nutritionData
+                };
+              });
+            }
+
+            // STEP 2: Calcola calorie totali base
+            let totalCalories = 0;
+            for (const meal of response.meals) {
+              let mealCalories = 0;
+              for (const ing of meal.ingredients) {
+                const cal = ing.nutritionData.unit === 'uova' 
+                  ? (ing.quantity / 2) * ing.nutritionData.cal
+                  : (ing.quantity / 100) * ing.nutritionData.cal;
+                mealCalories += cal;
+              }
+              totalCalories += mealCalories;
+            }
+
+            console.log(`📊 Calorie base: ${Math.round(totalCalories)} kcal (target: ${dailyCalories})`);
+
+            // STEP 3: Scala proporzionalmente TUTTI gli ingredienti per raggiungere il target
+            const scaleFactor = dailyCalories / totalCalories;
+            console.log(`🔧 Fattore di scala: ${scaleFactor.toFixed(4)}`);
+
+            for (const meal of response.meals) {
+              meal.ingredients = meal.ingredients.map(ing => {
+                const scaledQuantity = Math.max(1, Math.round(ing.quantity * scaleFactor));
+                
+                const actualCalories = ing.nutritionData.unit === 'uova' 
+                  ? (scaledQuantity / 2) * ing.nutritionData.cal
+                  : (scaledQuantity / 100) * ing.nutritionData.cal;
+                
+                const actualProtein = ing.nutritionData.unit === 'uova'
+                  ? (scaledQuantity / 2) * ing.nutritionData.protein
+                  : (scaledQuantity / 100) * ing.nutritionData.protein;
+                
+                const actualFat = ing.nutritionData.unit === 'uova'
+                  ? (scaledQuantity / 2) * ing.nutritionData.fat
+                  : (scaledQuantity / 100) * ing.nutritionData.fat;
+                
+                const actualCarbs = ing.nutritionData.unit === 'uova'
+                  ? (scaledQuantity / 2) * ing.nutritionData.carbs
+                  : (scaledQuantity / 100) * ing.nutritionData.carbs;
+                
+                return {
+                  name: ing.name,
+                  quantity: scaledQuantity,
+                  unit: ing.unit,
                   calories: Math.round(actualCalories),
                   protein: Math.round(actualProtein * 10) / 10,
                   carbs: Math.round(actualCarbs * 10) / 10,
                   fat: Math.round(actualFat * 10) / 10
-                });
-              }
+                };
+              });
               
-              meal.ingredients = calculatedIngredients;
-              meal.total_calories = calculatedIngredients.reduce((sum, ing) => sum + ing.calories, 0);
-              meal.total_protein = Math.round(calculatedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
-              meal.total_carbs = Math.round(calculatedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
-              meal.total_fat = Math.round(calculatedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
+              meal.total_calories = meal.ingredients.reduce((sum, ing) => sum + ing.calories, 0);
+              meal.total_protein = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
+              meal.total_carbs = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
+              meal.total_fat = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
             }
 
-            const totalCalories = response.meals.reduce((sum, meal) => sum + meal.total_calories, 0);
-            console.log(`✅ Calorie ricalcolate: ${totalCalories} kcal (target: ${dailyCalories})`);
-            console.log(`📊 Pasti:`, response.meals.map(m => ({ type: m.meal_type, cal: m.total_calories })));
+            const finalTotalCalories = response.meals.reduce((sum, meal) => sum + meal.total_calories, 0);
+            const finalDeviation = Math.abs(finalTotalCalories - dailyCalories);
+            
+            console.log(`✅ Calorie finali: ${finalTotalCalories} kcal (target: ${dailyCalories}, scarto: ${finalDeviation} kcal)`);
+            
+            // VERIFICA: scarto massimo ±10 kcal
+            if (finalDeviation > 10) {
+              console.error(`❌ SCARTO TROPPO ALTO: ${finalDeviation} kcal`);
+              continue;
+            }
 
             // CONTROLLO RAPIDO CARNIVORA
             if ((currentUser.diet_type || user.diet_type) === 'carnivore') {
