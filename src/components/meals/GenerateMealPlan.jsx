@@ -227,18 +227,9 @@ export default function GenerateMealPlan({ user, onComplete }) {
               continue;
             }
 
-            // 🔥 RICALCOLO MATEMATICO DELLE QUANTITÀ
-            console.log(`📊 Ricalcolo quantità per ${dayLabel}...`);
-            
-            const calorieTargets = {
-              breakfast: breakfastCal,
-              snack1: snack1Cal,
-              lunch: lunchCal,
-              snack2: snack2Cal,
-              dinner: dinnerCal
-            };
+            console.log(`📊 Calcolo quantità per ${dayLabel}...`);
 
-            // Database valori nutrizionali (per 100g)
+            // Database nutrizionale (per 100g)
             const nutritionDB = {
               // Carnivora
               manzo: { cal: 200, protein: 26, fat: 10, carbs: 0 },
@@ -248,7 +239,7 @@ export default function GenerateMealPlan({ user, onComplete }) {
               salmone: { cal: 200, protein: 20, fat: 13, carbs: 0 },
               tonno: { cal: 130, protein: 29, fat: 1, carbs: 0 },
               merluzzo: { cal: 82, protein: 18, fat: 0.7, carbs: 0 },
-              uova: { cal: 140, protein: 12, fat: 10, carbs: 1, unit: 'uova' }, // per 2 uova
+              uova: { cal: 140, protein: 12, fat: 10, carbs: 1, unit: 'uova' },
               burro: { cal: 750, protein: 0.9, fat: 83, carbs: 0.1 },
               strutto: { cal: 900, protein: 0, fat: 100, carbs: 0 },
               prosciutto: { cal: 145, protein: 22, fat: 6, carbs: 0 },
@@ -273,28 +264,28 @@ export default function GenerateMealPlan({ user, onComplete }) {
               banana: { cal: 89, protein: 1.1, fat: 0.3, carbs: 23 }
             };
 
-            // STEP 1: Calcola quantità base per ogni pasto
+            // STEP 1: Calcola quantità base usando distribuzione iniziale
             for (const meal of response.meals) {
-              const targetCal = calorieTargets[meal.meal_type];
-              
+              const targetCal = initialTargets[meal.meal_type];
+
               meal.ingredients = meal.ingredients.map(ing => {
                 const ingName = ing.name.toLowerCase().trim();
                 const nutritionData = nutritionDB[ingName] || { cal: 100, protein: 5, fat: 3, carbs: 15 };
-                
+
                 const ingCalories = targetCal * ing.proportion;
-                
+
                 let quantity;
                 if (nutritionData.unit === 'uova') {
-                  quantity = Math.round((ingCalories / nutritionData.cal) * 2);
+                  quantity = (ingCalories / nutritionData.cal) * 2;
                 } else if (nutritionData.unit === 'ml') {
-                  quantity = Math.round(ingCalories / (nutritionData.cal / 100));
+                  quantity = ingCalories / (nutritionData.cal / 100);
                 } else {
-                  quantity = Math.round(ingCalories / (nutritionData.cal / 100));
+                  quantity = ingCalories / (nutritionData.cal / 100);
                 }
-                
+
                 return {
                   name: ing.name,
-                  quantity: Math.max(1, quantity),
+                  quantity: quantity,
                   unit: nutritionData.unit || 'g',
                   nutritionData: nutritionData
                 };
@@ -314,35 +305,43 @@ export default function GenerateMealPlan({ user, onComplete }) {
               totalCalories += mealCalories;
             }
 
-            console.log(`📊 Calorie base: ${Math.round(totalCalories)} kcal (target: ${dailyCalories})`);
+            console.log(`📊 Calorie base: ${Math.round(totalCalories)} kcal`);
 
-            // STEP 3: Scala proporzionalmente TUTTI gli ingredienti per raggiungere il target
+            // STEP 3: Scala TUTTO per raggiungere target giornaliero
             const scaleFactor = dailyCalories / totalCalories;
-            console.log(`🔧 Fattore di scala: ${scaleFactor.toFixed(4)}`);
+            console.log(`🔧 Scala x${scaleFactor.toFixed(4)}`);
 
             for (const meal of response.meals) {
               meal.ingredients = meal.ingredients.map(ing => {
-                const scaledQuantity = Math.max(1, Math.round(ing.quantity * scaleFactor));
-                
+                const scaledQuantity = ing.quantity * scaleFactor;
+
                 const actualCalories = ing.nutritionData.unit === 'uova' 
                   ? (scaledQuantity / 2) * ing.nutritionData.cal
                   : (scaledQuantity / 100) * ing.nutritionData.cal;
-                
+
                 const actualProtein = ing.nutritionData.unit === 'uova'
                   ? (scaledQuantity / 2) * ing.nutritionData.protein
                   : (scaledQuantity / 100) * ing.nutritionData.protein;
-                
+
                 const actualFat = ing.nutritionData.unit === 'uova'
                   ? (scaledQuantity / 2) * ing.nutritionData.fat
                   : (scaledQuantity / 100) * ing.nutritionData.fat;
-                
+
                 const actualCarbs = ing.nutritionData.unit === 'uova'
                   ? (scaledQuantity / 2) * ing.nutritionData.carbs
                   : (scaledQuantity / 100) * ing.nutritionData.carbs;
-                
+
+                // Arrotonda quantità (min 1 per g/ml, min 1 per uova)
+                let finalQuantity;
+                if (ing.nutritionData.unit === 'uova') {
+                  finalQuantity = Math.max(1, Math.round(scaledQuantity));
+                } else {
+                  finalQuantity = Math.max(1, Math.round(scaledQuantity));
+                }
+
                 return {
                   name: ing.name,
-                  quantity: scaledQuantity,
+                  quantity: finalQuantity,
                   unit: ing.unit,
                   calories: Math.round(actualCalories),
                   protein: Math.round(actualProtein * 10) / 10,
@@ -350,21 +349,21 @@ export default function GenerateMealPlan({ user, onComplete }) {
                   fat: Math.round(actualFat * 10) / 10
                 };
               });
-              
+
               meal.total_calories = meal.ingredients.reduce((sum, ing) => sum + ing.calories, 0);
               meal.total_protein = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
               meal.total_carbs = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
               meal.total_fat = Math.round(meal.ingredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
             }
 
-            const finalTotalCalories = response.meals.reduce((sum, meal) => sum + meal.total_calories, 0);
-            const finalDeviation = Math.abs(finalTotalCalories - dailyCalories);
-            
-            console.log(`✅ Calorie finali: ${finalTotalCalories} kcal (target: ${dailyCalories}, scarto: ${finalDeviation} kcal)`);
-            
-            // VERIFICA: scarto massimo ±10 kcal
-            if (finalDeviation > 10) {
-              console.error(`❌ SCARTO TROPPO ALTO: ${finalDeviation} kcal`);
+            const finalTotal = response.meals.reduce((sum, meal) => sum + meal.total_calories, 0);
+            const deviation = Math.abs(finalTotal - dailyCalories);
+
+            console.log(`✅ Totale finale: ${finalTotal} kcal (target: ${dailyCalories}, scarto: ${deviation})`);
+
+            // Verifica scarto ±10 kcal
+            if (deviation > 10) {
+              console.error(`❌ Scarto ${deviation} kcal troppo alto`);
               continue;
             }
 
