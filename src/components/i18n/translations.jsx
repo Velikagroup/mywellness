@@ -986,8 +986,7 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Surplus di {amount} kcal - Rallenta il dimagrimento",
       surplusPerfect: "💪 Surplus di {amount} kcal - Perfetto per massa!",
       deficitSlowsGain: "⚠️ Deficit di {amount} kcal - Rallenta l'aumento",
-      plannedMealsNote: "Le sezioni più chiare sono pasti pianificati ma non ancora registrati",
-      healthDevice: "Dispositivo Salute"
+      plannedMealsNote: "Le sezioni più chiare sono pasti pianificati ma non ancora registrati"
     },
     settings: {
       title: "Impostazioni Account",
@@ -3046,8 +3045,7 @@ export const translations = {
       surplusSlowsLoss: "⚠️ {amount} kcal surplus - Slows weight loss",
       surplusPerfect: "💪 {amount} kcal surplus - Perfect for mass gain!",
       deficitSlowsGain: "⚠️ {amount} kcal deficit - Slows muscle gain",
-      plannedMealsNote: "Lighter sections are planned meals not yet logged",
-      healthDevice: "Health Device"
+      plannedMealsNote: "Lighter sections are planned meals not yet logged"
     },
     settings: {
       title: "Account Settings",
@@ -5017,8 +5015,7 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Superávit de {amount} kcal - Ralentiza la pérdida de peso",
       surplusPerfect: "💪 Superávit de {amount} kcal - ¡Perfecto para ganar masa!",
       deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Ralentiza el aumento",
-      plannedMealsNote: "Las secciones más claras son comidas planificadas pero no registradas",
-      healthDevice: "Dispositivo de Salud"
+      plannedMealsNote: "Las secciones más claras son comidas planificadas pero no registradas"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -7006,8 +7003,7 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Superávit de {amount} kcal - Retarda o emagrecimento",
       surplusPerfect: "💪 Superávit de {amount} kcal - Perfeito para ganhar massa!",
       deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Retarda o ganho",
-      plannedMealsNote: "As seções mais claras são refeições planejadas mas não registradas",
-      healthDevice: "Dispositivo de Saúde"
+      plannedMealsNote: "As seções mais claras são refeições planejadas mas não registradas"
     },
     settings: {
       title: "Configurações da Conta",
@@ -8995,8 +8991,7 @@ export const translations = {
       surplusSlowsLoss: "⚠️ {amount} kcal Überschuss - Verlangsamt Gewichtsverlust",
       surplusPerfect: "💪 {amount} kcal Überschuss - Perfekt für Muskelaufbau!",
       deficitSlowsGain: "⚠️ {amount} kcal Defizit - Verlangsamt Muskelzuwachs",
-      plannedMealsNote: "Hellere Abschnitte sind geplante, aber noch nicht erfasste Mahlzeiten",
-      healthDevice: "Gesundheitsgerät"
+      plannedMealsNote: "Hellere Abschnitte sind geplante, aber noch nicht erfasste Mahlzeiten"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -10984,8 +10979,7 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Surplus de {amount} kcal - Ralentit la perte de poids",
       surplusPerfect: "💪 Surplus de {amount} kcal - Parfait pour la masse!",
       deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Ralentit la prise de masse",
-      plannedMealsNote: "Les sections plus claires sont des repas planifiés mais non enregistrés",
-      healthDevice: "Appareil de Santé"
+      plannedMealsNote: "Les sections plus claires sont des repas planifiés mais non enregistrés"
     },
     settings: {
       title: "Paramètres du Compte",
