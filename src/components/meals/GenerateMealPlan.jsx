@@ -160,31 +160,44 @@ ISTRUZIONI FINALI:
 3. Usa grammi di carne/pesce e grammi di burro per raggiungere il target
 4. CONFERMA che la somma finale sia tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal`;
 
-          const normalPrompt = `Crea 5 pasti in italiano per ${dayLabel}.
+          const normalPrompt = `🚨 SUPER CRITICAL - LEGGI TUTTO PRIMA DI RISPONDERE 🚨
 
-🚨 CRITICAL CALORIE REQUIREMENT - LEGGI ATTENTAMENTE 🚨
-⚠️ ATTENZIONE: Il totale DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal ⚠️
-
-TARGET CALORICO GIORNALIERO: ${dailyCalories} kcal
-NON CREARE PIANI DA ${dailyCalories - 300} kcal O MENO!
-
-DISTRIBUZIONE CALORIE PER PASTO (usa questi come riferimento):
-- breakfast: circa ${breakfastCal} kcal
-- snack1: circa ${snack1Cal} kcal
-- lunch: circa ${lunchCal} kcal
-- snack2: circa ${snack2Cal} kcal
-- dinner: circa ${dinnerCal} kcal
-
-VERIFICA FINALE: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal
-
-REGOLE ASSOLUTE:
-1. LA SOMMA TOTALE dei 5 pasti DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal
-2. NON scendere MAI sotto ${dailyCalories - 50} kcal
-3. Calcola accuratamente le quantità per raggiungere il target di ${dailyCalories} kcal
-
+Crea 5 pasti in italiano per ${dayLabel}.
 Dieta: ${currentUser.diet_type || user.diet_type}
 
-Dieta: ${currentUser.diet_type || user.diet_type}`;
+🔥 REQUISITO CALORICO OBBLIGATORIO 🔥
+TARGET: ${dailyCalories} kcal TOTALI
+RANGE ACCETTABILE: ${dailyCalories - 10} - ${dailyCalories + 10} kcal
+
+⚠️ ERRORE COMUNE DA EVITARE ⚠️
+NON creare piani da ${dailyCalories - 300} kcal!
+NON creare piani da ${dailyCalories - 200} kcal!
+NON creare piani da ${dailyCalories - 100} kcal!
+Il target è ${dailyCalories} kcal, NON di meno!
+
+DISTRIBUZIONE CALORIE PER PASTO CON ESEMPI:
+1. breakfast: ${breakfastCal} kcal 
+   → es: 80g avena (300 kcal) + 200ml latte (120 kcal) + 20g miele (60 kcal) + 30g noci (200 kcal) = 680 kcal
+   
+2. snack1: ${snack1Cal} kcal
+   → es: 1 mela (80 kcal) + 20g mandorle (120 kcal) = 200 kcal
+   
+3. lunch: ${lunchCal} kcal
+   → es: 120g pasta (420 kcal) + 150g pollo (250 kcal) + 200g verdure (60 kcal) + 15ml olio (135 kcal) = 865 kcal
+   
+4. snack2: ${snack2Cal} kcal
+   → es: 1 yogurt greco (150 kcal) + 15g miele (45 kcal) = 195 kcal
+   
+5. dinner: ${dinnerCal} kcal
+   → es: 200g salmone (400 kcal) + 150g patate (130 kcal) + 200g verdure (60 kcal) + 10ml olio (90 kcal) = 680 kcal
+
+VERIFICA: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal ✅
+
+ISTRUZIONI FINALI:
+1. Calcola le porzioni per raggiungere ESATTAMENTE ${dailyCalories} kcal totali
+2. Se arrivi a ${dailyCalories - 100} kcal, AUMENTA le porzioni degli ingredienti calorici (grassi, carboidrati)!
+3. CONFERMA che la somma finale sia tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal
+4. NON essere timido con le quantità - il target è ${dailyCalories} kcal!`;
 
           try {
             const response = await InvokeLLM({
