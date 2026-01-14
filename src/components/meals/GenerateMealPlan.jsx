@@ -119,53 +119,71 @@ export default function GenerateMealPlan({ user, onComplete }) {
           attempts++;
           setAttemptInfo(`Tentativo ${attempts}/${MAX_ATTEMPTS}`);
           
+          const mealTypes = ['breakfast', 'snack1', 'lunch', 'snack2', 'dinner'];
+          const principalMeals = ['breakfast', 'lunch', 'dinner'];
+          const secondaryMeals = ['snack1', 'snack2', 'snack3', 'snack4'];
+
+          // Conta pasti principali e secondari presenti
+          const numPrincipal = mealTypes.filter(m => principalMeals.includes(m)).length;
+          const numSecondary = mealTypes.filter(m => secondaryMeals.includes(m)).length;
+
+          // Distribuisci 75% ai principali, 25% ai secondari
+          const principalTotal = Math.round(dailyCalories * 0.75);
+          const secondaryTotal = dailyCalories - principalTotal;
+
+          const principalCal = numPrincipal > 0 ? Math.round(principalTotal / numPrincipal) : 0;
+          const secondaryCal = numSecondary > 0 ? Math.round(secondaryTotal / numSecondary) : 0;
+
+          const initialTargets = {};
+          mealTypes.forEach(mealType => {
+            if (principalMeals.includes(mealType)) {
+              initialTargets[mealType] = principalCal;
+            } else {
+              initialTargets[mealType] = secondaryCal;
+            }
+          });
+
+          console.log(`📊 Distribuzione iniziale (${dayLabel}):`, initialTargets);
+
           const carnivorePrompt = `Crea 5 ricette carnivore per ${dayLabel}.
 
-INGREDIENTI PERMESSI: carne, pesce, uova, burro, sale
-VIETATO: pasta, riso, pane, verdure, frutta
+          INGREDIENTI PERMESSI: carne, pesce, uova, burro, sale
+          VIETATO: pasta, riso, pane, verdure, frutta
 
-Per ogni pasto specifica:
-- Nome ricetta
-- Ingredienti base (senza quantità precise)
-- Proporzioni relative tra ingredienti (es: 70% carne, 30% burro)
-- Macronutrienti approssimativi (% proteine, grassi, carbs)
-- Istruzioni preparazione
+          Per ogni pasto specifica:
+          - Nome ricetta
+          - Ingredienti base (senza quantità)
+          - Proporzioni relative (es: 70% carne, 30% burro)
+          - Istruzioni preparazione
 
-Esempio breakfast:
-{
-  "name": "Bistecca di Manzo con Burro",
-  "ingredients": [
-    {"name": "manzo", "proportion": 0.70},
-    {"name": "burro", "proportion": 0.30}
-  ],
-  "protein_ratio": 0.35,
-  "fat_ratio": 0.65,
-  "carbs_ratio": 0
-}`;
+          Esempio:
+          {
+          "name": "Bistecca con Burro",
+          "ingredients": [
+          {"name": "manzo", "proportion": 0.70},
+          {"name": "burro", "proportion": 0.30}
+          ]
+          }`;
 
           const normalPrompt = `Crea 5 ricette per ${dayLabel}.
-Dieta: ${currentUser.diet_type || user.diet_type}
+          Dieta: ${currentUser.diet_type || user.diet_type}
 
-Per ogni pasto specifica:
-- Nome ricetta
-- Ingredienti base (senza quantità precise)
-- Proporzioni relative tra ingredienti (es: 40% carboidrati, 30% proteine, 30% grassi)
-- Macronutrienti approssimativi (% proteine, grassi, carbs)
-- Istruzioni preparazione
+          Per ogni pasto specifica:
+          - Nome ricetta
+          - Ingredienti base (senza quantità)
+          - Proporzioni relative (es: 40% avena, 30% noci)
+          - Istruzioni preparazione
 
-Esempio breakfast:
-{
-  "name": "Porridge con Frutta Secca",
-  "ingredients": [
-    {"name": "avena", "proportion": 0.40},
-    {"name": "latte", "proportion": 0.20},
-    {"name": "miele", "proportion": 0.10},
-    {"name": "noci", "proportion": 0.30}
-  ],
-  "protein_ratio": 0.15,
-  "fat_ratio": 0.35,
-  "carbs_ratio": 0.50
-}`;
+          Esempio:
+          {
+          "name": "Porridge con Frutta Secca",
+          "ingredients": [
+          {"name": "avena", "proportion": 0.40},
+          {"name": "latte", "proportion": 0.20},
+          {"name": "miele", "proportion": 0.10},
+          {"name": "noci", "proportion": 0.30}
+          ]
+          }`;
 
           try {
             const response = await InvokeLLM({
