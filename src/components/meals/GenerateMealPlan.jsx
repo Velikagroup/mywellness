@@ -320,43 +320,7 @@ export default function GenerateMealPlan({ user, onComplete }) {
               });
             }
 
-            // STEP 4: Arrotonda e calcola calorie
-            for (const meal of response.meals) {
-              meal.ingredients = meal.ingredients.map(ing => {
-                const roundedQty = ing.nutritionData.unit === 'uova' 
-                  ? Math.max(1, Math.round(ing.quantity))
-                  : Math.max(1, Math.round(ing.quantity));
-
-                const cal = ing.nutritionData.unit === 'uova' 
-                  ? (roundedQty / 2) * ing.nutritionData.cal
-                  : (roundedQty / 100) * ing.nutritionData.cal;
-
-                const protein = ing.nutritionData.unit === 'uova'
-                  ? (roundedQty / 2) * ing.nutritionData.protein
-                  : (roundedQty / 100) * ing.nutritionData.protein;
-
-                const fat = ing.nutritionData.unit === 'uova'
-                  ? (roundedQty / 2) * ing.nutritionData.fat
-                  : (roundedQty / 100) * ing.nutritionData.fat;
-
-                const carbs = ing.nutritionData.unit === 'uova'
-                  ? (roundedQty / 2) * ing.nutritionData.carbs
-                  : (roundedQty / 100) * ing.nutritionData.carbs;
-
-                return {
-                  name: ing.name,
-                  quantity: roundedQty,
-                  unit: ing.unit,
-                  calories: cal,
-                  protein: protein,
-                  carbs: carbs,
-                  fat: fat,
-                  nutritionData: ing.nutritionData
-                };
-              });
-            }
-
-            // STEP 5: LOOP ITERATIVO - scala TUTTI gli ingredienti insieme
+            // STEP 4+5: LOOP ITERATIVO - scala e arrotonda insieme
             let iteration = 0;
             const MAX_ITERATIONS = 10;
             
