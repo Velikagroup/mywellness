@@ -66,7 +66,7 @@ export default function GenerateMealPlan({ user, onComplete }) {
   const [attemptInfo, setAttemptInfo] = useState('');
 
   const generateWeeklyMealPlan = async () => {
-    if (!user || !user.daily_calories) {
+    if (!user) {
       alert("Completa prima il quiz!");
       return;
     }
