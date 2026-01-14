@@ -26,6 +26,7 @@ import OnboardingTour from "../components/onboarding/OnboardingTour";
 import CalorieMeter from "../components/dashboard/CalorieMeter";
 import NutritionUnlockPrompt from "../components/dashboard/NutritionUnlockPrompt";
 import CalorieBalanceChart from "../components/dashboard/CalorieBalanceChart";
+import TermsAcceptanceModal from "../components/dashboard/TermsAcceptanceModal";
 import { useLanguage } from "../components/i18n/LanguageContext";
 import { rememberMeManager } from "../components/utils/rememberMeManager";
 
@@ -63,6 +64,7 @@ export default function Dashboard() {
   const [checkoutPlan, setCheckoutPlan] = useState('base');
   const [checkoutBilling, setCheckoutBilling] = useState('monthly');
   const [isRedirecting, setIsRedirecting] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -171,11 +173,19 @@ export default function Dashboard() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // ✅ Check onboarding status
+  // ✅ Check terms acceptance FIRST, then onboarding
   useEffect(() => {
-    const checkOnboarding = async () => {
-      if (user && !user.onboarding_completed) {
-        // Check if user has already started onboarding
+    const checkTermsAndOnboarding = async () => {
+      if (!user) return;
+
+      // 1. Check if user has accepted terms
+      if (!user.terms_accepted) {
+        setShowTermsModal(true);
+        return; // Don't show onboarding until terms are accepted
+      }
+
+      // 2. Check onboarding status
+      if (!user.onboarding_completed) {
         try {
           const onboardingRecords = await base44.entities.UserOnboarding.filter({ user_id: user.id });
           if (onboardingRecords.length === 0 || !onboardingRecords[0].onboarding_completed) {
@@ -183,24 +193,23 @@ export default function Dashboard() {
           }
         } catch (error) {
           console.error('Error checking onboarding:', error);
-          // Show onboarding anyway if error
           setShowOnboarding(true);
         }
       }
     };
 
     if (user && !isLoading) {
-      checkOnboarding();
+      checkTermsAndOnboarding();
     }
   }, [user, isLoading]);
 
-  // ✅ Nutrition unlock prompt per utenti standard (aspetta che l'onboarding finisca)
+  // ✅ Nutrition unlock prompt per utenti standard (aspetta che terms e onboarding finiscano)
   useEffect(() => {
     if (!user || isLoading) return;
     
-    // ⏳ Se l'onboarding è ancora in corso, non avviare i timer
-    if (showOnboarding) {
-      console.log('⏳ Onboarding in corso, nutrition unlock rinviato');
+    // ⏳ Se terms modal o onboarding è ancora in corso, non avviare i timer
+    if (showTermsModal || showOnboarding) {
+      console.log('⏳ Terms o onboarding in corso, nutrition unlock rinviato');
       return;
     }
     
@@ -247,7 +256,7 @@ export default function Dashboard() {
       clearTimeout(initialTimeout);
       clearInterval(interval);
     };
-  }, [user, isLoading, showUpgradeCheckout, showOnboarding]);
+  }, [user, isLoading, showUpgradeCheckout, showOnboarding, showTermsModal]);
 
   const handleMealUpdate = (updatedMeal) => {
     const updatedMeals = todayMeals.map(m => m.id === updatedMeal.id ? updatedMeal : m);
@@ -551,6 +560,20 @@ export default function Dashboard() {
     navigate(createPageUrl("Quiz") + "?mode=recap&from=dashboard");
   };
 
+  const handleAcceptTerms = async () => {
+    try {
+      await base44.auth.updateMe({
+        terms_accepted: true,
+        terms_accepted_at: new Date().toISOString()
+      });
+      setShowTermsModal(false);
+      await loadUserData(); // Reload user to update state
+    } catch (error) {
+      console.error('Error accepting terms:', error);
+      alert('Errore durante l\'accettazione dei termini. Riprova.');
+    }
+  };
+
   if (isLoading || isRebalancing || isRedirecting || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{
@@ -605,6 +628,13 @@ export default function Dashboard() {
             inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05);
         }
       `}</style>
+
+      {showTermsModal && (
+        <TermsAcceptanceModal
+          isOpen={showTermsModal}
+          onAccept={handleAcceptTerms}
+        />
+      )}
 
       {showOnboarding && user && (
         <OnboardingTour 
