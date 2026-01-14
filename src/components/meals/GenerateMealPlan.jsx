@@ -108,7 +108,7 @@ export default function GenerateMealPlan({ user, onComplete }) {
           monday: 'Lunedì', tuesday: 'Martedì', wednesday: 'Mercoledì', 
           thursday: 'Giovedì', friday: 'Venerdì', saturday: 'Sabato', sunday: 'Domenica'
         }[day];
-        
+
         setCurrentDay(dayLabel);
 
         let attempts = 0;
@@ -118,15 +118,6 @@ export default function GenerateMealPlan({ user, onComplete }) {
         while (attempts < MAX_ATTEMPTS && !validMeals) {
           attempts++;
           setAttemptInfo(`Tentativo ${attempts}/${MAX_ATTEMPTS}`);
-
-          // Calcola le calorie per pasto con precisione ASSOLUTA (max ±0.5 kcal)
-          const breakfastCal = Math.round(dailyCalories * 0.25);
-          const snack1Cal = Math.round(dailyCalories * 0.05);
-          const lunchCal = Math.round(dailyCalories * 0.35);
-          const snack2Cal = Math.round(dailyCalories * 0.05);
-          
-          // Dinner prende ESATTAMENTE il resto per arrivare al totale preciso
-          const dinnerCal = dailyCalories - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
           
           const carnivorePrompt = `Crea 5 ricette carnivore per ${dayLabel}.
 
