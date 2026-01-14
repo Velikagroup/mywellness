@@ -109,21 +109,20 @@ export default function GenerateMealPlan({ user, onComplete }) {
 
         let attempts = 0;
         let validMeals = null;
-        const MAX_ATTEMPTS = user.diet_type === 'carnivore' ? 10 : 3;
+        const MAX_ATTEMPTS = (currentUser.diet_type || user.diet_type) === 'carnivore' ? 10 : 3;
 
         while (attempts < MAX_ATTEMPTS && !validMeals) {
           attempts++;
           setAttemptInfo(`Tentativo ${attempts}/${MAX_ATTEMPTS}`);
 
           // Calcola le calorie per pasto con precisione ASSOLUTA (max ±0.5 kcal)
-          const dailyCal = user.daily_calories;
-          const breakfastCal = Math.round(dailyCal * 0.25);
-          const snack1Cal = Math.round(dailyCal * 0.05);
-          const lunchCal = Math.round(dailyCal * 0.35);
-          const snack2Cal = Math.round(dailyCal * 0.05);
+          const breakfastCal = Math.round(dailyCalories * 0.25);
+          const snack1Cal = Math.round(dailyCalories * 0.05);
+          const lunchCal = Math.round(dailyCalories * 0.35);
+          const snack2Cal = Math.round(dailyCalories * 0.05);
           
           // Dinner prende ESATTAMENTE il resto per arrivare al totale preciso
-          const dinnerCal = dailyCal - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
+          const dinnerCal = dailyCalories - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
           
           const carnivorePrompt = `🚨 ATTENZIONE CRITICA 🚨
 Stai per creare pasti per DIETA CARNIVORA.
@@ -160,7 +159,7 @@ ESEMPI VALIDI:
    Ingredienti: costine 300g, sale
 
 🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
-CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${user.daily_calories} kcal
+CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal
 DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
 - breakfast: ESATTAMENTE ${breakfastCal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
 - snack1: ESATTAMENTE ${snack1Cal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
@@ -168,7 +167,7 @@ DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
 - snack2: ESATTAMENTE ${snack2Cal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
 - dinner: ESATTAMENTE ${dinnerCal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
 
-TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${user.daily_calories} kcal ✅
+TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
 
 CRITICAL: Il total_calories di OGNI pasto DEVE essere ESATTAMENTE uguale al target indicato sopra (massimo ±0.5 kcal).
 Calcola con precisione le quantità degli ingredienti per raggiungere ESATTAMENTE le calorie target.
@@ -198,7 +197,7 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
 
           try {
             const response = await InvokeLLM({
-              prompt: user.diet_type === 'carnivore' ? carnivorePrompt : normalPrompt,
+              prompt: (currentUser.diet_type || user.diet_type) === 'carnivore' ? carnivorePrompt : normalPrompt,
               response_json_schema: {
                 type: "object",
                 properties: {
@@ -260,7 +259,7 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
             console.log(`✅ Calorie corrette: ${totalCalories} kcal (target: ${dailyCalories}, scarto: ${calorieDeviation} kcal)`);
 
             // CONTROLLO RAPIDO CARNIVORA
-            if (user.diet_type === 'carnivore') {
+            if ((currentUser.diet_type || user.diet_type) === 'carnivore') {
               const quickCheck = quickCheckCarnivore(response);
               if (!quickCheck.valid) {
                 console.error(`❌ QUICK CHECK FAILED: ${quickCheck.message}`);
@@ -295,9 +294,10 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
         // SALVA
         for (const meal of validMeals) {
           // Arrotonda le uova a numeri interi
-          const processedIngredients = meal.ingredients.map(ing => {
+          const processedIngredients = meal.ingredients?.map(ing => {
+            if (!ing || !ing.name) return ing;
             if (ing.unit && ing.unit.toLowerCase() === 'uova' || 
-                ing.name && ing.name.toLowerCase().includes('uov')) {
+                ing.name.toLowerCase().includes('uov')) {
               return {
                 ...ing,
                 quantity: Math.round(ing.quantity)
