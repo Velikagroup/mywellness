@@ -124,61 +124,41 @@ export default function GenerateMealPlan({ user, onComplete }) {
           // Dinner prende ESATTAMENTE il resto per arrivare al totale preciso
           const dinnerCal = dailyCalories - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
           
-          const carnivorePrompt = `🚨 ATTENZIONE CRITICA 🚨
-Stai per creare pasti per DIETA CARNIVORA.
+          const carnivorePrompt = `🚨 SUPER CRITICAL - LEGGI TUTTO PRIMA DI RISPONDERE 🚨
 
-VIETATO ASSOLUTAMENTE (SE INCLUDI ANCHE UNA DI QUESTE PAROLE IL PASTO È INVALIDO):
-❌ pasta, spaghetti, penne, riso, pane, pizza, bruschetta
-❌ patate di qualsiasi tipo
-❌ verdure (pomodori, insalata, cipolle, aglio, peperoni, zucchine, etc.)
-❌ frutta
-❌ legumi
-❌ oli vegetali, olive
-
-PERMESSO SOLO:
+DIETA CARNIVORA - INGREDIENTI PERMESSI:
 ✅ Carne: manzo, vitello, maiale, agnello, pollo, tacchino
 ✅ Pesce: salmone, tonno, merluzzo, sgombro, sardine
 ✅ Uova
 ✅ Burro, strutto
 ✅ Sale
 
-ESEMPI VALIDI:
-1. "Bistecca di Manzo con Burro" 
-   Ingredienti: manzo 300g, burro 30g, sale
-   
-2. "Salmone con Burro"
-   Ingredienti: salmone 250g, burro 25g, sale
-   
-3. "Uova Strapazzate"
-   Ingredienti: uova 4, burro 20g, sale
-   
-4. "Petto di Pollo"
-   Ingredienti: petto di pollo 250g, burro 20g, sale
-   
-5. "Costine di Maiale"
-   Ingredienti: costine 300g, sale
+VIETATO: pasta, riso, pane, verdure, frutta, legumi, oli vegetali
 
-🚨 CRITICAL CALORIE REQUIREMENT - LEGGI ATTENTAMENTE 🚨
-⚠️ ATTENZIONE: Il totale DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal ⚠️
+🔥 REQUISITO CALORICO OBBLIGATORIO 🔥
+TARGET: ${dailyCalories} kcal TOTALI
+RANGE ACCETTABILE: ${dailyCalories - 10} - ${dailyCalories + 10} kcal
 
-TARGET CALORICO GIORNALIERO: ${dailyCalories} kcal
-NON CREARE PIANI DA ${dailyCalories - 300} kcal O MENO!
+⚠️ ERRORE COMUNE DA EVITARE ⚠️
+NON creare piani da ${dailyCalories - 300} kcal!
+NON creare piani da ${dailyCalories - 200} kcal!
+NON creare piani da ${dailyCalories - 100} kcal!
+Il target è ${dailyCalories} kcal, NON di meno!
 
-DISTRIBUZIONE CALORIE PER PASTO (usa questi valori come guida):
-- breakfast: circa ${breakfastCal} kcal - SOLO carne/pesce/uova/burro
-- snack1: circa ${snack1Cal} kcal - SOLO carne/pesce/uova/burro  
-- lunch: circa ${lunchCal} kcal - SOLO carne/pesce/uova/burro
-- snack2: circa ${snack2Cal} kcal - SOLO carne/pesce/uova/burro
-- dinner: circa ${dinnerCal} kcal - SOLO carne/pesce/uova/burro
+DISTRIBUZIONE CALORIE PER PASTO:
+1. breakfast: ${breakfastCal} kcal → es: 200g manzo (400 kcal) + 20g burro (150 kcal) = 550 kcal
+2. snack1: ${snack1Cal} kcal → es: 2 uova (140 kcal) + 10g burro (75 kcal) = 215 kcal
+3. lunch: ${lunchCal} kcal → es: 250g salmone (500 kcal) + 30g burro (225 kcal) = 725 kcal
+4. snack2: ${snack2Cal} kcal → es: 50g prosciutto (120 kcal) + 1 uovo (70 kcal) = 190 kcal
+5. dinner: ${dinnerCal} kcal → es: 200g pollo (330 kcal) + 25g burro (185 kcal) = 515 kcal
 
-VERIFICA FINALE: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal
+VERIFICA: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal ✅
 
-REGOLE ASSOLUTE:
-1. LA SOMMA TOTALE dei 5 pasti DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal
-2. NON scendere MAI sotto ${dailyCalories - 50} kcal
-3. Regola le porzioni per raggiungere il target di ${dailyCalories} kcal
-
-CONFERMA: Stai usando SOLO prodotti animali, giusto? NO PASTA, NO VERDURE, NO RISO.`;
+ISTRUZIONI FINALI:
+1. Calcola le porzioni per raggiungere ESATTAMENTE ${dailyCalories} kcal totali
+2. Se arrivi a ${dailyCalories - 100} kcal, AUMENTA le porzioni!
+3. Usa grammi di carne/pesce e grammi di burro per raggiungere il target
+4. CONFERMA che la somma finale sia tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal`;
 
           const normalPrompt = `Crea 5 pasti in italiano per ${dayLabel}.
 
