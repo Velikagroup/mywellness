@@ -142,23 +142,24 @@ export default function CalorieBalanceChart({ user }) {
           };
         });
 
-      // Calcola metabolismo basale e NEAT
+      // Calcola metabolismo basale, NEAT e calorie da HealthKit
       const bmr = calculateBMR(user);
+      const calculatedNeat = calculateNEAT(user);
+      const healthKitCalories = (healthKitSync.length > 0 && healthKitSync[0].active_energy_burned_kcal) || 0;
       
-      // Usa dati HealthKit se disponibili, altrimenti calcolo automatico
-      let neat = calculateNEAT(user);
-      if (healthKitSync.length > 0 && healthKitSync[0].active_energy_burned_kcal) {
-        neat = healthKitSync[0].active_energy_burned_kcal;
-        console.log('🍎 Using HealthKit NEAT:', neat);
-      } else {
-        console.log('📊 Using calculated NEAT:', neat);
+      const isPremium = hasFeatureAccess(user?.subscription_plan, 'smartwatch_sync');
+
+      // NEAT per display: per non-premium, è HealthKit se disponibile, altrimenti calcolato. Per premium, è sempre il calcolato.
+      const neatForDisplay = isPremium ? calculatedNeat : (healthKitCalories > 0 ? healthKitCalories : calculatedNeat);
+      
+      let totalBurned = bmr + neatForDisplay;
+      if (isPremium && healthKitCalories > 0) {
+        totalBurned = bmr + calculatedNeat + healthKitCalories;
       }
-      
-      const totalBurned = bmr + neat;
 
-      console.log('💪 BMR:', bmr, 'NEAT:', neat, 'Total burned:', totalBurned);
+      console.log('💪 BMR:', bmr, 'Calculated NEAT:', calculatedNeat, 'HealthKit:', healthKitCalories, 'Total burned:', totalBurned);
       console.log('🍴 Planned:', plannedCalories, 'Consumed:', consumedCalories);
-
+      
       // Calcola bilancio
       const balance = consumedCalories - totalBurned;
 
@@ -170,10 +171,12 @@ export default function CalorieBalanceChart({ user }) {
         consumedCalories: Math.round(consumedCalories),
         mealSegments,
         bmr: Math.round(bmr),
-        neat: Math.round(neat),
+        neat: Math.round(neatForDisplay),
+        healthKitCalories: Math.round(healthKitCalories),
         totalBurned: Math.round(totalBurned),
         balance: Math.round(balance),
-        isWeightLoss
+        isWeightLoss,
+        isPremium
       });
 
       console.log('✅ CalorieBalanceChart: Data loaded successfully');
@@ -361,46 +364,57 @@ export default function CalorieBalanceChart({ user }) {
             </span>
           </div>
 
-          {/* Progress Bar BMR */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-600">
-                {t('dashboard.caloriesBurnedBMR')}
-              </span>
-              <span className={data.isWeightLoss ? "font-semibold text-green-600" : "font-semibold text-red-600"}>{data.bmr} kcal</span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
+          {/* Combined Progress Bar */}
+          <div className="w-full h-2.5 bg-gray-200 rounded-full overflow-hidden flex">
+            <div 
+              className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
+              style={{ width: `${(data.bmr / data.totalBurned) * 100}%` }}
+            />
+            <div 
+              className={data.isWeightLoss ? "h-full bg-green-400" : "h-full bg-red-400"}
+              style={{ width: `${(data.neat / data.totalBurned) * 100}%` }}
+            />
+            {data.isPremium && data.healthKitCalories > 0 && (
               <div 
-                className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
-                style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+                className={data.isWeightLoss ? "h-full bg-green-300" : "h-full bg-red-300"}
+                style={{ width: `${(data.healthKitCalories / data.totalBurned) * 100}%` }}
               />
-            </div>
+            )}
           </div>
 
-          {/* Progress Bar NEAT - allineato con BMR */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
+          {/* Labels */}
+          <div className="space-y-1 text-sm">
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900">
-                  {t('dashboard.neatActivity')}
-                </span>
-                {healthKitData && (
-                  <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+                <div className={`w-2.5 h-2.5 rounded-full ${data.isWeightLoss ? 'bg-green-600' : 'bg-red-600'}`}></div>
+                <span className="font-medium text-gray-600">{t('dashboard.caloriesBurnedBMR')}</span>
+              </div>
+              <span className="font-semibold text-gray-700">{data.bmr} kcal</span>
+            </div>
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <div className={`w-2.5 h-2.5 rounded-full ${data.isWeightLoss ? 'bg-green-400' : 'bg-red-400'}`}></div>
+                <span className="font-medium text-gray-600">{t('dashboard.neatActivity')}</span>
+                 {!data.isPremium && healthKitData && (
+                  <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
                     HealthKit
                   </span>
                 )}
               </div>
-              <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
+              <span className="font-semibold text-gray-700">{data.neat} kcal</span>
             </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-              <div 
-                className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
-                style={{ 
-                  left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
-                  width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` 
-                }}
-              />
-            </div>
+            {data.isPremium && data.healthKitCalories > 0 && (
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-2">
+                  <div className={`w-2.5 h-2.5 rounded-full ${data.isWeightLoss ? 'bg-green-300' : 'bg-red-300'}`}></div>
+                  <span className="font-medium text-gray-600">{t('dashboard.healthDevice')}</span>
+                  <span className="px-1.5 py-0.5 bg-gray-100 text-gray-600 text-[10px] font-bold rounded">
+                    HealthKit
+                  </span>
+                </div>
+                <span className="font-semibold text-gray-700">{data.healthKitCalories} kcal</span>
+              </div>
+            )}
           </div>
           </div>
 
