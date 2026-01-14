@@ -981,8 +981,6 @@ export const translations = {
       caloriesBurnedBMR: "Metabolismo Basale",
       caloriesBurnedNEAT: "NEAT (Attività)",
       neatActivity: "NEAT (Attività)",
-      estimatedNeat: "NEAT Stimato",
-      deviceActivity: "Attività da Dispositivo",
       deficitPerfect: "🎯 Deficit di {amount} kcal - Perfetto per dimagrire!",
       maintenance: "⚖️ Mantenimento",
       surplusSlowsLoss: "⚠️ Surplus di {amount} kcal - Rallenta il dimagrimento",
