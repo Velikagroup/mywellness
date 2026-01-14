@@ -124,52 +124,80 @@ export default function GenerateMealPlan({ user, onComplete }) {
           // Dinner prende ESATTAMENTE il resto per arrivare al totale preciso
           const dinnerCal = dailyCalories - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
           
-          const carnivorePrompt = `TOTALE OBBLIGATORIO: ${dailyCalories} kcal
+          const carnivorePrompt = `TARGET ASSOLUTO: ${dailyCalories} kcal TOTALI
 
-breakfast = ${breakfastCal} kcal
-snack1 = ${snack1Cal} kcal  
-lunch = ${lunchCal} kcal
-snack2 = ${snack2Cal} kcal
-dinner = ${dinnerCal} kcal
-SOMMA = ${dailyCalories} kcal
+STEP 1: Verifica le calorie per pasto:
+- breakfast: ${breakfastCal} kcal
+- snack1: ${snack1Cal} kcal  
+- lunch: ${lunchCal} kcal
+- snack2: ${snack2Cal} kcal
+- dinner: ${dinnerCal} kcal
+SOMMA: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} = ${dailyCalories} kcal ✓
 
-Dieta carnivora: SOLO carne, pesce, uova, burro, sale.
-
-Crea i 5 pasti seguendo ESATTAMENTE le calorie sopra indicate.
-Usa porzioni abbondanti per raggiungere il target.
-
-Valori calorici approssimativi:
+STEP 2: Valori calorici da usare:
 - Manzo: 200 kcal/100g
-- Salmone: 200 kcal/100g  
+- Maiale: 250 kcal/100g
+- Pollo: 165 kcal/100g
+- Salmone: 200 kcal/100g
+- Tonno: 130 kcal/100g
 - Uova: 70 kcal/uovo
-- Burro: 75 kcal/10g
+- Burro: 750 kcal/100g (75 kcal per 10g)
 
-Calcola le quantità in grammi per arrivare ESATTAMENTE alle calorie indicate per ogni pasto.`;
+STEP 3: Calcola MATEMATICAMENTE ogni pasto:
 
-          const normalPrompt = `TOTALE OBBLIGATORIO: ${dailyCalories} kcal
+Esempio breakfast (target ${breakfastCal} kcal):
+Se voglio fare "Bistecca con Burro":
+- Manzo: ${breakfastCal} kcal × 0.70 = ${Math.round(breakfastCal * 0.70)} kcal → ${Math.round(breakfastCal * 0.70 / 2)} g
+- Burro: ${breakfastCal} kcal × 0.30 = ${Math.round(breakfastCal * 0.30)} kcal → ${Math.round(breakfastCal * 0.30 / 7.5)} g
+VERIFICA: ${Math.round(breakfastCal * 0.70)} + ${Math.round(breakfastCal * 0.30)} = ${breakfastCal} kcal ✓
 
-breakfast = ${breakfastCal} kcal
-snack1 = ${snack1Cal} kcal
-lunch = ${lunchCal} kcal  
-snack2 = ${snack2Cal} kcal
-dinner = ${dinnerCal} kcal
-SOMMA = ${dailyCalories} kcal
+STEP 4: Applica lo stesso metodo per TUTTI i 5 pasti.
 
-Dieta: ${currentUser.diet_type || user.diet_type}
+STEP 5: VERIFICA FINALE prima di rispondere:
+Somma totale = breakfast + snack1 + lunch + snack2 + dinner = ${dailyCalories} kcal?
+Se NO → RICOMINCIA il calcolo!
 
-Crea i 5 pasti seguendo ESATTAMENTE le calorie sopra indicate.
-Usa porzioni abbondanti per raggiungere il target.
+Dieta carnivora: SOLO carne, pesce, uova, burro, sale. VIETATO: pasta, riso, verdure, frutta.`;
 
-Valori calorici approssimativi:
-- Pasta: 350 kcal/100g
+          const normalPrompt = `TARGET ASSOLUTO: ${dailyCalories} kcal TOTALI
+
+STEP 1: Verifica le calorie per pasto:
+- breakfast: ${breakfastCal} kcal
+- snack1: ${snack1Cal} kcal
+- lunch: ${lunchCal} kcal  
+- snack2: ${snack2Cal} kcal
+- dinner: ${dinnerCal} kcal
+SOMMA: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} = ${dailyCalories} kcal ✓
+
+STEP 2: Valori calorici da usare:
+- Pasta: 360 kcal/100g
 - Riso: 130 kcal/100g
 - Pane: 270 kcal/100g
-- Carne: 150-250 kcal/100g
-- Pesce: 100-200 kcal/100g
+- Avena: 380 kcal/100g
+- Pollo: 165 kcal/100g
+- Manzo: 200 kcal/100g
+- Salmone: 200 kcal/100g
 - Olio: 90 kcal/10ml
-- Frutta secca: 600 kcal/100g
+- Noci/Mandorle: 600 kcal/100g
+- Miele: 300 kcal/100g
 
-Calcola le quantità in grammi per arrivare ESATTAMENTE alle calorie indicate per ogni pasto.`;
+STEP 3: Calcola MATEMATICAMENTE ogni pasto:
+
+Esempio breakfast (target ${breakfastCal} kcal):
+Se voglio fare "Porridge con Frutta Secca":
+- Avena: ${Math.round(breakfastCal * 0.40)} kcal → ${Math.round(breakfastCal * 0.40 / 3.8)} g
+- Latte: ${Math.round(breakfastCal * 0.15)} kcal → ${Math.round(breakfastCal * 0.15 / 0.64)} ml
+- Miele: ${Math.round(breakfastCal * 0.10)} kcal → ${Math.round(breakfastCal * 0.10 / 3)} g
+- Noci: ${Math.round(breakfastCal * 0.35)} kcal → ${Math.round(breakfastCal * 0.35 / 6)} g
+VERIFICA: ${Math.round(breakfastCal * 0.40)} + ${Math.round(breakfastCal * 0.15)} + ${Math.round(breakfastCal * 0.10)} + ${Math.round(breakfastCal * 0.35)} = ${Math.round(breakfastCal * 0.40) + Math.round(breakfastCal * 0.15) + Math.round(breakfastCal * 0.10) + Math.round(breakfastCal * 0.35)} kcal ≈ ${breakfastCal} kcal ✓
+
+STEP 4: Applica lo stesso metodo per TUTTI i 5 pasti.
+
+STEP 5: VERIFICA FINALE prima di rispondere:
+Somma totale = breakfast + snack1 + lunch + snack2 + dinner = ${dailyCalories} kcal?
+Se NO → RICOMINCIA il calcolo!
+
+Dieta: ${currentUser.diet_type || user.diet_type}`;
 
           try {
             const response = await InvokeLLM({
@@ -233,15 +261,11 @@ Calcola le quantità in grammi per arrivare ESATTAMENTE alle calorie indicate pe
               meals: response.meals.map(m => ({ type: m.meal_type, cal: m.total_calories }))
             });
             
-            // VERIFICA: se mancano più di 20 kcal, rigetta immediatamente
-            if (totalCalories < dailyCalories - 20) {
-              console.error(`❌ TROPPE POCHE CALORIE: ${totalCalories} vs target ${dailyCalories} (mancano ${dailyCalories - totalCalories} kcal)`);
-              console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
-              continue;
-            }
+            // VERIFICA RIGOROSA: max scarto ±5%
+            const maxDeviation = Math.max(50, dailyCalories * 0.05); // 5% o minimo 50 kcal
             
-            if (calorieDeviation > 10) {
-              console.error(`❌ SCARTO TROPPO ALTO: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories})`);
+            if (calorieDeviation > maxDeviation) {
+              console.error(`❌ SCARTO TROPPO ALTO: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories}, max scarto: ${maxDeviation})`);
               console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
               continue;
             }
