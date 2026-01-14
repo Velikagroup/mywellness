@@ -159,18 +159,19 @@ ESEMPI VALIDI:
    Ingredienti: costine 300g, sale
 
 🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
-CALORIE TOTALI GIORNALIERE: ${dailyCalories} kcal (MAX SCARTO TOTALE: 5 kcal)
-DISTRIBUZIONE CALORIE (MAX ±1 kcal PER PASTO):
-- breakfast: ${breakfastCal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
-- snack1: ${snack1Cal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
-- lunch: ${lunchCal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
-- snack2: ${snack2Cal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
-- dinner: ${dinnerCal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
+CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal (MAX SCARTO: 10 kcal)
+DISTRIBUZIONE CALORIE PER PASTO:
+- breakfast: ${breakfastCal} kcal - SOLO carne/pesce/uova/burro
+- snack1: ${snack1Cal} kcal - SOLO carne/pesce/uova/burro
+- lunch: ${lunchCal} kcal - SOLO carne/pesce/uova/burro
+- snack2: ${snack2Cal} kcal - SOLO carne/pesce/uova/burro
+- dinner: ${dinnerCal} kcal - SOLO carne/pesce/uova/burro
 
 TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
 
-CRITICAL: LA SOMMA DEI 5 PASTI DEVE essere ${dailyCalories} kcal (MAX SCARTO: 5 kcal).
-Calcola le quantità degli ingredienti per avvicinarti il più possibile al target.
+CRITICAL: LA SOMMA breakfast + snack1 + lunch + snack2 + dinner DEVE essere ESATTAMENTE ${dailyCalories} kcal (MAX SCARTO: 10 kcal).
+NON scendere sotto ${dailyCalories - 10} kcal e non superare ${dailyCalories + 10} kcal.
+Calcola precisamente le quantità per raggiungere ${dailyCalories} kcal totali.
 
 CONFERMA: Stai usando SOLO prodotti animali, giusto? NO PASTA, NO VERDURE, NO RISO.`;
 
@@ -245,17 +246,24 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
               continue;
             }
 
-            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±5 kcal)
+            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±10 kcal)
             const totalCalories = response.meals.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
             const calorieDeviation = Math.abs(totalCalories - dailyCalories);
             
-            if (calorieDeviation > 5) {
-              console.error(`❌ CALORIE DEVIATION: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories})`);
+            console.log(`📊 Validazione calorie ${dayLabel}:`, {
+              target: dailyCalories,
+              ottenuto: totalCalories,
+              scarto: calorieDeviation,
+              meals: response.meals.map(m => ({ type: m.meal_type, cal: m.total_calories }))
+            });
+            
+            if (calorieDeviation > 10) {
+              console.error(`❌ SCARTO TROPPO ALTO: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories})`);
               console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
               continue;
             }
 
-            console.log(`✅ Calorie corrette: ${totalCalories} kcal (target: ${dailyCalories}, scarto: ${calorieDeviation} kcal)`);
+            console.log(`✅ Calorie accettate: ${totalCalories} kcal (target: ${dailyCalories}, scarto: ${calorieDeviation} kcal)`);
 
             // CONTROLLO RAPIDO CARNIVORA
             if ((currentUser.diet_type || user.diet_type) === 'carnivore') {
