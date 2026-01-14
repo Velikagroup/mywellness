@@ -36,7 +36,7 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
                     I nostri Termini di Servizio delineano le regole e normative per l'utilizzo della piattaforma MyWellness, inclusi diritti, responsabilità e limitazioni.
                   </p>
                   <a 
-                    href={createPageUrl('Terms')} 
+                    href="https://projectmywellness.com/terms" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-blue-600 hover:text-blue-700 font-medium"
@@ -54,7 +54,7 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
                     La nostra Privacy Policy spiega come raccogliamo, usiamo, proteggiamo e condividiamo le tue informazioni personali quando utilizzi i nostri servizi.
                   </p>
                   <a 
-                    href={createPageUrl('Privacy')} 
+                    href="https://projectmywellness.com/privacy" 
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-xs text-purple-600 hover:text-purple-700 font-medium"
@@ -74,7 +74,7 @@ export default function TermsAcceptanceModal({ isOpen, onAccept }) {
 
           <Button 
             onClick={onAccept}
-            className="w-full bg-[var(--brand-primary)] hover:bg-[var(--brand-primary-hover)] text-white py-6 text-base font-semibold"
+            className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white py-6 text-base font-semibold"
           >
             Accetto
           </Button>
