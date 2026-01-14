@@ -178,6 +178,8 @@ CONFERMA: Stai usando SOLO prodotti animali, giusto? NO PASTA, NO VERDURE, NO RI
           const normalPrompt = `Crea 5 pasti in italiano per ${dayLabel}.
 
 🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
+⚠️ SE LO SCARTO TOTALE È > 2 kcal IL PIANO VERRÀ RIGETTATO ⚠️
+
 CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal
 DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
 - breakfast: ESATTAMENTE ${breakfastCal} kcal (±0.5 kcal max)
@@ -189,7 +191,8 @@ DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
 TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
 
 CRITICAL: Il total_calories di OGNI pasto DEVE essere ESATTAMENTE uguale al target indicato sopra (massimo ±0.5 kcal).
-Calcola con precisione le quantità degli ingredienti per raggiungere ESATTAMENTE le calorie target.
+LA SOMMA breakfast + snack1 + lunch + snack2 + dinner DEVE essere ${dailyCalories} kcal (MAX SCARTO: 2 kcal).
+Calcola con precisione millimetrica le quantità degli ingredienti per raggiungere ESATTAMENTE le calorie target.
 
 Dieta: ${currentUser.diet_type || user.diet_type}`;
 
@@ -243,6 +246,18 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
               console.warn(`⚠️ Solo ${response.meals?.length || 0} pasti`);
               continue;
             }
+
+            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±2 kcal)
+            const totalCalories = response.meals.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
+            const calorieDeviation = Math.abs(totalCalories - dailyCalories);
+            
+            if (calorieDeviation > 2) {
+              console.error(`❌ CALORIE DEVIATION: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories})`);
+              console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
+              continue;
+            }
+
+            console.log(`✅ Calorie corrette: ${totalCalories} kcal (target: ${dailyCalories}, scarto: ${calorieDeviation} kcal)`);
 
             // CONTROLLO RAPIDO CARNIVORA
             if (user.diet_type === 'carnivore') {
