@@ -212,13 +212,10 @@ export default function GenerateMealPlan({ user, onComplete }) {
                           }
                         },
                         instructions: { type: "array", items: { type: "string" } },
-                        protein_ratio: { type: "number" },
-                        fat_ratio: { type: "number" },
-                        carbs_ratio: { type: "number" },
                         prep_time: { type: "number" },
                         difficulty: { type: "string", enum: ["easy", "medium", "hard"] }
                       },
-                      required: ["meal_type", "name", "ingredients", "protein_ratio", "fat_ratio", "carbs_ratio"]
+                      required: ["meal_type", "name", "ingredients"]
                     }
                   }
                 }
