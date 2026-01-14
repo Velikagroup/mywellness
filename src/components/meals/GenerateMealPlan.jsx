@@ -109,7 +109,7 @@ export default function GenerateMealPlan({ user, onComplete }) {
 
         let attempts = 0;
         let validMeals = null;
-        const MAX_ATTEMPTS = (currentUser.diet_type || user.diet_type) === 'carnivore' ? 10 : 5;
+        const MAX_ATTEMPTS = (currentUser.diet_type || user.diet_type) === 'carnivore' ? 10 : 8;
 
         while (attempts < MAX_ATTEMPTS && !validMeals) {
           attempts++;
@@ -158,41 +158,51 @@ ESEMPI VALIDI:
 5. "Costine di Maiale"
    Ingredienti: costine 300g, sale
 
-🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
-CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal (MAX SCARTO: 2 kcal)
-DISTRIBUZIONE CALORIE PER PASTO:
-- breakfast: ${breakfastCal} kcal - SOLO carne/pesce/uova/burro
-- snack1: ${snack1Cal} kcal - SOLO carne/pesce/uova/burro
-- lunch: ${lunchCal} kcal - SOLO carne/pesce/uova/burro
-- snack2: ${snack2Cal} kcal - SOLO carne/pesce/uova/burro
-- dinner: ${dinnerCal} kcal - SOLO carne/pesce/uova/burro
+🚨 CRITICAL CALORIE REQUIREMENT - LEGGI ATTENTAMENTE 🚨
+⚠️ ATTENZIONE: Il totale DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal ⚠️
 
-TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
+TARGET CALORICO GIORNALIERO: ${dailyCalories} kcal
+NON CREARE PIANI DA ${dailyCalories - 300} kcal O MENO!
 
-CRITICAL: LA SOMMA breakfast + snack1 + lunch + snack2 + dinner DEVE essere ESATTAMENTE ${dailyCalories} kcal (MAX SCARTO: 2 kcal).
-NON scendere sotto ${dailyCalories - 2} kcal e non superare ${dailyCalories + 2} kcal.
-Calcola con MASSIMA precisione le quantità per raggiungere ESATTAMENTE ${dailyCalories} kcal totali.
+DISTRIBUZIONE CALORIE PER PASTO (usa questi valori come guida):
+- breakfast: circa ${breakfastCal} kcal - SOLO carne/pesce/uova/burro
+- snack1: circa ${snack1Cal} kcal - SOLO carne/pesce/uova/burro  
+- lunch: circa ${lunchCal} kcal - SOLO carne/pesce/uova/burro
+- snack2: circa ${snack2Cal} kcal - SOLO carne/pesce/uova/burro
+- dinner: circa ${dinnerCal} kcal - SOLO carne/pesce/uova/burro
+
+VERIFICA FINALE: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal
+
+REGOLE ASSOLUTE:
+1. LA SOMMA TOTALE dei 5 pasti DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal
+2. NON scendere MAI sotto ${dailyCalories - 50} kcal
+3. Regola le porzioni per raggiungere il target di ${dailyCalories} kcal
 
 CONFERMA: Stai usando SOLO prodotti animali, giusto? NO PASTA, NO VERDURE, NO RISO.`;
 
           const normalPrompt = `Crea 5 pasti in italiano per ${dayLabel}.
 
-🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
-⚠️ SE LO SCARTO TOTALE È > 2 kcal IL PIANO VERRÀ RIGETTATO ⚠️
+🚨 CRITICAL CALORIE REQUIREMENT - LEGGI ATTENTAMENTE 🚨
+⚠️ ATTENZIONE: Il totale DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal ⚠️
 
-CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal (NON 300-400 kcal in meno!)
-DISTRIBUZIONE CALORIE PER PASTO:
-- breakfast: ${breakfastCal} kcal
-- snack1: ${snack1Cal} kcal
-- lunch: ${lunchCal} kcal
-- snack2: ${snack2Cal} kcal
-- dinner: ${dinnerCal} kcal
+TARGET CALORICO GIORNALIERO: ${dailyCalories} kcal
+NON CREARE PIANI DA ${dailyCalories - 300} kcal O MENO!
 
-TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
+DISTRIBUZIONE CALORIE PER PASTO (usa questi come riferimento):
+- breakfast: circa ${breakfastCal} kcal
+- snack1: circa ${snack1Cal} kcal
+- lunch: circa ${lunchCal} kcal
+- snack2: circa ${snack2Cal} kcal
+- dinner: circa ${dinnerCal} kcal
 
-CRITICAL: LA SOMMA breakfast + snack1 + lunch + snack2 + dinner DEVE essere ${dailyCalories} kcal (MAX SCARTO: 2 kcal).
-NON scendere sotto ${dailyCalories - 2} kcal e non superare ${dailyCalories + 2} kcal.
-Calcola con MASSIMA precisione le quantità degli ingredienti per raggiungere ESATTAMENTE ${dailyCalories} kcal totali.
+VERIFICA FINALE: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal
+
+REGOLE ASSOLUTE:
+1. LA SOMMA TOTALE dei 5 pasti DEVE essere tra ${dailyCalories - 10} e ${dailyCalories + 10} kcal
+2. NON scendere MAI sotto ${dailyCalories - 50} kcal
+3. Calcola accuratamente le quantità per raggiungere il target di ${dailyCalories} kcal
+
+Dieta: ${currentUser.diet_type || user.diet_type}
 
 Dieta: ${currentUser.diet_type || user.diet_type}`;
 
@@ -247,7 +257,7 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
               continue;
             }
 
-            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±2 kcal)
+            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±10 kcal)
             const totalCalories = response.meals.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
             const calorieDeviation = Math.abs(totalCalories - dailyCalories);
             
@@ -258,7 +268,14 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
               meals: response.meals.map(m => ({ type: m.meal_type, cal: m.total_calories }))
             });
             
-            if (calorieDeviation > 2) {
+            // VERIFICA: se mancano più di 50 kcal, rigetta immediatamente
+            if (totalCalories < dailyCalories - 50) {
+              console.error(`❌ TROPPE POCHE CALORIE: ${totalCalories} vs target ${dailyCalories} (mancano ${dailyCalories - totalCalories} kcal)`);
+              console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
+              continue;
+            }
+            
+            if (calorieDeviation > 10) {
               console.error(`❌ SCARTO TROPPO ALTO: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories})`);
               console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
               continue;
