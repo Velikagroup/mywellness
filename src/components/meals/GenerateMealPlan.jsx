@@ -75,6 +75,15 @@ export default function GenerateMealPlan({ user, onComplete }) {
     setProgress(0);
 
     try {
+      // 🔥 FETCH AGGIORNATO: Leggi i dati utente correnti dal database
+      const { User } = await import('@/entities/User');
+      const currentUser = await User.get(user.id);
+      
+      // Usa il target calorico aggiornato dal database
+      const dailyCalories = currentUser.daily_calorie_target || currentUser.daily_calories || user.daily_calories;
+      
+      console.log('🔄 Target calorico aggiornato:', dailyCalories);
+      
       const existingMeals = await MealPlan.filter({ user_id: user.id });
       await Promise.all(existingMeals.map(meal => MealPlan.delete(meal.id)));
 
@@ -166,20 +175,10 @@ Calcola con precisione le quantità degli ingredienti per raggiungere ESATTAMENT
 
 CONFERMA: Stai usando SOLO prodotti animali, giusto? NO PASTA, NO VERDURE, NO RISO.`;
 
-          // Calcola le calorie per pasto con precisione ASSOLUTA (max ±0.5 kcal)
-          const dailyCal = user.daily_calories;
-          const breakfastCal = Math.round(dailyCal * 0.25);
-          const snack1Cal = Math.round(dailyCal * 0.05);
-          const lunchCal = Math.round(dailyCal * 0.35);
-          const snack2Cal = Math.round(dailyCal * 0.05);
-          
-          // Dinner prende ESATTAMENTE il resto per arrivare al totale preciso
-          const dinnerCal = dailyCal - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
-          
           const normalPrompt = `Crea 5 pasti in italiano per ${dayLabel}.
 
 🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
-CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${user.daily_calories} kcal
+CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal
 DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
 - breakfast: ESATTAMENTE ${breakfastCal} kcal (±0.5 kcal max)
 - snack1: ESATTAMENTE ${snack1Cal} kcal (±0.5 kcal max)
@@ -187,12 +186,12 @@ DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
 - snack2: ESATTAMENTE ${snack2Cal} kcal (±0.5 kcal max)
 - dinner: ESATTAMENTE ${dinnerCal} kcal (±0.5 kcal max)
 
-TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${user.daily_calories} kcal ✅
+TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
 
 CRITICAL: Il total_calories di OGNI pasto DEVE essere ESATTAMENTE uguale al target indicato sopra (massimo ±0.5 kcal).
 Calcola con precisione le quantità degli ingredienti per raggiungere ESATTAMENTE le calorie target.
 
-Dieta: ${user.diet_type}`;
+Dieta: ${currentUser.diet_type || user.diet_type}`;
 
           try {
             const response = await InvokeLLM({
