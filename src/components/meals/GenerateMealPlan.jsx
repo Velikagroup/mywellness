@@ -124,80 +124,53 @@ export default function GenerateMealPlan({ user, onComplete }) {
           // Dinner prende ESATTAMENTE il resto per arrivare al totale preciso
           const dinnerCal = dailyCalories - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
           
-          const carnivorePrompt = `TARGET ASSOLUTO: ${dailyCalories} kcal TOTALI
+          const carnivorePrompt = `Crea 5 ricette carnivore per ${dayLabel}.
 
-STEP 1: Verifica le calorie per pasto:
-- breakfast: ${breakfastCal} kcal
-- snack1: ${snack1Cal} kcal  
-- lunch: ${lunchCal} kcal
-- snack2: ${snack2Cal} kcal
-- dinner: ${dinnerCal} kcal
-SOMMA: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} = ${dailyCalories} kcal ✓
+INGREDIENTI PERMESSI: carne, pesce, uova, burro, sale
+VIETATO: pasta, riso, pane, verdure, frutta
 
-STEP 2: Valori calorici da usare:
-- Manzo: 200 kcal/100g
-- Maiale: 250 kcal/100g
-- Pollo: 165 kcal/100g
-- Salmone: 200 kcal/100g
-- Tonno: 130 kcal/100g
-- Uova: 70 kcal/uovo
-- Burro: 750 kcal/100g (75 kcal per 10g)
+Per ogni pasto specifica:
+- Nome ricetta
+- Ingredienti base (senza quantità precise)
+- Proporzioni relative tra ingredienti (es: 70% carne, 30% burro)
+- Macronutrienti approssimativi (% proteine, grassi, carbs)
+- Istruzioni preparazione
 
-STEP 3: Calcola MATEMATICAMENTE ogni pasto:
+Esempio breakfast:
+{
+  "name": "Bistecca di Manzo con Burro",
+  "ingredients": [
+    {"name": "manzo", "proportion": 0.70},
+    {"name": "burro", "proportion": 0.30}
+  ],
+  "protein_ratio": 0.35,
+  "fat_ratio": 0.65,
+  "carbs_ratio": 0
+}`;
 
-Esempio breakfast (target ${breakfastCal} kcal):
-Se voglio fare "Bistecca con Burro":
-- Manzo: ${breakfastCal} kcal × 0.70 = ${Math.round(breakfastCal * 0.70)} kcal → ${Math.round(breakfastCal * 0.70 / 2)} g
-- Burro: ${breakfastCal} kcal × 0.30 = ${Math.round(breakfastCal * 0.30)} kcal → ${Math.round(breakfastCal * 0.30 / 7.5)} g
-VERIFICA: ${Math.round(breakfastCal * 0.70)} + ${Math.round(breakfastCal * 0.30)} = ${breakfastCal} kcal ✓
+          const normalPrompt = `Crea 5 ricette per ${dayLabel}.
+Dieta: ${currentUser.diet_type || user.diet_type}
 
-STEP 4: Applica lo stesso metodo per TUTTI i 5 pasti.
+Per ogni pasto specifica:
+- Nome ricetta
+- Ingredienti base (senza quantità precise)
+- Proporzioni relative tra ingredienti (es: 40% carboidrati, 30% proteine, 30% grassi)
+- Macronutrienti approssimativi (% proteine, grassi, carbs)
+- Istruzioni preparazione
 
-STEP 5: VERIFICA FINALE prima di rispondere:
-Somma totale = breakfast + snack1 + lunch + snack2 + dinner = ${dailyCalories} kcal?
-Se NO → RICOMINCIA il calcolo!
-
-Dieta carnivora: SOLO carne, pesce, uova, burro, sale. VIETATO: pasta, riso, verdure, frutta.`;
-
-          const normalPrompt = `TARGET ASSOLUTO: ${dailyCalories} kcal TOTALI
-
-STEP 1: Verifica le calorie per pasto:
-- breakfast: ${breakfastCal} kcal
-- snack1: ${snack1Cal} kcal
-- lunch: ${lunchCal} kcal  
-- snack2: ${snack2Cal} kcal
-- dinner: ${dinnerCal} kcal
-SOMMA: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} = ${dailyCalories} kcal ✓
-
-STEP 2: Valori calorici da usare:
-- Pasta: 360 kcal/100g
-- Riso: 130 kcal/100g
-- Pane: 270 kcal/100g
-- Avena: 380 kcal/100g
-- Pollo: 165 kcal/100g
-- Manzo: 200 kcal/100g
-- Salmone: 200 kcal/100g
-- Olio: 90 kcal/10ml
-- Noci/Mandorle: 600 kcal/100g
-- Miele: 300 kcal/100g
-
-STEP 3: Calcola MATEMATICAMENTE ogni pasto:
-
-Esempio breakfast (target ${breakfastCal} kcal):
-Se voglio fare "Porridge con Frutta Secca":
-- Avena: ${Math.round(breakfastCal * 0.40)} kcal → ${Math.round(breakfastCal * 0.40 / 3.8)} g
-- Latte: ${Math.round(breakfastCal * 0.15)} kcal → ${Math.round(breakfastCal * 0.15 / 0.64)} ml
-- Miele: ${Math.round(breakfastCal * 0.10)} kcal → ${Math.round(breakfastCal * 0.10 / 3)} g
-- Noci: ${Math.round(breakfastCal * 0.35)} kcal → ${Math.round(breakfastCal * 0.35 / 6)} g
-VERIFICA: ${Math.round(breakfastCal * 0.40)} + ${Math.round(breakfastCal * 0.15)} + ${Math.round(breakfastCal * 0.10)} + ${Math.round(breakfastCal * 0.35)} = ${Math.round(breakfastCal * 0.40) + Math.round(breakfastCal * 0.15) + Math.round(breakfastCal * 0.10) + Math.round(breakfastCal * 0.35)} kcal ≈ ${breakfastCal} kcal ✓
-
-STEP 4: Applica lo stesso metodo per TUTTI i 5 pasti.
-
-STEP 5: VERIFICA FINALE prima di rispondere:
-Somma totale = breakfast + snack1 + lunch + snack2 + dinner = ${dailyCalories} kcal?
-Se NO → RICOMINCIA il calcolo!
-
-Dieta: ${currentUser.diet_type || user.diet_type}`;
+Esempio breakfast:
+{
+  "name": "Porridge con Frutta Secca",
+  "ingredients": [
+    {"name": "avena", "proportion": 0.40},
+    {"name": "latte", "proportion": 0.20},
+    {"name": "miele", "proportion": 0.10},
+    {"name": "noci", "proportion": 0.30}
+  ],
+  "protein_ratio": 0.15,
+  "fat_ratio": 0.35,
+  "carbs_ratio": 0.50
+}`;
 
           try {
             const response = await InvokeLLM({
@@ -220,25 +193,19 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
                             type: "object",
                             properties: {
                               name: { type: "string" },
-                              quantity: { type: "number" },
-                              unit: { type: "string" },
-                              calories: { type: "number" },
-                              protein: { type: "number" },
-                              carbs: { type: "number" },
-                              fat: { type: "number" }
+                              proportion: { type: "number" }
                             },
-                            required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
+                            required: ["name", "proportion"]
                           }
                         },
                         instructions: { type: "array", items: { type: "string" } },
-                        total_calories: { type: "number" },
-                        total_protein: { type: "number" },
-                        total_carbs: { type: "number" },
-                        total_fat: { type: "number" },
+                        protein_ratio: { type: "number" },
+                        fat_ratio: { type: "number" },
+                        carbs_ratio: { type: "number" },
                         prep_time: { type: "number" },
                         difficulty: { type: "string", enum: ["easy", "medium", "hard"] }
                       },
-                      required: ["meal_type", "name", "ingredients", "total_calories", "total_protein", "total_carbs", "total_fat"]
+                      required: ["meal_type", "name", "ingredients", "protein_ratio", "fat_ratio", "carbs_ratio"]
                     }
                   }
                 }
@@ -250,27 +217,110 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
               continue;
             }
 
-            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±10 kcal)
-            const totalCalories = response.meals.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
-            const calorieDeviation = Math.abs(totalCalories - dailyCalories);
+            // 🔥 RICALCOLO MATEMATICO DELLE QUANTITÀ
+            console.log(`📊 Ricalcolo quantità per ${dayLabel}...`);
             
-            console.log(`📊 Validazione calorie ${dayLabel}:`, {
-              target: dailyCalories,
-              ottenuto: totalCalories,
-              scarto: calorieDeviation,
-              meals: response.meals.map(m => ({ type: m.meal_type, cal: m.total_calories }))
-            });
-            
-            // VERIFICA RIGOROSA: max scarto ±5%
-            const maxDeviation = Math.max(50, dailyCalories * 0.05); // 5% o minimo 50 kcal
-            
-            if (calorieDeviation > maxDeviation) {
-              console.error(`❌ SCARTO TROPPO ALTO: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories}, max scarto: ${maxDeviation})`);
-              console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
-              continue;
+            const calorieTargets = {
+              breakfast: breakfastCal,
+              snack1: snack1Cal,
+              lunch: lunchCal,
+              snack2: snack2Cal,
+              dinner: dinnerCal
+            };
+
+            // Database valori nutrizionali (per 100g)
+            const nutritionDB = {
+              // Carnivora
+              manzo: { cal: 200, protein: 26, fat: 10, carbs: 0 },
+              maiale: { cal: 250, protein: 25, fat: 17, carbs: 0 },
+              pollo: { cal: 165, protein: 31, fat: 3.6, carbs: 0 },
+              tacchino: { cal: 135, protein: 30, fat: 1, carbs: 0 },
+              salmone: { cal: 200, protein: 20, fat: 13, carbs: 0 },
+              tonno: { cal: 130, protein: 29, fat: 1, carbs: 0 },
+              merluzzo: { cal: 82, protein: 18, fat: 0.7, carbs: 0 },
+              uova: { cal: 140, protein: 12, fat: 10, carbs: 1, unit: 'uova' }, // per 2 uova
+              burro: { cal: 750, protein: 0.9, fat: 83, carbs: 0.1 },
+              strutto: { cal: 900, protein: 0, fat: 100, carbs: 0 },
+              prosciutto: { cal: 145, protein: 22, fat: 6, carbs: 0 },
+              // Standard
+              pasta: { cal: 360, protein: 13, fat: 1.5, carbs: 75 },
+              riso: { cal: 130, protein: 2.7, fat: 0.3, carbs: 28 },
+              pane: { cal: 270, protein: 9, fat: 3, carbs: 49 },
+              avena: { cal: 380, protein: 13, fat: 7, carbs: 67 },
+              olio: { cal: 900, protein: 0, fat: 100, carbs: 0 },
+              'olio di oliva': { cal: 900, protein: 0, fat: 100, carbs: 0 },
+              latte: { cal: 64, protein: 3.2, fat: 3.6, carbs: 5, unit: 'ml' },
+              'latte intero': { cal: 64, protein: 3.2, fat: 3.6, carbs: 5, unit: 'ml' },
+              yogurt: { cal: 60, protein: 3.5, fat: 3.3, carbs: 4 },
+              'yogurt greco': { cal: 100, protein: 10, fat: 5, carbs: 4 },
+              miele: { cal: 304, protein: 0.3, fat: 0, carbs: 82 },
+              noci: { cal: 654, protein: 15, fat: 65, carbs: 14 },
+              mandorle: { cal: 579, protein: 21, fat: 50, carbs: 22 },
+              patate: { cal: 85, protein: 2, fat: 0.1, carbs: 20 },
+              verdure: { cal: 30, protein: 2, fat: 0.3, carbs: 6 },
+              pomodori: { cal: 18, protein: 0.9, fat: 0.2, carbs: 3.9 },
+              mela: { cal: 52, protein: 0.3, fat: 0.2, carbs: 14 },
+              banana: { cal: 89, protein: 1.1, fat: 0.3, carbs: 23 }
+            };
+
+            for (const meal of response.meals) {
+              const targetCal = calorieTargets[meal.meal_type];
+              
+              // Calcola quantità per raggiungere target esatto
+              const calculatedIngredients = meal.ingredients.map(ing => {
+                const ingName = ing.name.toLowerCase().trim();
+                const nutritionData = nutritionDB[ingName] || { cal: 100, protein: 5, fat: 3, carbs: 15 };
+                
+                // Calorie per questo ingrediente
+                const ingCalories = targetCal * ing.proportion;
+                
+                // Quantità necessaria
+                let quantity;
+                if (nutritionData.unit === 'uova') {
+                  quantity = Math.round((ingCalories / nutritionData.cal) * 2); // 2 uova = 140 kcal
+                } else if (nutritionData.unit === 'ml') {
+                  quantity = Math.round(ingCalories / (nutritionData.cal / 100));
+                } else {
+                  quantity = Math.round(ingCalories / (nutritionData.cal / 100));
+                }
+                
+                const actualCalories = nutritionData.unit === 'uova' 
+                  ? (quantity / 2) * nutritionData.cal
+                  : (quantity / 100) * nutritionData.cal;
+                
+                const actualProtein = nutritionData.unit === 'uova'
+                  ? (quantity / 2) * nutritionData.protein
+                  : (quantity / 100) * nutritionData.protein;
+                
+                const actualFat = nutritionData.unit === 'uova'
+                  ? (quantity / 2) * nutritionData.fat
+                  : (quantity / 100) * nutritionData.fat;
+                
+                const actualCarbs = nutritionData.unit === 'uova'
+                  ? (quantity / 2) * nutritionData.carbs
+                  : (quantity / 100) * nutritionData.carbs;
+                
+                return {
+                  name: ing.name,
+                  quantity: Math.max(1, quantity),
+                  unit: nutritionData.unit || 'g',
+                  calories: Math.round(actualCalories),
+                  protein: Math.round(actualProtein * 10) / 10,
+                  carbs: Math.round(actualCarbs * 10) / 10,
+                  fat: Math.round(actualFat * 10) / 10
+                };
+              });
+              
+              meal.ingredients = calculatedIngredients;
+              meal.total_calories = Math.round(calculatedIngredients.reduce((sum, ing) => sum + ing.calories, 0));
+              meal.total_protein = Math.round(calculatedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10;
+              meal.total_carbs = Math.round(calculatedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10;
+              meal.total_fat = Math.round(calculatedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10;
             }
 
-            console.log(`✅ Calorie accettate: ${totalCalories} kcal (target: ${dailyCalories}, scarto: ${calorieDeviation} kcal)`);
+            const totalCalories = response.meals.reduce((sum, meal) => sum + meal.total_calories, 0);
+            console.log(`✅ Calorie ricalcolate: ${totalCalories} kcal (target: ${dailyCalories})`);
+            console.log(`📊 Pasti:`, response.meals.map(m => ({ type: m.meal_type, cal: m.total_calories })));
 
             // CONTROLLO RAPIDO CARNIVORA
             if ((currentUser.diet_type || user.diet_type) === 'carnivore') {
