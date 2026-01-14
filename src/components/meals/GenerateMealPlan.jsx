@@ -375,61 +375,57 @@ export default function GenerateMealPlan({ user, onComplete }) {
                 console.log(`📊 Dopo arrotondamento: ${currentTotal.toFixed(0)} kcal (gap: ${gap.toFixed(0)})`);
               }
 
-              // Se gap < 10, OK!
+              // Se gap ≤ 10, OK!
               if (Math.abs(gap) <= 10) {
                 console.log(`✅ Gap risolto in ${iteration} iterazioni: ${currentTotal} kcal`);
                 break;
               }
 
-              // Trova l'ingrediente con PIÙ CALORIE di TUTTO il giorno
-              let biggestIng = null;
-              let biggestMeal = null;
-              let maxCalories = 0;
-
+              // Per ogni pasto, trova l'ingrediente più grande
               for (const meal of response.meals) {
-                for (const ing of meal.ingredients) {
-                  if (ing.calories > maxCalories) {
-                    maxCalories = ing.calories;
-                    biggestIng = ing;
-                    biggestMeal = meal;
-                  }
-                }
+                meal.ingredients.sort((a, b) => b.calories - a.calories);
+                const biggestIng = meal.ingredients[0];
+                
+                if (!biggestIng || biggestIng.quantity <= 1) continue;
+
+                // Calcola proporzione di questo pasto sul totale
+                const mealTotal = meal.ingredients.reduce((s, i) => s + i.calories, 0);
+                const mealProportion = mealTotal / currentTotal;
+                
+                // Calcola quanto aggiungere/togliere in base alla proporzione
+                const addCalories = gap * mealProportion;
+                
+                if (Math.abs(addCalories) < 1) continue;
+
+                // Calcola quante calorie per grammo/unità
+                const calPerUnit = biggestIng.nutritionData.unit === 'uova'
+                  ? biggestIng.nutritionData.cal / 2
+                  : biggestIng.nutritionData.cal / 100;
+
+                // Aggiungi/togli in base al gap necessario
+                const addQuantity = Math.round(addCalories / calPerUnit);
+                
+                if (biggestIng.quantity + addQuantity < 1) continue;
+
+                biggestIng.quantity += addQuantity;
+
+                // Ricalcola tutto per questo ingrediente
+                biggestIng.calories = biggestIng.nutritionData.unit === 'uova'
+                  ? (biggestIng.quantity / 2) * biggestIng.nutritionData.cal
+                  : (biggestIng.quantity / 100) * biggestIng.nutritionData.cal;
+
+                biggestIng.protein = biggestIng.nutritionData.unit === 'uova'
+                  ? (biggestIng.quantity / 2) * biggestIng.nutritionData.protein
+                  : (biggestIng.quantity / 100) * biggestIng.nutritionData.protein;
+
+                biggestIng.fat = biggestIng.nutritionData.unit === 'uova'
+                  ? (biggestIng.quantity / 2) * biggestIng.nutritionData.fat
+                  : (biggestIng.quantity / 100) * biggestIng.nutritionData.fat;
+
+                biggestIng.carbs = biggestIng.nutritionData.unit === 'uova'
+                  ? (biggestIng.quantity / 2) * biggestIng.nutritionData.carbs
+                  : (biggestIng.quantity / 100) * biggestIng.nutritionData.carbs;
               }
-
-              if (!biggestIng) break;
-
-              // Calcola quante calorie per grammo/unità
-              const calPerUnit = biggestIng.nutritionData.unit === 'uova'
-                ? biggestIng.nutritionData.cal / 2
-                : biggestIng.nutritionData.cal / 100;
-
-              // Aggiungi/togli 1 grammo alla volta (o 1 uovo)
-              const step = gap > 0 ? 1 : -1;
-              
-              if (biggestIng.quantity + step < 1) {
-                // Non possiamo scendere sotto 1, prova con un altro ingrediente
-                biggestIng.calories = 0; // Escludi temporaneamente
-                continue;
-              }
-
-              biggestIng.quantity += step;
-
-              // Ricalcola tutto per questo ingrediente
-              biggestIng.calories = biggestIng.nutritionData.unit === 'uova'
-                ? (biggestIng.quantity / 2) * biggestIng.nutritionData.cal
-                : (biggestIng.quantity / 100) * biggestIng.nutritionData.cal;
-
-              biggestIng.protein = biggestIng.nutritionData.unit === 'uova'
-                ? (biggestIng.quantity / 2) * biggestIng.nutritionData.protein
-                : (biggestIng.quantity / 100) * biggestIng.nutritionData.protein;
-
-              biggestIng.fat = biggestIng.nutritionData.unit === 'uova'
-                ? (biggestIng.quantity / 2) * biggestIng.nutritionData.fat
-                : (biggestIng.quantity / 100) * biggestIng.nutritionData.fat;
-
-              biggestIng.carbs = biggestIng.nutritionData.unit === 'uova'
-                ? (biggestIng.quantity / 2) * biggestIng.nutritionData.carbs
-                : (biggestIng.quantity / 100) * biggestIng.nutritionData.carbs;
 
               iteration++;
             }
