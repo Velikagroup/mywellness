@@ -381,8 +381,8 @@ export default function CalorieBalanceChart({ user }) {
           <div className="space-y-2">
             <div className="flex items-center justify-between text-sm">
               <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-600">
-                  {t('dashboard.neatActivity')}
+                <span className="font-medium text-gray-900">
+                  NEAT (Attività)
                 </span>
                 {healthKitData && (
                   <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
