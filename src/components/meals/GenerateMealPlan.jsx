@@ -124,83 +124,52 @@ export default function GenerateMealPlan({ user, onComplete }) {
           // Dinner prende ESATTAMENTE il resto per arrivare al totale preciso
           const dinnerCal = dailyCalories - (breakfastCal + snack1Cal + lunchCal + snack2Cal);
           
-          const carnivorePrompt = `⚠️⚠️⚠️ STOP! LEGGI QUESTO PRIMA ⚠️⚠️⚠️
+          const carnivorePrompt = `TOTALE OBBLIGATORIO: ${dailyCalories} kcal
 
-IL TUO COMPITO: Creare un piano da ESATTAMENTE ${dailyCalories} kcal (non di meno!)
+breakfast = ${breakfastCal} kcal
+snack1 = ${snack1Cal} kcal  
+lunch = ${lunchCal} kcal
+snack2 = ${snack2Cal} kcal
+dinner = ${dinnerCal} kcal
+SOMMA = ${dailyCalories} kcal
 
-❌ ERRORE FREQUENTE: Stai creando piani da ${dailyCalories - 300} kcal invece di ${dailyCalories} kcal!
-✅ SOLUZIONE: USA PORZIONI PIÙ GRANDI per raggiungere ${dailyCalories} kcal!
+Dieta carnivora: SOLO carne, pesce, uova, burro, sale.
 
-🎯 TARGET OBBLIGATORIO: ${dailyCalories} kcal (range: ${dailyCalories - 10} to ${dailyCalories + 10} kcal)
+Crea i 5 pasti seguendo ESATTAMENTE le calorie sopra indicate.
+Usa porzioni abbondanti per raggiungere il target.
 
-DIETA CARNIVORA - USA SOLO:
-✅ Carne (manzo ~200 kcal/100g, maiale ~250 kcal/100g, pollo ~165 kcal/100g)
-✅ Pesce (salmone ~200 kcal/100g, tonno ~130 kcal/100g)
-✅ Uova (~70 kcal/uovo)
-✅ Burro (~750 kcal/100g = 75 kcal per 10g)
-✅ Sale
+Valori calorici approssimativi:
+- Manzo: 200 kcal/100g
+- Salmone: 200 kcal/100g  
+- Uova: 70 kcal/uovo
+- Burro: 75 kcal/10g
 
-CALCOLO PORZIONI PER RAGGIUNGERE ${dailyCalories} kcal:
+Calcola le quantità in grammi per arrivare ESATTAMENTE alle calorie indicate per ogni pasto.`;
 
-breakfast (${breakfastCal} kcal):
-- 250g manzo (500 kcal) + 30g burro (225 kcal) = 725 kcal ✅
-NON fare: 150g manzo + 10g burro = 400 kcal ❌ (troppo poco!)
+          const normalPrompt = `TOTALE OBBLIGATORIO: ${dailyCalories} kcal
 
-snack1 (${snack1Cal} kcal):
-- 3 uova (210 kcal) + 15g burro (110 kcal) = 320 kcal ✅
-NON fare: 1 uovo + 5g burro = 110 kcal ❌ (troppo poco!)
+breakfast = ${breakfastCal} kcal
+snack1 = ${snack1Cal} kcal
+lunch = ${lunchCal} kcal  
+snack2 = ${snack2Cal} kcal
+dinner = ${dinnerCal} kcal
+SOMMA = ${dailyCalories} kcal
 
-lunch (${lunchCal} kcal):
-- 300g salmone (600 kcal) + 40g burro (300 kcal) = 900 kcal ✅
-NON fare: 150g salmone + 15g burro = 410 kcal ❌ (troppo poco!)
+Dieta: ${currentUser.diet_type || user.diet_type}
 
-snack2 (${snack2Cal} kcal):
-- 100g prosciutto (240 kcal) + 2 uova (140 kcal) = 380 kcal ✅
-NON fare: 30g prosciutto + 1 uovo = 140 kcal ❌ (troppo poco!)
+Crea i 5 pasti seguendo ESATTAMENTE le calorie sopra indicate.
+Usa porzioni abbondanti per raggiungere il target.
 
-dinner (${dinnerCal} kcal):
-- 250g pollo (410 kcal) + 35g burro (260 kcal) = 670 kcal ✅
-NON fare: 150g pollo + 10g burro = 320 kcal ❌ (troppo poco!)
+Valori calorici approssimativi:
+- Pasta: 350 kcal/100g
+- Riso: 130 kcal/100g
+- Pane: 270 kcal/100g
+- Carne: 150-250 kcal/100g
+- Pesce: 100-200 kcal/100g
+- Olio: 90 kcal/10ml
+- Frutta secca: 600 kcal/100g
 
-TOTALE: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal
-
-🚨 CONTROLLA PRIMA DI RISPONDERE: La somma è ${dailyCalories} kcal? Se NO, AUMENTA le porzioni!`;
-
-          const normalPrompt = `⚠️⚠️⚠️ STOP! LEGGI QUESTO PRIMA ⚠️⚠️⚠️
-
-IL TUO COMPITO: Creare un piano da ESATTAMENTE ${dailyCalories} kcal (non di meno!)
-DIETA: ${currentUser.diet_type || user.diet_type}
-
-❌ ERRORE FREQUENTE: Stai creando piani da ${dailyCalories - 300} kcal invece di ${dailyCalories} kcal!
-✅ SOLUZIONE: USA PORZIONI PIÙ GRANDI per raggiungere ${dailyCalories} kcal!
-
-🎯 TARGET OBBLIGATORIO: ${dailyCalories} kcal (range: ${dailyCalories - 10} to ${dailyCalories + 10} kcal)
-
-CALCOLO PORZIONI PER RAGGIUNGERE ${dailyCalories} kcal:
-
-breakfast (${breakfastCal} kcal):
-✅ GIUSTO: 100g avena (380 kcal) + 250ml latte intero (160 kcal) + 25g miele (75 kcal) + 40g noci (260 kcal) = 875 kcal
-❌ SBAGLIATO: 50g avena + 100ml latte + 10g miele = 330 kcal (TROPPO POCO!)
-
-snack1 (${snack1Cal} kcal):
-✅ GIUSTO: 2 mele (160 kcal) + 30g mandorle (180 kcal) + 15g cioccolato (80 kcal) = 420 kcal
-❌ SBAGLIATO: 1 mela + 10g mandorle = 140 kcal (TROPPO POCO!)
-
-lunch (${lunchCal} kcal):
-✅ GIUSTO: 150g pasta (540 kcal) + 200g pollo (330 kcal) + 250g verdure (75 kcal) + 25ml olio (225 kcal) = 1170 kcal
-❌ SBAGLIATO: 80g pasta + 100g pollo + 5ml olio = 500 kcal (TROPPO POCO!)
-
-snack2 (${snack2Cal} kcal):
-✅ GIUSTO: 200g yogurt greco (200 kcal) + 25g miele (75 kcal) + 30g granola (140 kcal) = 415 kcal
-❌ SBAGLIATO: 100g yogurt + 5g miele = 110 kcal (TROPPO POCO!)
-
-dinner (${dinnerCal} kcal):
-✅ GIUSTO: 250g salmone (500 kcal) + 200g patate (170 kcal) + 250g verdure (75 kcal) + 20ml olio (180 kcal) = 925 kcal
-❌ SBAGLIATO: 120g salmone + 80g patate + 5ml olio = 380 kcal (TROPPO POCO!)
-
-TOTALE: ${breakfastCal} + ${snack1Cal} + ${lunchCal} + ${snack2Cal} + ${dinnerCal} = ${dailyCalories} kcal
-
-🚨 CONTROLLA PRIMA DI RISPONDERE: La somma è ${dailyCalories} kcal? Se NO, AUMENTA le porzioni!`;
+Calcola le quantità in grammi per arrivare ESATTAMENTE alle calorie indicate per ogni pasto.`;
 
           try {
             const response = await InvokeLLM({
