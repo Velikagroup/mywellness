@@ -109,7 +109,7 @@ export default function GenerateMealPlan({ user, onComplete }) {
 
         let attempts = 0;
         let validMeals = null;
-        const MAX_ATTEMPTS = (currentUser.diet_type || user.diet_type) === 'carnivore' ? 10 : 3;
+        const MAX_ATTEMPTS = (currentUser.diet_type || user.diet_type) === 'carnivore' ? 10 : 5;
 
         while (attempts < MAX_ATTEMPTS && !validMeals) {
           attempts++;
@@ -159,39 +159,38 @@ ESEMPI VALIDI:
    Ingredienti: costine 300g, sale
 
 🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
-CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal
-DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
-- breakfast: ESATTAMENTE ${breakfastCal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
-- snack1: ESATTAMENTE ${snack1Cal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
-- lunch: ESATTAMENTE ${lunchCal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
-- snack2: ESATTAMENTE ${snack2Cal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
-- dinner: ESATTAMENTE ${dinnerCal} kcal (±0.5 kcal max) - SOLO carne/pesce/uova/burro
+CALORIE TOTALI GIORNALIERE: ${dailyCalories} kcal (MAX SCARTO TOTALE: 5 kcal)
+DISTRIBUZIONE CALORIE (MAX ±1 kcal PER PASTO):
+- breakfast: ${breakfastCal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
+- snack1: ${snack1Cal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
+- lunch: ${lunchCal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
+- snack2: ${snack2Cal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
+- dinner: ${dinnerCal} kcal (±1 kcal max) - SOLO carne/pesce/uova/burro
 
 TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
 
-CRITICAL: Il total_calories di OGNI pasto DEVE essere ESATTAMENTE uguale al target indicato sopra (massimo ±0.5 kcal).
-Calcola con precisione le quantità degli ingredienti per raggiungere ESATTAMENTE le calorie target.
+CRITICAL: LA SOMMA DEI 5 PASTI DEVE essere ${dailyCalories} kcal (MAX SCARTO: 5 kcal).
+Calcola le quantità degli ingredienti per avvicinarti il più possibile al target.
 
 CONFERMA: Stai usando SOLO prodotti animali, giusto? NO PASTA, NO VERDURE, NO RISO.`;
 
           const normalPrompt = `Crea 5 pasti in italiano per ${dayLabel}.
 
 🚨 CRITICAL CALORIE PRECISION REQUIREMENT 🚨
-⚠️ SE LO SCARTO TOTALE È > 2 kcal IL PIANO VERRÀ RIGETTATO ⚠️
+⚠️ SE LO SCARTO TOTALE È > 5 kcal IL PIANO VERRÀ RIGETTATO ⚠️
 
 CALORIE TOTALI GIORNALIERE: ESATTAMENTE ${dailyCalories} kcal
-DISTRIBUZIONE CALORIE (MAX ±0.5 kcal PER PASTO):
-- breakfast: ESATTAMENTE ${breakfastCal} kcal (±0.5 kcal max)
-- snack1: ESATTAMENTE ${snack1Cal} kcal (±0.5 kcal max)
-- lunch: ESATTAMENTE ${lunchCal} kcal (±0.5 kcal max)
-- snack2: ESATTAMENTE ${snack2Cal} kcal (±0.5 kcal max)
-- dinner: ESATTAMENTE ${dinnerCal} kcal (±0.5 kcal max)
+DISTRIBUZIONE CALORIE (MAX ±1 kcal PER PASTO):
+- breakfast: ${breakfastCal} kcal (±1 kcal max)
+- snack1: ${snack1Cal} kcal (±1 kcal max)
+- lunch: ${lunchCal} kcal (±1 kcal max)
+- snack2: ${snack2Cal} kcal (±1 kcal max)
+- dinner: ${dinnerCal} kcal (±1 kcal max)
 
 TOTALE VERIFICATO: ${breakfastCal + snack1Cal + lunchCal + snack2Cal + dinnerCal} kcal = ${dailyCalories} kcal ✅
 
-CRITICAL: Il total_calories di OGNI pasto DEVE essere ESATTAMENTE uguale al target indicato sopra (massimo ±0.5 kcal).
-LA SOMMA breakfast + snack1 + lunch + snack2 + dinner DEVE essere ${dailyCalories} kcal (MAX SCARTO: 2 kcal).
-Calcola con precisione millimetrica le quantità degli ingredienti per raggiungere ESATTAMENTE le calorie target.
+CRITICAL: LA SOMMA breakfast + snack1 + lunch + snack2 + dinner DEVE essere ${dailyCalories} kcal (MAX SCARTO TOTALE: 5 kcal).
+Calcola le quantità degli ingredienti per avvicinarti il più possibile alle calorie target di ogni pasto.
 
 Dieta: ${currentUser.diet_type || user.diet_type}`;
 
@@ -246,11 +245,11 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
               continue;
             }
 
-            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±2 kcal)
+            // 🔥 VALIDAZIONE CALORIE TOTALI (MAX ±5 kcal)
             const totalCalories = response.meals.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
             const calorieDeviation = Math.abs(totalCalories - dailyCalories);
             
-            if (calorieDeviation > 2) {
+            if (calorieDeviation > 5) {
               console.error(`❌ CALORIE DEVIATION: ${calorieDeviation} kcal (target: ${dailyCalories}, got: ${totalCalories})`);
               console.log(`🔄 Ritento (${attempts}/${MAX_ATTEMPTS})...`);
               continue;
@@ -283,12 +282,17 @@ Dieta: ${currentUser.diet_type || user.diet_type}`;
 
           } catch (error) {
             console.error(`Errore tentativo ${attempts}:`, error);
-            if (attempts >= MAX_ATTEMPTS) throw error;
+            if (attempts >= MAX_ATTEMPTS) {
+              console.error(`❌ MAX ATTEMPTS raggiunto per ${dayLabel}`);
+              throw new Error(`Errore nella generazione di ${dayLabel}: ${error.message}`);
+            }
           }
         }
 
         if (!validMeals) {
-          throw new Error(`Impossibile generare pasti validi per ${dayLabel} dopo ${MAX_ATTEMPTS} tentativi`);
+          const errorMsg = `Impossibile generare pasti validi per ${dayLabel} dopo ${MAX_ATTEMPTS} tentativi`;
+          console.error(`❌ ${errorMsg}`);
+          throw new Error(errorMsg);
         }
 
         // SALVA
