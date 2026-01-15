@@ -57,21 +57,9 @@ export default function OneTimeOffer() {
         }
 
         @keyframes progress-shimmer {
-          0% { background-position: -200% 0; }
-          100% { background-position: 200% 0; }
-        }
-
-        .progress-animated > div {
-          background: linear-gradient(
-            90deg,
-            #22c55e 0%,
-            #16a34a 25%,
-            #86efac 50%,
-            #16a34a 75%,
-            #22c55e 100%
-          ) !important;
-          background-size: 200% 100% !important;
-          animation: progress-shimmer 2s linear infinite !important;
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
         }
       `}</style>
 
@@ -105,7 +93,7 @@ export default function OneTimeOffer() {
                 <span className="font-bold text-gray-700">Sei quasi alla fine!</span>
                 <span className="font-black text-[#26847F] text-lg">75%</span>
               </div>
-              <Progress value={75} className="h-3 progress-animated" />
+              <Progress value={75} className="h-3 bg-gray-200 [&>div]:!bg-gradient-to-r [&>div]:!from-green-500 [&>div]:!via-green-400 [&>div]:!to-green-500 [&>div]:!bg-[length:200%_100%] [&>div]:animate-[progress-shimmer_2s_linear_infinite]" />
               <p className="text-xs text-gray-500 text-center">Un ultimo passo per completare il tuo anno Premium</p>
             </div>
           </div>
