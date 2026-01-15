@@ -152,7 +152,7 @@ export default function OneTimeOffer() {
             disabled={isAccepting || isDeclining}
             className="w-full h-20 text-2xl font-black bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white shadow-2xl mb-4 rounded-2xl"
           >
-            {isAccepting ? 'Elaborazione...' : '✅ Sì, Voglio Premium a 99€'}
+            {isAccepting ? 'Elaborazione...' : 'Sì, Voglio Premium a 99€'}
           </Button>
 
           {/* Decline Link */}
