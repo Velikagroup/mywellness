@@ -61,7 +61,7 @@ export default function OneTimeOffer() {
           100% { background-position: 200% 0; }
         }
 
-        .progress-animated [data-state="complete"] {
+        .progress-animated > div {
           background: linear-gradient(
             90deg,
             #22c55e 0%,
