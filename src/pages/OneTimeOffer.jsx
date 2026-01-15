@@ -64,32 +64,54 @@ export default function OneTimeOffer() {
             <span className="text-[#26847F]">Premium</span> con Solo <span className="text-[#26847F]">99€</span>
           </h1>
 
-          {/* Calculation Breakdown */}
+          {/* Visual Calendar */}
           <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 mb-6">
-            <div className="flex items-center justify-center gap-3 mb-4">
-              <div className="text-center">
-                <div className="text-5xl font-black text-[#26847F]">3</div>
-                <div className="text-xs text-gray-600 font-medium mt-1">Già Acquistati</div>
+            <h3 className="text-lg font-bold text-gray-900 mb-4">Il Tuo Anno Premium Completo:</h3>
+            
+            {/* Calendar Grid */}
+            <div className="grid grid-cols-6 gap-2 mb-6">
+              {[...Array(12)].map((_, i) => {
+                const isAlreadyOwned = i < 3;
+                const monthNames = ['Gen', 'Feb', 'Mar', 'Apr', 'Mag', 'Giu', 'Lug', 'Ago', 'Set', 'Ott', 'Nov', 'Dic'];
+                return (
+                  <div
+                    key={i}
+                    className={`relative rounded-lg p-3 text-center transition-all ${
+                      isAlreadyOwned 
+                        ? 'bg-gradient-to-br from-[#26847F] to-teal-500 text-white shadow-lg' 
+                        : 'bg-gradient-to-br from-orange-400 to-yellow-500 text-white shadow-lg border-2 border-yellow-600'
+                    }`}
+                  >
+                    <div className="text-xs font-bold mb-1">{monthNames[i]}</div>
+                    <div className="text-[10px] font-medium">
+                      {isAlreadyOwned ? '✓ Tuo' : '🔥 Offerta'}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Legend */}
+            <div className="flex items-center justify-center gap-6 mb-4">
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded bg-gradient-to-br from-[#26847F] to-teal-500"></div>
+                <span className="text-xs text-gray-600 font-medium">3 Mesi Già Acquistati</span>
               </div>
-              <div className="text-4xl text-gray-400 font-bold">+</div>
-              <div className="text-center">
-                <div className="text-5xl font-black text-gray-900">9</div>
-                <div className="text-xs text-gray-600 font-medium mt-1">Con Questa Offerta</div>
-              </div>
-              <div className="text-4xl text-gray-400 font-bold">=</div>
-              <div className="text-center">
-                <div className="text-5xl font-black text-green-600">12</div>
-                <div className="text-xs text-gray-600 font-medium mt-1">Mesi Premium</div>
+              <div className="flex items-center gap-2">
+                <div className="w-4 h-4 rounded bg-gradient-to-br from-orange-400 to-yellow-500 border-2 border-yellow-600"></div>
+                <span className="text-xs text-gray-600 font-medium">9 Mesi Con Questa Offerta</span>
               </div>
             </div>
 
             <div className="border-t-2 border-gray-300 pt-4 mt-4">
-              <p className="text-gray-700 font-semibold mb-2">Il Tuo Risparmio:</p>
+              <p className="text-gray-700 font-semibold mb-2">Il Tuo Risparmio Incredibile:</p>
               <div className="flex items-center justify-center gap-3">
-                <span className="text-2xl text-gray-400 line-through">22€/mese</span>
-                <span className="text-4xl font-black text-[#26847F]">11€/mese</span>
+                <span className="text-2xl text-gray-400 line-through font-bold">351€</span>
+                <span className="text-4xl font-black text-[#26847F]">99€</span>
               </div>
-              <p className="text-sm text-green-700 font-bold mt-2">🎉 Dimezzi il costo mensile!</p>
+              <p className="text-sm text-green-700 font-bold mt-2 bg-green-50 rounded-lg py-2 px-4 inline-block">
+                🎉 Oltre il 70% di SCONTO!
+              </p>
             </div>
           </div>
 
@@ -121,7 +143,7 @@ export default function OneTimeOffer() {
               💰 Un Anno Intero di MyWellness Premium
             </p>
             <p className="text-3xl font-black text-[#26847F] mt-1">Solo 99€</p>
-            <p className="text-sm text-gray-600 mt-2">Invece di 264€ (risparmi 165€)</p>
+            <p className="text-sm text-gray-600 mt-2">Invece di 351€ (risparmi 252€)</p>
           </div>
 
           {/* CTA Button */}
