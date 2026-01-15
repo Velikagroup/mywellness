@@ -93,7 +93,7 @@ export default function OneTimeOffer() {
                 <span className="font-bold text-gray-700">Sei quasi alla fine!</span>
                 <span className="font-black text-[#26847F] text-lg">75%</span>
               </div>
-              <Progress value={75} className="h-3 bg-gray-200 [&>div]:!bg-gradient-to-r [&>div]:!from-[#26847F] [&>div]:!via-[#3aa39d] [&>div]:!to-[#26847F] [&>div]:!bg-[length:200%_100%] [&>div]:animate-[progress-shimmer_1.5s_ease-in-out_infinite]" />
+              <Progress value={75} className="h-3 bg-gray-200 [&>div]:!bg-gradient-to-r [&>div]:!from-[#26847F] [&>div]:!via-white [&>div]:!to-[#26847F] [&>div]:!bg-[length:200%_100%] [&>div]:animate-[progress-shimmer_1.5s_ease-in-out_infinite]" />
               <p className="text-xs text-gray-500 text-center">Un ultimo passo per completare il tuo anno Premium</p>
             </div>
           </div>
