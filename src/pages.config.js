@@ -65,7 +65,6 @@ import ptblogarticle from './pages/ptblogarticle';
 import ptcheckout from './pages/ptcheckout';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
-import AdminTest from './pages/AdminTest';
 import __Layout from './Layout.jsx';
 
 
@@ -137,7 +136,6 @@ export const PAGES = {
     "ptcheckout": ptcheckout,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
-    "AdminTest": AdminTest,
 }
 
 export const pagesConfig = {
