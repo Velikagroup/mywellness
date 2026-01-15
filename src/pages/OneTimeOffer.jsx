@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 import { CheckCircle, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
@@ -79,7 +80,19 @@ export default function OneTimeOffer() {
             </p>
           </div>
 
-          <div className="p-6 md:p-12 text-center">
+          {/* Progress Bar */}
+          <div className="px-6 md:px-12 pt-6">
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-bold text-gray-700">Sei quasi alla fine!</span>
+                <span className="font-black text-[#26847F] text-lg">75%</span>
+              </div>
+              <Progress value={75} className="h-3" />
+              <p className="text-xs text-gray-500 text-center">Un ultimo passo per completare il tuo anno Premium</p>
+            </div>
+          </div>
+
+          <div className="p-6 md:p-12 pt-6 text-center">
           {/* Main Headline */}
           <motion.h1 
             initial={{ opacity: 0, y: 20 }}
