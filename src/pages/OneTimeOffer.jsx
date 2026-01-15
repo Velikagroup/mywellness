@@ -1,47 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { CheckCircle, X, Zap, Target, TrendingUp, Lock } from 'lucide-react';
+import { CheckCircle, Sparkles } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { User } from '@/entities/User';
+import { base44 } from '@/api/base44Client';
 import { motion } from 'framer-motion';
 
 export default function OneTimeOffer() {
   const navigate = useNavigate();
-  const [timeLeft, setTimeLeft] = useState(10 * 60); // 10 minuti in secondi
   const [isAccepting, setIsAccepting] = useState(false);
   const [isDeclining, setIsDeclining] = useState(false);
 
   useEffect(() => {
-    document.title = "Offerta Speciale - MyWellness";
+    document.title = "Offerta Esclusiva - MyWellness";
     window.scrollTo(0, 0);
   }, []);
-
-  useEffect(() => {
-    const timer = setInterval(() => {
-      setTimeLeft((prev) => {
-        if (prev <= 0) {
-          clearInterval(timer);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  const formatTime = (seconds) => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const handleAccept = async () => {
     setIsAccepting(true);
     try {
-      await User.updateMyUserData({ order_bump_selected: true });
+      await base44.auth.updateMe({ order_bump_selected: true });
       navigate(createPageUrl('Dashboard'));
     } catch (error) {
       console.error('Error accepting OTO:', error);
@@ -53,7 +31,7 @@ export default function OneTimeOffer() {
   const handleDecline = async () => {
     setIsDeclining(true);
     try {
-      await User.updateMyUserData({ order_bump_selected: false });
+      await base44.auth.updateMe({ order_bump_selected: false });
       navigate(createPageUrl('Dashboard'));
     } catch (error) {
       console.error('Error declining OTO:', error);
@@ -62,121 +40,114 @@ export default function OneTimeOffer() {
     }
   };
 
-  const proFeatures = [
-    { icon: Zap, title: 'Piano Allenamento AI', desc: 'Schede personalizzate per i tuoi obiettivi' },
-    { icon: Target, title: 'Analisi Foto Progressi', desc: 'Computer vision per tracciare i cambiamenti' },
-    { icon: TrendingUp, title: 'Grafici Avanzati', desc: 'Visualizza ogni dettaglio dei tuoi progressi' }
-  ];
-
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12 px-4">
+    <div className="min-h-screen bg-gradient-to-br from-[#26847F]/5 via-white to-teal-50 flex items-center justify-center px-4 py-8">
       <style>{`
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
         * { font-family: 'Inter', sans-serif; }
-        :root {
-          --brand-primary: #26847F;
-          --brand-primary-hover: #1f6b66;
-        }
       `}</style>
 
-      <div className="max-w-4xl mx-auto">
-        {/* Timer */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="bg-gradient-to-r from-red-500 to-orange-500 text-white rounded-2xl p-6 text-center mb-8 shadow-2xl"
-        >
-          <div className="flex items-center justify-center gap-2 mb-2">
-            <Lock className="w-6 h-6" />
-            <h3 className="text-2xl font-bold">Offerta Irripetibile</h3>
-          </div>
-          <p className="text-3xl font-black mb-2">{formatTime(timeLeft)}</p>
-          <p className="text-sm opacity-90">Questa pagina si chiuderà automaticamente</p>
-        </motion.div>
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95 }}
+        animate={{ opacity: 1, scale: 1 }}
+        className="max-w-2xl w-full bg-white rounded-3xl shadow-2xl overflow-hidden border-4 border-[#26847F]"
+      >
+        {/* Header Badge */}
+        <div className="bg-gradient-to-r from-[#26847F] to-teal-500 text-white text-center py-3">
+          <p className="text-sm font-bold uppercase tracking-wider">✨ Offerta Esclusiva Una Tantum ✨</p>
+        </div>
 
-        {/* Main Offer */}
-        <Card className="border-2 border-[var(--brand-primary)] shadow-2xl mb-6">
-          <CardContent className="p-8">
-            <div className="text-center mb-8">
-              <span className="inline-block bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 text-white px-6 py-2 rounded-full text-sm font-bold mb-4">
-                ⚡ UPGRADE PRO - SOLO OGGI
-              </span>
-              <h1 className="text-4xl md:text-5xl font-black text-gray-900 mb-4">
-                Passa a PRO con il <span className="text-[var(--brand-primary)]">50% di Sconto</span>
-              </h1>
-              <p className="text-xl text-gray-600 mb-6">
-                Sblocca il piano allenamento AI e l'analisi progressi fotografica
-              </p>
-              <div className="flex items-center justify-center gap-4">
-                <span className="text-3xl text-gray-400 line-through">134€</span>
-                <span className="text-6xl font-black text-[var(--brand-primary)]">67€</span>
-                <span className="text-gray-600">/anno</span>
+        <div className="p-8 md:p-12 text-center">
+          {/* Main Headline */}
+          <h1 className="text-3xl md:text-4xl font-black text-gray-900 mb-4 leading-tight">
+            Completa il Tuo Anno<br />
+            <span className="text-[#26847F]">Premium</span> con Solo <span className="text-[#26847F]">99€</span>
+          </h1>
+
+          {/* Calculation Breakdown */}
+          <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 mb-6">
+            <div className="flex items-center justify-center gap-3 mb-4">
+              <div className="text-center">
+                <div className="text-5xl font-black text-[#26847F]">3</div>
+                <div className="text-xs text-gray-600 font-medium mt-1">Già Acquistati</div>
               </div>
-              <p className="text-sm text-gray-500 mt-2">Risparmi 67€ accettando ora</p>
+              <div className="text-4xl text-gray-400 font-bold">+</div>
+              <div className="text-center">
+                <div className="text-5xl font-black text-gray-900">9</div>
+                <div className="text-xs text-gray-600 font-medium mt-1">Con Questa Offerta</div>
+              </div>
+              <div className="text-4xl text-gray-400 font-bold">=</div>
+              <div className="text-center">
+                <div className="text-5xl font-black text-green-600">12</div>
+                <div className="text-xs text-gray-600 font-medium mt-1">Mesi Premium</div>
+              </div>
             </div>
 
-            <div className="grid md:grid-cols-3 gap-6 mb-8">
-              {proFeatures.map((feature, idx) => {
-                const Icon = feature.icon;
-                return (
-                  <motion.div
-                    key={idx}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="bg-gradient-to-br from-[var(--brand-primary)]/10 to-teal-50 p-6 rounded-xl text-center"
-                  >
-                    <Icon className="w-12 h-12 text-[var(--brand-primary)] mx-auto mb-3" />
-                    <h3 className="font-bold text-gray-900 mb-2">{feature.title}</h3>
-                    <p className="text-sm text-gray-600">{feature.desc}</p>
-                  </motion.div>
-                );
-              })}
+            <div className="border-t-2 border-gray-300 pt-4 mt-4">
+              <p className="text-gray-700 font-semibold mb-2">Il Tuo Risparmio:</p>
+              <div className="flex items-center justify-center gap-3">
+                <span className="text-2xl text-gray-400 line-through">22€/mese</span>
+                <span className="text-4xl font-black text-[#26847F]">11€/mese</span>
+              </div>
+              <p className="text-sm text-green-700 font-bold mt-2">🎉 Dimezzi il costo mensile!</p>
             </div>
+          </div>
 
-            <div className="space-y-3 mb-8 bg-gray-50 p-6 rounded-xl">
+          {/* Premium Features */}
+          <div className="mb-8 bg-gradient-to-br from-[#26847F]/5 to-teal-50 rounded-2xl p-6">
+            <div className="flex items-center justify-center gap-2 mb-4">
+              <Sparkles className="w-6 h-6 text-[#26847F]" />
+              <h3 className="font-bold text-gray-900 text-lg">Piano Premium Include:</h3>
+            </div>
+            <div className="space-y-2">
               {[
-                'Piano allenamento settimanale personalizzato',
-                'Analisi AI delle foto progressi',
-                'Grafici avanzati e proiezioni obiettivi',
-                'Sostituzione ingredienti AI illimitata',
+                'Generazioni ILLIMITATE piani nutrizionali e allenamento',
+                'Analisi progressi con foto AI',
+                'Scansione etichette con Health Score AI',
+                'Modifica schede AI per imprevisti',
                 'Supporto prioritario'
               ].map((item, idx) => (
-                <div key={idx} className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-600 flex-shrink-0" />
-                  <span className="text-gray-700">{item}</span>
+                <div key={idx} className="flex items-start gap-3">
+                  <CheckCircle className="w-5 h-5 text-[#26847F] flex-shrink-0 mt-0.5" />
+                  <span className="text-gray-700 text-left text-sm">{item}</span>
                 </div>
               ))}
             </div>
+          </div>
 
-            <div className="flex flex-col md:flex-row gap-4">
-              <Button
-                onClick={handleAccept}
-                disabled={isAccepting || isDeclining}
-                className="flex-1 h-16 text-xl font-bold bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 hover:from-[var(--brand-primary-hover)] hover:to-teal-600 text-white shadow-xl"
-              >
-                {isAccepting ? 'Elaborazione...' : '✅ Sì, Voglio il PRO a 67€'}
-              </Button>
-              <Button
-                onClick={handleDecline}
-                disabled={isAccepting || isDeclining}
-                variant="outline"
-                className="flex-1 h-16 text-lg border-2 border-gray-300 hover:bg-gray-100"
-              >
-                {isDeclining ? 'Reindirizzamento...' : 'No, Continua con Piano Base'}
-              </Button>
-            </div>
-
-            <p className="text-center text-xs text-gray-500 mt-4">
-              💳 Pagamento sicuro • 🔒 Garanzia 30 giorni soddisfatti o rimborsati
+          {/* Highlight Box */}
+          <div className="bg-yellow-50 border-2 border-yellow-400 rounded-xl p-4 mb-8">
+            <p className="text-lg font-bold text-gray-900">
+              💰 Un Anno Intero di MyWellness Premium
             </p>
-          </CardContent>
-        </Card>
+            <p className="text-3xl font-black text-[#26847F] mt-1">Solo 99€</p>
+            <p className="text-sm text-gray-600 mt-2">Invece di 264€ (risparmi 165€)</p>
+          </div>
 
-        <div className="text-center text-gray-500 text-sm">
-          <p>Questa offerta è valida solo su questa pagina e scade tra {formatTime(timeLeft)}</p>
+          {/* CTA Button */}
+          <Button
+            onClick={handleAccept}
+            disabled={isAccepting || isDeclining}
+            className="w-full h-20 text-2xl font-black bg-gradient-to-r from-[#26847F] to-teal-500 hover:from-[#1f6b66] hover:to-teal-600 text-white shadow-2xl mb-4 rounded-2xl"
+          >
+            {isAccepting ? 'Elaborazione...' : '✅ Sì, Voglio Premium a 99€'}
+          </Button>
+
+          {/* Decline Link */}
+          <button
+            onClick={handleDecline}
+            disabled={isAccepting || isDeclining}
+            className="text-sm text-gray-500 hover:text-gray-700 underline disabled:opacity-50"
+          >
+            {isDeclining ? 'Reindirizzamento...' : 'No grazie, non sono interessato'}
+          </button>
+
+          {/* Trust Badge */}
+          <p className="text-xs text-gray-500 mt-6">
+            💳 Pagamento sicuro • 🔒 Garanzia 30 giorni
+          </p>
         </div>
-      </div>
+      </motion.div>
     </div>
   );
 }
