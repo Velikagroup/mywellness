@@ -20,11 +20,18 @@ export default function OneTimeOffer() {
   const handleAccept = async () => {
     setIsAccepting(true);
     try {
-      await base44.auth.updateMe({ order_bump_selected: true });
-      navigate(createPageUrl('Dashboard'));
+      const { data } = await base44.functions.invoke('stripeProcessOTO');
+      
+      if (data.success) {
+        alert('🎉 Pagamento completato! Benvenuto in Premium per 12 mesi!');
+        navigate(createPageUrl('Dashboard'));
+      } else {
+        alert(data.error || 'Errore durante il pagamento. Riprova.');
+        setIsAccepting(false);
+      }
     } catch (error) {
-      console.error('Error accepting OTO:', error);
-      alert('Errore durante l\'accettazione. Riprova.');
+      console.error('Error processing OTO:', error);
+      alert(error.response?.data?.error || 'Errore durante il pagamento. Riprova.');
       setIsAccepting(false);
     }
   };
