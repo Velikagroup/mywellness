@@ -55,6 +55,24 @@ export default function OneTimeOffer() {
         .animate-pulse-glow {
           animation: pulse-glow 2s ease-in-out infinite;
         }
+
+        @keyframes progress-shimmer {
+          0% { background-position: -200% 0; }
+          100% { background-position: 200% 0; }
+        }
+
+        .progress-animated [data-state="complete"] {
+          background: linear-gradient(
+            90deg,
+            #22c55e 0%,
+            #16a34a 25%,
+            #86efac 50%,
+            #16a34a 75%,
+            #22c55e 100%
+          ) !important;
+          background-size: 200% 100% !important;
+          animation: progress-shimmer 2s linear infinite !important;
+        }
       `}</style>
 
       {/* Animated background particles */}
@@ -87,7 +105,7 @@ export default function OneTimeOffer() {
                 <span className="font-bold text-gray-700">Sei quasi alla fine!</span>
                 <span className="font-black text-[#26847F] text-lg">75%</span>
               </div>
-              <Progress value={75} className="h-3" />
+              <Progress value={75} className="h-3 progress-animated" />
               <p className="text-xs text-gray-500 text-center">Un ultimo passo per completare il tuo anno Premium</p>
             </div>
           </div>
