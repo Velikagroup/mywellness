@@ -667,6 +667,22 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
+            <Card className="bg-blue-50 border-blue-200">
+              <CardContent className="pt-6">
+                <div className="flex items-start gap-3">
+                  <div className="text-3xl">📱</div>
+                  <div>
+                    <p className="font-semibold text-blue-900 mb-1">
+                      ℹ️ Utenti iOS - App Lock
+                    </p>
+                    <p className="text-sm text-blue-800">
+                      Se hai l'app iOS e vuoi gestire l'App Lock (blocco con Face ID/Touch ID), clicca casualmente 3 volte sullo schermo per accedere alle impostazioni nascoste.
+                    </p>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
                 <CardTitle>{t('settings.personalInfo')}</CardTitle>
