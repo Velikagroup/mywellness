@@ -673,10 +673,10 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                   <div className="text-3xl">📱</div>
                   <div>
                     <p className="font-semibold text-blue-900 mb-1">
-                      ℹ️ Utenti iOS - App Lock
+                      ℹ️ Utenti iOS/Android - App Lock
                     </p>
                     <p className="text-sm text-blue-800">
-                      Se hai l'app iOS e vuoi gestire l'App Lock (blocco con Face ID/Touch ID), clicca casualmente 3 volte sullo schermo per accedere alle impostazioni nascoste.
+                      Se hai l'app mobile (iOS o Android) e vuoi gestire l'App Lock (blocco con Face ID/Touch ID/Impronta), clicca casualmente 3 volte sullo schermo per accedere alle impostazioni nascoste.
                     </p>
                   </div>
                 </div>
