@@ -786,7 +786,7 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                     </p>
                     <Button
                       onClick={handleConnectHealthKit}
-                      disabled={isSyncingHealthKit || !healthKitAvailable}
+                      disabled={isSyncingHealthKit}
                       className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
                     >
                       {isSyncingHealthKit ? (
@@ -798,11 +798,6 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                         '🍎 Connetti HealthKit'
                       )}
                     </Button>
-                    {!healthKitAvailable && (
-                      <p className="text-xs text-gray-500 text-center">
-                        ⚠️ Disponibile solo nell'app mobile iOS
-                      </p>
-                    )}
                   </>
                 )}
               </CardContent>
