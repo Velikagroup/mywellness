@@ -8,8 +8,20 @@ export const rememberMeManager = {
     try {
       const response = await base44.functions.invoke('generateRememberMeToken');
       if (response.data.success) {
-        localStorage.setItem(REMEMBER_ME_KEY, response.data.token);
+        const token = response.data.token;
+        localStorage.setItem(REMEMBER_ME_KEY, token);
         console.log('✅ Remember Me token saved');
+        
+        // Salva anche nel Keychain nativo iOS/Android se disponibile
+        if (window.__ios_saveRememberToken) {
+          try {
+            window.__ios_saveRememberToken(token);
+            console.log('✅ Remember Me token saved to native iOS Keychain');
+          } catch (e) {
+            console.error('❌ Failed to save token to iOS Keychain:', e);
+          }
+        }
+        
         return true;
       }
       return false;

@@ -101,6 +101,11 @@ export default function Settings() {
   const [showLanguageDialog, setShowLanguageDialog] = useState(false);
   const [showLanguageWarning, setShowLanguageWarning] = useState(false);
   
+  // HealthKit
+  const [isHealthKitConnected, setIsHealthKitConnected] = useState(false);
+  const [isSyncingHealthKit, setIsSyncingHealthKit] = useState(false);
+  const [healthKitAvailable, setHealthKitAvailable] = useState(false);
+  
   // Translation for the language warning banner
   const languageWarningTexts = {
     it: "Hai cambiato lingua! Per vedere i piani di nutrizione e allenamento nella nuova lingua, dovrai rigenerarli. Altrimenti rimarranno nella lingua originale.",
@@ -119,6 +124,27 @@ export default function Settings() {
 
   useEffect(() => {
     loadUserData();
+    
+    // Verifica disponibilità bridge HealthKit
+    if (window.__mw_sync) {
+      setHealthKitAvailable(true);
+      // Verifica se già connesso (localStorage)
+      const hkConnected = localStorage.getItem('hk_connected') === '1';
+      setIsHealthKitConnected(hkConnected);
+    }
+    
+    // Setup callback per risultati sync (opzionale, per future implementazioni)
+    window.__mw_sync_result = function(payload) {
+      console.log('📊 HealthKit sync result:', payload);
+      if (payload.success) {
+        setIsHealthKitConnected(true);
+        localStorage.setItem('hk_connected', '1');
+        alert('✅ HealthKit sincronizzato con successo!');
+      } else {
+        alert('❌ Errore sincronizzazione HealthKit: ' + (payload.message || 'Errore sconosciuto'));
+      }
+      setIsSyncingHealthKit(false);
+    };
   }, []);
 
   useEffect(() => {
@@ -595,6 +621,37 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
     alert('✅ Copiato negli appunti!');
   };
 
+  const handleConnectHealthKit = () => {
+    if (!window.__mw_sync) {
+      alert('⚠️ HealthKit bridge non disponibile. Usa l\'app iOS/Android.');
+      return;
+    }
+
+    setIsSyncingHealthKit(true);
+    
+    try {
+      // Chiama bridge nativo per sync
+      window.__mw_sync({ 
+        action: 'syncTodayNative', 
+        appId: '68d44c626cc2c19cca9c750d' 
+      });
+      
+      // Se non c'è callback, marca come connesso dopo 2 secondi
+      setTimeout(() => {
+        if (isSyncingHealthKit) {
+          setIsHealthKitConnected(true);
+          localStorage.setItem('hk_connected', '1');
+          setIsSyncingHealthKit(false);
+          alert('✅ HealthKit connesso! La sincronizzazione è in corso.');
+        }
+      }, 2000);
+    } catch (error) {
+      console.error('❌ HealthKit sync error:', error);
+      alert('❌ Errore durante la connessione a HealthKit.');
+      setIsSyncingHealthKit(false);
+    }
+  };
+
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -682,6 +739,47 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </div>
               </CardContent>
             </Card>
+
+            {healthKitAvailable && (
+              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <Activity className="w-6 h-6 text-green-600" />
+                    HealthKit Sync
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                  <p className="text-sm text-gray-700">
+                    {isHealthKitConnected 
+                      ? '✅ HealthKit è connesso. I tuoi dati di attività vengono sincronizzati automaticamente.'
+                      : '🍎 Connetti HealthKit per sincronizzare automaticamente le calorie bruciate e l\'attività fisica.'}
+                  </p>
+                  <Button
+                    onClick={handleConnectHealthKit}
+                    disabled={isSyncingHealthKit}
+                    className={`w-full ${
+                      isHealthKitConnected 
+                        ? 'bg-green-600 hover:bg-green-700' 
+                        : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+                    } text-white`}
+                  >
+                    {isSyncingHealthKit ? (
+                      <div className="flex items-center gap-2">
+                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                        Sincronizzazione...
+                      </div>
+                    ) : isHealthKitConnected ? (
+                      '🔄 Sincronizza Ora'
+                    ) : (
+                      '🍎 Connetti HealthKit'
+                    )}
+                  </Button>
+                  <p className="text-xs text-gray-500 text-center">
+                    💡 La prima volta ti verrà chiesta l'autorizzazione per accedere ai dati di HealthKit.
+                  </p>
+                </CardContent>
+              </Card>
+            )}
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
