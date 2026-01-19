@@ -32,7 +32,8 @@ import {
   Globe,
   ChevronDown,
   Check,
-  AlertTriangle
+  AlertTriangle,
+  Activity
 } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
