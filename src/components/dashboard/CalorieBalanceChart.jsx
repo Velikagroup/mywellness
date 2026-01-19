@@ -405,30 +405,42 @@ export default function CalorieBalanceChart({ user }) {
 
           {/* Progress Bar Dispositivo Salute - sotto NEAT - SOLO PREMIUM */}
           {user?.subscription_plan === 'premium' && (
-            <div className="space-y-2 opacity-50">
+            <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center gap-2">
-                  <span className="font-medium text-gray-600">
+                  <span className="font-medium text-gray-900">
                     🍎 Dispositivo salute
                   </span>
-                  <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">
-                    In arrivo
-                  </span>
+                  {healthKitData ? (
+                    <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+                      Attivo
+                    </span>
+                  ) : (
+                    <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">
+                      In attesa dati
+                    </span>
+                  )}
                 </div>
-                <span className="font-semibold text-gray-400">0 kcal</span>
+                <span className={`font-semibold ${healthKitData ? 'text-purple-600' : 'text-gray-400'}`}>
+                  {healthKitData?.active_energy_burned_kcal ? Math.round(healthKitData.active_energy_burned_kcal) : 0} kcal
+                </span>
               </div>
               <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
                 <div 
-                  className="h-full bg-gray-300 absolute top-0"
+                  className={`h-full absolute top-0 ${healthKitData ? 'bg-purple-500' : 'bg-gray-300'}`}
                   style={{ 
                     left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
-                    width: '0%'
+                    width: healthKitData?.active_energy_burned_kcal 
+                      ? `${(healthKitData.active_energy_burned_kcal / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`
+                      : '0%'
                   }}
                 />
               </div>
-              <p className="text-xs text-gray-500 italic">
-                📲 Quando disponibile, integrerà le calorie dal dispositivo HealthKit iOS
-              </p>
+              {!healthKitData && (
+                <p className="text-xs text-gray-500">
+                  📲 Connetti il dispositivo dall'app mobile per visualizzare i dati
+                </p>
+              )}
             </div>
           )}
           </div>
