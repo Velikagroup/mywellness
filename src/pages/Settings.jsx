@@ -628,6 +628,11 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
     console.log('window.__ios_healthkit:', typeof window.__ios_healthkit);
     console.log('window.webkit:', typeof window.webkit);
     
+    // 🔍 DEBUG: Mostra TUTTI i messageHandlers disponibili
+    if (window.webkit?.messageHandlers) {
+      console.log('📱 Available webkit messageHandlers:', Object.keys(window.webkit.messageHandlers));
+    }
+    
     // Prova diversi bridge nativi iOS/Android
     const iosHealthKit = window.__ios_healthkit || window.__mw_sync;
     const webkitBridge = window.webkit?.messageHandlers?.healthkit;
