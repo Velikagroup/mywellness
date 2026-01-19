@@ -741,46 +741,54 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
               </CardContent>
             </Card>
 
-            {healthKitAvailable && (
-              <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Activity className="w-6 h-6 text-green-600" />
-                    HealthKit Sync
-                  </CardTitle>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  <p className="text-sm text-gray-700">
-                    {isHealthKitConnected 
-                      ? '✅ HealthKit è connesso. I tuoi dati di attività vengono sincronizzati automaticamente.'
-                      : '🍎 Connetti HealthKit per sincronizzare automaticamente le calorie bruciate e l\'attività fisica.'}
-                  </p>
-                  <Button
-                    onClick={handleConnectHealthKit}
-                    disabled={isSyncingHealthKit}
-                    className={`w-full ${
-                      isHealthKitConnected 
-                        ? 'bg-green-600 hover:bg-green-700' 
-                        : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
-                    } text-white`}
-                  >
-                    {isSyncingHealthKit ? (
-                      <div className="flex items-center gap-2">
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        Sincronizzazione...
-                      </div>
-                    ) : isHealthKitConnected ? (
-                      '🔄 Sincronizza Ora'
-                    ) : (
-                      '🍎 Connetti HealthKit'
-                    )}
-                  </Button>
-                  <p className="text-xs text-gray-500 text-center">
-                    💡 La prima volta ti verrà chiesta l'autorizzazione per accedere ai dati di HealthKit.
-                  </p>
-                </CardContent>
-              </Card>
-            )}
+            <Card className="bg-gradient-to-br from-green-50 to-emerald-50 border-green-200">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Activity className="w-6 h-6 text-green-600" />
+                  HealthKit Sync
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                {!healthKitAvailable ? (
+                  <div className="p-4 bg-gray-50 rounded-lg border border-gray-200">
+                    <p className="text-sm text-gray-600">
+                      ⚠️ Funzionalità disponibile solo nell'app iOS/Android.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-700">
+                      {isHealthKitConnected 
+                        ? '✅ HealthKit è connesso. I tuoi dati di attività vengono sincronizzati automaticamente.'
+                        : '🍎 Connetti HealthKit per sincronizzare automaticamente le calorie bruciate e l\'attività fisica.'}
+                    </p>
+                    <Button
+                      onClick={handleConnectHealthKit}
+                      disabled={isSyncingHealthKit}
+                      className={`w-full ${
+                        isHealthKitConnected 
+                          ? 'bg-green-600 hover:bg-green-700' 
+                          : 'bg-gradient-to-r from-green-600 to-emerald-600 hover:from-green-700 hover:to-emerald-700'
+                      } text-white`}
+                    >
+                      {isSyncingHealthKit ? (
+                        <div className="flex items-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          Sincronizzazione...
+                        </div>
+                      ) : isHealthKitConnected ? (
+                        '🔄 Sincronizza Ora'
+                      ) : (
+                        '🍎 Connetti HealthKit'
+                      )}
+                    </Button>
+                    <p className="text-xs text-gray-500 text-center">
+                      💡 La prima volta ti verrà chiesta l'autorizzazione per accedere ai dati di HealthKit.
+                    </p>
+                  </>
+                )}
+              </CardContent>
+            </Card>
 
             <Card className="water-glass-effect border-gray-200/30">
               <CardHeader>
