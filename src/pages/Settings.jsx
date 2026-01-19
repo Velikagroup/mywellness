@@ -767,17 +767,44 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
-                <div className="bg-amber-100 border border-amber-300 rounded-lg p-4">
-                  <p className="text-sm text-amber-900 font-semibold mb-2">
-                    🚧 Funzionalità in arrivo
-                  </p>
-                  <p className="text-sm text-amber-800">
-                    La sincronizzazione HealthKit è in fase di sviluppo. Al momento il bridge nativo iOS non è ancora disponibile nell'app mobile.
-                  </p>
-                </div>
-                <p className="text-xs text-gray-600 text-center">
-                  💡 Una volta implementato, potrai sincronizzare automaticamente calorie bruciate e attività fisica da HealthKit.
-                </p>
+                {isHealthKitConnected ? (
+                  <div className="bg-green-50 border border-green-300 rounded-lg p-4">
+                    <div className="flex items-center gap-2 mb-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <p className="text-sm text-green-900 font-semibold">
+                        ✅ HealthKit connesso
+                      </p>
+                    </div>
+                    <p className="text-sm text-green-800">
+                      I tuoi dati di attività vengono sincronizzati automaticamente.
+                    </p>
+                  </div>
+                ) : (
+                  <>
+                    <p className="text-sm text-gray-700">
+                      Sincronizza automaticamente calorie bruciate e attività fisica da HealthKit.
+                    </p>
+                    <Button
+                      onClick={handleConnectHealthKit}
+                      disabled={isSyncingHealthKit || !healthKitAvailable}
+                      className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                    >
+                      {isSyncingHealthKit ? (
+                        <div className="flex items-center gap-2">
+                          <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
+                          <span>Connessione in corso...</span>
+                        </div>
+                      ) : (
+                        '🍎 Connetti HealthKit'
+                      )}
+                    </Button>
+                    {!healthKitAvailable && (
+                      <p className="text-xs text-gray-500 text-center">
+                        ⚠️ Disponibile solo nell'app mobile iOS
+                      </p>
+                    )}
+                  </>
+                )}
               </CardContent>
             </Card>
 
