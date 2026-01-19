@@ -623,7 +623,16 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
   };
 
   const handleConnectHealthKit = () => {
-    if (!window.__mw_sync) {
+    console.log('🔍 Checking available bridges...');
+    console.log('window.__mw_sync:', typeof window.__mw_sync);
+    console.log('window.__ios_healthkit:', typeof window.__ios_healthkit);
+    console.log('window.webkit:', typeof window.webkit);
+    
+    // Prova diversi bridge nativi iOS/Android
+    const iosHealthKit = window.__ios_healthkit || window.__mw_sync;
+    const webkitBridge = window.webkit?.messageHandlers?.healthkit;
+    
+    if (!iosHealthKit && !webkitBridge) {
       alert('⚠️ HealthKit bridge non disponibile. Usa l\'app iOS/Android.');
       return;
     }
@@ -631,20 +640,24 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
     setIsSyncingHealthKit(true);
     
     try {
-      // Chiama bridge nativo per sync
-      window.__mw_sync({ 
-        action: 'syncTodayNative', 
-        appId: '68d44c626cc2c19cca9c750d' 
-      });
+      // Chiama il bridge nativo appropriato
+      if (webkitBridge) {
+        console.log('📱 Using webkit bridge');
+        webkitBridge.postMessage({ action: 'syncHealthKit', appId: '68d44c626cc2c19cca9c750d', userId: user.id });
+      } else if (iosHealthKit) {
+        console.log('📱 Using __ios_healthkit or __mw_sync bridge');
+        iosHealthKit({ 
+          action: 'syncTodayNative', 
+          appId: '68d44c626cc2c19cca9c750d' 
+        });
+      }
       
       // Se non c'è callback, marca come connesso dopo 2 secondi
       setTimeout(() => {
-        if (isSyncingHealthKit) {
-          setIsHealthKitConnected(true);
-          localStorage.setItem('hk_connected', '1');
-          setIsSyncingHealthKit(false);
-          alert('✅ HealthKit connesso! La sincronizzazione è in corso.');
-        }
+        setIsHealthKitConnected(true);
+        localStorage.setItem('hk_connected', '1');
+        setIsSyncingHealthKit(false);
+        alert('✅ HealthKit connesso! La sincronizzazione è in corso.');
       }, 2000);
     } catch (error) {
       console.error('❌ HealthKit sync error:', error);
