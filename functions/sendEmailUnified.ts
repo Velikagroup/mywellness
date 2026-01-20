@@ -699,7 +699,7 @@ Deno.serve(async (req) => {
         // Salva log SUCCESS
         logEntry.status = 'sent';
         logEntry.sent_at = new Date().toISOString();
-        logEntry.sendgrid_message_id = sendResult.messageId;
+        logEntry.message_id = sendResult.messageId;
         logEntry.provider = sendResult.provider;
 
         try {
