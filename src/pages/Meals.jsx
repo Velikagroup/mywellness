@@ -1164,12 +1164,12 @@ Use accurate nutritional data. All in ${langName.toUpperCase()}.`;
                 existing.fat += ingredient.fat;
               } else {
                 normalizedIngredients.set(normalizedName, ingredient);
-              }
-            });
-            
-            let roundedIngredients = Array.from(normalizedIngredients.values());
-            let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
-            const diff = targetCals - calculatedCalories;
+                }
+                });
+
+                let roundedIngredients = Array.from(normalizedIngredients.values());
+                let calculatedCalories = Math.round(roundedIngredients.reduce((sum, ing) => sum + (ing.calories || 0), 0));
+                const diff = targetCals - calculatedCalories;
 
             // ✅ Aggiungi olio SOLO per pasti principali E solo se deficit > 50 kcal
             const isMainMeal = ['breakfast', 'lunch', 'dinner'].includes(mealType);
