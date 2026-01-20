@@ -453,7 +453,11 @@ Be concise but detailed (max 200 words).`,
         setCancellationReason('');
         setCancellationDetails('');
         setWouldRecommend(null);
-        await loadUserData();
+        
+        // Reload immediato per aggiornare l'UI con il banner di cancellazione
+        setTimeout(async () => {
+          await loadUserData();
+        }, 500);
       } else {
         alert('❌ Errore: ' + data.error);
       }
