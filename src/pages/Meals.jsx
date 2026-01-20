@@ -1489,7 +1489,6 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
           
           console.log(`✅ ${day} VALIDATO: macros corretti per dieta ${dietType}`);
       }
-      }
 
       updateProgress(90, t('meals.savingIngredients'));
       
