@@ -1125,17 +1125,10 @@ Use accurate nutritional data. All in ${langName.toUpperCase()}.`;
             console.error(`❌ ${day} ${mealType}: risposta LLM non valida`, mealResponse);
             continue;
           }
-            
-            // ✅ MATCH ingredienti con dispensa + NORMALIZZA NOMI
-            const normalizedIngredients = new Map();
-            
-            // ✅ FIX: Verifica che ingredients esista prima di forEach
-            if (!mealData.ingredients || !Array.isArray(mealData.ingredients)) {
-              console.error(`❌ ${day} ${mealType}: ingredients è undefined o non è un array`, mealData);
-              continue; // Salta questo pasto
-            }
-            
-            mealData.ingredients.forEach(ing => {
+          // ✅ MATCH ingredienti con dispensa + NORMALIZZA NOMI
+          const normalizedIngredients = new Map();
+          
+          mealResponse.ingredients.forEach(ing => {
               const normalizedName = ing.name.toLowerCase().trim();
               
               const pantryMatch = userIngredients.find(ui => 
