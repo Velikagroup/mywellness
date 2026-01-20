@@ -1016,32 +1016,14 @@ STRICT RULES:
         const day = daysToGenerate[dayIndex];
         const dayLabel = t(`meals.${day}`);
         
-        // Costruisci testo intolleranze
-        const intolerancesMap = {
-          lactose: 'LATTOSIO - NO latte, formaggi, yogurt, burro, panna, gelati, prodotti da forno con latte',
-          gluten: 'GLUTINE - NO frumento, pasta normale, pane normale, orzo, segale, farro, kamut, seitan',
-          nuts: 'FRUTTA SECCA - NO noci, mandorle, nocciole, pistacchi, anacardi, prodotti che li contengono',
-          eggs: 'UOVA - NO uova, maionese, pasta all\'uovo, dolci con uova, frittate',
-          soy: 'SOIA - NO tofu, tempeh, edamame, salsa di soia, latte di soia, proteine di soia',
-          fish: 'PESCE - NO pesce, frutti di mare, crostacei, molluschi, surimi',
-          peanuts: 'ARACHIDI - NO arachidi, burro di arachidi, olio di arachidi',
-          sesame: 'SESAMO - NO semi di sesamo, tahini, olio di sesamo, pane con sesamo',
-          sulfites: 'SOLFITI - NO vino, frutta secca, aceto, alcuni conservanti',
-          histamine: 'ISTAMINA - NO formaggi stagionati, salumi, pesce in scatola, pomodori, spinaci, melanzane',
-          fructose: 'FRUTTOSIO - NO miele, sciroppi, frutta ad alto fruttosio (mele, pere, mango)',
-          sorbitol: 'SORBITOLO - NO dolcificanti artificiali, prugne, mele, pere'
-        };
-        
-        let intolerancesText = '';
-        if (generationPrefs.intolerances && generationPrefs.intolerances.length > 0) {
-          intolerancesText = `\n\n🚫 INTOLLERANZE ALIMENTARI (ASSOLUTAMENTE DA EVITARE):\n${generationPrefs.intolerances.map(i => `- ${intolerancesMap[i] || i.toUpperCase()}`).join('\n')}`;
-        }
-        if (generationPrefs.custom_intolerances && generationPrefs.custom_intolerances.trim()) {
-          intolerancesText += `\n\n🚫 CIBI DA EVITARE (custom user preferences):\nUser wrote: "${generationPrefs.custom_intolerances}"\nInterpret this and NEVER include these foods/ingredients in ANY meal.`;
-        }
-        if (intolerancesText) {
-          intolerancesText += '\n\n⚠️ VERIFICA ATTENTAMENTE CHE NESSUN INGREDIENTE CONTENGA QUESTI ALLERGENI!';
-        }
+        // Genera ogni pasto individualmente
+        for (let mealIndex = 0; mealIndex < mealStructure.length; mealIndex++) {
+          const mealType = mealStructure[mealIndex];
+          const progress = 20 + Math.round(((dayIndex * mealStructure.length + mealIndex) / (daysToGenerate.length * mealStructure.length)) * 70);
+          updateProgress(progress, `${dayLabel} - ${getMealTypeLabel(mealType)} (${dayIndex * mealStructure.length + mealIndex + 1}/${daysToGenerate.length * mealStructure.length})`);
+          
+          const targetCals = mealCalorieDistribution[mealType];
+          const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
 
         const languageNames = {
           it: 'Italian',
