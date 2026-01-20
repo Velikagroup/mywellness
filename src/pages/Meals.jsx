@@ -1177,10 +1177,10 @@ Use accurate nutritional data. All in ${langName.toUpperCase()}.`;
               const oilKey = roundedIngredients.findIndex(ing => 
                 ing.name.toLowerCase().includes('olio') && ing.name.toLowerCase().includes('oliva')
               );
-              
+
               const oilMl = Math.round(diff / 9);
               const oilCalories = oilMl * 9;
-              
+
               if (oilKey >= 0) {
                 roundedIngredients[oilKey].quantity += oilMl;
                 roundedIngredients[oilKey].calories += oilCalories;
@@ -1214,21 +1214,21 @@ Use accurate nutritional data. All in ${langName.toUpperCase()}.`;
               user_id: user.id,
               day_of_week: day,
               meal_type: mealType,
-              name: mealData.name,
+              name: mealResponse.name,
               ingredients: roundedIngredients,
-              instructions: mealData.instructions || [],
+              instructions: mealResponse.instructions || [],
               total_calories: calculatedCalories,
               total_protein: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.protein, 0) * 10) / 10,
               total_carbs: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.carbs, 0) * 10) / 10,
               total_fat: Math.round(roundedIngredients.reduce((sum, ing) => sum + ing.fat, 0) * 10) / 10,
-              prep_time: mealData.prep_time || 15,
-              difficulty: mealData.difficulty || 'easy',
+              prep_time: mealResponse.prep_time || 15,
+              difficulty: mealResponse.difficulty || 'easy',
               image_url: null,
               is_cheat_meal: isCheatMeal
             });
-            
+
             console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal`);
-          }
+            }
           
           // 🎯 VALIDAZIONE E BILANCIAMENTO GIORNALIERO
           const dayMeals = allGeneratedMeals.filter(m => m.day_of_week === day);
