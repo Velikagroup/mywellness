@@ -332,7 +332,7 @@ export default function MealsPage() {
 
   const nutritionData = user ? {
     bmr: user.bmr,
-    daily_calories: user.daily_calories,
+    daily_calories: user.daily_calorie_target || user.daily_calories,
     diet_type: user.diet_type,
     intermittent_fasting: user.intermittent_fasting,
     if_skip_meal: user.if_skip_meal,
