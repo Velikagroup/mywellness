@@ -41,6 +41,7 @@ export default function HipCircumferenceStep({ data, onDataChange, translations 
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizHipTitle || "Circonferenza dei Fianchi"}</h2>
         <p className="text-gray-600">{t.quizHipSubtitle || "Misura nel punto più largo dei fianchi/glutei"}</p>
+        <p className="text-sm text-amber-600 font-medium mt-2">{t.quizCircumferenceOptional || "⚠️ Domanda opzionale, ma fondamentale per calcolare la massa grassa"}</p>
       </div>
 
       <div className="max-w-md mx-auto">
@@ -85,7 +86,7 @@ export default function HipCircumferenceStep({ data, onDataChange, translations 
             {unit}
           </span>
         </div>
-        <p className="text-sm text-gray-500 mt-2 text-center">{t.quizHipFemaleOnly || "Necessaria per calcolare la massa grassa (solo donne)"}</p>
+        <p className="text-xs text-gray-500 mt-2 text-center italic">{t.quizSkipWarning || "Puoi saltare se preferisci, ma il calcolo della massa grassa non sarà disponibile"}</p>
       </div>
     </div>
   );

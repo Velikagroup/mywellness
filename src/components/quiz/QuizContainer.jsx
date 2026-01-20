@@ -302,9 +302,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (stepComponent === HeightStep) return !!quizData.height && quizData.height > 0;
     if (stepComponent === CurrentWeightStep) return !!quizData.current_weight && quizData.current_weight > 0;
     if (stepComponent === TargetWeightStep) return !!quizData.target_weight && quizData.target_weight > 0;
-    if (stepComponent === NeckCircumferenceStep) return !!quizData.neck_circumference && quizData.neck_circumference > 0;
-    if (stepComponent === WaistCircumferenceStep) return !!quizData.waist_circumference && quizData.waist_circumference > 0;
-    if (stepComponent === HipCircumferenceStep) return !!quizData.hip_circumference && quizData.hip_circumference > 0;
+    if (stepComponent === NeckCircumferenceStep) return true;
+    if (stepComponent === WaistCircumferenceStep) return true;
+    if (stepComponent === HipCircumferenceStep) return true;
     if (stepComponent === CurrentBodyTypeStep) return !!quizData.current_body_fat_visual;
     if (stepComponent === TargetBodyTypeStep) return !!quizData.target_body_fat_visual;
     if (stepComponent === TargetZoneStep) return !!quizData.target_zones && quizData.target_zones.length > 0;

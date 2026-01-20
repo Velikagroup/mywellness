@@ -41,6 +41,7 @@ export default function WaistCircumferenceStep({ data, onDataChange, translation
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizWaistTitle || "Circonferenza della Vita"}</h2>
         <p className="text-gray-600">{t.quizWaistSubtitle || "Misura all'altezza dell'ombelico, mantenendo il metro orizzontale"}</p>
+        <p className="text-sm text-amber-600 font-medium mt-2">{t.quizCircumferenceOptional || "⚠️ Domanda opzionale, ma fondamentale per calcolare la massa grassa"}</p>
       </div>
 
       <div className="max-w-md mx-auto">
@@ -85,7 +86,7 @@ export default function WaistCircumferenceStep({ data, onDataChange, translation
             {unit}
           </span>
         </div>
-        <p className="text-sm text-gray-500 mt-2 text-center">{t.quizBodyFatRequired || "Necessaria per calcolare la massa grassa"}</p>
+        <p className="text-xs text-gray-500 mt-2 text-center italic">{t.quizSkipWarning || "Puoi saltare se preferisci, ma il calcolo della massa grassa non sarà disponibile"}</p>
       </div>
     </div>
   );
