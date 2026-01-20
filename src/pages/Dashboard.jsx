@@ -556,8 +556,8 @@ export default function Dashboard() {
   }, [user, weightHistory]);
 
   const handleRecalibrate = () => {
-    // Naviga al Quiz in modalità recap con parametro from=dashboard
-    navigate(createPageUrl("Quiz") + "?mode=recap&from=dashboard");
+    // Naviga al Quiz in modalità ricalibrazione
+    navigate(createPageUrl("Quiz") + "?from=dashboard");
   };
 
   const handleAcceptTerms = async () => {

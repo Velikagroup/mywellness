@@ -365,7 +365,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
       setIsCalculating(true);
       
       setTimeout(async () => {
-        if (isRecapMode) {
+        if (isRecalibrateFlow) {
           await handleRevealBodyFat();
         } else {
           setIsCalculating(false);
