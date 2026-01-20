@@ -1229,8 +1229,7 @@ Use accurate nutritional data. All in ${langName.toUpperCase()}.`;
 
             console.log(`✅ ${day} ${mealType}: ${calculatedCalories} kcal`);
             }
-          
-          // 🎯 VALIDAZIONE E BILANCIAMENTO GIORNALIERO
+          // 🎯 VALIDAZIONE E BILANCIAMENTO GIORNALIERO (dopo tutti i pasti del giorno)
           const dayMeals = allGeneratedMeals.filter(m => m.day_of_week === day);
           let dayTotalCals = dayMeals.reduce((sum, m) => sum + m.total_calories, 0);
           const dayGap = dailyCalories - dayTotalCals;
