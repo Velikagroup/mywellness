@@ -47,6 +47,25 @@ Deno.serve(async (req) => {
             cancellation_at_period_end: true
         });
 
+        // Salva feedback cancellazione
+        if (cancellation_reason) {
+            try {
+                console.log('💬 Saving cancellation feedback...');
+                await base44.asServiceRole.entities.CancellationFeedback.create({
+                    user_id: user.id,
+                    user_email: user.email,
+                    user_plan: user.subscription_plan,
+                    cancellation_reason: cancellation_reason,
+                    additional_details: additional_details || null,
+                    would_recommend: would_recommend || false,
+                    days_used: days_used || 0
+                });
+                console.log('✅ Cancellation feedback saved');
+            } catch (feedbackError) {
+                console.error('⚠️ Feedback error (non-critical):', feedbackError.message);
+            }
+        }
+
         // Invia email di conferma cancellazione
         try {
             await base44.asServiceRole.functions.invoke('sendCancellationConfirmation', {
