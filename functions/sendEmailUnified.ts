@@ -14,51 +14,26 @@ import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 const MAX_RETRIES = 3;
 const RETRY_DELAYS = [5000, 15000, 30000]; // 5s, 15s, 30s
 
-async function sendViaSendGrid(apiKey, emailData) {
-    const payload = {
-        personalizations: [{
-            to: [{ email: emailData.to, name: emailData.toName || emailData.to }]
-        }],
-        from: {
-            email: emailData.from || 'info@projectmywellness.com',
-            name: 'MyWellness'
-        },
-        reply_to: {
-            email: emailData.replyTo || 'info@projectmywellness.com'
-        },
-        subject: emailData.subject,
-        content: [{
-            type: 'text/html',
-            value: emailData.html
-        }]
-    };
-    
-    console.log('📤 SendGrid Request:', {
+async function sendViaBase44(base44, emailData) {
+    console.log('📤 Base44 Core SendEmail Request:', {
         to: emailData.to,
-        from: emailData.from,
         subject: emailData.subject,
         htmlLength: emailData.html?.length
     });
     
-    const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-        method: 'POST',
-        headers: {
-            'Authorization': `Bearer ${apiKey}`,
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify(payload)
+    const result = await base44.asServiceRole.integrations.Core.SendEmail({
+        to: emailData.to,
+        subject: emailData.subject,
+        body: emailData.html
     });
 
-    if (!response.ok) {
-        const errorText = await response.text();
-        console.error('❌ SendGrid Error Response:', errorText);
-        console.error('📧 Failed payload:', JSON.stringify(payload, null, 2));
-        throw new Error(`SendGrid API error (${response.status}): ${errorText}`);
+    if (!result) {
+        throw new Error('Base44 SendEmail returned empty result');
     }
 
     return {
-        messageId: response.headers.get('x-message-id'),
-        provider: 'sendgrid'
+        messageId: result.message_id || 'base44-sent',
+        provider: 'base44_core'
     };
 }
 
@@ -642,10 +617,9 @@ Deno.serve(async (req) => {
         console.log(`📬 Preparing email to ${userEmail} using template ${templateId}`);
         console.log(`📍 Trigger source: ${triggerSource}`);
 
-        // Verifica SendGrid API Key
-        const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
-        if (!sendGridApiKey) {
-            throw new Error('SENDGRID_API_KEY not configured');
+        // Verifica Base44 integrations
+        if (!base44) {
+            throw new Error('Base44 client not initialized');
         }
 
         // Carica template
@@ -694,7 +668,7 @@ Deno.serve(async (req) => {
             try {
                 console.log(`📤 Attempt ${attempt + 1}/${MAX_RETRIES} sending to ${userEmail}`);
                 
-                sendResult = await sendViaSendGrid(sendGridApiKey, {
+                sendResult = await sendViaBase44(base44, {
                     to: userEmail,
                     toName: variables.user_name,
                     from: template.from_email || 'info@projectmywellness.com',
