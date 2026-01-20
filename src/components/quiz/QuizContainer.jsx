@@ -232,10 +232,11 @@ export default function QuizContainer({ translations, language = 'it' }) {
         setUser(currentUser);
         
         if (isRecapMode && currentUser) {
+          // ✅ Modalità ricalibrazione: pulisci localStorage e parti da zero
           localStorage.removeItem(`quizData_${language}`);
           setQuizData({ gender: currentUser.gender || '' });
           setCurrentStep(0);
-        } else if (currentUser && currentUser.quiz_completed && !isRecapMode) {
+        } else if (currentUser && currentUser.quiz_completed && !isRecapMode && !isRecalibrateFlow) {
           const hasActiveSubscription = currentUser.subscription_status === 'active' || 
                                         currentUser.subscription_status === 'trial';
           
@@ -267,7 +268,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
     };
 
     loadUserData();
-  }, [navigate, isRecapMode, language]);
+  }, [navigate, isRecapMode, isRecalibrateFlow, language]);
 
   useEffect(() => {
     if (!isLoadingUser && !quizActivityTracked && currentStep === 1) {
@@ -383,6 +384,69 @@ export default function QuizContainer({ translations, language = 'it' }) {
   };
 
   const handleRevealBodyFat = async () => {
+    // ✅ Se è in modalità ricalibrazione da dashboard, salva i dati e torna alla dashboard
+    if (isRecalibrateFlow && user && user.id) {
+      setIsSaving(true);
+      
+      try {
+        const age = quizData.age || calculateAge(quizData.birthdate);
+        const bmr = calculateBMR(quizData.current_weight, quizData.height, age, quizData.gender);
+        const activityMultiplier = getActivityMultiplier(quizData.activity_level || 'sedentary');
+        let dailyCalories = bmr * activityMultiplier;
+
+        if (quizData.weight_loss_speed === 'very_fast') dailyCalories *= 0.75;
+        else if (quizData.weight_loss_speed === 'moderate') dailyCalories *= 0.8;
+        else if (quizData.weight_loss_speed === 'slow') dailyCalories *= 0.9;
+
+        const bodyFat = calculateBodyFat(
+          quizData.gender, quizData.height, quizData.waist_circumference,
+          quizData.neck_circumference, quizData.hip_circumference
+        );
+
+        const userDataToSave = {
+          gender: quizData.gender,
+          birthdate: quizData.birthdate,
+          age: age,
+          height: quizData.height,
+          current_weight: quizData.current_weight,
+          target_weight: quizData.target_weight,
+          neck_circumference: quizData.neck_circumference,
+          waist_circumference: quizData.waist_circumference,
+          hip_circumference: quizData.hip_circumference,
+          current_body_fat_visual: quizData.current_body_fat_visual,
+          target_body_fat_visual: quizData.target_body_fat_visual,
+          target_zone: quizData.target_zone,
+          weight_loss_speed: quizData.weight_loss_speed,
+          body_fat_percentage: bodyFat !== null ? parseFloat(bodyFat.toFixed(1)) : null,
+          bmr: Math.round(bmr),
+          daily_calories: Math.round(dailyCalories)
+        };
+
+        await base44.auth.updateMe(userDataToSave);
+        
+        const today = new Date().toISOString().split('T')[0];
+        try {
+          await base44.entities.WeightHistory.create({
+            user_id: user.id,
+            weight: quizData.current_weight,
+            date: today
+          });
+        } catch (weightError) {
+          console.warn('⚠️ Weight error:', weightError);
+        }
+        
+        localStorage.removeItem(`quizData_${language}`);
+        
+        navigate(createPageUrl('Dashboard'), { replace: true });
+        return;
+      } catch (error) {
+        console.error("Error saving quiz data:", error);
+        alert(t?.quizSaveError || "Error saving data. Please try again.");
+        setIsSaving(false);
+        return;
+      }
+    }
+    
     if (!user || !user.id) {
       const age = quizData.age || calculateAge(quizData.birthdate);
       const bmr = calculateBMR(quizData.current_weight, quizData.height, age, quizData.gender);
