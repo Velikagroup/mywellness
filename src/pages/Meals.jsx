@@ -1421,6 +1421,74 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
           } else {
             console.log(`✅ ${day} già bilanciato: ${dayTotalCals} kcal (gap: ${dayGap})`);
           }
+          
+          // 🚨 VALIDAZIONE MACROS PER DIETA
+          const dayTotalCarbs = dayMeals.reduce((sum, m) => sum + m.total_carbs, 0);
+          const dayTotalFat = dayMeals.reduce((sum, m) => sum + m.total_fat, 0);
+          const dayTotalProtein = dayMeals.reduce((sum, m) => sum + m.total_protein, 0);
+          const totalCals = dayMeals.reduce((sum, m) => sum + m.total_calories, 0);
+          
+          const fatPercent = totalCals > 0 ? (dayTotalFat * 9) / totalCals * 100 : 0;
+          const proteinPercent = totalCals > 0 ? (dayTotalProtein * 4) / totalCals * 100 : 0;
+          const carbsPercent = totalCals > 0 ? (dayTotalCarbs * 4) / totalCals * 100 : 0;
+          
+          console.log(`📊 ${day} MACROS: ${dayTotalCarbs}g carbs, ${dayTotalProtein}g protein, ${dayTotalFat}g fat`);
+          console.log(`📊 ${day} %: ${carbsPercent.toFixed(1)}% carbs, ${proteinPercent.toFixed(1)}% protein, ${fatPercent.toFixed(1)}% fat`);
+          
+          let isValidDay = true;
+          let validationError = '';
+          
+          const dietType = generationPrefs.diet_type;
+          
+          if (dietType === 'keto') {
+            if (dayTotalCarbs > 50) {
+              isValidDay = false;
+              validationError = `KETO FAIL: ${dayTotalCarbs}g carbs (max 50g)`;
+            }
+            if (fatPercent < 65) {
+              isValidDay = false;
+              validationError += ` | Grassi ${fatPercent.toFixed(0)}% (min 65%)`;
+            }
+          } else if (dietType === 'carnivore') {
+            if (dayTotalCarbs > 5) {
+              isValidDay = false;
+              validationError = `CARNIVORE FAIL: ${dayTotalCarbs}g carbs (max 5g)`;
+            }
+          } else if (dietType === 'low_carb') {
+            if (dayTotalCarbs > 100) {
+              isValidDay = false;
+              validationError = `LOW CARB FAIL: ${dayTotalCarbs}g carbs (max 100g)`;
+            }
+          } else if (dietType === 'soft_low_carb') {
+            if (dayTotalCarbs > 150) {
+              isValidDay = false;
+              validationError = `SOFT LOW CARB FAIL: ${dayTotalCarbs}g carbs (max 150g)`;
+            }
+          } else if (dietType === 'paleo') {
+            // Paleo: no cereali/legumi - controllo qualitativo fatto dall'AI
+            if (dayTotalCarbs > 150) {
+              isValidDay = false;
+              validationError = `PALEO FAIL: ${dayTotalCarbs}g carbs (max 150g)`;
+            }
+          }
+          
+          if (!isValidDay) {
+            console.error(`❌ ${day} NON VALIDO: ${validationError}`);
+            console.log(`🔄 RIGENERAZIONE ${day}...`);
+            
+            // Rimuovi pasti non validi
+            allGeneratedMeals.splice(
+              allGeneratedMeals.findIndex(m => m.day_of_week === day),
+              dayMeals.length
+            );
+            
+            // Decrementa dayIndex per rigenerare questo giorno
+            dayIndex--;
+            continue;
+          }
+          
+          console.log(`✅ ${day} VALIDATO: macros corretti per dieta ${dietType}`);
+      }
       }
 
       updateProgress(90, t('meals.savingIngredients'));
