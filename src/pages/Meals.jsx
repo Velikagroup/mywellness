@@ -1025,220 +1025,106 @@ STRICT RULES:
           const targetCals = mealCalorieDistribution[mealType];
           const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
 
-        const languageNames = {
-          it: 'Italian',
-          en: 'English', 
-          es: 'Spanish',
-          pt: 'Portuguese',
-          de: 'German',
-          fr: 'French'
-        };
-        const userLang = language || t('common.lang') || 'en';
-        const langName = languageNames[userLang] || 'English';
+          const languageNames = {
+            it: 'Italian',
+            en: 'English', 
+            es: 'Spanish',
+            pt: 'Portuguese',
+            de: 'German',
+            fr: 'French'
+          };
+          const userLang = language || t('common.lang') || 'en';
+          const langName = languageNames[userLang] || 'English';
 
-        // 🔥 GENERA CONTEXT PER VARIETÀ: ricorda cosa hai generato nei giorni precedenti
-        // Costruisci lista di tutti i pasti già generati con dettagli
-        const previousMealsDetailed = allGeneratedMeals.map(m => ({
-          day: m.day_of_week,
-          type: m.meal_type,
-          name: m.name,
-          mainProtein: m.ingredients?.find(i => 
-            /pollo|chicken|manzo|beef|maiale|pork|salmone|salmon|tonno|tuna|uova|egg|tofu|legumi|fagioli|lenticchie/i.test(i.name)
-          )?.name || 'unknown'
-        }));
-        
-        const usedDishes = [...new Set(allGeneratedMeals.map(m => m.name.toLowerCase()))];
-        const usedProteins = [...new Set(previousMealsDetailed.map(m => m.mainProtein.toLowerCase()))];
-        
-        const previousDaysContext = allGeneratedMeals.length > 0 ? `
+          // Context varietà per questo tipo di pasto
+          const sameMealTypePrevious = allGeneratedMeals.filter(m => m.meal_type === mealType);
+          const usedDishesForThisMeal = sameMealTypePrevious.map(m => m.name.toLowerCase());
+          
+          const varietyContext = sameMealTypePrevious.length > 0 ? `
+ALREADY USED ${getMealTypeLabel(mealType).toUpperCase()} DISHES THIS WEEK:
+${sameMealTypePrevious.map(m => `❌ ${m.day_of_week}: "${m.name}"`).join('\n')}
 
-🚨🚨🚨 CRITICAL: ABSOLUTE VARIETY ENFORCEMENT 🚨🚨🚨
+CRITICAL: Create a COMPLETELY DIFFERENT ${getMealTypeLabel(mealType)} - different ingredients, different cuisine, different style.
+` : `First ${getMealTypeLabel(mealType)} of the week - set a good variety foundation!`;
 
-ALREADY GENERATED MEALS (DO NOT REPEAT ANY OF THESE):
-${allGeneratedMeals.map(m => `❌ ${m.day_of_week.toUpperCase()} ${m.meal_type}: "${m.name}"`).join('\n')}
+          // Costruisci testo intolleranze
+          let intolerancesText = '';
+          if (generationPrefs.intolerances && generationPrefs.intolerances.length > 0) {
+            intolerancesText = `\n\n🚫 INTOLLERANZE (NO): ${generationPrefs.intolerances.map(i => intolerancesMap[i] || i.toUpperCase()).join(', ')}`;
+          }
+          if (generationPrefs.custom_intolerances && generationPrefs.custom_intolerances.trim()) {
+            intolerancesText += `\n🚫 User also avoids: "${generationPrefs.custom_intolerances}"`;
+          }
+          
+          const isSnack = mealType.includes('snack');
+          const preparationRules = isSnack 
+            ? 'ULTRA SIMPLE SNACK: ONLY ready-to-eat. NO cooking. Examples: yogurt+fruit, nuts, crackers+cheese.'
+            : 'SIMPLE ASSEMBLY ONLY: NO cooking. Examples: sandwiches, salads, cold plates with pre-cooked ingredients.';
 
-PROTEIN SOURCES ALREADY USED THIS WEEK:
-${usedProteins.map(p => `❌ ${p}`).join(', ')}
+          const singleMealPrompt = `Create ONE ${getMealTypeLabel(mealType)} in ${langName.toUpperCase()} for ${day}.
+${varietyContext}
 
-FOR ${day.toUpperCase()} YOU MUST:
-1. Use COMPLETELY DIFFERENT dish names - not similar, DIFFERENT
-2. Use DIFFERENT protein sources than: ${usedProteins.join(', ')}
-3. Use DIFFERENT cooking methods
-4. Explore DIFFERENT cuisines (if Monday was Italian, Tuesday should be Asian, etc.)
-
-BANNED DISH NAMES FOR TODAY:
-${usedDishes.slice(-15).map(d => `"${d}"`).join(', ')}
-
-` : `
-
-🚨🚨🚨 ABSOLUTE CRITICAL VARIETY REQUIREMENT 🚨🚨🚨
-
-THIS IS DAY 1 (${day.toUpperCase()}) - SET THE FOUNDATION FOR VARIETY!
-Create meals that will allow for maximum variety throughout the week.
-`;
-
-        // Definisci rotazione proteine e cucine per ogni giorno
-        const dayProteinMap = {
-          'monday': 'FISH (salmon, tuna, cod, sea bass)',
-          'tuesday': 'CHICKEN or TURKEY',
-          'wednesday': 'BEEF or VEAL',
-          'thursday': 'EGGS and DAIRY',
-          'friday': 'LEGUMES (lentils, chickpeas, beans) or TOFU',
-          'saturday': 'PORK or LAMB',
-          'sunday': 'MIXED (seafood, game, or premium cuts)'
-        };
-        
-        const dayCuisineMap = {
-          'monday': 'MEDITERRANEAN (Italian, Greek)',
-          'tuesday': 'ASIAN (Thai, Chinese, Japanese, Vietnamese)',
-          'wednesday': 'AMERICAN or BRITISH',
-          'thursday': 'MIDDLE EASTERN (Lebanese, Turkish, Moroccan)',
-          'friday': 'LATIN (Mexican, Spanish, Brazilian)',
-          'saturday': 'FRENCH or GERMAN',
-          'sunday': 'FUSION or INTERNATIONAL'
-        };
-        
-        const dayPrompt = `You are an expert nutritionist. Create a COMPLETE DAY of ${mealsPerDay} meals in ${langName.toUpperCase()} for ${day}.
-${previousDaysContext}
-
-🎯 MANDATORY REQUIREMENTS FOR ${day.toUpperCase()}:
-
-PRIMARY PROTEIN FOR TODAY: ${dayProteinMap[day] || 'VARIED'}
-CUISINE STYLE FOR TODAY: ${dayCuisineMap[day] || 'INTERNATIONAL'}
-
-VARIETY ENFORCEMENT RULES:
-1. TODAY'S PROTEIN: Use ${dayProteinMap[day] || 'varied proteins'} as main protein source
-2. TODAY'S CUISINE: Make dishes inspired by ${dayCuisineMap[day] || 'international'} cuisine
-3. COOKING METHODS: Vary between baked, grilled, stir-fried, steamed, raw
-4. ABSOLUTELY NO repeating dish names from previous days
-5. Each meal must feel FRESH and DIFFERENT
-
-🚨🚨🚨 CRITICAL PREPARATION RULES 🚨🚨🚨
-
-FOR SNACKS (snack1, snack2, snack3, snack4):
-- ONLY ready-to-eat foods that require NO cooking, NO heating, NO preparation
-- Examples: yogurt + fruit, crackers + cheese, nuts, protein bar, fruit, vegetables + hummus
-- FORBIDDEN: anything requiring a stove, oven, pan, or any cooking
-- ULTRA SIMPLE: just open packages and combine/eat directly
-
-FOR MAIN MEALS (breakfast, lunch, dinner):
-- ONLY foods that can be assembled or combined without cooking
-- Examples: sandwiches, salads, cold plates, wraps with pre-cooked ingredients
-- FORBIDDEN: recipes requiring cooking, heating, elaborate preparation
-- Keep it SIMPLE: combine ingredients that are ready or pre-cooked
-
-🛒 INGREDIENT SOURCING PRIORITY:
-- Use ONLY common supermarket ingredients (easy to find in any grocery store)
-- Examples: yogurt, bread, ham, cheese, canned tuna, pre-cooked chicken, eggs, milk, fruits, vegetables
-- FORBIDDEN: exotic ingredients, specialty items, hard-to-find products, gourmet ingredients
-- Think: "Can I buy this at a regular supermarket in 2 minutes?"
-
-CRITICAL INSTRUCTIONS:
-- Create EXACTLY ${mealsPerDay} meals
-- Each meal must have accurate nutritional data
-- Use ${langName.toUpperCase()} names for all ingredients, meals, and units
-- ${cookingTimeContext}
-- Diet: ${generationPrefs.diet_type}
-- Allowed foods: ${dietRules.allowed}
-- CRITICAL: For eggs ('uova'), ALWAYS use whole numbers (1, 2, 3, etc.), NEVER decimals like 1.47
+Target: ${targetCals} kcal
+Diet: ${generationPrefs.diet_type}
+Allowed: ${dietRules.allowed}
+${preparationRules}
+${isCheatMeal ? `\n🍕 CHEAT MEAL: User favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, burger'}. Can go +20% calories.` : ''}
+🛒 Use ONLY common supermarket ingredients.
+${cookingTimeContext}
 ${intolerancesText}
 ${pantryIngredientsPrompt}
 
-MEALS TO CREATE:
-${mealSpecs.map(spec => `
-${spec.label}:
-- Target: ${spec.target_calories} kcal
-${spec.is_cheat ? `- THIS IS A CHEAT MEAL: Make it delicious! User favorites: ${nutritionData.favorite_foods?.join(', ') || 'pizza, pasta, hamburger'}. Can go +20% calories.` : '- Follow diet rules strictly'}
-${spec.meal_type.includes('snack') ? '- ULTRA SIMPLE SNACK: only ready-to-eat foods, NO cooking at all' : '- SIMPLE ASSEMBLY: no cooking required, just combine ingredients'}
-`).join('\n')}
+CRITICAL: For eggs, use ONLY whole numbers (1, 2, 3), NEVER decimals.
+Use accurate nutritional data. All in ${langName.toUpperCase()}.`;
 
-User: ${nutritionData.age} anni, ${nutritionData.gender}, ${nutritionData.current_weight}kg → ${nutritionData.target_weight}kg
-
-Return a JSON with "${mealsPerDay} meals" array, each with exact structure as specified in schema.`;
-
-        let retryCount = 0;
-        const MAX_RETRIES = 3;
-        let dayResponse = null;
-        
-        while (retryCount < MAX_RETRIES && !dayResponse) {
-          try {
-            dayResponse = await base44.integrations.Core.InvokeLLM({
-              prompt: dayPrompt,
-              response_json_schema: {
-              type: "object",
-              properties: {
-                meals: {
-                  type: "array",
-                  minItems: mealsPerDay,
-                  maxItems: mealsPerDay,
-                  items: {
-                    type: "object",
-                    properties: {
-                      meal_type: { type: "string", enum: mealStructure },
-                      name: { type: "string" },
-                      ingredients: {
-                        type: "array",
-                        items: {
-                          type: "object",
-                          properties: {
-                            name: { type: "string" },
-                            quantity: { type: "number" },
-                            unit: { type: "string" },
-                            calories: { type: "number" },
-                            protein: { type: "number" },
-                            carbs: { type: "number" },
-                            fat: { type: "number" }
-                          },
-                          required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
-                        }
-                      },
-                      instructions: { type: "array", items: { type: "string" } },
-                      prep_time: { type: "number" },
-                      difficulty: { type: "string" }
+          let mealResponse = null;
+          let mealRetries = 0;
+          
+          while (mealRetries < 3 && !mealResponse) {
+            try {
+              mealResponse = await base44.integrations.Core.InvokeLLM({
+                prompt: singleMealPrompt,
+                response_json_schema: {
+                  type: "object",
+                  properties: {
+                    name: { type: "string" },
+                    ingredients: {
+                      type: "array",
+                      items: {
+                        type: "object",
+                        properties: {
+                          name: { type: "string" },
+                          quantity: { type: "number" },
+                          unit: { type: "string" },
+                          calories: { type: "number" },
+                          protein: { type: "number" },
+                          carbs: { type: "number" },
+                          fat: { type: "number" }
+                        },
+                        required: ["name", "quantity", "unit", "calories", "protein", "carbs", "fat"]
+                      }
                     },
-                    required: ["meal_type", "name", "ingredients", "instructions"]
-                  }
+                    instructions: { type: "array", items: { type: "string" } },
+                    prep_time: { type: "number" },
+                    difficulty: { type: "string" }
+                  },
+                  required: ["name", "ingredients", "instructions"]
                 }
-              },
-              required: ["meals"]
+              });
+            } catch (error) {
+              mealRetries++;
+              console.error(`❌ Errore generazione ${day} ${mealType} (tentativo ${mealRetries}/3):`, error);
+              if (mealRetries >= 3) {
+                throw new Error(`Impossibile generare ${mealType} per ${day}: ${error.message}`);
+              }
+              await new Promise(resolve => setTimeout(resolve, 1000 * mealRetries));
             }
-            });
-            
-            // Se arrivo qui, la chiamata è riuscita
-            console.log(`✅ LLM response per ${day}:`, dayResponse?.meals?.length, 'pasti');
-            break;
-          } catch (llmError) {
-            retryCount++;
-            console.error(`❌ Errore LLM per ${day} (tentativo ${retryCount}/${MAX_RETRIES}):`, llmError);
-            
-            if (retryCount >= MAX_RETRIES) {
-              console.error(`💥 GENERAZIONE FALLITA per ${day} dopo ${MAX_RETRIES} tentativi`);
-              alert(`Errore durante la generazione di ${day}. Riprova o contatta il supporto.`);
-              throw new Error(`Impossibile generare ${day} dopo ${MAX_RETRIES} tentativi: ${llmError.message}`);
-            }
-            
-            // Attendi prima di ritentare (backoff esponenziale)
-            const waitTime = 2000 * retryCount;
-            console.log(`⏳ Attendo ${waitTime}ms prima del retry...`);
-            await new Promise(resolve => setTimeout(resolve, waitTime));
-          }
-        }
-
-          if (!dayResponse?.meals || dayResponse.meals.length === 0) {
-            console.error(`❌ SKIP: Giorno ${day} non ha pasti`);
-            alert(`⚠️ Impossibile generare pasti per ${day}. Continuo con gli altri giorni...`);
-            continue;
           }
           
-          // ✅ Prendi solo i primi N pasti richiesti (in caso l'LLM ne generi di più)
-          const mealsToProcess = dayResponse.meals.slice(0, mealsPerDay);
-          console.log(`📦 ${day}: ricevuti ${dayResponse.meals.length} pasti, processo ${mealsToProcess.length}`);
-
-          // Processa ogni pasto del giorno
-          for (const mealData of mealsToProcess) {
-            const mealType = mealData.meal_type;
-            const targetCals = mealCalorieDistribution[mealType];
-            const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
+          if (!mealResponse || !mealResponse.ingredients || !Array.isArray(mealResponse.ingredients)) {
+            console.error(`❌ ${day} ${mealType}: risposta LLM non valida`, mealResponse);
+            continue;
+          }
             
             // ✅ MATCH ingredienti con dispensa + NORMALIZZA NOMI
             const normalizedIngredients = new Map();
