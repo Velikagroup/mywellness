@@ -1,9 +1,8 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.3';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
 
 Deno.serve(async (req) => {
-    console.log('📧 sendTestEmailDirect - Start');
-    
     try {
+        const base44 = createClientFromRequest(req);
         const body = await req.json();
         const { to, subject, html } = body;
 
@@ -11,9 +10,7 @@ Deno.serve(async (req) => {
             return Response.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        const base44 = createClientFromRequest(req);
-        
-        console.log(`📬 Sending email to ${to}`);
+        console.log(`📬 Sending test email to ${to}`);
 
         const result = await base44.asServiceRole.integrations.Core.SendEmail({
             to: to,
@@ -21,15 +18,16 @@ Deno.serve(async (req) => {
             body: html
         });
 
-        console.log('✅ Email sent via Base44:', result);
+        console.log('✅ Email sent via Base44 Core');
 
         return Response.json({ 
             success: true,
-            message: 'Email sent successfully'
+            message: 'Email sent successfully',
+            messageId: result?.message_id
         });
 
     } catch (error) {
-        console.error('❌ Error:', error);
+        console.error('❌ Error:', error.message);
         return Response.json({ 
             error: error.message 
         }, { status: 500 });
