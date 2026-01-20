@@ -1390,66 +1390,36 @@ Return a JSON with "${mealsPerDay} meals" array, each with exact structure as sp
           
           console.log(`📊 ${day} PRIMA del bilanciamento: ${dayTotalCals} kcal (target: ${dailyCalories}, gap: ${dayGap})`);
           
-          // Se gap > 50 kcal, bilancia TUTTI i pasti del giorno
-          if (Math.abs(dayGap) > 50) {
-            console.log(`🔧 Bilanciamento ${day}: gap ${dayGap} kcal`);
+          // Se gap > 10 kcal, bilancia TUTTI i pasti del giorno
+          if (Math.abs(dayGap) > 10) {
+            console.log(`🔧 INIZIO Bilanciamento ${day}: gap ${dayGap} kcal`);
             
-            let iteration = 0;
-            const MAX_ITERATIONS = 10;
+            // Scala proporzionale semplice
+            const scaleFactor = dailyCalories / dayTotalCals;
+            console.log(`🔧 Fattore scala: ${scaleFactor.toFixed(6)}`);
             
-            while (iteration < MAX_ITERATIONS) {
-              const currentTotal = dayMeals.reduce((sum, m) => sum + m.total_calories, 0);
-              const gap = dailyCalories - currentTotal;
+            // Scala TUTTI gli ingredienti di TUTTI i pasti del giorno
+            dayMeals.forEach(meal => {
+              meal.ingredients = meal.ingredients.map(ing => ({
+                ...ing,
+                quantity: Math.max(1, Math.round(ing.quantity * scaleFactor)),
+                calories: Math.round(ing.calories * scaleFactor),
+                protein: Math.round(ing.protein * scaleFactor * 10) / 10,
+                carbs: Math.round(ing.carbs * scaleFactor * 10) / 10,
+                fat: Math.round(ing.fat * scaleFactor * 10) / 10
+              }));
               
-              if (Math.abs(gap) <= 10) {
-                console.log(`✅ ${day} bilanciato in ${iteration} iterazioni: ${currentTotal} kcal`);
-                break;
-              }
-              
-              const scaleFactor = dailyCalories / currentTotal;
-              console.log(`🔧 ${day} iterazione ${iteration + 1}: scala x${scaleFactor.toFixed(4)} (gap: ${gap})`);
-              
-              // Scala TUTTI gli ingredienti di TUTTI i pasti del giorno
-              dayMeals.forEach(meal => {
-                meal.ingredients = meal.ingredients.map(ing => {
-                  const newQty = ing.quantity * scaleFactor;
-                  
-                  // Arrotonda (min 1)
-                  ing.quantity = ing.unit === 'uova' 
-                    ? Math.max(1, Math.round(newQty))
-                    : Math.max(1, Math.round(newQty));
-                  
-                  // Ricalcola macros
-                  const isEgg = ing.unit === 'uova';
-                  const factor = isEgg ? (ing.quantity / 2) : (ing.quantity / 100);
-                  
-                  // Assumo che ogni ingrediente abbia nutritionData salvata (da validazione precedente)
-                  // Se non c'è, uso i valori correnti come base
-                  const baseCal = isEgg ? 140 : (ing.calories / (ing.quantity / 100));
-                  const baseProt = isEgg ? 12 : (ing.protein / (ing.quantity / 100));
-                  const baseCarbs = isEgg ? 1 : (ing.carbs / (ing.quantity / 100));
-                  const baseFat = isEgg ? 10 : (ing.fat / (ing.quantity / 100));
-                  
-                  ing.calories = Math.round(baseCal * factor);
-                  ing.protein = Math.round(baseProt * factor * 10) / 10;
-                  ing.carbs = Math.round(baseCarbs * factor * 10) / 10;
-                  ing.fat = Math.round(baseFat * factor * 10) / 10;
-                  
-                  return ing;
-                });
-                
-                // Ricalcola totali pasto
-                meal.total_calories = Math.round(meal.ingredients.reduce((s, i) => s + i.calories, 0));
-                meal.total_protein = Math.round(meal.ingredients.reduce((s, i) => s + i.protein, 0) * 10) / 10;
-                meal.total_carbs = Math.round(meal.ingredients.reduce((s, i) => s + i.carbs, 0) * 10) / 10;
-                meal.total_fat = Math.round(meal.ingredients.reduce((s, i) => s + i.fat, 0) * 10) / 10;
-              });
-              
-              iteration++;
-            }
+              // Ricalcola totali pasto
+              meal.total_calories = Math.round(meal.ingredients.reduce((s, i) => s + i.calories, 0));
+              meal.total_protein = Math.round(meal.ingredients.reduce((s, i) => s + i.protein, 0) * 10) / 10;
+              meal.total_carbs = Math.round(meal.ingredients.reduce((s, i) => s + i.carbs, 0) * 10) / 10;
+              meal.total_fat = Math.round(meal.ingredients.reduce((s, i) => s + i.fat, 0) * 10) / 10;
+            });
             
             const finalDayTotal = dayMeals.reduce((sum, m) => sum + m.total_calories, 0);
-            console.log(`✅ ${day} FINALE: ${finalDayTotal} kcal (scarto: ${Math.abs(finalDayTotal - dailyCalories)})`);
+            console.log(`✅ ${day} DOPO bilanciamento: ${finalDayTotal} kcal (scarto: ${Math.abs(finalDayTotal - dailyCalories)})`);
+          } else {
+            console.log(`✅ ${day} già bilanciato: ${dayTotalCals} kcal (gap: ${dayGap})`);
           }
       }
 
