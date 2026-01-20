@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
         console.log(`📬 Sending test email to ${to}`);
 
         // Usa Base44 Core SendEmail
-        const result = await base44.asServiceRole.integrations.Core.SendEmail({
+        const result = await base44.integrations.Core.SendEmail({
             to: to,
             subject: subject,
             body: html
