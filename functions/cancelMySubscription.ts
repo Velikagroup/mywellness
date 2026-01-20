@@ -14,6 +14,10 @@ Deno.serve(async (req) => {
 
         console.log(`✅ User ${user.email} requesting to cancel own subscription`);
 
+        // Estrai dati di feedback dal body
+        const body = await req.json();
+        const { cancellation_reason, additional_details, would_recommend, days_used } = body;
+
         if (!user.stripe_subscription_id) {
             return Response.json({ 
                 success: false, 
