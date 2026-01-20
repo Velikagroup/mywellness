@@ -439,25 +439,12 @@ Be concise but detailed (max 200 words).`,
     try {
       const accountAge = Math.floor((new Date() - new Date(user.created_date)) / (1000 * 60 * 60 * 24));
 
-      console.log('🔍 Creating feedback with:', {
-        user_id: user.id,
-        user_email: user.email,
-        user_plan: user.subscription_plan,
-        cancellation_reason: cancellationReason,
-        would_recommend: wouldRecommend
-      });
-
-      await base44.entities.CancellationFeedback.create({
-        user_id: user.id,
-        user_email: user.email,
-        user_plan: user.subscription_plan,
+      const response = await base44.functions.invoke('cancelMySubscription', {
         cancellation_reason: cancellationReason,
         additional_details: cancellationDetails || null,
         would_recommend: wouldRecommend,
         days_used: accountAge
       });
-
-      const response = await base44.functions.invoke('cancelMySubscription');
       const data = response.data || response;
 
       if (data.success) {
