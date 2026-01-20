@@ -1011,24 +1011,10 @@ STRICT RULES:
 
       const allGeneratedMeals = [];
       
-      // ✅ OTTIMIZZAZIONE: genera tutti i pasti di un giorno in UNA SOLA chiamata LLM
-      // Invece di 35 chiamate (5 pasti × 7 giorni), ne facciamo solo 7!
+      // ✅ GENERA UN PASTO ALLA VOLTA per maggiore affidabilità
       for (let dayIndex = 0; dayIndex < daysToGenerate.length; dayIndex++) {
         const day = daysToGenerate[dayIndex];
-        const progress = 20 + Math.round((dayIndex / daysToGenerate.length) * 70);
         const dayLabel = t(`meals.${day}`);
-        updateProgress(progress, t('meals.generatingDay').replace('{day}', dayLabel).replace('{current}', dayIndex + 1).replace('{total}', daysToGenerate.length));
-        
-        // Costruisci le specifiche per ogni pasto del giorno
-        const mealSpecs = mealStructure.map(mealType => {
-          const isCheatMeal = cheatMeals.some(cm => cm.day === day && cm.meal_type === mealType);
-          return {
-            meal_type: mealType,
-            label: getMealTypeLabel(mealType),
-            target_calories: mealCalorieDistribution[mealType],
-            is_cheat: isCheatMeal
-          };
-        });
         
         // Costruisci testo intolleranze
         const intolerancesMap = {
