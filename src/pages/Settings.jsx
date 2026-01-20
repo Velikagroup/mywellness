@@ -439,6 +439,14 @@ Be concise but detailed (max 200 words).`,
     try {
       const accountAge = Math.floor((new Date() - new Date(user.created_date)) / (1000 * 60 * 60 * 24));
 
+      console.log('🔍 Creating feedback with:', {
+        user_id: user.id,
+        user_email: user.email,
+        user_plan: user.subscription_plan,
+        cancellation_reason: cancellationReason,
+        would_recommend: wouldRecommend
+      });
+
       await base44.entities.CancellationFeedback.create({
         user_id: user.id,
         user_email: user.email,
