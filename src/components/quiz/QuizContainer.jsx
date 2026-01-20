@@ -231,7 +231,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        if (isRecapMode && currentUser) {
+        if ((isRecapMode || isRecalibrateFlow) && currentUser) {
           // ✅ Modalità ricalibrazione: pulisci localStorage e parti da zero
           localStorage.removeItem(`quizData_${language}`);
           setQuizData({ gender: currentUser.gender || '' });
