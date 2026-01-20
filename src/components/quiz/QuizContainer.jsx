@@ -91,6 +91,14 @@ export default function QuizContainer({ translations, language = 'it' }) {
   const urlStep = parseInt(urlParams.get('step')) || 0;
   const isRecapMode = urlParams.get('mode') === 'recap';
   const isRecalibrateFlow = urlParams.get('from') === 'dashboard';
+  
+  console.log('🔍 Quiz URL Params:', {
+    from: urlParams.get('from'),
+    mode: urlParams.get('mode'),
+    isRecalibrateFlow,
+    isRecapMode,
+    fullURL: window.location.search
+  });
 
   const [currentStep, setCurrentStep] = useState(urlStep);
   const [quizData, setQuizData] = useState(() => {
