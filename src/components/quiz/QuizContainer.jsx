@@ -330,7 +330,14 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (currentStep < dynamicSteps.length - 1) {
       const newStep = currentStep + 1;
       setCurrentStep(newStep);
-      window.history.pushState({}, '', `?step=${newStep}`);
+      
+      // Preserva il parametro from=dashboard se presente
+      const searchParams = new URLSearchParams();
+      searchParams.set('step', newStep);
+      if (isRecalibrateFlow) {
+        searchParams.set('from', 'dashboard');
+      }
+      window.history.pushState({}, '', `?${searchParams.toString()}`);
     } else {
       const trackQuizCompleted = async () => {
         try {
@@ -387,7 +394,14 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (currentStep > 0) {
       const newStep = currentStep - 1;
       setCurrentStep(newStep);
-      window.history.pushState({}, '', `?step=${newStep}`);
+      
+      // Preserva il parametro from=dashboard se presente
+      const searchParams = new URLSearchParams();
+      searchParams.set('step', newStep);
+      if (isRecalibrateFlow) {
+        searchParams.set('from', 'dashboard');
+      }
+      window.history.pushState({}, '', `?${searchParams.toString()}`);
     }
   };
 
