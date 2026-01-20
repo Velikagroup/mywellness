@@ -44,7 +44,8 @@ Deno.serve(async (req) => {
 
         console.log('💾 Updating user record...');
         await base44.asServiceRole.entities.User.update(user.id, {
-            cancellation_at_period_end: true
+            cancellation_at_period_end: true,
+            subscription_period_end: new Date(subscription.current_period_end * 1000).toISOString()
         });
 
         // Salva feedback cancellazione

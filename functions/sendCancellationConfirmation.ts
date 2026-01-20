@@ -24,7 +24,7 @@ Deno.serve(async (req) => {
         
         const expiryDate = user.subscription_period_end 
             ? new Date(user.subscription_period_end).toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })
-            : 'non disponibile';
+            : new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' });
 
         // Usa sendEmailUnified
         await base44.asServiceRole.functions.invoke('sendEmailUnified', {
