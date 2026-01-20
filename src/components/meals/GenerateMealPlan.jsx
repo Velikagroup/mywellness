@@ -78,6 +78,13 @@ export default function GenerateMealPlan({ user, onComplete }) {
       // 🔄 Fetch dati utente aggiornati
       const { User } = await import('@/entities/User');
       const currentUser = await User.get(user.id);
+      
+      console.log('📊 USER DATA:', {
+        bmr: currentUser.bmr,
+        daily_calorie_target: currentUser.daily_calorie_target,
+        daily_calories: currentUser.daily_calories
+      });
+      
       const dailyCalories = currentUser.daily_calorie_target;
 
       if (!dailyCalories) {
@@ -86,7 +93,7 @@ export default function GenerateMealPlan({ user, onComplete }) {
         return;
       }
 
-      console.log(`🎯 Target giornaliero: ${dailyCalories} kcal`);
+      console.log(`🎯 Target giornaliero CONFERMATO: ${dailyCalories} kcal (BMR: ${currentUser.bmr})`);
       
       const existingMeals = await MealPlan.filter({ user_id: user.id });
       await Promise.all(existingMeals.map(meal => MealPlan.delete(meal.id)));
