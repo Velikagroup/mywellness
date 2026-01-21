@@ -398,59 +398,53 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
            </div>
          </div>
 
-         {/* Stats Cards Row - Minimal Style */}
-         <div className="grid grid-cols-3 gap-4 md:gap-8 mb-8">
-           <div className="flex items-start justify-between group">
-             <div>
-               <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{t('dashboard.targetCalories')}</p>
-               <div className="flex items-baseline gap-2">
-                 <p className="text-3xl font-bold text-gray-900">{user.daily_calories || 2000}</p>
-                 <span className="text-sm font-medium text-gray-500">kcal</span>
-               </div>
+         {/* Stats Row - Ultra Minimal */}
+         <div className="flex flex-row gap-6 md:gap-12 mb-8 py-4">
+           <div className="flex flex-col group">
+             <span className="text-xs font-medium text-gray-500 mb-1.5">{t('dashboard.targetCalories')}</span>
+             <div className="flex items-baseline gap-1.5">
+               <span className="text-2xl font-bold text-gray-900">{user.daily_calories || 2000}</span>
+               <span className="text-xs text-gray-400">kcal</span>
              </div>
              {onEditCalories && (
                <button
                  onClick={onEditCalories}
-                 className="p-2 text-gray-400 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all"
-                 title="Modifica Target Calorico"
+                 className="mt-1 text-gray-300 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all w-fit"
+                 title="Modifica"
                >
-                 <Edit3 className="w-4 h-4" />
+                 <Edit3 className="w-3.5 h-3.5" />
                </button>
              )}
            </div>
-           <div className="flex items-start justify-between group">
-             <div>
-               <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{t('dashboard.bmr')}</p>
-               <div className="flex items-baseline gap-2">
-                 <p className="text-3xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</p>
-                 <span className="text-sm font-medium text-gray-500">kcal</span>
-               </div>
+           <div className="flex flex-col group">
+             <span className="text-xs font-medium text-gray-500 mb-1.5">{t('dashboard.bmr')}</span>
+             <div className="flex items-baseline gap-1.5">
+               <span className="text-2xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</span>
+               <span className="text-xs text-gray-400">kcal</span>
              </div>
              {onEditBMR && (
                <button
                  onClick={onEditBMR}
-                 className="p-2 text-gray-400 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all"
-                 title="Modifica BMR"
+                 className="mt-1 text-gray-300 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all w-fit"
+                 title="Modifica"
                >
-                 <Edit3 className="w-4 h-4" />
+                 <Edit3 className="w-3.5 h-3.5" />
                </button>
              )}
            </div>
-           <div className="flex items-start justify-between group">
-             <div>
-               <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{t('dashboard.bodyFat')}</p>
-               <div className="flex items-baseline gap-2">
-                 <p className="text-3xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</p>
-                 <span className="text-sm font-medium text-gray-500">%</span>
-               </div>
+           <div className="flex flex-col group">
+             <span className="text-xs font-medium text-gray-500 mb-1.5">{t('dashboard.bodyFat')}</span>
+             <div className="flex items-baseline gap-1.5">
+               <span className="text-2xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</span>
+               <span className="text-xs text-gray-400">%</span>
              </div>
              {onEditBodyFat && (
                <button
                  onClick={onEditBodyFat}
-                 className="p-2 text-gray-400 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all"
-                 title="Modifica Massa Grassa"
+                 className="mt-1 text-gray-300 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all w-fit"
+                 title="Modifica"
                >
-                 <Edit3 className="w-4 h-4" />
+                 <Edit3 className="w-3.5 h-3.5" />
                </button>
              )}
            </div>
