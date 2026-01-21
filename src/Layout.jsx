@@ -426,6 +426,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           </div>
           </div>
           </div>
+
+          <button
+          onClick={() => setShowActionMenu(true)}
+          className="w-14 h-14 rounded-full bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 flex-shrink-0"
+          title="Quick Actions"
+          >
+          <Plus className="w-6 h-6" />
+          </button>
           </div>
           );
           }
