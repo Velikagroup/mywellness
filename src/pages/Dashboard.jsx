@@ -713,6 +713,12 @@ export default function Dashboard() {
                   weightHistory={weightHistory} 
                   onWeightLogged={loadUserData}
                   isMobile={isMobile}
+                  onEditBMR={handleOpenEditBMR}
+                  onEditBodyFat={handleOpenEditBodyFat}
+                  onEditCalories={handleOpenEditCalories}
+                  isSavingBMR={isSavingBMR}
+                  isSavingBodyFat={isSavingBodyFat}
+                  isSavingCalories={isSavingCalories}
                 />
               </div>
               
