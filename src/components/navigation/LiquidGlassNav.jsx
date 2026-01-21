@@ -62,7 +62,7 @@ export default function LiquidGlassNav({ navItems }) {
   }, [isDragging, dragStartX, dragOffset, selectedIndex, navItems.length]);
 
   const itemWidth = 100 / navItems.length;
-  const selectorPosition = selectedIndex * itemWidth + (dragOffset / (containerRef.current?.offsetWidth || 1)) * itemWidth * 100;
+  const selectorPosition = selectedIndex * itemWidth + (dragOffset / (containerRef.current?.offsetWidth || 1)) * 100;
 
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4">
