@@ -448,9 +448,54 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </LineChart>
             </ResponsiveContainer>
           </div>
-        </div>
 
-        {/* Bilancio Calorie Oggi */}
+          {/* Dati sotto il grafico */}
+          <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-gray-200/50">
+          {/* Target Calorie */}
+          <div className="relative group cursor-pointer">
+            <div className="flex flex-col items-center" onClick={onEditCalories}>
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-100 to-orange-50 border-2 border-orange-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
+                <Zap className="w-6 h-6 text-orange-600" />
+              </div>
+              <p className="text-sm font-bold text-orange-700 mt-2">{user.daily_calories || 2000}</p>
+              <p className="text-xs text-gray-500">kcal</p>
+            </div>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              {t('dashboard.targetCalories')}
+            </div>
+          </div>
+
+          {/* BMR */}
+          <div className="relative group cursor-pointer">
+            <div className="flex flex-col items-center" onClick={onEditBMR}>
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border-2 border-blue-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
+                <Heart className="w-6 h-6 text-blue-600" />
+              </div>
+              <p className="text-sm font-bold text-blue-700 mt-2">{Math.round(user.bmr || 1500)}</p>
+              <p className="text-xs text-gray-500">kcal</p>
+            </div>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              {t('dashboard.bmr')}
+            </div>
+          </div>
+
+          {/* Body Fat */}
+          <div className="relative group cursor-pointer">
+            <div className="flex flex-col items-center" onClick={onEditBodyFat}>
+              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-100 to-pink-50 border-2 border-pink-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
+                <Droplet className="w-6 h-6 text-pink-600" />
+              </div>
+              <p className="text-sm font-bold text-pink-700 mt-2">{(user.body_fat_percentage || 0).toFixed(1)}</p>
+              <p className="text-xs text-gray-500">%</p>
+            </div>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              {t('dashboard.bodyFat')}
+            </div>
+          </div>
+          </div>
+          </div>
+
+          {/* Bilancio Calorie Oggi */}
         <div className="mt-6">
           <CalorieBalanceChart user={user} />
         </div>
