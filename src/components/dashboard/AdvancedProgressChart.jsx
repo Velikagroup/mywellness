@@ -396,9 +396,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                </div>
              </div>
            </div>
+      </div>
 
-
-        <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+      <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
           <div className="flex items-center justify-between mb-6">
             <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
             <div className="flex items-center gap-4">
