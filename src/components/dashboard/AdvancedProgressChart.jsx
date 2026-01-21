@@ -64,7 +64,7 @@ const calculateNEAT = (userData) => {
   return bmr * multiplier;
 };
 
-export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false }) {
+export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, isSavingBMR, isSavingBodyFat, isSavingCalories }) {
   const { t } = useLanguage();
   const [weight, setWeight] = useState('');
   const [isSaving, setIsSaving] = useState(false);
