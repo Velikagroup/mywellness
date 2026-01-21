@@ -429,10 +429,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
       <button
         onClick={() => setShowActionMenu(true)}
-        className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 w-14 h-14 rounded-full bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-xl flex items-center justify-center transition-all hover:scale-110"
+        className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 w-16 h-16 rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold"
+        style={{
+          boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)'
+        }}
         title="Quick Actions"
       >
-        <Plus className="w-6 h-6" />
+        <Plus className="w-7 h-7" strokeWidth={3} />
       </button>
     </div>
   );
