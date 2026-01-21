@@ -370,7 +370,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             className="fixed inset-0 z-40 bg-black/10 backdrop-blur-xs" 
             onClick={() => setShowActionMenu(false)} 
           />
-          <div className="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-50 action-menu-drawer">
+          <div className="fixed bottom-48 left-1/2 transform -translate-x-1/2 z-50 action-menu-drawer">
             <div className="water-glass-effect rounded-2xl p-3 w-56 shadow-2xl" style={{
               boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)'
             }}>
