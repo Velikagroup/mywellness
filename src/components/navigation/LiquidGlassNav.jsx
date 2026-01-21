@@ -65,10 +65,10 @@ export default function LiquidGlassNav({ navItems }) {
   const selectorPosition = selectedIndex * itemWidth + (dragOffset / (containerRef.current?.offsetWidth || 1)) * itemWidth * 100;
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
       <div
         ref={containerRef}
-        className="water-glass-effect rounded-3xl relative py-3 px-2"
+        className="water-glass-effect rounded-3xl relative py-3 px-4 inline-flex"
         onMouseDown={handleMouseDown}
         style={{ userSelect: 'none', cursor: isDragging ? 'grabbing' : 'grab' }}
       >
