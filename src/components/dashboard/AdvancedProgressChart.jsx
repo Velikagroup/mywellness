@@ -399,7 +399,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
          </div>
 
          {/* Stats Cards Row - Minimal Style */}
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+         <div className="grid grid-cols-3 gap-4 md:gap-8 mb-8">
            <div className="flex items-start justify-between group">
              <div>
                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{t('dashboard.targetCalories')}</p>
