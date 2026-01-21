@@ -1,5 +1,5 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { Card, CardContent } from "@/components/ui/card";
+
 import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
