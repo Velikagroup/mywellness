@@ -47,8 +47,8 @@ Deno.serve(async (req) => {
 
         const template = templates[0];
         
-        // Invia email tramite funzione unificata
-        const response = await base44.functions.invoke('sendEmailUnified', {
+        // Invia email tramite funzione unificata (service role perché non c'è utente autenticato)
+        const response = await base44.asServiceRole.functions.invoke('sendEmailUnified', {
             userId: userId,
             userEmail: userEmail,
             templateId: templateId,
