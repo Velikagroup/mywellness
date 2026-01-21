@@ -320,18 +320,29 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         <div className="water-glass-effect rounded-3xl py-3 px-2">
           <div className="hidden sm:flex items-center justify-around">
             {allNavItems.map((item) => (
-              <Link
-                key={item.name}
-                to={createPageUrl(item.path)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] ${
-                  location.pathname === createPageUrl(item.path)
-                    ? 'text-[#26847F] bg-[#e9f6f5]'
-                    : 'text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]'
-                }`}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="text-xs font-medium">{item.name}</span>
-              </Link>
+              item.isAction ? (
+                <button
+                  key={item.name}
+                  onClick={() => handleActionClick(item.action)}
+                  className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-xs font-medium">{item.name}</span>
+                </button>
+              ) : (
+                <Link
+                  key={item.name}
+                  to={createPageUrl(item.path)}
+                  className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors min-w-[70px] ${
+                    location.pathname === createPageUrl(item.path)
+                      ? 'text-[#26847F] bg-[#e9f6f5]'
+                      : 'text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-xs font-medium">{item.name}</span>
+                </Link>
+              )
             ))}
           </div>
 
