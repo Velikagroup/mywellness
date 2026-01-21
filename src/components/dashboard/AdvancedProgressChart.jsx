@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Card, CardContent } from "@/components/ui/card";
-import { TrendingDown, TrendingUp, Scale, Save, RefreshCw } from "lucide-react";
+import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3 } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell } from 'recharts';
@@ -11,6 +11,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from '../i18n/LanguageContext';
 import CalorieBalanceChart from './CalorieBalanceChart';
+import TechnicalStatsCard from './TechnicalStatsCard';
 
 const KCAL_PER_KG = 7700;
 
