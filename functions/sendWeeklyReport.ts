@@ -14,12 +14,8 @@ Deno.serve(async (req) => {
         //     return Response.json({ error: 'Unauthorized' }, { status: 401 });
         // }
 
-        const today = new Date();
-        const oneWeekAgo = new Date(today);
-        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-        console.log(`📅 Generating weekly reports from ${oneWeekAgo.toISOString().split('T')[0]} to ${today.toISOString().split('T')[0]}`);
-
+        const now = new Date();
+        
         // Recupera tutti gli utenti attivi
         const allUsers = await base44.asServiceRole.entities.User.list();
         const activeUsers = allUsers.filter(u => 
@@ -27,12 +23,41 @@ Deno.serve(async (req) => {
             u.quiz_completed === true
         );
 
-        console.log(`👥 Found ${activeUsers.length} active users to send reports`);
+        console.log(`👥 Found ${activeUsers.length} active users total`);
+
+        // Filtra solo utenti per cui è lunedì mezzanotte nel loro timezone
+        const usersToEmail = [];
+        
+        for (const user of activeUsers) {
+            const userTimezone = user.timezone || 'Europe/Rome';
+            
+            try {
+                // Calcola che ore sono nel timezone dell'utente
+                const userNow = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
+                const userHour = userNow.getHours();
+                const userDay = userNow.getDay(); // 0=Sunday, 1=Monday, etc.
+                
+                // Controlla se è lunedì (1) e se è tra mezzanotte e 1am
+                if (userDay === 1 && userHour === 0) {
+                    usersToEmail.push(user);
+                    console.log(`✅ User ${user.email} (${userTimezone}): is Monday midnight - will send`);
+                }
+            } catch (error) {
+                console.error(`⚠️ Invalid timezone for user ${user.email}: ${userTimezone}`, error.message);
+            }
+        }
+
+        console.log(`📧 Sending weekly reports to ${usersToEmail.length} users (Monday midnight in their timezone)`);
 
         let sentCount = 0;
         const results = [];
+        
+        // Calcola periodo settimanale (ultimi 7 giorni)
+        const today = new Date();
+        const oneWeekAgo = new Date(today);
+        oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-        for (const user of activeUsers) {
+        for (const user of usersToEmail) {
             try {
                 // Rileva lingua utente
                 const userLanguage = user.preferred_language || 'it';
@@ -125,12 +150,13 @@ Deno.serve(async (req) => {
             }
         }
 
-        console.log(`🎉 Weekly reports sent: ${sentCount}/${activeUsers.length}`);
+        console.log(`🎉 Weekly reports sent: ${sentCount}/${usersToEmail.length} (total active users: ${activeUsers.length})`);
 
         return Response.json({
             success: true,
             sent_count: sentCount,
-            total_users: activeUsers.length,
+            eligible_users: usersToEmail.length,
+            total_active_users: activeUsers.length,
             results: results
         });
 
