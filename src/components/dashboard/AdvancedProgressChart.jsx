@@ -398,53 +398,56 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
            </div>
          </div>
 
-         {/* Stats Cards Row */}
-         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-           <div className="relative">
-             <TechnicalStatsCard
-               title={t('dashboard.targetCalories')}
-               value={user.daily_calories || 2000}
-               unit="kcal"
-               icon={Activity}
-             />
+         {/* Stats Cards Row - Minimal Style */}
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
+           <div className="flex items-start justify-between group">
+             <div>
+               <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{t('dashboard.targetCalories')}</p>
+               <div className="flex items-baseline gap-2">
+                 <p className="text-3xl font-bold text-gray-900">{user.daily_calories || 2000}</p>
+                 <span className="text-sm font-medium text-gray-500">kcal</span>
+               </div>
+             </div>
              {onEditCalories && (
                <button
                  onClick={onEditCalories}
-                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
+                 className="p-2 text-gray-400 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all"
                  title="Modifica Target Calorico"
                >
                  <Edit3 className="w-4 h-4" />
                </button>
              )}
            </div>
-           <div className="relative">
-             <TechnicalStatsCard
-               title={t('dashboard.bmr')}
-               value={Math.round(user.bmr || 1500)}
-               unit="kcal"
-               icon={TrendingUp}
-             />
+           <div className="flex items-start justify-between group">
+             <div>
+               <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{t('dashboard.bmr')}</p>
+               <div className="flex items-baseline gap-2">
+                 <p className="text-3xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</p>
+                 <span className="text-sm font-medium text-gray-500">kcal</span>
+               </div>
+             </div>
              {onEditBMR && (
                <button
                  onClick={onEditBMR}
-                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
+                 className="p-2 text-gray-400 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all"
                  title="Modifica BMR"
                >
                  <Edit3 className="w-4 h-4" />
                </button>
              )}
            </div>
-           <div className="relative">
-             <TechnicalStatsCard
-               title={t('dashboard.bodyFat')}
-               value={user.body_fat_percentage || 0}
-               unit="%"
-               icon={BarChart3}
-             />
+           <div className="flex items-start justify-between group">
+             <div>
+               <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">{t('dashboard.bodyFat')}</p>
+               <div className="flex items-baseline gap-2">
+                 <p className="text-3xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</p>
+                 <span className="text-sm font-medium text-gray-500">%</span>
+               </div>
+             </div>
              {onEditBodyFat && (
                <button
                  onClick={onEditBodyFat}
-                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
+                 className="p-2 text-gray-400 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all"
                  title="Modifica Massa Grassa"
                >
                  <Edit3 className="w-4 h-4" />
