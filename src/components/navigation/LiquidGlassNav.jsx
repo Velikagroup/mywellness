@@ -64,36 +64,44 @@ export default function LiquidGlassNav({ navItems }) {
   const itemWidth = 100 / navItems.length;
   const selectorPosition = selectedIndex * itemWidth + (dragOffset / (containerRef.current?.offsetWidth || 1)) * itemWidth * 100;
 
+  const mainItems = navItems.filter(item => !item.isAdminOnly);
+  const adminItems = navItems.filter(item => item.isAdminOnly);
+  const [showAdminMenu, setShowAdminMenu] = React.useState(false);
+
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4">
+    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
       <div
         ref={containerRef}
         className="water-glass-effect rounded-3xl relative py-3 px-2"
         onMouseDown={handleMouseDown}
-        style={{ userSelect: 'none', cursor: isDragging ? 'grabbing' : 'grab' }}
+        style={{ userSelect: 'none', cursor: isDragging ? 'grabbing' : 'grab', width: 'auto' }}
       >
         {/* Selettore liquido */}
-        <div
-          className="absolute top-1.5 bottom-1.5 rounded-2xl"
-          style={{
-            left: `${selectorPosition}%`,
-            width: `${itemWidth}%`,
-            transform: 'translateX(0)',
-            transition: isDragging ? 'none' : 'left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            boxShadow: '0 6px 20px rgba(38, 132, 127, 0.25)',
-          }}
-        />
+        {mainItems.length > 0 && (
+          <div
+            className="absolute top-1.5 bottom-1.5 rounded-2xl"
+            style={{
+              left: `${selectorPosition}%`,
+              width: `${itemWidth}%`,
+              transform: 'translateX(0)',
+              transition: isDragging ? 'none' : 'left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+              boxShadow: '0 6px 20px rgba(38, 132, 127, 0.25)',
+            }}
+          />
+        )}
 
         {/* Elementi nav */}
-        <div className="relative flex items-center justify-around z-10">
-          {navItems.map((item, index) => {
+        <div className="relative flex items-center justify-center z-10 gap-1">
+          {mainItems.map((item, index) => {
             const isSelected = selectedIndex === index;
             return (
               <Link
                 key={item.name}
                 to={createPageUrl(item.path)}
                 onClick={() => setSelectedIndex(index)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors min-w-[70px] pointer-events-auto ${
+                className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors min-w-max pointer-events-auto ${
                   isSelected ? 'text-[#26847F]' : 'text-gray-400 hover:text-[#26847F]'
                 }`}
                 style={{ cursor: 'pointer' }}
@@ -103,6 +111,38 @@ export default function LiquidGlassNav({ navItems }) {
               </Link>
             );
           })}
+
+          {adminItems.length > 0 && (
+            <div className="relative">
+              <button
+                onClick={() => setShowAdminMenu(!showAdminMenu)}
+                className="flex flex-col items-center gap-1 p-2 rounded-xl transition-colors text-gray-400 hover:text-[#26847F] pointer-events-auto"
+                style={{ cursor: 'pointer' }}
+              >
+                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path d="M3 5a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V5zM3 13a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" />
+                </svg>
+                <span className="text-xs font-medium">Menu</span>
+              </button>
+
+              {showAdminMenu && (
+                <div className="absolute bottom-16 right-0 bg-white/95 backdrop-blur-md rounded-2xl border border-gray-200/40 shadow-xl p-2 min-w-max">
+                  {adminItems.map(item => (
+                    <Link
+                      key={item.name}
+                      to={createPageUrl(item.path)}
+                      onClick={() => {
+                        setShowAdminMenu(false);
+                      }}
+                      className="block px-4 py-2 text-sm text-gray-700 hover:text-[#26847F] hover:bg-gray-100/50 rounded-lg transition-colors whitespace-nowrap"
+                    >
+                      {item.name}
+                    </Link>
+                  ))}
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </div>
