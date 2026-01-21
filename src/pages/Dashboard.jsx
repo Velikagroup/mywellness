@@ -673,7 +673,7 @@ export default function Dashboard() {
                 <p className="text-sm text-gray-600">{t('dashboard.subtitle')}</p>
               </div>
             </div>
-            <div className="grid grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 gap-3">
               <button
                 onClick={handleRecalibrate}
                 className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
@@ -681,15 +681,6 @@ export default function Dashboard() {
                 <div className="flex items-center justify-center gap-2">
                   <RefreshCw className="w-4 h-4" />
                   <span>{t('dashboard.recalibrate')}</span>
-                </div>
-              </button>
-              <button
-                onClick={() => setShowCalorieMeter(true)}
-                className="liquid-glass-button text-[#26847F] font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
-              >
-                <div className="flex items-center justify-center gap-2">
-                  <Calculator className="w-4 h-4" />
-                  <span>{t('dashboard.countCalories')}</span>
                 </div>
               </button>
             </div>
