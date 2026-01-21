@@ -338,6 +338,20 @@ export default function Settings() {
     setIsSaving(false);
   };
 
+  const handleSaveQuizData = async () => {
+    setIsSaving(true);
+    try {
+      await base44.auth.updateMe(quizData);
+      alert('✅ Dati del quiz salvati con successo!');
+      setIsEditingQuiz(false);
+      await loadUserData();
+    } catch (error) {
+      console.error('Error saving quiz data:', error);
+      alert('❌ Errore nel salvataggio');
+    }
+    setIsSaving(false);
+  };
+
   const handleSubmitTicket = async () => {
     if (!ticketSubject.trim() || !ticketMessage.trim()) {
       alert('❌ Compila tutti i campi');
