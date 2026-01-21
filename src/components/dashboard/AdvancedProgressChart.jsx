@@ -399,54 +399,54 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
          </div>
 
          {/* Stats Row - Ultra Minimal */}
-         <div className="flex flex-row gap-6 md:gap-12 mb-8 py-4">
-           <div className="flex flex-col group">
-             <span className="text-xs font-medium text-gray-500 mb-1.5">{t('dashboard.targetCalories')}</span>
-             <div className="flex items-baseline gap-1.5">
-               <span className="text-2xl font-bold text-gray-900">{user.daily_calories || 2000}</span>
+         <div className="grid grid-cols-3 gap-4 md:gap-6 mb-8">
+           <div className="group">
+             <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.targetCalories')}</p>
+             <div className="flex items-baseline gap-1">
+               <span className="text-xl font-bold text-gray-900">{user.daily_calories || 2000}</span>
                <span className="text-xs text-gray-400">kcal</span>
+               {onEditCalories && (
+                 <button
+                   onClick={onEditCalories}
+                   className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
+                   title="Modifica"
+                 >
+                   <Edit3 className="w-3 h-3" />
+                 </button>
+               )}
              </div>
-             {onEditCalories && (
-               <button
-                 onClick={onEditCalories}
-                 className="mt-1 text-gray-300 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all w-fit"
-                 title="Modifica"
-               >
-                 <Edit3 className="w-3.5 h-3.5" />
-               </button>
-             )}
            </div>
-           <div className="flex flex-col group">
-             <span className="text-xs font-medium text-gray-500 mb-1.5">{t('dashboard.bmr')}</span>
-             <div className="flex items-baseline gap-1.5">
-               <span className="text-2xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</span>
+           <div className="group">
+             <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.bmr')}</p>
+             <div className="flex items-baseline gap-1">
+               <span className="text-xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</span>
                <span className="text-xs text-gray-400">kcal</span>
+               {onEditBMR && (
+                 <button
+                   onClick={onEditBMR}
+                   className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
+                   title="Modifica"
+                 >
+                   <Edit3 className="w-3 h-3" />
+                 </button>
+               )}
              </div>
-             {onEditBMR && (
-               <button
-                 onClick={onEditBMR}
-                 className="mt-1 text-gray-300 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all w-fit"
-                 title="Modifica"
-               >
-                 <Edit3 className="w-3.5 h-3.5" />
-               </button>
-             )}
            </div>
-           <div className="flex flex-col group">
-             <span className="text-xs font-medium text-gray-500 mb-1.5">{t('dashboard.bodyFat')}</span>
-             <div className="flex items-baseline gap-1.5">
-               <span className="text-2xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</span>
+           <div className="group">
+             <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.bodyFat')}</p>
+             <div className="flex items-baseline gap-1">
+               <span className="text-xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</span>
                <span className="text-xs text-gray-400">%</span>
+               {onEditBodyFat && (
+                 <button
+                   onClick={onEditBodyFat}
+                   className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
+                   title="Modifica"
+                 >
+                   <Edit3 className="w-3 h-3" />
+                 </button>
+               )}
              </div>
-             {onEditBodyFat && (
-               <button
-                 onClick={onEditBodyFat}
-                 className="mt-1 text-gray-300 hover:text-[#26847F] opacity-0 group-hover:opacity-100 transition-all w-fit"
-                 title="Modifica"
-               >
-                 <Edit3 className="w-3.5 h-3.5" />
-               </button>
-             )}
            </div>
          </div>
 
