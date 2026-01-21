@@ -62,7 +62,7 @@ export default function LiquidGlassNav({ navItems }) {
   }, [isDragging, dragStartX, dragOffset, selectedIndex, navItems.length]);
 
   const itemWidth = 100 / navItems.length;
-  const selectorPosition = selectedIndex * itemWidth + (dragOffset / (containerRef.current?.offsetWidth || 1)) * 100;
+  const selectorPosition = selectedIndex * itemWidth + (dragOffset / (containerRef.current?.offsetWidth || 1)) * itemWidth * 100;
 
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4">
@@ -74,15 +74,13 @@ export default function LiquidGlassNav({ navItems }) {
       >
         {/* Selettore liquido */}
         <div
-          className="absolute rounded-2xl"
+          className="absolute top-1.5 bottom-1.5 rounded-2xl"
           style={{
             left: `${selectorPosition}%`,
             width: `${itemWidth}%`,
-            top: isDragging ? '-0.25rem' : '0.375rem',
-            bottom: isDragging ? '-0.25rem' : '0.375rem',
-            transform: isDragging ? 'scale(1.2)' : 'scale(1)',
-            transition: isDragging ? 'none' : 'all 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            boxShadow: isDragging ? '0 10px 32px rgba(38, 132, 127, 0.4)' : '0 6px 20px rgba(38, 132, 127, 0.25)',
+            transform: 'translateX(0)',
+            transition: isDragging ? 'none' : 'left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
+            boxShadow: '0 6px 20px rgba(38, 132, 127, 0.25)',
           }}
         />
 
