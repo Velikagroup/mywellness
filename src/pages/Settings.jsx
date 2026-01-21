@@ -216,6 +216,25 @@ export default function Settings() {
         workout_reminders: currentUser.email_notifications?.workout_reminders ?? true
       });
 
+      // Load quiz data
+      setQuizData({
+        age: currentUser.age || '',
+        gender: currentUser.gender || '',
+        height: currentUser.height || '',
+        current_weight: currentUser.current_weight || '',
+        target_weight: currentUser.target_weight || '',
+        fitness_goal: currentUser.fitness_goal || '',
+        fitness_experience: currentUser.fitness_experience || '',
+        workout_days: currentUser.workout_days || '',
+        activity_level: currentUser.activity_level || '',
+        diet_type: currentUser.diet_type || '',
+        allergies: currentUser.allergies || '',
+        favorite_foods: currentUser.favorite_foods || '',
+        target_body_type: currentUser.target_body_type || '',
+        current_body_type: currentUser.current_body_type || '',
+        target_zone: currentUser.target_zone || ''
+      });
+
       // ✅ FIX: Carica transazioni tramite backend function per bypassare RLS
       try {
         const txResponse = await base44.functions.invoke('getUserTransactions');
