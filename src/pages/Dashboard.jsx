@@ -646,8 +646,8 @@ export default function Dashboard() {
       <div className="min-h-screen pb-20 overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 pt-0 pb-4 sm:p-6 space-y-4 sm:space-y-8">
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
-            <div className="lg:col-span-2 space-y-6 sm:space-y-8 onboarding-dashboard-overview">
+          <div className="flex justify-center">
+            <div className="w-full max-w-5xl space-y-6 sm:space-y-8 onboarding-dashboard-overview">
               <div className="progress-chart-section">
                 <AdvancedProgressChart 
                   user={user} 
