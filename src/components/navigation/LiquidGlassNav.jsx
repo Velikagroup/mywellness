@@ -96,7 +96,7 @@ export default function LiquidGlassNav({ navItems }) {
                 key={item.name}
                 to={createPageUrl(item.path)}
                 onClick={() => setSelectedIndex(index)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors min-w-[70px] pointer-events-auto ${
+                className={`flex flex-col items-center gap-1 transition-colors flex-1 pointer-events-auto ${
                   isSelected ? 'text-[#26847F]' : 'text-gray-400 hover:text-[#26847F]'
                 }`}
                 style={{ cursor: 'pointer' }}
