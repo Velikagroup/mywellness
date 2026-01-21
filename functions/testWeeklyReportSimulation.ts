@@ -35,15 +35,26 @@ Deno.serve(async (req) => {
             const userTimezone = user.timezone || 'Europe/Rome';
             
             try {
-                // Calcola che ore sono nel timezone dell'utente
-                const userNow = new Date(now.toLocaleString('en-US', { timeZone: userTimezone }));
-                const userHour = userNow.getHours();
-                const userMinute = userNow.getMinutes();
-                const userDay = userNow.getDay(); // 0=Sunday, 1=Monday, etc.
+                // Calcola che ore sono nel timezone dell'utente usando formatter
+                const formatter = new Intl.DateTimeFormat('en-US', {
+                    timeZone: userTimezone,
+                    hour: 'numeric',
+                    minute: 'numeric',
+                    weekday: 'long',
+                    hour12: false
+                });
+                
+                const parts = formatter.formatToParts(now);
+                const dayName = parts.find(p => p.type === 'weekday')?.value || '';
+                const userHour = parseInt(parts.find(p => p.type === 'hour')?.value || '0');
+                const userMinute = parseInt(parts.find(p => p.type === 'minute')?.value || '0');
+                
                 const dayNames = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+                const isMonday = dayName === 'Monday';
+                const isMidnightHour = userHour === 0;
                 
                 // Controlla se è lunedì e se è tra mezzanotte e 1am
-                const isEligible = userDay === 1 && userHour === 0;
+                const isEligible = isMonday && isMidnightHour;
                 
                 if (isEligible) {
                     eligibleCount++;
@@ -52,14 +63,14 @@ Deno.serve(async (req) => {
                 results.push({
                     email: user.email,
                     timezone: userTimezone,
-                    local_time: `${dayNames[userDay]} ${userHour.toString().padStart(2, '0')}:${userMinute.toString().padStart(2, '0')}`,
-                    day_of_week: dayNames[userDay],
+                    local_time: `${dayName} ${userHour.toString().padStart(2, '0')}:${userMinute.toString().padStart(2, '0')}`,
+                    day_of_week: dayName,
                     hour: userHour,
-                    is_monday: userDay === 1,
-                    is_midnight_hour: userHour === 0,
+                    is_monday: isMonday,
+                    is_midnight_hour: isMidnightHour,
                     would_receive_email: isEligible ? '✅ YES' : '❌ NO',
                     reason: isEligible ? 'Monday + Midnight hour' : 
-                            !userDay === 1 ? `Wrong day (${dayNames[userDay]})` : 
+                            !isMonday ? `Wrong day (${dayName})` : 
                             'Wrong hour',
                     user_id: user.id
                 });
