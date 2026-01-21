@@ -5,6 +5,11 @@ import React from "react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { Scale, Save } from "lucide-react";
 
 function LayoutContent({ children }) {
   const location = useLocation();
@@ -13,6 +18,9 @@ function LayoutContent({ children }) {
   const [user, setUser] = React.useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
   const [showActionMenu, setShowActionMenu] = React.useState(false);
+  const [showWeightModal, setShowWeightModal] = React.useState(false);
+  const [weightInput, setWeightInput] = React.useState('');
+  const [isSavingWeight, setIsSavingWeight] = React.useState(false);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
