@@ -483,7 +483,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           <div className="relative group cursor-pointer">
             <div className="flex flex-col items-center" onClick={onEditBodyFat}>
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-100 to-pink-50 border-2 border-pink-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
-                <Droplet className="w-6 h-6 text-pink-600" />
+                <Gauge className="w-6 h-6 text-pink-600" />
               </div>
               <p className="text-sm font-bold text-pink-700 mt-2">{(user.body_fat_percentage || 0).toFixed(1)}</p>
               <p className="text-xs text-gray-500">%</p>
