@@ -165,7 +165,6 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   const mainNavItems = [
     { name: t('nav.dashboard'), icon: Home, path: 'Dashboard' },
     { name: t('nav.nutrition'), icon: Utensils, path: 'Meals', requiresFeature: 'meal_plan' },
-    { name: 'Quick Actions', icon: Plus, action: 'openActionMenu', isAction: true },
     { name: t('nav.workouts'), icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' },
     { name: t('nav.settings'), icon: SettingsIcon, path: 'Settings' }
   ].filter(item => {
