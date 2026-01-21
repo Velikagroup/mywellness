@@ -359,45 +359,100 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     <Card className="bg-white/55 backdrop-blur-md border-gray-200/30 shadow-xl rounded-xl overflow-hidden">
       <CardContent className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-          <div className="p-5 bg-gradient-to-br from-blue-50/70 to-blue-100/30 rounded-xl border border-blue-200/40 backdrop-blur-sm shadow-lg">
-            <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">{t('progressChart.startWeight')}</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold text-blue-900">{startWeight.toFixed(1)}</p>
-              <span className="text-sm font-medium text-blue-600">kg</span>
-            </div>
-          </div>
+           <div className="p-5 bg-gradient-to-br from-blue-50/70 to-blue-100/30 rounded-xl border border-blue-200/40 backdrop-blur-sm shadow-lg">
+             <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">{t('progressChart.startWeight')}</p>
+             <div className="flex items-baseline gap-2">
+               <p className="text-3xl font-bold text-blue-900">{startWeight.toFixed(1)}</p>
+               <span className="text-sm font-medium text-blue-600">kg</span>
+             </div>
+           </div>
 
-          <div className="p-5 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-xl border-2 border-[#26847F]/30 backdrop-blur-sm shadow-lg">
-            <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">{t('progressChart.targetWeight')}</p>
-            <div className="flex items-baseline gap-2">
-              <p className="text-3xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
-              <span className="text-sm font-medium text-[#1a5753]">kg</span>
-            </div>
-          </div>
+           <div className="p-5 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-xl border-2 border-[#26847F]/30 backdrop-blur-sm shadow-lg">
+             <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">{t('progressChart.targetWeight')}</p>
+             <div className="flex items-baseline gap-2">
+               <p className="text-3xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
+               <span className="text-sm font-medium text-[#1a5753]">kg</span>
+             </div>
+           </div>
 
-          <div className={`p-5 rounded-xl border backdrop-blur-sm shadow-lg ${
-            isGoodProgress
-              ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
-              : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40'
-          }`}>
-            <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
-              isGoodProgress ? 'text-green-700' : 'text-red-700'
-            }`}>{t('progressChart.variation')}</p>
-            <div className="flex items-center gap-2">
-              {isGoodProgress ? (
-                <TrendingDown className="w-5 h-5 text-green-600" />
-              ) : (
-                <TrendingUp className="w-5 h-5 text-red-600" />
-              )}
-              <div className="flex items-baseline gap-2">
-                <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
-                  {weightVariation >= 0 ? '+' : ''}{weightVariation.toFixed(1)}
-                </p>
-                <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
-              </div>
-            </div>
-          </div>
-        </div>
+           <div className={`p-5 rounded-xl border backdrop-blur-sm shadow-lg ${
+             isGoodProgress
+               ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
+               : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40'
+           }`}>
+             <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
+               isGoodProgress ? 'text-green-700' : 'text-red-700'
+             }`}>{t('progressChart.variation')}</p>
+             <div className="flex items-center gap-2">
+               {isGoodProgress ? (
+                 <TrendingDown className="w-5 h-5 text-green-600" />
+               ) : (
+                 <TrendingUp className="w-5 h-5 text-red-600" />
+               )}
+               <div className="flex items-baseline gap-2">
+                 <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
+                   {weightVariation >= 0 ? '+' : ''}{weightVariation.toFixed(1)}
+                 </p>
+                 <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
+               </div>
+             </div>
+           </div>
+         </div>
+
+         {/* Stats Cards Row */}
+         <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+           <div className="relative">
+             <TechnicalStatsCard
+               title={t('dashboard.targetCalories')}
+               value={user.daily_calories || 2000}
+               unit="kcal"
+               icon={Activity}
+             />
+             {onEditCalories && (
+               <button
+                 onClick={onEditCalories}
+                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
+                 title="Modifica Target Calorico"
+               >
+                 <Edit3 className="w-4 h-4" />
+               </button>
+             )}
+           </div>
+           <div className="relative">
+             <TechnicalStatsCard
+               title={t('dashboard.bmr')}
+               value={Math.round(user.bmr || 1500)}
+               unit="kcal"
+               icon={TrendingUp}
+             />
+             {onEditBMR && (
+               <button
+                 onClick={onEditBMR}
+                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
+                 title="Modifica BMR"
+               >
+                 <Edit3 className="w-4 h-4" />
+               </button>
+             )}
+           </div>
+           <div className="relative">
+             <TechnicalStatsCard
+               title={t('dashboard.bodyFat')}
+               value={user.body_fat_percentage || 0}
+               unit="%"
+               icon={BarChart3}
+             />
+             {onEditBodyFat && (
+               <button
+                 onClick={onEditBodyFat}
+                 className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
+                 title="Modifica Massa Grassa"
+               >
+                 <Edit3 className="w-4 h-4" />
+               </button>
+             )}
+           </div>
+         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <div className="flex flex-col space-y-4">
