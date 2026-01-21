@@ -580,7 +580,14 @@ Deno.serve(async (req) => {
     };
     
     try {
+        // Crea client - funziona sia con utente autenticato che senza (service role)
         base44 = createClientFromRequest(req);
+        
+        // Se non c'è utente autenticato, passiamo direttamente ad asServiceRole
+        const isAuthenticated = await base44.auth.isAuthenticated();
+        if (!isAuthenticated) {
+            console.log('📧 No authenticated user - using service role mode');
+        }
         
         const body = await req.json();
         const { 
