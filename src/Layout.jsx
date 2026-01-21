@@ -557,7 +557,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         style={{
           boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
           transform: 'rotate(0deg)',
-          transition: 'transform 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
         }}
         title="Quick Actions"
       >
