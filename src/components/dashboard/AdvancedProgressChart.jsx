@@ -455,7 +455,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           <div className="relative group cursor-pointer">
             <div className="flex flex-col items-center" onClick={onEditCalories}>
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-orange-100 to-orange-50 border-2 border-orange-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
-                <Zap className="w-6 h-6 text-orange-600" />
+                <Flame className="w-6 h-6 text-orange-600" />
               </div>
               <p className="text-sm font-bold text-orange-700 mt-2">{user.daily_calories || 2000}</p>
               <p className="text-xs text-gray-500">kcal</p>
