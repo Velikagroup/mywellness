@@ -760,52 +760,6 @@ export default function Dashboard() {
               </div>
             </div>
 
-            <div className="space-y-4 sm:space-y-6 onboarding-technical-stats-wrapper">
-             <div className="relative">
-              <TechnicalStatsCard
-                title={t('dashboard.targetCalories')}
-                value={user.daily_calories || 2000}
-                unit="kcal"
-                icon={Activity}
-              />
-              <button
-                onClick={handleOpenEditCalories}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
-                title="Modifica Target Calorico"
-              >
-                <Edit3 className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="relative">
-              <TechnicalStatsCard
-                title={t('dashboard.bmr')}
-                value={Math.round(user.bmr || 1500)}
-                unit="kcal"
-                icon={TrendingUp}
-              />
-              <button
-                onClick={handleOpenEditBMR}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
-                title="Modifica BMR"
-              >
-                <Edit3 className="w-4 h-4" />
-              </button>
-            </div>
-            <div className="relative">
-              <TechnicalStatsCard
-                title={t('dashboard.bodyFat')}
-                value={user.body_fat_percentage || 0}
-                unit="%"
-                icon={BarChart3}
-              />
-              <button
-                onClick={handleOpenEditBodyFat}
-                className="absolute top-4 right-4 p-2 text-gray-400 hover:text-[#26847F] hover:bg-gray-100 rounded-lg transition-all"
-                title="Modifica Massa Grassa"
-              >
-                <Edit3 className="w-4 h-4" />
-              </button>
-            </div>
 
           </div>
           </div>
