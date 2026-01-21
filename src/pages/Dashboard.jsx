@@ -663,7 +663,7 @@ export default function Dashboard() {
                 />
               </div>
               
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-8 dashboard-stats-section">
+              <div className="grid grid-cols-1 gap-8 dashboard-stats-section">
                 <NutritionOverview 
                   meals={todayMeals}
                   mealLogs={mealLogs}
