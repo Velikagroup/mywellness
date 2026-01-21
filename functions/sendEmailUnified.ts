@@ -88,6 +88,14 @@ function generateEmailHtml(template, variables, language = 'it') {
     mainContent = mainContent.replace(/\{app_url\}/g, appUrl);
     ctaUrl = ctaUrl.replace(/\{app_url\}/g, appUrl);
 
+    // Sostituisci anche footer_text se presente
+    let footerText = template.footer_text || '';
+    Object.keys(variables).forEach(key => {
+        const value = variables[key] || '';
+        const regex = new RegExp(`\\{${key}\\}`, 'g');
+        footerText = footerText.replace(regex, value);
+    });
+
     console.log('📧 Generating Default HTML');
 
     const html = `<!DOCTYPE html>
@@ -126,7 +134,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                     <tr>
                         <td class="content-cell">
                             ${greeting ? `<p style="color: #374151; font-size: 16px; margin: 0 0 20px 0; font-weight: 400;">${greeting}</p>` : ''}
-                            <div style="color: #374151; line-height: 1.5; font-size: 16px;">${mainContent}</div>
+                            <div style="color: #374151; line-height: 1.6; font-size: 16px;">${mainContent}</div>
                             ${template.call_to_action_text ? `
                             <table width="100%" cellpadding="0" cellspacing="0" border="0" style="margin: 30px 0 10px 0;">
                                 <tr>
@@ -137,6 +145,7 @@ function generateEmailHtml(template, variables, language = 'it') {
                                     </td>
                                 </tr>
                             </table>` : ''}
+                            ${footerText ? `<p style="color: #6b7280; text-align: center; font-size: 13px; margin: 20px 0 0 0; line-height: 1.6;">${footerText}</p>` : ''}
                         </td>
                     </tr>
                 </table>
