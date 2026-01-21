@@ -186,26 +186,26 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   const hasManagementAccess = user && (user.role === 'admin' || user.custom_role === 'customer_support');
 
   const customerSupportMenuItems = user && user.custom_role === 'customer_support' ? [
-    { name: t('nav.clients'), icon: Users, path: 'AdminClients' },
-    { name: t('nav.tickets'), icon: HelpCircle, path: 'AdminSupportTickets' },
-    { name: t('nav.feedback'), icon: MessageCircle, path: 'AdminFeedback' },
-    { name: t('nav.coupons'), icon: Tag, path: 'AdminCoupons' },
-    { name: t('nav.blog'), icon: FileText, path: 'AdminBlog' },
-    { name: t('nav.email'), icon: Mail, path: 'AdminEmails' },
-    { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' }
+    { name: t('nav.clients'), icon: Users, path: 'AdminClients', isAdminOnly: true },
+    { name: t('nav.tickets'), icon: HelpCircle, path: 'AdminSupportTickets', isAdminOnly: true },
+    { name: t('nav.feedback'), icon: MessageCircle, path: 'AdminFeedback', isAdminOnly: true },
+    { name: t('nav.coupons'), icon: Tag, path: 'AdminCoupons', isAdminOnly: true },
+    { name: t('nav.blog'), icon: FileText, path: 'AdminBlog', isAdminOnly: true },
+    { name: t('nav.email'), icon: Mail, path: 'AdminEmails', isAdminOnly: true },
+    { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing', isAdminOnly: true }
   ] : [];
 
   const adminMenuItems = user && user.role === 'admin' ? [
-    { name: t('nav.clients'), icon: Users, path: 'AdminClients' },
-    { name: t('nav.tickets'), icon: HelpCircle, path: 'AdminSupportTickets' },
-    { name: t('nav.feedback'), icon: MessageCircle, path: 'AdminFeedback' },
-    { name: t('nav.coupons'), icon: Tag, path: 'AdminCoupons' },
-    { name: t('nav.blog'), icon: FileText, path: 'AdminBlog' },
-    { name: t('nav.email'), icon: Mail, path: 'AdminEmails' },
-    { name: t('nav.analytics'), icon: BarChart3, path: 'AdminAnalytics' },
-    { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing' },
-    { name: t('nav.salesTax'), icon: Receipt, path: 'AdminSalesTax' },
-    { name: 'Video', icon: Video, path: 'Video' }
+    { name: t('nav.clients'), icon: Users, path: 'AdminClients', isAdminOnly: true },
+    { name: t('nav.tickets'), icon: HelpCircle, path: 'AdminSupportTickets', isAdminOnly: true },
+    { name: t('nav.feedback'), icon: MessageCircle, path: 'AdminFeedback', isAdminOnly: true },
+    { name: t('nav.coupons'), icon: Tag, path: 'AdminCoupons', isAdminOnly: true },
+    { name: t('nav.blog'), icon: FileText, path: 'AdminBlog', isAdminOnly: true },
+    { name: t('nav.email'), icon: Mail, path: 'AdminEmails', isAdminOnly: true },
+    { name: t('nav.analytics'), icon: BarChart3, path: 'AdminAnalytics', isAdminOnly: true },
+    { name: t('nav.marketing'), icon: Target, path: 'AdminMarketing', isAdminOnly: true },
+    { name: t('nav.salesTax'), icon: Receipt, path: 'AdminSalesTax', isAdminOnly: true },
+    { name: 'Video', icon: Video, path: 'Video', isAdminOnly: true }
   ] : [];
 
   const managementMenuItems = user?.role === 'admin' ? adminMenuItems : 
