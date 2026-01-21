@@ -58,7 +58,7 @@ Deno.serve(async (req) => {
             amount: '29.00',
             next_billing_date: '15 Marzo 2025',
             invoice_url: 'https://example.com/invoice',
-            expiry_date: '31 Gennaio 2025',
+            expiry_date: '31 Gennaio 2026',
             old_plan: 'Base',
             new_plan: 'Pro',
             features_unlocked: 'Allenamenti AI, Analisi Foto Progressi',
