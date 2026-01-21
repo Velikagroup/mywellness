@@ -651,17 +651,7 @@ export default function Dashboard() {
               <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard.title')}</h1>
               <p className="text-gray-600">{t('dashboard.subtitle')}</p>
             </div>
-            <div className="flex gap-3">
-               <button
-                 onClick={handleRecalibrate}
-                 className="liquid-glass-button text-gray-700 font-semibold text-sm px-5 py-2.5 rounded-xl transition-all hover:scale-[1.02] border-none"
-               >
-                 <div className="flex items-center justify-center gap-2">
-                   <RefreshCw className="w-4 h-4" />
-                   <span>{t('dashboard.recalibrate')}</span>
-                 </div>
-               </button>
-             </div>
+
           </div>
 
         {/* Header Mobile - visibile solo su mobile */}
