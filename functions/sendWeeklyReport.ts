@@ -29,9 +29,6 @@ Deno.serve(async (req) => {
 
         console.log(`👥 Found ${activeUsers.length} active users to send reports`);
 
-        // Carica template dall'admin
-        const template = await loadEmailTemplate(base44, 'weekly_report');
-        
         let sentCount = 0;
         const results = [];
 
