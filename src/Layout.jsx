@@ -317,7 +317,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       {showActionMenu && (
         <>
           <div className="fixed inset-0 z-40" onClick={() => setShowActionMenu(false)} />
-          <div className="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-50 animate-in fade-in duration-300">
+          <div className="fixed bottom-32 left-1/2 z-50 popup-action-menu">
             <div className="water-glass-effect rounded-2xl p-4 w-48 shadow-2xl space-y-2" style={{
               boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)'
             }}>
