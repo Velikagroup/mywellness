@@ -401,8 +401,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
          {/* Stats Row - Liquid Glass Box */}
          <div className="bg-white/50 backdrop-blur-md rounded-2xl border border-white/60 shadow-lg p-6 md:p-8 mb-8">
            <div className="grid grid-cols-3 gap-6 md:gap-8">
-             <div className="group">
-               <p className="text-xs text-gray-500 font-medium mb-2">{t('dashboard.targetCalories')}</p>
+             <div className="group flex flex-col justify-between">
                <div className="flex items-baseline gap-1">
                  <span className="text-2xl font-bold text-gray-900">{user.daily_calories || 2000}</span>
                  <span className="text-xs text-gray-400">kcal</span>
@@ -416,9 +415,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                    </button>
                  )}
                </div>
+               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.targetCalories')}</p>
              </div>
-             <div className="group">
-               <p className="text-xs text-gray-500 font-medium mb-2">{t('dashboard.bmr')}</p>
+             <div className="group flex flex-col justify-between">
                <div className="flex items-baseline gap-1">
                  <span className="text-2xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</span>
                  <span className="text-xs text-gray-400">kcal</span>
@@ -432,9 +431,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                    </button>
                  )}
                </div>
+               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bmr')}</p>
              </div>
-             <div className="group">
-               <p className="text-xs text-gray-500 font-medium mb-2">{t('dashboard.bodyFat')}</p>
+             <div className="group flex flex-col justify-between">
                <div className="flex items-baseline gap-1">
                  <span className="text-2xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</span>
                  <span className="text-xs text-gray-400">%</span>
@@ -448,6 +447,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                    </button>
                  )}
                </div>
+               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bodyFat')}</p>
              </div>
            </div>
          </div>
