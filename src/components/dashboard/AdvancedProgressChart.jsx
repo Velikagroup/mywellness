@@ -453,60 +453,56 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
          </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <div className="flex flex-col space-y-4">
-            <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
-                <div className="flex items-center gap-2 text-xs">
-                  <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
-                  <span className="text-gray-600 font-medium">{t('progressChart.currentWeight')}</span>
-                </div>
-              </div>
-              <div className="h-64">
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
-                    <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
-                    <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
-                    <Tooltip 
-                      contentStyle={{ 
-                        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                        border: '1px solid #e5e7eb', 
-                        borderRadius: '8px',
-                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                      }} 
-                      formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
-                      labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
-                      cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
-                    />
-                    <ReferenceLine 
-                      y={targetWeight} 
-                      stroke="#26847F" 
-                      strokeDasharray="4 4" 
-                      strokeWidth={2}
-                      label={{ 
-                        value: 'Target', 
-                        position: 'insideTopRight', 
-                        fill: '#26847F', 
-                        fontSize: 13,
-                        fontWeight: 'bold'
-                      }}
-                    />
-                    <Line 
-                      type="monotone" 
-                      dataKey="weight" 
-                      stroke="#26847F" 
-                      strokeWidth={3} 
-                      dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
-                      activeDot={{ r: 6, strokeWidth: 2 }} 
-                      connectNulls={true}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
+          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
+              <div className="flex items-center gap-2 text-xs">
+                <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
+                <span className="text-gray-600 font-medium">{t('progressChart.currentWeight')}</span>
               </div>
             </div>
-
-
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
+                  <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
+                  <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
+                  <Tooltip 
+                    contentStyle={{ 
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '8px',
+                      boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                    }} 
+                    formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
+                    labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
+                    cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
+                  />
+                  <ReferenceLine 
+                    y={targetWeight} 
+                    stroke="#26847F" 
+                    strokeDasharray="4 4" 
+                    strokeWidth={2}
+                    label={{ 
+                      value: 'Target', 
+                      position: 'insideTopRight', 
+                      fill: '#26847F', 
+                      fontSize: 13,
+                      fontWeight: 'bold'
+                    }}
+                  />
+                  <Line 
+                    type="monotone" 
+                    dataKey="weight" 
+                    stroke="#26847F" 
+                    strokeWidth={3} 
+                    dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
+                    activeDot={{ r: 6, strokeWidth: 2 }} 
+                    connectNulls={true}
+                  />
+                </LineChart>
+              </ResponsiveContainer>
+            </div>
           </div>
           
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
