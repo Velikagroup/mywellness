@@ -15,6 +15,15 @@ export default function LiquidGlassNav({ navItems }) {
   const navRef = useRef(null);
   const containerRef = useRef(null);
 
+  // Rileva cambio viewport
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   // Trova l'indice della pagina attuale
   useEffect(() => {
     const currentIndex = navItems.findIndex(
