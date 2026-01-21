@@ -556,7 +556,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 w-16 h-16 rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold"
         style={{
           boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
-          transform: showActionMenu ? 'rotate(30deg)' : 'rotate(0deg)',
+          transform: showActionMenu ? 'rotate(22.5deg)' : 'rotate(0deg)',
           transition: 'transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1)'
         }}
         title="Quick Actions"
