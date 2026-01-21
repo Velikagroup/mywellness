@@ -12,6 +12,7 @@ function LayoutContent({ children }) {
   const { language, t } = useLanguage();
   const [user, setUser] = React.useState(null);
   const [mobileMenuOpen, setMobileMenuOpen] = React.useState(false);
+  const [showActionMenu, setShowActionMenu] = React.useState(false);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
