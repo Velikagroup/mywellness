@@ -357,45 +357,42 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
   return (
     <>
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-           <div className="p-5 bg-gradient-to-br from-blue-50/70 to-blue-100/30 rounded-xl border border-blue-200/40 backdrop-blur-sm shadow-lg">
-             <p className="text-xs font-semibold text-blue-700 uppercase tracking-wide mb-2">{t('progressChart.startWeight')}</p>
-             <div className="flex items-baseline gap-2">
-               <p className="text-3xl font-bold text-blue-900">{startWeight.toFixed(1)}</p>
-               <span className="text-sm font-medium text-blue-600">kg</span>
-             </div>
-           </div>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+           {(() => {
+             const totalWeightToChange = startWeight - targetWeight;
+             const actualDirection = lastRecordedWeight - startWeight;
 
-           <div className="p-5 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-xl border-2 border-[#26847F]/30 backdrop-blur-sm shadow-lg">
-             <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">{t('progressChart.targetWeight')}</p>
-             <div className="flex items-baseline gap-2">
-               <p className="text-3xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
-               <span className="text-sm font-medium text-[#1a5753]">kg</span>
-             </div>
-           </div>
+             // Verde se movimento è coerente con l'obiettivo
+             const isAligned = (totalWeightToChange > 0 && actualDirection < 0) || 
+                              (totalWeightToChange < 0 && actualDirection > 0) ||
+                              (totalWeightToChange === 0);
 
-           <div className={`p-5 rounded-xl border backdrop-blur-sm shadow-lg ${
-             isGoodProgress
-               ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
-               : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40'
-           }`}>
-             <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
-               isGoodProgress ? 'text-green-700' : 'text-red-700'
-             }`}>{t('progressChart.variation')}</p>
-             <div className="flex items-center gap-2">
-               {isGoodProgress ? (
-                 <TrendingDown className="w-5 h-5 text-green-600" />
-               ) : (
-                 <TrendingUp className="w-5 h-5 text-red-600" />
-               )}
-               <div className="flex items-baseline gap-2">
-                 <p className={`text-3xl font-bold ${isGoodProgress ? 'text-green-900' : 'text-red-900'}`}>
-                   {weightVariation >= 0 ? '+' : ''}{weightVariation.toFixed(1)}
-                 </p>
-                 <span className={`text-sm font-medium ${isGoodProgress ? 'text-green-600' : 'text-red-600'}`}>kg</span>
-               </div>
-             </div>
-           </div>
+             return (
+               <>
+                 <div className={`p-5 rounded-xl border backdrop-blur-sm shadow-lg ${
+                   isAligned
+                     ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
+                     : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40'
+                 }`}>
+                   <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
+                     isAligned ? 'text-green-700' : 'text-red-700'
+                   }`}>{t('progressChart.currentWeight')}</p>
+                   <div className="flex items-baseline gap-2">
+                     <p className={`text-3xl font-bold ${isAligned ? 'text-green-900' : 'text-red-900'}`}>{lastRecordedWeight.toFixed(1)}</p>
+                     <span className={`text-sm font-medium ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</span>
+                   </div>
+                 </div>
+
+                 <div className="p-5 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-xl border-2 border-[#26847F]/30 backdrop-blur-sm shadow-lg">
+                   <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">{t('progressChart.targetWeight')}</p>
+                   <div className="flex items-baseline gap-2">
+                     <p className="text-3xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
+                     <span className="text-sm font-medium text-[#1a5753]">kg</span>
+                   </div>
+                 </div>
+               </>
+             );
+           })()}
       </div>
 
       <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
