@@ -194,7 +194,8 @@ function calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, startD
         distanceRemaining: (totalDistance - distanceCovered).toFixed(1)
     };
 }
-    const weightEmoji = stats.weightTrend === 'down' ? '📉' : stats.weightTrend === 'up' ? '📈' : '➡️';
+
+function getMotivationalMessageText(stats) {
     const weightColor = stats.weightTrend === 'down' ? '#10b981' : stats.weightTrend === 'up' ? '#ef4444' : '#6b7280';
     const adherenceColor = stats.adherence >= 80 ? '#10b981' : stats.adherence >= 50 ? '#f59e0b' : '#ef4444';
 
