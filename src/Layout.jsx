@@ -393,31 +393,20 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
             <div className="flex items-center justify-around">
               {mainNavItems.map((item) => (
-                item.isAction ? (
-                  <button
-                    key={item.name}
-                    onClick={() => handleActionClick(item.action)}
-                    className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]`}
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="text-xs font-medium text-center">{item.name}</span>
-                  </button>
-                ) : (
-                  <Link
-                    key={item.name}
-                    to={createPageUrl(item.path)}
-                    className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
-                      item.path === 'Meals' ? 'onboarding-nutrition-nav-link' : ''
-                    } ${
-                      location.pathname === createPageUrl(item.path)
-                        ? 'text-[#26847F] bg-[#e9f6f5]'
-                        : 'text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]'
-                    }`}
-                  >
-                    <item.icon className="w-5 h-5" />
-                    <span className="text-xs font-medium text-center">{item.name}</span>
-                  </Link>
-                )
+                <Link
+                  key={item.name}
+                  to={createPageUrl(item.path)}
+                  className={`flex flex-col items-center gap-1 p-2 rounded-md transition-colors flex-1 ${
+                    item.path === 'Meals' ? 'onboarding-nutrition-nav-link' : ''
+                  } ${
+                    location.pathname === createPageUrl(item.path)
+                      ? 'text-[#26847F] bg-[#e9f6f5]'
+                      : 'text-gray-400 hover:text-[#26847F] hover:bg-[#e9f6f5]'
+                  }`}
+                >
+                  <item.icon className="w-5 h-5" />
+                  <span className="text-xs font-medium text-center">{item.name}</span>
+                </Link>
               ))}
               
               {managementMenuItems.length > 0 && (
