@@ -367,23 +367,20 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       {showActionMenu && (
         <>
           <div 
-            className="fixed inset-0 z-40 bg-black/20 backdrop-blur-sm" 
+            className="fixed inset-0 z-40 bg-black/10 backdrop-blur-xs" 
             onClick={() => setShowActionMenu(false)} 
           />
-          <div className="fixed bottom-0 left-0 right-0 z-50 action-menu-drawer">
-            <div className="w-full water-glass-effect rounded-t-3xl p-6 shadow-2xl" style={{
-              boxShadow: '0 -8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)'
+          <div className="fixed bottom-24 left-1/2 transform -translate-x-1/2 z-50 action-menu-drawer">
+            <div className="water-glass-effect rounded-2xl p-3 w-56 shadow-2xl" style={{
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)'
             }}>
-              <div className="max-w-md mx-auto space-y-3">
-                <div className="flex justify-center mb-4">
-                  <div className="w-12 h-1 bg-gray-300 rounded-full opacity-50"></div>
-                </div>
+              <div className="space-y-2">
                 <button
                   onClick={() => {
                     navigate(createPageUrl('Dashboard'));
                     setShowActionMenu(false);
                   }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3 px-4 rounded-lg transition-colors text-base"
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm"
                 >
                   Count Calories
                 </button>
@@ -391,9 +388,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                   onClick={() => {
                     setShowWeightModal(true);
                   }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3 px-4 rounded-lg transition-colors text-base flex items-center justify-center gap-2"
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
                 >
-                  <Scale className="w-5 h-5" />
+                  <Scale className="w-4 h-4" />
                   Log Weight
                 </button>
                 <button
@@ -401,15 +398,9 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                     navigate(createPageUrl('BodyScan'));
                     setShowActionMenu(false);
                   }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3 px-4 rounded-lg transition-colors text-base"
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm"
                 >
                   Body Scan
-                </button>
-                <button
-                  onClick={() => setShowActionMenu(false)}
-                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-700 font-semibold py-3 px-4 rounded-lg transition-colors text-base mt-2"
-                >
-                  Chiudi
                 </button>
               </div>
             </div>
