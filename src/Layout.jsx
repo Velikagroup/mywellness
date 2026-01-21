@@ -300,6 +300,41 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         }
       `}</style>
       
+      {showActionMenu && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm">
+          <div className="water-glass-effect rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
+            <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+            <div className="space-y-3">
+              <button
+                onClick={() => {
+                  navigate(createPageUrl('Dashboard'));
+                  setShowActionMenu(false);
+                  document.querySelector('[onclick*="setShowCalorieMeter"]')?.click?.();
+                }}
+                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3 px-4 rounded-xl transition-colors"
+              >
+                Count Calories
+              </button>
+              <button
+                onClick={() => {
+                  navigate(createPageUrl('BodyScan'));
+                  setShowActionMenu(false);
+                }}
+                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3 px-4 rounded-xl transition-colors"
+              >
+                Body Scan
+              </button>
+            </div>
+            <button
+              onClick={() => setShowActionMenu(false)}
+              className="w-full mt-3 text-gray-600 hover:text-gray-900 font-medium py-2 px-4 rounded-lg transition-colors"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      )}
+
       {location.pathname !== createPageUrl('Video') && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
           <div className="water-glass-effect rounded-full px-6 py-3">
