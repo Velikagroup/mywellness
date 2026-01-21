@@ -595,6 +595,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
       <div className="mt-6">
         <CalorieBalanceChart user={user} />
       </div>
-    </Card>
+    </>
   );
 }
