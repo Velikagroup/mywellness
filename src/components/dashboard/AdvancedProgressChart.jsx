@@ -506,38 +506,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
             </div>
 
-            <div className="bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-              <div className="flex items-center gap-3 mb-4">
-                <div className="w-10 h-10 bg-[#26847F]/10 rounded-full flex items-center justify-center shadow-sm">
-                  <Scale className="w-5 h-5 text-[#26847F]" />
-                </div>
-                <h3 className="text-base font-bold text-gray-900">{t('progressChart.logWeight')}</h3>
-              </div>
-              <div className="space-y-4">
-                <div className="relative">
-                  <Input
-                    type="number"
-                    step="0.1"
-                    placeholder="70.5"
-                    value={weight}
-                    onChange={(e) => setWeight(e.target.value)}
-                    className="text-center text-xl h-12 pr-12"
-                  />
-                  <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
-                    kg
-                  </span>
-                </div>
-                
-                <Button
-                  onClick={handleSaveWeight}
-                  disabled={!weight || isSaving}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                >
-                  <Save className="w-4 h-4 mr-2" />
-                  {isSaving ? t('progressChart.saving') : t('progressChart.saveWeight')}
-                </Button>
-              </div>
-            </div>
+
           </div>
           
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
