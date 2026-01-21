@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Scale, Save } from "lucide-react";
+import LiquidGlassNav from "@/components/navigation/LiquidGlassNav";
 
 function LayoutContent({ children }) {
   const location = useLocation();
