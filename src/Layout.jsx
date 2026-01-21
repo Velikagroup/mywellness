@@ -297,6 +297,21 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             opacity: 1;
           }
         }
+
+        @keyframes popUpFromButton {
+          from {
+            opacity: 0;
+            transform: translate(-50%, 0) scale(0.3);
+          }
+          to {
+            opacity: 1;
+            transform: translate(-50%, 0) scale(1);
+          }
+        }
+
+        .popup-action-menu {
+          animation: popUpFromButton 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
       `}</style>
       
       {showActionMenu && (
