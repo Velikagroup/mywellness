@@ -37,6 +37,9 @@ Deno.serve(async (req) => {
 
         for (const user of activeUsers) {
             try {
+                // Rileva lingua utente
+                const userLanguage = user.preferred_language || 'it';
+                
                 // Recupera i dati della settimana
                 const weightHistory = await base44.asServiceRole.entities.WeightHistory.filter(
                     { user_id: user.id },
@@ -59,51 +62,48 @@ Deno.serve(async (req) => {
                 // Calcola statistiche
                 const stats = calculateWeeklyStats(user, weightHistory, mealLogs, workoutLogs, oneWeekAgo, today);
 
-                // Prepara variabili per il template
+                // Prepara variabili per sendEmailUnified
                 const variables = {
                     user_name: user.full_name || 'Utente',
                     week_range: stats.weekRange,
                     weight_change: stats.weightChange,
                     current_weight: stats.currentWeight,
                     target_weight: stats.targetWeight,
+                    start_weight: user.current_weight,
+                    distance_remaining: stats.distanceRemaining,
                     avg_calories: stats.avgCalories,
                     workouts_completed: stats.workoutsCompleted,
-                    planned_workouts: stats.plannedWorkouts,
                     adherence: stats.adherence,
                     progress: stats.progressPercentage,
-                    distance_remaining: stats.distanceRemaining,
-                    app_url: Deno.env.get('APP_URL') || 'https://projectmywellness.com'
+                    motivational_message: getMotivationalMessageText(stats),
+                    weight_data: generateWeightDataForEmail(weightHistory, oneWeekAgo, today)
                 };
 
-                const emailBody = getWeeklyReportTemplate(user, stats, template, variables);
+                // Usa sendEmailUnified con template localizzato
+                const templateId = `weekly_report_${userLanguage}`;
                 
-                // Usa valori dal template se disponibili
-                const fromEmail = template?.from_email || 'info@projectmywellness.com';
-                const replyToEmail = template?.reply_to_email || 'no-reply@projectmywellness.com';
-                const subject = template?.subject 
-                    ? replaceVariables(template.subject, variables)
-                    : `📊 Il tuo Report Settimanale MyWellness - ${stats.weekRange}`;
-
-                await sendEmailViaSendGrid(
-                    user.email,
-                    subject,
-                    emailBody,
-                    fromEmail,
-                    replyToEmail
-                );
+                await base44.asServiceRole.functions.invoke('sendEmailUnified', {
+                    userId: user.id,
+                    userEmail: user.email,
+                    templateId: templateId,
+                    variables: variables,
+                    language: userLanguage,
+                    triggerSource: 'sendWeeklyReport_cron'
+                });
 
                 sentCount++;
-                console.log(`✅ Weekly report sent to ${user.email}`);
+                console.log(`✅ Weekly report sent to ${user.email} (${userLanguage})`);
                 
                 results.push({
                     user_id: user.id,
                     email: user.email,
+                    language: userLanguage,
                     status: 'sent',
                     stats: stats
                 });
 
                 // Rate limiting
-                await new Promise(resolve => setTimeout(resolve, 150));
+                await new Promise(resolve => setTimeout(resolve, 200));
 
             } catch (error) {
                 console.error(`❌ Failed to send report to ${user.email}:`, error.message);
