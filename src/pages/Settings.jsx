@@ -106,6 +106,26 @@ export default function Settings() {
   const [isHealthKitConnected, setIsHealthKitConnected] = useState(false);
   const [isSyncingHealthKit, setIsSyncingHealthKit] = useState(false);
   const [healthKitAvailable, setHealthKitAvailable] = useState(false);
+
+  // Quiz Data
+  const [quizData, setQuizData] = useState({
+    age: '',
+    gender: '',
+    height: '',
+    current_weight: '',
+    target_weight: '',
+    fitness_goal: '',
+    fitness_experience: '',
+    workout_days: '',
+    activity_level: '',
+    diet_type: '',
+    allergies: '',
+    favorite_foods: '',
+    target_body_type: '',
+    current_body_type: '',
+    target_zone: ''
+  });
+  const [isEditingQuiz, setIsEditingQuiz] = useState(false);
   
   // Translation for the language warning banner
   const languageWarningTexts = {
