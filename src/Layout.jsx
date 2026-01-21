@@ -230,6 +230,33 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     }
   };
 
+  const handleSaveWeight = async () => {
+    if (!weightInput || !user) {
+      alert(t('progressChart.enterValidWeight') || 'Inserisci un peso valido');
+      return;
+    }
+    
+    setIsSavingWeight(true);
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      const weightData = {
+        user_id: user.id,
+        weight: parseFloat(weightInput),
+        date: today
+      };
+      
+      await base44.entities.WeightHistory.create(weightData);
+      setWeightInput('');
+      setShowWeightModal(false);
+      setShowActionMenu(false);
+      alert('✅ ' + (t('progressChart.weightSaved') || 'Peso registrato con successo'));
+    } catch (error) {
+      console.error("Error saving weight:", error);
+      alert('Errore durante la registrazione del peso. Riprova.');
+    }
+    setIsSavingWeight(false);
+  };
+
   return (
     <div className="min-h-screen animated-gradient-bg">
       <style>{`
