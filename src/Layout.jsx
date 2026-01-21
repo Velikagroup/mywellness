@@ -350,8 +350,8 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         {children}
       </main>
 
-      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 flex items-center justify-center gap-4" style={{ maxWidth: `${getMenuMaxWidth()}px` }}>
-        <div className="water-glass-effect rounded-3xl py-3 px-2 flex-1">
+      <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4" style={{ maxWidth: `${getMenuMaxWidth()}px` }}>
+        <div className="water-glass-effect rounded-3xl py-3 px-2">
           <div className="hidden sm:flex items-center justify-around">
             {allNavItems.map((item) => (
               <Link
@@ -424,19 +424,19 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
               )}
             </div>
           </div>
-          </div>
-          </div>
+        </div>
+      </div>
 
-          <button
-          onClick={() => setShowActionMenu(true)}
-          className="w-14 h-14 rounded-full bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-lg flex items-center justify-center transition-all hover:scale-110 flex-shrink-0"
-          title="Quick Actions"
-          >
-          <Plus className="w-6 h-6" />
-          </button>
-          </div>
-          );
-          }
+      <button
+        onClick={() => setShowActionMenu(true)}
+        className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50 w-14 h-14 rounded-full bg-[#26847F] hover:bg-[#1f6b66] text-white shadow-xl flex items-center justify-center transition-all hover:scale-110"
+        title="Quick Actions"
+      >
+        <Plus className="w-6 h-6" />
+      </button>
+    </div>
+  );
+}
 
           export default function Layout({ children }) {
   return (
