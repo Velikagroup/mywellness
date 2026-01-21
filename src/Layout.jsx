@@ -217,6 +217,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     navigate(createPageUrl(path));
   };
 
+  const handleActionClick = (action) => {
+    if (action === 'openActionMenu') {
+      setShowActionMenu(true);
+    }
+  };
+
   return (
     <div className="min-h-screen animated-gradient-bg">
       <style>{`
