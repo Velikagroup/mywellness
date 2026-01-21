@@ -25,7 +25,7 @@ import { Label } from "@/components/ui/label";
 import OnboardingTour from "../components/onboarding/OnboardingTour";
 import CalorieMeter from "../components/dashboard/CalorieMeter";
 import NutritionUnlockPrompt from "../components/dashboard/NutritionUnlockPrompt";
-
+import CalorieBalanceChart from "../components/dashboard/CalorieBalanceChart";
 import TermsAcceptanceModal from "../components/dashboard/TermsAcceptanceModal";
 import { useLanguage } from "../components/i18n/LanguageContext";
 import { rememberMeManager } from "../components/utils/rememberMeManager";

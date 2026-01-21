@@ -398,110 +398,164 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
            </div>
          </div>
 
-         {/* Stats Row - Bilancio Calorie Oggi */}
-        <div className="bg-white/50 backdrop-blur-md rounded-2xl border border-white/60 shadow-lg p-6 md:p-8 mb-8">
-          <h3 className="text-base font-bold text-gray-900 mb-4">{t('progressChart.todayCalorieBalance')}</h3>
-          <div className="grid grid-cols-3 gap-6 md:gap-8">
-            <div className="group flex flex-col justify-between">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-gray-900">{user.daily_calories || 2000}</span>
-                <span className="text-xs text-gray-400">kcal</span>
-                {onEditCalories && (
-                  <button
-                    onClick={onEditCalories}
-                    className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
-                    title="Modifica"
-                  >
-                    <Edit3 className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.targetCalories')}</p>
-            </div>
-            <div className="group flex flex-col justify-between">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</span>
-                <span className="text-xs text-gray-400">kcal</span>
-                {onEditBMR && (
-                  <button
-                    onClick={onEditBMR}
-                    className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
-                    title="Modifica"
-                  >
-                    <Edit3 className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bmr')}</p>
-            </div>
-            <div className="group flex flex-col justify-between">
-              <div className="flex items-baseline gap-1">
-                <span className="text-2xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</span>
-                <span className="text-xs text-gray-400">%</span>
-                {onEditBodyFat && (
-                  <button
-                    onClick={onEditBodyFat}
-                    className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
-                    title="Modifica"
-                  >
-                    <Edit3 className="w-3 h-3" />
-                  </button>
-                )}
-              </div>
-              <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bodyFat')}</p>
-            </div>
-          </div>
-        </div>
+         {/* Stats Row - Liquid Glass Box */}
+         <div className="bg-white/50 backdrop-blur-md rounded-2xl border border-white/60 shadow-lg p-6 md:p-8 mb-8">
+           <div className="grid grid-cols-3 gap-6 md:gap-8">
+             <div className="group flex flex-col justify-between">
+               <div className="flex items-baseline gap-1">
+                 <span className="text-2xl font-bold text-gray-900">{user.daily_calories || 2000}</span>
+                 <span className="text-xs text-gray-400">kcal</span>
+                 {onEditCalories && (
+                   <button
+                     onClick={onEditCalories}
+                     className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
+                     title="Modifica"
+                   >
+                     <Edit3 className="w-3 h-3" />
+                   </button>
+                 )}
+               </div>
+               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.targetCalories')}</p>
+             </div>
+             <div className="group flex flex-col justify-between">
+               <div className="flex items-baseline gap-1">
+                 <span className="text-2xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</span>
+                 <span className="text-xs text-gray-400">kcal</span>
+                 {onEditBMR && (
+                   <button
+                     onClick={onEditBMR}
+                     className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
+                     title="Modifica"
+                   >
+                     <Edit3 className="w-3 h-3" />
+                   </button>
+                 )}
+               </div>
+               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bmr')}</p>
+             </div>
+             <div className="group flex flex-col justify-between">
+               <div className="flex items-baseline gap-1">
+                 <span className="text-2xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</span>
+                 <span className="text-xs text-gray-400">%</span>
+                 {onEditBodyFat && (
+                   <button
+                     onClick={onEditBodyFat}
+                     className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
+                     title="Modifica"
+                   >
+                     <Edit3 className="w-3 h-3" />
+                   </button>
+                 )}
+               </div>
+               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bodyFat')}</p>
+             </div>
+           </div>
+         </div>
 
-        <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
-            <div className="flex items-center gap-2 text-xs">
-              <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
-              <span className="text-gray-600 font-medium">{t('progressChart.currentWeight')}</span>
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="flex flex-col space-y-4">
+            <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
+                <div className="flex items-center gap-2 text-xs">
+                  <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
+                  <span className="text-gray-600 font-medium">{t('progressChart.currentWeight')}</span>
+                </div>
+              </div>
+              <div className="h-64">
+                <ResponsiveContainer width="100%" height="100%">
+                  <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
+                    <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
+                    <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
+                    <Tooltip 
+                      contentStyle={{ 
+                        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                        border: '1px solid #e5e7eb', 
+                        borderRadius: '8px',
+                        boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                      }} 
+                      formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
+                      labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
+                      cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
+                    />
+                    <ReferenceLine 
+                      y={targetWeight} 
+                      stroke="#26847F" 
+                      strokeDasharray="4 4" 
+                      strokeWidth={2}
+                      label={{ 
+                        value: 'Target', 
+                        position: 'insideTopRight', 
+                        fill: '#26847F', 
+                        fontSize: 13,
+                        fontWeight: 'bold'
+                      }}
+                    />
+                    <Line 
+                      type="monotone" 
+                      dataKey="weight" 
+                      stroke="#26847F" 
+                      strokeWidth={3} 
+                      dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
+                      activeDot={{ r: 6, strokeWidth: 2 }} 
+                      connectNulls={true}
+                    />
+                  </LineChart>
+                </ResponsiveContainer>
+              </div>
             </div>
+
+
           </div>
-          <div className="h-64">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
-                <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
-                <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                    border: '1px solid #e5e7eb', 
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                  }} 
-                  formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
-                  labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
-                  cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
-                />
-                <ReferenceLine 
-                  y={targetWeight} 
-                  stroke="#26847F" 
-                  strokeDasharray="4 4" 
-                  strokeWidth={2}
-                  label={{ 
-                    value: 'Target', 
-                    position: 'insideTopRight', 
-                    fill: '#26847F', 
-                    fontSize: 13,
-                    fontWeight: 'bold'
-                  }}
-                />
-                <Line 
-                  type="monotone" 
-                  dataKey="weight" 
-                  stroke="#26847F" 
-                  strokeWidth={3} 
-                  dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
-                  activeDot={{ r: 6, strokeWidth: 2 }} 
-                  connectNulls={true}
-                />
-              </LineChart>
-            </ResponsiveContainer>
+          
+          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+            <h3 className="text-base font-bold text-gray-900 mb-4">{t('progressChart.calorieBreakdown')}</h3>
+            <div className="h-48 relative flex items-center justify-center">
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie 
+                    data={pieData} 
+                    cx="50%" 
+                    cy="50%" 
+                    innerRadius={55} 
+                    outerRadius={75} 
+                    paddingAngle={2} 
+                    dataKey="value"
+                  >
+                    {pieData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(value) => [`${Math.round(value).toLocaleString('it-IT')} kcal`, '']} 
+                    contentStyle={{
+                      backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                      border: '1px solid #e5e7eb', 
+                      borderRadius: '8px'
+                    }}
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div className="absolute text-center">
+                <p className={`text-3xl font-bold ${isRegressing ? 'text-red-500' : 'text-[#26847F]'}`}>{displayProgressPercentage.toFixed(0)}%</p>
+                <p className="text-xs text-gray-500 font-medium mt-1">{t('progressChart.completed')}</p>
+              </div>
+            </div>
+            <div className="mt-4 space-y-3">
+              {pieData.map((entry, index) => (
+                <div key={entry.name} className="flex items-center justify-between p-3 bg-white/65 rounded-lg border border-gray-200/30 backdrop-blur-sm shadow-md">
+                  <div className="flex items-center gap-3">
+                    <span className="w-4 h-4 rounded-full" style={{ backgroundColor: COLORS[index] }}></span>
+                    <span className="text-sm font-medium text-gray-700">{entry.name}</span>
+                  </div>
+                  <span className="text-sm font-bold text-gray-900">{Math.round(entry.value).toLocaleString('it-IT')} kcal</span>
+                </div>
+              ))}
+            </div>
+            <p className="text-xs text-gray-500 mt-4 text-center bg-white/65 p-3 rounded-lg border border-gray-200/30 backdrop-blur-sm shadow-md">
+              💡 {t('progressChart.calorieCalc')} <span className="font-semibold text-gray-700">7700 kcal = 1 kg</span> {t('progressChart.perKg')}
+            </p>
           </div>
         </div>
 
