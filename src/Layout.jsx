@@ -300,17 +300,19 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       `}</style>
       
       {showActionMenu && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-30 backdrop-blur-sm">
-          <div className="water-glass-effect rounded-2xl p-6 w-full max-w-sm mx-4 shadow-2xl">
-            <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
-            <div className="space-y-3">
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setShowActionMenu(false)} />
+          <div className="fixed bottom-32 left-1/2 transform -translate-x-1/2 z-50 animate-in fade-in duration-300">
+            <div className="water-glass-effect rounded-2xl p-4 w-48 shadow-2xl space-y-2" style={{
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.15), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)'
+            }}>
               <button
                 onClick={() => {
                   navigate(createPageUrl('Dashboard'));
                   setShowActionMenu(false);
                   document.querySelector('[onclick*="setShowCalorieMeter"]')?.click?.();
                 }}
-                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3 px-4 rounded-xl transition-colors"
+                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
               >
                 Count Calories
               </button>
@@ -319,19 +321,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                   navigate(createPageUrl('BodyScan'));
                   setShowActionMenu(false);
                 }}
-                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3 px-4 rounded-xl transition-colors"
+                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm"
               >
                 Body Scan
               </button>
             </div>
-            <button
-              onClick={() => setShowActionMenu(false)}
-              className="w-full mt-3 text-gray-600 hover:text-gray-900 font-medium py-2 px-4 rounded-lg transition-colors"
-            >
-              Close
-            </button>
           </div>
-        </div>
+        </>
       )}
 
       {location.pathname !== createPageUrl('Video') && (
