@@ -368,6 +368,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
               </button>
               <button
                 onClick={() => {
+                  setShowWeightModal(true);
+                }}
+                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2 px-4 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
+              >
+                <Scale className="w-4 h-4" />
+                Log Weight
+              </button>
+              <button
+                onClick={() => {
                   navigate(createPageUrl('BodyScan'));
                   setShowActionMenu(false);
                 }}
@@ -379,6 +388,56 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           </div>
         </>
       )}
+
+      <Dialog open={showWeightModal} onOpenChange={setShowWeightModal}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Registra Peso</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-gray-600">
+              Inserisci il tuo peso attuale
+            </p>
+            <div>
+              <Label htmlFor="weight-input" className="text-sm font-semibold text-gray-700 mb-2 block">
+                Peso (kg)
+              </Label>
+              <Input
+                id="weight-input"
+                type="number"
+                step="0.1"
+                value={weightInput}
+                onChange={(e) => setWeightInput(e.target.value)}
+                placeholder="Es: 70.5"
+                className="h-12 text-base"
+                min="30"
+                max="300"
+                autoFocus
+              />
+            </div>
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={handleSaveWeight}
+                disabled={isSavingWeight || !weightInput}
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSavingWeight ? 'Salvataggio...' : 'Salva'}
+              </Button>
+              <Button
+                onClick={() => {
+                  setShowWeightModal(false);
+                  setWeightInput('');
+                }}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
 
       {location.pathname !== createPageUrl('Video') && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
