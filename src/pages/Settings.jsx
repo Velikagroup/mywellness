@@ -106,26 +106,6 @@ export default function Settings() {
   const [isHealthKitConnected, setIsHealthKitConnected] = useState(false);
   const [isSyncingHealthKit, setIsSyncingHealthKit] = useState(false);
   const [healthKitAvailable, setHealthKitAvailable] = useState(false);
-
-  // Quiz Data
-  const [quizData, setQuizData] = useState({
-    age: '',
-    gender: '',
-    height: '',
-    current_weight: '',
-    target_weight: '',
-    fitness_goal: '',
-    fitness_experience: '',
-    workout_days: '',
-    activity_level: '',
-    diet_type: '',
-    allergies: '',
-    favorite_foods: '',
-    target_body_type: '',
-    current_body_type: '',
-    target_zone: ''
-  });
-  const [isEditingQuiz, setIsEditingQuiz] = useState(false);
   
   // Translation for the language warning banner
   const languageWarningTexts = {
@@ -214,25 +194,6 @@ export default function Settings() {
         product_updates: currentUser.email_notifications?.product_updates ?? true,
         renewal_reminders: currentUser.email_notifications?.renewal_reminders ?? true,
         workout_reminders: currentUser.email_notifications?.workout_reminders ?? true
-      });
-
-      // Load quiz data
-      setQuizData({
-        age: currentUser.age || '',
-        gender: currentUser.gender || '',
-        height: currentUser.height || '',
-        current_weight: currentUser.current_weight || '',
-        target_weight: currentUser.target_weight || '',
-        fitness_goal: currentUser.fitness_goal || '',
-        fitness_experience: currentUser.fitness_experience || '',
-        workout_days: currentUser.workout_days || '',
-        activity_level: currentUser.activity_level || '',
-        diet_type: currentUser.diet_type || '',
-        allergies: currentUser.allergies || '',
-        favorite_foods: currentUser.favorite_foods || '',
-        target_body_type: currentUser.target_body_type || '',
-        current_body_type: currentUser.current_body_type || '',
-        target_zone: currentUser.target_zone || ''
       });
 
       // ✅ FIX: Carica transazioni tramite backend function per bypassare RLS
@@ -333,20 +294,6 @@ export default function Settings() {
       await loadUserData();
     } catch (error) {
       console.error('Error saving notifications:', error);
-      alert('❌ Errore nel salvataggio');
-    }
-    setIsSaving(false);
-  };
-
-  const handleSaveQuizData = async () => {
-    setIsSaving(true);
-    try {
-      await base44.auth.updateMe(quizData);
-      alert('✅ Dati del quiz salvati con successo!');
-      setIsEditingQuiz(false);
-      await loadUserData();
-    } catch (error) {
-      console.error('Error saving quiz data:', error);
       alert('❌ Errore nel salvataggio');
     }
     setIsSaving(false);
@@ -914,217 +861,18 @@ Questo è necessario per poter pagare gli affiliati automaticamente.`);
             </Card>
 
             <Card className="water-glass-effect border-gray-200/30">
-               <CardHeader>
-                 <CardTitle className="flex items-center justify-between">
-                   📋 Dati del Quiz
-                   <Button
-                     onClick={() => setIsEditingQuiz(!isEditingQuiz)}
-                     variant="outline"
-                     size="sm"
-                   >
-                     {isEditingQuiz ? 'Annulla' : 'Modifica'}
-                   </Button>
-                 </CardTitle>
-               </CardHeader>
-               <CardContent className="space-y-4">
-                 {!isEditingQuiz ? (
-                   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Età</p>
-                       <p className="font-semibold text-gray-900">{quizData.age || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Genere</p>
-                       <p className="font-semibold text-gray-900">{quizData.gender || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Altezza (cm)</p>
-                       <p className="font-semibold text-gray-900">{quizData.height || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Peso attuale (kg)</p>
-                       <p className="font-semibold text-gray-900">{quizData.current_weight || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Peso target (kg)</p>
-                       <p className="font-semibold text-gray-900">{quizData.target_weight || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Obiettivo fitness</p>
-                       <p className="font-semibold text-gray-900">{quizData.fitness_goal || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Esperienza fitness</p>
-                       <p className="font-semibold text-gray-900">{quizData.fitness_experience || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Giorni allenamento/settimana</p>
-                       <p className="font-semibold text-gray-900">{quizData.workout_days || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Livello attività</p>
-                       <p className="font-semibold text-gray-900">{quizData.activity_level || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg">
-                       <p className="text-xs text-gray-600">Tipo dieta</p>
-                       <p className="font-semibold text-gray-900">{quizData.diet_type || 'Non specificato'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg col-span-1 sm:col-span-2">
-                       <p className="text-xs text-gray-600">Allergie</p>
-                       <p className="font-semibold text-gray-900">{quizData.allergies || 'Non specificate'}</p>
-                     </div>
-                     <div className="p-3 bg-gray-50 rounded-lg col-span-1 sm:col-span-2">
-                       <p className="text-xs text-gray-600">Cibi preferiti</p>
-                       <p className="font-semibold text-gray-900">{quizData.favorite_foods || 'Non specificati'}</p>
-                     </div>
-                   </div>
-                 ) : (
-                   <div className="space-y-4">
-                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                       <div>
-                         <Label>Età</Label>
-                         <Input
-                           type="number"
-                           value={quizData.age}
-                           onChange={(e) => setQuizData({...quizData, age: e.target.value})}
-                           className="bg-white"
-                         />
-                       </div>
-                       <div>
-                         <Label>Genere</Label>
-                         <Input
-                           value={quizData.gender}
-                           onChange={(e) => setQuizData({...quizData, gender: e.target.value})}
-                           className="bg-white"
-                           placeholder="es: M, F"
-                         />
-                       </div>
-                       <div>
-                         <Label>Altezza (cm)</Label>
-                         <Input
-                           type="number"
-                           value={quizData.height}
-                           onChange={(e) => setQuizData({...quizData, height: e.target.value})}
-                           className="bg-white"
-                         />
-                       </div>
-                       <div>
-                         <Label>Peso attuale (kg)</Label>
-                         <Input
-                           type="number"
-                           step="0.1"
-                           value={quizData.current_weight}
-                           onChange={(e) => setQuizData({...quizData, current_weight: e.target.value})}
-                           className="bg-white"
-                         />
-                       </div>
-                       <div>
-                         <Label>Peso target (kg)</Label>
-                         <Input
-                           type="number"
-                           step="0.1"
-                           value={quizData.target_weight}
-                           onChange={(e) => setQuizData({...quizData, target_weight: e.target.value})}
-                           className="bg-white"
-                         />
-                       </div>
-                       <div>
-                         <Label>Obiettivo fitness</Label>
-                         <Input
-                           value={quizData.fitness_goal}
-                           onChange={(e) => setQuizData({...quizData, fitness_goal: e.target.value})}
-                           className="bg-white"
-                         />
-                       </div>
-                       <div>
-                         <Label>Esperienza fitness</Label>
-                         <Input
-                           value={quizData.fitness_experience}
-                           onChange={(e) => setQuizData({...quizData, fitness_experience: e.target.value})}
-                           className="bg-white"
-                           placeholder="es: beginner, intermediate, advanced"
-                         />
-                       </div>
-                       <div>
-                         <Label>Giorni allenamento/settimana</Label>
-                         <Input
-                           type="number"
-                           value={quizData.workout_days}
-                           onChange={(e) => setQuizData({...quizData, workout_days: e.target.value})}
-                           className="bg-white"
-                         />
-                       </div>
-                       <div>
-                         <Label>Livello attività</Label>
-                         <Input
-                           value={quizData.activity_level}
-                           onChange={(e) => setQuizData({...quizData, activity_level: e.target.value})}
-                           className="bg-white"
-                           placeholder="es: sedentary, lightly active, active"
-                         />
-                       </div>
-                       <div>
-                         <Label>Tipo dieta</Label>
-                         <Input
-                           value={quizData.diet_type}
-                           onChange={(e) => setQuizData({...quizData, diet_type: e.target.value})}
-                           className="bg-white"
-                           placeholder="es: omnivore, vegetarian, vegan"
-                         />
-                       </div>
-                       <div className="col-span-1 sm:col-span-2">
-                         <Label>Allergie</Label>
-                         <Textarea
-                           value={quizData.allergies}
-                           onChange={(e) => setQuizData({...quizData, allergies: e.target.value})}
-                           className="bg-white h-20"
-                           placeholder="es: arachidi, lattosio, gluten..."
-                         />
-                       </div>
-                       <div className="col-span-1 sm:col-span-2">
-                         <Label>Cibi preferiti</Label>
-                         <Textarea
-                           value={quizData.favorite_foods}
-                           onChange={(e) => setQuizData({...quizData, favorite_foods: e.target.value})}
-                           className="bg-white h-20"
-                           placeholder="es: pasta, riso, verdure..."
-                         />
-                       </div>
-                     </div>
-                     <div className="flex gap-3">
-                       <Button
-                         onClick={handleSaveQuizData}
-                         disabled={isSaving}
-                         className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                       >
-                         {isSaving ? 'Salvataggio...' : 'Salva modifiche'}
-                       </Button>
-                       <Button
-                         onClick={() => setIsEditingQuiz(false)}
-                         variant="outline"
-                         className="flex-1"
-                       >
-                         Annulla
-                       </Button>
-                     </div>
-                   </div>
-                 )}
-               </CardContent>
-             </Card>
-
-             <Card className="water-glass-effect border-gray-200/30">
-               <CardContent className="pt-6">
-                 <Button
-                   onClick={handleLogout}
-                   variant="destructive"
-                   className="w-full"
-                 >
-                   <LogOut className="w-4 h-4 mr-2" />
-                   {t('settings.logout')}
-                 </Button>
-               </CardContent>
-             </Card>
-            </TabsContent>
+              <CardContent className="pt-6">
+                <Button
+                  onClick={handleLogout}
+                  variant="destructive"
+                  className="w-full"
+                >
+                  <LogOut className="w-4 h-4 mr-2" />
+                  {t('settings.logout')}
+                </Button>
+              </CardContent>
+            </Card>
+          </TabsContent>
 
           {/* SUBSCRIPTION */}
           <TabsContent value="subscription" className="space-y-6">

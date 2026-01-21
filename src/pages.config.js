@@ -11,7 +11,6 @@ import AdminSupportTickets from './pages/AdminSupportTickets';
 import AuthCallback from './pages/AuthCallback';
 import Blog from './pages/Blog';
 import BlogArticle from './pages/BlogArticle';
-import BodyScan from './pages/BodyScan';
 import Checkout from './pages/Checkout';
 import Dashboard from './pages/Dashboard';
 import Home from './pages/Home';
@@ -66,6 +65,7 @@ import ptblogarticle from './pages/ptblogarticle';
 import ptcheckout from './pages/ptcheckout';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
+import BodyScan from './pages/BodyScan';
 import __Layout from './Layout.jsx';
 
 
@@ -83,7 +83,6 @@ export const PAGES = {
     "AuthCallback": AuthCallback,
     "Blog": Blog,
     "BlogArticle": BlogArticle,
-    "BodyScan": BodyScan,
     "Checkout": Checkout,
     "Dashboard": Dashboard,
     "Home": Home,
@@ -138,6 +137,7 @@ export const PAGES = {
     "ptcheckout": ptcheckout,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
+    "BodyScan": BodyScan,
 }
 
 export const pagesConfig = {
