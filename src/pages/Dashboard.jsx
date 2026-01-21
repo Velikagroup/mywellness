@@ -800,17 +800,7 @@ export default function Dashboard() {
                 <Edit3 className="w-4 h-4" />
               </button>
             </div>
-            
-            {/* ✅ Mostra "Giorni di Allenamento" SOLO se ha accesso al workout_plan */}
-            {hasFeatureAccess(user?.subscription_plan, 'workout_plan') && (
-              <TechnicalStatsCard
-                title={t('dashboard.workoutDays')}
-                value={user.workout_days || 0}
-                unit={t('dashboard.daysPerWeek')}
-                icon={Calendar}
-                status="consistent"
-              />
-            )}
+
           </div>
           </div>
         </div>
