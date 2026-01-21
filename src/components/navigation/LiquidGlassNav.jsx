@@ -120,16 +120,14 @@ export default function LiquidGlassNav({ navItems }) {
             );
           })}
 
-          {adminItems.length > 0 && (
+          {adminItems.length > 0 && isMobile && (
             <div className="relative">
               <button
                 onClick={() => setShowAdminMenu(!showAdminMenu)}
                 className="flex flex-col items-center gap-1 p-2 rounded-xl transition-colors text-gray-400 hover:text-[#26847F] pointer-events-auto"
                 style={{ cursor: 'pointer' }}
               >
-                <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                  <path d="M3 5a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1V5zM3 13a1 1 0 011-1h12a1 1 0 011 1v2a1 1 0 01-1 1H4a1 1 0 01-1-1v-2z" />
-                </svg>
+                <MenuIcon className="w-5 h-5" />
                 <span className="text-xs font-medium">Menu</span>
               </button>
 
@@ -151,6 +149,18 @@ export default function LiquidGlassNav({ navItems }) {
               )}
             </div>
           )}
+
+          {adminItems.length > 0 && !isMobile && adminItems.map((item) => (
+            <Link
+              key={item.name}
+              to={createPageUrl(item.path)}
+              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-colors text-gray-400 hover:text-[#26847F] pointer-events-auto min-w-max"
+              style={{ cursor: 'pointer' }}
+            >
+              <item.icon className="w-5 h-5" />
+              <span className="text-xs font-medium text-center leading-tight">{item.name}</span>
+            </Link>
+          ))}
         </div>
       </div>
     </div>
