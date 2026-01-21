@@ -645,27 +645,6 @@ export default function Dashboard() {
 
       <div className="min-h-screen pb-20 overflow-x-hidden">
         <div className="max-w-7xl mx-auto px-4 pt-0 pb-4 sm:p-6 space-y-4 sm:space-y-8">
-          {/* Header Desktop - nascosto su mobile */}
-          <div className="hidden md:flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('dashboard.title')}</h1>
-              <p className="text-gray-600">{t('dashboard.subtitle')}</p>
-            </div>
-
-          </div>
-
-        {/* Header Mobile - visibile solo su mobile */}
-        {isMobile && (
-          <div className="md:hidden mb-6 pb-6 border-b border-gray-200/30">
-            <div className="flex items-start justify-between gap-4 mb-4">
-              <div>
-                <h1 className="text-2xl font-bold text-gray-900 mb-1">{t('dashboard.title')}</h1>
-                <p className="text-sm text-gray-600">{t('dashboard.subtitle')}</p>
-              </div>
-            </div>
-
-          </div>
-        )}
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-8">
             <div className="lg:col-span-2 space-y-6 sm:space-y-8 onboarding-dashboard-overview">
