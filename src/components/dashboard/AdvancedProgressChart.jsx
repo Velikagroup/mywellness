@@ -469,7 +469,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           <div className="relative group cursor-pointer">
             <div className="flex flex-col items-center" onClick={onEditBMR}>
               <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border-2 border-blue-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
-                <Heart className="w-6 h-6 text-blue-600" />
+                <Activity className="w-6 h-6 text-blue-600" />
               </div>
               <p className="text-sm font-bold text-blue-700 mt-2">{Math.round(user.bmr || 1500)}</p>
               <p className="text-xs text-gray-500">kcal</p>
