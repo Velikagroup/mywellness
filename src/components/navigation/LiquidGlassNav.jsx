@@ -74,13 +74,16 @@ export default function LiquidGlassNav({ navItems }) {
       >
         {/* Selettore liquido */}
         <div
-          className="absolute top-1.5 bottom-1.5 rounded-2xl"
+          className="absolute top-2 bottom-2 rounded-2xl"
           style={{
             left: `${selectorPosition}%`,
             width: `${itemWidth}%`,
             transform: 'translateX(0)',
             transition: isDragging ? 'none' : 'left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            boxShadow: '0 6px 20px rgba(38, 132, 127, 0.25)',
+            boxShadow: '0 8px 24px rgba(38, 132, 127, 0.3)',
+            marginLeft: '2%',
+            marginRight: '2%',
+            width: `calc(${itemWidth}% - 4%)`,
           }}
         />
 
