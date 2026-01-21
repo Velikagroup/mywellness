@@ -80,10 +80,7 @@ export default function LiquidGlassNav({ navItems }) {
             width: `${itemWidth}%`,
             transform: 'translateX(0)',
             transition: isDragging ? 'none' : 'left 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-            background: 'linear-gradient(135deg, rgba(38, 132, 127, 0.15) 0%, rgba(38, 132, 127, 0.1) 100%)',
-            backdropFilter: 'blur(12px)',
-            border: '1.5px solid rgba(38, 132, 127, 0.3)',
-            boxShadow: '0 8px 32px rgba(38, 132, 127, 0.15), inset 0 1px 1px rgba(255, 255, 255, 0.6)',
+            boxShadow: '0 6px 20px rgba(38, 132, 127, 0.25)',
           }}
         />
 
