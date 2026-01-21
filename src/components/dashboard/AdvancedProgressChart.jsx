@@ -398,61 +398,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
            </div>
          </div>
 
-         {/* Stats Row - Liquid Glass Box */}
-         <div className="bg-white/50 backdrop-blur-md rounded-2xl border border-white/60 shadow-lg p-6 md:p-8 mb-8">
-           <div className="grid grid-cols-3 gap-6 md:gap-8">
-             <div className="group flex flex-col justify-between">
-               <div className="flex items-baseline gap-1">
-                 <span className="text-2xl font-bold text-gray-900">{user.daily_calories || 2000}</span>
-                 <span className="text-xs text-gray-400">kcal</span>
-                 {onEditCalories && (
-                   <button
-                     onClick={onEditCalories}
-                     className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
-                     title="Modifica"
-                   >
-                     <Edit3 className="w-3 h-3" />
-                   </button>
-                 )}
-               </div>
-               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.targetCalories')}</p>
-             </div>
-             <div className="group flex flex-col justify-between">
-               <div className="flex items-baseline gap-1">
-                 <span className="text-2xl font-bold text-gray-900">{Math.round(user.bmr || 1500)}</span>
-                 <span className="text-xs text-gray-400">kcal</span>
-                 {onEditBMR && (
-                   <button
-                     onClick={onEditBMR}
-                     className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
-                     title="Modifica"
-                   >
-                     <Edit3 className="w-3 h-3" />
-                   </button>
-                 )}
-               </div>
-               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bmr')}</p>
-             </div>
-             <div className="group flex flex-col justify-between">
-               <div className="flex items-baseline gap-1">
-                 <span className="text-2xl font-bold text-gray-900">{(user.body_fat_percentage || 0).toFixed(1)}</span>
-                 <span className="text-xs text-gray-400">%</span>
-                 {onEditBodyFat && (
-                   <button
-                     onClick={onEditBodyFat}
-                     className="ml-auto p-1 text-gray-350 hover:text-[#26847F] transition-colors"
-                     title="Modifica"
-                   >
-                     <Edit3 className="w-3 h-3" />
-                   </button>
-                 )}
-               </div>
-               <p className="text-xs text-gray-500 font-medium mt-2">{t('dashboard.bodyFat')}</p>
-             </div>
-           </div>
-         </div>
-
-        <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+         <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
             <div className="flex items-center gap-2 text-xs">
