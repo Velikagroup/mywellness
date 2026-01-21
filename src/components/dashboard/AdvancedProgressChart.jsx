@@ -399,47 +399,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
       </div>
 
       <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-          <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
-            <div className="flex items-center gap-4">
-              {/* Cerchi dati */}
-              <div className="relative group">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-orange-100 to-orange-50 border-2 border-orange-300 flex items-center justify-center cursor-help hover:shadow-lg transition-shadow">
-                  <Zap className="w-5 h-5 text-orange-600" />
-                </div>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                  <div className="font-semibold">{t('dashboard.targetCalories')}</div>
-                  <div className="text-orange-300 font-bold">{user.daily_calories || 2000} kcal</div>
-                  {onEditCalories && <button onClick={onEditCalories} className="text-xs text-orange-300 hover:text-orange-200 mt-1">✏️ Modifica</button>}
-                </div>
-              </div>
-
-              <div className="relative group">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border-2 border-blue-300 flex items-center justify-center cursor-help hover:shadow-lg transition-shadow">
-                  <Heart className="w-5 h-5 text-blue-600" />
-                </div>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                  <div className="font-semibold">{t('dashboard.bmr')}</div>
-                  <div className="text-blue-300 font-bold">{Math.round(user.bmr || 1500)} kcal</div>
-                  {onEditBMR && <button onClick={onEditBMR} className="text-xs text-blue-300 hover:text-blue-200 mt-1">✏️ Modifica</button>}
-                </div>
-              </div>
-
-              <div className="relative group">
-                <div className="w-12 h-12 rounded-full bg-gradient-to-br from-pink-100 to-pink-50 border-2 border-pink-300 flex items-center justify-center cursor-help hover:shadow-lg transition-shadow">
-                  <Droplet className="w-5 h-5 text-pink-600" />
-                </div>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-                  <div className="font-semibold">{t('dashboard.bodyFat')}</div>
-                  <div className="text-pink-300 font-bold">{(user.body_fat_percentage || 0).toFixed(1)} %</div>
-                  {onEditBodyFat && <button onClick={onEditBodyFat} className="text-xs text-pink-300 hover:text-pink-200 mt-1">✏️ Modifica</button>}
-                </div>
-              </div>
-
-              <div className="flex items-center gap-2 text-xs ml-2">
-                <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
-                <span className="text-gray-600 font-medium">{t('progressChart.currentWeight')}</span>
-              </div>
+            <div className="flex items-center gap-2 text-xs">
+              <div className="w-3 h-3 bg-[#26847F] rounded-full"></div>
+              <span className="text-gray-600 font-medium">{t('progressChart.currentWeight')}</span>
             </div>
           </div>
           <div className="h-64">
