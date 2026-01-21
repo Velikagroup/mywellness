@@ -425,38 +425,26 @@ function getWeeklyReportTemplate(user, stats, template, variables) {
     `;
 }
 
-function getMotivationalMessage(stats) {
+function getMotivationalMessageText(stats) {
     if (stats.progressPercentage >= 75) {
-        return `
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0; color: #92400e; font-weight: 600;">
-                🔥 <strong>Incredibile!</strong> Sei oltre il 75% del tuo obiettivo! Il traguardo è vicino, continua così!
-            </p>
-        </div>
-        `;
+        return '🔥 Incredibile! Sei oltre il 75% del tuo obiettivo! Il traguardo è vicino, continua così!';
     } else if (stats.adherence >= 80 && stats.workoutsCompleted >= stats.plannedWorkouts * 0.8) {
-        return `
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0; color: #92400e; font-weight: 600;">
-                💪 <strong>Ottimo lavoro!</strong> La tua costanza sta dando risultati. Mantieni questo ritmo!
-            </p>
-        </div>
-        `;
+        return '💪 Ottimo lavoro! La tua costanza sta dando risultati. Mantieni questo ritmo!';
     } else if (stats.weightTrend === 'down') {
-        return `
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0; color: #92400e; font-weight: 600;">
-                📉 <strong>Ben fatto!</strong> Il peso sta scendendo. Stai andando nella direzione giusta!
-            </p>
-        </div>
-        `;
+        return '📉 Ben fatto! Il peso sta scendendo. Stai andando nella direzione giusta!';
     } else {
-        return `
-        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 15px; border-radius: 8px; margin: 20px 0;">
-            <p style="margin: 0; color: #92400e; font-weight: 600;">
-                💡 <strong>Consiglio:</strong> Cerca di seguire il piano con maggiore costanza questa settimana. Piccoli passi portano a grandi risultati!
-            </p>
-        </div>
-        `;
+        return '💡 Consiglio: Cerca di seguire il piano con maggiore costanza questa settimana. Piccoli passi portano a grandi risultati!';
     }
+}
+
+function generateWeightDataForEmail(weightHistory, startDate, endDate) {
+    const weekWeights = weightHistory.filter(w => {
+        const date = new Date(w.date);
+        return date >= startDate && date <= endDate;
+    }).sort((a, b) => new Date(a.date) - new Date(b.date));
+
+    return weekWeights.map(w => ({
+        date: new Date(w.date).toLocaleDateString('it-IT', { day: 'numeric', month: 'short' }),
+        weight: parseFloat(w.weight.toFixed(1))
+    }));
 }
