@@ -68,8 +68,15 @@ export default function LiquidGlassNav({ navItems }) {
   const mainItems = navItems.filter(item => !item.isAdminOnly);
   const adminItems = navItems.filter(item => item.isAdminOnly);
   const [showAdminMenu, setShowAdminMenu] = React.useState(false);
+  const [isMobile, setIsMobile] = React.useState(typeof window !== 'undefined' && window.innerWidth < 768);
 
-  const isMobile = typeof window !== 'undefined' && window.innerWidth < 768;
+  React.useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
