@@ -444,19 +444,186 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const mealOrder = { breakfast: 1, snack1: 2, lunch: 3, snack2: 4, dinner: 5 };
   const sortedMeals = uniqueMeals.sort((a, b) => (mealOrder[a.meal_type] || 999) - (mealOrder[b.meal_type] || 999));
 
-  const totalWeightToChange = startWeight - targetWeight;
-  const actualDirection = lastRecordedWeight - startWeight;
-
-  // Verde se movimento è coerente con l'obiettivo
-  const isAligned = (totalWeightToChange > 0 && actualDirection < 0) || 
-                   (totalWeightToChange < 0 && actualDirection > 0) ||
-                   (totalWeightToChange === 0);
-
   return (
     <>
-      <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-            {/* Box peso attuale e target integrati */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
+      {(() => {
+        const totalWeightToChange = startWeight - targetWeight;
+        const actualDirection = lastRecordedWeight - startWeight;
+
+        // Verde se movimento è coerente con l'obiettivo
+        const isAligned = (totalWeightToChange > 0 && actualDirection < 0) || 
+                         (totalWeightToChange < 0 && actualDirection > 0) ||
+                         (totalWeightToChange === 0);
+
+        return (
+          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+            {/* Macronutrienti giornalieri */}
+            <div className="flex justify-center gap-6 mb-6">
+              {/* Proteine */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#e5e7eb"
+                      strokeWidth="6"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#ef4444"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 32}`}
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.protein / Math.max(todayMacros.planned.protein, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Beef className="w-4 h-4 text-red-600 mb-0.5" />
+                    <p className="text-xs font-bold text-red-700">{todayMacros.consumed.protein}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Proteine</p>
+              </div>
+
+              {/* Carboidrati */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#e5e7eb"
+                      strokeWidth="6"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#f59e0b"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 32}`}
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.carbs / Math.max(todayMacros.planned.carbs, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Wheat className="w-4 h-4 text-amber-600 mb-0.5" />
+                    <p className="text-xs font-bold text-amber-700">{todayMacros.consumed.carbs}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Carboidrati</p>
+              </div>
+
+              {/* Grassi */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#e5e7eb"
+                      strokeWidth="6"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#8b5cf6"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 32}`}
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.fat / Math.max(todayMacros.planned.fat, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Droplet className="w-4 h-4 text-violet-600 mb-0.5" />
+                    <p className="text-xs font-bold text-violet-700">{todayMacros.consumed.fat}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Grassi</p>
+              </div>
+              </div>
+
+              {/* Pasti del giorno */}
+              {sortedMeals.length > 0 && (
+              <div className="mb-6 space-y-3">
+                {sortedMeals.map((meal) => {
+                  const mealLog = getMealLog(meal.id);
+                  const isLogged = !!mealLog;
+                  const displayCalories = isLogged ? mealLog.actual_calories : meal.total_calories;
+
+                  return (
+                    <div key={meal.id} className="w-full bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center justify-between gap-2">
+                        <button onClick={() => onMealSelect && onMealSelect(meal)} className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden relative flex-shrink-0">
+                            {meal.image_url ? (
+                                <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
+                            ) : (
+                                <ImageIcon className="w-5 h-5 text-gray-400 animate-pulse"/>
+                            )}
+                            {isLogged && (
+                              <div className="absolute top-0 right-0 bg-green-500 rounded-bl-lg p-0.5">
+                                <CheckCircle2 className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1 text-left">
+                            <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
+                            <p className="text-sm text-gray-600 truncate">{meal.name}</p>
+                          </div>
+                        </button>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="text-right">
+                            <p className={`font-bold ${isLogged ? 'text-green-600' : 'text-gray-800'}`}>
+                              {displayCalories}
+                            </p>
+                            <p className="text-xs text-gray-500">kcal</p>
+                          </div>
+                          {!isLogged && (
+                            <>
+                              <Checkbox
+                                checked={false}
+                                onCheckedChange={(checked) => handleCheckMeal(meal, checked)}
+                                disabled={savingMealId === meal.id}
+                                className="w-5 h-5 border-2 border-[#26847F] data-[state=checked]:bg-[#26847F]"
+                                title={t('nutrition.markAsConsumed')}
+                              />
+                              {hasFeatureAccess(userPlan, 'meal_photo_analysis') && onPhotoAnalyze && (
+                                <Button
+                                  onClick={() => onPhotoAnalyze(meal)}
+                                  variant="ghost"
+                                  size="icon"
+                                  className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
+                                  title={t('nutrition.analyzeWithPhoto')}
+                                >
+                                  <Camera className="w-5 h-5" />
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              )}
+
+              {/* Box peso attuale e target integrati */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
               <div className={`p-3 rounded-lg border backdrop-blur-sm ${
                 isAligned
                   ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
@@ -480,7 +647,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
             </div>
 
-            <div className="h-64">
+          <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
@@ -521,10 +688,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 />
               </LineChart>
             </ResponsiveContainer>
-            </div>
+          </div>
 
-            {/* Dati sotto il grafico */}
-            <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-gray-200/50">
+          {/* Dati sotto il grafico */}
+          <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-gray-200/50">
           {/* Target Calorie */}
           <div className="relative group cursor-pointer">
             <div className="flex flex-col items-center" onClick={onEditCalories}>
@@ -566,180 +733,15 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               {t('dashboard.bodyFat')}
             </div>
           </div>
-            </div>
-            </div>
-
-      {/* Bilancio Calorie Oggi */}
-      <div className="mt-6">
-        <CalorieBalanceChart user={user} />
-      </div>
-
-      {/* Macronutrienti giornalieri */}
-      <div className="mt-6 bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-        <div className="flex justify-center gap-6 mb-6">
-          {/* Proteine */}
-          <div className="flex flex-col items-center">
-            <div className="relative w-20 h-20">
-              <svg className="w-20 h-20 transform -rotate-90">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="#e5e7eb"
-                  strokeWidth="6"
-                  fill="none"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="#ef4444"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeDasharray={`${2 * Math.PI * 32}`}
-                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.protein / Math.max(todayMacros.planned.protein, 1)))}`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Beef className="w-4 h-4 text-red-600 mb-0.5" />
-                <p className="text-xs font-bold text-red-700">{todayMacros.consumed.protein}g</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-600 mt-1 font-medium">Proteine</p>
           </div>
-
-          {/* Carboidrati */}
-          <div className="flex flex-col items-center">
-            <div className="relative w-20 h-20">
-              <svg className="w-20 h-20 transform -rotate-90">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="#e5e7eb"
-                  strokeWidth="6"
-                  fill="none"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="#f59e0b"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeDasharray={`${2 * Math.PI * 32}`}
-                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.carbs / Math.max(todayMacros.planned.carbs, 1)))}`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Wheat className="w-4 h-4 text-amber-600 mb-0.5" />
-                <p className="text-xs font-bold text-amber-700">{todayMacros.consumed.carbs}g</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-600 mt-1 font-medium">Carboidrati</p>
           </div>
+          );
+          })()}
 
-          {/* Grassi */}
-          <div className="flex flex-col items-center">
-            <div className="relative w-20 h-20">
-              <svg className="w-20 h-20 transform -rotate-90">
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="#e5e7eb"
-                  strokeWidth="6"
-                  fill="none"
-                />
-                <circle
-                  cx="40"
-                  cy="40"
-                  r="32"
-                  stroke="#8b5cf6"
-                  strokeWidth="6"
-                  fill="none"
-                  strokeDasharray={`${2 * Math.PI * 32}`}
-                  strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.fat / Math.max(todayMacros.planned.fat, 1)))}`}
-                  strokeLinecap="round"
-                />
-              </svg>
-              <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <Droplet className="w-4 h-4 text-violet-600 mb-0.5" />
-                <p className="text-xs font-bold text-violet-700">{todayMacros.consumed.fat}g</p>
-              </div>
-            </div>
-            <p className="text-xs text-gray-600 mt-1 font-medium">Grassi</p>
+          {/* Bilancio Calorie Oggi */}
+          <div className="mt-6">
+          <CalorieBalanceChart user={user} />
           </div>
-        </div>
-
-        {/* Pasti del giorno */}
-        {sortedMeals.length > 0 && (
-          <div className="space-y-3">
-            {sortedMeals.map((meal) => {
-              const mealLog = getMealLog(meal.id);
-              const isLogged = !!mealLog;
-              const displayCalories = isLogged ? mealLog.actual_calories : meal.total_calories;
-
-              return (
-                <div key={meal.id} className="w-full bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors">
-                  <div className="flex items-center justify-between gap-2">
-                    <button onClick={() => onMealSelect && onMealSelect(meal)} className="flex items-center gap-3 min-w-0 flex-1">
-                      <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden relative flex-shrink-0">
-                        {meal.image_url ? (
-                            <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
-                        ) : (
-                            <ImageIcon className="w-5 h-5 text-gray-400 animate-pulse"/>
-                        )}
-                        {isLogged && (
-                          <div className="absolute top-0 right-0 bg-green-500 rounded-bl-lg p-0.5">
-                            <CheckCircle2 className="w-3 h-3 text-white" />
-                          </div>
-                        )}
-                      </div>
-                      <div className="min-w-0 flex-1 text-left">
-                        <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
-                        <p className="text-sm text-gray-600 truncate">{meal.name}</p>
-                      </div>
-                    </button>
-                    <div className="flex items-center gap-2 flex-shrink-0">
-                      <div className="text-right">
-                        <p className={`font-bold ${isLogged ? 'text-green-600' : 'text-gray-800'}`}>
-                          {displayCalories}
-                        </p>
-                        <p className="text-xs text-gray-500">kcal</p>
-                      </div>
-                      {!isLogged && (
-                        <>
-                          <Checkbox
-                            checked={false}
-                            onCheckedChange={(checked) => handleCheckMeal(meal, checked)}
-                            disabled={savingMealId === meal.id}
-                            className="w-5 h-5 border-2 border-[#26847F] data-[state=checked]:bg-[#26847F]"
-                            title={t('nutrition.markAsConsumed')}
-                          />
-                          {hasFeatureAccess(userPlan, 'meal_photo_analysis') && onPhotoAnalyze && (
-                            <Button
-                              onClick={() => onPhotoAnalyze(meal)}
-                              variant="ghost"
-                              size="icon"
-                              className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
-                              title={t('nutrition.analyzeWithPhoto')}
-                            >
-                              <Camera className="w-5 h-5" />
-                            </Button>
-                          )}
-                        </>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </>
-  );
-}
+          </>
+          );
+          }
