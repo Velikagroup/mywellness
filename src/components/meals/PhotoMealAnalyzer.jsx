@@ -532,7 +532,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
       
       <Dialog open={true} onOpenChange={onClose}>
         <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white border-2 border-gray-200">
-        <DialogHeader className="border-b border-gray-200 pb-4">
+          <DialogHeader className="border-b border-gray-200 pb-4">
           <DialogTitle className="flex items-center gap-3 text-2xl">
             <div className="w-12 h-12 bg-gradient-to-br from-[#26847F] to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
               <Sparkles className="w-6 h-6 text-white" />
