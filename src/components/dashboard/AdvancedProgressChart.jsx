@@ -659,13 +659,40 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <Flame className={isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
                     Calorie Bruciate
                   </span>
-                  <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
-                    {(() => {
+                  <div className="flex items-center gap-4">
+                    <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
+                      {(() => {
+                        const bmr = calculateBMR(user);
+                        const neat = calculateNEAT(user);
+                        return Math.round(bmr + neat);
+                      })()} kcal
+                    </span>
+                    <span className={`font-bold text-sm ${(() => {
+                      const consumed = sortedMeals.reduce((sum, meal) => {
+                        const mealLog = getMealLog(meal.id);
+                        return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
+                      }, 0);
                       const bmr = calculateBMR(user);
                       const neat = calculateNEAT(user);
-                      return Math.round(bmr + neat);
-                    })()} kcal
-                  </span>
+                      const burned = bmr + neat;
+                      const diff = Math.round(consumed - burned);
+                      return isWeightLoss 
+                        ? (diff < 0 ? 'text-green-600' : 'text-red-600')
+                        : (diff < 0 ? 'text-red-600' : 'text-green-600');
+                    })()}`}>
+                      {(() => {
+                        const consumed = sortedMeals.reduce((sum, meal) => {
+                          const mealLog = getMealLog(meal.id);
+                          return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
+                        }, 0);
+                        const bmr = calculateBMR(user);
+                        const neat = calculateNEAT(user);
+                        const burned = bmr + neat;
+                        const diff = Math.round(consumed - burned);
+                        return (diff > 0 ? '+' : '') + diff;
+                      })()}
+                    </span>
+                  </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <span 
