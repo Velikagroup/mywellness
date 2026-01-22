@@ -965,6 +965,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
             )}
             </DialogContent>
             </Dialog>
+            )}
             </>
             );
             }
