@@ -880,10 +880,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           );
           })()}
 
-          {/* Bilancio Calorie Oggi */}
-          <div className="mt-6">
-          <CalorieBalanceChart user={user} />
-          </div>
           </>
           );
           }
