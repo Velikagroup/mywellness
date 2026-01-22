@@ -9,7 +9,7 @@ import { base44 } from "@/api/base44Client";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useLanguage } from '../i18n/LanguageContext';
 
-export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onUpgradeClick, onMealComplete }) {
+export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onUpgradeClick, onMealComplete, onDataReload }) {
   const { t, language } = useLanguage();
   const navigate = useNavigate();
   const [savingMealId, setSavingMealId] = React.useState(null);
