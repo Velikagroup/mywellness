@@ -101,24 +101,24 @@ export default function LiquidGlassNav({ navItems }) {
         )}
 
         {/* Elementi nav */}
-        <div className="relative flex items-center justify-center z-10 gap-1">
-          {mainItems.map((item, index) => {
-            const isSelected = selectedIndex === index;
-            return (
-              <Link
-                key={item.name}
-                to={createPageUrl(item.path)}
-                onClick={() => setSelectedIndex(index)}
-                className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors min-w-max pointer-events-auto ${
-                  isSelected ? 'text-[#26847F]' : 'text-gray-400 hover:text-[#26847F]'
-                }`}
-                style={{ cursor: 'pointer' }}
-              >
-                <item.icon className="w-5 h-5" />
-                <span className="text-xs font-medium text-center leading-tight">{item.name}</span>
-              </Link>
-            );
-          })}
+        <div className={`relative flex items-center z-10 ${isMobile ? 'justify-between w-full' : 'justify-center gap-1'}`}>
+           {mainItems.map((item, index) => {
+             const isSelected = selectedIndex === index;
+             return (
+               <Link
+                 key={item.name}
+                 to={createPageUrl(item.path)}
+                 onClick={() => setSelectedIndex(index)}
+                 className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-colors pointer-events-auto ${isMobile ? 'flex-1 justify-center' : 'min-w-max'} ${
+                   isSelected ? 'text-[#26847F]' : 'text-gray-400 hover:text-[#26847F]'
+                 }`}
+                 style={{ cursor: 'pointer' }}
+               >
+                 <item.icon className="w-5 h-5" />
+                 <span className="text-xs font-medium text-center leading-tight">{item.name}</span>
+               </Link>
+             );
+           })}
 
           {adminItems.length > 0 && isMobile && (
             <div className="relative">
