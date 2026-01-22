@@ -709,6 +709,10 @@ export default function Dashboard() {
           user={user}
           onClose={() => setShowProgressPhoto(false)}
           onAnalysisComplete={handleProgressAnalysisComplete}
+          onOpenPhotoGallery={async () => {
+            await loadProgressPhotos();
+            setShowPhotoGallery(true);
+          }}
         />
       )}
       {showUpgradeModal && (
