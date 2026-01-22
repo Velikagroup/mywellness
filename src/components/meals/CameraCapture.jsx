@@ -123,6 +123,7 @@ export default function CameraCapture({ onCapture, onClose, t }) {
             autoPlay
             playsInline
             className="w-full h-full object-cover"
+            style={{ transform: `scale(${zoom})` }}
           />
 
           {/* Preview foto recenti in basso a sinistra */}
