@@ -29,6 +29,11 @@ const getActivityMultiplier = (activityLevel) => {
 };
 
 const calculateBMR = (userData) => {
+  // Se BMR è customizzato, usa quello
+  if (userData?.bmr) {
+    return userData.bmr;
+  }
+  
   if (!userData?.gender || !userData?.current_weight || !userData?.height) return 0;
   
   let age = 30;
