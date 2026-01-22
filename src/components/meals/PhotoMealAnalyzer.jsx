@@ -627,7 +627,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                         key={photo.id}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="p-4 bg-white transition-all"
+                        className="bg-white transition-all"
                       >
                         <div className="relative mb-3 group">
                           <img 
@@ -648,7 +648,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                           </div>
                         </div>
                         
-                        <div className="space-y-2">
+                        <div className="space-y-2 px-1">
                           <label className="text-sm font-semibold text-gray-700 flex items-center gap-1">
                             <Sparkles className="w-4 h-4 text-[#26847F]" />
                             {t('photoMealAnalyzer.ingredientDescription')}
