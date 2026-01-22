@@ -7,7 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
 
-export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplete }) {
+export default function ProgressPhotoAnalyzer({ user, onClose, onAnalysisComplete, onOpenPhotoGallery }) {
   const { t, language } = useLanguage();
 
   const TARGET_ZONES = [
@@ -1685,13 +1685,20 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
                   </div>
                 )}
 
-                <Button onClick={saveAnalysis} className="w-full bg-purple-600 hover:bg-purple-700" disabled={isSaving || isApplyingChanges || isGeneratingProposals}>
-                  {isSaving ? (
-                    <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.savingAnalysis')}</>
-                  ) : (
-                    <><Sparkles className="w-4 h-4 mr-2" />{t('progressAnalyzer.saveAnalysis')}</>
+                <div className="flex gap-2">
+                  <Button onClick={saveAnalysis} className="flex-1 bg-purple-600 hover:bg-purple-700" disabled={isSaving || isApplyingChanges || isGeneratingProposals}>
+                    {isSaving ? (
+                      <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.savingAnalysis')}</>
+                    ) : (
+                      <><Sparkles className="w-4 h-4 mr-2" />{t('progressAnalyzer.saveAnalysis')}</>
+                    )}
+                  </Button>
+                  {onOpenPhotoGallery && (
+                    <Button onClick={onOpenPhotoGallery} className="flex-1 bg-blue-600 hover:bg-blue-700">
+                      📸 {t('progressAnalyzer.gallery') || 'Galleria'}
+                    </Button>
                   )}
-                </Button>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
