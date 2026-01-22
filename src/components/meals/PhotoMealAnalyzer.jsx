@@ -960,10 +960,10 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                 {t('photoMealAnalyzer.saveAndRebalance')}
               </Button>
             )}
-          </DialogFooter>
-        )}
-      </DialogContent>
-    </Dialog>
-    </>
-  );
-}
+            </DialogFooter>
+            )}
+            </DialogContent>
+            </Dialog>
+            </>
+            );
+            }
