@@ -486,6 +486,25 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         {children}
       </main>
 
+      <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
+        <button
+          onClick={() => setShowActionMenu(!showActionMenu)}
+          className="w-16 h-16 rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold"
+          style={{
+            boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
+            transform: 'rotate(0deg)',
+            transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          }}
+          title="Quick Actions"
+        >
+          {showActionMenu ? (
+            <XIcon className="w-8 h-8" strokeWidth={3} />
+          ) : (
+            <Plus className="w-8 h-8" strokeWidth={3} />
+          )}
+        </button>
+      </div>
+
       <LiquidGlassNav 
         navItems={allNavItems} 
         onActionClick={handleActionClick}
