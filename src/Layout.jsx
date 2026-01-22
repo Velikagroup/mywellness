@@ -486,7 +486,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         {children}
       </main>
 
-      <LiquidGlassNav navItems={allNavItems} />
+      <LiquidGlassNav 
+        navItems={allNavItems} 
+        onActionClick={handleActionClick}
+        showActionMenu={showActionMenu}
+        setShowActionMenu={setShowActionMenu}
+      />
 
       <div className="fixed bottom-20 left-1/2 transform -translate-x-1/2 z-50">
         <button
