@@ -70,6 +70,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const [isSaving, setIsSaving] = useState(false);
   const [todayCalorieBalance, setTodayCalorieBalance] = useState(null);
   const [accumulatedCalories, setAccumulatedCalories] = useState(0);
+  const [todayMacros, setTodayMacros] = useState({ protein: 0, carbs: 0, fat: 0 });
 
   useEffect(() => {
     const loadCalorieData = async () => {
