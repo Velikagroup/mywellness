@@ -30,6 +30,11 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
       const todayDate = new Date().toISOString().split('T')[0];
       const user = await base44.auth.me();
       
+      // Aggiorna il pasto come completato
+      await base44.entities.MealPlan.update(meal.id, {
+        is_completed: true
+      });
+      
       await base44.entities.MealLog.create({
         user_id: user.id,
         original_meal_id: meal.id,
@@ -43,6 +48,11 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
         delta_calories: 0,
         rebalanced: false
       });
+      
+      // Trigger il callback per aggiornare il grafico
+      if (onMealComplete) {
+        onMealComplete();
+      }
       
       window.location.reload();
     } catch (error) {
