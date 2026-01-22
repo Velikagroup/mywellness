@@ -17,8 +17,37 @@ export default function MealsAndMacrosCard({
   getMealTypeLabel,
   t 
 }) {
+  const cameraInputRef = React.useRef(null);
+  const [currentMealForPhoto, setCurrentMealForPhoto] = React.useState(null);
+
+  const handleCameraClick = (meal) => {
+    setCurrentMealForPhoto(meal);
+    if (cameraInputRef.current) {
+      cameraInputRef.current.click();
+    }
+  };
+
+  const handleCameraFileSelect = (e) => {
+    const file = e.target.files?.[0];
+    if (file && currentMealForPhoto) {
+      onPhotoAnalyze(currentMealForPhoto, file);
+      setCurrentMealForPhoto(null);
+    }
+    e.target.value = '';
+  };
+
   return (
     <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+      {/* Hidden camera input */}
+      <input
+        ref={cameraInputRef}
+        type="file"
+        accept="image/*"
+        capture="environment"
+        onChange={handleCameraFileSelect}
+        className="hidden"
+      />
+      
       {/* Macronutrienti giornalieri */}
       <div className="flex justify-center gap-6 mb-4">
         {/* Proteine */}
@@ -144,7 +173,7 @@ export default function MealsAndMacrosCard({
                         />
                         {hasFeatureAccess(userPlan, 'meal_photo_analysis') && onPhotoAnalyze && (
                           <Button
-                            onClick={() => onPhotoAnalyze(meal)}
+                            onClick={() => handleCameraClick(meal)}
                             variant="ghost"
                             size="icon"
                             className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"

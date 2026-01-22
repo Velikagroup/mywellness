@@ -40,6 +40,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMeal, setSelectedMeal] = useState(null);
   const [photoAnalyzeMeal, setPhotoAnalyzeMeal] = useState(null);
+  const [photoAnalyzeInitialFile, setPhotoAnalyzeInitialFile] = useState(null);
   const [isRebalancing, setIsRebalancing] = useState(false);
   const [mealLogs, setMealLogs] = useState([]);
   const [showProgressPhoto, setShowProgressPhoto] = React.useState(false);
@@ -267,6 +268,7 @@ export default function Dashboard() {
 
   const handlePhotoAnalyzeCloseActual = async () => {
     setPhotoAnalyzeMeal(null);
+    setPhotoAnalyzeInitialFile(null);
     await loadUserData();
   };
 
@@ -370,12 +372,13 @@ export default function Dashboard() {
     setIsRebalancing(false);
   };
 
-  const handlePhotoAnalyze = (meal) => {
+  const handlePhotoAnalyze = (meal, initialFile = null) => {
     if (!hasFeatureAccess(user.subscription_plan, 'meal_photo_analysis')) {
       setShowUpgradeModal(true);
       return;
     }
     setPhotoAnalyzeMeal(meal);
+    setPhotoAnalyzeInitialFile(initialFile);
   };
 
   const handleProgressAnalysisComplete = async (analysisResult) => {
@@ -702,6 +705,7 @@ export default function Dashboard() {
           onRebalanceNeeded={handleRebalanceNeeded}
           language={language}
           t={t}
+          initialFile={photoAnalyzeInitialFile}
         />
       )}
       {showProgressPhoto && (

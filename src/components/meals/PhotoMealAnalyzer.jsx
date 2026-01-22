@@ -7,7 +7,7 @@ import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
 
-export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded, language: propLanguage, t: propT }) {
+export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded, language: propLanguage, t: propT, initialFile = null }) {
   const contextLang = useLanguage();
   const t = propT || contextLang?.t || ((key) => key);
   const language = propLanguage || contextLang?.language || 'it';
@@ -16,6 +16,30 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const filesRef = useRef(new Map());
+
+  // Auto-load initial file if provided
+  React.useEffect(() => {
+    if (initialFile) {
+      const photoId = Date.now();
+      const reader = new FileReader();
+      
+      reader.onload = (event) => {
+        filesRef.current.set(photoId, initialFile);
+        
+        const newPhoto = {
+          id: photoId,
+          previewUrl: event.target.result,
+          fileName: initialFile.name,
+          fileSize: initialFile.size,
+          description: '',
+          uploadedUrl: null
+        };
+        setPhotos([newPhoto]);
+      };
+      
+      reader.readAsDataURL(initialFile);
+    }
+  }, [initialFile]);
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
