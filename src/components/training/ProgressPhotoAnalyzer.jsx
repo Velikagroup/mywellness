@@ -1690,11 +1690,6 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
                   </div>
                 )}
 
-                {onOpenPhotoGallery && (
-                  <Button onClick={onOpenPhotoGallery} className="w-full bg-blue-600 hover:bg-blue-700 mb-3">
-                    📸 Galleria Progressi
-                  </Button>
-                )}
                 <Button onClick={saveAnalysis} className="w-full bg-purple-600 hover:bg-purple-700" disabled={isSaving || isApplyingChanges || isGeneratingProposals}>
                   {isSaving ? (
                     <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.savingAnalysis')}</>
