@@ -368,10 +368,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-base font-bold text-gray-900">{t('progressChart.bodyMassTrajectory')}</h3>
-            </div>
-
             {/* Box peso attuale e target integrati */}
             <div className="grid grid-cols-2 gap-3 mb-4">
               <div className={`p-3 rounded-lg border backdrop-blur-sm ${
