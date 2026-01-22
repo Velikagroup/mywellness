@@ -595,14 +595,19 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               {/* Calorie Consumate */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-gray-700">Calorie Consumate</span>
-                  <span className="font-bold text-gray-800">{(() => {
-                    const consumed = sortedMeals.reduce((sum, meal) => {
-                      const mealLog = getMealLog(meal.id);
-                      return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
-                    }, 0);
-                    return Math.round(consumed);
-                  })()} kcal</span>
+                  <span className="font-medium text-gray-700 flex items-center gap-2">
+                    <TrendingUp className={isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
+                    Calorie Consumate
+                  </span>
+                  <span className={`font-bold ${isWeightLoss ? "text-red-600" : "text-green-600"}`}>
+                    {(() => {
+                      const consumed = sortedMeals.reduce((sum, meal) => {
+                        const mealLog = getMealLog(meal.id);
+                        return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
+                      }, 0);
+                      return Math.round(consumed);
+                    })()} kcal
+                  </span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
                   <div className="h-full flex">
@@ -618,13 +623,16 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       const neat = calculateNEAT(user);
                       const totalBurned = bmr + neat;
                       const segmentWidth = (calories / Math.max(totalConsumed, totalBurned)) * 100;
+                      const baseColor = isWeightLoss ? 'red' : 'green';
 
                       return (
                         <React.Fragment key={meal.id}>
                           <div 
                             className={`h-full transition-all ${
-                              isLogged ? 'bg-blue-500' : 'bg-blue-300 opacity-60'
-                            }`}
+                              isLogged 
+                                ? (baseColor === 'red' ? 'bg-red-500' : 'bg-green-500')
+                                : (baseColor === 'red' ? 'bg-red-300' : 'bg-green-300')
+                            } ${!isLogged ? 'opacity-60' : ''}`}
                             style={{ 
                               width: `${segmentWidth}%`,
                               backgroundImage: !isLogged 
@@ -640,17 +648,25 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     })}
                   </div>
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  I pasti con pattern tratteggiato sono pianificati ma non ancora consumati
+                </p>
               </div>
 
               {/* Calorie Bruciate */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-gray-700">Calorie Bruciate</span>
-                  <span className="font-bold text-gray-800">{(() => {
-                    const bmr = calculateBMR(user);
-                    const neat = calculateNEAT(user);
-                    return Math.round(bmr + neat);
-                  })()} kcal</span>
+                  <span className="font-medium text-gray-700 flex items-center gap-2">
+                    <Flame className={isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
+                    Calorie Bruciate
+                  </span>
+                  <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
+                    {(() => {
+                      const bmr = calculateBMR(user);
+                      const neat = calculateNEAT(user);
+                      return Math.round(bmr + neat);
+                    })()} kcal
+                  </span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
                   <div className="h-full flex">
@@ -664,16 +680,17 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       }, 0);
                       const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
                       const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
+                      const baseColor = isWeightLoss ? 'green' : 'red';
 
                       return (
                         <>
                           <div 
-                            className="h-full bg-orange-500"
+                            className={baseColor === 'green' ? "h-full bg-green-600" : "h-full bg-red-600"}
                             style={{ width: `${bmrWidth}%` }}
                           />
                           <div className="w-[2px] h-full bg-white opacity-80" />
                           <div 
-                            className="h-full bg-orange-400"
+                            className={baseColor === 'green' ? "h-full bg-green-400" : "h-full bg-red-400"}
                             style={{ width: `${neatWidth}%` }}
                           />
                         </>
@@ -681,6 +698,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     })()}
                   </div>
                 </div>
+                <p className="text-xs text-gray-500 mt-1">
+                  Segmento scuro: Metabolismo Basale (BMR) · Segmento chiaro: Attività quotidiana (NEAT)
+                </p>
               </div>
             </div>
 
