@@ -672,22 +672,6 @@ export default function Dashboard() {
               </div>
               
               <div className="grid grid-cols-1 gap-8 dashboard-stats-section">
-                <NutritionOverview 
-                  meals={todayMeals}
-                  mealLogs={mealLogs}
-                  onMealSelect={setSelectedMeal}
-                  onPhotoAnalyze={handlePhotoAnalyze}
-                  userPlan={user?.subscription_plan}
-                  onUpgradeClick={() => {
-                    setShowNutritionUnlock(false);
-                    setCheckoutPlan('base');
-                    setCheckoutBilling('monthly');
-                    setShowUpgradeCheckout(true);
-                  }}
-                  onMealComplete={() => setMealsUpdateTrigger(prev => prev + 1)}
-                  onDataReload={loadUserData}
-                />
-                
                 {/* Pulsanti Galleria e Analisi AI */}
                 <div className="flex gap-4 justify-center">
                   <Button
