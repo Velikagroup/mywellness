@@ -955,15 +955,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
             )}
 
-            {/* Pulsante Analisi AI */}
-            <div className="mt-6 pt-4 border-t border-gray-200/50">
-              <Button
-                onClick={onOpenProgressAnalysis}
-                className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3"
-              >
-                🤖 Analisi AI
-              </Button>
-            </div>
+
           </div>
           );
           })()}
