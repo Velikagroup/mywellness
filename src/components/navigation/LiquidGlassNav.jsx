@@ -89,7 +89,7 @@ export default function LiquidGlassNav({ navItems }) {
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 md:w-auto md:px-0">
       <div
         ref={containerRef}
-        className={`water-glass-effect rounded-full relative py-2 md:py-3 px-4 md:px-6 flex items-center justify-center md:justify-start gap-0 md:gap-2 ${isMobile ? 'w-full' : ''}`}
+        className={`water-glass-effect rounded-full relative py-3 md:py-3 px-4 md:px-6 flex items-center justify-center md:justify-start gap-0 md:gap-2 ${isMobile ? 'w-full' : ''}`}
         onMouseDown={handleMouseDown}
         style={{ 
           userSelect: 'none', 
@@ -97,19 +97,6 @@ export default function LiquidGlassNav({ navItems }) {
           minWidth: isMobile ? 'auto' : `${Math.max(mainItems.length * 100 + (adminItems.length > 0 ? 50 : 0), 300)}px`
         }}
       >
-        {/* Selettore liquido - solo se ci sono mainItems */}
-        {mainItems.length > 0 && (
-          <div
-            className="absolute top-1 bottom-1 rounded-full bg-gradient-to-r from-[#26847F]/10 to-[#26847F]/5 hidden md:block"
-            style={{
-              left: `${selectorPosition}%`,
-              width: `${itemWidth}%`,
-              transition: isDragging ? 'none' : 'left 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94)',
-              boxShadow: isDragging ? 'none' : '0 4px 12px rgba(38, 132, 127, 0.15)',
-              pointerEvents: 'none'
-            }}
-          />
-        )}
 
         {/* Main nav items */}
         <div className={`relative flex items-center z-10 gap-0.5 md:gap-1 ${isMobile ? 'w-full justify-between' : 'justify-center'}`}>
