@@ -531,7 +531,29 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                   }} 
-                  formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
+                  formatter={(value, name, props) => {
+                    if (name === 'weight') {
+                      return [`${value.toFixed(1)} kg`, 'Peso'];
+                    }
+                    return [value, name];
+                  }}
+                  content={({ active, payload }) => {
+                    if (active && payload && payload.length) {
+                      const data = payload[0].payload;
+                      return (
+                        <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-lg">
+                          <p className="font-semibold text-gray-900">{data.name}</p>
+                          <p className="text-sm text-gray-700">{data.weight.toFixed(1)} kg</p>
+                          {data.calorieBalance !== null && (
+                            <p className={`text-sm font-semibold ${data.calorieBalance < 0 ? 'text-green-600' : data.calorieBalance > 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                              Bilancio: {data.calorieBalance > 0 ? '+' : ''}{data.calorieBalance} kcal
+                            </p>
+                          )}
+                        </div>
+                      );
+                    }
+                    return null;
+                  }}
                   labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
                   cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
                 />
