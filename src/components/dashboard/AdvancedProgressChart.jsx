@@ -541,20 +541,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </div>
           </div>
 
-          {/* BMR */}
-          <div className="relative group cursor-pointer">
-            <div className="flex flex-col items-center" onClick={onEditBMR}>
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-100 to-blue-50 border-2 border-blue-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
-                <Activity className="w-6 h-6 text-blue-600" />
-              </div>
-              <p className="text-sm font-bold text-blue-700 mt-2">{Math.round(user.bmr || 1500)}</p>
-              <p className="text-xs text-gray-500">kcal</p>
-            </div>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-              {t('dashboard.bmr')}
-            </div>
-          </div>
-
           {/* Bilancio Calorico */}
           <div className="relative group cursor-pointer">
             <div className="flex flex-col items-center">
@@ -669,7 +655,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   </span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <span className="font-medium text-gray-600 text-xs">
+                  <span 
+                    className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
+                    onClick={onEditBMR}
+                  >
                     BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{Math.round(calculateBMR(user))} kcal</span>
                   </span>
                   <span className="font-medium text-gray-600 text-xs">
