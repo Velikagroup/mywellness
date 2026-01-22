@@ -522,6 +522,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
                 />
                 <ReferenceLine 
+                  yAxisId="left"
                   y={targetWeight} 
                   stroke="#26847F" 
                   strokeDasharray="4 4" 
