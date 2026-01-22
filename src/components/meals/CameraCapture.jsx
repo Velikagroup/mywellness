@@ -126,7 +126,7 @@ export default function CameraCapture({ onCapture, onClose, t }) {
       {/* Bottone chiudi (X in alto a destra) */}
       <button
         onClick={onClose}
-        className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+        className="absolute top-10 right-6 z-50 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
         style={{
           background: 'rgba(0, 0, 0, 0.5)',
           backdropFilter: 'blur(8px)'
