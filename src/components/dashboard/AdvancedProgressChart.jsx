@@ -732,7 +732,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                    className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
                    onClick={onEditBMR}
                  >
-                   BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{Math.round(calculateBMR(user))} kcal</span>
+                   BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{user.bmr ? Math.round(user.bmr) : Math.round(calculateBMR(user))} kcal</span>
                  </span>
                  <span className="font-medium text-gray-600 text-xs">
                    NEAT: <span className={isWeightLoss ? "text-green-400" : "text-red-400"}>{Math.round(calculateNEAT(user))} kcal</span>
