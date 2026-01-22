@@ -3,6 +3,7 @@ import { Beef, Wheat, Droplet, Camera, CheckCircle2, ImageIcon } from "lucide-re
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox";
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
+import CameraCapture from './CameraCapture';
 
 export default function MealsAndMacrosCard({ 
   todayMacros, 
@@ -17,36 +18,35 @@ export default function MealsAndMacrosCard({
   getMealTypeLabel,
   t 
 }) {
-  const cameraInputRef = React.useRef(null);
+  const [showCamera, setShowCamera] = React.useState(false);
   const [currentMealForPhoto, setCurrentMealForPhoto] = React.useState(null);
 
   const handleCameraClick = (meal) => {
     setCurrentMealForPhoto(meal);
-    if (cameraInputRef.current) {
-      cameraInputRef.current.click();
-    }
+    setShowCamera(true);
   };
 
-  const handleCameraFileSelect = (e) => {
-    const file = e.target.files?.[0];
+  const handlePhotoCapture = (file) => {
     if (file && currentMealForPhoto) {
       onPhotoAnalyze(currentMealForPhoto, file);
+      setShowCamera(false);
       setCurrentMealForPhoto(null);
     }
-    e.target.value = '';
   };
 
   return (
-    <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-      {/* Hidden camera input */}
-      <input
-        ref={cameraInputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleCameraFileSelect}
-        className="hidden"
-      />
+    <>
+      {showCamera && (
+        <CameraCapture
+          onCapture={handlePhotoCapture}
+          onClose={() => {
+            setShowCamera(false);
+            setCurrentMealForPhoto(null);
+          }}
+          t={t}
+        />
+      )}
+      <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
       
       {/* Macronutrienti giornalieri */}
       <div className="flex justify-center gap-6 mb-4">
@@ -192,5 +192,6 @@ export default function MealsAndMacrosCard({
         </div>
       )}
     </div>
+    </>
   );
 }
