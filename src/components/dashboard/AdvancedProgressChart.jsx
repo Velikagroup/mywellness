@@ -98,10 +98,28 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         const plannedCarbs = mealPlans.reduce((sum, meal) => sum + (meal.total_carbs || 0), 0);
         const plannedFat = mealPlans.reduce((sum, meal) => sum + (meal.total_fat || 0), 0);
 
+        // Calcola i macro consumati dai pasti completati
+        const consumedProtein = mealPlans
+          .filter(meal => meal.is_completed)
+          .reduce((sum, meal) => sum + (meal.total_protein || 0), 0);
+        const consumedCarbs = mealPlans
+          .filter(meal => meal.is_completed)
+          .reduce((sum, meal) => sum + (meal.total_carbs || 0), 0);
+        const consumedFat = mealPlans
+          .filter(meal => meal.is_completed)
+          .reduce((sum, meal) => sum + (meal.total_fat || 0), 0);
+
         setTodayMacros({
-          protein: Math.round(plannedProtein),
-          carbs: Math.round(plannedCarbs),
-          fat: Math.round(plannedFat)
+          planned: {
+            protein: Math.round(plannedProtein),
+            carbs: Math.round(plannedCarbs),
+            fat: Math.round(plannedFat)
+          },
+          consumed: {
+            protein: Math.round(consumedProtein),
+            carbs: Math.round(consumedCarbs),
+            fat: Math.round(consumedFat)
+          }
         });
 
         let consumedCalories = 0;
