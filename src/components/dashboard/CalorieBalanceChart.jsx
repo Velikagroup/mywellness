@@ -348,7 +348,7 @@ export default function CalorieBalanceChart({ user }) {
           </p>
         </div>
 
-        {/* Calorie Bruciate - Raggruppate */}
+        {/* Calorie Bruciate - Barra Unificata */}
         <div className="space-y-3">
           {/* Titolo principale con totale */}
           <div className="flex items-center justify-between text-sm pb-2 border-b border-gray-200">
@@ -361,89 +361,65 @@ export default function CalorieBalanceChart({ user }) {
             </span>
           </div>
 
-          {/* Progress Bar BMR */}
+          {/* Progress Bar Unificata con segmenti BMR, NEAT e HealthKit */}
           <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-600">
-                {t('dashboard.caloriesBurnedBMR')}
-              </span>
-              <span className={data.isWeightLoss ? "font-semibold text-green-600" : "font-semibold text-red-600"}>{data.bmr} kcal</span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
-                style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
-              />
-            </div>
-          </div>
-
-          {/* Progress Bar NEAT - allineato con BMR */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-gray-900">
-                  {t('dashboard.neatActivity')}
+            <div className="flex items-center justify-between text-sm flex-wrap gap-2">
+              <div className="flex items-center gap-3">
+                <span className="font-medium text-gray-600">
+                  BMR: <span className={data.isWeightLoss ? "text-green-600" : "text-red-600"}>{data.bmr} kcal</span>
                 </span>
-                {healthKitData && (
-                  <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
-                    HealthKit
+                <span className="font-medium text-gray-600">
+                  NEAT: <span className={data.isWeightLoss ? "text-green-400" : "text-red-400"}>{data.neat} kcal</span>
+                </span>
+                {user?.subscription_plan === 'premium' && healthKitData && (
+                  <span className="font-medium text-gray-600">
+                    🍎 Device: <span className="text-purple-600">{Math.round(healthKitData.active_energy_burned_kcal || 0)} kcal</span>
                   </span>
                 )}
               </div>
-              <span className={data.isWeightLoss ? "font-semibold text-green-400" : "font-semibold text-red-400"}>{data.neat} kcal</span>
-            </div>
-            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-              <div 
-                className={data.isWeightLoss ? "h-full bg-green-400 absolute top-0" : "h-full bg-red-400 absolute top-0"}
-                style={{ 
-                  left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
-                  width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` 
-                }}
-              />
-            </div>
-          </div>
-
-          {/* Progress Bar Dispositivo Salute - sotto NEAT - SOLO PREMIUM */}
-          {user?.subscription_plan === 'premium' && (
-            <div className="space-y-2">
-              <div className="flex items-center justify-between text-sm">
-                <div className="flex items-center gap-2">
-                  <span className="font-medium text-gray-900">
-                    🍎 Dispositivo salute
-                  </span>
-                  {healthKitData ? (
-                    <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
-                      Attivo
-                    </span>
-                  ) : (
-                    <span className="px-1.5 py-0.5 bg-amber-100 text-amber-700 text-xs font-medium rounded">
-                      In attesa dati
-                    </span>
-                  )}
-                </div>
-                <span className={`font-semibold ${healthKitData ? 'text-purple-600' : 'text-gray-400'}`}>
-                  {healthKitData?.active_energy_burned_kcal ? Math.round(healthKitData.active_energy_burned_kcal) : 0} kcal
+              {healthKitData && (
+                <span className="px-1.5 py-0.5 bg-green-100 text-green-700 text-xs font-medium rounded">
+                  HealthKit Attivo
                 </span>
-              </div>
-              <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-                <div 
-                  className={`h-full absolute top-0 ${healthKitData ? 'bg-purple-500' : 'bg-gray-300'}`}
-                  style={{ 
-                    left: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`,
-                    width: healthKitData?.active_energy_burned_kcal 
-                      ? `${(healthKitData.active_energy_burned_kcal / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`
-                      : '0%'
-                  }}
-                />
-              </div>
-              {!healthKitData && (
-                <p className="text-xs text-gray-500">
-                  📲 Connetti il dispositivo dall'app mobile per visualizzare i dati
-                </p>
               )}
             </div>
-          )}
+            <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+              <div className="h-full flex">
+                {/* Segmento BMR */}
+                <div 
+                  className={data.isWeightLoss ? "h-full bg-green-600" : "h-full bg-red-600"}
+                  style={{ width: `${(data.bmr / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+                />
+                {/* Divisore */}
+                <div className="w-[2px] h-full bg-white opacity-80" />
+                
+                {/* Segmento NEAT */}
+                <div 
+                  className={data.isWeightLoss ? "h-full bg-green-400" : "h-full bg-red-400"}
+                  style={{ width: `${(data.neat / Math.max(data.consumedCalories, data.totalBurned)) * 100}%` }}
+                />
+                
+                {/* Segmento HealthKit (solo Premium) */}
+                {user?.subscription_plan === 'premium' && healthKitData?.active_energy_burned_kcal && (
+                  <>
+                    <div className="w-[2px] h-full bg-white opacity-80" />
+                    <div 
+                      className="h-full bg-purple-500"
+                      style={{ 
+                        width: `${(healthKitData.active_energy_burned_kcal / Math.max(data.consumedCalories, data.totalBurned)) * 100}%`
+                      }}
+                    />
+                  </>
+                )}
+              </div>
+            </div>
+            {user?.subscription_plan === 'premium' && !healthKitData && (
+              <p className="text-xs text-gray-500">
+                📲 Connetti il dispositivo dall'app mobile per aggiungere i dati HealthKit
+              </p>
+            )}
           </div>
+        </div>
 
           </CardContent>
           </Card>
