@@ -537,49 +537,51 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
               exit={{ opacity: 0, y: -20 }}
               className="space-y-6"
             >
-              {/* Upload Section */}
-              <div className="relative border-2 border-dashed border-[#26847F]/30 rounded-2xl p-8 text-center bg-gradient-to-br from-[#e9f6f5]/50 to-white hover:border-[#26847F]/50 transition-all group">
-                <Camera className="w-12 h-12 text-[#26847F] mx-auto mb-4 group-hover:scale-110 transition-transform" />
-                <p className="text-gray-800 font-semibold mb-2">{t('photoMealAnalyzer.uploadMealPhoto')}</p>
-                <p className="text-sm text-gray-600 mb-6">{t('photoMealAnalyzer.uploadInfo')}</p>
-                <div className="flex gap-3 justify-center flex-wrap">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    capture="environment"
-                    multiple
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    id="camera-input"
-                  />
-                  <Button 
-                    type="button" 
-                    onClick={() => document.getElementById('camera-input').click()}
-                    className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
-                  >
-                    <Camera className="w-4 h-4 mr-2" />
-                    {t('photoMealAnalyzer.takePhoto')}
-                  </Button>
-                  
-                  <input
-                    type="file"
-                    accept="image/*"
-                    multiple
-                    onChange={handleFileSelect}
-                    className="hidden"
-                    id="gallery-input"
-                  />
-                  <Button 
-                    type="button" 
-                    onClick={() => document.getElementById('gallery-input').click()}
-                    variant="outline" 
-                    className="border-2 border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5] transition-all"
-                  >
-                    <Upload className="w-4 h-4 mr-2" />
-                    {t('photoMealAnalyzer.selectFromGallery')}
-                  </Button>
+              {/* Upload Section - Only show if no photos uploaded */}
+              {photos.length === 0 && (
+                <div className="relative border-2 border-dashed border-[#26847F]/30 rounded-2xl p-8 text-center bg-gradient-to-br from-[#e9f6f5]/50 to-white hover:border-[#26847F]/50 transition-all group">
+                  <Camera className="w-12 h-12 text-[#26847F] mx-auto mb-4 group-hover:scale-110 transition-transform" />
+                  <p className="text-gray-800 font-semibold mb-2">{t('photoMealAnalyzer.uploadMealPhoto')}</p>
+                  <p className="text-sm text-gray-600 mb-6">{t('photoMealAnalyzer.uploadInfo')}</p>
+                  <div className="flex gap-3 justify-center flex-wrap">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      multiple
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      id="camera-input"
+                    />
+                    <Button 
+                      type="button" 
+                      onClick={() => document.getElementById('camera-input').click()}
+                      className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
+                    >
+                      <Camera className="w-4 h-4 mr-2" />
+                      {t('photoMealAnalyzer.takePhoto')}
+                    </Button>
+
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      id="gallery-input"
+                    />
+                    <Button 
+                      type="button" 
+                      onClick={() => document.getElementById('gallery-input').click()}
+                      variant="outline" 
+                      className="border-2 border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5] transition-all"
+                    >
+                      <Upload className="w-4 h-4 mr-2" />
+                      {t('photoMealAnalyzer.selectFromGallery')}
+                    </Button>
+                  </div>
                 </div>
-              </div>
+              )}
 
               {/* Photos Grid */}
               {photos.length > 0 && (
