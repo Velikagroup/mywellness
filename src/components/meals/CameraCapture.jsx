@@ -152,6 +152,26 @@ export default function CameraCapture({ onCapture, onClose, t }) {
             </button>
           )}
 
+          {/* Slider Zoom */}
+          <div className="absolute top-1/2 right-6 -translate-y-1/2 z-20 flex flex-col items-center gap-3">
+            <input
+              type="range"
+              min="1"
+              max="3"
+              step="0.1"
+              value={zoom}
+              onChange={(e) => setZoom(parseFloat(e.target.value))}
+              className="w-32 h-1 appearance-none rounded-full bg-white cursor-pointer"
+              style={{
+                writingMode: 'bt-lr',
+                WebkitAppearance: 'slider-vertical'
+              }}
+            />
+            <span className="text-white text-sm font-semibold bg-black/50 px-2 py-1 rounded">
+              {zoom.toFixed(1)}x
+            </span>
+          </div>
+
           {/* Bottone scatta foto (centro basso) */}
           <button
             onClick={capturePhoto}
