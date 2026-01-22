@@ -790,7 +790,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
             </div>
 
-            {/* Meals and Macros Card */}
+            </div>
+            );
+            })()}
+
+            {/* Meals and Macros Card - Separate Box Below */}
             <div className="mt-6">
               <MealsAndMacrosCard
                 todayMacros={todayMacros}
@@ -807,11 +811,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               />
             </div>
 
-
-          </div>
-          );
-          })()}
-
-          </>
-          );
-          }
+            </>
+            );
+            }
