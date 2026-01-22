@@ -11,6 +11,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
   const [dragOffset, setDragOffset] = useState(0);
   const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [isMobile, setIsMobile] = useState(typeof window !== 'undefined' && window.innerWidth < 768);
+  const [actionMenuOpen, setActionMenuOpen] = useState(showActionMenu || false);
   const containerRef = useRef(null);
 
   // Rileva cambio di pagina
