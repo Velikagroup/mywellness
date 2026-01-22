@@ -54,7 +54,10 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
         onMealComplete();
       }
       
-      window.location.reload();
+      // Ricarica i dati invece di fare reload completo
+      if (onDataReload) {
+        await onDataReload();
+      }
     } catch (error) {
       console.error('Error logging meal:', error);
       alert(t('nutrition.errorSavingMeal'));
