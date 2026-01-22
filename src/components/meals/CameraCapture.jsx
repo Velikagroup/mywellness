@@ -10,7 +10,27 @@ export default function CameraCapture({ onCapture, onClose, t }) {
   const [capturedPhoto, setCapturedPhoto] = useState(null);
   const [error, setError] = useState(null);
   const [recentPhotos, setRecentPhotos] = useState([]);
-  const [zoom, setZoom] = useState(1);
+  const [zoomIndex, setZoomIndex] = useState(0);
+  const zoomLevels = [1, 2, 4];
+  const zoom = zoomLevels[zoomIndex];
+  const [touchStart, setTouchStart] = useState(null);
+
+  const handleSwipe = (e) => {
+    if (!touchStart) return;
+    const touchEnd = e.changedTouches[0].clientX;
+    const diff = touchStart - touchEnd;
+
+    // Swipe da sinistra a destra = aumenta zoom
+    if (diff > 50) {
+      setZoomIndex((prev) => (prev + 1) % zoomLevels.length);
+    }
+    // Swipe da destra a sinistra = diminuisci zoom
+    else if (diff < -50) {
+      setZoomIndex((prev) => (prev - 1 + zoomLevels.length) % zoomLevels.length);
+    }
+
+    setTouchStart(null);
+  };
 
   // Accedi alla fotocamera
   useEffect(() => {
