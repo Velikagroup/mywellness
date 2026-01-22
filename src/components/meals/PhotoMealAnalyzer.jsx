@@ -938,12 +938,12 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                 </div>
               </div>
             </motion.div>
-          )}
-          </AnimatePresence>
+            )}
+            </AnimatePresence>
 
-          {analysisResult && (
-            <DialogFooter className="flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
-            <Button
+            {analysisResult && (
+              <DialogFooter className="flex-col sm:flex-row gap-3 pt-4 border-t border-gray-200">
+                <Button
               onClick={saveWithoutRebalance}
               variant="outline"
               disabled={isSaving}
