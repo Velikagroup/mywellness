@@ -482,7 +482,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
             </div>
 
-          <div className="h-64">
+            <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
@@ -523,10 +523,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 />
               </LineChart>
             </ResponsiveContainer>
-          </div>
+            </div>
 
-          {/* Dati sotto il grafico */}
-          <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-gray-200/50">
+            {/* Dati sotto il grafico */}
+            <div className="flex items-center justify-center gap-6 mt-6 pt-4 border-t border-gray-200/50">
           {/* Target Calorie */}
           <div className="relative group cursor-pointer">
             <div className="flex flex-col items-center" onClick={onEditCalories}>
@@ -568,12 +568,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               {t('dashboard.bodyFat')}
             </div>
           </div>
-          </div>
+            </div>
           </div>
 
           {/* Bilancio Calorie Oggi */}
           <div className="mt-6">
-          <CalorieBalanceChart user={user} />
+            <CalorieBalanceChart user={user} />
           </div>
 
           {/* Macronutrienti giornalieri */}
