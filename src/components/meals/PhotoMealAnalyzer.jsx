@@ -545,9 +545,9 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
               <p className="text-sm text-gray-600 font-normal mt-1">{t('photoMealAnalyzer.subtitle')}</p>
             </div>
           </DialogTitle>
-        </DialogHeader>
+          </DialogHeader>
 
-        <AnimatePresence mode="wait">
+          <AnimatePresence mode="wait">
           {!analysisResult ? (
             <motion.div 
               key="upload"
