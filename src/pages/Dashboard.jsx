@@ -661,6 +661,7 @@ export default function Dashboard() {
                   isSavingBMR={isSavingBMR}
                   isSavingBodyFat={isSavingBodyFat}
                   isSavingCalories={isSavingCalories}
+                  mealsUpdateTrigger={mealsUpdateTrigger}
                 />
               </div>
               
