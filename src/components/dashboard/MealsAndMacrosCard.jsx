@@ -3,7 +3,7 @@ import { Beef, Wheat, Droplet, Camera, CheckCircle2, ImageIcon } from "lucide-re
 import { Button } from '@/components/ui/button';
 import { Checkbox } from "@/components/ui/checkbox";
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
-import CameraCapture from './CameraCapture';
+import CameraCapture from '../meals/CameraCapture';
 
 export default function MealsAndMacrosCard({ 
   todayMacros, 
