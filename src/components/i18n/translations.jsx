@@ -988,7 +988,26 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Surplus di {amount} kcal - Rallenta il dimagrimento",
       surplusPerfect: "💪 Surplus di {amount} kcal - Perfetto per massa!",
       deficitSlowsGain: "⚠️ Deficit di {amount} kcal - Rallenta l'aumento",
-      plannedMealsNote: "Le sezioni più chiare sono pasti pianificati ma non ancora registrati"
+      plannedMealsNote: "Le sezioni più chiare sono pasti pianificati ma non ancora registrati",
+      // Alert messages
+      noRemainingMeals: "Non ci sono pasti rimanenti oggi da ribilanciare. Lo sgarro sarà compensato domani.",
+      rebalanceSuccess: "✅ Pasti successivi ribilanciati con successo!",
+      rebalanceError: "Errore nel ribilanciamento. Riprova.",
+      photoDeleteSuccess: "✅ Foto eliminata con successo",
+      photoDeleteError: "❌ Errore durante l'eliminazione della foto",
+      bmrUpdateSuccess: "✅ Metabolismo Basale aggiornato con successo!",
+      bmrUpdateError: "Errore durante l'aggiornamento del BMR",
+      bmrInvalidValue: "Inserisci un valore valido per il BMR",
+      bodyFatUpdateSuccess: "✅ Massa Grassa aggiornata con successo!",
+      bodyFatUpdateError: "Errore durante l'aggiornamento della Massa Grassa",
+      bodyFatInvalidValue: "Inserisci un valore valido per la Massa Grassa (0-100%)",
+      caloriesUpdateSuccess: "✅ Target Calorico aggiornato con successo!",
+      caloriesUpdateError: "Errore durante l'aggiornamento del Target Calorico",
+      caloriesInvalidValue: "Inserisci un valore valido per il Target Calorico",
+      termsAcceptError: "Errore durante l'accettazione dei termini. Riprova.",
+      redirecting: "Reindirizzamento...",
+      // Edit modal labels
+      calculatedValues: "Valori calcolati:"
     },
     settings: {
       title: "Impostazioni Account",
