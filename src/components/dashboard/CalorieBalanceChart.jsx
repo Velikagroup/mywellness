@@ -270,41 +270,6 @@ export default function CalorieBalanceChart({ user }) {
         </div>
       </CardHeader>
       <CardContent className="space-y-6">
-        {/* DEFICIT/SURPLUS - GROSSO E IN EVIDENZA */}
-        <div className={`rounded-xl p-6 text-center border-2 ${
-          isBalanceGood
-            ? 'bg-gradient-to-br from-green-50 to-emerald-50 border-green-200' 
-            : 'bg-gradient-to-br from-red-50 to-orange-50 border-red-200'
-        }`}>
-          <p className="text-sm font-medium text-gray-600 mb-2">{t('dashboard.dailyBalance').toUpperCase()}</p>
-          <div className="flex items-center justify-center gap-3">
-            {isBalanceGood ? (
-              <ArrowDown className="w-8 h-8 text-green-600" />
-            ) : (
-              <ArrowUp className="w-8 h-8 text-red-600" />
-            )}
-            <p className={`text-5xl font-bold ${isBalanceGood ? 'text-green-600' : 'text-red-600'}`}>
-              {data.balance > 0 ? '+' : ''}{data.balance}
-            </p>
-            <span className="text-2xl font-semibold text-gray-600">kcal</span>
-          </div>
-          <p className="text-sm text-gray-600 mt-2 font-medium">
-            {data.isWeightLoss ? (
-              data.balance < 0 
-                ? t('dashboard.deficitPerfect').replace('{amount}', Math.abs(data.balance))
-                : data.balance === 0
-                ? t('dashboard.maintenance')
-                : t('dashboard.surplusSlowsLoss').replace('{amount}', data.balance)
-            ) : (
-              data.balance > 0
-                ? t('dashboard.surplusPerfect').replace('{amount}', data.balance)
-                : data.balance === 0
-                ? t('dashboard.maintenance')
-                : t('dashboard.deficitSlowsGain').replace('{amount}', Math.abs(data.balance))
-            )}
-          </p>
-        </div>
-
         {/* Progress Bar Calorie Assunte con segmenti per pasto */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
