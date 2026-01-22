@@ -127,40 +127,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
             );
           })}
 
-          {/* Admin menu - mobile dropdown */}
-          {adminItems.length > 0 && isMobile && (
-            <div className="relative flex-1">
-              <button
-                onClick={() => setShowAdminMenu(!showAdminMenu)}
-                className={`
-                  flex flex-col items-center justify-center gap-0.5
-                  px-2 py-2 rounded-lg w-full
-                  transition-colors pointer-events-auto
-                  ${showAdminMenu 
-                    ? 'text-[#26847F]' 
-                    : 'text-gray-400 hover:text-gray-600'
-                  }
-                `}
-              >
-                <MenuIcon className="w-5 h-5" />
-              </button>
 
-              {showAdminMenu && (
-                <div className="absolute bottom-12 right-0 bg-white/95 backdrop-blur-md rounded-xl border border-gray-200/40 shadow-xl p-2 min-w-max z-50">
-                  {adminItems.map(item => (
-                    <Link
-                      key={item.name}
-                      to={createPageUrl(item.path)}
-                      onClick={() => setShowAdminMenu(false)}
-                      className="block px-3 py-2 text-sm text-gray-700 hover:text-[#26847F] hover:bg-gray-100/60 rounded-lg transition-colors whitespace-nowrap"
-                    >
-                      {item.name}
-                    </Link>
-                  ))}
-                </div>
-              )}
-            </div>
-          )}
 
           {/* Admin items - desktop inline */}
           {adminItems.length > 0 && !isMobile && adminItems.map((item) => (
