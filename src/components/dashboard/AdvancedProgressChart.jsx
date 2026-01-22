@@ -555,6 +555,26 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </div>
           </div>
 
+          {/* Bilancio Calorico */}
+          <div className="relative group cursor-pointer">
+            <div className="flex flex-col items-center">
+              <div className={`w-14 h-14 rounded-full bg-gradient-to-br ${todayCalorieBalance !== null && todayCalorieBalance < 0 ? 'from-green-100 to-green-50 border-2 border-green-300' : 'from-red-100 to-red-50 border-2 border-red-300'} flex items-center justify-center hover:shadow-lg transition-all hover:scale-110`}>
+                {todayCalorieBalance !== null && todayCalorieBalance < 0 ? (
+                  <TrendingDown className="w-6 h-6 text-green-600" />
+                ) : (
+                  <TrendingUp className="w-6 h-6 text-red-600" />
+                )}
+              </div>
+              <p className={`text-sm font-bold mt-2 ${todayCalorieBalance !== null && todayCalorieBalance < 0 ? 'text-green-700' : 'text-red-700'}`}>
+                {todayCalorieBalance !== null ? (todayCalorieBalance > 0 ? '+' : '') + Math.round(todayCalorieBalance) : '0'}
+              </p>
+              <p className="text-xs text-gray-500">kcal</p>
+            </div>
+            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
+              Bilancio Giornaliero
+            </div>
+          </div>
+
           {/* Body Fat */}
           <div className="relative group cursor-pointer">
             <div className="flex flex-col items-center" onClick={onEditBodyFat}>
