@@ -34,6 +34,9 @@ export default function CameraCapture({ onCapture, onClose, t }) {
 
   // Accedi alla fotocamera
   useEffect(() => {
+    // Nascondi il menu mobile quando la camera è aperta
+    document.body.setAttribute('data-camera-open', 'true');
+    
     const startCamera = async () => {
       try {
         const mediaStream = await navigator.mediaDevices.getUserMedia({
@@ -52,6 +55,8 @@ export default function CameraCapture({ onCapture, onClose, t }) {
     startCamera();
 
     return () => {
+      // Ripristina il menu mobile quando la camera si chiude
+      document.body.removeAttribute('data-camera-open');
       if (stream) {
         stream.getTracks().forEach(track => track.stop());
       }
