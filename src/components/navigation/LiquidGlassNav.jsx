@@ -3,7 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { Menu as MenuIcon, Plus, X as XIcon } from 'lucide-react';
 
-export default function LiquidGlassNav({ navItems }) {
+export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu, setShowActionMenu }) {
   const location = useLocation();
   const [selectedIndex, setSelectedIndex] = useState(0);
   const [isDragging, setIsDragging] = useState(false);
