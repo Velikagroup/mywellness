@@ -124,6 +124,7 @@ export default function CameraCapture({ onCapture, onClose, t }) {
         ref={fileInputRef}
         type="file"
         accept="image/*"
+        capture={false}
         onChange={handleGallerySelect}
         className="hidden"
       />
