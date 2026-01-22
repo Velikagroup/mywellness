@@ -487,8 +487,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
                 <defs>
                   <linearGradient id="bodyFatGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4}/>
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.05}/>
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.7}/>
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
@@ -522,14 +522,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   <ReferenceLine 
                     x={lineData[lineData.length - 1].name}
                     stroke="url(#bodyFatGradient)"
-                    strokeWidth={45}
+                    strokeWidth={60}
                     label={{
                       value: `${parseFloat(user.body_fat_percentage).toFixed(1)}%`,
-                      position: 'top',
+                      position: 'insideBottom',
                       fill: '#8b5cf6',
-                      fontSize: 14,
+                      fontSize: 15,
                       fontWeight: 700,
-                      offset: 15
+                      offset: 10
                     }}
                   />
                 )}
