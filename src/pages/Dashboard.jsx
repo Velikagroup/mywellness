@@ -679,6 +679,7 @@ export default function Dashboard() {
                     setShowUpgradeCheckout(true);
                   }}
                   onMealComplete={() => setMealsUpdateTrigger(prev => prev + 1)}
+                  onDataReload={loadUserData}
                 />
                 
                 {/* Pulsanti Galleria e Analisi AI */}
