@@ -123,7 +123,7 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
       <CardContent className="p-6 pt-0">
         {sortedMeals.length > 0 && (
           <div className="bg-gradient-to-r from-[#e9f6f5] to-blue-50 rounded-xl p-3 border-2 border-[#26847F]/30 mb-4">
-            <div className="grid grid-cols-4 gap-2">
+            <div className="grid grid-cols-4 gap-2 mb-4">
               <div className="text-center">
                 <p className="text-xs text-gray-600 font-medium mb-0.5">{t('nutrition.kcal')}</p>
                 <p className="text-lg font-bold text-[#26847F]">{Math.round(dailyTotals.calories)}</p>
