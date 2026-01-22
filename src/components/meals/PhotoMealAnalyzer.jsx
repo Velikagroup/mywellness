@@ -615,7 +615,10 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                     </h3>
                     <Button 
                       type="button" 
-                      onClick={() => setCameraOpen(true)}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setCameraOpen(true);
+                      }}
                       variant="outline" 
                       size="sm" 
                       className="border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5]"
