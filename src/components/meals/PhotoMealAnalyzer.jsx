@@ -45,7 +45,11 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
 
   const handleFileSelect = (e) => {
     const files = Array.from(e.target.files);
-    
+    processFiles(files);
+    e.target.value = '';
+  };
+
+  const processFiles = (files) => {
     files.forEach(file => {
       const photoId = Date.now() + Math.random();
       const reader = new FileReader();
@@ -66,8 +70,11 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
       
       reader.readAsDataURL(file);
     });
-    
-    e.target.value = '';
+  };
+
+  const handleCameraCapture = (file) => {
+    processFiles([file]);
+    setCameraOpen(false);
   };
 
   const handleDescriptionChange = (photoId, description) => {
