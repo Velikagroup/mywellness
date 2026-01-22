@@ -701,51 +701,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
             </div>
 
-            {/* Bilancio Calorico Totale */}
-            <div className="mt-6 pt-4 border-t border-gray-200/50">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl p-4 border border-gray-200">
-                <div className="grid grid-cols-3 gap-4 text-center">
-                  <div>
-                    <p className="text-xs text-gray-600 mb-1">Consumate</p>
-                    <p className={`text-lg font-bold ${isWeightLoss ? 'text-red-600' : 'text-green-600'}`}>
-                      {(() => {
-                        const consumed = sortedMeals.reduce((sum, meal) => {
-                          const mealLog = getMealLog(meal.id);
-                          return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
-                        }, 0);
-                        return Math.round(consumed);
-                      })()}
-                    </p>
-                    <p className="text-xs text-gray-500">kcal</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-600 mb-1">Bruciate</p>
-                    <p className={`text-lg font-bold ${isWeightLoss ? 'text-green-600' : 'text-red-600'}`}>
-                      {(() => {
-                        const bmr = calculateBMR(user);
-                        const neat = calculateNEAT(user);
-                        return Math.round(bmr + neat);
-                      })()}
-                    </p>
-                    <p className="text-xs text-gray-500">kcal</p>
-                  </div>
-                  <div>
-                    <p className="text-xs text-gray-600 mb-1">Bilancio</p>
-                    <p className={`text-xl font-bold ${
-                      todayCalorieBalance !== null 
-                        ? (isWeightLoss 
-                            ? (todayCalorieBalance < 0 ? 'text-green-600' : 'text-red-600')
-                            : (todayCalorieBalance > 0 ? 'text-green-600' : 'text-red-600'))
-                        : 'text-gray-600'
-                    }`}>
-                      {todayCalorieBalance !== null ? (todayCalorieBalance > 0 ? '+' : '') + Math.round(todayCalorieBalance) : '0'}
-                    </p>
-                    <p className="text-xs text-gray-500">kcal</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
             {/* Macronutrienti giornalieri */}
             <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-gray-200/50">
               {/* Proteine */}
