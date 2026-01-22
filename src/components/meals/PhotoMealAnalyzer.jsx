@@ -627,7 +627,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                         key={photo.id}
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
-                        className="border-2 border-gray-200 rounded-xl p-4 bg-white shadow-sm hover:shadow-md transition-all"
+                        className="p-4 bg-white transition-all"
                       >
                         <div className="relative mb-3 group">
                           <img 
