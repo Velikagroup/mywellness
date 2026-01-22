@@ -71,7 +71,7 @@ const calculateNEAT = (userData) => {
   return bmr * multiplier;
 };
 
-export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, isSavingBMR, isSavingBodyFat, isSavingCalories, mealsUpdateTrigger, meals = [], mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onDataReload }) {
+export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, isSavingBMR, isSavingBodyFat, isSavingCalories, mealsUpdateTrigger, meals = [], mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onDataReload, onOpenPhotoGallery, onOpenProgressAnalysis }) {
   const { t } = useLanguage();
   const [weight, setWeight] = useState('');
   const [isSaving, setIsSaving] = useState(false);
