@@ -65,6 +65,12 @@ export default function CameraCapture({ onCapture, onClose, t }) {
       
       canvasRef.current.width = video.videoWidth;
       canvasRef.current.height = video.videoHeight;
+      
+      // Applica lo zoom al canvas
+      context.translate(canvasRef.current.width / 2, canvasRef.current.height / 2);
+      context.scale(zoom, zoom);
+      context.translate(-canvasRef.current.width / 2, -canvasRef.current.height / 2);
+      
       context.drawImage(video, 0, 0);
       
       const photoData = canvasRef.current.toDataURL('image/jpeg');
