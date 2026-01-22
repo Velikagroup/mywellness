@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
-import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge } from "lucide-react";
+import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge, Beef, Wheat, Droplet } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell } from 'recharts';
@@ -399,6 +399,104 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+            {/* Macronutrienti giornalieri */}
+            <div className="flex justify-center gap-6 mb-6">
+              {/* Proteine */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#e5e7eb"
+                      strokeWidth="6"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#ef4444"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 32}`}
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.protein / Math.max(todayMacros.planned.protein, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Beef className="w-4 h-4 text-red-600 mb-0.5" />
+                    <p className="text-xs font-bold text-red-700">{todayMacros.consumed.protein}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Proteine</p>
+              </div>
+
+              {/* Carboidrati */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#e5e7eb"
+                      strokeWidth="6"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#f59e0b"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 32}`}
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.carbs / Math.max(todayMacros.planned.carbs, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Wheat className="w-4 h-4 text-amber-600 mb-0.5" />
+                    <p className="text-xs font-bold text-amber-700">{todayMacros.consumed.carbs}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Carboidrati</p>
+              </div>
+
+              {/* Grassi */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-20 h-20">
+                  <svg className="w-20 h-20 transform -rotate-90">
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#e5e7eb"
+                      strokeWidth="6"
+                      fill="none"
+                    />
+                    <circle
+                      cx="40"
+                      cy="40"
+                      r="32"
+                      stroke="#8b5cf6"
+                      strokeWidth="6"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 32}`}
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.fat / Math.max(todayMacros.planned.fat, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Droplet className="w-4 h-4 text-violet-600 mb-0.5" />
+                    <p className="text-xs font-bold text-violet-700">{todayMacros.consumed.fat}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Grassi</p>
+              </div>
+            </div>
 
             {/* Box peso attuale e target integrati */}
             <div className="grid grid-cols-2 gap-3 mb-4">
