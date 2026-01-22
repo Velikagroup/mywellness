@@ -790,6 +790,18 @@ export default function Dashboard() {
                 max="5000"
               />
             </div>
+            
+            {editBMRValue && (
+              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2">
+                <p className="text-xs font-semibold text-blue-900">Valori calcolati:</p>
+                <div className="text-sm text-blue-800">
+                  <p>🔥 BMR: <span className="font-bold">{Math.round(parseFloat(editBMRValue))} kcal</span></p>
+                  <p>⚡ NEAT: <span className="font-bold">{Math.round(parseFloat(editBMRValue) * (user?.activity_level === 'sedentary' ? 0.2 : user?.activity_level === 'lightly_active' ? 0.375 : user?.activity_level === 'moderately_active' ? 0.55 : user?.activity_level === 'very_active' ? 0.725 : 0.375))} kcal</span></p>
+                  <p>💪 Totale: <span className="font-bold">{Math.round(parseFloat(editBMRValue) * (1 + (user?.activity_level === 'sedentary' ? 0.2 : user?.activity_level === 'lightly_active' ? 0.375 : user?.activity_level === 'moderately_active' ? 0.55 : user?.activity_level === 'very_active' ? 0.725 : 0.375)))} kcal</span></p>
+                </div>
+              </div>
+            )}
+            
             <div className="flex gap-3 pt-2">
               <Button
                 onClick={handleSaveBMR}
