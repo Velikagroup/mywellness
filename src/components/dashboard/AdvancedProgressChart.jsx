@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
-import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge, Beef, Wheat, Droplet } from "lucide-react";
+import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge, Beef, Wheat, Droplet, Camera, CheckCircle2, ImageIcon } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell } from 'recharts';
@@ -12,6 +12,8 @@ import { base44 } from "@/api/base44Client";
 import { useLanguage } from '../i18n/LanguageContext';
 import CalorieBalanceChart from './CalorieBalanceChart';
 import TechnicalStatsCard from './TechnicalStatsCard';
+import { Checkbox } from "@/components/ui/checkbox";
+import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
 
 const KCAL_PER_KG = 7700;
 
@@ -64,7 +66,7 @@ const calculateNEAT = (userData) => {
   return bmr * multiplier;
 };
 
-export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, isSavingBMR, isSavingBodyFat, isSavingCalories, mealsUpdateTrigger }) {
+export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, isSavingBMR, isSavingBodyFat, isSavingCalories, mealsUpdateTrigger, meals = [], mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onDataReload }) {
   const { t } = useLanguage();
   const [weight, setWeight] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -74,6 +76,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     planned: { protein: 0, carbs: 0, fat: 0 },
     consumed: { protein: 0, carbs: 0, fat: 0 }
   });
+  const [savingMealId, setSavingMealId] = useState(null);
 
   useEffect(() => {
     const loadCalorieData = async () => {
@@ -296,13 +299,57 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     } catch (error) {
       console.error("❌ Errore nel salvare il peso:", error);
       alert(`${t('progressChart.saveError')}: ${error.message || 'Riprova'}`);
-    }
-    setIsSaving(false);
-  };
+      }
+      setIsSaving(false);
+      };
 
-  if (!user) {
-    return null;
-  }
+      const handleCheckMeal = async (meal, checked) => {
+      if (!checked) return;
+
+      setSavingMealId(meal.id);
+      try {
+      const todayDate = new Date().toISOString().split('T')[0];
+      const currentUser = await base44.auth.me();
+
+      await base44.entities.MealPlan.update(meal.id, {
+        is_completed: true
+      });
+
+      await base44.entities.MealLog.create({
+        user_id: currentUser.id,
+        original_meal_id: meal.id,
+        date: todayDate,
+        meal_type: meal.meal_type,
+        actual_calories: meal.total_calories,
+        actual_protein: meal.total_protein,
+        actual_carbs: meal.total_carbs,
+        actual_fat: meal.total_fat,
+        planned_calories: meal.total_calories,
+        delta_calories: 0,
+        rebalanced: false
+      });
+
+      if (onDataReload) {
+        await onDataReload();
+      }
+      } catch (error) {
+      console.error('Error logging meal:', error);
+      alert(t('nutrition.errorSavingMeal') || 'Errore nel salvare il pasto');
+      }
+      setSavingMealId(null);
+      };
+
+      const getMealLog = (mealId) => {
+      return mealLogs.find(log => log.original_meal_id === mealId);
+      };
+
+      const getMealTypeLabel = (type) => {
+      return t(`meals.${type}`) || type;
+      };
+
+      if (!user) {
+      return null;
+      }
   
   const startWeight = user.current_weight || 0;
   const targetWeight = user.target_weight || 0;
@@ -386,6 +433,17 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   // Colori: verde per completato, grigio normale per restante, rosso se in regresso
   const COLORS = isRegressing ? ['#26847F', '#ef4444'] : ['#26847F', '#e5e7eb'];
 
+  const uniqueMeals = meals.reduce((acc, meal) => {
+    const existing = acc.find(m => m.meal_type === meal.meal_type);
+    if (!existing || new Date(meal.created_date) > new Date(existing.created_date)) {
+      return [...acc.filter(m => m.meal_type !== meal.meal_type), meal];
+    }
+    return acc;
+  }, []);
+
+  const mealOrder = { breakfast: 1, snack1: 2, lunch: 3, snack2: 4, dinner: 5 };
+  const sortedMeals = uniqueMeals.sort((a, b) => (mealOrder[a.meal_type] || 999) - (mealOrder[b.meal_type] || 999));
+
   return (
     <>
       {(() => {
@@ -399,6 +457,72 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
+            {/* Pasti del giorno */}
+            {sortedMeals.length > 0 && (
+              <div className="mb-6 space-y-3">
+                {sortedMeals.map((meal) => {
+                  const mealLog = getMealLog(meal.id);
+                  const isLogged = !!mealLog;
+                  const displayCalories = isLogged ? mealLog.actual_calories : meal.total_calories;
+
+                  return (
+                    <div key={meal.id} className="w-full bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center justify-between gap-2">
+                        <button onClick={() => onMealSelect && onMealSelect(meal)} className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden relative flex-shrink-0">
+                            {meal.image_url ? (
+                                <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
+                            ) : (
+                                <ImageIcon className="w-5 h-5 text-gray-400 animate-pulse"/>
+                            )}
+                            {isLogged && (
+                              <div className="absolute top-0 right-0 bg-green-500 rounded-bl-lg p-0.5">
+                                <CheckCircle2 className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1 text-left">
+                            <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
+                            <p className="text-sm text-gray-600 truncate">{meal.name}</p>
+                          </div>
+                        </button>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="text-right">
+                            <p className={`font-bold ${isLogged ? 'text-green-600' : 'text-gray-800'}`}>
+                              {displayCalories}
+                            </p>
+                            <p className="text-xs text-gray-500">kcal</p>
+                          </div>
+                          {!isLogged && (
+                            <>
+                              <Checkbox
+                                checked={false}
+                                onCheckedChange={(checked) => handleCheckMeal(meal, checked)}
+                                disabled={savingMealId === meal.id}
+                                className="w-5 h-5 border-2 border-[#26847F] data-[state=checked]:bg-[#26847F]"
+                                title={t('nutrition.markAsConsumed')}
+                              />
+                              {hasFeatureAccess(userPlan, 'meal_photo_analysis') && onPhotoAnalyze && (
+                                <Button
+                                  onClick={() => onPhotoAnalyze(meal)}
+                                  variant="ghost"
+                                  size="icon"
+                                  className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
+                                  title={t('nutrition.analyzeWithPhoto')}
+                                >
+                                  <Camera className="w-5 h-5" />
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+
             {/* Macronutrienti giornalieri */}
             <div className="flex justify-center gap-6 mb-6">
               {/* Proteine */}
