@@ -421,13 +421,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       strokeWidth="6"
                       fill="none"
                       strokeDasharray={`${2 * Math.PI * 32}`}
-                      strokeDashoffset="0"
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.protein / Math.max(todayMacros.planned.protein, 1)))}`}
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <Beef className="w-4 h-4 text-red-600 mb-0.5" />
-                    <p className="text-xs font-bold text-red-700">{todayMacros.protein}g</p>
+                    <p className="text-xs font-bold text-red-700">{todayMacros.consumed.protein}g</p>
                   </div>
                 </div>
                 <p className="text-xs text-gray-600 mt-1 font-medium">Proteine</p>
@@ -453,13 +453,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       strokeWidth="6"
                       fill="none"
                       strokeDasharray={`${2 * Math.PI * 32}`}
-                      strokeDashoffset="0"
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.carbs / Math.max(todayMacros.planned.carbs, 1)))}`}
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <Wheat className="w-4 h-4 text-amber-600 mb-0.5" />
-                    <p className="text-xs font-bold text-amber-700">{todayMacros.carbs}g</p>
+                    <p className="text-xs font-bold text-amber-700">{todayMacros.consumed.carbs}g</p>
                   </div>
                 </div>
                 <p className="text-xs text-gray-600 mt-1 font-medium">Carboidrati</p>
@@ -485,13 +485,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       strokeWidth="6"
                       fill="none"
                       strokeDasharray={`${2 * Math.PI * 32}`}
-                      strokeDashoffset="0"
+                      strokeDashoffset={`${2 * Math.PI * 32 * (1 - (todayMacros.consumed.fat / Math.max(todayMacros.planned.fat, 1)))}`}
                       strokeLinecap="round"
                     />
                   </svg>
                   <div className="absolute inset-0 flex flex-col items-center justify-center">
                     <Droplet className="w-4 h-4 text-violet-600 mb-0.5" />
-                    <p className="text-xs font-bold text-violet-700">{todayMacros.fat}g</p>
+                    <p className="text-xs font-bold text-violet-700">{todayMacros.consumed.fat}g</p>
                   </div>
                 </div>
                 <p className="text-xs text-gray-600 mt-1 font-medium">Grassi</p>
