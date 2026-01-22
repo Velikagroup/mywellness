@@ -485,6 +485,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           <div className="h-64">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="bodyFatGradient" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.4}/>
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0.05}/>
+                  </linearGradient>
+                </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
                 <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
                 <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
@@ -512,6 +518,21 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     fontWeight: 'bold'
                   }}
                 />
+                {lineData.length > 0 && user.body_fat_percentage && (
+                  <ReferenceLine 
+                    x={lineData[lineData.length - 1].name}
+                    stroke="url(#bodyFatGradient)"
+                    strokeWidth={45}
+                    label={{
+                      value: `${parseFloat(user.body_fat_percentage).toFixed(1)}%`,
+                      position: 'top',
+                      fill: '#8b5cf6',
+                      fontSize: 14,
+                      fontWeight: 700,
+                      offset: 15
+                    }}
+                  />
+                )}
                 <Line 
                   type="monotone" 
                   dataKey="weight" 
