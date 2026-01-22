@@ -404,6 +404,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 >
                   Body Scan
                 </button>
+                <button
+                  onClick={() => {
+                    setShowProgressAnalysis(true);
+                    setShowActionMenu(false);
+                  }}
+                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm"
+                >
+                  🤖 Analisi AI
+                </button>
               </div>
             </div>
           </div>
