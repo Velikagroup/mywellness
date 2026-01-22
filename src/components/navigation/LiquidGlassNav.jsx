@@ -147,6 +147,27 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
             </Link>
           ))}
         </div>
+
+        {/* Action Button - destra del menu */}
+        <button
+          onClick={() => {
+            setActionMenuOpen(!actionMenuOpen);
+            if (setShowActionMenu) setShowActionMenu(!actionMenuOpen);
+          }}
+          className="w-12 h-12 md:w-14 md:h-14 rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0"
+          style={{
+            boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
+            transform: 'rotate(0deg)',
+            transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          }}
+          title="Quick Actions"
+        >
+          {actionMenuOpen ? (
+            <XIcon className="w-6 h-6 md:w-7 md:h-7" strokeWidth={3} />
+          ) : (
+            <Plus className="w-6 h-6 md:w-7 md:h-7" strokeWidth={3} />
+          )}
+        </button>
       </div>
     </div>
   );
