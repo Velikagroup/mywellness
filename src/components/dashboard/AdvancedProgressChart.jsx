@@ -632,9 +632,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 </div>
                 <div 
                   className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative cursor-help group"
-                  onMouseEnter={() => setShowConsumedTooltip(true)}
-                  onMouseLeave={() => setShowConsumedTooltip(false)}
-                  onClick={() => setShowConsumedTooltip(!showConsumedTooltip)}
+                  onMouseEnter={() => !consumedTooltipClicked && setShowConsumedTooltip(true)}
+                  onMouseLeave={() => !consumedTooltipClicked && setShowConsumedTooltip(false)}
+                  onClick={() => {
+                    setConsumedTooltipClicked(!consumedTooltipClicked);
+                    setShowConsumedTooltip(!consumedTooltipClicked);
+                  }}
                 >
                   <div className="h-full flex">
                     {sortedMeals.map((meal, index) => {
