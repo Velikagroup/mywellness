@@ -628,7 +628,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     Target Calorico: <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>{user.daily_calories || 2000} kcal</span>
                   </span>
                 </div>
-                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+                <div 
+                  className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative cursor-help group"
+                  onMouseEnter={() => setShowConsumedTooltip(true)}
+                  onMouseLeave={() => setShowConsumedTooltip(false)}
+                  onClick={() => setShowConsumedTooltip(!showConsumedTooltip)}
+                >
                   <div className="h-full flex">
                     {sortedMeals.map((meal, index) => {
                       const mealLog = getMealLog(meal.id);
@@ -666,10 +671,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       );
                     })}
                   </div>
+                  {showConsumedTooltip && (
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-10 pointer-events-none">
+                      I pasti con pattern tratteggiato sono pianificati ma non ancora consumati
+                    </div>
+                  )}
                 </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  I pasti con pattern tratteggiato sono pianificati ma non ancora consumati
-                </p>
               </div>
 
               {/* Calorie Bruciate */}
