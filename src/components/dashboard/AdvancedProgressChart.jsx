@@ -598,7 +598,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <TrendingUp className={isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
                     Calorie Consumate
                   </span>
-                  <span className={`font-bold ${isWeightLoss ? "text-red-600" : "text-green-600"}`}>
+                  <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>
                     {(() => {
                       const consumed = sortedMeals.reduce((sum, meal) => {
                         const mealLog = getMealLog(meal.id);
