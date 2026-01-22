@@ -677,27 +677,32 @@ export default function Dashboard() {
                     setShowUpgradeCheckout(true);
                   }}
                 />
-                <TrainingStatus 
-                  workout={todayWorkout} 
-                  onProgressPhotoClick={() => {
-                    if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
-                      setUpgradePlanTarget('premium');
-                      setShowUpgradeModal(true);
-                      return;
-                    }
-                    setShowProgressPhoto(true);
-                  }}
-                  onViewGalleryClick={async () => {
-                    await loadProgressPhotos();
-                    setShowPhotoGallery(true);
-                  }}
-                  userPlan={user?.subscription_plan}
-                  onUpgradeClick={() => {
-                                      setShowNutritionUnlock(false);
-                                      setUpgradePlanTarget('pro');
-                                      setShowUpgradeModal(true);
-                                    }}
-                />
+                
+                {/* Pulsanti Galleria e Analisi AI */}
+                <div className="flex gap-4 justify-center">
+                  <Button
+                    onClick={async () => {
+                      await loadProgressPhotos();
+                      setShowPhotoGallery(true);
+                    }}
+                    className="flex-1 max-w-xs liquid-glass-button text-gray-800 hover:text-gray-900 font-semibold"
+                  >
+                    📸 Galleria Progressi
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      if (!hasFeatureAccess(user.subscription_plan, 'progress_photo_analysis')) {
+                        setUpgradePlanTarget('premium');
+                        setShowUpgradeModal(true);
+                        return;
+                      }
+                      setShowProgressPhoto(true);
+                    }}
+                    className="flex-1 max-w-xs liquid-glass-button text-gray-800 hover:text-gray-900 font-semibold"
+                  >
+                    🤖 Analisi AI
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
