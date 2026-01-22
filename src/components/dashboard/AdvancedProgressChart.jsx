@@ -677,7 +677,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     })}
                   </div>
                   {showConsumedTooltip && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-10 pointer-events-none">
+                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-50 pointer-events-none">
                       I pasti con pattern tratteggiato sono pianificati ma non ancora consumati
                     </div>
                   )}
