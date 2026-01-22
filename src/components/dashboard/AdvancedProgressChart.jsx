@@ -681,63 +681,70 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
               {/* Calorie Bruciate */}
               <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-gray-700 flex items-center gap-2">
-                    <Flame className={isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
-                    Calorie Bruciate
-                  </span>
-                  <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
-                    {(() => {
-                      const bmr = calculateBMR(user);
-                      const neat = calculateNEAT(user);
-                      return Math.round(bmr + neat);
-                    })()} kcal
-                  </span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <span 
-                    className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
-                    onClick={onEditBMR}
-                  >
-                    BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{Math.round(calculateBMR(user))} kcal</span>
-                  </span>
-                  <span className="font-medium text-gray-600 text-xs">
-                    NEAT: <span className={isWeightLoss ? "text-green-400" : "text-red-400"}>{Math.round(calculateNEAT(user))} kcal</span>
-                  </span>
-                </div>
-                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-                  <div className="h-full flex">
-                    {(() => {
-                      const bmr = calculateBMR(user);
-                      const neat = calculateNEAT(user);
-                      const totalBurned = bmr + neat;
-                      const totalConsumed = sortedMeals.reduce((sum, m) => {
-                        const log = getMealLog(m.id);
-                        return sum + (log ? log.actual_calories : m.total_calories || 0);
-                      }, 0);
-                      const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
-                      const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
-                      const baseColor = isWeightLoss ? 'green' : 'red';
+               <div className="flex items-center justify-between text-sm">
+                 <span className="font-medium text-gray-700 flex items-center gap-2">
+                   <Flame className={isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
+                   Calorie Bruciate
+                 </span>
+                 <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
+                   {(() => {
+                     const bmr = calculateBMR(user);
+                     const neat = calculateNEAT(user);
+                     return Math.round(bmr + neat);
+                   })()} kcal
+                 </span>
+               </div>
+               <div className="flex items-center gap-3">
+                 <span 
+                   className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
+                   onClick={onEditBMR}
+                 >
+                   BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{Math.round(calculateBMR(user))} kcal</span>
+                 </span>
+                 <span className="font-medium text-gray-600 text-xs">
+                   NEAT: <span className={isWeightLoss ? "text-green-400" : "text-red-400"}>{Math.round(calculateNEAT(user))} kcal</span>
+                 </span>
+               </div>
+               <div 
+                 className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative cursor-help group"
+                 onMouseEnter={() => setShowBurnedTooltip(true)}
+                 onMouseLeave={() => setShowBurnedTooltip(false)}
+                 onClick={() => setShowBurnedTooltip(!showBurnedTooltip)}
+               >
+                 <div className="h-full flex">
+                   {(() => {
+                     const bmr = calculateBMR(user);
+                     const neat = calculateNEAT(user);
+                     const totalBurned = bmr + neat;
+                     const totalConsumed = sortedMeals.reduce((sum, m) => {
+                       const log = getMealLog(m.id);
+                       return sum + (log ? log.actual_calories : m.total_calories || 0);
+                     }, 0);
+                     const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
+                     const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
+                     const baseColor = isWeightLoss ? 'green' : 'red';
 
-                      return (
-                        <>
-                          <div 
-                            className={baseColor === 'green' ? "h-full bg-green-600" : "h-full bg-red-600"}
-                            style={{ width: `${bmrWidth}%` }}
-                          />
-                          <div className="w-[2px] h-full bg-white opacity-80" />
-                          <div 
-                            className={baseColor === 'green' ? "h-full bg-green-400" : "h-full bg-red-400"}
-                            style={{ width: `${neatWidth}%` }}
-                          />
-                        </>
-                      );
-                    })()}
-                  </div>
-                </div>
-                <p className="text-xs text-gray-500 mt-1">
-                  Segmento scuro: Metabolismo Basale (BMR) · Segmento chiaro: Attività quotidiana (NEAT)
-                </p>
+                     return (
+                       <>
+                         <div 
+                           className={baseColor === 'green' ? "h-full bg-green-600" : "h-full bg-red-600"}
+                           style={{ width: `${bmrWidth}%` }}
+                         />
+                         <div className="w-[2px] h-full bg-white opacity-80" />
+                         <div 
+                           className={baseColor === 'green' ? "h-full bg-green-400" : "h-full bg-red-400"}
+                           style={{ width: `${neatWidth}%` }}
+                         />
+                       </>
+                     );
+                   })()}
+                 </div>
+                 {showBurnedTooltip && (
+                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-10 pointer-events-none">
+                     Segmento scuro: BMR · Segmento chiaro: NEAT
+                   </div>
+                 )}
+               </div>
                 <div className="flex justify-end mt-2 pt-2 border-t border-gray-200/50">
                   <span className={`font-bold text-sm ${(() => {
                     const consumed = sortedMeals.reduce((sum, meal) => {
