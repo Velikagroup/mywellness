@@ -22,6 +22,7 @@ function LayoutContent({ children }) {
   const [showWeightModal, setShowWeightModal] = React.useState(false);
   const [weightInput, setWeightInput] = React.useState('');
   const [isSavingWeight, setIsSavingWeight] = React.useState(false);
+  const [showProgressAnalysis, setShowProgressAnalysis] = React.useState(false);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
