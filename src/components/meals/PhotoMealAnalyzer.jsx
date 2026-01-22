@@ -950,22 +950,22 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
               className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-all"
             >
               {t('photoMealAnalyzer.saveWithoutRebalance')}
-            </Button>
-            {Math.abs(analysisResult.delta_calories) > 50 && (
-              <Button
-                onClick={saveAndRebalance}
-                className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
-                disabled={isSaving}
-              >
-                {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
-                {t('photoMealAnalyzer.saveAndRebalance')}
               </Button>
-            )}
-            </DialogFooter>
-            )}
-            </DialogContent>
-            </Dialog>
-            )}
-            </>
-            );
-            }
+              {Math.abs(analysisResult.delta_calories) > 50 && (
+                <Button
+                  onClick={saveAndRebalance}
+                  className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
+                  disabled={isSaving}
+                >
+                  {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
+                  {t('photoMealAnalyzer.saveAndRebalance')}
+                </Button>
+              )}
+              </DialogFooter>
+              )}
+              </DialogContent>
+              </Dialog>
+              )}
+              </>
+              );
+              }
