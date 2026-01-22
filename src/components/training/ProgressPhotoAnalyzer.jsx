@@ -1127,7 +1127,10 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
                   </div>
                 </div>
                 {onOpenPhotoGallery && (
-                  <Button onClick={onOpenPhotoGallery} className="w-full bg-blue-600 hover:bg-blue-700">
+                  <Button onClick={() => {
+                    onClose();
+                    onOpenPhotoGallery();
+                  }} className="w-full bg-blue-600 hover:bg-blue-700">
                     📸 Galleria Progressi
                   </Button>
                 )}
