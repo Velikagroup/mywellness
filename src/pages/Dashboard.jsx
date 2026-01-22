@@ -59,6 +59,7 @@ export default function Dashboard() {
   const [isSavingCalories, setIsSavingCalories] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showCalorieMeter, setShowCalorieMeter] = useState(false);
+  const [mealsUpdateTrigger, setMealsUpdateTrigger] = useState(0);
   const [showNutritionUnlock, setShowNutritionUnlock] = useState(false);
   const [showUpgradeCheckout, setShowUpgradeCheckout] = useState(false);
   const [checkoutPlan, setCheckoutPlan] = useState('base');
