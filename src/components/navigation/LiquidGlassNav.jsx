@@ -154,10 +154,10 @@ export default function LiquidGlassNav({ navItems }) {
             <Link
               key={item.name}
               to={createPageUrl(item.path)}
-              className="flex flex-col items-center gap-1 p-2 rounded-xl transition-colors text-gray-400 hover:text-[#26847F] pointer-events-auto min-w-max"
+              className="flex flex-col items-center gap-1 p-3 rounded-xl transition-colors text-gray-400 hover:text-[#26847F] pointer-events-auto min-w-max"
               style={{ cursor: 'pointer' }}
-            >
-              <item.icon className="w-5 h-5" />
+              >
+              <item.icon className="w-6 h-6" />
               <span className="text-xs font-medium text-center leading-tight">{item.name}</span>
             </Link>
           ))}
