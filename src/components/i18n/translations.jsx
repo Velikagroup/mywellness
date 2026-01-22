@@ -3068,7 +3068,26 @@ export const translations = {
       surplusSlowsLoss: "⚠️ {amount} kcal surplus - Slows weight loss",
       surplusPerfect: "💪 {amount} kcal surplus - Perfect for mass gain!",
       deficitSlowsGain: "⚠️ {amount} kcal deficit - Slows muscle gain",
-      plannedMealsNote: "Lighter sections are planned meals not yet logged"
+      plannedMealsNote: "Lighter sections are planned meals not yet logged",
+      // Alert messages
+      noRemainingMeals: "No remaining meals today to rebalance. The cheat will be compensated tomorrow.",
+      rebalanceSuccess: "✅ Subsequent meals successfully rebalanced!",
+      rebalanceError: "Rebalancing error. Please try again.",
+      photoDeleteSuccess: "✅ Photo successfully deleted",
+      photoDeleteError: "❌ Error deleting photo",
+      bmrUpdateSuccess: "✅ Basal Metabolic Rate successfully updated!",
+      bmrUpdateError: "Error updating BMR",
+      bmrInvalidValue: "Enter a valid value for BMR",
+      bodyFatUpdateSuccess: "✅ Body Fat successfully updated!",
+      bodyFatUpdateError: "Error updating Body Fat",
+      bodyFatInvalidValue: "Enter a valid value for Body Fat (0-100%)",
+      caloriesUpdateSuccess: "✅ Calorie Target successfully updated!",
+      caloriesUpdateError: "Error updating Calorie Target",
+      caloriesInvalidValue: "Enter a valid value for Calorie Target",
+      termsAcceptError: "Error accepting terms. Please try again.",
+      redirecting: "Redirecting...",
+      // Edit modal labels
+      calculatedValues: "Calculated values:"
     },
     settings: {
       title: "Account Settings",
@@ -5040,7 +5059,26 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Superávit de {amount} kcal - Ralentiza la pérdida de peso",
       surplusPerfect: "💪 Superávit de {amount} kcal - ¡Perfecto para ganar masa!",
       deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Ralentiza el aumento",
-      plannedMealsNote: "Las secciones más claras son comidas planificadas pero no registradas"
+      plannedMealsNote: "Las secciones más claras son comidas planificadas pero no registradas",
+      // Alert messages
+      noRemainingMeals: "No hay comidas restantes hoy para rebalancear. El exceso se compensará mañana.",
+      rebalanceSuccess: "✅ ¡Comidas siguientes rebalanceadas con éxito!",
+      rebalanceError: "Error en el rebalanceo. Inténtalo de nuevo.",
+      photoDeleteSuccess: "✅ Foto eliminada con éxito",
+      photoDeleteError: "❌ Error al eliminar la foto",
+      bmrUpdateSuccess: "✅ ¡Metabolismo Basal actualizado con éxito!",
+      bmrUpdateError: "Error al actualizar el BMR",
+      bmrInvalidValue: "Introduce un valor válido para el BMR",
+      bodyFatUpdateSuccess: "✅ ¡Grasa Corporal actualizada con éxito!",
+      bodyFatUpdateError: "Error al actualizar la Grasa Corporal",
+      bodyFatInvalidValue: "Introduce un valor válido para la Grasa Corporal (0-100%)",
+      caloriesUpdateSuccess: "✅ ¡Objetivo Calórico actualizado con éxito!",
+      caloriesUpdateError: "Error al actualizar el Objetivo Calórico",
+      caloriesInvalidValue: "Introduce un valor válido para el Objetivo Calórico",
+      termsAcceptError: "Error al aceptar los términos. Inténtalo de nuevo.",
+      redirecting: "Redirigiendo...",
+      // Edit modal labels
+      calculatedValues: "Valores calculados:"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -7030,7 +7068,26 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Superávit de {amount} kcal - Retarda o emagrecimento",
       surplusPerfect: "💪 Superávit de {amount} kcal - Perfeito para ganhar massa!",
       deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Retarda o ganho",
-      plannedMealsNote: "As seções mais claras são refeições planejadas mas não registradas"
+      plannedMealsNote: "As seções mais claras são refeições planejadas mas não registradas",
+      // Alert messages
+      noRemainingMeals: "Não há refeições restantes hoje para rebalancear. O excesso será compensado amanhã.",
+      rebalanceSuccess: "✅ Refeições seguintes rebalanceadas com sucesso!",
+      rebalanceError: "Erro no rebalanceamento. Tente novamente.",
+      photoDeleteSuccess: "✅ Foto excluída com sucesso",
+      photoDeleteError: "❌ Erro ao excluir a foto",
+      bmrUpdateSuccess: "✅ Taxa Metabólica Basal atualizada com sucesso!",
+      bmrUpdateError: "Erro ao atualizar a TMB",
+      bmrInvalidValue: "Digite um valor válido para a TMB",
+      bodyFatUpdateSuccess: "✅ Gordura Corporal atualizada com sucesso!",
+      bodyFatUpdateError: "Erro ao atualizar a Gordura Corporal",
+      bodyFatInvalidValue: "Digite um valor válido para a Gordura Corporal (0-100%)",
+      caloriesUpdateSuccess: "✅ Meta Calórica atualizada com sucesso!",
+      caloriesUpdateError: "Erro ao atualizar a Meta Calórica",
+      caloriesInvalidValue: "Digite um valor válido para a Meta Calórica",
+      termsAcceptError: "Erro ao aceitar os termos. Tente novamente.",
+      redirecting: "Redirecionando...",
+      // Edit modal labels
+      calculatedValues: "Valores calculados:"
     },
     settings: {
       title: "Configurações da Conta",
@@ -9020,7 +9077,26 @@ export const translations = {
       surplusSlowsLoss: "⚠️ {amount} kcal Überschuss - Verlangsamt Gewichtsverlust",
       surplusPerfect: "💪 {amount} kcal Überschuss - Perfekt für Muskelaufbau!",
       deficitSlowsGain: "⚠️ {amount} kcal Defizit - Verlangsamt Muskelzuwachs",
-      plannedMealsNote: "Hellere Abschnitte sind geplante, aber noch nicht erfasste Mahlzeiten"
+      plannedMealsNote: "Hellere Abschnitte sind geplante, aber noch nicht erfasste Mahlzeiten",
+      // Alert messages
+      noRemainingMeals: "Es gibt heute keine verbleibenden Mahlzeiten zum Ausgleichen. Der Überschuss wird morgen kompensiert.",
+      rebalanceSuccess: "✅ Folgende Mahlzeiten erfolgreich ausgeglichen!",
+      rebalanceError: "Fehler beim Ausgleich. Bitte versuchen Sie es erneut.",
+      photoDeleteSuccess: "✅ Foto erfolgreich gelöscht",
+      photoDeleteError: "❌ Fehler beim Löschen des Fotos",
+      bmrUpdateSuccess: "✅ Grundumsatz erfolgreich aktualisiert!",
+      bmrUpdateError: "Fehler beim Aktualisieren des BMR",
+      bmrInvalidValue: "Geben Sie einen gültigen Wert für den BMR ein",
+      bodyFatUpdateSuccess: "✅ Körperfett erfolgreich aktualisiert!",
+      bodyFatUpdateError: "Fehler beim Aktualisieren des Körperfetts",
+      bodyFatInvalidValue: "Geben Sie einen gültigen Wert für Körperfett ein (0-100%)",
+      caloriesUpdateSuccess: "✅ Kalorienziel erfolgreich aktualisiert!",
+      caloriesUpdateError: "Fehler beim Aktualisieren des Kalorienziels",
+      caloriesInvalidValue: "Geben Sie einen gültigen Wert für das Kalorienziel ein",
+      termsAcceptError: "Fehler beim Akzeptieren der Bedingungen. Bitte versuchen Sie es erneut.",
+      redirecting: "Weiterleitung...",
+      // Edit modal labels
+      calculatedValues: "Berechnete Werte:"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -11010,7 +11086,26 @@ export const translations = {
       surplusSlowsLoss: "⚠️ Surplus de {amount} kcal - Ralentit la perte de poids",
       surplusPerfect: "💪 Surplus de {amount} kcal - Parfait pour la masse!",
       deficitSlowsGain: "⚠️ Déficit de {amount} kcal - Ralentit la prise de masse",
-      plannedMealsNote: "Les sections plus claires sont des repas planifiés mais non enregistrés"
+      plannedMealsNote: "Les sections plus claires sont des repas planifiés mais non enregistrés",
+      // Alert messages
+      noRemainingMeals: "Il n'y a plus de repas aujourd'hui à rééquilibrer. L'écart sera compensé demain.",
+      rebalanceSuccess: "✅ Repas suivants rééquilibrés avec succès!",
+      rebalanceError: "Erreur de rééquilibrage. Veuillez réessayer.",
+      photoDeleteSuccess: "✅ Photo supprimée avec succès",
+      photoDeleteError: "❌ Erreur lors de la suppression de la photo",
+      bmrUpdateSuccess: "✅ Métabolisme de Base mis à jour avec succès!",
+      bmrUpdateError: "Erreur lors de la mise à jour du MB",
+      bmrInvalidValue: "Entrez une valeur valide pour le MB",
+      bodyFatUpdateSuccess: "✅ Masse Grasse mise à jour avec succès!",
+      bodyFatUpdateError: "Erreur lors de la mise à jour de la Masse Grasse",
+      bodyFatInvalidValue: "Entrez une valeur valide pour la Masse Grasse (0-100%)",
+      caloriesUpdateSuccess: "✅ Objectif Calorique mis à jour avec succès!",
+      caloriesUpdateError: "Erreur lors de la mise à jour de l'Objectif Calorique",
+      caloriesInvalidValue: "Entrez une valeur valide pour l'Objectif Calorique",
+      termsAcceptError: "Erreur lors de l'acceptation des conditions. Veuillez réessayer.",
+      redirecting: "Redirection...",
+      // Edit modal labels
+      calculatedValues: "Valeurs calculées:"
     },
     settings: {
       title: "Paramètres du Compte",
