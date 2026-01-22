@@ -183,6 +183,30 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     loadCalorieData();
   }, [user, weightHistory, mealsUpdateTrigger]);
 
+  const [calorieBalanceMap, setCalorieBalanceMap] = React.useState({});
+
+  // Carica i CalorieBalance per mostrare i dati accanto ai punti del peso
+  useEffect(() => {
+    const loadCalorieBalances = async () => {
+      if (!user?.id) return;
+      try {
+        const balances = await base44.entities.CalorieBalance.filter({
+          user_id: user.id
+        }, '-date', 1000);
+        
+        const map = {};
+        balances.forEach(b => {
+          map[b.date] = Math.round(b.daily_balance || 0);
+        });
+        setCalorieBalanceMap(map);
+      } catch (error) {
+        console.error('Error loading calorie balances:', error);
+      }
+    };
+    
+    loadCalorieBalances();
+  }, [user?.id]);
+
   const lineData = useMemo(() => {
     console.log('📈 lineData calculation - weightHistory:', weightHistory?.length, 'entries');
     
@@ -257,13 +281,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         
         return {
             name: label,
-            weight: entry.weight
+            weight: entry.weight,
+            calorieBalance: calorieBalanceMap[dayKey] || null
         };
     });
     
     console.log('📈 lineData result:', result);
     return result;
-  }, [weightHistory, user]);
+  }, [weightHistory, user, calorieBalanceMap]);
 
   const handleSaveWeight = async () => {
     console.log('🔍 handleSaveWeight called', { weight, user: user?.id, isSaving });
