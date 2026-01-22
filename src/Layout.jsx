@@ -506,6 +506,15 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           )}
         </button>
       </div>
+
+      {showProgressAnalysis && user && (
+        <ProgressPhotoAnalyzer
+          user={user}
+          onClose={() => setShowProgressAnalysis(false)}
+          onAnalysisComplete={() => setShowProgressAnalysis(false)}
+          onOpenPhotoGallery={() => {}}
+        />
+      )}
     </div>
   );
 }
