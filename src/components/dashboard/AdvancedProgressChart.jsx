@@ -781,33 +781,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                    </div>
                  )}
                </div>
-                <div className="flex justify-end mt-2 pt-2 border-t border-gray-200/50">
-                  <span className={`font-bold text-sm ${(() => {
-                    const consumed = sortedMeals.reduce((sum, meal) => {
-                      const mealLog = getMealLog(meal.id);
-                      return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
-                    }, 0);
-                    const bmr = calculateBMR(user);
-                    const neat = calculateNEAT(user);
-                    const burned = bmr + neat;
-                    const diff = Math.round(consumed - burned);
-                    return isWeightLoss 
-                      ? (diff < 0 ? 'text-green-600' : 'text-red-600')
-                      : (diff < 0 ? 'text-red-600' : 'text-green-600');
-                  })()}`}>
-                    {(() => {
-                      const consumed = sortedMeals.reduce((sum, meal) => {
-                        const mealLog = getMealLog(meal.id);
-                        return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
-                      }, 0);
-                      const bmr = calculateBMR(user);
-                      const neat = calculateNEAT(user);
-                      const burned = bmr + neat;
-                      const diff = Math.round(consumed - burned);
-                      return (diff > 0 ? '+' : '') + diff + ' kcal';
-                    })()}
-                  </span>
-                </div>
+
               </div>
             </div>
 
