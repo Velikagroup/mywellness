@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge, Beef, Wheat, Droplet, Camera, CheckCircle2, ImageIcon } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
-import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell } from 'recharts';
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell, Legend } from 'recharts';
 import { format } from 'date-fns';
 import { WeightHistory } from "@/entities/WeightHistory";
 import { Link } from 'react-router-dom';
@@ -77,6 +77,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     consumed: { protein: 0, carbs: 0, fat: 0 }
   });
   const [savingMealId, setSavingMealId] = useState(null);
+  const [calorieBalanceByDate, setCalorieBalanceByDate] = useState({});
 
   useEffect(() => {
     const loadCalorieData = async () => {
@@ -147,14 +148,21 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         const lastWeightLog = weightHistory.length > 0 ? weightHistory[0] : null;
         const lastWeightDate = lastWeightLog?.date || lastWeightLog?.created_date?.split('T')[0];
 
+        // Carica tutti i CalorieBalance per il mapping per data
+        const allCalorieBalances = await base44.entities.CalorieBalance.filter({
+          user_id: user.id
+        }, '-date', 1000);
+
+        // Crea una mappa date -> daily_balance
+        const balancesByDate = {};
+        allCalorieBalances.forEach(balance => {
+          balancesByDate[balance.date] = balance.daily_balance || 0;
+        });
+        setCalorieBalanceByDate(balancesByDate);
+
         if (lastWeightDate) {
           // Carica tutti i CalorieBalance DOPO l'ultima registrazione peso
-          const calorieBalances = await base44.entities.CalorieBalance.filter({
-            user_id: user.id
-          }, '-date', 1000);
-
-          // Filtra solo quelli dopo l'ultima registrazione peso
-          const balancesAfterWeight = calorieBalances.filter(b => b.date > lastWeightDate);
+          const balancesAfterWeight = allCalorieBalances.filter(b => b.date > lastWeightDate);
           
           // Prendi l'ultimo accumulo (il più recente)
           const latestBalance = balancesAfterWeight.length > 0 ? balancesAfterWeight[0] : null;
@@ -166,12 +174,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           }
         } else {
           // Nessuna registrazione peso, usa l'ultimo accumulo totale
-          const calorieBalances = await base44.entities.CalorieBalance.filter({
-            user_id: user.id
-          }, '-date', 1);
-
-          if (calorieBalances.length > 0) {
-            setAccumulatedCalories(calorieBalances[0].accumulated_balance || 0);
+          if (allCalorieBalances.length > 0) {
+            setAccumulatedCalories(allCalorieBalances[0].accumulated_balance || 0);
           }
         }
 
