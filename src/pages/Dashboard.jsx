@@ -454,7 +454,6 @@ export default function Dashboard() {
     setIsSavingBMR(true);
     try {
       await base44.auth.updateMe({ bmr: Math.round(newBMR) });
-      setUser(prev => ({ ...prev, bmr: Math.round(newBMR) }));
       setShowEditBMR(false);
       await loadUserData();
       alert('✅ Metabolismo Basale aggiornato con successo!');
