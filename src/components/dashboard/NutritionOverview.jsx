@@ -141,6 +141,105 @@ export default function NutritionOverview({ meals, mealLogs = [], onMealSelect, 
                 <p className="text-lg font-bold text-yellow-600">{(Math.round(dailyTotals.fat * 10) / 10).toFixed(1)}g</p>
               </div>
             </div>
+            
+            {/* Macronutrienti Progress Circles */}
+            <div className="flex justify-center gap-6 pt-3 border-t border-[#26847F]/20">
+              {/* Proteine */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-16 h-16">
+                  <svg className="w-16 h-16 transform -rotate-90">
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#e5e7eb"
+                      strokeWidth="5"
+                      fill="none"
+                    />
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#ef4444"
+                      strokeWidth="5"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 28}`}
+                      strokeDashoffset={`${2 * Math.PI * 28 * (1 - (dailyTotals.protein / Math.max(dailyTotals.protein * 1.2, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Beef className="w-3.5 h-3.5 text-red-600 mb-0.5" />
+                    <p className="text-xs font-bold text-red-700">{Math.round(dailyTotals.protein)}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Proteine</p>
+              </div>
+
+              {/* Carboidrati */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-16 h-16">
+                  <svg className="w-16 h-16 transform -rotate-90">
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#e5e7eb"
+                      strokeWidth="5"
+                      fill="none"
+                    />
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#f59e0b"
+                      strokeWidth="5"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 28}`}
+                      strokeDashoffset={`${2 * Math.PI * 28 * (1 - (dailyTotals.carbs / Math.max(dailyTotals.carbs * 1.2, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Wheat className="w-3.5 h-3.5 text-amber-600 mb-0.5" />
+                    <p className="text-xs font-bold text-amber-700">{Math.round(dailyTotals.carbs)}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Carboidrati</p>
+              </div>
+
+              {/* Grassi */}
+              <div className="flex flex-col items-center">
+                <div className="relative w-16 h-16">
+                  <svg className="w-16 h-16 transform -rotate-90">
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#e5e7eb"
+                      strokeWidth="5"
+                      fill="none"
+                    />
+                    <circle
+                      cx="32"
+                      cy="32"
+                      r="28"
+                      stroke="#8b5cf6"
+                      strokeWidth="5"
+                      fill="none"
+                      strokeDasharray={`${2 * Math.PI * 28}`}
+                      strokeDashoffset={`${2 * Math.PI * 28 * (1 - (dailyTotals.fat / Math.max(dailyTotals.fat * 1.2, 1)))}`}
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <Droplet className="w-3.5 h-3.5 text-violet-600 mb-0.5" />
+                    <p className="text-xs font-bold text-violet-700">{Math.round(dailyTotals.fat)}g</p>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-600 mt-1 font-medium">Grassi</p>
+              </div>
+            </div>
           </div>
         )}
 
