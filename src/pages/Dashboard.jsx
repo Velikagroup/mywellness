@@ -283,7 +283,7 @@ export default function Dashboard() {
       const remainingMeals = todayMeals.filter(m => remainingMealTypes.includes(m.meal_type));
 
       if (remainingMeals.length === 0) {
-        alert("Non ci sono pasti rimanenti oggi da ribilanciare. Lo sgarro sarà compensato domani.");
+        alert(t('dashboard.noRemainingMeals'));
         setIsRebalancing(false);
         await loadUserData();
         return;
@@ -362,10 +362,10 @@ export default function Dashboard() {
       }
 
       await loadUserData();
-      alert("✅ Pasti successivi ribilanciati con successo!");
+      alert(t('dashboard.rebalanceSuccess'));
     } catch (error) {
       console.error("Error rebalancing meals:", error);
-      alert("Errore nel ribilanciamento. Riprova.");
+      alert(t('dashboard.rebalanceError'));
     }
     setIsRebalancing(false);
   };
@@ -422,10 +422,10 @@ export default function Dashboard() {
     try {
       await base44.entities.ProgressPhoto.delete(photoId);
       await loadProgressPhotos();
-      alert('✅ Foto eliminata con successo');
+      alert(t('dashboard.photoDeleteSuccess'));
     } catch (error) {
       console.error('Error deleting photo:', error);
-      alert('❌ Errore durante l\'eliminazione della foto');
+      alert(t('dashboard.photoDeleteError'));
     }
   };
 
@@ -447,7 +447,7 @@ export default function Dashboard() {
   const handleSaveBMR = async () => {
     const newBMR = parseFloat(editBMRValue);
     if (isNaN(newBMR) || newBMR <= 0) {
-      alert('Inserisci un valore valido per il BMR');
+      alert(t('dashboard.bmrInvalidValue'));
       return;
     }
 
@@ -456,10 +456,10 @@ export default function Dashboard() {
       await base44.auth.updateMe({ bmr: Math.round(newBMR) });
       setShowEditBMR(false);
       await loadUserData();
-      alert('✅ Metabolismo Basale aggiornato con successo!');
+      alert(t('dashboard.bmrUpdateSuccess'));
     } catch (error) {
       console.error('Error updating BMR:', error);
-      alert('Errore durante l\'aggiornamento del BMR');
+      alert(t('dashboard.bmrUpdateError'));
     }
     setIsSavingBMR(false);
   };
@@ -467,7 +467,7 @@ export default function Dashboard() {
   const handleSaveBodyFat = async () => {
     const newBodyFat = parseFloat(editBodyFatValue);
     if (isNaN(newBodyFat) || newBodyFat < 0 || newBodyFat > 100) {
-      alert('Inserisci un valore valido per la Massa Grassa (0-100%)');
+      alert(t('dashboard.bodyFatInvalidValue'));
       return;
     }
 
@@ -476,10 +476,10 @@ export default function Dashboard() {
       await base44.auth.updateMe({ body_fat_percentage: parseFloat(newBodyFat.toFixed(1)) });
       await loadUserData();
       setShowEditBodyFat(false);
-      alert('✅ Massa Grassa aggiornata con successo!');
+      alert(t('dashboard.bodyFatUpdateSuccess'));
     } catch (error) {
       console.error('Error updating body fat:', error);
-      alert('Errore durante l\'aggiornamento della Massa Grassa');
+      alert(t('dashboard.bodyFatUpdateError'));
     }
     setIsSavingBodyFat(false);
   };
@@ -487,7 +487,7 @@ export default function Dashboard() {
   const handleSaveCalories = async () => {
     const newCalories = parseFloat(editCaloriesValue);
     if (isNaN(newCalories) || newCalories <= 0) {
-      alert('Inserisci un valore valido per il Target Calorico');
+      alert(t('dashboard.caloriesInvalidValue'));
       return;
     }
 
@@ -496,10 +496,10 @@ export default function Dashboard() {
       await base44.auth.updateMe({ daily_calories: Math.round(newCalories) });
       await loadUserData();
       setShowEditCalories(false);
-      alert('✅ Target Calorico aggiornato con successo!');
+      alert(t('dashboard.caloriesUpdateSuccess'));
     } catch (error) {
       console.error('Error updating daily calories:', error);
-      alert('Errore durante l\'aggiornamento del Target Calorico');
+      alert(t('dashboard.caloriesUpdateError'));
     }
     setIsSavingCalories(false);
   };
@@ -571,7 +571,7 @@ export default function Dashboard() {
       await loadUserData(); // Reload user to update state
     } catch (error) {
       console.error('Error accepting terms:', error);
-      alert('Errore durante l\'accettazione dei termini. Riprova.');
+      alert(t('dashboard.termsAcceptError'));
     }
   };
 
@@ -592,7 +592,7 @@ export default function Dashboard() {
         <div className="flex flex-col items-center gap-4">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#26847F]"></div>
           <p className="text-gray-600 font-medium">
-            {isRedirecting ? 'Reindirizzamento...' : (isRebalancing ? t('common.loading') : t('common.loading'))}
+            {isRedirecting ? t('dashboard.redirecting') : (isRebalancing ? t('common.loading') : t('common.loading'))}
           </p>
         </div>
       </div>
@@ -781,7 +781,7 @@ export default function Dashboard() {
             
             {editBMRValue && (
               <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2">
-                <p className="text-xs font-semibold text-blue-900">Valori calcolati:</p>
+                <p className="text-xs font-semibold text-blue-900">{t('dashboard.calculatedValues')}</p>
                 <div className="text-sm text-blue-800">
                   <p>🔥 BMR: <span className="font-bold">{Math.round(parseFloat(editBMRValue))} kcal</span></p>
                   <p>⚡ NEAT: <span className="font-bold">{Math.round(parseFloat(editBMRValue) * (user?.activity_level === 'sedentary' ? 0.2 : user?.activity_level === 'lightly_active' ? 0.375 : user?.activity_level === 'moderately_active' ? 0.55 : user?.activity_level === 'very_active' ? 0.725 : 0.375))} kcal</span></p>
