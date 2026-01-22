@@ -482,13 +482,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
             </div>
 
-          <div className="h-64">
+          <div className="h-64 relative">
             <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lineData} margin={{ top: 5, right: 20, left: -10, bottom: 5 }}>
+              <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
                 <defs>
-                  <linearGradient id="bodyFatGradient" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={0.7}/>
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
+                  <linearGradient id="bodyFatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#a78bfa" stopOpacity={0.8}/>
+                    <stop offset="50%" stopColor="#c4b5fd" stopOpacity={0.4}/>
+                    <stop offset="100%" stopColor="#ddd6fe" stopOpacity={0}/>
                   </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
@@ -522,15 +523,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   <ReferenceLine 
                     x={lineData[lineData.length - 1].name}
                     stroke="url(#bodyFatGradient)"
-                    strokeWidth={60}
-                    label={{
-                      value: `${parseFloat(user.body_fat_percentage).toFixed(1)}%`,
-                      position: 'insideBottom',
-                      fill: '#8b5cf6',
-                      fontSize: 15,
-                      fontWeight: 700,
-                      offset: 10
-                    }}
+                    strokeWidth={80}
+                    isFront={false}
                   />
                 )}
                 <Line 
@@ -544,6 +538,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 />
               </LineChart>
             </ResponsiveContainer>
+            {lineData.length > 0 && user.body_fat_percentage && (
+              <div className="absolute top-2 right-8 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg">
+                <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
+                <p className="text-xs text-purple-600">Massa Grassa</p>
+              </div>
+            )}
           </div>
 
           {/* Dati sotto il grafico */}
