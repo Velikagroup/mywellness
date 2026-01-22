@@ -678,6 +678,7 @@ export default function Dashboard() {
                     setCheckoutBilling('monthly');
                     setShowUpgradeCheckout(true);
                   }}
+                  onMealComplete={() => setMealsUpdateTrigger(prev => prev + 1)}
                 />
                 
                 {/* Pulsanti Galleria e Analisi AI */}
