@@ -3,7 +3,7 @@ import React, { useState, useMemo, useEffect } from 'react';
 import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge, Beef, Wheat, Droplet, Camera, CheckCircle2, ImageIcon } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
-import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell, Legend } from 'recharts';
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell } from 'recharts';
 import { format } from 'date-fns';
 import { WeightHistory } from "@/entities/WeightHistory";
 import { Link } from 'react-router-dom';
@@ -77,7 +77,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     consumed: { protein: 0, carbs: 0, fat: 0 }
   });
   const [savingMealId, setSavingMealId] = useState(null);
-  const [calorieBalanceByDate, setCalorieBalanceByDate] = useState({});
 
   useEffect(() => {
     const loadCalorieData = async () => {
@@ -148,21 +147,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         const lastWeightLog = weightHistory.length > 0 ? weightHistory[0] : null;
         const lastWeightDate = lastWeightLog?.date || lastWeightLog?.created_date?.split('T')[0];
 
-        // Carica tutti i CalorieBalance per il mapping per data
-        const allCalorieBalances = await base44.entities.CalorieBalance.filter({
-          user_id: user.id
-        }, '-date', 1000);
-
-        // Crea una mappa date -> daily_balance
-        const balancesByDate = {};
-        allCalorieBalances.forEach(balance => {
-          balancesByDate[balance.date] = balance.daily_balance || 0;
-        });
-        setCalorieBalanceByDate(balancesByDate);
-
         if (lastWeightDate) {
           // Carica tutti i CalorieBalance DOPO l'ultima registrazione peso
-          const balancesAfterWeight = allCalorieBalances.filter(b => b.date > lastWeightDate);
+          const calorieBalances = await base44.entities.CalorieBalance.filter({
+            user_id: user.id
+          }, '-date', 1000);
+
+          // Filtra solo quelli dopo l'ultima registrazione peso
+          const balancesAfterWeight = calorieBalances.filter(b => b.date > lastWeightDate);
           
           // Prendi l'ultimo accumulo (il più recente)
           const latestBalance = balancesAfterWeight.length > 0 ? balancesAfterWeight[0] : null;
@@ -174,8 +166,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           }
         } else {
           // Nessuna registrazione peso, usa l'ultimo accumulo totale
-          if (allCalorieBalances.length > 0) {
-            setAccumulatedCalories(allCalorieBalances[0].accumulated_balance || 0);
+          const calorieBalances = await base44.entities.CalorieBalance.filter({
+            user_id: user.id
+          }, '-date', 1);
+
+          if (calorieBalances.length > 0) {
+            setAccumulatedCalories(calorieBalances[0].accumulated_balance || 0);
           }
         }
 
@@ -261,14 +257,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         
         return {
             name: label,
-            weight: entry.weight,
-            calorieBalance: calorieBalanceByDate[dayKey] || 0
+            weight: entry.weight
         };
     });
     
     console.log('📈 lineData result:', result);
     return result;
-  }, [weightHistory, user, calorieBalanceByDate]);
+  }, [weightHistory, user]);
 
   const handleSaveWeight = async () => {
     console.log('🔍 handleSaveWeight called', { weight, user: user?.id, isSaving });
@@ -488,23 +483,22 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </div>
 
           <div className="h-64 relative">
-           <ResponsiveContainer width="100%" height="100%">
-             <LineChart data={lineData} margin={{ top: 25, right: 60, left: -10, bottom: 5 }}>
-               <defs>
-                 <linearGradient id="bodyFatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                   <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
-                   <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
-                 </linearGradient>
-                 <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                   <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
-                   <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
-                   <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
-                 </linearGradient>
-               </defs>
-               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
-               <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
-               <YAxis yAxisId="left" stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
-               <YAxis yAxisId="right" orientation="right" stroke="#8b5cf6" tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} style={{ fontSize: '12px' }} />
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
+                <defs>
+                  <linearGradient id="bodyFatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
+                  </linearGradient>
+                  <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
+                    <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
+                  </linearGradient>
+                </defs>
+                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
+                <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
+                <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: 'rgba(255, 255, 255, 0.95)', 
@@ -512,17 +506,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                   }} 
-                  formatter={(value, name) => {
-                    if (name === 'calorieBalance') {
-                      return [`${Math.round(value)} kcal`, 'Bilancio Calorico'];
-                    }
-                    return [`${value.toFixed(1)} kg`, 'Peso'];
-                  }}
+                  formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
                   labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
                   cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
                 />
                 <ReferenceLine 
-                  yAxisId="left"
                   y={targetWeight} 
                   stroke="#26847F" 
                   strokeDasharray="4 4" 
@@ -544,7 +532,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   />
                 )}
                 <Line 
-                  yAxisId="left"
                   type="monotone" 
                   dataKey="weight" 
                   stroke="url(#weightLineGradient)" 
@@ -552,19 +539,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
                   activeDot={{ r: 6, strokeWidth: 2 }} 
                   connectNulls={true}
-                  name="Peso"
-                />
-                <Line 
-                  yAxisId="right"
-                  type="monotone" 
-                  dataKey="calorieBalance" 
-                  stroke="#8b5cf6" 
-                  strokeWidth={2} 
-                  dot={{ r: 3, fill: '#8b5cf6', strokeWidth: 1, stroke: '#fff' }} 
-                  activeDot={{ r: 5, strokeWidth: 1 }} 
-                  connectNulls={true}
-                  name="Bilancio Calorico"
-                  strokeDasharray="5 5"
                 />
               </LineChart>
             </ResponsiveContainer>
