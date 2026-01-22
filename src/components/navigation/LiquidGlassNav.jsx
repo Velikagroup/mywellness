@@ -124,10 +124,10 @@ export default function LiquidGlassNav({ navItems }) {
             <div className="relative">
               <button
                 onClick={() => setShowAdminMenu(!showAdminMenu)}
-                className="flex flex-col items-center gap-1 p-3 rounded-xl transition-colors text-gray-400 hover:text-[#26847F] pointer-events-auto"
+                className="flex flex-col items-center gap-1 p-2 md:p-3 rounded-xl transition-colors text-gray-400 hover:text-[#26847F] pointer-events-auto"
                   style={{ cursor: 'pointer' }}
                 >
-                  <MenuIcon className="w-6 h-6" />
+                  <MenuIcon className="w-5 h-5 md:w-6 md:h-6" />
                 <span className="text-xs font-medium">Menu</span>
               </button>
 
