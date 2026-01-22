@@ -590,6 +590,100 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           </div>
           </div>
 
+            {/* Progress Bar Calorie - tra icone e macro */}
+            <div className="space-y-4 mt-6 pt-4 border-t border-gray-200/50">
+              {/* Calorie Consumate */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-gray-700">Calorie Consumate</span>
+                  <span className="font-bold text-gray-800">{(() => {
+                    const consumed = sortedMeals.reduce((sum, meal) => {
+                      const mealLog = getMealLog(meal.id);
+                      return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
+                    }, 0);
+                    return Math.round(consumed);
+                  })()} kcal</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+                  <div className="h-full flex">
+                    {sortedMeals.map((meal, index) => {
+                      const mealLog = getMealLog(meal.id);
+                      const isLogged = !!mealLog;
+                      const calories = isLogged ? mealLog.actual_calories : meal.total_calories || 0;
+                      const totalConsumed = sortedMeals.reduce((sum, m) => {
+                        const log = getMealLog(m.id);
+                        return sum + (log ? log.actual_calories : m.total_calories || 0);
+                      }, 0);
+                      const bmr = calculateBMR(user);
+                      const neat = calculateNEAT(user);
+                      const totalBurned = bmr + neat;
+                      const segmentWidth = (calories / Math.max(totalConsumed, totalBurned)) * 100;
+
+                      return (
+                        <React.Fragment key={meal.id}>
+                          <div 
+                            className={`h-full transition-all ${
+                              isLogged ? 'bg-blue-500' : 'bg-blue-300 opacity-60'
+                            }`}
+                            style={{ 
+                              width: `${segmentWidth}%`,
+                              backgroundImage: !isLogged 
+                                ? 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px)'
+                                : 'none'
+                            }}
+                          />
+                          {index < sortedMeals.length - 1 && (
+                            <div className="w-[2px] h-full bg-white opacity-80" />
+                          )}
+                        </React.Fragment>
+                      );
+                    })}
+                  </div>
+                </div>
+              </div>
+
+              {/* Calorie Bruciate */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-gray-700">Calorie Bruciate</span>
+                  <span className="font-bold text-gray-800">{(() => {
+                    const bmr = calculateBMR(user);
+                    const neat = calculateNEAT(user);
+                    return Math.round(bmr + neat);
+                  })()} kcal</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+                  <div className="h-full flex">
+                    {(() => {
+                      const bmr = calculateBMR(user);
+                      const neat = calculateNEAT(user);
+                      const totalBurned = bmr + neat;
+                      const totalConsumed = sortedMeals.reduce((sum, m) => {
+                        const log = getMealLog(m.id);
+                        return sum + (log ? log.actual_calories : m.total_calories || 0);
+                      }, 0);
+                      const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
+                      const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
+
+                      return (
+                        <>
+                          <div 
+                            className="h-full bg-orange-500"
+                            style={{ width: `${bmrWidth}%` }}
+                          />
+                          <div className="w-[2px] h-full bg-white opacity-80" />
+                          <div 
+                            className="h-full bg-orange-400"
+                            style={{ width: `${neatWidth}%` }}
+                          />
+                        </>
+                      );
+                    })()}
+                  </div>
+                </div>
+              </div>
+            </div>
+
             {/* Macronutrienti giornalieri */}
             <div className="flex justify-center gap-6 mt-6 pt-4 border-t border-gray-200/50">
               {/* Proteine */}
