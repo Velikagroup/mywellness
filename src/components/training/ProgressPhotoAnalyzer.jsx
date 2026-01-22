@@ -1685,20 +1685,18 @@ Se le raccomandazioni suggeriscono di aumentare proteine/ridurre carboidrati ma 
                   </div>
                 )}
 
-                <div className="flex gap-2">
-                  <Button onClick={saveAnalysis} className="flex-1 bg-purple-600 hover:bg-purple-700" disabled={isSaving || isApplyingChanges || isGeneratingProposals}>
-                    {isSaving ? (
-                      <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.savingAnalysis')}</>
-                    ) : (
-                      <><Sparkles className="w-4 h-4 mr-2" />{t('progressAnalyzer.saveAnalysis')}</>
-                    )}
+                {onOpenPhotoGallery && (
+                  <Button onClick={onOpenPhotoGallery} className="w-full bg-blue-600 hover:bg-blue-700 mb-3">
+                    📸 Galleria Progressi
                   </Button>
-                  {onOpenPhotoGallery && (
-                    <Button onClick={onOpenPhotoGallery} className="flex-1 bg-blue-600 hover:bg-blue-700">
-                      📸 {t('progressAnalyzer.gallery') || 'Galleria'}
-                    </Button>
+                )}
+                <Button onClick={saveAnalysis} className="w-full bg-purple-600 hover:bg-purple-700" disabled={isSaving || isApplyingChanges || isGeneratingProposals}>
+                  {isSaving ? (
+                    <><Loader2 className="w-4 h-4 animate-spin mr-2" />{t('progressAnalyzer.savingAnalysis')}</>
+                  ) : (
+                    <><Sparkles className="w-4 h-4 mr-2" />{t('progressAnalyzer.saveAnalysis')}</>
                   )}
-                </div>
+                </Button>
               </motion.div>
             )}
           </AnimatePresence>
