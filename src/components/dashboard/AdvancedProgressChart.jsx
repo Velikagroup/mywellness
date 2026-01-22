@@ -613,7 +613,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
                     onClick={onEditCalories}
                   >
-                    Target Calorico: <span className="text-gray-800">{user.daily_calories || 2000} kcal</span>
+                    Target Calorico: <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>{user.daily_calories || 2000} kcal</span>
                   </span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
