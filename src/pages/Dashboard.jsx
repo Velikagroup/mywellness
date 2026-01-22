@@ -662,6 +662,12 @@ export default function Dashboard() {
                   isSavingBodyFat={isSavingBodyFat}
                   isSavingCalories={isSavingCalories}
                   mealsUpdateTrigger={mealsUpdateTrigger}
+                  meals={todayMeals}
+                  mealLogs={mealLogs}
+                  onMealSelect={setSelectedMeal}
+                  onPhotoAnalyze={handlePhotoAnalyze}
+                  userPlan={user?.subscription_plan}
+                  onDataReload={loadUserData}
                 />
               </div>
               
