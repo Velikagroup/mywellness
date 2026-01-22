@@ -175,7 +175,7 @@ export default function CameraCapture({ onCapture, onClose, t }) {
           )}
 
           {/* Zoom Selector (sopra bottone scatta foto) */}
-          <div className="absolute bottom-24 left-1/2 -translate-x-1/2 z-10 flex gap-2">
+          <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex gap-2">
             {zoomLevels.map((level, index) => (
               <button
                 key={level}
