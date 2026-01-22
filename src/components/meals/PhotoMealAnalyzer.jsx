@@ -16,6 +16,7 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [analysisResult, setAnalysisResult] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
+  const [cameraOpen, setCameraOpen] = useState(false);
   const filesRef = useRef(new Map());
 
   // Auto-load initial file if provided
