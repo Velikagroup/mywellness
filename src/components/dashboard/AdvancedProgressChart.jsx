@@ -490,6 +490,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
                     <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
                   </linearGradient>
+                  <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
+                    <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
+                    <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
+                  </linearGradient>
                 </defs>
                 <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
                 <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
@@ -529,7 +534,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 <Line 
                   type="monotone" 
                   dataKey="weight" 
-                  stroke="#26847F" 
+                  stroke="url(#weightLineGradient)" 
                   strokeWidth={3} 
                   dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
                   activeDot={{ r: 6, strokeWidth: 2 }} 
@@ -581,19 +586,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </div>
           </div>
 
-          {/* Body Fat */}
-          <div className="relative group cursor-pointer">
-            <div className="flex flex-col items-center" onClick={onEditBodyFat}>
-              <div className="w-14 h-14 rounded-full bg-gradient-to-br from-pink-100 to-pink-50 border-2 border-pink-300 flex items-center justify-center hover:shadow-lg transition-all hover:scale-110">
-                <Gauge className="w-6 h-6 text-pink-600" />
-              </div>
-              <p className="text-sm font-bold text-pink-700 mt-2">{(user.body_fat_percentage || 0).toFixed(1)}</p>
-              <p className="text-xs text-gray-500">%</p>
-            </div>
-            <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-3 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-10">
-              {t('dashboard.bodyFat')}
-            </div>
-          </div>
+
           </div>
 
             {/* Progress Bar Calorie - tra icone e macro */}
