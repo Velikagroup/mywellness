@@ -186,6 +186,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const [calorieBalanceMap, setCalorieBalanceMap] = React.useState({});
   const [showConsumedTooltip, setShowConsumedTooltip] = React.useState(false);
   const [showBurnedTooltip, setShowBurnedTooltip] = React.useState(false);
+  const [consumedTooltipClicked, setConsumedTooltipClicked] = React.useState(false);
+  const [burnedTooltipClicked, setBurnedTooltipClicked] = React.useState(false);
 
   // Carica i CalorieBalance per mostrare i dati accanto ai punti del peso
   useEffect(() => {
