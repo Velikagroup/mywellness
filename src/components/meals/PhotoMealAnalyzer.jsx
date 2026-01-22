@@ -613,12 +613,17 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                       <Zap className="w-5 h-5 text-[#26847F]" />
                       {t('photoMealAnalyzer.photosUploaded')} ({photos.length})
                     </h3>
+                    <input
+                      type="file"
+                      accept="image/*"
+                      capture="environment"
+                      onChange={handleFileSelect}
+                      className="hidden"
+                      id="add-more-photo-input"
+                    />
                     <Button 
                       type="button" 
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setCameraOpen(true);
-                      }}
+                      onClick={() => document.getElementById('add-more-photo-input').click()}
                       variant="outline" 
                       size="sm" 
                       className="border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5]"
