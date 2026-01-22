@@ -642,44 +642,65 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 </div>
               </div>
 
-              {/* Calorie Bruciate */}
+              {/* BMR */}
               <div className="space-y-2">
                 <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-gray-700">Calorie Bruciate</span>
+                  <span className="font-medium text-gray-700">Metabolismo Basale (BMR)</span>
                   <span className="font-bold text-gray-800">{(() => {
                     const bmr = calculateBMR(user);
-                    const neat = calculateNEAT(user);
-                    return Math.round(bmr + neat);
+                    return Math.round(bmr);
                   })()} kcal</span>
                 </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
-                  <div className="h-full flex">
-                    {(() => {
-                      const bmr = calculateBMR(user);
-                      const neat = calculateNEAT(user);
-                      const totalBurned = bmr + neat;
-                      const totalConsumed = sortedMeals.reduce((sum, m) => {
-                        const log = getMealLog(m.id);
-                        return sum + (log ? log.actual_calories : m.total_calories || 0);
-                      }, 0);
-                      const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
-                      const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
+                  {(() => {
+                    const bmr = calculateBMR(user);
+                    const neat = calculateNEAT(user);
+                    const totalBurned = bmr + neat;
+                    const totalConsumed = sortedMeals.reduce((sum, m) => {
+                      const log = getMealLog(m.id);
+                      return sum + (log ? log.actual_calories : m.total_calories || 0);
+                    }, 0);
+                    const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
+                    const isWeightLoss = targetWeight < startWeight;
 
-                      return (
-                        <>
-                          <div 
-                            className="h-full bg-orange-500"
-                            style={{ width: `${bmrWidth}%` }}
-                          />
-                          <div className="w-[2px] h-full bg-white opacity-80" />
-                          <div 
-                            className="h-full bg-orange-400"
-                            style={{ width: `${neatWidth}%` }}
-                          />
-                        </>
-                      );
-                    })()}
-                  </div>
+                    return (
+                      <div 
+                        className={`h-full ${isWeightLoss ? 'bg-green-600' : 'bg-red-600'}`}
+                        style={{ width: `${bmrWidth}%` }}
+                      />
+                    );
+                  })()}
+                </div>
+              </div>
+
+              {/* NEAT */}
+              <div className="space-y-2">
+                <div className="flex items-center justify-between text-sm">
+                  <span className="font-medium text-gray-700">Attività (NEAT)</span>
+                  <span className="font-bold text-gray-800">{(() => {
+                    const neat = calculateNEAT(user);
+                    return Math.round(neat);
+                  })()} kcal</span>
+                </div>
+                <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
+                  {(() => {
+                    const bmr = calculateBMR(user);
+                    const neat = calculateNEAT(user);
+                    const totalBurned = bmr + neat;
+                    const totalConsumed = sortedMeals.reduce((sum, m) => {
+                      const log = getMealLog(m.id);
+                      return sum + (log ? log.actual_calories : m.total_calories || 0);
+                    }, 0);
+                    const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
+                    const isWeightLoss = targetWeight < startWeight;
+
+                    return (
+                      <div 
+                        className={`h-full ${isWeightLoss ? 'bg-green-400' : 'bg-red-400'}`}
+                        style={{ width: `${neatWidth}%` }}
+                      />
+                    );
+                  })()}
                 </div>
               </div>
             </div>
