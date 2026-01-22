@@ -102,6 +102,18 @@ export default function CameraCapture({ onCapture, onClose, t }) {
       />
       <canvas ref={canvasRef} className="hidden" />
 
+      {/* Bottone chiudi (X in alto a destra) */}
+      <button
+        onClick={onClose}
+        className="absolute top-6 right-6 z-50 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+        style={{
+          background: 'rgba(0, 0, 0, 0.5)',
+          backdropFilter: 'blur(8px)'
+        }}
+      >
+        <X className="w-7 h-7 text-white" strokeWidth={3} />
+      </button>
+
       {!capturedPhoto ? (
         <>
           {/* Video dalla fotocamera */}
@@ -114,10 +126,10 @@ export default function CameraCapture({ onCapture, onClose, t }) {
 
           {/* Preview foto recenti in basso a sinistra */}
           {recentPhotos.length > 0 && (
-            <div className="absolute bottom-6 left-6 z-10">
+            <div className="absolute bottom-8 left-6 z-10">
               <button
                 onClick={handleGalleryClick}
-                className="w-14 h-14 rounded-lg overflow-hidden border-2 border-white shadow-lg hover:scale-105 transition-transform bg-white"
+                className="w-16 h-16 rounded-lg overflow-hidden border-3 border-white shadow-lg hover:scale-105 transition-transform bg-white"
               >
                 <img
                   src={recentPhotos[0]}
@@ -132,9 +144,9 @@ export default function CameraCapture({ onCapture, onClose, t }) {
           {recentPhotos.length === 0 && (
             <button
               onClick={handleGalleryClick}
-              className="absolute bottom-6 left-6 z-10 w-14 h-14 bg-white rounded-lg flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
+              className="absolute bottom-8 left-6 z-10 w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
             >
-              <ImageIcon className="w-6 h-6 text-gray-800" />
+              <ImageIcon className="w-7 h-7 text-gray-800" />
             </button>
           )}
 
@@ -144,14 +156,6 @@ export default function CameraCapture({ onCapture, onClose, t }) {
             className="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 w-16 h-16 bg-white rounded-full flex items-center justify-center shadow-2xl hover:scale-110 transition-transform border-4 border-gray-200"
           >
             <div className="w-14 h-14 bg-gradient-to-r from-[#26847F] to-teal-600 rounded-full" />
-          </button>
-
-          {/* Bottone chiudi (destra basso) */}
-          <button
-            onClick={onClose}
-            className="absolute bottom-6 right-6 z-10 w-14 h-14 bg-red-500 rounded-lg flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-          >
-            <X className="w-6 h-6 text-white" />
           </button>
         </>
       ) : (
