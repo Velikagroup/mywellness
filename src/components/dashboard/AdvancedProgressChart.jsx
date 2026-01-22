@@ -488,22 +488,23 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </div>
 
           <div className="h-64 relative">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
-                <defs>
-                  <linearGradient id="bodyFatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
-                    <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
-                <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
-                <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
+           <ResponsiveContainer width="100%" height="100%">
+             <LineChart data={lineData} margin={{ top: 25, right: 60, left: -10, bottom: 5 }}>
+               <defs>
+                 <linearGradient id="bodyFatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                   <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
+                   <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
+                 </linearGradient>
+                 <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                   <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
+                   <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
+                   <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
+                 </linearGradient>
+               </defs>
+               <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
+               <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
+               <YAxis yAxisId="left" stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
+               <YAxis yAxisId="right" orientation="right" stroke="#8b5cf6" tickLine={false} axisLine={false} tickFormatter={(value) => `${value}`} style={{ fontSize: '12px' }} />
                 <Tooltip 
                   contentStyle={{ 
                     backgroundColor: 'rgba(255, 255, 255, 0.95)', 
@@ -511,7 +512,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     borderRadius: '8px',
                     boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
                   }} 
-                  formatter={(value) => [`${value.toFixed(1)} kg`, 'Peso']} 
+                  formatter={(value, name) => {
+                    if (name === 'calorieBalance') {
+                      return [`${Math.round(value)} kcal`, 'Bilancio Calorico'];
+                    }
+                    return [`${value.toFixed(1)} kg`, 'Peso'];
+                  }}
                   labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
                   cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
                 />
@@ -537,6 +543,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   />
                 )}
                 <Line 
+                  yAxisId="left"
                   type="monotone" 
                   dataKey="weight" 
                   stroke="url(#weightLineGradient)" 
@@ -544,6 +551,19 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
                   activeDot={{ r: 6, strokeWidth: 2 }} 
                   connectNulls={true}
+                  name="Peso"
+                />
+                <Line 
+                  yAxisId="right"
+                  type="monotone" 
+                  dataKey="calorieBalance" 
+                  stroke="#8b5cf6" 
+                  strokeWidth={2} 
+                  dot={{ r: 3, fill: '#8b5cf6', strokeWidth: 1, stroke: '#fff' }} 
+                  activeDot={{ r: 5, strokeWidth: 1 }} 
+                  connectNulls={true}
+                  name="Bilancio Calorico"
+                  strokeDasharray="5 5"
                 />
               </LineChart>
             </ResponsiveContainer>
