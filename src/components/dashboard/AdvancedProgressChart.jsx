@@ -608,6 +608,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     })()} kcal
                   </span>
                 </div>
+                <div className="flex items-center gap-3 mb-1">
+                  <span 
+                    className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
+                    onClick={onEditCalories}
+                  >
+                    Target Calorico: <span className="text-gray-800">{user.daily_calories || 2000} kcal</span>
+                  </span>
+                </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
                   <div className="h-full flex">
                     {sortedMeals.map((meal, index) => {
