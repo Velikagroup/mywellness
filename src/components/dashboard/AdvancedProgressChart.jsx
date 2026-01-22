@@ -954,6 +954,22 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 })}
               </div>
             )}
+
+            {/* Pulsanti Galleria e Analisi AI */}
+            <div className="mt-6 pt-4 border-t border-gray-200/50 flex gap-3">
+              <Button
+                onClick={onDataReload}
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3"
+              >
+                📸 Galleria Progressi
+              </Button>
+              <Button
+                onClick={onDataReload}
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-3"
+              >
+                🤖 Analisi AI
+              </Button>
+            </div>
           </div>
           );
           })()}
