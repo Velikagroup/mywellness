@@ -583,30 +583,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   dataKey="weight" 
                   stroke="url(#weightLineGradient)" 
                   strokeWidth={3} 
-                  dot={({ cx, cy, payload }) => (
-                    <g key={`${cx}-${cy}`}>
-                      <circle cx={cx} cy={cy} r={4} fill="#26847F" stroke="#fff" strokeWidth={2} />
-                    </g>
-                  )}
+                  dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
                   activeDot={{ r: 6, strokeWidth: 2 }} 
                   connectNulls={true}
-                  label={({ x, y, value, payload }) => {
-                    if (!payload.calorieBalance) return null;
-                    const displayValue = payload.calorieBalance < 0 ? payload.calorieBalance : `+${payload.calorieBalance}`;
-                    const color = payload.calorieBalance < 0 ? '#16a34a' : '#dc2626';
-                    return (
-                      <text 
-                        x={x} 
-                        y={y - 20} 
-                        textAnchor="middle" 
-                        fill={color} 
-                        fontSize={12} 
-                        fontWeight="bold"
-                      >
-                        {displayValue} kcal
-                      </text>
-                    );
-                  }}
                 />
               </LineChart>
             </ResponsiveContainer>
