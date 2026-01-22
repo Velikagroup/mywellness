@@ -394,8 +394,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   <p className="text-2xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
                   <span className="text-xs font-medium text-[#1a5753]">kg</span>
                 </div>
-              </div>
-            </div>
+                </div>
+                );
+                })()}
         );
       })()}
           <div className="h-64">
