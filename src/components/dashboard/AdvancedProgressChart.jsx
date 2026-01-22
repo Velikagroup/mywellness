@@ -457,72 +457,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl">
-            {/* Pasti del giorno */}
-            {sortedMeals.length > 0 && (
-              <div className="mb-6 space-y-3">
-                {sortedMeals.map((meal) => {
-                  const mealLog = getMealLog(meal.id);
-                  const isLogged = !!mealLog;
-                  const displayCalories = isLogged ? mealLog.actual_calories : meal.total_calories;
-
-                  return (
-                    <div key={meal.id} className="w-full bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors">
-                      <div className="flex items-center justify-between gap-2">
-                        <button onClick={() => onMealSelect && onMealSelect(meal)} className="flex items-center gap-3 min-w-0 flex-1">
-                          <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden relative flex-shrink-0">
-                            {meal.image_url ? (
-                                <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
-                            ) : (
-                                <ImageIcon className="w-5 h-5 text-gray-400 animate-pulse"/>
-                            )}
-                            {isLogged && (
-                              <div className="absolute top-0 right-0 bg-green-500 rounded-bl-lg p-0.5">
-                                <CheckCircle2 className="w-3 h-3 text-white" />
-                              </div>
-                            )}
-                          </div>
-                          <div className="min-w-0 flex-1 text-left">
-                            <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
-                            <p className="text-sm text-gray-600 truncate">{meal.name}</p>
-                          </div>
-                        </button>
-                        <div className="flex items-center gap-2 flex-shrink-0">
-                          <div className="text-right">
-                            <p className={`font-bold ${isLogged ? 'text-green-600' : 'text-gray-800'}`}>
-                              {displayCalories}
-                            </p>
-                            <p className="text-xs text-gray-500">kcal</p>
-                          </div>
-                          {!isLogged && (
-                            <>
-                              <Checkbox
-                                checked={false}
-                                onCheckedChange={(checked) => handleCheckMeal(meal, checked)}
-                                disabled={savingMealId === meal.id}
-                                className="w-5 h-5 border-2 border-[#26847F] data-[state=checked]:bg-[#26847F]"
-                                title={t('nutrition.markAsConsumed')}
-                              />
-                              {hasFeatureAccess(userPlan, 'meal_photo_analysis') && onPhotoAnalyze && (
-                                <Button
-                                  onClick={() => onPhotoAnalyze(meal)}
-                                  variant="ghost"
-                                  size="icon"
-                                  className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
-                                  title={t('nutrition.analyzeWithPhoto')}
-                                >
-                                  <Camera className="w-5 h-5" />
-                                </Button>
-                              )}
-                            </>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-
             {/* Macronutrienti giornalieri */}
             <div className="flex justify-center gap-6 mb-6">
               {/* Proteine */}
@@ -620,10 +554,76 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 </div>
                 <p className="text-xs text-gray-600 mt-1 font-medium">Grassi</p>
               </div>
-            </div>
+              </div>
 
-            {/* Box peso attuale e target integrati */}
-            <div className="grid grid-cols-2 gap-3 mb-4">
+              {/* Pasti del giorno */}
+              {sortedMeals.length > 0 && (
+              <div className="mb-6 space-y-3">
+                {sortedMeals.map((meal) => {
+                  const mealLog = getMealLog(meal.id);
+                  const isLogged = !!mealLog;
+                  const displayCalories = isLogged ? mealLog.actual_calories : meal.total_calories;
+
+                  return (
+                    <div key={meal.id} className="w-full bg-gray-50/80 rounded-lg p-3 border border-gray-200/60 hover:bg-gray-100 transition-colors">
+                      <div className="flex items-center justify-between gap-2">
+                        <button onClick={() => onMealSelect && onMealSelect(meal)} className="flex items-center gap-3 min-w-0 flex-1">
+                          <div className="w-16 h-12 bg-gray-200 rounded-lg flex items-center justify-center border overflow-hidden relative flex-shrink-0">
+                            {meal.image_url ? (
+                                <img src={meal.image_url} alt={meal.name} className="w-full h-full object-cover"/>
+                            ) : (
+                                <ImageIcon className="w-5 h-5 text-gray-400 animate-pulse"/>
+                            )}
+                            {isLogged && (
+                              <div className="absolute top-0 right-0 bg-green-500 rounded-bl-lg p-0.5">
+                                <CheckCircle2 className="w-3 h-3 text-white" />
+                              </div>
+                            )}
+                          </div>
+                          <div className="min-w-0 flex-1 text-left">
+                            <p className="font-semibold text-gray-800">{getMealTypeLabel(meal.meal_type)}</p>
+                            <p className="text-sm text-gray-600 truncate">{meal.name}</p>
+                          </div>
+                        </button>
+                        <div className="flex items-center gap-2 flex-shrink-0">
+                          <div className="text-right">
+                            <p className={`font-bold ${isLogged ? 'text-green-600' : 'text-gray-800'}`}>
+                              {displayCalories}
+                            </p>
+                            <p className="text-xs text-gray-500">kcal</p>
+                          </div>
+                          {!isLogged && (
+                            <>
+                              <Checkbox
+                                checked={false}
+                                onCheckedChange={(checked) => handleCheckMeal(meal, checked)}
+                                disabled={savingMealId === meal.id}
+                                className="w-5 h-5 border-2 border-[#26847F] data-[state=checked]:bg-[#26847F]"
+                                title={t('nutrition.markAsConsumed')}
+                              />
+                              {hasFeatureAccess(userPlan, 'meal_photo_analysis') && onPhotoAnalyze && (
+                                <Button
+                                  onClick={() => onPhotoAnalyze(meal)}
+                                  variant="ghost"
+                                  size="icon"
+                                  className="text-[#26847F] hover:bg-[#e9f6f5] flex-shrink-0"
+                                  title={t('nutrition.analyzeWithPhoto')}
+                                >
+                                  <Camera className="w-5 h-5" />
+                                </Button>
+                              )}
+                            </>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+              )}
+
+              {/* Box peso attuale e target integrati */}
+              <div className="grid grid-cols-2 gap-3 mb-4">
               <div className={`p-3 rounded-lg border backdrop-blur-sm ${
                 isAligned
                   ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
