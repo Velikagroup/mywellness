@@ -21,6 +21,14 @@ export default function MealsAndMacrosCard({
   const [showCamera, setShowCamera] = React.useState(false);
   const [currentMealForPhoto, setCurrentMealForPhoto] = React.useState(null);
 
+  React.useEffect(() => {
+    if (showCamera) {
+      document.body.setAttribute('data-camera-open', 'true');
+    } else {
+      document.body.removeAttribute('data-camera-open');
+    }
+  }, [showCamera]);
+
   const handleCameraClick = (meal) => {
     setCurrentMealForPhoto(meal);
     setShowCamera(true);
