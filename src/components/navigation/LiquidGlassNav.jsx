@@ -100,7 +100,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
       >
 
         {/* Main nav items */}
-        <div className={`relative flex items-center z-10 gap-0.5 md:gap-1 ${isMobile ? 'w-full justify-between' : 'justify-center'}`}>
+        <div className={`relative flex items-center z-10 gap-0.5 md:gap-1 flex-1 ${isMobile ? 'justify-between' : 'justify-center'}`}>
           {mainItems.map((item, index) => {
             const isSelected = selectedIndex === index;
             return (
