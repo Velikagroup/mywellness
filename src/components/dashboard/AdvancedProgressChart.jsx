@@ -261,13 +261,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         
         return {
             name: label,
-            weight: entry.weight
+            weight: entry.weight,
+            calorieBalance: calorieBalanceByDate[dayKey] || 0
         };
     });
     
     console.log('📈 lineData result:', result);
     return result;
-  }, [weightHistory, user]);
+  }, [weightHistory, user, calorieBalanceByDate]);
 
   const handleSaveWeight = async () => {
     console.log('🔍 handleSaveWeight called', { weight, user: user?.id, isSaving });
