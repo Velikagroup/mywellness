@@ -668,6 +668,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     })()} kcal
                   </span>
                 </div>
+                <div className="flex items-center gap-3">
+                  <span className="font-medium text-gray-600 text-xs">
+                    BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{Math.round(calculateBMR(user))} kcal</span>
+                  </span>
+                  <span className="font-medium text-gray-600 text-xs">
+                    NEAT: <span className={isWeightLoss ? "text-green-400" : "text-red-400"}>{Math.round(calculateNEAT(user))} kcal</span>
+                  </span>
+                </div>
                 <div className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative">
                   <div className="h-full flex">
                     {(() => {
