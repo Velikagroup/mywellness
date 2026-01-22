@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Scale, Save } from "lucide-react";
 import LiquidGlassNav from "@/components/navigation/LiquidGlassNav";
+import ProgressPhotoAnalyzer from "@/components/training/ProgressPhotoAnalyzer";
 
 function LayoutContent({ children }) {
   const location = useLocation();
