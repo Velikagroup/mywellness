@@ -91,6 +91,15 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         });
 
         const plannedCalories = mealPlans.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
+        const plannedProtein = mealPlans.reduce((sum, meal) => sum + (meal.total_protein || 0), 0);
+        const plannedCarbs = mealPlans.reduce((sum, meal) => sum + (meal.total_carbs || 0), 0);
+        const plannedFat = mealPlans.reduce((sum, meal) => sum + (meal.total_fat || 0), 0);
+
+        setTodayMacros({
+          protein: Math.round(plannedProtein),
+          carbs: Math.round(plannedCarbs),
+          fat: Math.round(plannedFat)
+        });
 
         let consumedCalories = 0;
         const loggedMealTypes = new Set(mealLogs.map(log => log.meal_type));
