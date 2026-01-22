@@ -6,6 +6,7 @@ import { Camera, Upload, Loader2, CheckCircle, AlertTriangle, X, Plus, ArrowLeft
 import { base44 } from '@/api/base44Client';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useLanguage } from '../i18n/LanguageContext';
+import CameraCapture from './CameraCapture';
 
 export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeeded, language: propLanguage, t: propT, initialFile = null }) {
   const contextLang = useLanguage();
