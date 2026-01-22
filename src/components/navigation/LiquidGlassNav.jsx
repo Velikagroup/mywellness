@@ -82,9 +82,9 @@ export default function LiquidGlassNav({ navItems }) {
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 w-full px-4 md:w-auto">
       <div
         ref={containerRef}
-        className="water-glass-effect rounded-3xl relative py-3 px-4 w-full md:px-6"
+        className="water-glass-effect rounded-3xl relative py-3 px-2 w-full md:px-6 md:min-w-[500px]"
         onMouseDown={handleMouseDown}
-        style={{ userSelect: 'none', cursor: isDragging ? 'grabbing' : 'grab', minWidth: '500px' }}
+        style={{ userSelect: 'none', cursor: isDragging ? 'grabbing' : 'grab' }}
       >
         {/* Selettore liquido */}
         {mainItems.length > 0 && (
