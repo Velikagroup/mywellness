@@ -144,6 +144,8 @@ export default function CameraCapture({ onCapture, onClose, t }) {
             playsInline
             className="w-full h-full object-cover"
             style={{ transform: `scale(${zoom})` }}
+            onTouchStart={(e) => setTouchStart(e.touches[0].clientX)}
+            onTouchEnd={handleSwipe}
           />
 
           {/* Preview foto recenti in basso a sinistra */}
