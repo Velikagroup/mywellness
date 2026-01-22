@@ -10,6 +10,7 @@ export default function CameraCapture({ onCapture, onClose, t }) {
   const [capturedPhoto, setCapturedPhoto] = useState(null);
   const [error, setError] = useState(null);
   const [recentPhotos, setRecentPhotos] = useState([]);
+  const [zoom, setZoom] = useState(1);
 
   // Accedi alla fotocamera
   useEffect(() => {
