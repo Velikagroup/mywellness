@@ -528,6 +528,52 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
             </div>
           )}
 
+          {/* Frame Guide per Calories */}
+          {mode === 'calories' && cameraActive && !capturedImage && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {/* Semi-transparent overlay */}
+              <div className="absolute inset-0 bg-black/40" />
+
+              {/* Camera frame */}
+              <div className="relative w-80 h-96 border-4 border-white/60 rounded-3xl shadow-2xl flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 rounded-3xl" />
+                <div className="flex flex-col items-center gap-4 z-10">
+                  <UtensilsCrossed className="w-16 h-16 text-white/70" strokeWidth={1.5} />
+                  <p className="text-white text-sm font-semibold text-center px-4">Centra il cibo</p>
+                </div>
+
+                {/* Corner markers */}
+                <div className="absolute top-3 left-3 w-6 h-6 border-2 border-white/70"></div>
+                <div className="absolute top-3 right-3 w-6 h-6 border-2 border-white/70"></div>
+                <div className="absolute bottom-3 left-3 w-6 h-6 border-2 border-white/70"></div>
+                <div className="absolute bottom-3 right-3 w-6 h-6 border-2 border-white/70"></div>
+              </div>
+            </div>
+          )}
+
+          {/* Frame Guide per Nutrition Table */}
+          {mode === 'nutrition_table' && cameraActive && !capturedImage && (
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {/* Semi-transparent overlay */}
+              <div className="absolute inset-0 bg-black/40" />
+
+              {/* Camera frame for table */}
+              <div className="relative w-96 h-72 border-4 border-white/60 rounded-2xl shadow-2xl flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 rounded-2xl" />
+                <div className="flex flex-col items-center gap-4 z-10">
+                  <ClipboardList className="w-16 h-16 text-white/70" strokeWidth={1.5} />
+                  <p className="text-white text-sm font-semibold text-center px-4">Inquadra la tabella nutrizionale</p>
+                </div>
+
+                {/* Corner markers */}
+                <div className="absolute top-3 left-3 w-6 h-6 border-2 border-white/70"></div>
+                <div className="absolute top-3 right-3 w-6 h-6 border-2 border-white/70"></div>
+                <div className="absolute bottom-3 left-3 w-6 h-6 border-2 border-white/70"></div>
+                <div className="absolute bottom-3 right-3 w-6 h-6 border-2 border-white/70"></div>
+              </div>
+            </div>
+          )}
+
           {/* Gallery Button */}
           {(mode === 'calories' || mode === 'nutrition_table' || mode === 'bodyscan') && !capturedImage && !calorieResult && !nutritionResult && (
             <>
