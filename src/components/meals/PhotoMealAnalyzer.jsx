@@ -105,6 +105,73 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
     setAnalysisResult(null);
   };
 
+  const findIdenticalMealInHistory = async (uploadedUrl) => {
+    try {
+      const today = new Date().toISOString().split('T')[0];
+
+      // Carica tutti i MealLog per questo utente
+      const mealLogs = await base44.entities.MealLog.filter({
+        user_id: user.id
+      }, '-created_date', 1000);
+
+      if (!mealLogs || mealLogs.length === 0) {
+        return null;
+      }
+
+      // Usa AI per confrontare le immagini
+      const comparisonPrompt = `Analyze if these two meal photos appear to be the EXACT SAME meal (same dish, same quantities, same presentation).
+
+  Current meal photo: ${uploadedUrl}
+
+  You will compare this to historical meal photos. For each historical meal provided, determine if they match.
+
+  Return a JSON with: {
+  "is_identical": boolean (true only if visually the same meal),
+  "confidence": "high" | "medium" | "low",
+  "reason": "brief explanation"
+  }
+
+  Be STRICT: Only return true if the meals look exactly the same (same dish, similar quantities, similar presentation).`;
+
+      // Confronta con i 10 meal log più recenti
+      const recentLogs = mealLogs.slice(0, 10);
+
+      for (const log of recentLogs) {
+        if (!log.photo_url) continue;
+
+        try {
+          const comparison = await base44.integrations.Core.InvokeLLM({
+            prompt: comparisonPrompt.replace(
+              'You will compare this to historical meal photos. For each historical meal provided, determine if they match.',
+              `Historical meal photo: ${log.photo_url}\n\nDetermine if the current meal matches this historical meal.`
+            ),
+            file_urls: [uploadedUrl, log.photo_url],
+            response_json_schema: {
+              type: "object",
+              properties: {
+                is_identical: { type: "boolean" },
+                confidence: { type: "string", enum: ["high", "medium", "low"] },
+                reason: { type: "string" }
+              }
+            }
+          });
+
+          if (comparison.is_identical && comparison.confidence === "high") {
+            return log;
+          }
+        } catch (error) {
+          console.error("Error comparing meals:", error);
+          continue;
+        }
+      }
+
+      return null;
+    } catch (error) {
+      console.error("Error in findIdenticalMealInHistory:", error);
+      return null;
+    }
+  };
+
   const analyzePhotos = async () => {
     if (photos.length === 0) return;
     
