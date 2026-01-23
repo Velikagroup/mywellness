@@ -370,6 +370,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
       console.log('✅ Weight saved successfully');
       setWeight('');
+      setWeightUnit('kg');
       setRefreshTrigger(prev => prev + 1);
 
       if (onWeightLogged) {
