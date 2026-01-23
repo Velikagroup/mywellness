@@ -592,9 +592,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   key={step}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
                     bodyScanPhotos[step] 
-                      ? 'bg-green-500/80' 
+                      ? 'bg-black/80' 
                       : currentBodyScanStep === step 
-                      ? 'bg-[#26847F]/80' 
+                      ? 'bg-black/80' 
                       : 'bg-white/20'
                   } backdrop-blur-sm`}
                 >
