@@ -1,6 +1,6 @@
 import React, { useState, useMemo, useEffect } from 'react';
 
-import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge } from "lucide-react";
+import { TrendingDown, TrendingUp, Scale, Save, RefreshCw, Activity, BarChart3, Edit3, Flame, Gauge, Flame as FlameIcon } from "lucide-react";
 import { Button } from '@/components/ui/button';
 import { Input } from "@/components/ui/input";
 import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine, PieChart, Pie, Cell } from 'recharts';
@@ -553,6 +553,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
             </div>
 
+          {/* Grafico Peso */}
           <div className="h-64 relative">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
