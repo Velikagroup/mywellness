@@ -151,19 +151,48 @@ html {
 }
 
 /* ============================================
-   APPLE SQUIRCLE EFFECT
+   APPLE SQUIRCLE EFFECT - Superellipse
    ============================================ */
 
 .squircle-xl {
-  border-radius: 44px;
-  position: relative;
-}
+  /* Border radius come percentuale per vera superellipse */
+  border-radius: 34px 34px 34px 34px / 34px 34px 34px 34px;
 
-/* Superellipse effect - angoli Apple attivi */
-.squircle-xl {
+  /* Effetto squircle con mask SVG per angoli "attivi" */
+  -webkit-mask-image: radial-gradient(
+    ellipse 120% 120% at 50% 50%,
+    black 0%,
+    black 85%,
+    transparent 100%
+  );
+  mask-image: radial-gradient(
+    ellipse 120% 120% at 50% 50%,
+    black 0%,
+    black 85%,
+    transparent 100%
+  );
+
+  /* Alternative: clip-path con bezier curves approssimate */
   clip-path: polygon(
-    0% 44px, 0% 0%, 44px 0%, 
-    100% 0%, 100% 44px, 100% 100%, 
-    44px 100%, 0% 100%, 0% 44px
+    34px 0%,
+    66px 0%,
+    85px 2%,
+    95px 5%,
+    99% 15%,
+    100% 34px,
+    100% 66px,
+    99% 85%,
+    95% 95%,
+    85% 99%,
+    66px 100%,
+    34px 100%,
+    15% 99%,
+    5% 95%,
+    1% 85%,
+    0% 66px,
+    0% 34px,
+    1% 15%,
+    5% 5%,
+    15% 2%
   );
 }
