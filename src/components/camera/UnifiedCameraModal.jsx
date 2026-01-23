@@ -539,6 +539,16 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         </button>
       )}
 
+      {/* Calorie History Button */}
+      {mode === 'calories' && !analyzing && !calorieResult && (
+        <button
+          onClick={loadCalorieHistory}
+          className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
+        >
+          Storico Calorie
+        </button>
+      )}
+
       {/* Mode Selector Buttons */}
       <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex gap-3">
         <button
