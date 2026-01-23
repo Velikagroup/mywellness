@@ -452,12 +452,22 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   };
 
   const saveMealLog = async () => {
-    if (!calorieResult || !user) return;
+    if (!calorieResult || !user) {
+      alert('Dati mancanti per salvare il pasto');
+      return;
+    }
     
     try {
       const today = new Date().toISOString().split('T')[0];
       
-      await base44.entities.MealLog.create({
+      console.log('Saving meal log with:', {
+        user_id: user.id,
+        date: today,
+        detected_items: [calorieResult.nome_cibo],
+        actual_calories: calorieResult.calorie
+      });
+      
+      const result = await base44.entities.MealLog.create({
         user_id: user.id,
         original_meal_id: null,
         date: today,
@@ -471,13 +481,21 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         planned_calories: calorieResult.calorie
       });
       
+      console.log('Meal log saved successfully:', result);
+      
       alert('✅ Pasto salvato con successo!');
+      
+      // Reset state
       setCalorieResult(null);
       setCapturedImage(null);
-      onClose();
+      
+      // Close modal
+      setTimeout(() => {
+        onClose();
+      }, 500);
     } catch (error) {
       console.error('Error saving meal log:', error);
-      alert('Errore durante il salvataggio del pasto');
+      alert('Errore: ' + (error.message || 'Impossibile salvare il pasto'));
     }
   };
 
