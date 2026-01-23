@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
-import { Clock, Flame, Zap, Wheat, Droplet, Plus, Trash2 } from 'lucide-react';
+import { Clock, Flame, Zap, Wheat, Droplet, Plus, Trash2, ChevronRight } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import IngredientSelector from './IngredientSelector';
