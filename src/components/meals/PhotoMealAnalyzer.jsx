@@ -604,7 +604,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                   animate={{ opacity: 1 }}
                   className="space-y-4"
                 >
-                  <div className="flex items-center justify-between">
+                  <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                     <h3 className="font-bold text-gray-900 flex items-center gap-2">
                       <Zap className="w-5 h-5 text-[#26847F]" />
                       {t('photoMealAnalyzer.photosUploaded')} ({photos.length})
@@ -614,7 +614,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                       onClick={() => setCameraOpen(true)}
                       variant="outline" 
                       size="sm" 
-                      className="border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5]"
+                      className="border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5] w-full sm:w-auto"
                     >
                       <Plus className="w-4 h-4 mr-1" />
                       {t('photoMealAnalyzer.addMorePhoto')}
