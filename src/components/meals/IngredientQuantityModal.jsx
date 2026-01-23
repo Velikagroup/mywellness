@@ -96,7 +96,7 @@ export default function IngredientQuantityModal({ isOpen, ingredient, onClose, o
           <div>
             <p className="text-sm font-semibold text-gray-700 mb-3">Medida</p>
             <div className="flex gap-2">
-              {['g', 'ml', ingredient.default_unit].filter(Boolean).map((unit) => (
+              {Array.from(new Set(['g', 'ml', ingredient.default_unit].filter(Boolean))).map((unit) => (
                 <button
                   key={unit}
                   onClick={() => setSelectedUnit(unit)}
