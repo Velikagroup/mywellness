@@ -401,7 +401,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   return (
     <div className="fixed inset-0 z-[100] bg-black">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 pt-16 px-4">
+      <div className="absolute top-0 left-0 right-0 z-10 pt-4 px-6">
         <div className="flex items-center justify-between">
           <button
             onClick={onClose}
@@ -409,14 +409,21 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           >
             <X className="w-6 h-6 text-white" />
           </button>
-          {cameraActive && (
+          <div className="flex gap-3">
+            {cameraActive && (
+              <button
+                onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')}
+                className="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors"
+              >
+                <FlipHorizontal className="w-6 h-6 text-white" />
+              </button>
+            )}
             <button
-              onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')}
-              className="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors"
+              className="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors text-white font-semibold text-lg"
             >
-              <FlipHorizontal className="w-6 h-6 text-white" />
+              ?
             </button>
-          )}
+          </div>
         </div>
       </div>
 
@@ -554,22 +561,21 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {/* Frame Guide per Nutrition Table */}
           {mode === 'nutrition_table' && cameraActive && !capturedImage && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              {/* Semi-transparent overlay */}
-              <div className="absolute inset-0 bg-black/40" />
+              {/* Semi-transparent overlay - solo esterno */}
+              <div className="absolute inset-0 bg-black/50" />
 
-              {/* Camera frame for table */}
-              <div className="relative w-96 h-72 border-4 border-white/60 rounded-2xl shadow-2xl flex items-center justify-center">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 rounded-2xl" />
+              {/* Camera frame for table - senza overlay interno */}
+              <div className="relative w-80 h-96 border-[6px] border-white/80 rounded-[48px] shadow-2xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="flex flex-col items-center gap-4 z-10">
-                  <ClipboardList className="w-16 h-16 text-white/70" strokeWidth={1.5} />
+                  <ClipboardList className="w-16 h-16 text-white/60" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Inquadra la tabella nutrizionale</p>
                 </div>
 
-                {/* Corner markers */}
-                <div className="absolute top-3 left-3 w-6 h-6 border-2 border-white/70"></div>
-                <div className="absolute top-3 right-3 w-6 h-6 border-2 border-white/70"></div>
-                <div className="absolute bottom-3 left-3 w-6 h-6 border-2 border-white/70"></div>
-                <div className="absolute bottom-3 right-3 w-6 h-6 border-2 border-white/70"></div>
+                {/* Corner markers - angoli più marcati */}
+                <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-white/80 rounded-tl-lg"></div>
+                <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-white/80 rounded-tr-lg"></div>
+                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-white/80 rounded-bl-lg"></div>
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-white/80 rounded-br-lg"></div>
               </div>
             </div>
           )}
