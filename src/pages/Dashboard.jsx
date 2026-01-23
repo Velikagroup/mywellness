@@ -178,27 +178,18 @@ export default function Dashboard() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const firstBox = document.querySelector('.progress-chart-section');
       const secondBox = document.getElementById('meals-macros-section');
+      if (!secondBox) return;
       
-      if (!firstBox || !secondBox) return;
-      
-      const firstBoxRect = firstBox.getBoundingClientRect();
       const secondBoxRect = secondBox.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      // Calcola quale box è più visibile nella viewport
-      const firstBoxVisible = firstBoxRect.top < windowHeight / 2 && firstBoxRect.bottom > windowHeight / 2;
-      const secondBoxVisible = secondBoxRect.top < windowHeight / 2;
-      
-      if (secondBoxVisible) {
-        // Il secondo box è prevalentemente visibile
-        setScrollOpacity({ first: 0.3, second: 1 });
+      // Se il secondo box è visibile nella viewport, portalo al 100%
+      if (secondBoxRect.top < windowHeight * 0.7) {
         secondBox.style.opacity = '1';
       } else {
-        // Il primo box è prevalentemente visibile
-        setScrollOpacity({ first: 1, second: 0.3 });
-        if (secondBox) secondBox.style.opacity = '0.3';
+        // Altrimenti torna al 30%
+        secondBox.style.opacity = '0.3';
       }
     };
 
@@ -684,7 +675,7 @@ export default function Dashboard() {
 
           <div className="flex justify-center">
             <div className="w-full max-w-5xl space-y-6 sm:space-y-8 onboarding-dashboard-overview">
-              <div className="progress-chart-section transition-opacity duration-300" style={{ opacity: scrollOpacity.first }}>
+              <div className="progress-chart-section">
                 <AdvancedProgressChart 
                   user={user} 
                   weightHistory={weightHistory} 
