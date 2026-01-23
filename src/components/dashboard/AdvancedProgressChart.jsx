@@ -493,11 +493,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-6 border border-gray-200/30 backdrop-blur-md shadow-xl" id="progress-section">
 
-            {/* Top Section: Bilancio a sinistra + Box Peso */}
-            <div className="flex gap-4 mb-6 items-center">
+            {/* Top Section: Bilancio, Peso Attuale, Target in riga */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
               
-              {/* Bilancio di Oggi - GROSSO a sinistra */}
-              <div className={`flex-1 p-6 rounded-lg border backdrop-blur-sm ${
+              {/* Bilancio di Oggi */}
+              <div className={`p-5 rounded-lg border backdrop-blur-sm ${
                 (() => {
                   const totalWeightToChange = startWeight - targetWeight;
                   const isWeightLoss = totalWeightToChange > 0;
@@ -509,13 +509,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40';
                 })()
               }`}>
-                <div className="flex items-center gap-2 mb-3">
+                <div className="flex items-center gap-2 mb-2">
                   <Flame className="w-5 h-5 text-orange-500" />
                   <p className="text-xs font-semibold text-gray-700">Bilancio di oggi</p>
                 </div>
                 {todayCalorieBalance !== null ? (
                   <>
-                    <p className={`text-5xl font-bold leading-tight ${
+                    <p className={`text-3xl font-bold leading-tight ${
                       (() => {
                         const totalWeightToChange = startWeight - targetWeight;
                         const isWeightLoss = totalWeightToChange > 0;
@@ -527,37 +527,57 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     }`}>
                       {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
                     </p>
-                    <p className="text-lg text-gray-600 font-medium">kcal</p>
+                    <p className="text-sm text-gray-600 font-medium">kcal</p>
                   </>
                 ) : (
                   <p className="text-gray-500 italic text-sm">Dati non disponibili</p>
                 )}
               </div>
 
-              {/* Peso Attuale → Target */}
-              <div className="bg-white/80 backdrop-blur-sm rounded-lg border border-gray-200/50 px-6 py-5 shadow-lg">
-                <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-4">Peso</p>
-                <div className="flex items-center gap-4">
-                  <div className="text-center">
-                    <p className={`text-2xl font-bold leading-tight ${(() => {
-                      const totalWeightToChange = startWeight - targetWeight;
-                      const isWeightLoss = totalWeightToChange > 0;
-                      const actualWeightChange = lastRecordedWeight - startWeight;
-                      const isWeightAligned = (isWeightLoss && actualWeightChange < 0) || 
-                                            (!isWeightLoss && actualWeightChange > 0) ||
-                                            (totalWeightToChange === 0);
-                      return isWeightAligned ? 'text-green-700' : 'text-red-700';
-                    })()}`}>
-                      {lastRecordedWeight.toFixed(1)}
-                    </p>
-                    <p className="text-xs text-gray-500 font-medium">attuale</p>
-                  </div>
-                  <ArrowRight className="w-5 h-5 text-gray-400" />
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-[#26847F] leading-tight">{targetWeight.toFixed(1)}</p>
-                    <p className="text-xs text-[#1a5753] font-medium">target</p>
-                  </div>
-                </div>
+              {/* Peso Attuale */}
+              <div className={`p-5 rounded-lg border backdrop-blur-sm ${
+                (() => {
+                  const totalWeightToChange = startWeight - targetWeight;
+                  const isWeightLoss = totalWeightToChange > 0;
+                  const actualWeightChange = lastRecordedWeight - startWeight;
+                  const isWeightAligned = (isWeightLoss && actualWeightChange < 0) || 
+                                        (!isWeightLoss && actualWeightChange > 0) ||
+                                        (totalWeightToChange === 0);
+                  return isWeightAligned
+                    ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40'
+                    : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40';
+                })()
+              }`}>
+                <p className={`text-xs font-semibold uppercase tracking-wide mb-2 ${
+                  (() => {
+                    const totalWeightToChange = startWeight - targetWeight;
+                    const isWeightLoss = totalWeightToChange > 0;
+                    const actualWeightChange = lastRecordedWeight - startWeight;
+                    const isWeightAligned = (isWeightLoss && actualWeightChange < 0) || 
+                                          (!isWeightLoss && actualWeightChange > 0) ||
+                                          (totalWeightToChange === 0);
+                    return isWeightAligned ? 'text-green-700' : 'text-red-700';
+                  })()
+                }`}>Peso Attuale</p>
+                <p className={`text-3xl font-bold leading-tight ${
+                  (() => {
+                    const totalWeightToChange = startWeight - targetWeight;
+                    const isWeightLoss = totalWeightToChange > 0;
+                    const actualWeightChange = lastRecordedWeight - startWeight;
+                    const isWeightAligned = (isWeightLoss && actualWeightChange < 0) || 
+                                          (!isWeightLoss && actualWeightChange > 0) ||
+                                          (totalWeightToChange === 0);
+                    return isWeightAligned ? 'text-green-900' : 'text-red-900';
+                  })()
+                }`}>{lastRecordedWeight.toFixed(1)}</p>
+                <p className="text-sm text-gray-600 font-medium">kg</p>
+              </div>
+
+              {/* Peso Target */}
+              <div className="p-5 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-lg border-2 border-[#26847F]/30 backdrop-blur-sm">
+                <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-2">Peso Target</p>
+                <p className="text-3xl font-bold text-[#26847F] leading-tight">{targetWeight.toFixed(1)}</p>
+                <p className="text-sm text-[#1a5753] font-medium">kg</p>
               </div>
 
             </div>
