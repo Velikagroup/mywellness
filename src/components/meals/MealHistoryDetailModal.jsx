@@ -92,103 +92,76 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
           </div>
         </DialogHeader>
 
-        <div className="space-y-6 pt-4">
+        <div className="space-y-6 pt-6">
           {/* Foto */}
           {mealLog.photo_url && (
             <div className="rounded-xl overflow-hidden">
               <img
                 src={mealLog.photo_url}
                 alt="Pasto"
-                className="w-full h-64 object-cover"
+                className="w-full h-48 object-cover"
               />
             </div>
           )}
 
-          {/* Macronutrienti Totali */}
-          <div className="bg-gradient-to-br from-[#e9f6f5] to-teal-50 p-6 rounded-xl border-2 border-[#26847F]/30">
-            <div className="flex items-center gap-2 mb-4">
-              <Flame className="w-5 h-5 text-orange-500" />
-              <h3 className="font-bold text-gray-900">Totali Nutrizionali</h3>
+          {/* Informazioni Nutrizionali */}
+          <div className="bg-gray-50 p-4 rounded-lg">
+            <div className="flex items-center gap-2 mb-3">
+              <Flame className="w-4 h-4 text-orange-500" />
+              <p className="text-sm text-gray-600">Calorías</p>
             </div>
+            <p className="text-3xl font-bold text-gray-900 mb-4">{Math.round(totals.calories)}</p>
 
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <div className="bg-white p-3 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600 mb-1">Calorie</p>
-                <p className="text-2xl font-bold text-[#26847F]">{Math.round(totals.calories)}</p>
-                <p className="text-xs text-gray-500">kcal</p>
+            <div className="grid grid-cols-3 gap-3">
+              <div className="bg-white p-3 rounded-lg">
+                <p className="text-xs text-gray-600 mb-1">Proteína</p>
+                <p className="text-lg font-bold text-red-600">{totals.protein.toFixed(1)}g</p>
               </div>
-              <div className="bg-white p-3 rounded-lg border border-gray-200">
-                <p className="text-xs text-gray-600 mb-1">Proteine</p>
-                <p className="text-2xl font-bold text-red-600">{totals.protein.toFixed(1)}</p>
-                <p className="text-xs text-gray-500">g</p>
-              </div>
-              <div className="bg-white p-3 rounded-lg border border-gray-200">
+              <div className="bg-white p-3 rounded-lg">
                 <p className="text-xs text-gray-600 mb-1">Carboidrati</p>
-                <p className="text-2xl font-bold text-amber-600">{totals.carbs.toFixed(1)}</p>
-                <p className="text-xs text-gray-500">g</p>
+                <p className="text-lg font-bold text-amber-600">{totals.carbs.toFixed(1)}g</p>
               </div>
-              <div className="bg-white p-3 rounded-lg border border-gray-200">
+              <div className="bg-white p-3 rounded-lg">
                 <p className="text-xs text-gray-600 mb-1">Grassi</p>
-                <p className="text-2xl font-bold text-blue-600">{totals.fat.toFixed(1)}</p>
-                <p className="text-xs text-gray-500">g</p>
+                <p className="text-lg font-bold text-blue-600">{totals.fat.toFixed(1)}g</p>
               </div>
             </div>
           </div>
 
           {/* Ingredienti */}
           <div>
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="font-bold text-gray-900 flex items-center gap-2">
-                📋 Ingredienti
-              </h3>
-              <Button
-                onClick={() => setShowIngredientSelector(true)}
-                size="sm"
-                className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
-              >
-                <Plus className="w-4 h-4 mr-1" />
-                Aggiungi
-              </Button>
-            </div>
+            <h3 className="font-bold text-gray-900 mb-3 text-sm">Ingredienti ({ingredients.length})</h3>
 
             <div className="space-y-3">
               {ingredients.length > 0 ? (
                 ingredients.map((ing) => (
-                  <div key={ing.id} className="bg-gray-50 p-4 rounded-lg border-2 border-gray-200">
-                    <div className="flex justify-between items-start mb-3">
-                      <div>
-                        <p className="font-semibold text-gray-900">{ing.name}</p>
-                        {ing.grams && (
-                          <p className="text-sm text-gray-600">{ing.grams}g</p>
-                        )}
-                      </div>
-                      <button
-                        onClick={() => handleRemoveIngredient(ing.id)}
-                        className="text-red-500 hover:text-red-700 p-1"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                  <div key={ing.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{ing.name}</p>
+                      <p className="text-xs text-gray-500">
+                        {ing.grams}g · {ing.calories.toFixed(0)} cal
+                      </p>
                     </div>
-                    <div className="flex gap-4 text-xs">
-                      <span className="bg-white px-2 py-1 rounded border border-gray-200">
-                        <span className="text-red-600 font-semibold">{ing.protein.toFixed(1)}g</span> proteine
-                      </span>
-                      <span className="bg-white px-2 py-1 rounded border border-gray-200">
-                        <span className="text-amber-600 font-semibold">{ing.carbs.toFixed(1)}g</span> carb
-                      </span>
-                      <span className="bg-white px-2 py-1 rounded border border-gray-200">
-                        <span className="text-blue-600 font-semibold">{ing.fat.toFixed(1)}g</span> grassi
-                      </span>
-                      <span className="bg-white px-2 py-1 rounded border border-gray-200">
-                        <span className="text-orange-600 font-semibold">{ing.calories.toFixed(0)}</span> kcal
-                      </span>
-                    </div>
+                    <button
+                      onClick={() => handleRemoveIngredient(ing.id)}
+                      className="text-red-500 hover:text-red-700 p-1"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
                 ))
               ) : (
                 <p className="text-gray-500 text-sm text-center py-4">Nessun ingrediente aggiunto</p>
               )}
             </div>
+
+            <Button
+              onClick={() => setShowIngredientSelector(true)}
+              className="w-full mt-4 h-12 bg-black hover:bg-gray-900 text-white font-semibold rounded-full"
+            >
+              <Plus className="w-4 h-4 mr-2" />
+              Aggiungi ingrediente
+            </Button>
           </div>
 
           {/* Ingredient Selector Modal */}
