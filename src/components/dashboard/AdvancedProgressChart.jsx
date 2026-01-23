@@ -530,8 +530,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <div className="flex items-baseline gap-2">
                       <p className={`text-5xl font-['Inter'] font-bold ${calorieColor} leading-tight`} style={{
                         filter: isCalorieAligned 
-                          ? 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.6)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.4))'
-                          : 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.6)) drop-shadow(0 0 16px rgba(239, 68, 68, 0.4))'
+                          ? 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.18)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.12))'
+                          : 'drop-shadow(0 0 8px rgba(239, 68, 68, 0.18)) drop-shadow(0 0 16px rgba(239, 68, 68, 0.12))'
                       }}>
                         {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
                       </p>
