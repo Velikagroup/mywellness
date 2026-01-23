@@ -528,7 +528,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
       <button
         onClick={() => setShowActionMenu(!showActionMenu)}
-        className="hidden md:flex fixed bottom-6 right-6 z-50 rounded-full water-glass-effect text-[#26847F] items-center justify-center transition-all hover:scale-110 font-bold"
+        className="hidden md:flex fixed bottom-6 left-[520px] z-50 rounded-full water-glass-effect text-[#26847F] items-center justify-center transition-all hover:scale-110 font-bold"
         style={{
           width: '64px',
           height: '64px',
