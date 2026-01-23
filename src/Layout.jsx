@@ -392,9 +392,33 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
             <p className="text-sm text-gray-600">
               Inserisci il tuo peso attuale
             </p>
+
+            <div className="flex gap-2 bg-gray-100 p-1 rounded-lg w-fit">
+              <button
+                onClick={() => setWeightUnit('kg')}
+                className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+                  weightUnit === 'kg'
+                    ? 'bg-[#26847F] text-white'
+                    : 'bg-transparent text-gray-700 hover:text-gray-900'
+                }`}
+              >
+                kg
+              </button>
+              <button
+                onClick={() => setWeightUnit('lbs')}
+                className={`px-4 py-2 rounded-md font-semibold transition-colors ${
+                  weightUnit === 'lbs'
+                    ? 'bg-[#26847F] text-white'
+                    : 'bg-transparent text-gray-700 hover:text-gray-900'
+                }`}
+              >
+                lbs
+              </button>
+            </div>
+
             <div>
               <Label htmlFor="weight-input" className="text-sm font-semibold text-gray-700 mb-2 block">
-                Peso (kg)
+                Peso ({weightUnit})
               </Label>
               <Input
                 id="weight-input"
@@ -402,10 +426,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 step="0.1"
                 value={weightInput}
                 onChange={(e) => setWeightInput(e.target.value)}
-                placeholder="Es: 70.5"
+                placeholder={weightUnit === 'kg' ? 'Es: 70.5' : 'Es: 155'}
                 className="h-12 text-base"
                 min="30"
-                max="300"
+                max={weightUnit === 'kg' ? '300' : '660'}
                 autoFocus
               />
             </div>
@@ -422,6 +446,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
                 onClick={() => {
                   setShowWeightModal(false);
                   setWeightInput('');
+                  setWeightUnit('kg');
                 }}
                 variant="outline"
                 className="flex-1"
