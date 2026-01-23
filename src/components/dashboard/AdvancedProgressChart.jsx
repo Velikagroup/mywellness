@@ -540,8 +540,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 )}
               </div>
 
-              {/* DESTRA: Peso Attuale → Target */}
-              <div className="flex-1 flex flex-col md:flex-row items-center md:justify-end gap-3">
+              {/* Peso Attuale → Target */}
+              <div className="flex flex-row items-center justify-start gap-3">
                 <div className="text-right">
                   <div className="flex items-baseline gap-1.5">
                     <p className={`font-bold bg-gradient-to-r ${isAligned ? 'from-green-600 to-emerald-500' : 'from-red-600 to-rose-500'} bg-clip-text text-transparent`} style={{ fontSize: '25.5px' }}>{lastRecordedWeight.toFixed(1)}</p>
