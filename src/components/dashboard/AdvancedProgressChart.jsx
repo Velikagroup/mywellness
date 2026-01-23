@@ -216,7 +216,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     };
     
     loadCalorieBalances();
-  }, [user?.id]);
+  }, [user?.id, refreshTrigger]);
 
   const lineData = useMemo(() => {
     console.log('📈 lineData calculation - weightHistory:', weightHistory?.length, 'entries');
