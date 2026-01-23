@@ -12,6 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Scale, Save } from "lucide-react";
 import LiquidGlassNav from "@/components/navigation/LiquidGlassNav";
 import ProgressPhotoAnalyzer from "@/components/training/ProgressPhotoAnalyzer";
+import UnifiedCameraModal from "@/components/camera/UnifiedCameraModal";
 
 function LayoutContent({ children }) {
   const location = useLocation();
@@ -24,6 +25,7 @@ function LayoutContent({ children }) {
   const [weightInput, setWeightInput] = React.useState('');
   const [isSavingWeight, setIsSavingWeight] = React.useState(false);
   const [showProgressAnalysis, setShowProgressAnalysis] = React.useState(false);
+  const [showUnifiedCamera, setShowUnifiedCamera] = React.useState(false);
 
   React.useEffect(() => {
     window.scrollTo(0, 0);
@@ -370,58 +372,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       }
       `}</style>
       
-      {showActionMenu && (
-        <>
-          <div 
-            className="fixed inset-0 z-40 bg-black/10 backdrop-blur-xs" 
-            onClick={() => setShowActionMenu(false)} 
-          />
-          <div className="fixed top-1/2 left-1/2 z-50 action-menu-drawer -translate-x-1/2 -translate-y-1/2">
-            <div className="water-glass-effect rounded-2xl p-3 w-56 shadow-2xl" style={{
-              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.12), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)'
-            }}>
-              <div className="space-y-2">
-                <button
-                  onClick={() => {
-                    navigate(createPageUrl('Dashboard'));
-                    setShowActionMenu(false);
-                  }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm"
-                >
-                  Count Calories
-                </button>
-                <button
-                  onClick={() => {
-                    setShowWeightModal(true);
-                  }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm flex items-center justify-center gap-2"
-                >
-                  <Scale className="w-4 h-4" />
-                  Log Weight
-                </button>
-                <button
-                  onClick={() => {
-                    navigate(createPageUrl('BodyScan'));
-                    setShowActionMenu(false);
-                  }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm"
-                >
-                  Body Scan
-                </button>
-                <button
-                  onClick={() => {
-                    setShowProgressAnalysis(true);
-                    setShowActionMenu(false);
-                  }}
-                  className="w-full bg-[#26847F] hover:bg-[#1f6b66] text-white font-semibold py-2.5 px-3 rounded-lg transition-colors text-sm"
-                >
-                  🤖 Analisi AI
-                </button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+
 
       <Dialog open={showWeightModal} onOpenChange={setShowWeightModal}>
         <DialogContent>
@@ -497,7 +448,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           setShowActionMenu={setShowActionMenu}
         />
         <button
-          onClick={() => setShowActionMenu(!showActionMenu)}
+          onClick={() => setShowUnifiedCamera(true)}
           className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0"
           style={{
             width: '64px',
@@ -507,11 +458,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           }}
           title="Quick Actions"
         >
-          {showActionMenu ? (
-            <XIcon className="w-7 h-7" strokeWidth={3} />
-          ) : (
-            <Plus className="w-7 h-7" strokeWidth={3} />
-          )}
+          <Plus className="w-7 h-7" strokeWidth={3} />
         </button>
       </div>
 
@@ -525,7 +472,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           />
         </div>
         <button
-          onClick={() => setShowActionMenu(!showActionMenu)}
+          onClick={() => setShowUnifiedCamera(true)}
           className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0 w-[83px] h-[83px]"
           style={{
             boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
@@ -533,11 +480,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           }}
           title="Quick Actions"
         >
-          {showActionMenu ? (
-            <XIcon className="w-9 h-9" strokeWidth={3} />
-          ) : (
-            <Plus className="w-9 h-9" strokeWidth={3} />
-          )}
+          <Plus className="w-9 h-9" strokeWidth={3} />
         </button>
       </div>
 
@@ -553,6 +496,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           onOpenPhotoGallery={() => {}}
         />
       )}
+
+      <UnifiedCameraModal
+        isOpen={showUnifiedCamera}
+        onClose={() => setShowUnifiedCamera(false)}
+        user={user}
+      />
     </div>
   );
 }
