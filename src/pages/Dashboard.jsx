@@ -180,20 +180,17 @@ export default function Dashboard() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const progressSection = document.getElementById('progress-section');
       const mealsSection = document.getElementById('meals-macros-section');
-      if (!progressSection || !mealsSection) return;
+      if (!mealsSection) return;
       
-      const progressRect = progressSection.getBoundingClientRect();
+      const mealsRect = mealsSection.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      // Se il progress section è fuori dalla viewport (scrollato via), cambia le opacità
-      if (progressRect.bottom < windowHeight * 0.3) {
-        progressSection.style.opacity = '0.3';
+      // Se il secondo box è visibile nella parte superiore della viewport (scrollato in vista)
+      if (mealsRect.top < windowHeight * 0.5) {
         mealsSection.style.opacity = '1';
       } else {
-        // Altrimenti ripristina le opacità iniziali
-        progressSection.style.opacity = '1';
+        // Altrimenti mantieni l'opacità al 30%
         mealsSection.style.opacity = '0.3';
       }
     };
