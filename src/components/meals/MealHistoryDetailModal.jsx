@@ -193,91 +193,20 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
             </div>
           </div>
 
-          {/* Form Aggiungi Ingrediente */}
-          {showAddIngredient && (
-            <div className="bg-[#f0fffe] border-2 border-[#26847F]/30 p-4 rounded-lg space-y-4">
-              <h4 className="font-bold text-gray-900">Nuovo Ingrediente</h4>
+          {/* Ingredient Selector Modal */}
+          <IngredientSelector
+            isOpen={showIngredientSelector}
+            onClose={() => setShowIngredientSelector(false)}
+            onSelectIngredient={handleSelectIngredient}
+          />
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Nome</Label>
-                  <Input
-                    type="text"
-                    placeholder="Es: Pollo grigliato"
-                    value={newIngredient.name}
-                    onChange={(e) => setNewIngredient({ ...newIngredient, name: e.target.value })}
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Grammi</Label>
-                  <Input
-                    type="number"
-                    placeholder="Es: 150"
-                    value={newIngredient.grams}
-                    onChange={(e) => setNewIngredient({ ...newIngredient, grams: e.target.value })}
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Calorie</Label>
-                  <Input
-                    type="number"
-                    placeholder="Es: 200"
-                    value={newIngredient.calories}
-                    onChange={(e) => setNewIngredient({ ...newIngredient, calories: e.target.value })}
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Proteine (g)</Label>
-                  <Input
-                    type="number"
-                    placeholder="Es: 30"
-                    value={newIngredient.protein}
-                    onChange={(e) => setNewIngredient({ ...newIngredient, protein: e.target.value })}
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Carboidrati (g)</Label>
-                  <Input
-                    type="number"
-                    placeholder="Es: 10"
-                    value={newIngredient.carbs}
-                    onChange={(e) => setNewIngredient({ ...newIngredient, carbs: e.target.value })}
-                    className="h-9 text-sm"
-                  />
-                </div>
-                <div>
-                  <Label className="text-xs font-semibold text-gray-700">Grassi (g)</Label>
-                  <Input
-                    type="number"
-                    placeholder="Es: 5"
-                    value={newIngredient.fat}
-                    onChange={(e) => setNewIngredient({ ...newIngredient, fat: e.target.value })}
-                    className="h-9 text-sm"
-                  />
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                <Button
-                  onClick={handleAddIngredient}
-                  className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                >
-                  Aggiungi Ingrediente
-                </Button>
-                <Button
-                  onClick={() => setShowAddIngredient(false)}
-                  variant="outline"
-                  className="flex-1"
-                >
-                  Annulla
-                </Button>
-              </div>
-            </div>
-          )}
+          {/* Ingredient Quantity Modal */}
+          <IngredientQuantityModal
+            isOpen={!!selectedIngredient}
+            ingredient={selectedIngredient}
+            onClose={() => setSelectedIngredient(null)}
+            onConfirm={handleAddIngredientQuantity}
+          />
         </div>
 
         <div className="flex gap-3 pt-4 border-t border-gray-200">
