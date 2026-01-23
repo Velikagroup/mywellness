@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
-import { Clock, Flame, Zap, Wheat, Droplet, Plus } from 'lucide-react';
+import { Clock, Flame, Zap, Wheat, Droplet, Plus, Trash2 } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import MealHistoryDetailModal from './MealHistoryDetailModal';
+import IngredientSelector from './IngredientSelector';
+import IngredientQuantityModal from './IngredientQuantityModal';
 
 const ITEMS_PER_PAGE = 5;
 
