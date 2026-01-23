@@ -499,192 +499,180 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                          (totalWeightToChange < 0 && actualDirection > 0) ||
                          (totalWeightToChange === 0);
 
-        return (
-          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl mt-6" id="progress-section">
-
-          <div className="hidden">
-
-
-
-
-            {/* Progress Bar Calorie - tra icone e macro */}
-            <div className="space-y-4 mt-6 pt-4 border-t border-gray-200/50">
-              {/* Calorie Consumate */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between text-sm">
-                  <span className="font-medium text-gray-700 flex items-center gap-2">
-                    <TrendingUp className={isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
-                    Calorie Consumate
-                  </span>
-                  <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>
-                    {(() => {
-                      const consumed = sortedMeals.reduce((sum, meal) => {
-                        const mealLog = getMealLog(meal.id);
-                        return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
-                      }, 0);
-                      return Math.round(consumed);
-                    })()} kcal
-                  </span>
-                </div>
-                <div className="flex items-center gap-3 mb-1">
-                  <span 
-                    className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
-                    onClick={onEditCalories}
-                  >
-                    Target Calorico: <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>{user.daily_calories || 2000} kcal</span>
-                  </span>
-                </div>
-                <div 
-                  className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative cursor-help group"
-                  onMouseEnter={() => !consumedTooltipClicked && setShowConsumedTooltip(true)}
-                  onMouseLeave={() => !consumedTooltipClicked && setShowConsumedTooltip(false)}
-                  onClick={() => {
-                    setConsumedTooltipClicked(!consumedTooltipClicked);
-                    setShowConsumedTooltip(!consumedTooltipClicked);
-                  }}
-                >
-                  <div className="h-full flex">
-                    {sortedMeals.map((meal, index) => {
+          <div className="space-y-4 mt-6 pt-4 border-t border-gray-200/50">
+            {/* Calorie Consumate */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-gray-700 flex items-center gap-2">
+                  <TrendingUp className={isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
+                  Calorie Consumate
+                </span>
+                <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>
+                  {(() => {
+                    const consumed = sortedMeals.reduce((sum, meal) => {
                       const mealLog = getMealLog(meal.id);
-                      const isLogged = !!mealLog;
-                      const calories = isLogged ? mealLog.actual_calories : meal.total_calories || 0;
-                      const totalConsumed = sortedMeals.reduce((sum, m) => {
-                        const log = getMealLog(m.id);
-                        return sum + (log ? log.actual_calories : m.total_calories || 0);
-                      }, 0);
-                      const bmr = calculateBMR(user);
-                      const neat = calculateNEAT(user);
-                      const totalBurned = bmr + neat;
-                      const segmentWidth = (calories / Math.max(totalConsumed, totalBurned)) * 100;
-                      const baseColor = isWeightLoss ? 'red' : 'green';
+                      return sum + (mealLog ? mealLog.actual_calories : meal.total_calories || 0);
+                    }, 0);
+                    return Math.round(consumed);
+                  })()} kcal
+                </span>
+              </div>
+              <div className="flex items-center gap-3 mb-1">
+                <span 
+                  className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
+                  onClick={onEditCalories}
+                >
+                  Target Calorico: <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>{user.daily_calories || 2000} kcal</span>
+                </span>
+              </div>
+              <div 
+                className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative cursor-help group"
+                onMouseEnter={() => !consumedTooltipClicked && setShowConsumedTooltip(true)}
+                onMouseLeave={() => !consumedTooltipClicked && setShowConsumedTooltip(false)}
+                onClick={() => {
+                  setConsumedTooltipClicked(!consumedTooltipClicked);
+                  setShowConsumedTooltip(!consumedTooltipClicked);
+                }}
+              >
+                <div className="h-full flex">
+                  {sortedMeals.map((meal, index) => {
+                    const mealLog = getMealLog(meal.id);
+                    const isLogged = !!mealLog;
+                    const calories = isLogged ? mealLog.actual_calories : meal.total_calories || 0;
+                    const totalConsumed = sortedMeals.reduce((sum, m) => {
+                      const log = getMealLog(m.id);
+                      return sum + (log ? log.actual_calories : m.total_calories || 0);
+                    }, 0);
+                    const bmr = calculateBMR(user);
+                    const neat = calculateNEAT(user);
+                    const totalBurned = bmr + neat;
+                    const segmentWidth = (calories / Math.max(totalConsumed, totalBurned)) * 100;
+                    const baseColor = isWeightLoss ? 'red' : 'green';
 
-                      return (
-                        <React.Fragment key={meal.id}>
-                          <div 
-                            className={`h-full transition-all ${
-                              isLogged 
-                                ? (baseColor === 'red' ? 'bg-red-500' : 'bg-green-500')
-                                : (baseColor === 'red' ? 'bg-red-300' : 'bg-green-300')
-                            } ${!isLogged ? 'opacity-60' : ''}`}
-                            style={{ 
-                              width: `${segmentWidth}%`,
-                              backgroundImage: !isLogged 
-                                ? 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px)'
-                                : 'none'
-                            }}
-                          />
-                          {index < sortedMeals.length - 1 && (
-                            <div className="w-[2px] h-full bg-white opacity-80" />
-                          )}
-                        </React.Fragment>
-                      );
-                    })}
-                  </div>
-                  {showConsumedTooltip && (
-                    <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-50 pointer-events-none">
-                      I pasti con pattern tratteggiato sono pianificati ma non ancora consumati
-                    </div>
-                  )}
+                    return (
+                      <React.Fragment key={meal.id}>
+                        <div 
+                          className={`h-full transition-all ${
+                            isLogged 
+                              ? (baseColor === 'red' ? 'bg-red-500' : 'bg-green-500')
+                              : (baseColor === 'red' ? 'bg-red-300' : 'bg-green-300')
+                          } ${!isLogged ? 'opacity-60' : ''}`}
+                          style={{ 
+                            width: `${segmentWidth}%`,
+                            backgroundImage: !isLogged 
+                              ? 'repeating-linear-gradient(45deg, transparent, transparent 5px, rgba(255,255,255,0.2) 5px, rgba(255,255,255,0.2) 10px)'
+                              : 'none'
+                          }}
+                        />
+                        {index < sortedMeals.length - 1 && (
+                          <div className="w-[2px] h-full bg-white opacity-80" />
+                        )}
+                      </React.Fragment>
+                    );
+                  })}
                 </div>
-              </div>
-
-              {/* Calorie Bruciate */}
-              <div className="space-y-2">
-               <div className="flex items-center justify-between text-sm">
-                 <span className="font-medium text-gray-700 flex items-center gap-2">
-                   <Flame className={isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
-                   Calorie Bruciate
-                 </span>
-                 <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
-                   {(() => {
-                     const bmr = calculateBMR(user);
-                     const neat = calculateNEAT(user);
-                     return Math.round(bmr + neat);
-                   })()} kcal
-                 </span>
-               </div>
-               <div className="flex items-center gap-3">
-                 <span 
-                   className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
-                   onClick={onEditBMR}
-                 >
-                   BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{user.bmr ? Math.round(user.bmr) : Math.round(calculateBMR(user))} kcal</span>
-                 </span>
-                 <span 
-                   className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
-                   onClick={onEditNEAT}
-                 >
-                   NEAT: <span className={isWeightLoss ? "text-green-400" : "text-red-400"}>{Math.round(calculateNEAT(user))} kcal</span>
-                 </span>
-               </div>
-               <div 
-                 className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative cursor-help group"
-                 onMouseEnter={() => !burnedTooltipClicked && setShowBurnedTooltip(true)}
-                 onMouseLeave={() => !burnedTooltipClicked && setShowBurnedTooltip(false)}
-                 onClick={() => {
-                   setBurnedTooltipClicked(!burnedTooltipClicked);
-                   setShowBurnedTooltip(!burnedTooltipClicked);
-                 }}
-               >
-                 <div className="h-full flex">
-                   {(() => {
-                     const bmr = calculateBMR(user);
-                     const neat = calculateNEAT(user);
-                     const totalBurned = bmr + neat;
-                     const totalConsumed = sortedMeals.reduce((sum, m) => {
-                       const log = getMealLog(m.id);
-                       return sum + (log ? log.actual_calories : m.total_calories || 0);
-                     }, 0);
-                     const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
-                     const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
-                     const baseColor = isWeightLoss ? 'green' : 'red';
-
-                     return (
-                       <>
-                         <div 
-                           className={baseColor === 'green' ? "h-full bg-green-600" : "h-full bg-red-600"}
-                           style={{ width: `${bmrWidth}%` }}
-                         />
-                         <div className="w-[2px] h-full bg-white opacity-80" />
-                         <div 
-                           className={baseColor === 'green' ? "h-full bg-green-400" : "h-full bg-red-400"}
-                           style={{ width: `${neatWidth}%` }}
-                         />
-                       </>
-                     );
-                   })()}
-                 </div>
-                 {showBurnedTooltip && (
-                   <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-50 pointer-events-none">
-                     Segmento scuro: BMR · Segmento chiaro: NEAT
-                   </div>
-                 )}
-               </div>
-
+                {showConsumedTooltip && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-50 pointer-events-none">
+                    I pasti con pattern tratteggiato sono pianificati ma non ancora consumati
+                  </div>
+                )}
               </div>
             </div>
 
-            </div>
-            );
-            })()}
+            {/* Calorie Bruciate */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between text-sm">
+                <span className="font-medium text-gray-700 flex items-center gap-2">
+                  <Flame className={isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
+                  Calorie Bruciate
+                </span>
+                <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
+                  {(() => {
+                    const bmr = calculateBMR(user);
+                    const neat = calculateNEAT(user);
+                    return Math.round(bmr + neat);
+                  })()} kcal
+                </span>
+              </div>
+              <div className="flex items-center gap-3">
+                <span 
+                  className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
+                  onClick={onEditBMR}
+                >
+                  BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{user.bmr ? Math.round(user.bmr) : Math.round(calculateBMR(user))} kcal</span>
+                </span>
+                <span 
+                  className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
+                  onClick={onEditNEAT}
+                >
+                  NEAT: <span className={isWeightLoss ? "text-green-400" : "text-red-400"}>{Math.round(calculateNEAT(user))} kcal</span>
+                </span>
+              </div>
+              <div 
+                className="w-full h-3 bg-gray-200 rounded-full overflow-hidden relative cursor-help group"
+                onMouseEnter={() => !burnedTooltipClicked && setShowBurnedTooltip(true)}
+                onMouseLeave={() => !burnedTooltipClicked && setShowBurnedTooltip(false)}
+                onClick={() => {
+                  setBurnedTooltipClicked(!burnedTooltipClicked);
+                  setShowBurnedTooltip(!burnedTooltipClicked);
+                }}
+              >
+                <div className="h-full flex">
+                  {(() => {
+                    const bmr = calculateBMR(user);
+                    const neat = calculateNEAT(user);
+                    const totalBurned = bmr + neat;
+                    const totalConsumed = sortedMeals.reduce((sum, m) => {
+                      const log = getMealLog(m.id);
+                      return sum + (log ? log.actual_calories : m.total_calories || 0);
+                    }, 0);
+                    const bmrWidth = (bmr / Math.max(totalConsumed, totalBurned)) * 100;
+                    const neatWidth = (neat / Math.max(totalConsumed, totalBurned)) * 100;
+                    const baseColor = isWeightLoss ? 'green' : 'red';
 
-            {/* Meals and Macros Card - Separate Box Below */}
-            <div className="mt-6 transition-opacity duration-300 opacity-30" id="meals-macros-section">
-              <MealsAndMacrosCard
-                todayMacros={todayMacros}
-                sortedMeals={sortedMeals}
-                mealLogs={mealLogs}
-                savingMealId={savingMealId}
-                onMealSelect={onMealSelect}
-                onPhotoAnalyze={onPhotoAnalyze}
-                onCheckMeal={handleCheckMeal}
-                userPlan={userPlan}
-                getMealLog={getMealLog}
-                getMealTypeLabel={getMealTypeLabel}
-                t={t}
-              />
+                    return (
+                      <>
+                        <div 
+                          className={baseColor === 'green' ? "h-full bg-green-600" : "h-full bg-red-600"}
+                          style={{ width: `${bmrWidth}%` }}
+                        />
+                        <div className="w-[2px] h-full bg-white opacity-80" />
+                        <div 
+                          className={baseColor === 'green' ? "h-full bg-green-400" : "h-full bg-red-400"}
+                          style={{ width: `${neatWidth}%` }}
+                        />
+                      </>
+                    );
+                  })()}
+                </div>
+                {showBurnedTooltip && (
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 bg-gray-900 text-white text-xs px-3 py-2 rounded-lg whitespace-nowrap opacity-100 z-50 pointer-events-none">
+                    Segmento scuro: BMR · Segmento chiaro: NEAT
+                  </div>
+                )}
+              </div>
             </div>
+          </div>
+        );
+        })}
 
-            </>
-            );
-            }
+        {/* Meals and Macros Card - Separate Box Below */}
+        <div className="mt-6 transition-opacity duration-300 opacity-30" id="meals-macros-section">
+          <MealsAndMacrosCard
+            todayMacros={todayMacros}
+            sortedMeals={sortedMeals}
+            mealLogs={mealLogs}
+            savingMealId={savingMealId}
+            onMealSelect={onMealSelect}
+            onPhotoAnalyze={onPhotoAnalyze}
+            onCheckMeal={handleCheckMeal}
+            userPlan={userPlan}
+            getMealLog={getMealLog}
+            getMealTypeLabel={getMealTypeLabel}
+            t={t}
+          />
+        </div>
+
+      </>
+      );
+      }
