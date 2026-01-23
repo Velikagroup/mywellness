@@ -367,10 +367,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         .action-menu-drawer {
           animation: slideUpFromBottom 0.35s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
         }
-      body[data-camera-open="true"] .hidden.md\:flex.fixed.bottom-5 {
+      body[data-camera-open="true"] > main ~ div {
         display: none !important;
       }
-      body[data-camera-open="true"] .md\:hidden.fixed.bottom-6 {
+      body[data-camera-open="true"] [data-menu] {
         display: none !important;
       }
       `}</style>
