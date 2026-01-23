@@ -2,12 +2,14 @@ import React, { useState, useRef } from 'react';
 import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { AlertCircle, Camera, Upload, Loader2, Check, ChevronRight } from 'lucide-react';
+import { AlertCircle, Camera, Upload, Loader2, Check, ChevronRight, Image as ImageIcon, TrendingUp, TrendingDown, Minus } from 'lucide-react';
 import { createPageUrl } from '@/utils';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
+import ProgressPhotoGallery from '@/components/training/ProgressPhotoGallery';
 
 export default function BodyScanPage() {
   const navigate = useNavigate();
+  const location = useLocation();
   const [step, setStep] = useState(1); // 1: upload, 2: analyzing, 3: results
   const [user, setUser] = React.useState(null);
   const [loading, setLoading] = useState(false);
@@ -20,6 +22,8 @@ export default function BodyScanPage() {
   });
   
   const [scanResult, setScanResult] = useState(null);
+  const [previousScan, setPreviousScan] = useState(null);
+  const [showGallery, setShowGallery] = useState(false);
   const fileInputRefs = {
     front: useRef(null),
     side: useRef(null),
@@ -31,12 +35,38 @@ export default function BodyScanPage() {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
+        
+        // Check if coming from camera with photos
+        if (location.state?.photos && location.state?.fromCamera) {
+          const cameraPhotos = location.state.photos;
+          const photoUrls = {
+            front: cameraPhotos.find(p => p.position === 'front')?.url || null,
+            side: cameraPhotos.find(p => p.position === 'side')?.url || null,
+            back: cameraPhotos.find(p => p.position === 'back')?.url || null
+          };
+          setPhotos(photoUrls);
+          
+          // Auto-start analysis
+          if (photoUrls.front) {
+            setTimeout(() => handleAnalyze(photoUrls, currentUser), 500);
+          }
+        }
+        
+        // Load previous scan for comparison
+        const previousScans = await base44.entities.BodyScanResult.filter(
+          { user_id: currentUser.id },
+          '-created_date',
+          2
+        );
+        if (previousScans.length > 0) {
+          setPreviousScan(previousScans[0]);
+        }
       } catch (error) {
         navigate(createPageUrl('Home'));
       }
     };
     loadUser();
-  }, [navigate]);
+  }, [navigate, location]);
 
   const handlePhotoUpload = async (e, position) => {
     const file = e.target.files?.[0];
@@ -57,8 +87,11 @@ export default function BodyScanPage() {
     }
   };
 
-  const handleAnalyze = async () => {
-    if (!photos.front) {
+  const handleAnalyze = async (photoUrls = null, userData = null) => {
+    const photosToAnalyze = photoUrls || photos;
+    const userToUse = userData || user;
+    
+    if (!photosToAnalyze.front) {
       setError('La foto frontale è obbligatoria');
       return;
     }
@@ -69,17 +102,36 @@ export default function BodyScanPage() {
 
     try {
       const response = await base44.functions.invoke('analyzeBodyImage', {
-        frontPhotoUrl: photos.front,
-        sidePhotoUrl: photos.side,
-        backPhotoUrl: photos.back,
-        userAge: user?.age,
-        userHeight: user?.height,
-        userWeight: user?.weight,
-        userGender: user?.gender
+        frontPhotoUrl: photosToAnalyze.front,
+        sidePhotoUrl: photosToAnalyze.side,
+        backPhotoUrl: photosToAnalyze.back,
+        userAge: userToUse?.age,
+        userHeight: userToUse?.height,
+        userWeight: userToUse?.weight,
+        userGender: userToUse?.gender
       });
 
       if (response.data.success) {
         setScanResult(response.data.scanResult);
+        
+        // Save scan result to database
+        await base44.entities.BodyScanResult.create({
+          user_id: userToUse.id,
+          front_photo_url: photosToAnalyze.front,
+          side_photo_url: photosToAnalyze.side,
+          back_photo_url: photosToAnalyze.back,
+          somatotype: response.data.scanResult.somatotype,
+          body_fat_percentage: response.data.scanResult.body_fat_percentage,
+          muscle_definition_score: response.data.scanResult.muscle_definition_score,
+          body_age_estimate: response.data.scanResult.body_age_estimate,
+          posture_assessment: response.data.scanResult.posture_assessment,
+          problem_areas: response.data.scanResult.problem_areas,
+          strong_areas: response.data.scanResult.strong_areas,
+          skin_texture: response.data.scanResult.skin_texture,
+          skin_tone: response.data.scanResult.skin_tone,
+          swelling_percentage: response.data.scanResult.swelling_percentage
+        });
+        
         setStep(3);
       } else {
         setError(response.data.error || 'Errore nell\'analisi');
@@ -303,6 +355,124 @@ export default function BodyScanPage() {
         {/* Step 3: Results */}
         {step === 3 && scanResult && (
           <div className="space-y-6">
+            {/* Progress Comparison - Before/After */}
+            {previousScan && (
+              <Card className="bg-gradient-to-br from-blue-50 to-purple-50">
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    📊 Confronto Progressi
+                  </CardTitle>
+                  <CardDescription>
+                    Comparazione con la tua ultima scansione
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                    {/* Body Fat Comparison */}
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                      <h4 className="text-sm font-semibold text-gray-600 mb-3">Massa Grassa</h4>
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <p className="text-xs text-gray-500">Prima</p>
+                          <p className="text-lg font-bold text-gray-700">{previousScan.body_fat_percentage?.toFixed(1)}%</p>
+                        </div>
+                        <div className="text-2xl">→</div>
+                        <div>
+                          <p className="text-xs text-gray-500">Ora</p>
+                          <p className="text-lg font-bold text-blue-600">{scanResult.body_fat_percentage.toFixed(1)}%</p>
+                        </div>
+                      </div>
+                      {scanResult.body_fat_percentage < previousScan.body_fat_percentage && (
+                        <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                          <TrendingDown className="w-4 h-4" />
+                          <span>-{(previousScan.body_fat_percentage - scanResult.body_fat_percentage).toFixed(1)}%</span>
+                        </div>
+                      )}
+                      {scanResult.body_fat_percentage > previousScan.body_fat_percentage && (
+                        <div className="flex items-center gap-1 text-red-600 text-sm font-medium">
+                          <TrendingUp className="w-4 h-4" />
+                          <span>+{(scanResult.body_fat_percentage - previousScan.body_fat_percentage).toFixed(1)}%</span>
+                        </div>
+                      )}
+                      {scanResult.body_fat_percentage === previousScan.body_fat_percentage && (
+                        <div className="flex items-center gap-1 text-gray-600 text-sm font-medium">
+                          <Minus className="w-4 h-4" />
+                          <span>Stabile</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Muscle Definition Comparison */}
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                      <h4 className="text-sm font-semibold text-gray-600 mb-3">Definizione Muscolare</h4>
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <p className="text-xs text-gray-500">Prima</p>
+                          <p className="text-lg font-bold text-gray-700">{previousScan.muscle_definition_score}/100</p>
+                        </div>
+                        <div className="text-2xl">→</div>
+                        <div>
+                          <p className="text-xs text-gray-500">Ora</p>
+                          <p className="text-lg font-bold text-green-600">{scanResult.muscle_definition_score}/100</p>
+                        </div>
+                      </div>
+                      {scanResult.muscle_definition_score > previousScan.muscle_definition_score && (
+                        <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                          <TrendingUp className="w-4 h-4" />
+                          <span>+{(scanResult.muscle_definition_score - previousScan.muscle_definition_score)}</span>
+                        </div>
+                      )}
+                      {scanResult.muscle_definition_score < previousScan.muscle_definition_score && (
+                        <div className="flex items-center gap-1 text-red-600 text-sm font-medium">
+                          <TrendingDown className="w-4 h-4" />
+                          <span>{(scanResult.muscle_definition_score - previousScan.muscle_definition_score)}</span>
+                        </div>
+                      )}
+                      {scanResult.muscle_definition_score === previousScan.muscle_definition_score && (
+                        <div className="flex items-center gap-1 text-gray-600 text-sm font-medium">
+                          <Minus className="w-4 h-4" />
+                          <span>Stabile</span>
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Body Age Comparison */}
+                    <div className="bg-white rounded-xl p-4 shadow-sm">
+                      <h4 className="text-sm font-semibold text-gray-600 mb-3">Età Biologica</h4>
+                      <div className="flex items-center justify-between mb-2">
+                        <div>
+                          <p className="text-xs text-gray-500">Prima</p>
+                          <p className="text-lg font-bold text-gray-700">{previousScan.body_age_estimate?.toFixed(0)} anni</p>
+                        </div>
+                        <div className="text-2xl">→</div>
+                        <div>
+                          <p className="text-xs text-gray-500">Ora</p>
+                          <p className="text-lg font-bold text-purple-600">{scanResult.body_age_estimate.toFixed(0)} anni</p>
+                        </div>
+                      </div>
+                      {scanResult.body_age_estimate < previousScan.body_age_estimate && (
+                        <div className="flex items-center gap-1 text-green-600 text-sm font-medium">
+                          <TrendingDown className="w-4 h-4" />
+                          <span>-{(previousScan.body_age_estimate - scanResult.body_age_estimate).toFixed(0)} anni</span>
+                        </div>
+                      )}
+                      {scanResult.body_age_estimate > previousScan.body_age_estimate && (
+                        <div className="flex items-center gap-1 text-red-600 text-sm font-medium">
+                          <TrendingUp className="w-4 h-4" />
+                          <span>+{(scanResult.body_age_estimate - previousScan.body_age_estimate).toFixed(0)} anni</span>
+                        </div>
+                      )}
+                      {scanResult.body_age_estimate === previousScan.body_age_estimate && (
+                        <div className="flex items-center gap-1 text-gray-600 text-sm font-medium">
+                          <Minus className="w-4 h-4" />
+                          <span>Stabile</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            )}
             {/* Results Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card>
@@ -395,6 +565,17 @@ export default function BodyScanPage() {
               </CardContent>
             </Card>
 
+            {/* Progress Gallery Button */}
+            <Button
+              onClick={() => setShowGallery(true)}
+              variant="outline"
+              className="w-full h-12 border-2 border-[#26847F] text-[#26847F] hover:bg-[#26847F]/10"
+              size="lg"
+            >
+              <ImageIcon className="w-5 h-5 mr-2" />
+              📸 Galleria Progressi
+            </Button>
+
             {/* CTA Buttons */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <Button
@@ -438,6 +619,14 @@ export default function BodyScanPage() {
           </div>
         )}
       </div>
+
+      {/* Progress Photo Gallery Modal */}
+      {showGallery && user && (
+        <ProgressPhotoGallery
+          user={user}
+          onClose={() => setShowGallery(false)}
+        />
+      )}
     </div>
   );
 }
