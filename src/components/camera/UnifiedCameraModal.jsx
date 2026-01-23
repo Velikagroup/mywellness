@@ -29,7 +29,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   // Body scan mode states
   const [bodyScanPhotos, setBodyScanPhotos] = useState({
     front: null,
-    side: null
+    side: null,
+    back: null
   });
   const [currentBodyScanStep, setCurrentBodyScanStep] = useState('front');
   const [bodyScanAnalyzing, setBodyScanAnalyzing] = useState(false);
@@ -160,9 +161,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     };
     setBodyScanPhotos(updatedPhotos);
 
-    // Controlla se front e side sono state scattate (back opzionale)
-    if (updatedPhotos.front && updatedPhotos.side) {
-      // Foto necessarie presenti, procedi all'analisi
+    // Controlla se front, side e back sono state scattate
+    if (updatedPhotos.front && updatedPhotos.side && updatedPhotos.back) {
+      // Tutte le foto presenti, procedi all'analisi
       stopCamera();
       analyzeBodyScan(updatedPhotos);
     } else {
@@ -171,6 +172,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         setCurrentBodyScanStep('front');
       } else if (!updatedPhotos.side) {
         setCurrentBodyScanStep('side');
+      } else if (!updatedPhotos.back) {
+        setCurrentBodyScanStep('back');
       }
     }
   };
@@ -185,32 +188,32 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   };
 
   const analyzeBodyScan = async (photos) => {
-    setBodyScanAnalyzing(true);
-    try {
-      // Upload only front and side photos
-      const uploadedPhotos = {};
-      for (const [key, imageUrl] of Object.entries(photos)) {
-        if (imageUrl && (key === 'front' || key === 'side')) {
-          const response = await fetch(imageUrl);
-          const blob = await response.blob();
-          const file = new File([blob], `${key}.jpg`, { type: 'image/jpeg' });
-          const { file_url } = await base44.integrations.Core.UploadFile({ file });
-          uploadedPhotos[key] = file_url;
-        }
-      }
+   setBodyScanAnalyzing(true);
+   try {
+     // Upload all body scan photos
+     const uploadedPhotos = {};
+     for (const [key, imageUrl] of Object.entries(photos)) {
+       if (imageUrl && (key === 'front' || key === 'side' || key === 'back')) {
+         const response = await fetch(imageUrl);
+         const blob = await response.blob();
+         const file = new File([blob], `${key}.jpg`, { type: 'image/jpeg' });
+         const { file_url } = await base44.integrations.Core.UploadFile({ file });
+         uploadedPhotos[key] = file_url;
+       }
+     }
 
-      // Analyze body
-      const { analyzeBodyImage } = await import('@/functions/analyzeBodyImage');
-      const result = await analyzeBodyImage({
-        front_photo_url: uploadedPhotos.front,
-        side_photo_url: uploadedPhotos.side,
-        back_photo_url: null,
-        user_id: user.id,
-        height: user.height,
-        weight: user.weight || user.current_weight,
-        age: user.age,
-        gender: user.gender
-      });
+     // Analyze body
+     const { analyzeBodyImage } = await import('@/functions/analyzeBodyImage');
+     const result = await analyzeBodyImage({
+       front_photo_url: uploadedPhotos.front,
+       side_photo_url: uploadedPhotos.side,
+       back_photo_url: uploadedPhotos.back || null,
+       user_id: user.id,
+       height: user.height,
+       weight: user.weight || user.current_weight,
+       age: user.age,
+       gender: user.gender
+     });
 
       setBodyScanResult({
         ...result,
@@ -230,20 +233,20 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     setSavingBodyScan(true);
     try {
       await base44.entities.BodyScanResult.create({
-        user_id: user.id,
-        front_photo_url: bodyScanResult.photos.front,
-        side_photo_url: bodyScanResult.photos.side,
-        back_photo_url: null,
-        somatotype: bodyScanResult.somatotype,
-        body_fat_percentage: bodyScanResult.body_fat_percentage,
-        muscle_definition_score: bodyScanResult.muscle_definition_score,
-        body_age_estimate: bodyScanResult.body_age_estimate,
-        posture_assessment: bodyScanResult.posture_assessment,
-        problem_areas: bodyScanResult.problem_areas,
-        strong_areas: bodyScanResult.strong_areas,
-        skin_texture: bodyScanResult.skin_texture,
-        skin_tone: bodyScanResult.skin_tone,
-        swelling_percentage: bodyScanResult.swelling_percentage
+       user_id: user.id,
+       front_photo_url: bodyScanResult.photos.front,
+       side_photo_url: bodyScanResult.photos.side,
+       back_photo_url: bodyScanResult.photos.back || null,
+       somatotype: bodyScanResult.somatotype,
+       body_fat_percentage: bodyScanResult.body_fat_percentage,
+       muscle_definition_score: bodyScanResult.muscle_definition_score,
+       body_age_estimate: bodyScanResult.body_age_estimate,
+       posture_assessment: bodyScanResult.posture_assessment,
+       problem_areas: bodyScanResult.problem_areas,
+       strong_areas: bodyScanResult.strong_areas,
+       skin_texture: bodyScanResult.skin_texture,
+       skin_tone: bodyScanResult.skin_tone,
+       swelling_percentage: bodyScanResult.swelling_percentage
       });
       alert('✅ Body scan salvato con successo!');
       onClose();
@@ -404,8 +407,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
           {/* Body Scan Photo Indicators */}
           {mode === 'bodyscan' && (
-            <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10 flex gap-4">
-              {['front', 'side'].map((step) => (
+           <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10 flex gap-4">
+             {['front', 'side', 'back'].map((step) => (
                 <div
                   key={step}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
@@ -704,7 +707,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 <Button
                   onClick={() => {
                     setBodyScanResult(null);
-                    setBodyScanPhotos({ front: null, side: null });
+                    setBodyScanPhotos({ front: null, side: null, back: null });
                     setCurrentBodyScanStep('front');
                     startCamera();
                   }}
