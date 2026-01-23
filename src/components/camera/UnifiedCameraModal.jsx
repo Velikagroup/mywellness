@@ -204,10 +204,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
      // Analyze body
      const result = await base44.functions.invoke('analyzeBodyImage', {
-       front_photo_url: uploadedPhotos.front,
-       side_photo_url: uploadedPhotos.side,
-       back_photo_url: uploadedPhotos.back || null,
-       user_id: user.id,
+       frontPhotoUrl: uploadedPhotos.front,
+       sidePhotoUrl: uploadedPhotos.side,
+       backPhotoUrl: uploadedPhotos.back || null,
+       userId: user.id,
        height: user.height,
        weight: user.weight || user.current_weight,
        age: user.age,
