@@ -10,15 +10,8 @@ import IngredientQuantityModal from './IngredientQuantityModal';
 
 export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
   const [ingredients, setIngredients] = useState([]);
-  const [showAddIngredient, setShowAddIngredient] = useState(false);
-  const [newIngredient, setNewIngredient] = useState({
-    name: '',
-    grams: '',
-    calories: '',
-    protein: '',
-    carbs: '',
-    fat: ''
-  });
+  const [showIngredientSelector, setShowIngredientSelector] = useState(false);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
   const [isSaving, setIsSaving] = useState(false);
   const [totals, setTotals] = useState({
     calories: mealLog.actual_calories || 0,
