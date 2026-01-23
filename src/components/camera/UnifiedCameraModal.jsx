@@ -165,6 +165,15 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     }
   };
 
+  const removeBodyScanPhoto = (step) => {
+    setBodyScanPhotos(prev => ({
+      ...prev,
+      [step]: null
+    }));
+    // Se rimuovi una foto, torna a quello step
+    setCurrentBodyScanStep(step);
+  };
+
   const navigateToBodyScan = async () => {
     try {
       // Upload all photos
@@ -230,7 +239,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   return (
     <div className="fixed inset-0 z-[100] bg-black">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/80 to-transparent">
+      <div className="absolute top-16 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/80 to-transparent">
         <div className="flex items-center justify-between">
           <button
             onClick={onClose}
@@ -302,11 +311,11 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
           {/* Body Scan Photo Indicators */}
           {mode === 'bodyscan' && (
-            <div className="absolute top-20 left-1/2 -translate-x-1/2 z-10 flex gap-4">
+            <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10 flex gap-4">
               {['front', 'side', 'back'].map((step) => (
                 <div
                   key={step}
-                  className={`flex flex-col items-center gap-2 p-3 rounded-xl ${
+                  className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
                     bodyScanPhotos[step] 
                       ? 'bg-green-500/80' 
                       : currentBodyScanStep === step 
@@ -314,6 +323,14 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                       : 'bg-white/20'
                   } backdrop-blur-sm`}
                 >
+                  {bodyScanPhotos[step] && (
+                    <button
+                      onClick={() => removeBodyScanPhoto(step)}
+                      className="absolute -top-2 -right-2 p-1 rounded-full bg-red-500 hover:bg-red-600 transition-colors z-20"
+                    >
+                      <X className="w-4 h-4 text-white" />
+                    </button>
+                  )}
                   <div className="w-16 h-20 rounded-lg border-2 border-white/50 flex items-center justify-center">
                     {bodyScanPhotos[step] ? (
                       <img src={bodyScanPhotos[step]} className="w-full h-full object-cover rounded-lg" />
