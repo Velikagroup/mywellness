@@ -485,6 +485,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         user={user}
         weightHistory={weightHistory}
         todayCalorieBalance={todayCalorieBalance}
+        lineData={lineData}
+        calorieBalanceMap={calorieBalanceMap}
         t={t}
       />
 
@@ -500,123 +502,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl mt-6" id="progress-section">
 
-          <div className="h-64 relative">
-            <ResponsiveContainer width="100%" height="100%">
-              <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
-                <defs>
-                  <linearGradient id="bodyFatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
-                  </linearGradient>
-                  <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                    <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
-                    <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
-                    <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
-                  </linearGradient>
-                </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
-                <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
-                <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
-                <Tooltip 
-                  contentStyle={{ 
-                    backgroundColor: 'rgba(255, 255, 255, 0.95)', 
-                    border: '1px solid #e5e7eb', 
-                    borderRadius: '8px',
-                    boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
-                  }} 
-                  formatter={(value, name, props) => {
-                    if (name === 'weight') {
-                      return [`${value.toFixed(1)} kg`, 'Peso'];
-                    }
-                    return [value, name];
-                  }}
-                  content={({ active, payload }) => {
-                    if (active && payload && payload.length) {
-                      const data = payload[0].payload;
-                      return (
-                        <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-lg">
-                          <p className="font-semibold text-gray-900">{data.name}</p>
-                          <p className="text-sm text-gray-700">{data.weight.toFixed(1)} kg</p>
-                          {data.calorieBalance !== null && (
-                            <p className={`text-sm font-semibold ${data.calorieBalance < 0 ? 'text-green-600' : data.calorieBalance > 0 ? 'text-red-600' : 'text-gray-600'}`}>
-                              Bilancio: {data.calorieBalance > 0 ? '+' : ''}{data.calorieBalance} kcal
-                            </p>
-                          )}
-                        </div>
-                      );
-                    }
-                    return null;
-                  }}
-                  labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
-                  cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
-                />
-                <ReferenceLine 
-                  y={targetWeight} 
-                  stroke="#26847F" 
-                  strokeDasharray="4 4" 
-                  strokeWidth={2}
-                  label={{ 
-                    value: 'Target', 
-                    position: 'insideTopRight', 
-                    fill: '#26847F', 
-                    fontSize: 13,
-                    fontWeight: 'bold'
-                  }}
-                />
-                {lineData.length > 0 && user.body_fat_percentage && (
-                  <ReferenceLine 
-                    x={lineData[lineData.length - 1].name}
-                    stroke="url(#bodyFatGradient)"
-                    strokeWidth={100}
-                    isFront={false}
-                  />
-                )}
-                <Line 
-                  type="monotone" 
-                  dataKey="weight" 
-                  stroke="url(#weightLineGradient)" 
-                  strokeWidth={3} 
-                  dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
-                  activeDot={{ r: 6, strokeWidth: 2 }} 
-                  connectNulls={true}
-                />
-              </LineChart>
-            </ResponsiveContainer>
-            <div className="absolute top-2 right-8 flex flex-col gap-2">
-              {lineData.length > 0 && user.body_fat_percentage && (
-                <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg">
-                  <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
-                  <p className="text-xs text-purple-600">Massa Grassa</p>
-                </div>
-              )}
-              {todayCalorieBalance !== null && (
-                <div className={`bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 shadow-lg ${
-                  todayCalorieBalance < 0 
-                    ? 'border-green-400' 
-                    : todayCalorieBalance > 0 
-                    ? 'border-red-400' 
-                    : 'border-gray-400'
-                }`}>
-                  <p className={`text-sm font-bold ${
-                    todayCalorieBalance < 0 
-                      ? 'text-green-700' 
-                      : todayCalorieBalance > 0 
-                      ? 'text-red-700' 
-                      : 'text-gray-700'
-                  }`}>
-                    {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)} kcal
-                  </p>
-                  <p className={`text-xs ${
-                    todayCalorieBalance < 0 
-                      ? 'text-green-600' 
-                      : todayCalorieBalance > 0 
-                      ? 'text-red-600' 
-                      : 'text-gray-600'
-                  }`}>Bilancio Oggi</p>
-                </div>
-              )}
-            </div>
-          </div>
+          <div className="hidden">
+
 
 
 
