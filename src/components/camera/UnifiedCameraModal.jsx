@@ -348,7 +348,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const calculateBodyFatNavyFormula = (userData) => {
     if (userData.gender === 'male') {
       if (!userData.neck_circumference || !userData.waist_circumference || !userData.height) {
-        return null;
+        // Fallback: usa una stima semplice basata su BMI (se non hai le misure)
+        return estimateBodyFatFromBMI(userData);
       }
       const abdomen = userData.waist_circumference;
       const neck = userData.neck_circumference;
@@ -361,7 +362,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       return Math.max(0, parseFloat(bodyFat.toFixed(1)));
     } else {
       if (!userData.neck_circumference || !userData.waist_circumference || !userData.hip_circumference || !userData.height) {
-        return null;
+        // Fallback: usa una stima semplice basata su BMI (se non hai le misure)
+        return estimateBodyFatFromBMI(userData);
       }
       const waist = userData.waist_circumference;
       const hip = userData.hip_circumference;
@@ -372,6 +374,35 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       const heightInches = heightCm / 2.54;
 
       const bodyFat = 163.205 * Math.log10(circumference) - 97.684 * Math.log10(heightInches) - 78.387;
+      return Math.max(0, parseFloat(bodyFat.toFixed(1)));
+    }
+  };
+
+  const estimateBodyFatFromBMI = (userData) => {
+    if (!userData.current_weight || !userData.height) return null;
+
+    const weight = userData.current_weight;
+    const heightCm = userData.height;
+    const heightM = heightCm / 100;
+    const bmi = weight / (heightM * heightM);
+
+    // Stima semplice in base a BMI (formula approssimativa di Deurenberg)
+    let age = 30;
+    if (userData.birthdate) {
+      const birthDate = new Date(userData.birthdate);
+      const today = new Date();
+      age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+    }
+
+    if (userData.gender === 'male') {
+      const bodyFat = (1.20 * bmi) + (0.23 * age) - 16.2;
+      return Math.max(0, parseFloat(bodyFat.toFixed(1)));
+    } else {
+      const bodyFat = (1.20 * bmi) + (0.23 * age) - 5.4;
       return Math.max(0, parseFloat(bodyFat.toFixed(1)));
     }
   };
