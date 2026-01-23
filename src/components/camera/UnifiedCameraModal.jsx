@@ -683,7 +683,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {cameraActive && !capturedImage && !calorieResult && !nutritionResult && (
             <button
               onClick={capturePhoto}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-[#26847F] border-4 border-white shadow-2xl hover:scale-110 transition-transform active:scale-95"
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-black border-4 border-white shadow-2xl hover:scale-110 transition-transform active:scale-95"
             />
           )}
         </>
