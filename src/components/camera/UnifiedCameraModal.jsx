@@ -347,6 +347,22 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     }
   };
 
+  const loadCalorieHistory = async () => {
+    if (!user) return;
+    try {
+      const history = await base44.entities.MealLog.filter(
+        { user_id: user.id },
+        '-created_date',
+        20
+      );
+      setCalorieHistory(history);
+      setShowCalorieHistoryModal(true);
+    } catch (error) {
+      console.error('Error loading calorie history:', error);
+      alert('Errore durante il caricamento dello storico');
+    }
+  };
+
   const calculateBodyFatNavyFormula = (userData) => {
     if (userData.gender === 'male') {
       if (!userData.neck_circumference || !userData.waist_circumference || !userData.height) {
