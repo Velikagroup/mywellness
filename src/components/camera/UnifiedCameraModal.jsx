@@ -404,7 +404,11 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       alert('✅ Peso registrato con successo!');
       setWeightKg('');
       setWeightUnit('kg');
-      onClose();
+
+      // Ricarica la pagina per aggiornare tutti i dati (peso e massa grassa)
+      setTimeout(() => {
+        window.location.reload();
+      }, 1000);
     } catch (error) {
       console.error('Error saving weight:', error);
       alert('Errore durante il salvataggio');
