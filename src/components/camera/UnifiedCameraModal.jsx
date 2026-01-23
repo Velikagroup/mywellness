@@ -354,12 +354,18 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     setSavingWeight(true);
     try {
       const today = new Date().toISOString().split('T')[0];
+      const weightValue = parseFloat(weightKg) >= 150 
+        ? parseFloat(weightKg) / 2.20462 
+        : parseFloat(weightKg);
+
       await base44.entities.WeightHistory.create({
         user_id: user.id,
-        weight: parseFloat(weightKg),
+        weight: weightValue,
         date: today
       });
       alert('✅ Peso registrato con successo!');
+      setWeightKg('');
+      setWeightUnit('kg');
       onClose();
     } catch (error) {
       console.error('Error saving weight:', error);
