@@ -44,6 +44,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [bodyScanHistory, setBodyScanHistory] = useState([]);
   const [expandedHistoryId, setExpandedHistoryId] = useState(null);
+  const [showCalorieHistoryModal, setShowCalorieHistoryModal] = useState(false);
+  const [calorieHistory, setCalorieHistory] = useState([]);
 
   useEffect(() => {
     if (isOpen && (mode === 'weight')) {
