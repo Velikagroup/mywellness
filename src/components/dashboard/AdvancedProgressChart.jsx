@@ -602,7 +602,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
 
               {/* Pesi */}
-              <div className="flex items-center gap-2 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-200/50">
+              <div className="absolute -top-16 right-6 flex items-center gap-2 bg-white/70 backdrop-blur-sm rounded-lg px-3 py-2 border border-gray-200/50">
                 <div className="text-right">
                   <p className="text-xs font-semibold text-gray-600">Attuale</p>
                   <p className="text-sm font-bold text-gray-800">{lastRecordedWeight.toFixed(1)}</p>
