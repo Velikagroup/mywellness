@@ -341,6 +341,44 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     }
   };
 
+  const handleSaveBodyFatCircumferences = async () => {
+    if (!neckCirc || !waistCirc || (user.gender === 'female' && !hipCirc)) {
+      alert('Inserisci tutti i dati richiesti');
+      return;
+    }
+
+    setSavingBodyFat(true);
+    try {
+      // Aggiorna le circonferenze nel profilo
+      const updateData = {
+        neck_circumference: parseFloat(neckCirc),
+        waist_circumference: parseFloat(waistCirc)
+      };
+
+      if (user.gender === 'female') {
+        updateData.hip_circumference = parseFloat(hipCirc);
+      }
+
+      await base44.auth.updateMe(updateData);
+
+      // Calcola la nuova massa grassa
+      const updatedUser = { ...user, ...updateData };
+      const calculatedBodyFat = calculateBodyFatNavyFormula(updatedUser);
+
+      if (calculatedBodyFat !== null) {
+        await base44.auth.updateMe({ body_fat_percentage: calculatedBodyFat });
+      }
+
+      alert('✅ Massa grassa aggiornata con successo!');
+      setShowBodyFatModal(false);
+      setRefreshTrigger(prev => prev + 1);
+    } catch (error) {
+      console.error('Error saving body fat data:', error);
+      alert('Errore durante il salvataggio');
+    }
+    setSavingBodyFat(false);
+  };
+
   const handleSaveWeight = async () => {
     console.log('🔍 handleSaveWeight called', { weight, user: user?.id, isSaving });
 
