@@ -178,25 +178,31 @@ export default function Dashboard() {
 
   useEffect(() => {
     const handleScroll = () => {
-      const scrollPosition = window.scrollY;
+      const firstBox = document.querySelector('.progress-chart-section');
+      const secondBox = document.getElementById('meals-macros-section');
+      
+      if (!firstBox || !secondBox) return;
+      
+      const firstBoxRect = firstBox.getBoundingClientRect();
+      const secondBoxRect = secondBox.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      // Primo box: opacità 1 quando in alto, diminuisce scrollando
-      const firstOpacity = Math.max(0.3, 1 - (scrollPosition / (windowHeight * 0.5)));
+      // Calcola quale box è più visibile nella viewport
+      const firstBoxVisible = firstBoxRect.top < windowHeight / 2 && firstBoxRect.bottom > windowHeight / 2;
+      const secondBoxVisible = secondBoxRect.top < windowHeight / 2;
       
-      // Secondo box: opacità 0.3 quando in alto, aumenta scrollando
-      const secondOpacity = Math.min(1, 0.3 + (scrollPosition / (windowHeight * 0.5)));
-      
-      setScrollOpacity({ first: firstOpacity, second: secondOpacity });
-      
-      // Applica l'opacità al secondo box tramite getElementById
-      const mealsSection = document.getElementById('meals-macros-section');
-      if (mealsSection) {
-        mealsSection.style.opacity = secondOpacity;
+      if (secondBoxVisible) {
+        // Il secondo box è prevalentemente visibile
+        setScrollOpacity({ first: 0.3, second: 1 });
+        secondBox.style.opacity = '1';
+      } else {
+        // Il primo box è prevalentemente visibile
+        setScrollOpacity({ first: 1, second: 0.3 });
+        if (secondBox) secondBox.style.opacity = '0.3';
       }
     };
 
-    handleScroll(); // Esegui subito al mount
+    handleScroll();
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
