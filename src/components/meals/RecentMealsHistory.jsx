@@ -137,10 +137,18 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
               transition={{ delay: index * 0.05 }}
-              onClick={() => setSelectedMeal(log)}
-              className="bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all cursor-pointer active:scale-95"
+              className="bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all"
             >
-              <div className="flex gap-4">
+              {/* Header cliccabile */}
+              <button
+                onClick={() => {
+                  if (expandedMealId !== log.id) {
+                    initializeIngredients(log.id, log);
+                  }
+                  setExpandedMealId(expandedMealId === log.id ? null : log.id);
+                }}
+                className="w-full p-4 flex gap-4 cursor-pointer hover:bg-gray-50 text-left"
+              >
                 {/* Foto */}
                 {log.photo_url && (
                   <img
@@ -185,7 +193,105 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                      </div>
                    </div>
                 </div>
-              </div>
+              </button>
+
+              {/* Contenuto accordion */}
+              <AnimatePresence>
+                {expandedMealId === log.id && mealIngredients[log.id] && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    transition={{ duration: 0.3 }}
+                    className="border-t border-gray-200"
+                  >
+                    <div className="p-6 space-y-6">
+                      {/* Foto grande */}
+                      {log.photo_url && (
+                        <div className="rounded-xl overflow-hidden">
+                          <img
+                            src={log.photo_url}
+                            alt="Pasto"
+                            className="w-full h-48 object-cover"
+                          />
+                        </div>
+                      )}
+
+                      {/* Informazioni Nutrizionali */}
+                      <div className="bg-gray-50 p-4 rounded-lg">
+                        <div className="flex items-center gap-2 mb-3">
+                          <Flame className="w-4 h-4 text-orange-500" />
+                          <p className="text-sm text-gray-600">Calorie</p>
+                        </div>
+                        <p className="text-3xl font-bold text-gray-900 mb-4">{Math.round(mealIngredients[log.id].totals.calories)}</p>
+
+                        <div className="grid grid-cols-3 gap-3">
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-600 mb-1">Proteina</p>
+                            <p className="text-lg font-bold text-red-600">{mealIngredients[log.id].totals.protein.toFixed(1)}g</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-600 mb-1">Carboidrati</p>
+                            <p className="text-lg font-bold text-amber-600">{mealIngredients[log.id].totals.carbs.toFixed(1)}g</p>
+                          </div>
+                          <div className="bg-white p-3 rounded-lg">
+                            <p className="text-xs text-gray-600 mb-1">Grassi</p>
+                            <p className="text-lg font-bold text-blue-600">{mealIngredients[log.id].totals.fat.toFixed(1)}g</p>
+                          </div>
+                        </div>
+                      </div>
+
+                      {/* Ingredienti */}
+                      <div>
+                        <h3 className="font-bold text-gray-900 mb-3 text-sm">Ingredienti ({mealIngredients[log.id].ingredients.length})</h3>
+
+                        <div className="space-y-3">
+                          {mealIngredients[log.id].ingredients.length > 0 ? (
+                            mealIngredients[log.id].ingredients.map((ing) => (
+                              <div key={ing.id} className="flex items-center justify-between p-3 border border-gray-200 rounded-lg">
+                                <div className="flex-1">
+                                  <p className="font-medium text-gray-900">{ing.name}</p>
+                                  <p className="text-xs text-gray-500">
+                                    {ing.grams}g · {ing.calories.toFixed(0)} cal
+                                  </p>
+                                </div>
+                                <button
+                                  onClick={() => handleRemoveIngredient(log.id, ing.id)}
+                                  className="text-red-500 hover:text-red-700 p-1"
+                                >
+                                  <Trash2 className="w-4 h-4" />
+                                </button>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-gray-500 text-sm text-center py-4">Nessun ingrediente aggiunto</p>
+                          )}
+                        </div>
+
+                        <Button
+                          onClick={() => setShowIngredientSelector(log.id)}
+                          className="w-full mt-4 h-12 bg-black hover:bg-gray-900 text-white font-semibold rounded-full"
+                        >
+                          <Plus className="w-4 h-4 mr-2" />
+                          Aggiungi ingrediente
+                        </Button>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+
+              {/* Ingredient Selector */}
+              {showIngredientSelector === log.id && (
+                <IngredientSelector
+                  isOpen={true}
+                  onClose={() => setShowIngredientSelector(null)}
+                  onSelectIngredient={(ing) => {
+                    setSelectedIngredient({ mealId: log.id, ingredient: ing });
+                    setShowIngredientSelector(null);
+                  }}
+                />
+              )}
             </motion.div>
           ))}
         </AnimatePresence>
