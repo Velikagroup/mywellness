@@ -529,6 +529,56 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
   return (
     <>
+      <div className="mb-4 p-4 bg-white/50 rounded-lg border border-gray-200/30">
+        <div className="flex items-center justify-between gap-4">
+          <div>
+            <label className="text-sm font-medium text-gray-700 block mb-2">Registra Peso</label>
+            <div className="flex gap-2">
+              <Input
+                type="number"
+                step="0.1"
+                value={weight}
+                onChange={(e) => setWeight(e.target.value)}
+                placeholder={weightUnit === 'kg' ? 'Es: 70.5' : 'Es: 155'}
+                className="w-24"
+                min="30"
+                max={weightUnit === 'kg' ? '300' : '660'}
+              />
+              <div className="flex gap-1 bg-gray-100 p-1 rounded-lg">
+                <button
+                  onClick={() => setWeightUnit('kg')}
+                  className={`px-3 py-1 rounded-md font-semibold text-sm transition-colors ${
+                    weightUnit === 'kg'
+                      ? 'bg-[#26847F] text-white'
+                      : 'bg-transparent text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  kg
+                </button>
+                <button
+                  onClick={() => setWeightUnit('lbs')}
+                  className={`px-3 py-1 rounded-md font-semibold text-sm transition-colors ${
+                    weightUnit === 'lbs'
+                      ? 'bg-[#26847F] text-white'
+                      : 'bg-transparent text-gray-700 hover:text-gray-900'
+                  }`}
+                >
+                  lbs
+                </button>
+              </div>
+              <Button
+                onClick={handleSaveWeight}
+                disabled={isSaving || !weight}
+                className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+              >
+                <Save className="w-4 h-4 mr-2" />
+                {isSaving ? 'Salvataggio...' : 'Salva'}
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       {(() => {
         const totalWeightToChange = startWeight - targetWeight;
         const actualDirection = lastRecordedWeight - startWeight;
