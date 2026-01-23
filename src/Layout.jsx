@@ -474,7 +474,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         {children}
       </main>
 
-      <div className="hidden md:flex fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 items-center gap-2">
+      <div className={`hidden md:flex fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 items-center gap-2 ${showUnifiedCamera ? 'invisible' : ''}`}>
         <LiquidGlassNav 
           navItems={allNavItems} 
           onActionClick={handleActionClick}
