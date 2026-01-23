@@ -544,14 +544,14 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               <div className="flex-1 flex flex-col md:flex-row items-center md:justify-end gap-3">
                 <div className="text-right">
                   <div className="flex items-baseline gap-1.5">
-                    <p className={`text-3xl font-bold bg-gradient-to-r ${isAligned ? 'from-green-600 to-emerald-500' : 'from-red-600 to-rose-500'} bg-clip-text text-transparent`}>{lastRecordedWeight.toFixed(1)}</p>
+                    <p className={`font-bold bg-gradient-to-r ${isAligned ? 'from-green-600 to-emerald-500' : 'from-red-600 to-rose-500'} bg-clip-text text-transparent`} style={{ fontSize: '25.5px' }}>{lastRecordedWeight.toFixed(1)}</p>
                     <p className={`text-sm font-semibold ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</p>
                   </div>
                 </div>
-                <div className="text-3xl font-light text-gray-400">></div>
+                <div className="font-light text-gray-400" style={{ fontSize: '25.5px' }}>></div>
                 <div className="text-left">
                   <div className="flex items-baseline gap-1.5">
-                    <p className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent">{targetWeight.toFixed(1)}</p>
+                    <p className="font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent" style={{ fontSize: '25.5px' }}>{targetWeight.toFixed(1)}</p>
                     <p className="text-sm font-semibold text-teal-600">kg</p>
                   </div>
                 </div>
