@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine, Image, ChevronDown } from 'lucide-react';
+import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine, Image, ChevronDown, ClipboardList } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
@@ -13,7 +13,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const streamRef = useRef(null);
   const fileInputRef = useRef(null);
 
-  const [mode, setMode] = useState('calories'); // 'calories', 'weight', 'bodyscan'
+  const [mode, setMode] = useState('calories'); // 'calories', 'nutrition_table', 'weight', 'bodyscan'
   const [cameraActive, setCameraActive] = useState(false);
   const [facingMode, setFacingMode] = useState('environment');
   const [capturedImage, setCapturedImage] = useState(null);
@@ -21,6 +21,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   // Calorie mode states
   const [analyzing, setAnalyzing] = useState(false);
   const [calorieResult, setCalorieResult] = useState(null);
+
+  // Nutrition table mode states
+  const [nutritionAnalyzing, setNutritionAnalyzing] = useState(false);
+  const [nutritionResult, setNutritionResult] = useState(null);
 
   // Weight mode states
   const [weightKg, setWeightKg] = useState('');
@@ -41,7 +45,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const [expandedHistoryId, setExpandedHistoryId] = useState(null);
 
   useEffect(() => {
-    if (isOpen && mode !== 'weight') {
+    if (isOpen && (mode === 'weight')) {
+      stopCamera();
+    } else if (isOpen) {
       startCamera();
     }
     return () => {
@@ -106,6 +112,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         setCapturedImage(imageUrl);
         stopCamera();
         await analyzeCalories(blob);
+      } else if (mode === 'nutrition_table') {
+        setCapturedImage(imageUrl);
+        stopCamera();
+        await analyzeNutritionTable(blob);
       } else if (mode === 'bodyscan') {
         handleBodyScanPhoto(imageUrl, blob);
       }
@@ -152,6 +162,68 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       alert('Errore durante l\'analisi. Riprova.');
     }
     setAnalyzing(false);
+  };
+
+  const analyzeNutritionTable = async (blob) => {
+    setNutritionAnalyzing(true);
+    try {
+      const file = new File([blob], 'nutrition_table.jpg', { type: 'image/jpeg' });
+      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Analizza questa tabella nutrizionale e fornisci una valutazione della qualità nutritiva dell'alimento.
+
+        Estrai le informazioni principali e assegna uno score da 0 a 10 basato su:
+        - Contenuto di zuccheri (meno è meglio)
+        - Contenuto di grassi saturi (meno è meglio)
+        - Contenuto di sale (meno è meglio)
+        - Contenuto di proteine (più è meglio)
+        - Contenuto di fibre (più è meglio)
+        - Naturalità dell'ingrediente
+
+        Fornisci i dati in questo formato JSON:
+        {
+          "nome_alimento": "nome del prodotto",
+          "score_qualita": numero da 0 a 10,
+          "calorie_per_porzione": numero,
+          "proteine_g": numero,
+          "carboidrati_g": numero,
+          "grassi_g": numero,
+          "zuccheri_g": numero,
+          "sale_g": numero,
+          "fibre_g": numero,
+          "valutazione": "breve descrizione della qualità nutrizionale",
+          "punti_forti": ["lista di punti positivi"],
+          "punti_deboli": ["lista di punti negativi"],
+          "consiglio": "raccomandazione per il consumo"
+        }`,
+        file_urls: [file_url],
+        response_json_schema: {
+          type: "object",
+          properties: {
+            nome_alimento: { type: "string" },
+            score_qualita: { type: "number" },
+            calorie_per_porzione: { type: "number" },
+            proteine_g: { type: "number" },
+            carboidrati_g: { type: "number" },
+            grassi_g: { type: "number" },
+            zuccheri_g: { type: "number" },
+            sale_g: { type: "number" },
+            fibre_g: { type: "number" },
+            valutazione: { type: "string" },
+            punti_forti: { type: "array", items: { type: "string" } },
+            punti_deboli: { type: "array", items: { type: "string" } },
+            consiglio: { type: "string" }
+          }
+        }
+      });
+
+      setNutritionResult({ ...result, photo_url: file_url });
+    } catch (error) {
+      console.error('Error analyzing nutrition table:', error);
+      alert('Errore durante l\'analisi. Riprova.');
+    }
+    setNutritionAnalyzing(false);
   };
 
   const handleBodyScanPhoto = (imageUrl, blob) => {
@@ -298,6 +370,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const retakePhoto = () => {
     setCapturedImage(null);
     setCalorieResult(null);
+    setNutritionResult(null);
     startCamera();
   };
 
@@ -314,6 +387,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       setCapturedImage(imageUrl);
       stopCamera();
       await analyzeCalories(file);
+    } else if (mode === 'nutrition_table') {
+      setCapturedImage(imageUrl);
+      stopCamera();
+      await analyzeNutritionTable(file);
     } else if (mode === 'bodyscan') {
       handleBodyScanPhoto(imageUrl, file);
     }
@@ -365,6 +442,18 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         >
           <UtensilsCrossed className="w-6 h-6" />
           <span className="text-xs font-medium">Calories</span>
+        </button>
+
+        <button
+          onClick={() => setMode('nutrition_table')}
+          className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
+            mode === 'nutrition_table' 
+              ? 'bg-[#26847F] text-white scale-110' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}
+        >
+          <ClipboardList className="w-6 h-6" />
+          <span className="text-xs font-medium">Nutrition</span>
         </button>
 
         <button
@@ -439,8 +528,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
             </div>
           )}
 
-          {/* Gallery Button (solo per calories e bodyscan) */}
-          {(mode === 'calories' || mode === 'bodyscan') && !capturedImage && !calorieResult && (
+          {/* Gallery Button */}
+          {(mode === 'calories' || mode === 'nutrition_table' || mode === 'bodyscan') && !capturedImage && !calorieResult && !nutritionResult && (
             <>
               <input
                 ref={fileInputRef}
@@ -459,7 +548,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           )}
 
           {/* Capture Button */}
-          {cameraActive && !capturedImage && !calorieResult && (
+          {cameraActive && !capturedImage && !calorieResult && !nutritionResult && (
             <button
               onClick={capturePhoto}
               className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-[#26847F] border-4 border-white shadow-2xl hover:scale-110 transition-transform active:scale-95"
@@ -516,6 +605,119 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           <div className="text-center text-white">
             <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
             <p className="text-lg font-semibold">Analisi in corso...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Nutrition Table Analyzing */}
+      {mode === 'nutrition_table' && nutritionAnalyzing && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
+          <div className="text-center text-white">
+            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-lg font-semibold">Analisi tabella nutrizionale...</p>
+          </div>
+        </div>
+      )}
+
+      {/* Nutrition Table Result */}
+      {mode === 'nutrition_table' && nutritionResult && (
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-6 overflow-y-auto">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl my-auto">
+            {nutritionResult.photo_url && (
+              <div className="relative w-full h-48 rounded-t-3xl overflow-hidden bg-gray-100">
+                <img 
+                  src={nutritionResult.photo_url} 
+                  alt="Tabella nutrizionale"
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+
+            <div className="p-8">
+              <div className="mb-6 text-center">
+                <h3 className="text-2xl font-bold text-gray-900 mb-2">{nutritionResult.nome_alimento}</h3>
+                <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#26847F]/20 to-[#26847F]/10 border-2 border-[#26847F]">
+                  <p className="text-3xl font-bold text-[#26847F]">{nutritionResult.score_qualita}</p>
+                </div>
+                <p className="text-sm text-gray-500 mt-3 font-medium">Score Qualità</p>
+              </div>
+
+              <div className="border-t border-gray-200 mb-6"></div>
+
+              <div className="mb-6">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Informazioni Nutrizionali</p>
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xl font-bold text-gray-900">{nutritionResult.calorie_per_porzione}</p>
+                    <p className="text-xs text-gray-600 mt-1">Calorie</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xl font-bold text-gray-900">{nutritionResult.proteine_g}g</p>
+                    <p className="text-xs text-gray-600 mt-1">Proteine</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xl font-bold text-gray-900">{nutritionResult.carboidrati_g}g</p>
+                    <p className="text-xs text-gray-600 mt-1">Carboidrati</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xl font-bold text-gray-900">{nutritionResult.grassi_g}g</p>
+                    <p className="text-xs text-gray-600 mt-1">Grassi</p>
+                  </div>
+                </div>
+              </div>
+
+              {nutritionResult.valutazione && (
+                <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                  <p className="text-sm text-blue-900">{nutritionResult.valutazione}</p>
+                </div>
+              )}
+
+              {nutritionResult.punti_forti && nutritionResult.punti_forti.length > 0 && (
+                <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-2">Punti Positivi</p>
+                  <ul className="space-y-1">
+                    {nutritionResult.punti_forti.map((punto, idx) => (
+                      <li key={idx} className="text-sm text-green-800">✓ {punto}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {nutritionResult.punti_deboli && nutritionResult.punti_deboli.length > 0 && (
+                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">Punti Negativi</p>
+                  <ul className="space-y-1">
+                    {nutritionResult.punti_deboli.map((punto, idx) => (
+                      <li key={idx} className="text-sm text-red-800">✗ {punto}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              {nutritionResult.consiglio && (
+                <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-amber-700 uppercase tracking-wide mb-2">Consiglio</p>
+                  <p className="text-sm text-amber-900">{nutritionResult.consiglio}</p>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <Button
+                  onClick={retakePhoto}
+                  variant="outline"
+                  className="flex-1 border-gray-300 hover:bg-gray-50"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Rifai
+                </Button>
+                <Button
+                  onClick={onClose}
+                  className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                >
+                  Chiudi
+                </Button>
+              </div>
+            </div>
           </div>
         </div>
       )}
