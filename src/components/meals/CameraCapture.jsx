@@ -134,10 +134,10 @@ export default function CameraCapture({ onCapture, onClose, t }) {
       />
       <canvas ref={canvasRef} className="hidden" />
 
-      {/* Bottone chiudi (X in alto a destra) */}
+      {/* Bottone chiudi (X in alto a sinistra) */}
       <button
         onClick={onClose}
-        className="absolute top-10 right-6 z-50 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
+        className="absolute top-10 left-6 z-50 w-12 h-12 rounded-full flex items-center justify-center shadow-lg hover:scale-110 transition-transform"
         style={{
           background: 'rgba(0, 0, 0, 0.5)',
           backdropFilter: 'blur(8px)'
@@ -159,31 +159,28 @@ export default function CameraCapture({ onCapture, onClose, t }) {
             onTouchEnd={handleSwipe}
           />
 
-          {/* Preview foto recenti in basso a sinistra */}
-          {recentPhotos.length > 0 && (
-            <div className="absolute bottom-8 left-6 z-10">
-              <button
-                onClick={handleGalleryClick}
-                className="w-16 h-16 rounded-lg overflow-hidden border-3 border-white shadow-lg hover:scale-105 transition-transform bg-white"
-              >
-                <img
-                  src={recentPhotos[0]}
-                  alt="Ultima foto"
-                  className="w-full h-full object-cover"
-                />
-              </button>
-            </div>
-          )}
-
-          {/* Bottone apri galleria (se nessuna foto recente) */}
-          {recentPhotos.length === 0 && (
-            <button
-              onClick={handleGalleryClick}
-              className="absolute bottom-8 left-6 z-10 w-16 h-16 bg-white rounded-lg flex items-center justify-center shadow-lg hover:scale-105 transition-transform"
-            >
-              <ImageIcon className="w-7 h-7 text-gray-800" />
-            </button>
-          )}
+          {/* Pulsante galleria (stile liquid glass) */}
+          <button
+            onClick={handleGalleryClick}
+            className="absolute bottom-8 left-6 z-10 p-4 rounded-full flex items-center justify-center hover:scale-110 transition-transform"
+            style={{
+              width: '64px',
+              height: '64px',
+              backdropFilter: 'blur(12px) saturate(180%)',
+              background: 'linear-gradient(135deg, rgba(249, 250, 251, 0.75) 0%, rgba(243, 244, 246, 0.65) 50%, rgba(249, 250, 241, 0.75) 100%)',
+              boxShadow: '0 8px 32px 0 rgba(31, 38, 135, 0.08), inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.05)'
+            }}
+          >
+            {recentPhotos.length > 0 ? (
+              <img
+                src={recentPhotos[0]}
+                alt="Ultima foto"
+                className="w-full h-full object-cover rounded-full"
+              />
+            ) : (
+              <ImageIcon className="w-6 h-6 text-gray-600" />
+            )}
+          </button>
 
           {/* Zoom Selector (sopra bottone scatta foto) */}
           <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex gap-2">
