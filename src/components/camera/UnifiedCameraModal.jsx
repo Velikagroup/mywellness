@@ -29,8 +29,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   // Body scan mode states
   const [bodyScanPhotos, setBodyScanPhotos] = useState({
     front: null,
-    side: null,
-    back: null
+    side: null
   });
   const [currentBodyScanStep, setCurrentBodyScanStep] = useState('front');
   const [bodyScanAnalyzing, setBodyScanAnalyzing] = useState(false);
@@ -406,7 +405,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {/* Body Scan Photo Indicators */}
           {mode === 'bodyscan' && (
             <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10 flex gap-4">
-              {['front', 'side', 'back'].map((step) => (
+              {['front', 'side'].map((step) => (
                 <div
                   key={step}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
@@ -705,7 +704,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 <Button
                   onClick={() => {
                     setBodyScanResult(null);
-                    setBodyScanPhotos({ front: null, side: null, back: null });
+                    setBodyScanPhotos({ front: null, side: null });
                     setCurrentBodyScanStep('front');
                     startCamera();
                   }}
