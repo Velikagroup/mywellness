@@ -56,11 +56,14 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
     );
   }
 
+  const displayedMeals = mealLogs.slice(0, displayedCount);
+  const hasMore = displayedCount < mealLogs.length;
+
   return (
     <>
       <div className="space-y-3">
         <AnimatePresence>
-          {mealLogs.map((log, index) => (
+          {displayedMeals.map((log, index) => (
             <motion.div
               key={log.id}
               initial={{ opacity: 0, y: 10 }}
