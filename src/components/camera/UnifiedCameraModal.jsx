@@ -451,6 +451,36 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     }
   };
 
+  const saveMealLog = async () => {
+    if (!calorieResult || !user) return;
+    
+    try {
+      const today = new Date().toISOString().split('T')[0];
+      
+      await base44.entities.MealLog.create({
+        user_id: user.id,
+        original_meal_id: null,
+        date: today,
+        meal_type: 'lunch',
+        photo_url: calorieResult.photo_url,
+        detected_items: [calorieResult.nome_cibo],
+        actual_calories: calorieResult.calorie,
+        actual_protein: calorieResult.proteine,
+        actual_carbs: calorieResult.carboidrati,
+        actual_fat: calorieResult.grassi,
+        planned_calories: calorieResult.calorie
+      });
+      
+      alert('✅ Pasto salvato con successo!');
+      setCalorieResult(null);
+      setCapturedImage(null);
+      onClose();
+    } catch (error) {
+      console.error('Error saving meal log:', error);
+      alert('Errore durante il salvataggio del pasto');
+    }
+  };
+
   const retakePhoto = () => {
     setCapturedImage(null);
     setCalorieResult(null);
