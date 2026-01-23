@@ -732,6 +732,15 @@ export default function Dashboard() {
                   }}
                 />
               </div>
+
+              {/* Storico Pasti Recenti */}
+              <div className="bg-white/65 rounded-xl p-6 border border-gray-200/30 backdrop-blur-md shadow-xl">
+                <h2 className="text-2xl font-bold text-gray-900 mb-6">📋 Recentemente subito</h2>
+                <RecentMealsHistory 
+                  userId={user.id}
+                  onMealSelect={setSelectedMeal}
+                />
+              </div>
             </div>
           </div>
         </div>
