@@ -3,7 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { X, Plus, Trash2, Flame } from 'lucide-react';
+import { ArrowLeft, Plus, Trash2, Flame } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
 import IngredientSelector from './IngredientSelector';
 import IngredientQuantityModal from './IngredientQuantityModal';
