@@ -622,12 +622,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {/* Frame Guide per Calories */}
           {mode === 'calories' && cameraActive && !capturedImage && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              {/* Semi-transparent overlay */}
-              <div className="absolute inset-0 bg-black/40" />
-
               {/* Camera frame */}
               <div className="relative w-80 h-96 border-4 border-white/60 rounded-3xl shadow-2xl flex items-center justify-center">
-                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 rounded-3xl" />
                 <div className="flex flex-col items-center gap-4 z-10">
                   <UtensilsCrossed className="w-16 h-16 text-white/70" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Centra il cibo</p>
