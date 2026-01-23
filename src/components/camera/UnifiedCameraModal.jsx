@@ -974,14 +974,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                    Rifai
                  </Button>
                  <Button
-                   onClick={() => {
-                     setCapturedImage(null);
-                     setCalorieResult(null);
-                     startCamera();
-                   }}
+                   onClick={saveMealLog}
                    className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                  >
-                   Nuovo
+                   Salva
                  </Button>
                </div>
             </div>
