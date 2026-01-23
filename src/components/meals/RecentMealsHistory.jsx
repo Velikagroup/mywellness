@@ -79,7 +79,7 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                 {/* Dettagli */}
                 <div className="flex-1 min-w-0">
                   <div className="flex justify-between items-start gap-2 mb-3">
-                     <p className="font-bold text-gray-900 line-clamp-2">
+                     <p className="text-gray-900 line-clamp-2">
                        {getMealName(log)}
                      </p>
                      <span className="text-xs text-gray-500 flex-shrink-0">
