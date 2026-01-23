@@ -925,13 +925,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 >
                   {savingBodyScan ? 'Salvataggio...' : 'Salva Scan'}
                 </Button>
-                <Button
-                  onClick={onClose}
-                  variant="outline"
-                  className="px-6 border-gray-300 hover:bg-gray-50"
-                >
-                  Chiudi
-                </Button>
               </div>
             </div>
           </div>
