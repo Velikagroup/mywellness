@@ -95,7 +95,7 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
   };
 
   return (
-    <Dialog open={true} onOpenChange={onClose}>
+    <Dialog open={!!mealLog} onOpenChange={(open) => !open && onClose()}>
       <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
         <DialogHeader className="border-b border-gray-200 pb-4 sticky top-0 bg-white z-10">
           <div className="flex items-start justify-between">
