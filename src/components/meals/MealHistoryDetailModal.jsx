@@ -5,6 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { X, Plus, Trash2, Flame } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import IngredientSelector from './IngredientSelector';
+import IngredientQuantityModal from './IngredientQuantityModal';
 
 export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
   const [ingredients, setIngredients] = useState([]);
