@@ -309,11 +309,18 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
         </div>
       )}
 
-      {selectedMeal && (
-        <MealHistoryDetailModal
-          mealLog={selectedMeal}
-          onClose={() => setSelectedMeal(null)}
-          onReload={loadMealLogs}
+      {selectedIngredient && (
+        <IngredientQuantityModal
+          isOpen={true}
+          ingredient={selectedIngredient.ingredient}
+          onClose={() => setSelectedIngredient(null)}
+          onConfirm={(data) => {
+            const ingredientData = {
+              ...data,
+              id: Date.now()
+            };
+            handleAddIngredientQuantity(selectedIngredient.mealId, ingredientData);
+          }}
         />
       )}
     </>
