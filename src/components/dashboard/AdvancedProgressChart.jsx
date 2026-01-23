@@ -674,5 +674,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             />
             </div>
 
-            </>
-            );
+      </>
+    );
+  }
+}
