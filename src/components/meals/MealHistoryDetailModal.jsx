@@ -73,24 +73,22 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
 
   return (
     <Dialog open={!!mealLog} onOpenChange={(open) => !open && onClose()}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white">
-        <DialogHeader className="border-b border-gray-200 pb-4 sticky top-0 bg-white z-10">
-          <div className="flex items-start justify-between">
-            <div>
-              <DialogTitle className="text-2xl font-bold text-gray-900 text-left">
-                {mealLog.meal_type === 'breakfast' ? '🥐' : 
-                 mealLog.meal_type === 'snack1' ? '🥜' :
-                 mealLog.meal_type === 'lunch' ? '🍽️' :
-                 mealLog.meal_type === 'snack2' ? '🍌' :
-                 '🍴'} Dettagli Pasto
-              </DialogTitle>
-              <p className="text-sm text-gray-500 mt-1">
-                {new Date(mealLog.created_date).toLocaleString('it-IT')}
-              </p>
-            </div>
-            <button onClick={onClose} className="text-gray-400 hover:text-gray-600">
-              <X className="w-6 h-6" />
+      <DialogContent className="max-w-md bg-white">
+        <DialogHeader className="border-b border-gray-200 pb-4">
+          <div className="flex items-center gap-3">
+            <button
+              onClick={onClose}
+              className="text-gray-600 hover:text-gray-900 p-2 -ml-2"
+            >
+              <ArrowLeft className="w-5 h-5" />
             </button>
+            <DialogTitle className="text-xl font-bold text-gray-900">
+              {mealLog.meal_type === 'breakfast' ? '🥐' : 
+               mealLog.meal_type === 'snack1' ? '🥜' :
+               mealLog.meal_type === 'lunch' ? '🍽️' :
+               mealLog.meal_type === 'snack2' ? '🍌' :
+               '🍴'} {new Date(mealLog.created_date).toLocaleTimeString('it-IT', { hour: '2-digit', minute: '2-digit' })}
+            </DialogTitle>
           </div>
         </DialogHeader>
 
