@@ -71,7 +71,7 @@ const calculateNEAT = (userData) => {
   return bmr * multiplier;
 };
 
-export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, isSavingBMR, isSavingBodyFat, isSavingCalories, mealsUpdateTrigger, meals = [], mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onDataReload, onOpenPhotoGallery, onOpenProgressAnalysis }) {
+export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, onEditNEAT, isSavingBMR, isSavingBodyFat, isSavingCalories, mealsUpdateTrigger, meals = [], mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onDataReload, onOpenPhotoGallery, onOpenProgressAnalysis }) {
   const { t } = useLanguage();
   const [weight, setWeight] = useState('');
   const [isSaving, setIsSaving] = useState(false);
@@ -739,7 +739,10 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                  >
                    BMR: <span className={isWeightLoss ? "text-green-600" : "text-red-600"}>{user.bmr ? Math.round(user.bmr) : Math.round(calculateBMR(user))} kcal</span>
                  </span>
-                 <span className="font-medium text-gray-600 text-xs">
+                 <span 
+                   className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
+                   onClick={onEditNEAT}
+                 >
                    NEAT: <span className={isWeightLoss ? "text-green-400" : "text-red-400"}>{Math.round(calculateNEAT(user))} kcal</span>
                  </span>
                </div>

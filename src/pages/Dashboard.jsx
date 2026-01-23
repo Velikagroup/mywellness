@@ -68,6 +68,8 @@ export default function Dashboard() {
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
   const [scrollOpacity, setScrollOpacity] = useState({ first: 1, second: 0.3 });
+  const [showNEATModal, setShowNEATModal] = useState(false);
+  const [selectedActivityLevel, setSelectedActivityLevel] = useState(null);
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -601,6 +603,23 @@ export default function Dashboard() {
     }
   };
 
+  const handleSaveActivityLevel = async () => {
+    if (!selectedActivityLevel) {
+      alert('Seleziona un livello di attività');
+      return;
+    }
+
+    try {
+      await base44.auth.updateMe({ activity_level: selectedActivityLevel });
+      setShowNEATModal(false);
+      await loadUserData();
+      alert('✅ Livello di attività aggiornato');
+    } catch (error) {
+      console.error('Error updating activity level:', error);
+      alert('Errore nell\'aggiornamento');
+    }
+  };
+
   if (isLoading || isRebalancing || isRedirecting || !user) {
     return (
       <div className="min-h-screen flex items-center justify-center" style={{
@@ -705,6 +724,10 @@ export default function Dashboard() {
                       return;
                     }
                     setShowProgressPhoto(true);
+                  }}
+                  onEditNEAT={() => {
+                    setSelectedActivityLevel(user?.activity_level || 'lightly_active');
+                    setShowNEATModal(true);
                   }}
                 />
               </div>
@@ -922,6 +945,64 @@ export default function Dashboard() {
                 className="flex-1"
               >
                 {t('upgradeModal.cancel')}
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Dialog Modifica NEAT */}
+      <Dialog open={showNEATModal} onOpenChange={setShowNEATModal}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-bold text-gray-900">Livello di Attività (NEAT)</DialogTitle>
+          </DialogHeader>
+          <div className="space-y-4 pt-4">
+            <p className="text-sm text-gray-600">
+              Seleziona il tuo livello di attività quotidiana per calcolare il NEAT (Non-Exercise Activity Thermogenesis) corretto
+            </p>
+            
+            <div className="space-y-3">
+              {[
+                { value: 'sedentary', label: 'Sedentario', desc: 'Lavoro da scrivania, poco movimento' },
+                { value: 'lightly_active', label: 'Poco Attivo', desc: 'Attività leggera, cammino occasionale' },
+                { value: 'moderately_active', label: 'Moderatamente Attivo', desc: 'Movimento regolare, alcune passeggiate' },
+                { value: 'very_active', label: 'Molto Attivo', desc: 'Lavoro fisico o sport regolare' },
+                { value: 'professional_athlete', label: 'Atleta', desc: 'Allenamento intenso quotidiano' }
+              ].map((level) => (
+                <button
+                  key={level.value}
+                  onClick={() => setSelectedActivityLevel(level.value)}
+                  className={`w-full text-left p-4 rounded-lg border-2 transition-all ${
+                    selectedActivityLevel === level.value
+                      ? 'border-[#26847F] bg-[#26847F]/5'
+                      : 'border-gray-200 hover:border-gray-300'
+                  }`}
+                >
+                  <p className={`font-semibold ${
+                    selectedActivityLevel === level.value ? 'text-[#26847F]' : 'text-gray-900'
+                  }`}>
+                    {level.label}
+                  </p>
+                  <p className="text-xs text-gray-600 mt-1">{level.desc}</p>
+                </button>
+              ))}
+            </div>
+            
+            <div className="flex gap-3 pt-2">
+              <Button
+                onClick={handleSaveActivityLevel}
+                disabled={!selectedActivityLevel}
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+              >
+                Salva
+              </Button>
+              <Button
+                onClick={() => setShowNEATModal(false)}
+                variant="outline"
+                className="flex-1"
+              >
+                Annulla
               </Button>
             </div>
           </div>
