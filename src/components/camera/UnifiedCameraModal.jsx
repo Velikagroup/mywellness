@@ -409,7 +409,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           >
             <X className="w-6 h-6 text-white" />
           </button>
-          {cameraActive && mode !== 'bodyscan' && (
+          {cameraActive && (
             <button
               onClick={() => setFacingMode(prev => prev === 'user' ? 'environment' : 'user')}
               className="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors"
