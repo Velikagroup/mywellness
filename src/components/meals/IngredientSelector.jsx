@@ -131,41 +131,84 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
           )}
         </div>
 
-        <div className="px-6 pb-4">
-          {/* Suggested */}
-          <h3 className="font-bold text-gray-900 mb-4 text-sm">Sugerencias</h3>
-          
-          {isLoading ? (
-            <div className="py-8 text-center text-gray-500">
-              Cargando ingredientes...
-            </div>
-          ) : filteredIngredients.length > 0 ? (
-            <div className="space-y-3">
-              {filteredIngredients.map((ingredient) => (
-                <div
-                  key={ingredient.id}
-                  className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
-                >
-                  <div className="flex-1">
-                    <p className="font-medium text-gray-900">{ingredient.name}</p>
-                    {ingredient.default_unit && ingredient.calories_per_unit && (
-                      <p className="text-xs text-gray-500">
-                        💪 {ingredient.calories_per_unit} cal · {ingredient.default_unit}
-                      </p>
-                    )}
-                  </div>
-                  <button
-                    onClick={() => handleSelectIngredient(ingredient)}
-                    className="ml-4 flex-shrink-0 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors"
+        <div className="px-6 pb-4 space-y-6">
+          {/* AI Suggestions */}
+          {aiSuggestions.length > 0 && (
+            <div>
+              <h3 className="font-bold text-gray-900 mb-3 text-sm">✨ Sugerencias IA</h3>
+              <div className="space-y-3">
+                {aiSuggestions.map((ingredient, idx) => (
+                  <div
+                    key={idx}
+                    className="flex items-center justify-between p-4 border border-blue-200 bg-blue-50 rounded-lg hover:bg-blue-100 transition-colors"
                   >
-                    <Plus className="w-5 h-5 text-gray-700" />
-                  </button>
-                </div>
-              ))}
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{ingredient.name}</p>
+                      <p className="text-xs text-gray-600">
+                        💪 {Math.round(ingredient.calories_per_100g)} cal · 100{ingredient.default_unit || 'g'}
+                      </p>
+                    </div>
+                    <button
+                      onClick={() => handleSelectIngredient({
+                        id: `ai-${idx}`,
+                        name: ingredient.name,
+                        calories_per_100g: ingredient.calories_per_100g,
+                        protein_per_100g: ingredient.protein_per_100g,
+                        carbs_per_100g: ingredient.carbs_per_100g,
+                        fat_per_100g: ingredient.fat_per_100g,
+                        default_unit: ingredient.default_unit || 'g'
+                      })}
+                      className="ml-4 flex-shrink-0 bg-blue-500 hover:bg-blue-600 p-2 rounded-full transition-colors"
+                    >
+                      <Plus className="w-5 h-5 text-white" />
+                    </button>
+                  </div>
+                ))}
+              </div>
             </div>
-          ) : (
+          )}
+
+          {/* Database Ingredients */}
+          {filteredIngredients.length > 0 && (
+            <div>
+              <h3 className="font-bold text-gray-900 mb-3 text-sm">Todos</h3>
+              <div className="space-y-3">
+                {filteredIngredients.map((ingredient) => (
+                  <div
+                    key={ingredient.id}
+                    className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
+                  >
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900">{ingredient.name}</p>
+                      {ingredient.calories_per_100g && (
+                        <p className="text-xs text-gray-500">
+                          💪 {Math.round(ingredient.calories_per_100g)} cal · 100{ingredient.default_unit || 'g'}
+                        </p>
+                      )}
+                    </div>
+                    <button
+                      onClick={() => handleSelectIngredient(ingredient)}
+                      className="ml-4 flex-shrink-0 bg-gray-100 hover:bg-gray-200 p-2 rounded-full transition-colors"
+                    >
+                      <Plus className="w-5 h-5 text-gray-700" />
+                    </button>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Empty State */}
+          {!isLoading && filteredIngredients.length === 0 && aiSuggestions.length === 0 && searchQuery.length > 0 && (
             <div className="py-8 text-center">
               <p className="text-gray-500">No se encontraron ingredientes</p>
+            </div>
+          )}
+
+          {/* Initial State */}
+          {!searchQuery && filteredIngredients.length === 0 && isLoading && (
+            <div className="py-8 text-center text-gray-500">
+              Cargando ingredientes...
             </div>
           )}
         </div>
