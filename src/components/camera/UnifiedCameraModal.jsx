@@ -203,8 +203,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
      }
 
      // Analyze body
-     const { analyzeBodyImage } = await import('@/functions/analyzeBodyImage');
-     const result = await analyzeBodyImage({
+     const result = await base44.functions.invoke('analyzeBodyImage', {
        front_photo_url: uploadedPhotos.front,
        side_photo_url: uploadedPhotos.side,
        back_photo_url: uploadedPhotos.back || null,
