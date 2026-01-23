@@ -928,6 +928,82 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               />
             </div>
 
+            {/* Body Fat Modal */}
+            <Dialog open={showBodyFatModal} onOpenChange={setShowBodyFatModal}>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="text-xl font-bold text-gray-900">Aggiorna Massa Grassa</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <p className="text-sm text-gray-600">
+                    Inserisci le tue misure corporee per calcolare con precisione la massa grassa
+                  </p>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Circonferenza Collo (cm)
+                    </label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={neckCirc}
+                      onChange={(e) => setNeckCirc(e.target.value)}
+                      placeholder="Es: 37.5"
+                      className="h-10"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">
+                      Circonferenza Vita (cm)
+                    </label>
+                    <Input
+                      type="number"
+                      step="0.1"
+                      value={waistCirc}
+                      onChange={(e) => setWaistCirc(e.target.value)}
+                      placeholder="Es: 85.5"
+                      className="h-10"
+                    />
+                  </div>
+
+                  {user.gender === 'female' && (
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">
+                        Circonferenza Fianchi (cm)
+                      </label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={hipCirc}
+                        onChange={(e) => setHipCirc(e.target.value)}
+                        placeholder="Es: 95.5"
+                        className="h-10"
+                      />
+                    </div>
+                  )}
+
+                  <div className="flex gap-3 pt-4">
+                    <Button
+                      onClick={handleSaveBodyFatCircumferences}
+                      disabled={savingBodyFat || !neckCirc || !waistCirc || (user.gender === 'female' && !hipCirc)}
+                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                    >
+                      <Save className="w-4 h-4 mr-2" />
+                      {savingBodyFat ? 'Salvataggio...' : 'Calcola'}
+                    </Button>
+                    <Button
+                      onClick={() => setShowBodyFatModal(false)}
+                      variant="outline"
+                      className="flex-1"
+                    >
+                      Annulla
+                    </Button>
+                  </div>
+                </div>
+              </DialogContent>
+            </Dialog>
+
             </>
             );
             }
