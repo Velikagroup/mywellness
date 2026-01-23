@@ -1,3 +1,4 @@
+css
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -151,19 +152,10 @@ html {
 }
 
 /* ============================================
-   APPLE SQUIRCLE EFFECT
+   APPLE SQUIRCLE EFFECT - True Superellipse
    ============================================ */
 
 .squircle-xl {
-  border-radius: 44px;
+  border-radius: 45%;
   position: relative;
-}
-
-/* Superellipse effect - angoli Apple attivi */
-.squircle-xl {
-  clip-path: polygon(
-    0% 44px, 0% 0%, 44px 0%, 
-    100% 0%, 100% 44px, 100% 100%, 
-    44px 100%, 0% 100%, 0% 44px
-  );
 }
