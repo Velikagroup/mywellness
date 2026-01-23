@@ -480,7 +480,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           }}
           title="Quick Actions"
         >
-          <ScanLine className="w-10 h-10" strokeWidth={2.5} />
+          <Plus className="w-10 h-10" strokeWidth={2.5} />
         </button>
       </div>
 
