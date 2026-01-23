@@ -1,7 +1,7 @@
 import React from "react";
       import { Link, useLocation, useNavigate } from "react-router-dom";
       import { createPageUrl } from "@/utils";
-      import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video, Receipt, Plus, X as XIcon, Camera } from "lucide-react";
+      import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video, Receipt, Plus, X as XIcon, Camera, Scan } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
@@ -480,7 +480,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
           }}
           title="Quick Actions"
         >
-          <Camera className="w-10 h-10" strokeWidth={2.5} />
+          <Scan className="w-10 h-10" strokeWidth={2.5} />
         </button>
       </div>
 
