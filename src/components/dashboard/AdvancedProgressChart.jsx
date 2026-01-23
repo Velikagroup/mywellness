@@ -481,13 +481,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
   return (
     <>
-      <CalorieBalanceSection 
-        user={user}
-        weightHistory={weightHistory}
-        todayCalorieBalance={todayCalorieBalance}
-        t={t}
-      />
-
       {(() => {
         const totalWeightToChange = startWeight - targetWeight;
         const actualDirection = lastRecordedWeight - startWeight;
@@ -582,40 +575,66 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 />
               </LineChart>
             </ResponsiveContainer>
-            <div className="absolute top-2 right-8 flex flex-col gap-2">
-              {lineData.length > 0 && user.body_fat_percentage && (
-                <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg">
-                  <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
-                  <p className="text-xs text-purple-600">Massa Grassa</p>
+            
+            {/* CalorieBalanceSection overlay inside chart */}
+            <div className="absolute top-6 left-6 flex flex-col gap-4">
+              {/* Large Calorie Balance */}
+              <div>
+                <div className="flex items-center gap-2 mb-2">
+                  <Flame className="w-6 h-6 text-orange-500" />
+                  <p className="text-xs font-semibold text-gray-700">Bilancio di oggi</p>
                 </div>
-              )}
-              {todayCalorieBalance !== null && (
-                <div className={`bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 shadow-lg ${
-                  todayCalorieBalance < 0 
-                    ? 'border-green-400' 
-                    : todayCalorieBalance > 0 
-                    ? 'border-red-400' 
-                    : 'border-gray-400'
-                }`}>
-                  <p className={`text-sm font-bold ${
-                    todayCalorieBalance < 0 
-                      ? 'text-green-700' 
-                      : todayCalorieBalance > 0 
-                      ? 'text-red-700' 
-                      : 'text-gray-700'
-                  }`}>
-                    {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)} kcal
+                
+                {todayCalorieBalance !== null ? (
+                  <>
+                    <p className={`text-4xl font-bold ${
+                      (() => {
+                        const totalWeightToChange = startWeight - targetWeight;
+                        const isWeightLoss = totalWeightToChange > 0;
+                        const isCalorieAligned = isWeightLoss 
+                          ? (todayCalorieBalance < 0)
+                          : (todayCalorieBalance > 0);
+                        return isCalorieAligned ? 'text-green-700' : 'text-red-700';
+                      })()
+                    } leading-tight`}>
+                      {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
+                    </p>
+                    <p className="text-lg text-gray-600 font-medium">kcal</p>
+                  </>
+                ) : null}
+              </div>
+
+              {/* Weight compact box */}
+              <div className="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-200/50 px-4 py-2 shadow-lg flex items-center gap-3">
+                <div className="text-right">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide">Attuale</p>
+                  <p className={`text-lg font-bold ${(() => {
+                    const totalWeightToChange = startWeight - targetWeight;
+                    const isWeightLoss = totalWeightToChange > 0;
+                    const actualWeightChange = lastRecordedWeight - startWeight;
+                    const isWeightAligned = (isWeightLoss && actualWeightChange < 0) || 
+                                          (!isWeightLoss && actualWeightChange > 0) ||
+                                          (totalWeightToChange === 0);
+                    return isWeightAligned ? 'text-green-700' : 'text-red-700';
+                  })()}`}>
+                    {lastRecordedWeight.toFixed(1)}
                   </p>
-                  <p className={`text-xs ${
-                    todayCalorieBalance < 0 
-                      ? 'text-green-600' 
-                      : todayCalorieBalance > 0 
-                      ? 'text-red-600' 
-                      : 'text-gray-600'
-                  }`}>Bilancio Oggi</p>
                 </div>
-              )}
+                <div className="text-gray-400 font-light">&gt;</div>
+                <div className="text-left">
+                  <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide">Target</p>
+                  <p className="text-lg font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
+                </div>
+              </div>
             </div>
+
+            {/* Body Fat Percentage (right side) */}
+            {lineData.length > 0 && user.body_fat_percentage && (
+              <div className="absolute top-6 right-6 bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg">
+                <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
+                <p className="text-xs text-purple-600">Massa Grassa</p>
+              </div>
+            )}
           </div>
 
 
