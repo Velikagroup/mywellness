@@ -36,23 +36,13 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
     }
   }, [mealLog]);
 
-  const handleAddIngredient = async () => {
-    if (!newIngredient.name || !newIngredient.calories) {
-      alert('Inserisci nome e calorie');
-      return;
-    }
+  const handleSelectIngredient = (ingredient) => {
+    setSelectedIngredient(ingredient);
+    setShowIngredientSelector(false);
+  };
 
-    const ingredient = {
-      id: Date.now(),
-      name: newIngredient.name,
-      grams: parseFloat(newIngredient.grams) || 0,
-      calories: parseFloat(newIngredient.calories) || 0,
-      protein: parseFloat(newIngredient.protein) || 0,
-      carbs: parseFloat(newIngredient.carbs) || 0,
-      fat: parseFloat(newIngredient.fat) || 0
-    };
-
-    const updatedIngredients = [...ingredients, ingredient];
+  const handleAddIngredientQuantity = (ingredientData) => {
+    const updatedIngredients = [...ingredients, ingredientData];
     setIngredients(updatedIngredients);
 
     // Calcola nuovi totali
@@ -64,15 +54,7 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
     };
     setTotals(newTotals);
 
-    setNewIngredient({
-      name: '',
-      grams: '',
-      calories: '',
-      protein: '',
-      carbs: '',
-      fat: ''
-    });
-    setShowAddIngredient(false);
+    setSelectedIngredient(null);
   };
 
   const handleRemoveIngredient = (id) => {
