@@ -121,11 +121,14 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
               type="text"
               placeholder="Buscar un ingrediente"
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => handleSearch(e.target.value)}
               className="pl-10 py-3 text-base h-12"
               autoFocus
             />
           </div>
+          {isSearching && (
+            <p className="text-xs text-gray-500 mt-2">Buscando con IA...</p>
+          )}
         </div>
 
         <div className="px-6 pb-4">
