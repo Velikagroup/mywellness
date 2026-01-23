@@ -241,18 +241,23 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       alert(t('progressChart.enterValidWeight') || 'Inserisci un peso valido');
       return;
     }
-    
+
     setIsSavingWeight(true);
     try {
       const today = new Date().toISOString().split('T')[0];
+      const weightValue = weightUnit === 'lbs' 
+        ? parseFloat(weightInput) / 2.20462 
+        : parseFloat(weightInput);
+
       const weightData = {
         user_id: user.id,
-        weight: parseFloat(weightInput),
+        weight: weightValue,
         date: today
       };
-      
+
       await base44.entities.WeightHistory.create(weightData);
       setWeightInput('');
+      setWeightUnit('kg');
       setShowWeightModal(false);
       setShowActionMenu(false);
       alert('✅ ' + (t('progressChart.weightSaved') || 'Peso registrato con successo'));
