@@ -489,7 +489,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         {children}
       </main>
 
-      <div className="hidden md:flex fixed bottom-6 left-4 z-50 items-center gap-3">
+      <div className="hidden md:flex fixed bottom-5 left-4 z-50 items-center gap-3">
         <LiquidGlassNav 
           navItems={allNavItems} 
           onActionClick={handleActionClick}
