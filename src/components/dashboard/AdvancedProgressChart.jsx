@@ -795,7 +795,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             })()}
 
             {/* Meals and Macros Card - Separate Box Below */}
-            <div className="mt-6">
+            <div className="mt-6 transition-opacity duration-300" id="meals-macros-section">
               <MealsAndMacrosCard
                 todayMacros={todayMacros}
                 sortedMeals={sortedMeals}

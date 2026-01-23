@@ -67,6 +67,7 @@ export default function Dashboard() {
   const [checkoutBilling, setCheckoutBilling] = useState('monthly');
   const [isRedirecting, setIsRedirecting] = useState(false);
   const [showTermsModal, setShowTermsModal] = useState(false);
+  const [scrollOpacity, setScrollOpacity] = useState({ first: 1, second: 0.3 });
 
   // Re-defining loadUserData as useCallback to allow external calls (e.g. from handlePhotoAnalyzeClose)
   const loadUserData = useCallback(async () => {
@@ -173,6 +174,31 @@ export default function Dashboard() {
     window.addEventListener('resize', handleResize);
 
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      const scrollPosition = window.scrollY;
+      const windowHeight = window.innerHeight;
+      
+      // Primo box: opacità 1 quando in alto, diminuisce scrollando
+      const firstOpacity = Math.max(0.3, 1 - (scrollPosition / (windowHeight * 0.5)));
+      
+      // Secondo box: opacità 0.3 quando in alto, aumenta scrollando
+      const secondOpacity = Math.min(1, 0.3 + (scrollPosition / (windowHeight * 0.5)));
+      
+      setScrollOpacity({ first: firstOpacity, second: secondOpacity });
+      
+      // Applica l'opacità al secondo box tramite getElementById
+      const mealsSection = document.getElementById('meals-macros-section');
+      if (mealsSection) {
+        mealsSection.style.opacity = secondOpacity;
+      }
+    };
+
+    handleScroll(); // Esegui subito al mount
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   // ✅ Check terms acceptance FIRST, then onboarding
@@ -652,7 +678,7 @@ export default function Dashboard() {
 
           <div className="flex justify-center">
             <div className="w-full max-w-5xl space-y-6 sm:space-y-8 onboarding-dashboard-overview">
-              <div className="progress-chart-section">
+              <div className="progress-chart-section transition-opacity duration-300" style={{ opacity: scrollOpacity.first }}>
                 <AdvancedProgressChart 
                   user={user} 
                   weightHistory={weightHistory} 
