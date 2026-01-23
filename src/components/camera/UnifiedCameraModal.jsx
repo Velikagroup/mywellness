@@ -449,29 +449,40 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
       {mode === 'calories' && calorieResult && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-6">
-          <div className="w-full max-w-md bg-white rounded-3xl p-6 shadow-2xl">
-            <h3 className="text-2xl font-bold text-gray-900 mb-2">{calorieResult.nome_cibo}</h3>
-            <p className="text-sm text-gray-600 mb-6">Porzione: {calorieResult.porzione_stimata}</p>
+          <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl">
+            <div className="text-center mb-6">
+              <h3 className="text-2xl font-bold text-gray-900 mb-1 capitalize">{calorieResult.nome_cibo}</h3>
+              <p className="text-sm text-gray-500">Porzione: {calorieResult.porzione_stimata}</p>
+            </div>
 
-            <div className="grid grid-cols-2 gap-4 mb-6">
-              <div className="bg-gradient-to-br from-orange-50 to-orange-100 rounded-2xl p-4 text-center">
-                <p className="text-3xl font-bold text-orange-600">{calorieResult.calorie}</p>
-                <p className="text-sm text-gray-600 font-medium">Calorie</p>
-              </div>
+            {/* Calorie Box - Prominente */}
+            <div className="mb-6 bg-gradient-to-br from-[#26847F]/10 to-[#26847F]/5 border-2 border-[#26847F]/20 rounded-2xl p-6">
+              <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 text-center">Energia</p>
+              <p className="text-5xl font-bold text-[#26847F] text-center">{calorieResult.calorie}</p>
+              <p className="text-sm font-medium text-gray-500 text-center mt-1">kcal</p>
+            </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-blue-100 rounded-2xl p-4 text-center">
-                <p className="text-3xl font-bold text-blue-600">{calorieResult.proteine}g</p>
-                <p className="text-sm text-gray-600 font-medium">Proteine</p>
-              </div>
+            {/* Divider */}
+            <div className="border-t border-gray-200 mb-6"></div>
 
-              <div className="bg-gradient-to-br from-green-50 to-green-100 rounded-2xl p-4 text-center">
-                <p className="text-3xl font-bold text-green-600">{calorieResult.carboidrati}g</p>
-                <p className="text-sm text-gray-600 font-medium">Carboidrati</p>
-              </div>
+            {/* Macronutrienti */}
+            <div className="mb-6">
+              <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Macronutrienti</p>
+              <div className="grid grid-cols-3 gap-3">
+                <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
+                  <p className="text-2xl font-bold text-gray-900">{calorieResult.proteine}g</p>
+                  <p className="text-xs text-gray-600 font-medium mt-1">Proteine</p>
+                </div>
 
-              <div className="bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-2xl p-4 text-center">
-                <p className="text-3xl font-bold text-yellow-600">{calorieResult.grassi}g</p>
-                <p className="text-sm text-gray-600 font-medium">Grassi</p>
+                <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
+                  <p className="text-2xl font-bold text-gray-900">{calorieResult.carboidrati}g</p>
+                  <p className="text-xs text-gray-600 font-medium mt-1">Carboidrati</p>
+                </div>
+
+                <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
+                  <p className="text-2xl font-bold text-gray-900">{calorieResult.grassi}g</p>
+                  <p className="text-xs text-gray-600 font-medium mt-1">Grassi</p>
+                </div>
               </div>
             </div>
 
@@ -479,14 +490,14 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               <Button
                 onClick={retakePhoto}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 border-gray-300 hover:bg-gray-50"
               >
                 <RotateCcw className="w-4 h-4 mr-2" />
                 Rifai
               </Button>
               <Button
                 onClick={onClose}
-                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66]"
+                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
                 Chiudi
               </Button>
