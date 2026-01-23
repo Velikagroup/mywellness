@@ -31,11 +31,11 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
       const items = mealLog.detected_items.map((item, idx) => ({
         id: idx,
         name: typeof item === 'string' ? item : item.name || '',
-        grams: item.grams || '',
-        calories: item.calories || '',
-        protein: item.protein || 0,
-        carbs: item.carbs || 0,
-        fat: item.fat || 0
+        grams: parseFloat(item.grams) || 0,
+        calories: parseFloat(item.calories) || 0,
+        protein: parseFloat(item.protein) || 0,
+        carbs: parseFloat(item.carbs) || 0,
+        fat: parseFloat(item.fat) || 0
       }));
       setIngredients(items);
     }
