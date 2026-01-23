@@ -3,12 +3,16 @@ import { base44 } from '@/api/base44Client';
 import { format } from 'date-fns';
 import { Clock, Flame, Zap, Wheat, Droplet } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '@/components/ui/button';
 import MealHistoryDetailModal from './MealHistoryDetailModal';
+
+const ITEMS_PER_PAGE = 5;
 
 export default function RecentMealsHistory({ userId, onMealSelect }) {
   const [mealLogs, setMealLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedMeal, setSelectedMeal] = useState(null);
+  const [displayedCount, setDisplayedCount] = useState(ITEMS_PER_PAGE);
 
   useEffect(() => {
     loadMealLogs();
