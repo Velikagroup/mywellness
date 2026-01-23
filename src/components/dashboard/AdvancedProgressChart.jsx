@@ -544,14 +544,18 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 <div className="bg-white/80 backdrop-blur-sm rounded-3xl border border-gray-200/50 px-6 py-4 shadow-lg flex items-center gap-4">
                   <div className="text-right">
                     <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Attuale</p>
-                    <p className={`text-2xl font-bold ${isAligned ? 'text-green-700' : 'text-red-700'}`}>{lastRecordedWeight.toFixed(1)}</p>
-                    <p className="text-xs text-gray-500 font-medium">kg</p>
+                    <div className="flex items-baseline gap-1">
+                      <p className={`text-2xl font-bold ${isAligned ? 'text-green-700' : 'text-red-700'}`}>{lastRecordedWeight.toFixed(1)}</p>
+                      <p className={`text-xs font-medium ${isAligned ? 'text-green-700' : 'text-red-700'}`}>kg</p>
+                    </div>
                   </div>
                   <div className="text-2xl text-gray-400 font-light">&gt;</div>
                   <div className="text-left">
                     <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-1">Target</p>
-                    <p className="text-2xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
-                    <p className="text-xs text-[#1a5753] font-medium">kg</p>
+                    <div className="flex items-baseline gap-1">
+                      <p className="text-2xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
+                      <p className="text-xs font-medium text-[#26847F]">kg</p>
+                    </div>
                   </div>
                 </div>
               </div>
