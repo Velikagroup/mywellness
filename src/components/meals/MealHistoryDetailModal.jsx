@@ -180,14 +180,7 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
           />
         </div>
 
-        <div className="flex gap-3 pt-4 border-t border-gray-200">
-          <Button
-            onClick={onClose}
-            className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
-          >
-            Chiudi
-          </Button>
-        </div>
+
       </DialogContent>
     </Dialog>
   );
