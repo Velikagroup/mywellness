@@ -202,16 +202,22 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
       const secondBoxRect = secondBox.getBoundingClientRect();
       const windowHeight = window.innerHeight;
       
-      if (secondBoxRect.top < windowHeight * 0.7) {
-        secondBox.style.opacity = '1';
-      } else {
+      // Se il top del box è oltre il 90% della viewport, è fuori vista -> 30%
+      // Altrimenti è visibile -> 100%
+      if (secondBoxRect.top > windowHeight * 0.9) {
         secondBox.style.opacity = '0.3';
+      } else {
+        secondBox.style.opacity = '1';
       }
     };
 
     handleScroll();
     window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+    document.addEventListener('scroll', handleScroll, true);
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      document.removeEventListener('scroll', handleScroll, true);
+    };
   }, []);
 
   // Carica i CalorieBalance per mostrare i dati accanto ai punti del peso
