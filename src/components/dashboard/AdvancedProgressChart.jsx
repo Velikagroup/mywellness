@@ -325,6 +325,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
       
       console.log('✅ Weight saved successfully');
       setWeight('');
+      setRefreshTrigger(prev => prev + 1);
       
       if (onWeightLogged) {
         console.log('🔄 Calling onWeightLogged callback');
