@@ -61,10 +61,10 @@ const calculateNEAT = (userData) => {
   const bmr = calculateBMR(userData);
   const activityMultipliers = {
     sedentary: 0.2,
-    light: 0.375,
-    moderate: 0.55,
-    active: 0.725,
-    very_active: 0.9
+    lightly_active: 0.375,
+    moderately_active: 0.55,
+    very_active: 0.725,
+    professional_athlete: 0.9
   };
   
   const multiplier = activityMultipliers[userData?.activity_level] || 0.375;
