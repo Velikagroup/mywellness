@@ -164,9 +164,15 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                      <p className="text-gray-900 line-clamp-2">
                        {getMealName(log)}
                      </p>
-                     <span className="text-xs text-gray-500 flex-shrink-0">
-                       {format(new Date(log.created_date), 'HH:mm')}
-                     </span>
+                     <div className="flex items-center gap-2 flex-shrink-0">
+                       <span className="text-xs text-gray-500">
+                         {format(new Date(log.created_date), 'HH:mm')}
+                       </span>
+                       <ChevronRight 
+                         className="w-5 h-5 text-gray-400 transition-transform duration-300"
+                         style={{ transform: expandedMealId === log.id ? 'rotate(90deg)' : 'rotate(0deg)' }}
+                       />
+                     </div>
                    </div>
 
                    <div className="flex items-center gap-1 mb-3">
