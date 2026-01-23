@@ -347,9 +347,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     setIsSaving(true);
     try {
       const today = new Date().toISOString().split('T')[0];
+      const weightValue = weightUnit === 'lbs' 
+        ? parseFloat(weight) / 2.20462 
+        : parseFloat(weight);
+
       const weightData = {
         user_id: user.id,
-        weight: parseFloat(weight),
+        weight: weightValue,
         date: today
       };
 
