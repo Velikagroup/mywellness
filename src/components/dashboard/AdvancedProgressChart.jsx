@@ -75,6 +75,7 @@ const calculateNEAT = (userData) => {
 export default function AdvancedProgressChart({ user, weightHistory = [], onWeightLogged, isMobile = false, onEditBMR, onEditBodyFat, onEditCalories, onEditNEAT, isSavingBMR, isSavingBodyFat, isSavingCalories, mealsUpdateTrigger, meals = [], mealLogs = [], onMealSelect, onPhotoAnalyze, userPlan, onDataReload, onOpenPhotoGallery, onOpenProgressAnalysis }) {
   const { t } = useLanguage();
   const [weight, setWeight] = useState('');
+  const [weightUnit, setWeightUnit] = useState('kg');
   const [isSaving, setIsSaving] = useState(false);
   const [todayCalorieBalance, setTodayCalorieBalance] = useState(null);
   const [accumulatedCalories, setAccumulatedCalories] = useState(0);
