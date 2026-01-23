@@ -12,8 +12,11 @@ const ITEMS_PER_PAGE = 5;
 export default function RecentMealsHistory({ userId, onMealSelect }) {
   const [mealLogs, setMealLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [selectedMeal, setSelectedMeal] = useState(null);
+  const [expandedMealId, setExpandedMealId] = useState(null);
   const [displayedCount, setDisplayedCount] = useState(ITEMS_PER_PAGE);
+  const [mealIngredients, setMealIngredients] = useState({});
+  const [showIngredientSelector, setShowIngredientSelector] = useState(null);
+  const [selectedIngredient, setSelectedIngredient] = useState(null);
 
   useEffect(() => {
     loadMealLogs();
