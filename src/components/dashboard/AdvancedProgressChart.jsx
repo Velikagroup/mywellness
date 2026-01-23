@@ -481,13 +481,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
   return (
     <>
-      <CalorieBalanceSection 
-        user={user}
-        weightHistory={weightHistory}
-        todayCalorieBalance={todayCalorieBalance}
-        t={t}
-      />
-
       {(() => {
         const totalWeightToChange = startWeight - targetWeight;
         const actualDirection = lastRecordedWeight - startWeight;
@@ -497,8 +490,68 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                          (totalWeightToChange < 0 && actualDirection > 0) ||
                          (totalWeightToChange === 0);
 
+        // Logica colori per le calorie di oggi
+        const isWeightLoss = totalWeightToChange > 0;
+        const isCalorieAligned = isWeightLoss 
+          ? (todayCalorieBalance !== null && todayCalorieBalance < 0)
+          : (todayCalorieBalance !== null && todayCalorieBalance > 0);
+        const calorieColor = isCalorieAligned ? 'text-green-700' : 'text-red-700';
+        const calorieBackground = isCalorieAligned ? 'from-green-50/70 to-green-100/30 border-green-200/40' : 'from-red-50/70 to-red-100/30 border-red-200/40';
+
         return (
-          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl mt-6" id="progress-section">
+          <div className="flex flex-col bg-white/65 rounded-xl p-6 border border-gray-200/30 backdrop-blur-md shadow-xl" id="progress-section">
+            
+            {/* Riga superiore: Bilancio Calorico + Peso Attuale → Target */}
+            <div className="flex items-start justify-between gap-6 mb-6 pb-6 border-b border-gray-200/50">
+              
+              {/* SINISTRA: Bilancio Calorico */}
+              <div className="flex-1">
+                <div className="flex items-center gap-2 mb-3">
+                  <Flame className="w-8 h-8 text-orange-500" />
+                  <p className="text-sm font-semibold text-gray-700">Bilancio di oggi</p>
+                </div>
+                
+                {todayCalorieBalance !== null ? (
+                  <>
+                    <p className={`text-5xl font-bold ${calorieColor} leading-tight`}>
+                      {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
+                    </p>
+                    <p className="text-xl text-gray-600 font-medium">kcal</p>
+                    
+                    <div className={`mt-3 inline-block px-4 py-2 rounded-full text-sm font-medium ${
+                      isCalorieAligned 
+                        ? 'bg-green-100/70 text-green-700'
+                        : 'bg-red-100/70 text-red-700'
+                    }`}>
+                      {isWeightLoss 
+                        ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
+                        : (isCalorieAligned ? 'In surplus' : 'In deficit')
+                      }
+                    </div>
+                  </>
+                ) : (
+                  <p className="text-gray-500 italic">Dati non disponibili</p>
+                )}
+              </div>
+
+              {/* DESTRA: Peso Attuale → Target */}
+              <div className="flex-1 flex items-center justify-end">
+                <div className="bg-white/80 backdrop-blur-sm rounded-3xl border border-gray-200/50 px-6 py-4 shadow-lg flex items-center gap-4">
+                  <div className="text-right">
+                    <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Attuale</p>
+                    <p className={`text-2xl font-bold ${isAligned ? 'text-green-700' : 'text-red-700'}`}>{lastRecordedWeight.toFixed(1)}</p>
+                    <p className="text-xs text-gray-500 font-medium">kg</p>
+                  </div>
+                  <div className="text-2xl text-gray-400 font-light">&gt;</div>
+                  <div className="text-left">
+                    <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-1">Target</p>
+                    <p className="text-2xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
+                    <p className="text-xs text-[#1a5753] font-medium">kg</p>
+                  </div>
+                </div>
+              </div>
+
+            </div>
 
           <div className="h-64 relative">
             <ResponsiveContainer width="100%" height="100%">
