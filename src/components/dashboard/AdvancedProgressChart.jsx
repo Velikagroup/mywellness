@@ -542,21 +542,19 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
               {/* DESTRA: Peso Attuale → Target */}
               <div className="flex-1 flex items-center justify-end">
-                <div className="bg-gradient-to-br from-white/90 to-white/70 backdrop-blur-lg rounded-2xl border border-white/60 px-7 py-5 shadow-xl flex items-center gap-5 hover:shadow-2xl transition-all duration-300">
-                  <div className="text-right">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 opacity-80">Attuale</p>
-                    <div className="flex items-baseline gap-1.5">
-                      <p className={`text-3xl font-bold bg-gradient-to-r ${isAligned ? 'from-green-600 to-emerald-500' : 'from-red-600 to-rose-500'} bg-clip-text text-transparent`}>{lastRecordedWeight.toFixed(1)}</p>
-                      <p className={`text-sm font-semibold ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</p>
-                    </div>
+                <div className="text-right">
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 opacity-80">Attuale</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <p className={`text-3xl font-bold bg-gradient-to-r ${isAligned ? 'from-green-600 to-emerald-500' : 'from-red-600 to-rose-500'} bg-clip-text text-transparent`}>{lastRecordedWeight.toFixed(1)}</p>
+                    <p className={`text-sm font-semibold ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</p>
                   </div>
-                  <div className={`text-3xl font-light ${isAligned ? 'text-green-400' : 'text-red-400'}`}>→</div>
-                  <div className="text-left">
-                    <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 opacity-80">Target</p>
-                    <div className="flex items-baseline gap-1.5">
-                      <p className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent">{targetWeight.toFixed(1)}</p>
-                      <p className="text-sm font-semibold text-teal-600">kg</p>
-                    </div>
+                </div>
+                <div className={`text-3xl font-light ${isAligned ? 'text-green-400' : 'text-red-400'}`}>→</div>
+                <div className="text-left">
+                  <p className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-2 opacity-80">Target</p>
+                  <div className="flex items-baseline gap-1.5">
+                    <p className="text-3xl font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent">{targetWeight.toFixed(1)}</p>
+                    <p className="text-sm font-semibold text-teal-600">kg</p>
                   </div>
                 </div>
               </div>
