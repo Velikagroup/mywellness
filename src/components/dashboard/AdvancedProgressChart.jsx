@@ -83,6 +83,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     consumed: { protein: 0, carbs: 0, fat: 0 }
   });
   const [savingMealId, setSavingMealId] = useState(null);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   useEffect(() => {
     const loadCalorieData = async () => {
