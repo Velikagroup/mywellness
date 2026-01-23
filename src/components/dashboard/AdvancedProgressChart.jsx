@@ -491,15 +491,16 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
       />
 
       {(() => {
-        const totalWeightToChange = startWeight - targetWeight;
-        const actualDirection = lastRecordedWeight - startWeight;
+         const totalWeightToChange = startWeight - targetWeight;
+         const actualDirection = lastRecordedWeight - startWeight;
 
-        // Verde se movimento è coerente con l'obiettivo
-        const isAligned = (totalWeightToChange > 0 && actualDirection < 0) || 
-                         (totalWeightToChange < 0 && actualDirection > 0) ||
-                         (totalWeightToChange === 0);
+         // Verde se movimento è coerente con l'obiettivo
+         const isAligned = (totalWeightToChange > 0 && actualDirection < 0) || 
+                          (totalWeightToChange < 0 && actualDirection > 0) ||
+                          (totalWeightToChange === 0);
 
-          <div className="space-y-4 mt-6 pt-4 border-t border-gray-200/50">
+         return (
+           <div className="space-y-4 mt-6 pt-4 border-t border-gray-200/50">
             {/* Calorie Consumate */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-sm">
@@ -652,13 +653,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 )}
               </div>
             </div>
-          </div>
-        );
-        })}
+            </div>
+            );
+            })}
 
-        {/* Meals and Macros Card - Separate Box Below */}
-        <div className="mt-6 transition-opacity duration-300 opacity-30" id="meals-macros-section">
-          <MealsAndMacrosCard
+            {/* Meals and Macros Card - Separate Box Below */}
+            <div className="mt-6 transition-opacity duration-300 opacity-30" id="meals-macros-section">
+            <MealsAndMacrosCard
             todayMacros={todayMacros}
             sortedMeals={sortedMeals}
             mealLogs={mealLogs}
@@ -670,9 +671,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             getMealLog={getMealLog}
             getMealTypeLabel={getMealTypeLabel}
             t={t}
-          />
-        </div>
+            />
+            </div>
 
-      </>
-      );
-      }
+            </>
+            );
