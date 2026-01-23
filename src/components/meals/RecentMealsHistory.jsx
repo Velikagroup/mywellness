@@ -209,7 +209,6 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                     animate={{ opacity: 1, height: 'auto' }}
                     exit={{ opacity: 0, height: 0 }}
                     transition={{ duration: 0.3 }}
-                    className="border-t border-gray-200"
                   >
                     <div className="p-6 space-y-6">
                       {/* Foto grande */}
