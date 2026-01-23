@@ -506,9 +506,23 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               
               {/* SINISTRA: Bilancio Calorico */}
               <div className="flex-1">
-                <div className="flex items-center gap-2 mb-3">
-                  <Flame className="w-8 h-8 text-orange-500" />
-                  <p className="text-sm font-semibold text-gray-700">Bilancio di oggi</p>
+                <div className="flex items-center gap-3 mb-3">
+                  <div className="flex items-center gap-2">
+                    <Flame className="w-8 h-8 text-orange-500" />
+                    <p className="text-sm font-semibold text-gray-700">Bilancio di oggi</p>
+                  </div>
+                  {todayCalorieBalance !== null && (
+                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                      isCalorieAligned 
+                        ? 'bg-green-100/70 text-green-700'
+                        : 'bg-red-100/70 text-red-700'
+                    }`}>
+                      {isWeightLoss 
+                        ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
+                        : (isCalorieAligned ? 'In surplus' : 'In deficit')
+                      }
+                    </div>
+                  )}
                 </div>
                 
                 {todayCalorieBalance !== null ? (
@@ -518,17 +532,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                         {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
                       </p>
                       <p className={`text-xl font-medium ${calorieColor}`}>kcal</p>
-                    </div>
-                    
-                    <div className={`mt-3 inline-block px-4 py-2 rounded-full text-sm font-medium ${
-                      isCalorieAligned 
-                        ? 'bg-green-100/70 text-green-700'
-                        : 'bg-red-100/70 text-red-700'
-                    }`}>
-                      {isWeightLoss 
-                        ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
-                        : (isCalorieAligned ? 'In surplus' : 'In deficit')
-                      }
                     </div>
                   </>
                 ) : (
