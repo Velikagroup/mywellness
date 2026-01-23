@@ -194,6 +194,26 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const [consumedTooltipClicked, setConsumedTooltipClicked] = React.useState(false);
   const [burnedTooltipClicked, setBurnedTooltipClicked] = React.useState(false);
 
+  useEffect(() => {
+    const handleScroll = () => {
+      const secondBox = document.getElementById('meals-macros-section');
+      if (!secondBox) return;
+      
+      const secondBoxRect = secondBox.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      if (secondBoxRect.top < windowHeight * 0.7) {
+        secondBox.style.opacity = '1';
+      } else {
+        secondBox.style.opacity = '0.3';
+      }
+    };
+
+    handleScroll();
+    window.addEventListener('scroll', handleScroll);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
+
   // Carica i CalorieBalance per mostrare i dati accanto ai punti del peso
   useEffect(() => {
     const loadCalorieBalances = async () => {

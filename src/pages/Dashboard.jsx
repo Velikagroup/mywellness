@@ -178,27 +178,7 @@ export default function Dashboard() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useEffect(() => {
-    const handleScroll = () => {
-      const secondBox = document.getElementById('meals-macros-section');
-      if (!secondBox) return;
-      
-      const secondBoxRect = secondBox.getBoundingClientRect();
-      const windowHeight = window.innerHeight;
-      
-      // Se il secondo box è visibile nella viewport, portalo al 100%
-      if (secondBoxRect.top < windowHeight * 0.7) {
-        secondBox.style.opacity = '1';
-      } else {
-        // Altrimenti torna al 30%
-        secondBox.style.opacity = '0.3';
-      }
-    };
 
-    handleScroll();
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
-  }, []);
 
   // ✅ Check terms acceptance FIRST, then onboarding
   useEffect(() => {
