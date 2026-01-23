@@ -174,30 +174,30 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
 
   const analyzePhotos = async () => {
     if (photos.length === 0) return;
-    
+
     setIsAnalyzing(true);
     try {
       const uploadedUrls = [];
-      
+
       for (let i = 0; i < photos.length; i++) {
         const photo = photos[i];
         const file = filesRef.current.get(photo.id);
-        
+
         if (!file) {
           alert(`Errore: File ${i + 1} non trovato`);
           setIsAnalyzing(false);
           return;
         }
-        
+
         try {
           const result = await base44.integrations.Core.UploadFile({ file: file });
-          
+
           if (!result || !result.file_url) {
             throw new Error(`Upload fallito per foto ${i + 1}`);
           }
-          
+
           uploadedUrls.push(result.file_url);
-          
+
         } catch (uploadError) {
           console.error(`Error uploading photo ${i + 1}:`, uploadError);
           alert(`Errore nel caricamento della foto ${i + 1}: ${uploadError.message || 'Errore sconosciuto'}`);
@@ -205,12 +205,34 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
           return;
         }
       }
-      
+
       const updatedPhotos = photos.map((photo, idx) => ({
         ...photo,
         uploadedUrl: uploadedUrls[idx]
       }));
       setPhotos(updatedPhotos);
+
+      // PRIMA: Cerca un pasto identico nello storico
+      const identicalMeal = await findIdenticalMealInHistory(uploadedUrls[0]);
+
+      if (identicalMeal) {
+        // Trovato un pasto identico! Usa i risultati precedenti
+        console.log("✅ Pasto identico trovato nello storico:", identicalMeal);
+        setAnalysisResult({
+          photo_urls: uploadedUrls,
+          delta_calories: identicalMeal.delta_calories,
+          actual_calories: identicalMeal.actual_calories,
+          actual_protein: identicalMeal.actual_protein,
+          actual_carbs: identicalMeal.actual_carbs,
+          actual_fat: identicalMeal.actual_fat,
+          detected_items: identicalMeal.detected_items || [],
+          assessment: `📌 Questo pasto è identico a uno analizzato il ${new Date(identicalMeal.created_date).toLocaleDateString('it-IT')}. Utilizziamo i risultati precedenti per consistenza.`,
+          adherence_level: identicalMeal.delta_calories > 50 ? 'significantly_over' : identicalMeal.delta_calories > 0 ? 'slightly_over' : identicalMeal.delta_calories < -50 ? 'under' : 'on_track',
+          suggested_meal_name: `${meal.name} (duplicato)`
+        });
+        setIsAnalyzing(false);
+        return;
+      }
 
       const languageNames = {
         it: 'Italian',
