@@ -511,18 +511,6 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <div className="flex items-center gap-2 mb-3">
                       <Flame className="w-8 h-8 text-orange-500" />
                       <p className="text-sm font-semibold text-gray-700">Bilancio di oggi</p>
-                      {todayCalorieBalance !== null && (
-                        <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                          isCalorieAligned 
-                            ? 'bg-green-100/70 text-green-700'
-                            : 'bg-red-100/70 text-red-700'
-                        }`}>
-                          {isWeightLoss 
-                            ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
-                            : (isCalorieAligned ? 'In surplus' : 'In deficit')
-                          }
-                        </div>
-                      )}
                     </div>
                     <div className="flex items-baseline gap-2 mb-3">
                       <p className={`text-5xl font-['Inter'] font-bold ${calorieColor} leading-tight`} style={{
@@ -534,6 +522,18 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       </p>
                       <p className={`text-xl font-medium ${calorieColor}`}>kcal</p>
                     </div>
+                    {todayCalorieBalance !== null && (
+                      <div className={`px-3 py-1 rounded-full text-xs font-medium inline-block ${
+                        isCalorieAligned 
+                          ? 'bg-green-100/70 text-green-700'
+                          : 'bg-red-100/70 text-red-700'
+                      }`}>
+                        {isWeightLoss 
+                          ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
+                          : (isCalorieAligned ? 'In surplus' : 'In deficit')
+                        }
+                      </div>
+                    )}
                   </>
                 ) : (
                   <p className="text-gray-500 italic mb-3">Dati non disponibili</p>
