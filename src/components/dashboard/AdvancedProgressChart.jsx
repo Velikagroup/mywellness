@@ -11,6 +11,7 @@ import { createPageUrl } from '@/utils';
 import { base44 } from "@/api/base44Client";
 import { useLanguage } from '../i18n/LanguageContext';
 import CalorieBalanceChart from './CalorieBalanceChart';
+import CalorieBalanceSection from './CalorieBalanceSection';
 import TechnicalStatsCard from './TechnicalStatsCard';
 import MealsAndMacrosCard from './MealsAndMacrosCard';
 import { hasFeatureAccess } from '@/components/utils/subscriptionPlans';
@@ -480,6 +481,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
   return (
     <>
+      <CalorieBalanceSection 
+        user={user}
+        weightHistory={weightHistory}
+        todayCalorieBalance={todayCalorieBalance}
+        t={t}
+      />
+
       {(() => {
         const totalWeightToChange = startWeight - targetWeight;
         const actualDirection = lastRecordedWeight - startWeight;
@@ -490,31 +498,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                          (totalWeightToChange === 0);
 
         return (
-          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl" id="progress-section">
-            {/* Box peso attuale e target integrati */}
-              <div className="grid grid-cols-2 gap-3 mb-4">
-              <div className={`p-3 rounded-lg border backdrop-blur-sm ${
-                isAligned
-                  ? 'bg-gradient-to-br from-green-50/70 to-green-100/30 border-green-200/40' 
-                  : 'bg-gradient-to-br from-red-50/70 to-red-100/30 border-red-200/40'
-              }`}>
-                <p className={`text-xs font-semibold uppercase tracking-wide mb-1 ${
-                  isAligned ? 'text-green-700' : 'text-red-700'
-                }`}>{t('progressChart.currentWeight')}</p>
-                <div className="flex items-baseline gap-1">
-                  <p className={`text-2xl font-bold ${isAligned ? 'text-green-900' : 'text-red-900'}`}>{lastRecordedWeight.toFixed(1)}</p>
-                  <span className={`text-xs font-medium ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</span>
-                </div>
-              </div>
-
-              <div className="p-3 bg-gradient-to-br from-[#e9f6f5]/70 to-emerald-50/30 rounded-lg border-2 border-[#26847F]/30 backdrop-blur-sm">
-                <p className="text-xs font-semibold text-[#1a5753] uppercase tracking-wide mb-1">{t('progressChart.targetWeight')}</p>
-                <div className="flex items-baseline gap-1">
-                  <p className="text-2xl font-bold text-[#26847F]">{targetWeight.toFixed(1)}</p>
-                  <span className="text-xs font-medium text-[#1a5753]">kg</span>
-                </div>
-              </div>
-            </div>
+          <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl mt-6" id="progress-section">
 
           <div className="h-64 relative">
             <ResponsiveContainer width="100%" height="100%">
