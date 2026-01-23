@@ -29,15 +29,11 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
     setIsLoading(false);
   };
 
-  const getMealTypeLabel = (type) => {
-    const labels = {
-      breakfast: '🥐 Colazione',
-      snack1: '🥜 Snack 1',
-      lunch: '🍽️ Pranzo',
-      snack2: '🍌 Snack 2',
-      dinner: '🍴 Cena'
-    };
-    return labels[type] || type;
+  const getMealName = (log) => {
+    if (log.detected_items && Array.isArray(log.detected_items) && log.detected_items.length > 0) {
+      return log.detected_items.map(item => typeof item === 'string' ? item : item.name).join(', ');
+    }
+    return 'Pasto';
   };
 
   if (isLoading) {
