@@ -345,6 +345,37 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     }
   };
 
+  const calculateBodyFatNavyFormula = (userData) => {
+    if (userData.gender === 'male') {
+      if (!userData.neck_circumference || !userData.waist_circumference || !userData.height) {
+        return null;
+      }
+      const abdomen = userData.waist_circumference;
+      const neck = userData.neck_circumference;
+      const heightCm = userData.height;
+
+      const ratio = (abdomen - neck) / 2.54;
+      const heightInches = heightCm / 2.54;
+
+      const bodyFat = 86.010 * Math.log10(ratio) - 70.041 * Math.log10(heightInches) + 36.76;
+      return Math.max(0, parseFloat(bodyFat.toFixed(1)));
+    } else {
+      if (!userData.neck_circumference || !userData.waist_circumference || !userData.hip_circumference || !userData.height) {
+        return null;
+      }
+      const waist = userData.waist_circumference;
+      const hip = userData.hip_circumference;
+      const neck = userData.neck_circumference;
+      const heightCm = userData.height;
+
+      const circumference = waist + hip - neck;
+      const heightInches = heightCm / 2.54;
+
+      const bodyFat = 163.205 * Math.log10(circumference) - 97.684 * Math.log10(heightInches) - 78.387;
+      return Math.max(0, parseFloat(bodyFat.toFixed(1)));
+    }
+  };
+
   const saveWeight = async () => {
     if (!weightKg || !user) {
       alert('Inserisci un peso valido');
@@ -363,6 +394,13 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         weight: weightValue,
         date: today
       });
+
+      // Calcola e aggiorna la massa grassa
+      const calculatedBodyFat = calculateBodyFatNavyFormula(user);
+      if (calculatedBodyFat !== null) {
+        await base44.auth.updateMe({ body_fat_percentage: calculatedBodyFat });
+      }
+
       alert('✅ Peso registrato con successo!');
       setWeightKg('');
       setWeightUnit('kg');
