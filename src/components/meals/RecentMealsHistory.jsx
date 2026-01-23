@@ -44,6 +44,69 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
     return 'Pasto';
   };
 
+  const initializeIngredients = (mealId, log) => {
+    if (!mealIngredients[mealId]) {
+      const items = (log.detected_items && Array.isArray(log.detected_items)) 
+        ? log.detected_items.map((item, idx) => ({
+            id: idx,
+            name: typeof item === 'string' ? item : item.name || '',
+            grams: parseFloat(item.grams) || 0,
+            calories: parseFloat(item.calories) || 0,
+            protein: parseFloat(item.protein) || 0,
+            carbs: parseFloat(item.carbs) || 0,
+            fat: parseFloat(item.fat) || 0
+          }))
+        : [];
+      setMealIngredients(prev => ({
+        ...prev,
+        [mealId]: {
+          ingredients: items,
+          totals: {
+            calories: log.actual_calories || 0,
+            protein: log.actual_protein || 0,
+            carbs: log.actual_carbs || 0,
+            fat: log.actual_fat || 0
+          }
+        }
+      }));
+    }
+  };
+
+  const handleRemoveIngredient = (mealId, ingredientId) => {
+    setMealIngredients(prev => {
+      const meal = prev[mealId];
+      const updatedIngredients = meal.ingredients.filter(ing => ing.id !== ingredientId);
+      const newTotals = {
+        calories: updatedIngredients.reduce((sum, ing) => sum + ing.calories, 0),
+        protein: updatedIngredients.reduce((sum, ing) => sum + ing.protein, 0),
+        carbs: updatedIngredients.reduce((sum, ing) => sum + ing.carbs, 0),
+        fat: updatedIngredients.reduce((sum, ing) => sum + ing.fat, 0)
+      };
+      return {
+        ...prev,
+        [mealId]: { ingredients: updatedIngredients, totals: newTotals }
+      };
+    });
+  };
+
+  const handleAddIngredientQuantity = (mealId, ingredientData) => {
+    setMealIngredients(prev => {
+      const meal = prev[mealId];
+      const updatedIngredients = [...meal.ingredients, ingredientData];
+      const newTotals = {
+        calories: updatedIngredients.reduce((sum, ing) => sum + ing.calories, 0),
+        protein: updatedIngredients.reduce((sum, ing) => sum + ing.protein, 0),
+        carbs: updatedIngredients.reduce((sum, ing) => sum + ing.carbs, 0),
+        fat: updatedIngredients.reduce((sum, ing) => sum + ing.fat, 0)
+      };
+      return {
+        ...prev,
+        [mealId]: { ingredients: updatedIngredients, totals: newTotals }
+      };
+    });
+    setSelectedIngredient(null);
+  };
+
   if (isLoading) {
     return (
       <div className="flex justify-center py-8">
