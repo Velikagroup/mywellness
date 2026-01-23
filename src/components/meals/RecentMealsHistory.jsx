@@ -128,8 +128,9 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
         <div className="flex justify-center mt-6">
           <Button
             onClick={() => setDisplayedCount(prev => prev + ITEMS_PER_PAGE)}
-            className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+            className="bg-black hover:bg-gray-900 text-white rounded-full px-6 py-3 font-semibold flex items-center gap-2"
           >
+            <Plus className="w-5 h-5" />
             Carica altri 5
           </Button>
         </div>
