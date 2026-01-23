@@ -620,21 +620,43 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
             </div>
 
             <div className="space-y-6">
+              {/* Unit Toggle */}
+              <div className="flex gap-2 bg-gray-100 p-1 rounded-lg w-full justify-center">
+                <button
+                  onClick={() => setWeightKg(weightKg ? lbsToKg(weightKg) : '')}
+                  className={`flex-1 px-4 py-2 rounded-md font-semibold transition-colors ${
+                    weightKg ? (parseFloat(weightKg) < 150 ? 'bg-[#26847F] text-white' : 'bg-transparent text-gray-700') : 'bg-[#26847F] text-white'
+                  }`}
+                  title="Usa kg"
+                >
+                  kg
+                </button>
+                <button
+                  onClick={() => setWeightKg(weightKg ? kgToLbs(weightKg) : '')}
+                  className={`flex-1 px-4 py-2 rounded-md font-semibold transition-colors ${
+                    weightKg ? (parseFloat(weightKg) >= 150 ? 'bg-[#26847F] text-white' : 'bg-transparent text-gray-700') : 'bg-transparent text-gray-700'
+                  }`}
+                  title="Usa lbs"
+                >
+                  lbs
+                </button>
+              </div>
+
               <div>
                 <label className="block text-sm font-semibold text-gray-700 mb-2">
-                  Peso (kg)
+                  Peso
                 </label>
                 <Input
                   type="number"
                   step="0.1"
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
-                  placeholder="70.5"
+                  placeholder={weightKg && parseFloat(weightKg) >= 150 ? '155' : '70.5'}
                   className="h-14 text-lg text-center"
                 />
                 {weightKg && (
                   <p className="text-sm text-gray-500 text-center mt-2">
-                    ≈ {kgToLbs(weightKg)} lbs
+                    ≈ {parseFloat(weightKg) >= 150 ? lbsToKg(weightKg) : kgToLbs(weightKg)} {parseFloat(weightKg) >= 150 ? 'kg' : 'lbs'}
                   </p>
                 )}
               </div>
