@@ -75,7 +75,20 @@ export default function PhotoMealAnalyzer({ meal, user, onClose, onRebalanceNeed
   const handleCameraCapture = (file) => {
     processFiles([file]);
     setCameraOpen(false);
+    document.body.removeAttribute('data-camera-open');
   };
+
+  React.useEffect(() => {
+    if (cameraOpen) {
+      document.body.setAttribute('data-camera-open', 'true');
+    } else {
+      document.body.removeAttribute('data-camera-open');
+    }
+    
+    return () => {
+      document.body.removeAttribute('data-camera-open');
+    };
+  }, [cameraOpen]);
 
   const handleDescriptionChange = (photoId, description) => {
     setPhotos(prev => prev.map(p => 
@@ -525,7 +538,10 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
       {cameraOpen && (
         <CameraCapture
           onCapture={handleCameraCapture}
-          onClose={() => setCameraOpen(false)}
+          onClose={() => {
+            setCameraOpen(false);
+            document.body.removeAttribute('data-camera-open');
+          }}
           t={t}
         />
       )}
