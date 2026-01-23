@@ -96,7 +96,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
           userSelect: 'none', 
           cursor: isDragging ? 'grabbing' : 'grab',
           width: isMobile ? 'auto' : 'fit-content',
-          transform: isMobile ? 'none' : 'scaleX(1.3)',
+          transform: isMobile ? 'none' : 'scaleX(1.15)',
           transformOrigin: 'left center'
         }}
       >
