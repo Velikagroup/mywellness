@@ -1,7 +1,7 @@
 import React from "react";
       import { Link, useLocation, useNavigate } from "react-router-dom";
       import { createPageUrl } from "@/utils";
-      import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video, Receipt, Plus, X as XIcon } from "lucide-react";
+      import { Home, Utensils, Dumbbell, Settings as SettingsIcon, Tag, FileText, Mail, BarChart3, Target, Activity, Menu as MenuIcon, X, Users, HelpCircle, MessageCircle, Video, Receipt, Plus, X as XIcon, Camera } from "lucide-react";
 import { base44 } from "@/api/base44Client";
 import { hasFeatureAccess } from "@/components/utils/subscriptionPlans";
 import { LanguageProvider, useLanguage, createLocalizedPageUrl } from "@/components/i18n/LanguageContext";
@@ -473,14 +473,14 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         </div>
         <button
           onClick={() => setShowUnifiedCamera(true)}
-          className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0 w-[83px] h-[83px]"
+          className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0 w-[116px] h-[116px]"
           style={{
             boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
             transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
           }}
           title="Quick Actions"
         >
-          <Plus className="w-9 h-9" strokeWidth={3} />
+          <Camera className="w-12 h-12" strokeWidth={2.5} />
         </button>
       </div>
 
