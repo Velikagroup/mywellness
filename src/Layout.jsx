@@ -24,6 +24,7 @@ function LayoutContent({ children }) {
   const [showWeightModal, setShowWeightModal] = React.useState(false);
   const [weightInput, setWeightInput] = React.useState('');
   const [isSavingWeight, setIsSavingWeight] = React.useState(false);
+  const [weightUnit, setWeightUnit] = React.useState('kg');
   const [showProgressAnalysis, setShowProgressAnalysis] = React.useState(false);
   const [showUnifiedCamera, setShowUnifiedCamera] = React.useState(false);
 
