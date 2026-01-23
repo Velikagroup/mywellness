@@ -85,6 +85,11 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   });
   const [savingMealId, setSavingMealId] = useState(null);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [showBodyFatModal, setShowBodyFatModal] = useState(false);
+  const [neckCirc, setNeckCirc] = useState(user?.neck_circumference || '');
+  const [waistCirc, setWaistCirc] = useState(user?.waist_circumference || '');
+  const [hipCirc, setHipCirc] = useState(user?.hip_circumference || '');
+  const [savingBodyFat, setSavingBodyFat] = useState(false);
 
   useEffect(() => {
     const loadCalorieData = async () => {
