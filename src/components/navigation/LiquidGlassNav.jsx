@@ -87,7 +87,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
   const selectorPosition = selectedIndex * itemWidth + (dragOffset / (containerRef.current?.offsetWidth || 1)) * itemWidth * 100;
 
   return (
-    <div className="fixed bottom-6 left-4 z-50 flex items-center justify-start px-0 md:px-0">
+    <div className={`${isMobile ? 'fixed bottom-6 left-4' : ''} z-50 flex items-center justify-start px-0 md:px-0`}>
       <div
         ref={containerRef}
         className={`water-glass-effect rounded-full relative py-3 md:py-2 px-4 md:px-6 flex items-center justify-start gap-2 ${isMobile ? 'max-w-md' : ''}`}

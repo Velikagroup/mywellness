@@ -489,13 +489,30 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         {children}
       </main>
 
-      <div className="hidden md:block">
+      <div className="hidden md:flex fixed bottom-6 left-4 z-50 items-center gap-3">
         <LiquidGlassNav 
           navItems={allNavItems} 
           onActionClick={handleActionClick}
           showActionMenu={showActionMenu}
           setShowActionMenu={setShowActionMenu}
         />
+        <button
+          onClick={() => setShowActionMenu(!showActionMenu)}
+          className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0"
+          style={{
+            width: '64px',
+            height: '64px',
+            boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
+            transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+          }}
+          title="Quick Actions"
+        >
+          {showActionMenu ? (
+            <XIcon className="w-7 h-7" strokeWidth={3} />
+          ) : (
+            <Plus className="w-7 h-7" strokeWidth={3} />
+          )}
+        </button>
       </div>
 
       <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 flex items-center gap-3" data-menu="mobile-nav">
@@ -526,23 +543,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         </button>
       </div>
 
-      <button
-        onClick={() => setShowActionMenu(!showActionMenu)}
-        className="hidden md:flex fixed bottom-6 left-[520px] z-50 rounded-full water-glass-effect text-[#26847F] items-center justify-center transition-all hover:scale-110 font-bold"
-        style={{
-          width: '64px',
-          height: '64px',
-          boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
-          transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-        }}
-        title="Quick Actions"
-      >
-        {showActionMenu ? (
-          <XIcon className="w-7 h-7" strokeWidth={3} />
-        ) : (
-          <Plus className="w-7 h-7" strokeWidth={3} />
-        )}
-      </button>
+
 
 
 
