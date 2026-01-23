@@ -301,15 +301,48 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     return result;
   }, [weightHistory, user, calorieBalanceMap]);
 
+  const calculateBodyFatNavyFormula = (userData) => {
+    if (userData.gender === 'male') {
+      // Men: neck, waist (cm), height (cm)
+      if (!userData.neck_circumference || !userData.waist_circumference || !userData.height) {
+        return null;
+      }
+      const abdomen = userData.waist_circumference;
+      const neck = userData.neck_circumference;
+      const heightCm = userData.height;
+
+      const ratio = (abdomen - neck) / 2.54;
+      const heightInches = heightCm / 2.54;
+
+      const bodyFat = 86.010 * Math.log10(ratio) - 70.041 * Math.log10(heightInches) + 36.76;
+      return Math.max(0, parseFloat(bodyFat.toFixed(1)));
+    } else {
+      // Women: neck, waist, hip (cm), height (cm)
+      if (!userData.neck_circumference || !userData.waist_circumference || !userData.hip_circumference || !userData.height) {
+        return null;
+      }
+      const waist = userData.waist_circumference;
+      const hip = userData.hip_circumference;
+      const neck = userData.neck_circumference;
+      const heightCm = userData.height;
+
+      const circumference = waist + hip - neck;
+      const heightInches = heightCm / 2.54;
+
+      const bodyFat = 163.205 * Math.log10(circumference) - 97.684 * Math.log10(heightInches) - 78.387;
+      return Math.max(0, parseFloat(bodyFat.toFixed(1)));
+    }
+  };
+
   const handleSaveWeight = async () => {
     console.log('🔍 handleSaveWeight called', { weight, user: user?.id, isSaving });
-    
+
     if (!weight || !user) {
       console.warn('⚠️ Missing weight or user', { weight, userId: user?.id });
       alert(t('progressChart.enterValidWeight'));
       return;
     }
-    
+
     setIsSaving(true);
     try {
       const today = new Date().toISOString().split('T')[0];
@@ -318,20 +351,27 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         weight: parseFloat(weight),
         date: today
       };
-      
+
       console.log('💾 Saving weight:', weightData);
-      
+
       await base44.entities.WeightHistory.create(weightData);
-      
+
+      // Calcola automaticamente la massa grassa usando formula Navy
+      const calculatedBodyFat = calculateBodyFatNavyFormula(user);
+      if (calculatedBodyFat !== null) {
+        console.log('📊 Updating body fat percentage:', calculatedBodyFat);
+        await base44.auth.updateMe({ body_fat_percentage: calculatedBodyFat });
+      }
+
       console.log('✅ Weight saved successfully');
       setWeight('');
       setRefreshTrigger(prev => prev + 1);
-      
+
       if (onWeightLogged) {
         console.log('🔄 Calling onWeightLogged callback');
         await onWeightLogged();
       }
-      
+
       alert('✅ ' + t('progressChart.weightSaved'));
     } catch (error) {
       console.error("❌ Errore nel salvare il peso:", error);
