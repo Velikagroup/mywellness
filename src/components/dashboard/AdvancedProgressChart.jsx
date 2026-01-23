@@ -508,7 +508,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               <div className="flex-1">
                 {todayCalorieBalance !== null ? (
                   <>
-                    <div className="flex items-baseline gap-2 mb-3">
+                    <div className="flex items-baseline gap-3 mb-3">
                       <p className={`text-5xl font-['Inter'] font-bold ${calorieColor} leading-tight`} style={{
                         filter: isCalorieAligned 
                           ? 'drop-shadow(0 0 8px rgba(34, 197, 94, 0.18)) drop-shadow(0 0 16px rgba(34, 197, 94, 0.12))'
@@ -516,31 +516,27 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                       }}>
                         {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
                       </p>
-                      <p className={`text-xl font-medium ${calorieColor}`}>kcal</p>
+                      {todayCalorieBalance !== null && (
+                        <div className={`px-3 py-1 rounded-full text-xs font-medium ${
+                          isCalorieAligned 
+                            ? 'bg-green-100/70 text-green-700'
+                            : 'bg-red-100/70 text-red-700'
+                        }`}>
+                          {isWeightLoss 
+                            ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
+                            : (isCalorieAligned ? 'In surplus' : 'In deficit')
+                          }
+                        </div>
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2 mb-3">
+                      <Flame className="w-8 h-8 text-orange-500" />
+                      <p className="text-sm font-semibold text-gray-700">Bilancio di oggi</p>
                     </div>
                   </>
                 ) : (
                   <p className="text-gray-500 italic mb-3">Dati non disponibili</p>
                 )}
-
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
-                    <Flame className="w-8 h-8 text-orange-500" />
-                    <p className="text-sm font-semibold text-gray-700">Bilancio di oggi</p>
-                  </div>
-                  {todayCalorieBalance !== null && (
-                    <div className={`px-3 py-1 rounded-full text-xs font-medium ${
-                      isCalorieAligned 
-                        ? 'bg-green-100/70 text-green-700'
-                        : 'bg-red-100/70 text-red-700'
-                    }`}>
-                      {isWeightLoss 
-                        ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
-                        : (isCalorieAligned ? 'In surplus' : 'In deficit')
-                      }
-                    </div>
-                  )}
-                </div>
               </div>
 
               {/* DESTRA: Peso Attuale → Target */}
