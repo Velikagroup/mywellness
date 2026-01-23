@@ -68,7 +68,7 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
               exit={{ opacity: 0, y: -10 }}
               transition={{ delay: index * 0.05 }}
               onClick={() => setSelectedMeal(log)}
-              className="bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-[#26847F] hover:shadow-lg transition-all cursor-pointer active:scale-95"
+              className="bg-white rounded-xl p-4 border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all cursor-pointer active:scale-95"
             >
               <div className="flex gap-4">
                 {/* Foto */}
