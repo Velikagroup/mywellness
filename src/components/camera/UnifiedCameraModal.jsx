@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine } from 'lucide-react';
+import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine, Image } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
@@ -11,6 +11,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
+  const fileInputRef = useRef(null);
 
   const [mode, setMode] = useState('calories'); // 'calories', 'weight', 'bodyscan'
   const [cameraActive, setCameraActive] = useState(false);
@@ -148,20 +149,26 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   };
 
   const handleBodyScanPhoto = (imageUrl, blob) => {
-    setBodyScanPhotos(prev => ({
-      ...prev,
+    const updatedPhotos = {
+      ...bodyScanPhotos,
       [currentBodyScanStep]: imageUrl
-    }));
+    };
+    setBodyScanPhotos(updatedPhotos);
 
-    // Move to next step
-    if (currentBodyScanStep === 'front') {
-      setCurrentBodyScanStep('side');
-    } else if (currentBodyScanStep === 'side') {
-      setCurrentBodyScanStep('back');
-    } else {
-      // All photos captured, proceed to body scan page
+    // Controlla se tutte e tre le foto sono state scattate
+    if (updatedPhotos.front && updatedPhotos.side && updatedPhotos.back) {
+      // Tutte le foto presenti, procedi all'analisi
       stopCamera();
       navigateToBodyScan();
+    } else {
+      // Trova la prossima foto mancante
+      if (!updatedPhotos.front) {
+        setCurrentBodyScanStep('front');
+      } else if (!updatedPhotos.side) {
+        setCurrentBodyScanStep('side');
+      } else if (!updatedPhotos.back) {
+        setCurrentBodyScanStep('back');
+      }
     }
   };
 
@@ -234,12 +241,27 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const kgToLbs = (kg) => (kg * 2.20462).toFixed(1);
   const lbsToKg = (lbs) => (lbs / 2.20462).toFixed(1);
 
+  const handleGallerySelect = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    const imageUrl = URL.createObjectURL(file);
+
+    if (mode === 'calories') {
+      setCapturedImage(imageUrl);
+      stopCamera();
+      await analyzeCalories(file);
+    } else if (mode === 'bodyscan') {
+      handleBodyScanPhoto(imageUrl, file);
+    }
+  };
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-[100] bg-black">
       {/* Header */}
-      <div className="absolute top-16 left-0 right-0 z-10 p-4 bg-gradient-to-b from-black/80 to-transparent">
+      <div className="absolute top-0 left-0 right-0 z-10 pt-16 px-4">
         <div className="flex items-center justify-between">
           <button
             onClick={onClose}
@@ -342,6 +364,25 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 </div>
               ))}
             </div>
+          )}
+
+          {/* Gallery Button (solo per calories e bodyscan) */}
+          {(mode === 'calories' || mode === 'bodyscan') && !capturedImage && !calorieResult && (
+            <>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleGallerySelect}
+                className="hidden"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                className="absolute bottom-8 left-8 p-4 rounded-full bg-white/20 backdrop-blur-sm hover:bg-white/30 transition-colors"
+              >
+                <Image className="w-6 h-6 text-white" />
+              </button>
+            </>
           )}
 
           {/* Capture Button */}
