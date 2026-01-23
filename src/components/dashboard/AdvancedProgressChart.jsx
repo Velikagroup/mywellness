@@ -513,10 +513,12 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 
                 {todayCalorieBalance !== null ? (
                   <>
-                    <p className={`text-5xl font-bold ${calorieColor} leading-tight`}>
-                      {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
-                    </p>
-                    <p className="text-xl text-gray-600 font-medium">kcal</p>
+                    <div className="flex items-baseline gap-2">
+                      <p className={`text-5xl font-bold ${calorieColor} leading-tight`}>
+                        {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
+                      </p>
+                      <p className={`text-xl font-medium ${calorieColor}`}>kcal</p>
+                    </div>
                     
                     <div className={`mt-3 inline-block px-4 py-2 rounded-full text-sm font-medium ${
                       isCalorieAligned 
