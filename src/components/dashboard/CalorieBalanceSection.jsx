@@ -1,10 +1,14 @@
 import React from 'react';
 import { Flame } from 'lucide-react';
+import { ResponsiveContainer, LineChart, CartesianGrid, XAxis, YAxis, Tooltip, Line, ReferenceLine } from 'recharts';
+import { format } from 'date-fns';
 
 export default function CalorieBalanceSection({ 
   user, 
   weightHistory = [], 
   todayCalorieBalance = null,
+  lineData = [],
+  calorieBalanceMap = {},
   t 
 }) {
   // Calcolo peso attuale e target
@@ -46,9 +50,15 @@ export default function CalorieBalanceSection({
   const calorieColor = isCalorieAligned ? 'text-green-700' : 'text-red-700';
   const calorieBackground = isCalorieAligned ? 'from-green-50/70 to-green-100/30 border-green-200/40' : 'from-red-50/70 to-red-100/30 border-red-200/40';
 
+  // Calcolo asse Y per il grafico
+  const allWeights = weightHistory.map(d => d.weight).concat([startWeight, targetWeight]).filter(w => w > 0);
+  const yAxisDomain = allWeights.length > 0 
+    ? [Math.floor(Math.min(...allWeights) - 2), Math.ceil(Math.max(...allWeights) + 2)]
+    : [0, 100];
+
   return (
     <div className="flex flex-col bg-white/65 rounded-xl p-6 border border-gray-200/30 backdrop-blur-md shadow-xl">
-      {/* Layout principale: Bilancio a sinistra, pesi a destra */}
+      {/* SEZIONE SUPERIORE: Bilancio + Pesi */}
       <div className="flex items-start justify-between gap-6 mb-6">
         
         {/* SINISTRA: Bilancio Calorico Principale */}
@@ -117,6 +127,101 @@ export default function CalorieBalanceSection({
         </div>
 
       </div>
+
+      {/* SEZIONE INFERIORE: Grafico Peso */}
+      {lineData.length > 0 && (
+        <div className="h-64 relative pt-6 border-t border-gray-200/50">
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
+              <defs>
+                <linearGradient id="bodyFatGradient" x1="0%" y1="0%" x2="0%" y2="100%">
+                  <stop offset="0%" stopColor="#8b5cf6" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#8b5cf6" stopOpacity={0}/>
+                </linearGradient>
+                <linearGradient id="weightLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="#26847F" stopOpacity={0.4}/>
+                  <stop offset="50%" stopColor="#26847F" stopOpacity={1}/>
+                  <stop offset="100%" stopColor="#26847F" stopOpacity={0.4}/>
+                </linearGradient>
+              </defs>
+              <CartesianGrid strokeDasharray="3 3" stroke="#e0e0e0" vertical={false} />
+              <XAxis dataKey="name" stroke="#6b7280" tickLine={false} axisLine={{ stroke: '#e0e0e0' }} style={{ fontSize: '12px' }} />
+              <YAxis stroke="#6b7280" tickLine={false} axisLine={false} domain={yAxisDomain} tickFormatter={(value) => `${value}kg`} style={{ fontSize: '12px' }} />
+              <Tooltip 
+                contentStyle={{ 
+                  backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+                  border: '1px solid #e5e7eb', 
+                  borderRadius: '8px',
+                  boxShadow: '0 4px 6px rgba(0,0,0,0.1)'
+                }} 
+                formatter={(value, name, props) => {
+                  if (name === 'weight') {
+                    return [`${value.toFixed(1)} kg`, 'Peso'];
+                  }
+                  return [value, name];
+                }}
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    const data = payload[0].payload;
+                    return (
+                      <div className="bg-white p-3 rounded-lg border border-gray-200 shadow-lg">
+                        <p className="font-semibold text-gray-900">{data.name}</p>
+                        <p className="text-sm text-gray-700">{data.weight.toFixed(1)} kg</p>
+                        {data.calorieBalance !== null && (
+                          <p className={`text-sm font-semibold ${data.calorieBalance < 0 ? 'text-green-600' : data.calorieBalance > 0 ? 'text-red-600' : 'text-gray-600'}`}>
+                            Bilancio: {data.calorieBalance > 0 ? '+' : ''}{data.calorieBalance} kcal
+                          </p>
+                        )}
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+                labelStyle={{ fontWeight: 'bold', color: '#111827' }} 
+                cursor={{ stroke: '#26847F', strokeWidth: 2, strokeDasharray: '5 5' }} 
+              />
+              <ReferenceLine 
+                y={targetWeight} 
+                stroke="#26847F" 
+                strokeDasharray="4 4" 
+                strokeWidth={2}
+                label={{ 
+                  value: 'Target', 
+                  position: 'insideTopRight', 
+                  fill: '#26847F', 
+                  fontSize: 13,
+                  fontWeight: 'bold'
+                }}
+              />
+              {lineData.length > 0 && user.body_fat_percentage && (
+                <ReferenceLine 
+                  x={lineData[lineData.length - 1].name}
+                  stroke="url(#bodyFatGradient)"
+                  strokeWidth={100}
+                  isFront={false}
+                />
+              )}
+              <Line 
+                type="monotone" 
+                dataKey="weight" 
+                stroke="url(#weightLineGradient)" 
+                strokeWidth={3} 
+                dot={{ r: 4, fill: '#26847F', strokeWidth: 2, stroke: '#fff' }} 
+                activeDot={{ r: 6, strokeWidth: 2 }} 
+                connectNulls={true}
+              />
+            </LineChart>
+          </ResponsiveContainer>
+          <div className="absolute top-2 right-8 flex flex-col gap-2">
+            {lineData.length > 0 && user.body_fat_percentage && (
+              <div className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg">
+                <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
+                <p className="text-xs text-purple-600">Massa Grassa</p>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
