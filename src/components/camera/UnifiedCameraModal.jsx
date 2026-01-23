@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine, Image } from 'lucide-react';
+import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine, Image, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
@@ -38,7 +38,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const [savingBodyScan, setSavingBodyScan] = useState(false);
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [bodyScanHistory, setBodyScanHistory] = useState([]);
-  const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
+  const [expandedHistoryId, setExpandedHistoryId] = useState(null);
 
   useEffect(() => {
     if (isOpen && mode !== 'weight') {
@@ -161,9 +161,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     };
     setBodyScanPhotos(updatedPhotos);
 
-    // Controlla se tutte e tre le foto sono state scattate
-    if (updatedPhotos.front && updatedPhotos.side && updatedPhotos.back) {
-      // Tutte le foto presenti, procedi all'analisi
+    // Controlla se front e side sono state scattate (back opzionale)
+    if (updatedPhotos.front && updatedPhotos.side) {
+      // Foto necessarie presenti, procedi all'analisi
       stopCamera();
       analyzeBodyScan(updatedPhotos);
     } else {
@@ -172,8 +172,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         setCurrentBodyScanStep('front');
       } else if (!updatedPhotos.side) {
         setCurrentBodyScanStep('side');
-      } else if (!updatedPhotos.back) {
-        setCurrentBodyScanStep('back');
       }
     }
   };
@@ -190,10 +188,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const analyzeBodyScan = async (photos) => {
     setBodyScanAnalyzing(true);
     try {
-      // Upload all photos
+      // Upload only front and side photos
       const uploadedPhotos = {};
       for (const [key, imageUrl] of Object.entries(photos)) {
-        if (imageUrl) {
+        if (imageUrl && (key === 'front' || key === 'side')) {
           const response = await fetch(imageUrl);
           const blob = await response.blob();
           const file = new File([blob], `${key}.jpg`, { type: 'image/jpeg' });
@@ -207,7 +205,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       const result = await analyzeBodyImage({
         front_photo_url: uploadedPhotos.front,
         side_photo_url: uploadedPhotos.side,
-        back_photo_url: uploadedPhotos.back,
+        back_photo_url: null,
         user_id: user.id,
         height: user.height,
         weight: user.weight || user.current_weight,
@@ -236,7 +234,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         user_id: user.id,
         front_photo_url: bodyScanResult.photos.front,
         side_photo_url: bodyScanResult.photos.side,
-        back_photo_url: bodyScanResult.photos.back,
+        back_photo_url: null,
         somatotype: bodyScanResult.somatotype,
         body_fat_percentage: bodyScanResult.body_fat_percentage,
         muscle_definition_score: bodyScanResult.muscle_definition_score,
@@ -265,6 +263,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         '-created_date'
       );
       setBodyScanHistory(history);
+      setExpandedHistoryId(null);
       setShowHistoryModal(true);
     } catch (error) {
       console.error('Error loading body scan history:', error);
@@ -347,7 +346,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {mode === 'bodyscan' && !bodyScanAnalyzing && !bodyScanResult && (
         <button
           onClick={loadBodyScanHistory}
-          className="absolute bottom-52 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
+          className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
         >
           Storico Body Scan
         </button>
@@ -607,75 +606,72 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-4 overflow-y-auto">
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto">
             {/* Header con foto */}
-            <div className="relative h-64 rounded-t-3xl overflow-hidden bg-gray-900">
-              <div className="grid grid-cols-3 h-full">
+            <div className="relative rounded-t-3xl overflow-hidden bg-white border-b border-gray-200">
+              <div className="grid grid-cols-2 gap-3 p-4">
                 {bodyScanResult.photos.front && (
-                  <img src={bodyScanResult.photos.front} className="w-full h-full object-cover" alt="Front" />
+                  <img src={bodyScanResult.photos.front} className="w-full h-56 object-cover rounded-lg" alt="Front" />
                 )}
                 {bodyScanResult.photos.side && (
-                  <img src={bodyScanResult.photos.side} className="w-full h-full object-cover" alt="Side" />
-                )}
-                {bodyScanResult.photos.back && (
-                  <img src={bodyScanResult.photos.back} className="w-full h-full object-cover" alt="Back" />
+                  <img src={bodyScanResult.photos.side} className="w-full h-56 object-cover rounded-lg" alt="Side" />
                 )}
               </div>
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6">
-                <h3 className="text-2xl font-bold text-white mb-1">Analisi Corporea Completata</h3>
-                <p className="text-sm text-white/80">{new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              <div className="px-6 py-4">
+                <p className="text-sm text-gray-500 mb-1">Analisi del {new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <h3 className="text-2xl font-bold text-gray-900">Risultati Body Scan</h3>
               </div>
             </div>
 
             <div className="p-6 max-h-[60vh] overflow-y-auto">
               {/* Metriche Principali */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
-                <div className="bg-gradient-to-br from-[#26847F]/10 to-[#26847F]/5 border-2 border-[#26847F]/20 rounded-xl p-4">
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Somatotipo</p>
-                  <p className="text-2xl font-bold text-[#26847F] capitalize">{bodyScanResult.somatotype}</p>
+              <div className="grid grid-cols-2 gap-3 mb-6">
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Somatotipo</p>
+                  <p className="text-2xl font-bold text-gray-900 capitalize">{bodyScanResult.somatotype}</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-2 border-blue-500/20 rounded-xl p-4">
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Massa Grassa</p>
-                  <p className="text-2xl font-bold text-blue-600">{bodyScanResult.body_fat_percentage}%</p>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Massa Grassa</p>
+                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.body_fat_percentage}%</p>
                 </div>
 
-                <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-2 border-purple-500/20 rounded-xl p-4">
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Definizione Muscolare</p>
-                  <p className="text-2xl font-bold text-purple-600">{bodyScanResult.muscle_definition_score}/100</p>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Definizione Muscolare</p>
+                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.muscle_definition_score}<span className="text-base text-gray-500">/100</span></p>
                 </div>
 
-                <div className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-2 border-orange-500/20 rounded-xl p-4">
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Età Biologica</p>
-                  <p className="text-2xl font-bold text-orange-600">{bodyScanResult.body_age_estimate} anni</p>
+                <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Età Biologica</p>
+                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.body_age_estimate} <span className="text-base text-gray-500">anni</span></p>
                 </div>
               </div>
 
               {/* Postura */}
               {bodyScanResult.posture_assessment && (
-                <div className="mb-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
-                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Valutazione Posturale</p>
-                  <p className="text-sm text-gray-800">{bodyScanResult.posture_assessment}</p>
+                <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Valutazione Posturale</p>
+                  <p className="text-sm text-gray-700 leading-relaxed">{bodyScanResult.posture_assessment}</p>
                 </div>
               )}
 
               {/* Aree Problematiche e Punti di Forza */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-2 gap-3 mb-6">
                 {bodyScanResult.problem_areas && bodyScanResult.problem_areas.length > 0 && (
-                  <div className="bg-red-50 rounded-xl p-4 border border-red-200">
-                    <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">⚠️ Aree da Migliorare</p>
+                  <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                    <p className="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">Aree da Migliorare</p>
                     <ul className="space-y-1">
                       {bodyScanResult.problem_areas.map((area, idx) => (
-                        <li key={idx} className="text-sm text-red-900">• {area}</li>
+                        <li key={idx} className="text-sm text-red-800">• {area}</li>
                       ))}
                     </ul>
                   </div>
                 )}
 
                 {bodyScanResult.strong_areas && bodyScanResult.strong_areas.length > 0 && (
-                  <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                    <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">✅ Punti di Forza</p>
+                  <div className="bg-green-50 border border-green-200 rounded-lg p-4">
+                    <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-2">Punti di Forza</p>
                     <ul className="space-y-1">
                       {bodyScanResult.strong_areas.map((area, idx) => (
-                        <li key={idx} className="text-sm text-green-900">• {area}</li>
+                        <li key={idx} className="text-sm text-green-800">• {area}</li>
                       ))}
                     </ul>
                   </div>
@@ -685,20 +681,20 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               {/* Dettagli Aggiuntivi */}
               <div className="grid grid-cols-3 gap-3 mb-6">
                 {bodyScanResult.skin_texture && (
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <p className="text-xs text-gray-600 font-medium mb-1">Texture Pelle</p>
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500 font-medium mb-1">Texture Pelle</p>
                     <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_texture}</p>
                   </div>
                 )}
                 {bodyScanResult.skin_tone && (
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <p className="text-xs text-gray-600 font-medium mb-1">Tono Pelle</p>
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500 font-medium mb-1">Tono Pelle</p>
                     <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_tone}</p>
                   </div>
                 )}
                 {bodyScanResult.swelling_percentage !== undefined && (
-                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
-                    <p className="text-xs text-gray-600 font-medium mb-1">Gonfiore</p>
+                  <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                    <p className="text-xs text-gray-500 font-medium mb-1">Gonfiore</p>
                     <p className="text-sm font-semibold text-gray-900">{bodyScanResult.swelling_percentage}%</p>
                   </div>
                 )}
@@ -742,14 +738,14 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Body Scan History Modal */}
       {showHistoryModal && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl my-auto">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-gray-900">Storico Body Scan</h3>
                 <button
                   onClick={() => {
                     setShowHistoryModal(false);
-                    setSelectedHistoryItem(null);
+                    setExpandedHistoryId(null);
                   }}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 >
@@ -764,101 +760,95 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   <ScanLine className="w-16 h-16 mx-auto text-gray-300 mb-4" />
                   <p className="text-gray-600">Nessun body scan salvato</p>
                 </div>
-              ) : selectedHistoryItem ? (
-                // Vista dettaglio scan selezionato
-                <div>
-                  <button
-                    onClick={() => setSelectedHistoryItem(null)}
-                    className="mb-4 flex items-center gap-2 text-[#26847F] hover:text-[#1f6b66] font-medium"
-                  >
-                    ← Torna alla lista
-                  </button>
-
-                  <div className="grid grid-cols-3 gap-3 mb-6">
-                    <img src={selectedHistoryItem.front_photo_url} className="w-full h-48 object-cover rounded-xl" alt="Front" />
-                    <img src={selectedHistoryItem.side_photo_url} className="w-full h-48 object-cover rounded-xl" alt="Side" />
-                    <img src={selectedHistoryItem.back_photo_url} className="w-full h-48 object-cover rounded-xl" alt="Back" />
-                  </div>
-
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="bg-gradient-to-br from-[#26847F]/10 to-[#26847F]/5 border-2 border-[#26847F]/20 rounded-xl p-4">
-                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Somatotipo</p>
-                      <p className="text-2xl font-bold text-[#26847F] capitalize">{selectedHistoryItem.somatotype}</p>
-                    </div>
-                    <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-2 border-blue-500/20 rounded-xl p-4">
-                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Massa Grassa</p>
-                      <p className="text-2xl font-bold text-blue-600">{selectedHistoryItem.body_fat_percentage}%</p>
-                    </div>
-                    <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-2 border-purple-500/20 rounded-xl p-4">
-                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Definizione Muscolare</p>
-                      <p className="text-2xl font-bold text-purple-600">{selectedHistoryItem.muscle_definition_score}/100</p>
-                    </div>
-                    <div className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-2 border-orange-500/20 rounded-xl p-4">
-                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Età Biologica</p>
-                      <p className="text-2xl font-bold text-orange-600">{selectedHistoryItem.body_age_estimate} anni</p>
-                    </div>
-                  </div>
-
-                  {selectedHistoryItem.posture_assessment && (
-                    <div className="mb-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
-                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Valutazione Posturale</p>
-                      <p className="text-sm text-gray-800">{selectedHistoryItem.posture_assessment}</p>
-                    </div>
-                  )}
-
-                  <div className="grid grid-cols-2 gap-4">
-                    {selectedHistoryItem.problem_areas && selectedHistoryItem.problem_areas.length > 0 && (
-                      <div className="bg-red-50 rounded-xl p-4 border border-red-200">
-                        <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">⚠️ Aree da Migliorare</p>
-                        <ul className="space-y-1">
-                          {selectedHistoryItem.problem_areas.map((area, idx) => (
-                            <li key={idx} className="text-sm text-red-900">• {area}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                    {selectedHistoryItem.strong_areas && selectedHistoryItem.strong_areas.length > 0 && (
-                      <div className="bg-green-50 rounded-xl p-4 border border-green-200">
-                        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">✅ Punti di Forza</p>
-                        <ul className="space-y-1">
-                          {selectedHistoryItem.strong_areas.map((area, idx) => (
-                            <li key={idx} className="text-sm text-green-900">• {area}</li>
-                          ))}
-                        </ul>
-                      </div>
-                    )}
-                  </div>
-                </div>
               ) : (
-                // Lista dei body scan
-                <div className="grid grid-cols-1 gap-4">
+                <div className="space-y-3">
                   {bodyScanHistory.map((scan) => (
-                    <button
-                      key={scan.id}
-                      onClick={() => setSelectedHistoryItem(scan)}
-                      className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-all text-left"
-                    >
-                      <div className="flex gap-2">
-                        <img src={scan.front_photo_url} className="w-16 h-20 object-cover rounded-lg" alt="Front" />
-                        <img src={scan.side_photo_url} className="w-16 h-20 object-cover rounded-lg" alt="Side" />
-                        <img src={scan.back_photo_url} className="w-16 h-20 object-cover rounded-lg" alt="Back" />
-                      </div>
-                      <div className="flex-1">
-                        <p className="font-semibold text-gray-900">
-                          {new Date(scan.created_date).toLocaleDateString('it-IT', { 
-                            day: 'numeric', 
-                            month: 'long', 
-                            year: 'numeric' 
-                          })}
-                        </p>
-                        <div className="flex gap-4 mt-2 text-sm text-gray-600">
-                          <span>🎯 {scan.somatotype}</span>
-                          <span>💪 {scan.muscle_definition_score}/100</span>
-                          <span>📊 {scan.body_fat_percentage}%</span>
+                    <div key={scan.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden">
+                      <button
+                        onClick={() => setExpandedHistoryId(expandedHistoryId === scan.id ? null : scan.id)}
+                        className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors text-left"
+                      >
+                        <img 
+                          src={scan.front_photo_url} 
+                          className="w-16 h-20 object-cover rounded-lg flex-shrink-0" 
+                          alt="Front" 
+                        />
+                        <div className="flex-1">
+                          <p className="font-semibold text-gray-900 text-lg">
+                            {new Date(scan.created_date).toLocaleDateString('it-IT', { 
+                              day: 'numeric', 
+                              month: 'long', 
+                              year: 'numeric' 
+                            })}
+                          </p>
                         </div>
-                      </div>
-                      <div className="text-gray-400">→</div>
-                    </button>
+                        <ChevronDown 
+                          className={`w-5 h-5 text-gray-400 transition-transform ${
+                            expandedHistoryId === scan.id ? 'rotate-180' : ''
+                          }`}
+                        />
+                      </button>
+
+                      {expandedHistoryId === scan.id && (
+                        <div className="px-4 pb-4 border-t border-gray-100 pt-4">
+                          <div className="grid grid-cols-2 gap-3 mb-4">
+                            <img src={scan.front_photo_url} className="w-full h-48 object-cover rounded-lg" alt="Front" />
+                            <img src={scan.side_photo_url} className="w-full h-48 object-cover rounded-lg" alt="Side" />
+                          </div>
+
+                          <div className="space-y-3">
+                            <div className="grid grid-cols-2 gap-3">
+                              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Somatotipo</p>
+                                <p className="text-xl font-bold text-gray-900 capitalize">{scan.somatotype}</p>
+                              </div>
+                              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Massa Grassa</p>
+                                <p className="text-xl font-bold text-gray-900">{scan.body_fat_percentage}%</p>
+                              </div>
+                              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Definizione</p>
+                                <p className="text-xl font-bold text-gray-900">{scan.muscle_definition_score}/100</p>
+                              </div>
+                              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Età Biologica</p>
+                                <p className="text-xl font-bold text-gray-900">{scan.body_age_estimate} anni</p>
+                              </div>
+                            </div>
+
+                            {scan.posture_assessment && (
+                              <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
+                                <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Postura</p>
+                                <p className="text-sm text-gray-700 leading-relaxed">{scan.posture_assessment}</p>
+                              </div>
+                            )}
+
+                            <div className="grid grid-cols-2 gap-3">
+                              {scan.problem_areas && scan.problem_areas.length > 0 && (
+                                <div className="bg-red-50 border border-red-200 rounded-lg p-3">
+                                  <p className="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">Aree da Migliorare</p>
+                                  <ul className="space-y-1">
+                                    {scan.problem_areas.map((area, idx) => (
+                                      <li key={idx} className="text-sm text-red-800">• {area}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                              {scan.strong_areas && scan.strong_areas.length > 0 && (
+                                <div className="bg-green-50 border border-green-200 rounded-lg p-3">
+                                  <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-2">Punti di Forza</p>
+                                  <ul className="space-y-1">
+                                    {scan.strong_areas.map((area, idx) => (
+                                      <li key={idx} className="text-sm text-green-800">• {area}</li>
+                                    ))}
+                                  </ul>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                   ))}
                 </div>
               )}
