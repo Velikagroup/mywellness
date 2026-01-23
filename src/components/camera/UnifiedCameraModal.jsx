@@ -451,54 +451,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     }
   };
 
-  const saveMealLog = async () => {
-    if (!calorieResult || !user) {
-      alert('Dati mancanti per salvare il pasto');
-      return;
-    }
-    
-    try {
-      const today = new Date().toISOString().split('T')[0];
-      
-      console.log('Saving meal log with:', {
-        user_id: user.id,
-        date: today,
-        detected_items: [calorieResult.nome_cibo],
-        actual_calories: calorieResult.calorie
-      });
-      
-      const result = await base44.entities.MealLog.create({
-        user_id: user.id,
-        original_meal_id: `logged_${Date.now()}`,
-        date: today,
-        meal_type: 'lunch',
-        photo_url: calorieResult.photo_url,
-        detected_items: [calorieResult.nome_cibo],
-        actual_calories: calorieResult.calorie,
-        actual_protein: calorieResult.proteine,
-        actual_carbs: calorieResult.carboidrati,
-        actual_fat: calorieResult.grassi,
-        planned_calories: calorieResult.calorie
-      });
-      
-      console.log('Meal log saved successfully:', result);
-      
-      alert('✅ Pasto salvato con successo!');
-      
-      // Reset state
-      setCalorieResult(null);
-      setCapturedImage(null);
-      
-      // Close modal
-      setTimeout(() => {
-        onClose();
-      }, 500);
-    } catch (error) {
-      console.error('Error saving meal log:', error);
-      alert('Errore: ' + (error.message || 'Impossibile salvare il pasto'));
-    }
-  };
-
   const retakePhoto = () => {
     setCapturedImage(null);
     setCalorieResult(null);
@@ -992,10 +944,14 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                    Rifai
                  </Button>
                  <Button
-                   onClick={saveMealLog}
+                   onClick={() => {
+                     setCapturedImage(null);
+                     setCalorieResult(null);
+                     startCamera();
+                   }}
                    className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                  >
-                   Salva
+                   Nuovo
                  </Button>
                </div>
             </div>
