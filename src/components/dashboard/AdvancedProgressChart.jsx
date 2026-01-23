@@ -485,7 +485,9 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
   const sortedByDate = [...weightHistory].sort((a, b) => {
     const dateA = a.date || new Date(a.created_date).toISOString().substring(0, 10);
     const dateB = b.date || new Date(b.created_date).toISOString().substring(0, 10);
-    return dateA.localeCompare(dateB);
+    if (dateA !== dateB) return dateA.localeCompare(dateB);
+    // Se stessa data, ordina per created_date (più recente ultimo)
+    return new Date(a.created_date) - new Date(b.created_date);
   });
   
   // Ultimo peso registrato (più recente)
