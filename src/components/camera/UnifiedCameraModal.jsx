@@ -389,31 +389,35 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         ? parseFloat(weightKg) / 2.20462 
         : parseFloat(weightKg);
 
+      // Salva il peso
       await base44.entities.WeightHistory.create({
         user_id: user.id,
         weight: weightValue,
         date: today
       });
 
-      // Calcola e aggiorna la massa grassa
+      // Calcola la nuova massa grassa
       const calculatedBodyFat = calculateBodyFatNavyFormula(user);
+      console.log('Massa grassa calcolata:', calculatedBodyFat);
+
       if (calculatedBodyFat !== null) {
+        // Aggiorna la massa grassa
         await base44.auth.updateMe({ body_fat_percentage: calculatedBodyFat });
+        console.log('Massa grassa aggiornata nel database');
       }
 
-      alert('✅ Peso registrato con successo!');
+      alert('✅ Peso e massa grassa aggiornati!');
       setWeightKg('');
       setWeightUnit('kg');
 
-      // Ricarica la pagina per aggiornare tutti i dati (peso e massa grassa)
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
+      // Attendi un po' prima di ricaricare
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      window.location.reload();
     } catch (error) {
       console.error('Error saving weight:', error);
       alert('Errore durante il salvataggio');
+      setSavingWeight(false);
     }
-    setSavingWeight(false);
   };
 
   const retakePhoto = () => {
