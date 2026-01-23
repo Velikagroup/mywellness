@@ -144,7 +144,7 @@ export default function MealHistoryDetailModal({ mealLog, onClose, onReload }) {
                 📋 Ingredienti
               </h3>
               <Button
-                onClick={() => setShowAddIngredient(true)}
+                onClick={() => setShowIngredientSelector(true)}
                 size="sm"
                 className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
