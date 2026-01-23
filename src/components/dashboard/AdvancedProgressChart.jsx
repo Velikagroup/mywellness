@@ -493,7 +493,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl mt-6" id="progress-section">
 
-          <div className="h-40 relative mt-12">
+          <div className="h-40 relative mt-16">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
                 <defs>
@@ -577,7 +577,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </ResponsiveContainer>
 
             {/* Top Left: Bilancio e Pesi */}
-            <div className="absolute -top-8 left-6 flex flex-col gap-3">
+            <div className="absolute -top-16 left-6 flex flex-col gap-3">
               {/* Bilancio */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
