@@ -711,18 +711,22 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   Rifai
                 </Button>
                 <Button
-                  onClick={onClose}
+                  onClick={() => {
+                    setCapturedImage(null);
+                    setNutritionResult(null);
+                    startCamera();
+                  }}
                   className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
-                  Chiudi
+                  Nuovo
                 </Button>
               </div>
-            </div>
-          </div>
-        </div>
-      )}
+              </div>
+              </div>
+              </div>
+              )}
 
-      {mode === 'calories' && calorieResult && (
+              {mode === 'calories' && calorieResult && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-6 overflow-y-auto">
           <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl my-auto">
             {/* Foto del Cibo */}
@@ -773,21 +777,25 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               </div>
 
               <div className="flex gap-3">
-                <Button
-                  onClick={retakePhoto}
-                  variant="outline"
-                  className="flex-1 border-gray-300 hover:bg-gray-50"
-                >
-                  <RotateCcw className="w-4 h-4 mr-2" />
-                  Rifai
-                </Button>
-                <Button
-                  onClick={onClose}
-                  className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                >
-                  Chiudi
-                </Button>
-              </div>
+                 <Button
+                   onClick={retakePhoto}
+                   variant="outline"
+                   className="flex-1 border-gray-300 hover:bg-gray-50"
+                 >
+                   <RotateCcw className="w-4 h-4 mr-2" />
+                   Rifai
+                 </Button>
+                 <Button
+                   onClick={() => {
+                     setCapturedImage(null);
+                     setCalorieResult(null);
+                     startCamera();
+                   }}
+                   className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                 >
+                   Nuovo
+                 </Button>
+               </div>
             </div>
           </div>
         </div>
@@ -925,7 +933,14 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 >
                   {savingBodyScan ? 'Salvataggio...' : 'Salva Scan'}
                 </Button>
-              </div>
+                <Button
+                  onClick={onClose}
+                  variant="outline"
+                  className="px-6 border-gray-300 hover:bg-gray-50"
+                >
+                  Chiudi
+                </Button>
+                </div>
             </div>
           </div>
         </div>
