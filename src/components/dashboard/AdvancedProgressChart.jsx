@@ -490,7 +490,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                          (totalWeightToChange === 0);
 
         return (
-          <div className="flex flex-col bg-white/65 rounded-[48px] p-5 border border-gray-200/30 backdrop-blur-md shadow-xl" id="progress-section">
+          <div className="flex flex-col bg-white/65 p-5 border border-gray-200/30 backdrop-blur-md shadow-xl squircle-xl" id="progress-section" style={{borderRadius: '44px'}}>
             {/* Box peso attuale e target integrati */}
               <div className="grid grid-cols-2 gap-3 mb-4">
               <div className={`p-3 rounded-lg border backdrop-blur-sm ${
