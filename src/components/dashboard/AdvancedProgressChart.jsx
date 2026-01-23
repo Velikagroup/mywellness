@@ -541,18 +541,18 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </div>
 
               {/* Peso Attuale → Target */}
-              <div className="absolute md:relative top-0 md:top-auto right-0 md:right-auto flex flex-row items-center justify-center md:justify-end gap-2 md:gap-3 w-auto border border-gray-200/60 rounded-lg px-2 py-1 md:px-4 md:py-3 md:-mt-8 text-xs md:text-base">
+              <div className="absolute md:relative top-0 md:top-auto right-0 md:right-auto flex flex-row items-center justify-center md:justify-end gap-1 md:gap-3 w-auto border border-gray-200/60 rounded-lg px-2 py-1 md:px-4 md:py-3 md:-mt-8">
                 <div className="text-right">
-                  <div className="flex items-baseline gap-1.5">
-                    <p className={`font-bold bg-gradient-to-r ${isAligned ? 'from-green-600 to-emerald-500' : 'from-red-600 to-rose-500'} bg-clip-text text-transparent`} style={{ fontSize: '25.5px' }}>{lastRecordedWeight.toFixed(1)}</p>
-                    <p className={`text-sm font-semibold ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</p>
+                  <div className="flex items-baseline gap-0.5 md:gap-1.5">
+                    <p className={`font-bold bg-gradient-to-r ${isAligned ? 'from-green-600 to-emerald-500' : 'from-red-600 to-rose-500'} bg-clip-text text-transparent`} style={{ fontSize: '16px' }}>{lastRecordedWeight.toFixed(1)}</p>
+                    <p className={`text-xs md:text-sm font-semibold ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</p>
                   </div>
                 </div>
-                <div className="font-light text-gray-400" style={{ fontSize: '25.5px' }}>></div>
+                <div className="font-light text-gray-400" style={{ fontSize: '16px' }}>></div>
                 <div className="text-left">
-                  <div className="flex items-baseline gap-1.5">
-                    <p className="font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent" style={{ fontSize: '25.5px' }}>{targetWeight.toFixed(1)}</p>
-                    <p className="text-sm font-semibold text-teal-600">kg</p>
+                  <div className="flex items-baseline gap-0.5 md:gap-1.5">
+                    <p className="font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent" style={{ fontSize: '16px' }}>{targetWeight.toFixed(1)}</p>
+                    <p className="text-xs md:text-sm font-semibold text-teal-600">kg</p>
                   </div>
                 </div>
               </div>
