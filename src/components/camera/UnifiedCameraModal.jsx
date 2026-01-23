@@ -469,7 +469,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       
       const result = await base44.entities.MealLog.create({
         user_id: user.id,
-        original_meal_id: null,
+        original_meal_id: `logged_${Date.now()}`,
         date: today,
         meal_type: 'lunch',
         photo_url: calorieResult.photo_url,
