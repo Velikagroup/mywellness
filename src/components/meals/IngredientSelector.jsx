@@ -7,8 +7,10 @@ import { base44 } from '@/api/base44Client';
 
 export default function IngredientSelector({ isOpen, onClose, onSelectIngredient }) {
   const [ingredients, setIngredients] = useState([]);
+  const [aiSuggestions, setAiSuggestions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const [isSearching, setIsSearching] = useState(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -26,6 +28,65 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
       setIngredients([]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const searchWithAI = async (query) => {
+    if (!query || query.length < 2) {
+      setAiSuggestions([]);
+      return;
+    }
+
+    setIsSearching(true);
+    try {
+      const result = await base44.integrations.Core.InvokeLLM({
+        prompt: `Suggerisci 5 ingredienti alimentari simili a "${query}" con le informazioni nutrizionali per 100g. Ritorna in JSON con questo formato:
+        [
+          {
+            "name": "nome ingrediente",
+            "calories_per_100g": numero,
+            "protein_per_100g": numero,
+            "carbs_per_100g": numero,
+            "fat_per_100g": numero,
+            "default_unit": "g"
+          }
+        ]`,
+        response_json_schema: {
+          type: "object",
+          properties: {
+            suggestions: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  name: { type: "string" },
+                  calories_per_100g: { type: "number" },
+                  protein_per_100g: { type: "number" },
+                  carbs_per_100g: { type: "number" },
+                  fat_per_100g: { type: "number" },
+                  default_unit: { type: "string" }
+                }
+              }
+            }
+          }
+        }
+      });
+
+      setAiSuggestions(result.suggestions || []);
+    } catch (error) {
+      console.error('Error getting AI suggestions:', error);
+      setAiSuggestions([]);
+    } finally {
+      setIsSearching(false);
+    }
+  };
+
+  const handleSearch = (value) => {
+    setSearchQuery(value);
+    if (value.length >= 2) {
+      searchWithAI(value);
+    } else {
+      setAiSuggestions([]);
     }
   };
 
