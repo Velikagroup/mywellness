@@ -493,7 +493,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
         return (
           <div className="flex flex-col bg-white/65 rounded-xl p-5 border border-gray-200/30 backdrop-blur-md shadow-xl mt-6" id="progress-section">
 
-          <div className="h-64 relative">
+          <div className="h-40 relative mt-12">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={lineData} margin={{ top: 25, right: 20, left: -10, bottom: 5 }}>
                 <defs>
@@ -580,13 +580,13 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             <div className="absolute top-4 left-6 flex flex-col gap-3">
               {/* Bilancio */}
               <div>
-                <div className="flex items-center gap-2 mb-1">
-                  <Flame className="w-4 h-4 text-orange-500" />
+                <div className="flex items-center gap-2 mb-2">
+                  <Flame className="w-5 h-5 text-orange-500" />
                   <p className="text-xs font-semibold text-gray-700">Bilancio</p>
                 </div>
                 {todayCalorieBalance !== null && (
                   <>
-                    <p className={`text-2xl font-bold ${
+                    <p className={`text-4xl font-bold leading-none ${
                       (() => {
                         const totalWeightToChange = startWeight - targetWeight;
                         const isWeightLoss = totalWeightToChange > 0;
@@ -596,7 +596,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     }`}>
                       {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
                     </p>
-                    <p className="text-xs text-gray-600">kcal</p>
+                    <p className="text-sm text-gray-600 font-medium">kcal</p>
                   </>
                 )}
               </div>
