@@ -349,7 +349,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           onClick={loadBodyScanHistory}
           className="absolute bottom-52 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
         >
-          📊 Storico Body Scan
+          Storico Body Scan
         </button>
       )}
 
@@ -745,7 +745,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl my-auto">
             <div className="p-6 border-b border-gray-200">
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">📊 Storico Body Scan</h3>
+                <h3 className="text-2xl font-bold text-gray-900">Storico Body Scan</h3>
                 <button
                   onClick={() => {
                     setShowHistoryModal(false);
