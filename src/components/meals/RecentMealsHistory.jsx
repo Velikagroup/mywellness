@@ -124,6 +124,17 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
         </AnimatePresence>
       </div>
 
+      {hasMore && (
+        <div className="flex justify-center mt-6">
+          <Button
+            onClick={() => setDisplayedCount(prev => prev + ITEMS_PER_PAGE)}
+            className="bg-[#26847F] hover:bg-[#1f6b66] text-white"
+          >
+            Carica altri 5
+          </Button>
+        </div>
+      )}
+
       {selectedMeal && (
         <MealHistoryDetailModal
           mealLog={selectedMeal}
