@@ -78,39 +78,38 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
 
                 {/* Dettagli */}
                 <div className="flex-1 min-w-0">
-                  <div className="flex justify-between items-start gap-2 mb-2">
-                    <p className="font-bold text-gray-900 text-sm line-clamp-2">
-                      {getMealTypeLabel(log.meal_type)}
-                    </p>
-                    <span className="text-xs text-gray-500 flex-shrink-0">
-                      {format(new Date(log.created_date), 'HH:mm')}
-                    </span>
-                  </div>
+                  <div className="flex justify-between items-start gap-2 mb-3">
+                     <p className="font-bold text-gray-900 line-clamp-2">
+                       {getMealName(log)}
+                     </p>
+                     <span className="text-xs text-gray-500 flex-shrink-0">
+                       {format(new Date(log.created_date), 'HH:mm')}
+                     </span>
+                   </div>
 
-                  <div className="flex items-center gap-4 mb-2">
-                    <div className="flex items-center gap-1">
-                      <Flame className="w-4 h-4 text-orange-500" />
-                      <span className="font-bold text-gray-900 text-sm">
-                        {log.actual_calories} kcal
-                      </span>
-                    </div>
-                    <span className="text-xs text-gray-500">
-                      {format(new Date(log.created_date), 'd MMM')}
-                    </span>
-                  </div>
+                   <div className="flex items-center gap-1 mb-3">
+                     <Flame className="w-5 h-5 text-orange-500" />
+                     <span className="font-bold text-gray-900 text-2xl">
+                       {log.actual_calories}
+                     </span>
+                     <span className="text-xs text-gray-500">kcal</span>
+                   </div>
 
-                  {/* Macronutrienti */}
-                  <div className="flex gap-3 text-xs">
-                    <span className="text-red-600 font-semibold">
-                      P: {log.actual_protein || 0}g
-                    </span>
-                    <span className="text-amber-600 font-semibold">
-                      C: {log.actual_carbs || 0}g
-                    </span>
-                    <span className="text-blue-600 font-semibold">
-                      G: {log.actual_fat || 0}g
-                    </span>
-                  </div>
+                   {/* Macronutrienti */}
+                   <div className="flex gap-4 text-xs">
+                     <div className="flex items-center gap-1">
+                       <Zap className="w-4 h-4 text-red-600" />
+                       <span className="text-red-600 font-semibold">{log.actual_protein || 0}g</span>
+                     </div>
+                     <div className="flex items-center gap-1">
+                       <Wheat className="w-4 h-4 text-amber-600" />
+                       <span className="text-amber-600 font-semibold">{log.actual_carbs || 0}g</span>
+                     </div>
+                     <div className="flex items-center gap-1">
+                       <Droplet className="w-4 h-4 text-blue-600" />
+                       <span className="text-blue-600 font-semibold">{log.actual_fat || 0}g</span>
+                     </div>
+                   </div>
                 </div>
               </div>
             </motion.div>
