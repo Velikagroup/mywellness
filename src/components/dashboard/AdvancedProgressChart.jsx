@@ -577,7 +577,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
             </ResponsiveContainer>
 
             {/* Top Left: Bilancio e Pesi */}
-            <div className="absolute top-4 left-6 flex flex-col gap-3">
+            <div className="absolute -top-8 left-6 flex flex-col gap-3">
               {/* Bilancio */}
               <div>
                 <div className="flex items-center gap-2 mb-2">
