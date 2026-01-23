@@ -188,7 +188,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
     };
 
     loadCalorieData();
-  }, [user, weightHistory, mealsUpdateTrigger]);
+  }, [user, weightHistory, mealsUpdateTrigger, refreshTrigger]);
 
   const [calorieBalanceMap, setCalorieBalanceMap] = React.useState({});
   const [showConsumedTooltip, setShowConsumedTooltip] = React.useState(false);
