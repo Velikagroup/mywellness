@@ -528,7 +528,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 {todayCalorieBalance !== null ? (
                   <>
                     <div className="flex items-baseline gap-2">
-                      <p className={`text-5xl font-mono font-bold ${calorieColor} leading-tight`}>
+                      <p className={`text-5xl font-['Poppins'] font-bold ${calorieColor} leading-tight`}>
                         {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)}
                       </p>
                       <p className={`text-xl font-medium ${calorieColor}`}>kcal</p>
