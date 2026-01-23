@@ -649,32 +649,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   <p className="text-xs text-purple-600">Massa Grassa</p>
                 </div>
               )}
-              {todayCalorieBalance !== null && (
-                <div className={`bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 shadow-lg ${
-                  todayCalorieBalance < 0 
-                    ? 'border-green-400' 
-                    : todayCalorieBalance > 0 
-                    ? 'border-red-400' 
-                    : 'border-gray-400'
-                }`}>
-                  <p className={`text-sm font-bold ${
-                    todayCalorieBalance < 0 
-                      ? 'text-green-700' 
-                      : todayCalorieBalance > 0 
-                      ? 'text-red-700' 
-                      : 'text-gray-700'
-                  }`}>
-                    {todayCalorieBalance > 0 ? '+' : ''}{Math.round(todayCalorieBalance)} kcal
-                  </p>
-                  <p className={`text-xs ${
-                    todayCalorieBalance < 0 
-                      ? 'text-green-600' 
-                      : todayCalorieBalance > 0 
-                      ? 'text-red-600' 
-                      : 'text-gray-600'
-                  }`}>Bilancio Oggi</p>
-                </div>
-              )}
+
             </div>
           </div>
 
