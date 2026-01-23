@@ -96,8 +96,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
           userSelect: 'none', 
           cursor: isDragging ? 'grabbing' : 'grab',
           width: isMobile ? '100%' : 'fit-content',
-          transform: isMobile ? 'none' : 'scaleX(1.15)',
-          transformOrigin: 'left center'
+          transform: 'none'
         }}
       >
 
@@ -114,7 +113,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
                   flex flex-col items-center justify-center gap-0.5 md:gap-1 
                   px-2 md:px-3 py-2 md:py-2 rounded-lg md:rounded-xl
                   transition-all duration-300 pointer-events-auto
-                  ${isMobile ? 'flex-1' : 'min-w-[80px] md:min-w-[100px]'}
+                  ${isMobile ? 'flex-1' : 'w-[70px]'}
                   ${isSelected 
                     ? 'text-[#26847F] md:text-[#26847F]' 
                     : 'text-gray-400 hover:text-gray-600 md:hover:text-[#26847F]'
@@ -137,7 +136,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
               className={`
                 flex flex-col items-center justify-center gap-1
                 px-3 py-2 rounded-xl transition-colors pointer-events-auto
-                min-w-[100px] text-gray-400 hover:text-[#26847F]
+                w-[70px] text-gray-400 hover:text-[#26847F]
               `}
             >
               <item.icon className="w-6 h-6" />
