@@ -27,8 +27,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const [nutritionResult, setNutritionResult] = useState(null);
 
   // Weight mode states
-  const [weightKg, setWeightKg] = useState('');
-  const [savingWeight, setSavingWeight] = useState(false);
+   const [weightKg, setWeightKg] = useState('');
+   const [weightUnit, setWeightUnit] = useState('kg');
+   const [savingWeight, setSavingWeight] = useState(false);
 
   // Body scan mode states
   const [bodyScanPhotos, setBodyScanPhotos] = useState({
