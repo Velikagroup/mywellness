@@ -502,7 +502,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
           <div className="flex flex-col bg-white/65 rounded-xl p-6 border border-gray-200/30 backdrop-blur-md shadow-xl" id="progress-section">
             
             {/* Riga superiore: Bilancio Calorico + Peso Attuale → Target */}
-            <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-6 pb-6 border-b border-gray-200/50">
+            <div className="relative flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-6 pb-6 border-b border-gray-200/50">
               
               {/* Bilancio Calorico */}
               <div className="flex-1">
