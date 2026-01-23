@@ -33,6 +33,12 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     back: null
   });
   const [currentBodyScanStep, setCurrentBodyScanStep] = useState('front');
+  const [bodyScanAnalyzing, setBodyScanAnalyzing] = useState(false);
+  const [bodyScanResult, setBodyScanResult] = useState(null);
+  const [savingBodyScan, setSavingBodyScan] = useState(false);
+  const [showHistoryModal, setShowHistoryModal] = useState(false);
+  const [bodyScanHistory, setBodyScanHistory] = useState([]);
+  const [selectedHistoryItem, setSelectedHistoryItem] = useState(null);
 
   useEffect(() => {
     if (isOpen && mode !== 'weight') {
@@ -159,7 +165,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     if (updatedPhotos.front && updatedPhotos.side && updatedPhotos.back) {
       // Tutte le foto presenti, procedi all'analisi
       stopCamera();
-      navigateToBodyScan();
+      analyzeBodyScan(updatedPhotos);
     } else {
       // Trova la prossima foto mancante
       if (!updatedPhotos.front) {
@@ -181,31 +187,88 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     setCurrentBodyScanStep(step);
   };
 
-  const navigateToBodyScan = async () => {
+  const analyzeBodyScan = async (photos) => {
+    setBodyScanAnalyzing(true);
     try {
       // Upload all photos
-      const photos = [];
-      for (const [key, imageUrl] of Object.entries(bodyScanPhotos)) {
+      const uploadedPhotos = {};
+      for (const [key, imageUrl] of Object.entries(photos)) {
         if (imageUrl) {
           const response = await fetch(imageUrl);
           const blob = await response.blob();
           const file = new File([blob], `${key}.jpg`, { type: 'image/jpeg' });
           const { file_url } = await base44.integrations.Core.UploadFile({ file });
-          photos.push({ position: key, url: file_url });
+          uploadedPhotos[key] = file_url;
         }
       }
 
-      // Navigate to body scan with photos
-      navigate(createPageUrl('BodyScan'), { 
-        state: { 
-          photos: photos,
-          fromCamera: true 
-        } 
+      // Analyze body
+      const { analyzeBodyImage } = await import('@/functions/analyzeBodyImage');
+      const result = await analyzeBodyImage({
+        front_photo_url: uploadedPhotos.front,
+        side_photo_url: uploadedPhotos.side,
+        back_photo_url: uploadedPhotos.back,
+        user_id: user.id,
+        height: user.height,
+        weight: user.weight || user.current_weight,
+        age: user.age,
+        gender: user.gender
       });
+
+      setBodyScanResult({
+        ...result,
+        photos: uploadedPhotos,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error('Error analyzing body scan:', error);
+      alert('Errore durante l\'analisi. Riprova.');
+    }
+    setBodyScanAnalyzing(false);
+  };
+
+  const saveBodyScanResult = async () => {
+    if (!bodyScanResult || !user) return;
+    
+    setSavingBodyScan(true);
+    try {
+      await base44.entities.BodyScanResult.create({
+        user_id: user.id,
+        front_photo_url: bodyScanResult.photos.front,
+        side_photo_url: bodyScanResult.photos.side,
+        back_photo_url: bodyScanResult.photos.back,
+        somatotype: bodyScanResult.somatotype,
+        body_fat_percentage: bodyScanResult.body_fat_percentage,
+        muscle_definition_score: bodyScanResult.muscle_definition_score,
+        body_age_estimate: bodyScanResult.body_age_estimate,
+        posture_assessment: bodyScanResult.posture_assessment,
+        problem_areas: bodyScanResult.problem_areas,
+        strong_areas: bodyScanResult.strong_areas,
+        skin_texture: bodyScanResult.skin_texture,
+        skin_tone: bodyScanResult.skin_tone,
+        swelling_percentage: bodyScanResult.swelling_percentage
+      });
+      alert('✅ Body scan salvato con successo!');
       onClose();
     } catch (error) {
-      console.error('Error uploading photos:', error);
-      alert('Errore durante il caricamento delle foto');
+      console.error('Error saving body scan:', error);
+      alert('Errore durante il salvataggio');
+    }
+    setSavingBodyScan(false);
+  };
+
+  const loadBodyScanHistory = async () => {
+    if (!user) return;
+    try {
+      const history = await base44.entities.BodyScanResult.filter(
+        { user_id: user.id },
+        '-created_date'
+      );
+      setBodyScanHistory(history);
+      setShowHistoryModal(true);
+    } catch (error) {
+      console.error('Error loading body scan history:', error);
+      alert('Errore durante il caricamento dello storico');
     }
   };
 
@@ -279,6 +342,16 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           )}
         </div>
       </div>
+
+      {/* Body Scan History Button */}
+      {mode === 'bodyscan' && !bodyScanAnalyzing && !bodyScanResult && (
+        <button
+          onClick={loadBodyScanHistory}
+          className="absolute bottom-52 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
+        >
+          📊 Storico Body Scan
+        </button>
+      )}
 
       {/* Mode Selector Buttons */}
       <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex gap-3">
@@ -513,6 +586,282 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   Chiudi
                 </Button>
               </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Body Scan Analyzing */}
+      {mode === 'bodyscan' && bodyScanAnalyzing && (
+        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
+          <div className="text-center text-white">
+            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
+            <p className="text-lg font-semibold">Analisi del corpo in corso...</p>
+            <p className="text-sm text-white/70 mt-2">Attendere prego</p>
+          </div>
+        </div>
+      )}
+
+      {/* Body Scan Result */}
+      {mode === 'bodyscan' && bodyScanResult && (
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto">
+            {/* Header con foto */}
+            <div className="relative h-64 rounded-t-3xl overflow-hidden bg-gray-900">
+              <div className="grid grid-cols-3 h-full">
+                {bodyScanResult.photos.front && (
+                  <img src={bodyScanResult.photos.front} className="w-full h-full object-cover" alt="Front" />
+                )}
+                {bodyScanResult.photos.side && (
+                  <img src={bodyScanResult.photos.side} className="w-full h-full object-cover" alt="Side" />
+                )}
+                {bodyScanResult.photos.back && (
+                  <img src={bodyScanResult.photos.back} className="w-full h-full object-cover" alt="Back" />
+                )}
+              </div>
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/90 via-black/60 to-transparent p-6">
+                <h3 className="text-2xl font-bold text-white mb-1">Analisi Corporea Completata</h3>
+                <p className="text-sm text-white/80">{new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+              </div>
+            </div>
+
+            <div className="p-6 max-h-[60vh] overflow-y-auto">
+              {/* Metriche Principali */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                <div className="bg-gradient-to-br from-[#26847F]/10 to-[#26847F]/5 border-2 border-[#26847F]/20 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Somatotipo</p>
+                  <p className="text-2xl font-bold text-[#26847F] capitalize">{bodyScanResult.somatotype}</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-2 border-blue-500/20 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Massa Grassa</p>
+                  <p className="text-2xl font-bold text-blue-600">{bodyScanResult.body_fat_percentage}%</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-2 border-purple-500/20 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Definizione Muscolare</p>
+                  <p className="text-2xl font-bold text-purple-600">{bodyScanResult.muscle_definition_score}/100</p>
+                </div>
+
+                <div className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-2 border-orange-500/20 rounded-xl p-4">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Età Biologica</p>
+                  <p className="text-2xl font-bold text-orange-600">{bodyScanResult.body_age_estimate} anni</p>
+                </div>
+              </div>
+
+              {/* Postura */}
+              {bodyScanResult.posture_assessment && (
+                <div className="mb-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
+                  <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Valutazione Posturale</p>
+                  <p className="text-sm text-gray-800">{bodyScanResult.posture_assessment}</p>
+                </div>
+              )}
+
+              {/* Aree Problematiche e Punti di Forza */}
+              <div className="grid grid-cols-2 gap-4 mb-6">
+                {bodyScanResult.problem_areas && bodyScanResult.problem_areas.length > 0 && (
+                  <div className="bg-red-50 rounded-xl p-4 border border-red-200">
+                    <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">⚠️ Aree da Migliorare</p>
+                    <ul className="space-y-1">
+                      {bodyScanResult.problem_areas.map((area, idx) => (
+                        <li key={idx} className="text-sm text-red-900">• {area}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {bodyScanResult.strong_areas && bodyScanResult.strong_areas.length > 0 && (
+                  <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                    <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">✅ Punti di Forza</p>
+                    <ul className="space-y-1">
+                      {bodyScanResult.strong_areas.map((area, idx) => (
+                        <li key={idx} className="text-sm text-green-900">• {area}</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </div>
+
+              {/* Dettagli Aggiuntivi */}
+              <div className="grid grid-cols-3 gap-3 mb-6">
+                {bodyScanResult.skin_texture && (
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xs text-gray-600 font-medium mb-1">Texture Pelle</p>
+                    <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_texture}</p>
+                  </div>
+                )}
+                {bodyScanResult.skin_tone && (
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xs text-gray-600 font-medium mb-1">Tono Pelle</p>
+                    <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_tone}</p>
+                  </div>
+                )}
+                {bodyScanResult.swelling_percentage !== undefined && (
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xs text-gray-600 font-medium mb-1">Gonfiore</p>
+                    <p className="text-sm font-semibold text-gray-900">{bodyScanResult.swelling_percentage}%</p>
+                  </div>
+                )}
+              </div>
+
+              {/* Pulsanti Azione */}
+              <div className="flex gap-3">
+                <Button
+                  onClick={() => {
+                    setBodyScanResult(null);
+                    setBodyScanPhotos({ front: null, side: null, back: null });
+                    setCurrentBodyScanStep('front');
+                    startCamera();
+                  }}
+                  variant="outline"
+                  className="flex-1 border-gray-300 hover:bg-gray-50"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Nuovo Scan
+                </Button>
+                <Button
+                  onClick={saveBodyScanResult}
+                  disabled={savingBodyScan}
+                  className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                >
+                  {savingBodyScan ? 'Salvataggio...' : 'Salva Scan'}
+                </Button>
+                <Button
+                  onClick={onClose}
+                  variant="outline"
+                  className="px-6 border-gray-300 hover:bg-gray-50"
+                >
+                  Chiudi
+                </Button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Body Scan History Modal */}
+      {showHistoryModal && (
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-4xl bg-white rounded-3xl shadow-2xl my-auto">
+            <div className="p-6 border-b border-gray-200">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-bold text-gray-900">📊 Storico Body Scan</h3>
+                <button
+                  onClick={() => {
+                    setShowHistoryModal(false);
+                    setSelectedHistoryItem(null);
+                  }}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-600" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              {bodyScanHistory.length === 0 ? (
+                <div className="text-center py-12">
+                  <ScanLine className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-600">Nessun body scan salvato</p>
+                </div>
+              ) : selectedHistoryItem ? (
+                // Vista dettaglio scan selezionato
+                <div>
+                  <button
+                    onClick={() => setSelectedHistoryItem(null)}
+                    className="mb-4 flex items-center gap-2 text-[#26847F] hover:text-[#1f6b66] font-medium"
+                  >
+                    ← Torna alla lista
+                  </button>
+
+                  <div className="grid grid-cols-3 gap-3 mb-6">
+                    <img src={selectedHistoryItem.front_photo_url} className="w-full h-48 object-cover rounded-xl" alt="Front" />
+                    <img src={selectedHistoryItem.side_photo_url} className="w-full h-48 object-cover rounded-xl" alt="Side" />
+                    <img src={selectedHistoryItem.back_photo_url} className="w-full h-48 object-cover rounded-xl" alt="Back" />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4 mb-6">
+                    <div className="bg-gradient-to-br from-[#26847F]/10 to-[#26847F]/5 border-2 border-[#26847F]/20 rounded-xl p-4">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Somatotipo</p>
+                      <p className="text-2xl font-bold text-[#26847F] capitalize">{selectedHistoryItem.somatotype}</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-blue-500/10 to-blue-500/5 border-2 border-blue-500/20 rounded-xl p-4">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Massa Grassa</p>
+                      <p className="text-2xl font-bold text-blue-600">{selectedHistoryItem.body_fat_percentage}%</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-purple-500/10 to-purple-500/5 border-2 border-purple-500/20 rounded-xl p-4">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Definizione Muscolare</p>
+                      <p className="text-2xl font-bold text-purple-600">{selectedHistoryItem.muscle_definition_score}/100</p>
+                    </div>
+                    <div className="bg-gradient-to-br from-orange-500/10 to-orange-500/5 border-2 border-orange-500/20 rounded-xl p-4">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-1">Età Biologica</p>
+                      <p className="text-2xl font-bold text-orange-600">{selectedHistoryItem.body_age_estimate} anni</p>
+                    </div>
+                  </div>
+
+                  {selectedHistoryItem.posture_assessment && (
+                    <div className="mb-6 bg-gray-50 rounded-xl p-4 border border-gray-200">
+                      <p className="text-xs font-semibold text-gray-600 uppercase tracking-wide mb-2">Valutazione Posturale</p>
+                      <p className="text-sm text-gray-800">{selectedHistoryItem.posture_assessment}</p>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    {selectedHistoryItem.problem_areas && selectedHistoryItem.problem_areas.length > 0 && (
+                      <div className="bg-red-50 rounded-xl p-4 border border-red-200">
+                        <p className="text-xs font-semibold text-red-700 uppercase tracking-wide mb-2">⚠️ Aree da Migliorare</p>
+                        <ul className="space-y-1">
+                          {selectedHistoryItem.problem_areas.map((area, idx) => (
+                            <li key={idx} className="text-sm text-red-900">• {area}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    {selectedHistoryItem.strong_areas && selectedHistoryItem.strong_areas.length > 0 && (
+                      <div className="bg-green-50 rounded-xl p-4 border border-green-200">
+                        <p className="text-xs font-semibold text-green-700 uppercase tracking-wide mb-2">✅ Punti di Forza</p>
+                        <ul className="space-y-1">
+                          {selectedHistoryItem.strong_areas.map((area, idx) => (
+                            <li key={idx} className="text-sm text-green-900">• {area}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ) : (
+                // Lista dei body scan
+                <div className="grid grid-cols-1 gap-4">
+                  {bodyScanHistory.map((scan) => (
+                    <button
+                      key={scan.id}
+                      onClick={() => setSelectedHistoryItem(scan)}
+                      className="flex items-center gap-4 p-4 bg-gray-50 hover:bg-gray-100 rounded-xl border border-gray-200 transition-all text-left"
+                    >
+                      <div className="flex gap-2">
+                        <img src={scan.front_photo_url} className="w-16 h-20 object-cover rounded-lg" alt="Front" />
+                        <img src={scan.side_photo_url} className="w-16 h-20 object-cover rounded-lg" alt="Side" />
+                        <img src={scan.back_photo_url} className="w-16 h-20 object-cover rounded-lg" alt="Back" />
+                      </div>
+                      <div className="flex-1">
+                        <p className="font-semibold text-gray-900">
+                          {new Date(scan.created_date).toLocaleDateString('it-IT', { 
+                            day: 'numeric', 
+                            month: 'long', 
+                            year: 'numeric' 
+                          })}
+                        </p>
+                        <div className="flex gap-4 mt-2 text-sm text-gray-600">
+                          <span>🎯 {scan.somatotype}</span>
+                          <span>💪 {scan.muscle_definition_score}/100</span>
+                          <span>📊 {scan.body_fat_percentage}%</span>
+                        </div>
+                      </div>
+                      <div className="text-gray-400">→</div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
