@@ -610,7 +610,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       )}
 
       {/* Calorie History Button */}
-      {mode === 'calories' && !analyzing && !calorieResult && (
+      {mode === 'calories' && !analyzing && !calorieResult && !capturedImage && (
         <button
           onClick={loadCalorieHistory}
           className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
@@ -778,10 +778,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           )}
 
           {/* Capture Button */}
-          {cameraActive && !capturedImage && !calorieResult && !nutritionResult && (
+          {cameraActive && !capturedImage && !calorieResult && !nutritionResult && !bodyScanResult && (
             <button
               onClick={capturePhoto}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-black border-4 border-white shadow-2xl hover:scale-110 transition-transform active:scale-95"
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-white border-4 border-black shadow-2xl hover:scale-110 transition-transform active:scale-95 z-20"
             />
           )}
         </>
