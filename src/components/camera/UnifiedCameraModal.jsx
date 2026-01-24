@@ -536,7 +536,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   return (
     <div className="fixed inset-0 z-[100] bg-black">
       {/* Header */}
-      <div className="absolute top-0 left-0 right-0 z-10 pt-4 px-6">
+      <div className="absolute top-0 left-0 right-0 z-10 pt-12 px-6">
         <div className="flex items-center justify-between">
           <button
             onClick={onClose}
