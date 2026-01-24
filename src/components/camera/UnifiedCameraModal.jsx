@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import RecentMealsHistory from '@/components/meals/RecentMealsHistory';
 
 export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const navigate = useNavigate();
