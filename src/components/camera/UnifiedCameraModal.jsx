@@ -295,7 +295,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         actual_calories: Math.round(totCalorie),
         actual_protein: Math.round(totProteine * 10) / 10,
         actual_carbs: Math.round(totCarbs * 10) / 10,
-        actual_fat: Math.round(totGrassi * 10) / 10
+        actual_fat: Math.round(totGrassi * 10) / 10,
+        is_quick_scan: true
       });
 
       setAnalysisProgress(100);
