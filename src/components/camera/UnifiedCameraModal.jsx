@@ -1132,7 +1132,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Calorie History Modal */}
       {showCalorieHistoryModal && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white/65 backdrop-blur-md rounded-3xl shadow-2xl my-auto border border-gray-200/30">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-gray-200/30">
             <div className="p-6 border-b border-gray-200/30">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-gray-900">Storico Calorie</h3>
