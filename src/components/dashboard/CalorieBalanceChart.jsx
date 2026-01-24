@@ -313,6 +313,37 @@ export default function CalorieBalanceChart({ user }) {
           </p>
         </div>
 
+        {/* Bilancio Calorico Totale */}
+        <div className={`p-4 rounded-xl border-2 ${
+          isBalanceGood 
+            ? 'bg-green-50 border-green-200' 
+            : 'bg-red-50 border-red-200'
+        }`}>
+          <div className="flex items-center justify-between">
+            <span className="font-bold text-gray-900 flex items-center gap-2">
+              {isBalanceGood ? (
+                <ArrowDown className="w-5 h-5 text-green-600" />
+              ) : (
+                <ArrowUp className="w-5 h-5 text-red-600" />
+              )}
+              Bilancio Calorico
+            </span>
+            <div className="text-right">
+              <span className={`font-bold text-2xl ${
+                isBalanceGood ? 'text-green-600' : 'text-red-600'
+              }`}>
+                {data.balance > 0 ? '+' : ''}{data.balance} kcal
+              </span>
+              <p className="text-xs text-gray-600 mt-0.5">
+                {data.isWeightLoss 
+                  ? (data.balance < 0 ? '✓ Deficit calorico' : '⚠️ Surplus calorico')
+                  : (data.balance > 0 ? '✓ Surplus calorico' : '⚠️ Deficit calorico')
+                }
+              </p>
+            </div>
+          </div>
+        </div>
+
         {/* Calorie Bruciate - Barra Unificata */}
         <div className="space-y-3">
           {/* Titolo principale con totale */}
