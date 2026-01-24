@@ -98,7 +98,7 @@ export default function Dashboard() {
       const basePromises = [
         base44.entities.WeightHistory.list('-date', 30), // Use list() - RLS will filter by user
         base44.entities.MealPlan.filter({ user_id: currentUser.id, day_of_week: todayOfWeek }),
-        base44.entities.MealLog.filter({ user_id: currentUser.id, date: todayDate })
+        base44.entities.MealLog.filter({ user_id: currentUser.id, date: todayDate, is_quick_scan: false })
       ];
 
       let workoutPlanPromise = Promise.resolve([]);
