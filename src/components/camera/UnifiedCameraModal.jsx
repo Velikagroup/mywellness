@@ -682,7 +682,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
           {/* Frame Guide per Calories */}
           {mode === 'calories' && cameraActive && !capturedImage && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-24">
               {/* Camera frame */}
               <div className="relative w-80 h-96 border-4 border-white/60 rounded-3xl shadow-2xl flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4 z-10">
