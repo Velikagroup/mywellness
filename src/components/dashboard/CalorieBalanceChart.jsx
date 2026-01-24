@@ -91,12 +91,13 @@ export default function CalorieBalanceChart({ user }) {
       });
       console.log('🍽️ Meal plans loaded:', mealPlans.length);
 
-      // Carica pasti loggati di oggi
-      const mealLogs = await base44.entities.MealLog.filter({
+      // Carica pasti loggati di oggi (esclusi i quick scan dal pulsante +)
+      const allMealLogs = await base44.entities.MealLog.filter({
         user_id: user.id,
         date: today
       });
-      console.log('📊 Meal logs loaded:', mealLogs.length);
+      const mealLogs = allMealLogs.filter(log => !log.is_quick_scan);
+      console.log('📊 Meal logs loaded:', mealLogs.length, '(quick scans excluded:', allMealLogs.length - mealLogs.length, ')');
 
       // Carica dati HealthKit per oggi
       const healthKitSync = await base44.entities.HealthKitSync.filter({

@@ -160,7 +160,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           actual_carbs: 0,
           actual_fat: 0,
           planned_calories: 0,
-          delta_calories: 0
+          delta_calories: 0,
+          is_quick_scan: true
         });
 
         setAnalysisProgress(40);
