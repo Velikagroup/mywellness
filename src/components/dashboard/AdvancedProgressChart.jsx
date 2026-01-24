@@ -107,7 +107,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
         const mealLogs = await base44.entities.MealLog.filter({
           user_id: user.id,
-          date: today
+          date: today,
+          is_quick_scan: false
         });
 
         const plannedCalories = mealPlans.reduce((sum, meal) => sum + (meal.total_calories || 0), 0);
