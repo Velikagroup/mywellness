@@ -137,35 +137,13 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         const file = new File([blob], 'food.jpg', { type: 'image/jpeg' });
         const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
-        setAnalysisProgress(20);
+        setAnalysisProgress(30);
         // Carica i pasti esistenti per confronto
         const existingMeals = await base44.entities.MealLog.filter(
           { user_id: user.id },
           '-created_date',
           50
         );
-
-        setAnalysisProgress(30);
-        // Crea subito un MealLog temporaneo
-        const tempMealId = `temp_${Date.now()}`;
-        const tempMeal = await base44.entities.MealLog.create({
-          user_id: user.id,
-          original_meal_id: tempMealId,
-          date: new Date().toISOString().split('T')[0],
-          meal_type: 'snack1',
-          photo_url: file_url,
-          detected_items: ['Analisi in corso...'],
-          actual_calories: 0,
-          actual_protein: 0,
-          actual_carbs: 0,
-          actual_fat: 0,
-          planned_calories: 0,
-          delta_calories: 0
-        });
-
-        setAnalysisProgress(40);
-        // Apri lo storico immediatamente
-        await loadCalorieHistory();
 
         setAnalysisProgress(50);
         // Controlla se esiste già un piatto simile
@@ -288,19 +266,20 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         }
 
       setAnalysisProgress(90);
-      // Aggiorna il MealLog con i dati reali
-      await base44.entities.MealLog.update(tempMeal.id, {
+
+      // Mostra solo i risultati senza salvare
+      const resultData = {
+        photo_url: file_url,
         detected_items: detectedItems,
         actual_calories: Math.round(totCalorie),
         actual_protein: Math.round(totProteine * 10) / 10,
         actual_carbs: Math.round(totCarbs * 10) / 10,
-        actual_fat: Math.round(totGrassi * 10) / 10
-      });
+        actual_fat: Math.round(totGrassi * 10) / 10,
+        is_match: !!matchFound
+      };
 
+      setCalorieResult(resultData);
       setAnalysisProgress(100);
-
-      // Piccola attesa per permettere alla subscription di aggiornare
-      await new Promise(resolve => setTimeout(resolve, 500));
 
       } catch (error) {
       console.error('Error analyzing food:', error);
@@ -1182,6 +1161,102 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   Chiudi
                 </Button>
                 </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Calorie Result Display */}
+      {mode === 'calories' && calorieResult && !analyzing && (
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-6 overflow-y-auto">
+          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl my-auto">
+            {calorieResult.photo_url && (
+              <div className="relative w-full h-48 rounded-t-3xl overflow-hidden bg-gray-100">
+                <img 
+                  src={calorieResult.photo_url} 
+                  alt="Analisi cibo"
+                  className="w-full h-full object-cover"
+                />
+                {calorieResult.is_match && (
+                  <div className="absolute top-3 right-3 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-semibold">
+                    ✓ Già analizzato
+                  </div>
+                )}
+              </div>
+            )}
+
+            <div className="p-8">
+              <div className="mb-6 text-center">
+                <div className="inline-flex items-center justify-center w-24 h-24 rounded-full bg-gradient-to-br from-orange-400 to-orange-600 mb-4">
+                  <p className="text-3xl font-bold text-white">{calorieResult.actual_calories}</p>
+                </div>
+                <p className="text-sm text-gray-500 font-medium">Calorie Totali</p>
+              </div>
+
+              <div className="border-t border-gray-200 mb-6"></div>
+
+              <div className="mb-6">
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Macronutrienti</p>
+                <div className="grid grid-cols-3 gap-3">
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xl font-bold text-red-600">{calorieResult.actual_protein}g</p>
+                    <p className="text-xs text-gray-600 mt-1">Proteine</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xl font-bold text-amber-600">{calorieResult.actual_carbs}g</p>
+                    <p className="text-xs text-gray-600 mt-1">Carboidrati</p>
+                  </div>
+                  <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
+                    <p className="text-xl font-bold text-blue-600">{calorieResult.actual_fat}g</p>
+                    <p className="text-xs text-gray-600 mt-1">Grassi</p>
+                  </div>
+                </div>
+              </div>
+
+              {calorieResult.detected_items && calorieResult.detected_items.length > 0 && (
+                <div className="mb-6 bg-gray-50 border border-gray-200 rounded-lg p-4">
+                  <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">Ingredienti Rilevati</p>
+                  <div className="space-y-2">
+                    {calorieResult.detected_items.map((item, idx) => {
+                      let parsedItem = item;
+                      if (typeof item === 'string') {
+                        try {
+                          parsedItem = JSON.parse(item);
+                        } catch {
+                          parsedItem = { name: item };
+                        }
+                      }
+                      return (
+                        <div key={idx} className="flex justify-between items-center">
+                          <span className="text-sm text-gray-700">{parsedItem.name}</span>
+                          <span className="text-xs text-gray-500">{parsedItem.grams ? `${parsedItem.grams}g` : ''}</span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+
+              <div className="flex gap-3">
+                <Button
+                  onClick={retakePhoto}
+                  variant="outline"
+                  className="flex-1 border-gray-300 hover:bg-gray-50"
+                >
+                  <RotateCcw className="w-4 h-4 mr-2" />
+                  Rifai
+                </Button>
+                <Button
+                  onClick={() => {
+                    setCalorieResult(null);
+                    setCapturedImage(null);
+                    startCamera();
+                  }}
+                  className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                >
+                  Nuovo
+                </Button>
+              </div>
             </div>
           </div>
         </div>
