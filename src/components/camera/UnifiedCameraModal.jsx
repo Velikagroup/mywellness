@@ -1176,6 +1176,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   onClick={() => {
                     setShowCalorieHistoryModal(false);
                     setCalorieHistory([]);
+                    setCapturedImage(null);
+                    setAnalyzing(false);
+                    setAnalysisProgress(0);
                   }}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 >
