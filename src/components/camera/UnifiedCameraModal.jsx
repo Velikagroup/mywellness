@@ -720,18 +720,19 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {/* Frame Guide per Calories */}
           {mode === 'calories' && cameraActive && !capturedImage && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-24">
-              {/* Camera frame */}
-              <div className="relative w-80 h-96 border-4 border-white/60 rounded-3xl shadow-2xl flex items-center justify-center">
+              {/* Camera frame con maschera */}
+              <div className="relative w-80 h-96 rounded-3xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
+                <div className="absolute inset-0 border-4 border-white/80 rounded-3xl"></div>
                 <div className="flex flex-col items-center gap-4 z-10">
-                  <UtensilsCrossed className="w-16 h-16 text-white/70" strokeWidth={1.5} />
+                  <UtensilsCrossed className="w-16 h-16 text-white/90" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Centra il cibo</p>
                 </div>
 
                 {/* Corner markers */}
-                <div className="absolute top-3 left-3 w-6 h-6 border-2 border-white/70"></div>
-                <div className="absolute top-3 right-3 w-6 h-6 border-2 border-white/70"></div>
-                <div className="absolute bottom-3 left-3 w-6 h-6 border-2 border-white/70"></div>
-                <div className="absolute bottom-3 right-3 w-6 h-6 border-2 border-white/70"></div>
+                <div className="absolute top-3 left-3 w-6 h-6 border-t-2 border-l-2 border-white/90 rounded-tl-lg"></div>
+                <div className="absolute top-3 right-3 w-6 h-6 border-t-2 border-r-2 border-white/90 rounded-tr-lg"></div>
+                <div className="absolute bottom-3 left-3 w-6 h-6 border-b-2 border-l-2 border-white/90 rounded-bl-lg"></div>
+                <div className="absolute bottom-3 right-3 w-6 h-6 border-b-2 border-r-2 border-white/90 rounded-br-lg"></div>
               </div>
             </div>
           )}
@@ -739,21 +740,18 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {/* Frame Guide per Nutrition Table */}
           {mode === 'nutrition_table' && cameraActive && !capturedImage && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-              {/* Semi-transparent overlay - solo esterno */}
-              <div className="absolute inset-0 bg-black/50" />
-
               {/* Camera frame for table - senza overlay interno */}
-              <div className="relative w-80 h-96 border-[6px] border-white/80 rounded-[48px] shadow-2xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
+              <div className="relative w-80 h-96 border-[6px] border-white/80 rounded-[48px] flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="flex flex-col items-center gap-4 z-10">
-                  <ClipboardList className="w-16 h-16 text-white/60" strokeWidth={1.5} />
+                  <ClipboardList className="w-16 h-16 text-white/90" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Inquadra la tabella nutrizionale</p>
                 </div>
 
                 {/* Corner markers - angoli più marcati */}
-                <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-white/80 rounded-tl-lg"></div>
-                <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-white/80 rounded-tr-lg"></div>
-                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-white/80 rounded-bl-lg"></div>
-                <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-white/80 rounded-br-lg"></div>
+                <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-white/90 rounded-tl-lg"></div>
+                <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-white/90 rounded-tr-lg"></div>
+                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-white/90 rounded-bl-lg"></div>
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-white/90 rounded-br-lg"></div>
               </div>
             </div>
           )}
