@@ -22,6 +22,20 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
     loadMealLogs();
   }, [userId]);
 
+  // Real-time subscription per aggiornamenti automatici
+  useEffect(() => {
+    if (!userId) return;
+    
+    const unsubscribe = base44.entities.MealLog.subscribe((event) => {
+      if (event.type === 'create' || event.type === 'update') {
+        // Ricarica i dati quando un MealLog viene creato o aggiornato
+        loadMealLogs();
+      }
+    });
+
+    return () => unsubscribe();
+  }, [userId]);
+
   const loadMealLogs = async () => {
     if (!userId) return;
     setIsLoading(true);

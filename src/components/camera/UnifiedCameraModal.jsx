@@ -235,8 +235,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       });
 
       setAnalysisProgress(100);
-      // Ricarica lo storico
-      await loadCalorieHistory();
+
+      // Piccola attesa per permettere alla subscription di aggiornare
+      await new Promise(resolve => setTimeout(resolve, 500));
 
       } catch (error) {
       console.error('Error analyzing food:', error);
