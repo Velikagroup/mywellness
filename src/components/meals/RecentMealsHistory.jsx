@@ -41,7 +41,8 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
     setIsLoading(true);
     try {
       const logs = await base44.entities.MealLog.filter({
-        user_id: userId
+        user_id: userId,
+        is_quick_scan: true  // Mostra SOLO i quick scan dal pulsante +
       }, '-created_date', 50);
       
       setMealLogs(logs);
