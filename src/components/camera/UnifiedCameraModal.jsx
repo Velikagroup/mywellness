@@ -166,12 +166,12 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           "nome_piatto": "nome del piatto completo",
           "ingredienti": [
             {
-              "nome": "nome ingrediente",
-              "grammi": numero,
-              "calorie": numero,
-              "proteine": numero,
-              "carboidrati": numero,
-              "grassi": numero
+              "name": "nome ingrediente",
+              "grams": numero,
+              "calories": numero,
+              "protein": numero,
+              "carbs": numero,
+              "fat": numero
             }
           ]
         }`,
@@ -185,32 +185,34 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               items: {
                 type: "object",
                 properties: {
-                  nome: { type: "string" },
-                  grammi: { type: "number" },
-                  calorie: { type: "number" },
-                  proteine: { type: "number" },
-                  carboidrati: { type: "number" },
-                  grassi: { type: "number" }
-                }
+                  name: { type: "string" },
+                  grams: { type: "number" },
+                  calories: { type: "number" },
+                  protein: { type: "number" },
+                  carbs: { type: "number" },
+                  fat: { type: "number" }
+                },
+                required: ["name", "grams", "calories", "protein", "carbs", "fat"]
               }
             }
-          }
+          },
+          required: ["nome_piatto", "ingredienti"]
         }
       });
 
       // Calcola i totali
-      const totCalorie = result.ingredienti.reduce((sum, ing) => sum + ing.calorie, 0);
-      const totProteine = result.ingredienti.reduce((sum, ing) => sum + ing.proteine, 0);
-      const totCarbs = result.ingredienti.reduce((sum, ing) => sum + ing.carboidrati, 0);
-      const totGrassi = result.ingredienti.reduce((sum, ing) => sum + ing.grassi, 0);
+      const totCalorie = result.ingredienti.reduce((sum, ing) => sum + (ing.calories || 0), 0);
+      const totProteine = result.ingredienti.reduce((sum, ing) => sum + (ing.protein || 0), 0);
+      const totCarbs = result.ingredienti.reduce((sum, ing) => sum + (ing.carbs || 0), 0);
+      const totGrassi = result.ingredienti.reduce((sum, ing) => sum + (ing.fat || 0), 0);
 
       // Aggiorna il MealLog con i dati reali
       await base44.entities.MealLog.update(tempMeal.id, {
         detected_items: result.ingredienti,
-        actual_calories: totCalorie,
-        actual_protein: totProteine,
-        actual_carbs: totCarbs,
-        actual_fat: totGrassi
+        actual_calories: Math.round(totCalorie),
+        actual_protein: Math.round(totProteine * 10) / 10,
+        actual_carbs: Math.round(totCarbs * 10) / 10,
+        actual_fat: Math.round(totGrassi * 10) / 10
       });
 
       // Ricarica lo storico
