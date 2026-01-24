@@ -128,9 +128,30 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
   const analyzeCalories = async (blob) => {
     setAnalyzing(true);
+    
     try {
       const file = new File([blob], 'food.jpg', { type: 'image/jpeg' });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
+
+      // Crea subito un MealLog temporaneo
+      const tempMealId = `temp_${Date.now()}`;
+      const tempMeal = await base44.entities.MealLog.create({
+        user_id: user.id,
+        original_meal_id: tempMealId,
+        date: new Date().toISOString().split('T')[0],
+        meal_type: 'snack1',
+        photo_url: file_url,
+        detected_items: ['Analisi in corso...'],
+        actual_calories: 0,
+        actual_protein: 0,
+        actual_carbs: 0,
+        actual_fat: 0,
+        planned_calories: 0,
+        delta_calories: 0
+      });
+
+      // Apri lo storico immediatamente
+      await loadCalorieHistory();
 
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Analizza questa foto di cibo e fornisci SOLO i valori nutrizionali per la PORZIONE VISIBILE nella foto.
@@ -160,7 +181,18 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         }
       });
 
-      setCalorieResult({ ...result, photo_url: file_url });
+      // Aggiorna il MealLog con i dati reali
+      await base44.entities.MealLog.update(tempMeal.id, {
+        detected_items: [result.nome_cibo],
+        actual_calories: result.calorie,
+        actual_protein: result.proteine,
+        actual_carbs: result.carboidrati,
+        actual_fat: result.grassi
+      });
+
+      // Ricarica lo storico
+      await loadCalorieHistory();
+      
     } catch (error) {
       console.error('Error analyzing food:', error);
       alert('Errore durante l\'analisi. Riprova.');
@@ -783,15 +815,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       )}
 
       {/* Calorie Analysis Result */}
-      {mode === 'calories' && analyzing && (
-        <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
-          <div className="text-center text-white">
-            <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-lg font-semibold">Analisi in corso...</p>
-          </div>
-        </div>
-      )}
-
       {/* Nutrition Table Analyzing */}
       {mode === 'nutrition_table' && nutritionAnalyzing && (
         <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
@@ -909,80 +932,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               </div>
               )}
 
-              {mode === 'calories' && calorieResult && (
-        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-20 flex items-center justify-center p-6 overflow-y-auto">
-          <div className="w-full max-w-md bg-white rounded-3xl shadow-2xl my-auto">
-            {/* Foto del Cibo */}
-            {calorieResult.photo_url && (
-              <div className="relative w-full h-48 rounded-t-3xl overflow-hidden bg-gray-100">
-                <img 
-                  src={calorieResult.photo_url} 
-                  alt="Cibo analizzato"
-                  className="w-full h-full object-cover"
-                />
-                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-4">
-                  <h3 className="text-xl font-bold text-white capitalize">{calorieResult.nome_cibo}</h3>
-                  <p className="text-xs text-white/90">Porzione: {calorieResult.porzione_stimata}</p>
-                </div>
-              </div>
-            )}
-
-            <div className="p-8">
-              {/* Calorie Box - Prominente */}
-              <div className="mb-6 bg-gradient-to-br from-[#26847F]/10 to-[#26847F]/5 border-2 border-[#26847F]/20 rounded-2xl p-6">
-                <p className="text-sm font-semibold text-gray-600 uppercase tracking-wide mb-2 text-center">Energia Totale</p>
-                <p className="text-5xl font-bold text-[#26847F] text-center">{calorieResult.calorie}</p>
-                <p className="text-sm font-medium text-gray-500 text-center mt-1">kcal</p>
-              </div>
-
-              {/* Divider */}
-              <div className="border-t border-gray-200 mb-6"></div>
-
-              {/* Macronutrienti */}
-              <div className="mb-6">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Composizione Macronutrizionale</p>
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
-                    <p className="text-2xl font-bold text-gray-900">{calorieResult.proteine}g</p>
-                    <p className="text-xs text-gray-600 font-medium mt-1">Proteine</p>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
-                    <p className="text-2xl font-bold text-gray-900">{calorieResult.carboidrati}g</p>
-                    <p className="text-xs text-gray-600 font-medium mt-1">Carboidrati</p>
-                  </div>
-
-                  <div className="bg-gray-50 rounded-xl p-4 text-center border border-gray-200">
-                    <p className="text-2xl font-bold text-gray-900">{calorieResult.grassi}g</p>
-                    <p className="text-xs text-gray-600 font-medium mt-1">Grassi</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex gap-3">
-                 <Button
-                   onClick={retakePhoto}
-                   variant="outline"
-                   className="flex-1 border-gray-300 hover:bg-gray-50"
-                 >
-                   <RotateCcw className="w-4 h-4 mr-2" />
-                   Rifai
-                 </Button>
-                 <Button
-                   onClick={() => {
-                     setCapturedImage(null);
-                     setCalorieResult(null);
-                     startCamera();
-                   }}
-                   className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
-                 >
-                   Nuovo
-                 </Button>
-               </div>
-            </div>
-          </div>
-        </div>
-      )}
+        
 
       {/* Body Scan Analyzing */}
       {mode === 'bodyscan' && bodyScanAnalyzing && (
