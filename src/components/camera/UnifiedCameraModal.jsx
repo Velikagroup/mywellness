@@ -1131,8 +1131,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Calorie History Modal */}
       {showCalorieHistoryModal && (
         <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto">
-            <div className="p-6 border-b border-gray-200">
+          <div className="w-full max-w-2xl bg-white/65 backdrop-blur-md rounded-3xl shadow-2xl my-auto border border-gray-200/30">
+            <div className="p-6 border-b border-gray-200/30">
               <div className="flex items-center justify-between">
                 <h3 className="text-2xl font-bold text-gray-900">Storico Calorie</h3>
                 <button
@@ -1148,64 +1148,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
             </div>
 
             <div className="p-6 max-h-[70vh] overflow-y-auto">
-              {calorieHistory.length === 0 ? (
-                <div className="text-center py-12">
-                  <UtensilsCrossed className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-600">Nessuna registrazione calorica</p>
-                </div>
-              ) : (
-                <div className="space-y-3">
-                  {calorieHistory.map((entry) => (
-                    <div key={entry.id} className="bg-white border border-gray-200 rounded-xl overflow-hidden p-4">
-                      <div className="flex items-start gap-4">
-                        {entry.photo_url && (
-                          <img 
-                            src={entry.photo_url} 
-                            className="w-20 h-20 object-cover rounded-lg flex-shrink-0" 
-                            alt="Pasto" 
-                          />
-                        )}
-                        <div className="flex-1">
-                          <div className="flex items-start justify-between gap-2">
-                            <div>
-                              <p className="font-semibold text-gray-900 text-lg">
-                                {entry.detected_items?.[0] || 'Pasto'} {Array.isArray(entry.detected_items) && entry.detected_items.length > 1 ? `+${entry.detected_items.length - 1}` : ''}
-                              </p>
-                              <p className="text-xs text-gray-500 mt-1">
-                                {new Date(entry.created_date).toLocaleDateString('it-IT', { 
-                                  day: 'numeric', 
-                                  month: 'short',
-                                  year: 'numeric',
-                                  hour: '2-digit',
-                                  minute: '2-digit'
-                                })}
-                              </p>
-                            </div>
-                            <div className="text-right">
-                              <p className="text-2xl font-bold text-[#26847F]">{entry.actual_calories}</p>
-                              <p className="text-xs text-gray-500">kcal</p>
-                            </div>
-                          </div>
-                          <div className="flex gap-4 text-xs mt-3">
-                            <div>
-                              <span className="text-gray-500">Proteine:</span>
-                              <span className="font-semibold text-gray-900 ml-1">{entry.actual_protein || 0}g</span>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">Carbs:</span>
-                              <span className="font-semibold text-gray-900 ml-1">{entry.actual_carbs || 0}g</span>
-                            </div>
-                            <div>
-                              <span className="text-gray-500">Grassi:</span>
-                              <span className="font-semibold text-gray-900 ml-1">{entry.actual_fat || 0}g</span>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
+              <RecentMealsHistory 
+                userId={user?.id}
+                onMealSelect={() => {}}
+              />
             </div>
           </div>
         </div>
