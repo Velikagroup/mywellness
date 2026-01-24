@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import { createLocalizedPageUrl } from '@/components/i18n/LanguageContext';
 import RecentMealsHistory from '@/components/meals/RecentMealsHistory';
 
 export default function UnifiedCameraModal({ isOpen, onClose, user }) {
@@ -128,101 +129,163 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   };
 
   const analyzeCalories = async (blob) => {
-    setAnalyzing(true);
-    setAnalysisProgress(0);
+      setAnalyzing(true);
+      setAnalysisProgress(0);
 
-    try {
-      setAnalysisProgress(10);
-      const file = new File([blob], 'food.jpg', { type: 'image/jpeg' });
-      const { file_url } = await base44.integrations.Core.UploadFile({ file });
+      try {
+        setAnalysisProgress(10);
+        const file = new File([blob], 'food.jpg', { type: 'image/jpeg' });
+        const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
-      setAnalysisProgress(30);
-      // Crea subito un MealLog temporaneo
-      const tempMealId = `temp_${Date.now()}`;
-      const tempMeal = await base44.entities.MealLog.create({
-        user_id: user.id,
-        original_meal_id: tempMealId,
-        date: new Date().toISOString().split('T')[0],
-        meal_type: 'snack1',
-        photo_url: file_url,
-        detected_items: ['Analisi in corso...'],
-        actual_calories: 0,
-        actual_protein: 0,
-        actual_carbs: 0,
-        actual_fat: 0,
-        planned_calories: 0,
-        delta_calories: 0
-      });
+        setAnalysisProgress(20);
+        // Carica i pasti esistenti per confronto
+        const existingMeals = await base44.entities.MealLog.filter(
+          { user_id: user.id },
+          '-created_date',
+          50
+        );
 
-      setAnalysisProgress(50);
-      // Apri lo storico immediatamente
-      await loadCalorieHistory();
+        setAnalysisProgress(30);
+        // Crea subito un MealLog temporaneo
+        const tempMealId = `temp_${Date.now()}`;
+        const tempMeal = await base44.entities.MealLog.create({
+          user_id: user.id,
+          original_meal_id: tempMealId,
+          date: new Date().toISOString().split('T')[0],
+          meal_type: 'snack1',
+          photo_url: file_url,
+          detected_items: ['Analisi in corso...'],
+          actual_calories: 0,
+          actual_protein: 0,
+          actual_carbs: 0,
+          actual_fat: 0,
+          planned_calories: 0,
+          delta_calories: 0
+        });
 
-      setAnalysisProgress(70);
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analizza questa foto di cibo e IDENTIFICA OGNI SINGOLO INGREDIENTE presente nel piatto.
+        setAnalysisProgress(40);
+        // Apri lo storico immediatamente
+        await loadCalorieHistory();
 
-        IMPORTANTE: 
-        - Separa TUTTI gli ingredienti (es: se vedi pasta al sugo di lenticchie, dividi in: pasta, lenticchie, pomodoro, olio, ecc.)
-        - Per ogni ingrediente stima la quantità in grammi basandoti sulla PORZIONE REALE visibile
-        - Calcola i valori nutrizionali per CIASCUN ingrediente separatamente
-        
-        Fornisci i dati in questo formato JSON preciso:
-        {
-          "nome_piatto": "nome del piatto completo",
-          "ingredienti": [
-            {
-              "name": "nome ingrediente",
-              "grams": numero,
-              "calories": numero,
-              "protein": numero,
-              "carbs": numero,
-              "fat": numero
-            }
-          ]
-        }`,
-        file_urls: [file_url],
-        response_json_schema: {
-          type: "object",
-          properties: {
-            nome_piatto: { type: "string" },
-            ingredienti: {
-              type: "array",
-              items: {
+        setAnalysisProgress(50);
+        // Controlla se esiste già un piatto simile
+        let matchFound = null;
+        if (existingMeals.length > 0) {
+          const mealsWithPhotos = existingMeals.filter(m => m.photo_url && m.actual_calories > 0);
+
+          if (mealsWithPhotos.length > 0) {
+            const photoUrls = mealsWithPhotos.slice(0, 10).map(m => m.photo_url);
+            const matchResult = await base44.integrations.Core.InvokeLLM({
+              prompt: `Confronta questa nuova foto di cibo con le foto dei pasti precedenti.
+
+              Determina se il piatto nella nuova foto è IDENTICO o MOLTO SIMILE a uno dei pasti precedenti.
+
+              Criteri per considerarlo identico/simile:
+              - Stesso tipo di piatto (es: pasta al pomodoro, insalata, pizza margherita)
+              - Stessa composizione di ingredienti principali
+              - Porzione simile
+
+              Restituisci:
+              {
+                "match_found": true/false,
+                "match_index": indice del pasto simile (0-based) o null,
+                "confidence": numero da 0 a 100 (confidenza del match),
+                "reason": "breve spiegazione del perché è simile o diverso"
+              }`,
+              file_urls: [file_url, ...photoUrls],
+              response_json_schema: {
                 type: "object",
                 properties: {
-                  name: { type: "string" },
-                  grams: { type: "number" },
-                  calories: { type: "number" },
-                  protein: { type: "number" },
-                  carbs: { type: "number" },
-                  fat: { type: "number" }
-                },
-                required: ["name", "grams", "calories", "protein", "carbs", "fat"]
+                  match_found: { type: "boolean" },
+                  match_index: { type: ["number", "null"] },
+                  confidence: { type: "number" },
+                  reason: { type: "string" }
+                }
               }
+            });
+
+            if (matchResult.match_found && matchResult.confidence >= 70 && matchResult.match_index !== null) {
+              matchFound = mealsWithPhotos[matchResult.match_index];
             }
-          },
-          required: ["nome_piatto", "ingredienti"]
+          }
         }
-      });
 
-      // Calcola i totali
-      const totCalorie = result.ingredienti.reduce((sum, ing) => sum + (ing.calories || 0), 0);
-      const totProteine = result.ingredienti.reduce((sum, ing) => sum + (ing.protein || 0), 0);
-      const totCarbs = result.ingredienti.reduce((sum, ing) => sum + (ing.carbs || 0), 0);
-      const totGrassi = result.ingredienti.reduce((sum, ing) => sum + (ing.fat || 0), 0);
+        setAnalysisProgress(70);
 
-      // Prepara detected_items come array di oggetti serializzati come stringhe per compatibilità
-      const detectedItems = result.ingredienti.map(ing => 
-        JSON.stringify({
-          name: ing.name,
-          grams: ing.grams,
-          calories: ing.calories,
-          protein: ing.protein,
-          carbs: ing.carbs,
-          fat: ing.fat
-        })
-      );
+        let detectedItems, totCalorie, totProteine, totCarbs, totGrassi;
+
+        if (matchFound) {
+          // Usa i dati del pasto precedente
+          detectedItems = matchFound.detected_items;
+          totCalorie = matchFound.actual_calories;
+          totProteine = matchFound.actual_protein;
+          totCarbs = matchFound.actual_carbs;
+          totGrassi = matchFound.actual_fat;
+        } else {
+          // Analisi completa con AI
+          const result = await base44.integrations.Core.InvokeLLM({
+            prompt: `Analizza questa foto di cibo e IDENTIFICA OGNI SINGOLO INGREDIENTE presente nel piatto.
+
+            IMPORTANTE: 
+            - Separa TUTTI gli ingredienti (es: se vedi pasta al sugo di lenticchie, dividi in: pasta, lenticchie, pomodoro, olio, ecc.)
+            - Per ogni ingrediente stima la quantità in grammi basandoti sulla PORZIONE REALE visibile
+            - Calcola i valori nutrizionali per CIASCUN ingrediente separatamente
+
+            Fornisci i dati in questo formato JSON preciso:
+            {
+              "nome_piatto": "nome del piatto completo",
+              "ingredienti": [
+                {
+                  "name": "nome ingrediente",
+                  "grams": numero,
+                  "calories": numero,
+                  "protein": numero,
+                  "carbs": numero,
+                  "fat": numero
+                }
+              ]
+            }`,
+            file_urls: [file_url],
+            response_json_schema: {
+              type: "object",
+              properties: {
+                nome_piatto: { type: "string" },
+                ingredienti: {
+                  type: "array",
+                  items: {
+                    type: "object",
+                    properties: {
+                      name: { type: "string" },
+                      grams: { type: "number" },
+                      calories: { type: "number" },
+                      protein: { type: "number" },
+                      carbs: { type: "number" },
+                      fat: { type: "number" }
+                    },
+                    required: ["name", "grams", "calories", "protein", "carbs", "fat"]
+                  }
+                }
+              },
+              required: ["nome_piatto", "ingredienti"]
+            }
+          });
+
+          totCalorie = result.ingredienti.reduce((sum, ing) => sum + (ing.calories || 0), 0);
+          totProteine = result.ingredienti.reduce((sum, ing) => sum + (ing.protein || 0), 0);
+          totCarbs = result.ingredienti.reduce((sum, ing) => sum + (ing.carbs || 0), 0);
+          totGrassi = result.ingredienti.reduce((sum, ing) => sum + (ing.fat || 0), 0);
+
+          detectedItems = result.ingredienti.map(ing => 
+            JSON.stringify({
+              name: ing.name,
+              grams: ing.grams,
+              calories: ing.calories,
+              protein: ing.protein,
+              carbs: ing.carbs,
+              fat: ing.fat
+            })
+          );
+        }
 
       setAnalysisProgress(90);
       // Aggiorna il MealLog con i dati reali
@@ -1179,6 +1242,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                     setCapturedImage(null);
                     setAnalyzing(false);
                     setAnalysisProgress(0);
+                    onClose();
+                    navigate(createPageUrl('Dashboard'));
                   }}
                   className="p-2 rounded-full hover:bg-gray-100 transition-colors"
                 >
