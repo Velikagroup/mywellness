@@ -39,7 +39,17 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
 
   const getMealName = (log) => {
     if (log.detected_items && Array.isArray(log.detected_items) && log.detected_items.length > 0) {
-      return log.detected_items.map(item => typeof item === 'string' ? item : item.name).join(', ');
+      return log.detected_items.map(item => {
+        if (typeof item === 'string') {
+          try {
+            const parsed = JSON.parse(item);
+            return parsed.name || item;
+          } catch {
+            return item;
+          }
+        }
+        return item.name || 'Ingrediente';
+      }).join(', ');
     }
     return 'Pasto';
   };
@@ -47,15 +57,25 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
   const initializeIngredients = (mealId, log) => {
     if (!mealIngredients[mealId]) {
       const items = (log.detected_items && Array.isArray(log.detected_items)) 
-        ? log.detected_items.map((item, idx) => ({
-            id: idx,
-            name: typeof item === 'string' ? item : item.name || '',
-            grams: parseFloat(item.grams) || 0,
-            calories: parseFloat(item.calories) || 0,
-            protein: parseFloat(item.protein) || 0,
-            carbs: parseFloat(item.carbs) || 0,
-            fat: parseFloat(item.fat) || 0
-          }))
+        ? log.detected_items.map((item, idx) => {
+            let parsedItem = item;
+            if (typeof item === 'string') {
+              try {
+                parsedItem = JSON.parse(item);
+              } catch {
+                parsedItem = { name: item, grams: 0, calories: 0, protein: 0, carbs: 0, fat: 0 };
+              }
+            }
+            return {
+              id: idx,
+              name: parsedItem.name || '',
+              grams: parseFloat(parsedItem.grams) || 0,
+              calories: parseFloat(parsedItem.calories) || 0,
+              protein: parseFloat(parsedItem.protein) || 0,
+              carbs: parseFloat(parsedItem.carbs) || 0,
+              fat: parseFloat(parsedItem.fat) || 0
+            };
+          })
         : [];
       setMealIngredients(prev => ({
         ...prev,

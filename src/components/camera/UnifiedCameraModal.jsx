@@ -206,9 +206,21 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       const totCarbs = result.ingredienti.reduce((sum, ing) => sum + (ing.carbs || 0), 0);
       const totGrassi = result.ingredienti.reduce((sum, ing) => sum + (ing.fat || 0), 0);
 
+      // Prepara detected_items come array di oggetti serializzati come stringhe per compatibilità
+      const detectedItems = result.ingredienti.map(ing => 
+        JSON.stringify({
+          name: ing.name,
+          grams: ing.grams,
+          calories: ing.calories,
+          protein: ing.protein,
+          carbs: ing.carbs,
+          fat: ing.fat
+        })
+      );
+
       // Aggiorna il MealLog con i dati reali
       await base44.entities.MealLog.update(tempMeal.id, {
-        detected_items: result.ingredienti,
+        detected_items: detectedItems,
         actual_calories: Math.round(totCalorie),
         actual_protein: Math.round(totProteine * 10) / 10,
         actual_carbs: Math.round(totCarbs * 10) / 10,
