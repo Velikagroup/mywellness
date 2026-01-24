@@ -21,6 +21,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   
   // Calorie mode states
   const [analyzing, setAnalyzing] = useState(false);
+  const [analysisProgress, setAnalysisProgress] = useState(0);
   const [calorieResult, setCalorieResult] = useState(null);
 
   // Nutrition table mode states
@@ -128,11 +129,14 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
   const analyzeCalories = async (blob) => {
     setAnalyzing(true);
-    
+    setAnalysisProgress(0);
+
     try {
+      setAnalysisProgress(10);
       const file = new File([blob], 'food.jpg', { type: 'image/jpeg' });
       const { file_url } = await base44.integrations.Core.UploadFile({ file });
 
+      setAnalysisProgress(30);
       // Crea subito un MealLog temporaneo
       const tempMealId = `temp_${Date.now()}`;
       const tempMeal = await base44.entities.MealLog.create({
@@ -150,9 +154,11 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         delta_calories: 0
       });
 
+      setAnalysisProgress(50);
       // Apri lo storico immediatamente
       await loadCalorieHistory();
 
+      setAnalysisProgress(70);
       const result = await base44.integrations.Core.InvokeLLM({
         prompt: `Analizza questa foto di cibo e IDENTIFICA OGNI SINGOLO INGREDIENTE presente nel piatto.
 
@@ -218,6 +224,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         })
       );
 
+      setAnalysisProgress(90);
       // Aggiorna il MealLog con i dati reali
       await base44.entities.MealLog.update(tempMeal.id, {
         detected_items: detectedItems,
@@ -227,15 +234,17 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         actual_fat: Math.round(totGrassi * 10) / 10
       });
 
+      setAnalysisProgress(100);
       // Ricarica lo storico
       await loadCalorieHistory();
-      
-    } catch (error) {
+
+      } catch (error) {
       console.error('Error analyzing food:', error);
       alert('Errore durante l\'analisi. Riprova.');
-    }
-    setAnalyzing(false);
-  };
+      }
+      setAnalyzing(false);
+      setAnalysisProgress(0);
+      };
 
   const analyzeNutritionTable = async (blob) => {
     setNutritionAnalyzing(true);
@@ -1109,6 +1118,47 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   Chiudi
                 </Button>
                 </div>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Calorie Analyzing Overlay */}
+      {analyzing && capturedImage && (
+        <div className="absolute inset-0 bg-black/95 backdrop-blur-sm z-30 flex items-center justify-center p-6">
+          <div className="w-full max-w-md">
+            {/* Foto catturata */}
+            <div className="relative w-full aspect-[4/5] rounded-3xl overflow-hidden mb-6">
+              <img 
+                src={capturedImage} 
+                alt="Analyzing food" 
+                className="w-full h-full object-cover"
+              />
+              {/* Overlay con progress */}
+              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent flex flex-col items-center justify-end p-6">
+                <div className="w-full space-y-3">
+                  <div className="flex items-center justify-center gap-3">
+                    <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                    <p className="text-white font-semibold">Analisi in corso...</p>
+                  </div>
+
+                  {/* Progress bar */}
+                  <div className="w-full h-2 bg-white/20 rounded-full overflow-hidden">
+                    <div 
+                      className="h-full bg-gradient-to-r from-[#26847F] to-[#3fb8af] transition-all duration-500 ease-out"
+                      style={{ width: `${analysisProgress}%` }}
+                    />
+                  </div>
+
+                  <p className="text-white/70 text-sm text-center">
+                    {analysisProgress < 30 ? 'Caricamento immagine...' :
+                     analysisProgress < 50 ? 'Creazione record...' :
+                     analysisProgress < 70 ? 'Apertura storico...' :
+                     analysisProgress < 90 ? 'Analisi AI in corso...' :
+                     'Salvataggio risultati...'}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
         </div>
