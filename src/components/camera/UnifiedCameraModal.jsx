@@ -154,40 +154,63 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       await loadCalorieHistory();
 
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Analizza questa foto di cibo e fornisci SOLO i valori nutrizionali per la PORZIONE VISIBILE nella foto.
-        
-        IMPORTANTE: Stima la quantità basandoti sulla PORZIONE REALE visibile, non una porzione standard.
+        prompt: `Analizza questa foto di cibo e IDENTIFICA OGNI SINGOLO INGREDIENTE presente nel piatto.
+
+        IMPORTANTE: 
+        - Separa TUTTI gli ingredienti (es: se vedi pasta al sugo di lenticchie, dividi in: pasta, lenticchie, pomodoro, olio, ecc.)
+        - Per ogni ingrediente stima la quantità in grammi basandoti sulla PORZIONE REALE visibile
+        - Calcola i valori nutrizionali per CIASCUN ingrediente separatamente
         
         Fornisci i dati in questo formato JSON preciso:
         {
-          "nome_cibo": "nome del cibo",
-          "porzione_stimata": "descrizione della porzione (es: 1 piatto, 200g, 1 fetta)",
-          "calorie": numero,
-          "proteine": numero (in grammi),
-          "carboidrati": numero (in grammi),
-          "grassi": numero (in grammi)
+          "nome_piatto": "nome del piatto completo",
+          "ingredienti": [
+            {
+              "nome": "nome ingrediente",
+              "grammi": numero,
+              "calorie": numero,
+              "proteine": numero,
+              "carboidrati": numero,
+              "grassi": numero
+            }
+          ]
         }`,
         file_urls: [file_url],
         response_json_schema: {
           type: "object",
           properties: {
-            nome_cibo: { type: "string" },
-            porzione_stimata: { type: "string" },
-            calorie: { type: "number" },
-            proteine: { type: "number" },
-            carboidrati: { type: "number" },
-            grassi: { type: "number" }
+            nome_piatto: { type: "string" },
+            ingredienti: {
+              type: "array",
+              items: {
+                type: "object",
+                properties: {
+                  nome: { type: "string" },
+                  grammi: { type: "number" },
+                  calorie: { type: "number" },
+                  proteine: { type: "number" },
+                  carboidrati: { type: "number" },
+                  grassi: { type: "number" }
+                }
+              }
+            }
           }
         }
       });
 
+      // Calcola i totali
+      const totCalorie = result.ingredienti.reduce((sum, ing) => sum + ing.calorie, 0);
+      const totProteine = result.ingredienti.reduce((sum, ing) => sum + ing.proteine, 0);
+      const totCarbs = result.ingredienti.reduce((sum, ing) => sum + ing.carboidrati, 0);
+      const totGrassi = result.ingredienti.reduce((sum, ing) => sum + ing.grassi, 0);
+
       // Aggiorna il MealLog con i dati reali
       await base44.entities.MealLog.update(tempMeal.id, {
-        detected_items: [result.nome_cibo],
-        actual_calories: result.calorie,
-        actual_protein: result.proteine,
-        actual_carbs: result.carboidrati,
-        actual_fat: result.grassi
+        detected_items: result.ingredienti,
+        actual_calories: totCalorie,
+        actual_protein: totProteine,
+        actual_carbs: totCarbs,
+        actual_fat: totGrassi
       });
 
       // Ricarica lo storico
