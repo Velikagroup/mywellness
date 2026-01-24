@@ -5,7 +5,6 @@ import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import RecentMealsHistory from '@/components/meals/RecentMealsHistory';
 
 export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const navigate = useNavigate();
@@ -45,8 +44,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const [showHistoryModal, setShowHistoryModal] = useState(false);
   const [bodyScanHistory, setBodyScanHistory] = useState([]);
   const [expandedHistoryId, setExpandedHistoryId] = useState(null);
-  const [showCalorieHistoryModal, setShowCalorieHistoryModal] = useState(false);
-  const [calorieHistory, setCalorieHistory] = useState([]);
 
   useEffect(() => {
     if (isOpen && (mode === 'weight')) {
@@ -348,22 +345,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
     }
   };
 
-  const loadCalorieHistory = async () => {
-    if (!user) return;
-    try {
-      const history = await base44.entities.MealLog.filter(
-        { user_id: user.id },
-        '-created_date',
-        20
-      );
-      setCalorieHistory(history);
-      setShowCalorieHistoryModal(true);
-    } catch (error) {
-      console.error('Error loading calorie history:', error);
-      alert('Errore durante il caricamento dello storico');
-    }
-  };
-
   const calculateBodyFatNavyFormula = (userData) => {
     if (userData.gender === 'male') {
       if (!userData.neck_circumference || !userData.waist_circumference || !userData.height) {
@@ -540,65 +521,55 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         </button>
       )}
 
-      {/* Calorie History Button */}
-      {mode === 'calories' && !analyzing && !calorieResult && (
-        <button
-          onClick={loadCalorieHistory}
-          className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
-        >
-          Storico Calorie
-        </button>
-      )}
-
       {/* Mode Selector Buttons */}
       <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex gap-3">
         <button
-           onClick={() => setMode('calories')}
-           className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
-             mode === 'calories' 
-               ? 'bg-black text-white scale-110' 
-               : 'bg-white/20 text-white backdrop-blur-sm'
-           }`}
-         >
-           <UtensilsCrossed className="w-6 h-6" />
-           <span className="text-xs font-medium">Calories</span>
-         </button>
+          onClick={() => setMode('calories')}
+          className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
+            mode === 'calories' 
+              ? 'bg-[#26847F] text-white scale-110' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}
+        >
+          <UtensilsCrossed className="w-6 h-6" />
+          <span className="text-xs font-medium">Calories</span>
+        </button>
 
-         <button
-           onClick={() => setMode('nutrition_table')}
-           className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
-             mode === 'nutrition_table' 
-               ? 'bg-black text-white scale-110' 
-               : 'bg-white/20 text-white backdrop-blur-sm'
-           }`}
-         >
-           <ClipboardList className="w-6 h-6" />
-           <span className="text-xs font-medium">Nutrition</span>
-         </button>
+        <button
+          onClick={() => setMode('nutrition_table')}
+          className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
+            mode === 'nutrition_table' 
+              ? 'bg-[#26847F] text-white scale-110' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}
+        >
+          <ClipboardList className="w-6 h-6" />
+          <span className="text-xs font-medium">Nutrition</span>
+        </button>
 
-         <button
-           onClick={() => setMode('weight')}
-           className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
-             mode === 'weight' 
-               ? 'bg-black text-white scale-110' 
-               : 'bg-white/20 text-white backdrop-blur-sm'
-           }`}
-         >
-           <Scale className="w-6 h-6" />
-           <span className="text-xs font-medium">Weight</span>
-         </button>
+        <button
+          onClick={() => setMode('weight')}
+          className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
+            mode === 'weight' 
+              ? 'bg-[#26847F] text-white scale-110' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}
+        >
+          <Scale className="w-6 h-6" />
+          <span className="text-xs font-medium">Weight</span>
+        </button>
 
-         <button
-           onClick={() => setMode('bodyscan')}
-           className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
-             mode === 'bodyscan' 
-               ? 'bg-black text-white scale-110' 
-               : 'bg-white/20 text-white backdrop-blur-sm'
-           }`}
-         >
-           <ScanLine className="w-6 h-6" />
-           <span className="text-xs font-medium">Body Scan</span>
-         </button>
+        <button
+          onClick={() => setMode('bodyscan')}
+          className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
+            mode === 'bodyscan' 
+              ? 'bg-[#26847F] text-white scale-110' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}
+        >
+          <ScanLine className="w-6 h-6" />
+          <span className="text-xs font-medium">Body Scan</span>
+        </button>
       </div>
 
       {/* Camera View (for calories and bodyscan modes) */}
@@ -621,9 +592,9 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   key={step}
                   className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
                     bodyScanPhotos[step] 
-                      ? 'bg-black/80' 
+                      ? 'bg-green-500/80' 
                       : currentBodyScanStep === step 
-                      ? 'bg-black/80' 
+                      ? 'bg-[#26847F]/80' 
                       : 'bg-white/20'
                   } backdrop-blur-sm`}
                 >
@@ -651,8 +622,12 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {/* Frame Guide per Calories */}
           {mode === 'calories' && cameraActive && !capturedImage && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {/* Semi-transparent overlay */}
+              <div className="absolute inset-0 bg-black/40" />
+
               {/* Camera frame */}
               <div className="relative w-80 h-96 border-4 border-white/60 rounded-3xl shadow-2xl flex items-center justify-center">
+                <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-white/0 rounded-3xl" />
                 <div className="flex flex-col items-center gap-4 z-10">
                   <UtensilsCrossed className="w-16 h-16 text-white/70" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Centra il cibo</p>
@@ -712,7 +687,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {cameraActive && !capturedImage && !calorieResult && !nutritionResult && (
             <button
               onClick={capturePhoto}
-              className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-black border-4 border-white shadow-2xl hover:scale-110 transition-transform active:scale-95"
+              className="absolute bottom-8 left-1/2 -translate-x-1/2 w-20 h-20 rounded-full bg-[#26847F] border-4 border-white shadow-2xl hover:scale-110 transition-transform active:scale-95"
             />
           )}
         </>
@@ -1124,35 +1099,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   Chiudi
                 </Button>
                 </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {/* Calorie History Modal */}
-      {showCalorieHistoryModal && (
-        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl bg-white/65 backdrop-blur-md rounded-3xl shadow-2xl my-auto border border-gray-200/30">
-            <div className="p-6 border-b border-gray-200/30">
-              <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">Storico Calorie</h3>
-                <button
-                  onClick={() => {
-                    setShowCalorieHistoryModal(false);
-                    setCalorieHistory([]);
-                  }}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
-                >
-                  <X className="w-6 h-6 text-gray-600" />
-                </button>
-              </div>
-            </div>
-
-            <div className="p-6 max-h-[70vh] overflow-y-auto">
-              <RecentMealsHistory 
-                userId={user?.id}
-                onMealSelect={() => {}}
-              />
             </div>
           </div>
         </div>
