@@ -110,10 +110,10 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
                 to={createPageUrl(item.path)}
                 onClick={() => setSelectedIndex(index)}
                 className={`
-                  flex flex-col items-center justify-center gap-0.5 md:gap-1 
-                  px-2 md:px-3 py-2 md:py-2 rounded-lg md:rounded-xl
+                  flex flex-col items-center justify-center gap-0 md:gap-0.5 
+                  px-1.5 md:px-2.5 py-1 md:py-1.5 rounded-lg md:rounded-lg
                   transition-all duration-300 pointer-events-auto
-                  ${isMobile ? 'flex-1' : 'w-[70px]'}
+                  ${isMobile ? 'flex-1' : 'w-[60px]'}
                   ${isSelected 
                     ? 'text-[#26847F] md:text-[#26847F]' 
                     : 'text-gray-400 hover:text-gray-600 md:hover:text-[#26847F]'
