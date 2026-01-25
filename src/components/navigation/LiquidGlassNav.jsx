@@ -90,7 +90,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
     <div className={`${isMobile ? 'fixed bottom-6 left-4' : ''} z-50 flex items-center justify-start px-0 md:px-0`}>
       <div
         ref={containerRef}
-        className={`water-glass-effect rounded-full relative py-3 md:py-2 px-4 md:px-6 flex items-center justify-start gap-2 ${isMobile ? 'max-w-md' : ''}`}
+        className={`water-glass-effect rounded-full relative py-1.5 md:py-1.5 px-4 md:px-6 flex items-center justify-start gap-2 ${isMobile ? 'max-w-md' : ''}`}
         onMouseDown={handleMouseDown}
         style={{ 
           userSelect: 'none', 
