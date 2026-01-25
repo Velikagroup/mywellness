@@ -90,7 +90,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
     <div className={`${isMobile ? 'fixed bottom-6 left-4' : ''} z-50 flex items-center justify-start px-0 md:px-0`}>
       <div
         ref={containerRef}
-        className={`water-glass-effect rounded-full relative py-1 md:py-1 px-3 md:px-5 flex items-center justify-start gap-1 ${isMobile ? 'max-w-md' : ''}`}
+        className={`water-glass-effect rounded-full relative py-3 md:py-2 px-4 md:px-6 flex items-center justify-start gap-2 ${isMobile ? 'max-w-md' : ''}`}
         onMouseDown={handleMouseDown}
         style={{ 
           userSelect: 'none', 
@@ -110,17 +110,17 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
                 to={createPageUrl(item.path)}
                 onClick={() => setSelectedIndex(index)}
                 className={`
-                  flex flex-col items-center justify-center gap-0 md:gap-0 
-                  px-1 md:px-2 py-0.5 md:py-0.5 rounded-md md:rounded-md
+                  flex flex-col items-center justify-center gap-0.5 md:gap-1 
+                  px-2 md:px-3 py-2 md:py-2 rounded-lg md:rounded-xl
                   transition-all duration-300 pointer-events-auto
-                  ${isMobile ? 'flex-1' : 'w-[50px]'}
+                  ${isMobile ? 'flex-1' : 'w-[70px]'}
                   ${isSelected 
                     ? 'text-[#26847F] md:text-[#26847F]' 
                     : 'text-gray-400 hover:text-gray-600 md:hover:text-[#26847F]'
                   }
                 `}
               >
-                <item.icon className="w-4 h-4 md:w-5 md:h-5" />
+                <item.icon className="w-5 h-5 md:w-6 md:h-6" />
                 <span className="text-xs font-medium text-center leading-tight hidden md:block">
                   {item.name}
                 </span>
