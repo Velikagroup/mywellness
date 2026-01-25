@@ -120,7 +120,7 @@ export default function LiquidGlassNav({ navItems, onActionClick, showActionMenu
                   }
                 `}
               >
-                <item.icon className="w-5 h-5 md:w-6 md:h-6" />
+                <item.icon className="w-4 h-4 md:w-5 md:h-5" />
                 <span className="text-xs font-medium text-center leading-tight hidden md:block">
                   {item.name}
                 </span>
