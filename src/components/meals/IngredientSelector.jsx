@@ -4,8 +4,10 @@ import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, ArrowLeft, Plus } from 'lucide-react';
 import { base44 } from '@/api/base44Client';
+import { useLanguage } from '../i18n/LanguageContext';
 
 export default function IngredientSelector({ isOpen, onClose, onSelectIngredient }) {
+  const { t, language } = useLanguage();
   const [ingredients, setIngredients] = useState([]);
   const [aiSuggestions, setAiSuggestions] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -39,18 +41,33 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
 
     setIsSearching(true);
     try {
+      const languageNames = {
+        it: 'Italian',
+        en: 'English',
+        es: 'Spanish',
+        pt: 'Portuguese',
+        de: 'German',
+        fr: 'French'
+      };
+
       const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `Suggerisci 5 ingredienti alimentari simili a "${query}" con le informazioni nutrizionali per 100g. Ritorna in JSON con questo formato:
-        [
-          {
-            "name": "nome ingrediente",
-            "calories_per_100g": numero,
-            "protein_per_100g": numero,
-            "carbs_per_100g": numero,
-            "fat_per_100g": numero,
-            "default_unit": "g"
-          }
-        ]`,
+        prompt: `The user is searching for food ingredients in ${languageNames[language] || 'Italian'}. 
+The search query is: "${query}"
+
+Suggest 5 food ingredients similar to this query with nutritional information per 100g.
+The ingredient names MUST be in ${languageNames[language] || 'Italian'} language.
+
+Return in JSON format:
+[
+  {
+    "name": "ingredient name in ${languageNames[language] || 'Italian'}",
+    "calories_per_100g": number,
+    "protein_per_100g": number,
+    "carbs_per_100g": number,
+    "fat_per_100g": number,
+    "default_unit": "g"
+  }
+]`,
         response_json_schema: {
           type: "object",
           properties: {
@@ -90,9 +107,16 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
     }
   };
 
-  const filteredIngredients = ingredients.filter(ing =>
-    ing.name?.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const filteredIngredients = ingredients.filter(ing => {
+    const nameMatch = ing.name?.toLowerCase().includes(searchQuery.toLowerCase());
+    
+    // Cerca anche nelle traduzioni se esistono
+    const translationMatch = ing.name_translations && Object.values(ing.name_translations).some(
+      translation => translation?.toLowerCase().includes(searchQuery.toLowerCase())
+    );
+    
+    return nameMatch || translationMatch;
+  });
 
   const handleSelectIngredient = (ingredient) => {
     onSelectIngredient(ingredient);
@@ -110,7 +134,7 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
             >
               <ArrowLeft className="w-6 h-6" />
             </button>
-            <DialogTitle className="text-xl font-bold text-gray-900">Registrar comida</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('meals.ingredients')}</DialogTitle>
             <div className="w-10" />
           </div>
         </DialogHeader>
@@ -120,7 +144,7 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 text-gray-400" />
             <Input
               type="text"
-              placeholder="Buscar un ingrediente"
+              placeholder={t('common.search')}
               value={searchQuery}
               onChange={(e) => handleSearch(e.target.value)}
               className="pl-10 py-3 text-base h-12"
@@ -128,7 +152,7 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
             />
           </div>
           {isSearching && (
-            <p className="text-xs text-gray-500 mt-2">Buscando con IA...</p>
+            <p className="text-xs text-gray-500 mt-2">{t('common.loading')}</p>
           )}
         </div>
 
@@ -136,7 +160,7 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
           {/* AI Suggestions */}
           {aiSuggestions.length > 0 && (
             <div>
-              <h3 className="font-bold text-gray-900 mb-3 text-sm">✨ Sugerencias IA</h3>
+              <h3 className="font-bold text-gray-900 mb-3 text-sm">✨ AI</h3>
               <div className="space-y-3">
                 {aiSuggestions.map((ingredient, idx) => (
                   <div
@@ -172,7 +196,7 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
           {/* Database Ingredients */}
           {filteredIngredients.length > 0 && (
             <div>
-              <h3 className="font-bold text-gray-900 mb-3 text-sm">Todos</h3>
+              <h3 className="font-bold text-gray-900 mb-3 text-sm">{t('common.all')}</h3>
               <div className="space-y-3">
                 {filteredIngredients.map((ingredient) => (
                   <div
@@ -180,7 +204,9 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
                     className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                   >
                     <div className="flex-1">
-                      <p className="font-medium text-gray-900">{ingredient.name}</p>
+                      <p className="font-medium text-gray-900">
+                        {ingredient.name_translations?.[language] || ingredient.name}
+                      </p>
                       {ingredient.calories_per_100g && (
                         <p className="text-xs text-gray-500">
                           💪 {Math.round(ingredient.calories_per_100g)} cal · 100{ingredient.default_unit || 'g'}
@@ -202,14 +228,14 @@ export default function IngredientSelector({ isOpen, onClose, onSelectIngredient
           {/* Empty State */}
           {!isLoading && filteredIngredients.length === 0 && aiSuggestions.length === 0 && searchQuery.length > 0 && (
             <div className="py-8 text-center">
-              <p className="text-gray-500">No se encontraron ingredientes</p>
+              <p className="text-gray-500">{t('common.none')}</p>
             </div>
           )}
 
           {/* Initial State */}
           {!searchQuery && filteredIngredients.length === 0 && isLoading && (
             <div className="py-8 text-center text-gray-500">
-              Cargando ingredientes...
+              {t('common.loading')}
             </div>
           )}
         </div>
