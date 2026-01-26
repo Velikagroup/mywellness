@@ -17,7 +17,7 @@ Deno.serve(async (req) => {
         }
 
         const body = await req.json();
-        const { frontPhotoUrl, sidePhotoUrl, backPhotoUrl, userAge, userHeight, userWeight, userGender } = body;
+        const { frontPhotoUrl, sidePhotoUrl, backPhotoUrl, userAge, userHeight, userWeight, userGender, language = 'it' } = body;
 
         if (!frontPhotoUrl) {
             return Response.json({ error: 'Missing frontPhotoUrl' }, { status: 400 });
@@ -25,35 +25,48 @@ Deno.serve(async (req) => {
 
         console.log(`📸 Analyzing body photos for user ${user.id}`);
 
+        const languageInstructions = {
+            it: 'Rispondi in ITALIANO',
+            en: 'Respond in ENGLISH',
+            es: 'Responde en ESPAÑOL',
+            pt: 'Responda em PORTUGUÊS',
+            de: 'Antworte auf DEUTSCH',
+            fr: 'Répondez en FRANÇAIS'
+        };
+
+        const langInstruction = languageInstructions[language] || languageInstructions.it;
+
         // Costruisci il prompt dettagliato per l'AI
-        const prompt = `Analizza queste foto del corpo in modo medico-scientifico e fornisci una valutazione completa.
+        const prompt = `Analyze these body photos in a medical-scientific manner and provide a complete assessment.
+${langInstruction} for ALL text fields (skin_texture, skin_tone, posture_assessment, problem_areas, strong_areas, recommended_diet_focus, recommended_workout_focus).
 
-DATI UTENTE:
-- Età: ${userAge || 'sconosciuta'}
-- Altezza: ${userHeight || 'sconosciuta'} cm
-- Peso: ${userWeight || 'sconosciuto'} kg
-- Genere: ${userGender || 'non specificato'}
+USER DATA:
+- Age: ${userAge || 'unknown'}
+- Height: ${userHeight || 'unknown'} cm
+- Weight: ${userWeight || 'unknown'} kg
+- Gender: ${userGender || 'not specified'}
 
-ANALISI RICHIESTA - Fornisci valori NUMERICI e SPECIFICI per:
+ANALYSIS REQUIRED - Provide NUMERIC and SPECIFIC values for:
 
-1. SOMATOTIPO: Classifica come ectomorph, mesomorph, endomorph o mixed
-2. PERCENTUALE MASSA GRASSA: Stima percentuale (0-100)
-3. ETÀ DEL CORPO: Stima in anni (la "biological age" del corpo)
-4. SCORE DEFINIZIONE MUSCOLARE: 0-100
-5. TEXTURE PELLE: Descrizione (liscia, irregolare, acneica, disidratata, etc)
-6. TONO PELLE: Classificazione (chiaro/fair, medio/medium, scuro/dark)
-7. PERCENTUALE GONFIORE: Stima di ritenzione idrica e gonfiore (0-100)
-8. VALUTAZIONE POSTURA: Descrizione brevissima dello stato posturale
-9. AREE PROBLEMATICHE: Lista di max 3 zone che necessitano attenzione
-10. AREE FORTI: Lista di max 3 zone ben sviluppate
+1. SOMATOTYPE: Classify as ectomorph, mesomorph, endomorph or mixed
+2. BODY FAT PERCENTAGE: Estimate percentage (0-100)
+3. BODY AGE: Estimate in years (the "biological age" of the body)
+4. MUSCLE DEFINITION SCORE: 0-100
+5. SKIN TEXTURE: Description in ${langInstruction.split(' ')[2]} (smooth/liscia, rough/irregolare, acne-prone/acneica, dry/disidratata, etc)
+6. SKIN TONE: Classification in ${langInstruction.split(' ')[2]} (fair/chiaro, medium/medio, dark/scuro)
+7. SWELLING PERCENTAGE: Estimate water retention and swelling (0-100)
+8. POSTURE ASSESSMENT: Very brief description of postural state in ${langInstruction.split(' ')[2]}
+9. PROBLEM AREAS: List of max 3 zones that need attention in ${langInstruction.split(' ')[2]}
+10. STRONG AREAS: List of max 3 well-developed zones in ${langInstruction.split(' ')[2]}
 
-FOCUS NUTRIZIONALI CONSIGLIATI:
-Basato sulla composizione corporea osservata, suggerisci 3-4 focus dietetici specifici (es: "aumentare proteine per sviluppo muscolare", "ridurre carboidrati semplici", etc)
+RECOMMENDED NUTRITIONAL FOCUS in ${langInstruction.split(' ')[2]}:
+Based on observed body composition, suggest 3-4 specific dietary focuses (e.g., "increase protein for muscle development", "reduce simple carbs", etc)
 
-FOCUS ALLENAMENTO CONSIGLIATI:
-Basato sulla composizione corporea, suggerisci 3-4 focus di allenamento specifici (es: "sviluppare spalle e petto", "aumentare resistenza cardiovascolare", etc)
+RECOMMENDED WORKOUT FOCUS in ${langInstruction.split(' ')[2]}:
+Based on body composition, suggest 3-4 specific training focuses (e.g., "develop shoulders and chest", "increase cardiovascular endurance", etc)
 
-Rispondi SOLO in formato JSON valido, senza markdown o commenti.`;
+Respond ONLY in valid JSON format, without markdown or comments.
+CRITICAL: All text fields MUST be in ${langInstruction.split(' ')[2]} language.`;
 
         console.log('🤖 Calling Core.InvokeLLM for body analysis...');
 
