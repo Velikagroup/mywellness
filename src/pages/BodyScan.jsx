@@ -67,7 +67,7 @@ export default function BodyScanPage() {
       `}</style>
       <div className="mb-12 text-center">
         <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-4 tracking-tight leading-[1.1]">
-          <span className="animated-text-gradient">Body Scan</span>
+          Body <span className="animated-text-gradient">Scan</span>
         </h1>
         <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
           Monitora i tuoi progressi fisici nel tempo
