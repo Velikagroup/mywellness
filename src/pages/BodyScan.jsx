@@ -47,9 +47,31 @@ export default function BodyScanPage() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 pb-32">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-2">Body Scan</h1>
-        <p className="text-gray-600">Monitora i tuoi progressi fisici nel tempo</p>
+      <style>{`
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700;900&display=swap');
+        
+        .animated-text-gradient {
+          background: linear-gradient(90deg, #26847F, #14b8a6, #10b981, #14b8a6, #26847F);
+          background-size: 200% auto;
+          background-clip: text;
+          -webkit-background-clip: text;
+          -webkit-text-fill-color: transparent;
+          animation: textGradientFlow 4s ease-in-out infinite;
+        }
+
+        @keyframes textGradientFlow {
+          0% { background-position: 0% 50%; }
+          50% { background-position: 100% 50%; }
+          100% { background-position: 0% 50%; }
+        }
+      `}</style>
+      <div className="mb-12 text-center">
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-bold text-gray-900 mb-4 tracking-tight leading-[1.1]">
+          <span className="animated-text-gradient">Body Scan</span>
+        </h1>
+        <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
+          Monitora i tuoi progressi fisici nel tempo
+        </p>
       </div>
 
       {/* Latest Scan */}
