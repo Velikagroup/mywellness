@@ -314,10 +314,16 @@ export default function BodyScanPage() {
                       alt="Front" 
                     />
                     <div className="flex-1">
-                      <p className="font-bold text-gray-900 mb-2">
-                        {format(new Date(scan.created_date), 'dd MMMM yyyy', { locale: it })}
-                      </p>
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-2 text-xs">
+                      <div className="flex items-center gap-3 mb-2">
+                        <div className="flex items-center gap-2">
+                          <Cake className="w-5 h-5 text-green-600" />
+                          <span className="font-bold text-gray-900 text-lg">{scan.body_age_estimate}y</span>
+                        </div>
+                        <p className="text-xs text-gray-500">
+                          {format(new Date(scan.created_date), 'dd MMM', { locale: it })}
+                        </p>
+                      </div>
+                      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 text-xs">
                         <div className="flex items-center gap-1">
                           <Percent className="w-3 h-3 text-orange-600" />
                           <span className="text-orange-600 font-semibold">{scan.body_fat_percentage}%</span>
@@ -329,10 +335,6 @@ export default function BodyScanPage() {
                         <div className="flex items-center gap-1">
                           <User className="w-3 h-3 text-purple-600" />
                           <span className="text-purple-600 font-semibold capitalize">{scan.somatotype}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Cake className="w-3 h-3 text-green-600" />
-                          <span className="text-green-600 font-semibold">{scan.body_age_estimate}y</span>
                         </div>
                       </div>
                     </div>
