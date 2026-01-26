@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { base44 } from '@/api/base44Client';
 import { ChevronDown, ScanLine, Calendar, TrendingUp, TrendingDown } from 'lucide-react';
 import { format } from 'date-fns';
+import { it } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export default function BodyScanPage() {
@@ -185,7 +186,7 @@ export default function BodyScanPage() {
                     />
                     <div className="flex-1">
                       <p className="font-semibold text-gray-900 text-lg">
-                        {format(new Date(scan.created_date), 'dd MMMM yyyy', { locale: require('date-fns/locale/it') })}
+                        {format(new Date(scan.created_date), 'dd MMMM yyyy', { locale: it })}
                       </p>
                       <div className="flex gap-4 text-xs text-gray-600 mt-1">
                         <span>BF: {scan.body_fat_percentage}%</span>
