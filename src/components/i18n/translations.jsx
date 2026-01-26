@@ -1007,7 +1007,17 @@ export const translations = {
       termsAcceptError: "Errore durante l'accettazione dei termini. Riprova.",
       redirecting: "Reindirizzamento...",
       // Edit modal labels
-      calculatedValues: "Valori calcolati:"
+      calculatedValues: "Valori calcolati:",
+      // Body fat modal
+      updateBodyFat: "Aggiorna Massa Grassa",
+      updateBodyFatDesc: "Inserisci le tue misure corporee per calcolare con precisione la massa grassa",
+      neckCircumference: "Circonferenza Collo (cm)",
+      neckCircumferencePlaceholder: "Es: 37.5",
+      waistCircumference: "Circonferenza Vita (cm)",
+      waistCircumferencePlaceholder: "Es: 85.5",
+      hipCircumference: "Circonferenza Fianchi (cm)",
+      hipCircumferencePlaceholder: "Es: 95.5",
+      calculate: "Calcola"
     },
     settings: {
       title: "Impostazioni Account",
@@ -3101,7 +3111,17 @@ export const translations = {
       termsAcceptError: "Error accepting terms. Please try again.",
       redirecting: "Redirecting...",
       // Edit modal labels
-      calculatedValues: "Calculated values:"
+      calculatedValues: "Calculated values:",
+      // Body fat modal
+      updateBodyFat: "Update Body Fat",
+      updateBodyFatDesc: "Enter your body measurements to accurately calculate body fat",
+      neckCircumference: "Neck Circumference (cm)",
+      neckCircumferencePlaceholder: "E.g.: 37.5",
+      waistCircumference: "Waist Circumference (cm)",
+      waistCircumferencePlaceholder: "E.g.: 85.5",
+      hipCircumference: "Hip Circumference (cm)",
+      hipCircumferencePlaceholder: "E.g.: 95.5",
+      calculate: "Calculate"
     },
     settings: {
       title: "Account Settings",
@@ -5106,7 +5126,17 @@ export const translations = {
       termsAcceptError: "Error al aceptar los términos. Inténtalo de nuevo.",
       redirecting: "Redirigiendo...",
       // Edit modal labels
-      calculatedValues: "Valores calculados:"
+      calculatedValues: "Valores calculados:",
+      // Body fat modal
+      updateBodyFat: "Actualizar Grasa Corporal",
+      updateBodyFatDesc: "Ingrese sus medidas corporales para calcular con precisión la grasa corporal",
+      neckCircumference: "Circunferencia del Cuello (cm)",
+      neckCircumferencePlaceholder: "Ej: 37.5",
+      waistCircumference: "Circunferencia de la Cintura (cm)",
+      waistCircumferencePlaceholder: "Ej: 85.5",
+      hipCircumference: "Circunferencia de las Caderas (cm)",
+      hipCircumferencePlaceholder: "Ej: 95.5",
+      calculate: "Calcular"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -7129,7 +7159,17 @@ export const translations = {
       termsAcceptError: "Erro ao aceitar os termos. Tente novamente.",
       redirecting: "Redirecionando...",
       // Edit modal labels
-      calculatedValues: "Valores calculados:"
+      calculatedValues: "Valores calculados:",
+      // Body fat modal
+      updateBodyFat: "Atualizar Gordura Corporal",
+      updateBodyFatDesc: "Insira suas medidas corporais para calcular com precisão a gordura corporal",
+      neckCircumference: "Circunferência do Pescoço (cm)",
+      neckCircumferencePlaceholder: "Ex: 37.5",
+      waistCircumference: "Circunferência da Cintura (cm)",
+      waistCircumferencePlaceholder: "Ex: 85.5",
+      hipCircumference: "Circunferência dos Quadris (cm)",
+      hipCircumferencePlaceholder: "Ex: 95.5",
+      calculate: "Calcular"
     },
     settings: {
       title: "Configurações da Conta",
@@ -9152,7 +9192,17 @@ export const translations = {
       termsAcceptError: "Fehler beim Akzeptieren der Bedingungen. Bitte versuchen Sie es erneut.",
       redirecting: "Weiterleitung...",
       // Edit modal labels
-      calculatedValues: "Berechnete Werte:"
+      calculatedValues: "Berechnete Werte:",
+      // Body fat modal
+      updateBodyFat: "Körperfett Aktualisieren",
+      updateBodyFatDesc: "Geben Sie Ihre Körpermaße ein, um Körperfett genau zu berechnen",
+      neckCircumference: "Halsumfang (cm)",
+      neckCircumferencePlaceholder: "Z.B.: 37.5",
+      waistCircumference: "Taillenumfang (cm)",
+      waistCircumferencePlaceholder: "Z.B.: 85.5",
+      hipCircumference: "Hüftumfang (cm)",
+      hipCircumferencePlaceholder: "Z.B.: 95.5",
+      calculate: "Berechnen"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -11175,7 +11225,17 @@ export const translations = {
       termsAcceptError: "Erreur lors de l'acceptation des conditions. Veuillez réessayer.",
       redirecting: "Redirection...",
       // Edit modal labels
-      calculatedValues: "Valeurs calculées:"
+      calculatedValues: "Valeurs calculées:",
+      // Body fat modal
+      updateBodyFat: "Mettre à Jour la Masse Grasse",
+      updateBodyFatDesc: "Entrez vos mesures corporelles pour calculer avec précision la masse grasse",
+      neckCircumference: "Circonférence du Cou (cm)",
+      neckCircumferencePlaceholder: "Ex: 37.5",
+      waistCircumference: "Circonférence de la Taille (cm)",
+      waistCircumferencePlaceholder: "Ex: 85.5",
+      hipCircumference: "Circonférence des Hanches (cm)",
+      hipCircumferencePlaceholder: "Ex: 95.5",
+      calculate: "Calculer"
     },
     settings: {
       title: "Paramètres du Compte",
