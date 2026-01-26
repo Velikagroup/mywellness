@@ -323,7 +323,7 @@ export default function BodyScanPage() {
                           {format(new Date(scan.created_date), 'dd MMM', { locale: it })}
                         </p>
                       </div>
-                      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 text-xs">
+                      <div className="grid grid-cols-3 md:grid-cols-4 gap-2 text-xs mb-2">
                         <div className="flex items-center gap-1">
                           <Percent className="w-3 h-3 text-orange-600" />
                           <span className="text-orange-600 font-semibold">{scan.body_fat_percentage}%</span>
@@ -337,6 +337,28 @@ export default function BodyScanPage() {
                           <span className="text-purple-600 font-semibold capitalize">{scan.somatotype}</span>
                         </div>
                       </div>
+                      {(scan.skin_texture || scan.skin_tone || scan.swelling_percentage !== undefined) && (
+                        <div className="grid grid-cols-3 gap-2 text-xs pt-2 border-t border-gray-300">
+                          {scan.skin_texture && (
+                            <div className="flex flex-col">
+                              <p className="text-gray-500 text-xs mb-1">Texture</p>
+                              <span className="text-gray-700 font-semibold truncate">{scan.skin_texture}</span>
+                            </div>
+                          )}
+                          {scan.skin_tone && (
+                            <div className="flex flex-col">
+                              <p className="text-gray-500 text-xs mb-1">Tono</p>
+                              <span className="text-gray-700 font-semibold truncate">{scan.skin_tone}</span>
+                            </div>
+                          )}
+                          {scan.swelling_percentage !== undefined && (
+                            <div className="flex flex-col">
+                              <p className="text-gray-500 text-xs mb-1">Gonfiore</p>
+                              <span className="text-gray-700 font-semibold">{scan.swelling_percentage}%</span>
+                            </div>
+                          )}
+                        </div>
+                      )}
                     </div>
                     <ChevronDown 
                       className={`w-5 h-5 text-gray-400 transition-transform duration-300 ${
