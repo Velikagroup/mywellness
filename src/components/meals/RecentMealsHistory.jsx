@@ -320,18 +320,6 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                   </motion.div>
                 )}
               </AnimatePresence>
-
-              {/* Ingredient Selector */}
-              {showIngredientSelector === log.id && (
-                <IngredientSelector
-                  isOpen={true}
-                  onClose={() => setShowIngredientSelector(null)}
-                  onSelectIngredient={(ing) => {
-                    setSelectedIngredient({ mealId: log.id, ingredient: ing });
-                    setShowIngredientSelector(null);
-                  }}
-                />
-              )}
             </motion.div>
           ))}
         </AnimatePresence>
@@ -347,6 +335,18 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
             Carica altri 5
           </Button>
         </div>
+      )}
+
+      {/* Modali fuori dal loop */}
+      {showIngredientSelector !== null && (
+        <IngredientSelector
+          isOpen={true}
+          onClose={() => setShowIngredientSelector(null)}
+          onSelectIngredient={(ing) => {
+            setSelectedIngredient({ mealId: showIngredientSelector, ingredient: ing });
+            setShowIngredientSelector(null);
+          }}
+        />
       )}
 
       {selectedIngredient && (
