@@ -1342,10 +1342,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   <p className="text-gray-600">Nessuna analisi salvata</p>
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="space-y-3">
                   {nutritionHistory.map((analysis) => (
-                    <div key={analysis.id} className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all">
-                      <div className="flex gap-4 p-4">
+                    <div key={analysis.id} className="bg-white rounded-xl border-2 border-gray-200 hover:border-gray-300 hover:shadow-lg transition-all p-4">
+                      <div className="flex gap-4">
                         {analysis.photo_url && (
                           <img 
                             src={analysis.photo_url} 
@@ -1353,25 +1353,41 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                             className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
                           />
                         )}
-                        <div className="flex-1">
-                          <h4 className="font-bold text-gray-900 text-lg mb-1">{analysis.nome_alimento}</h4>
-                          <p className="text-xs text-gray-500 mb-2">
-                            {new Date(analysis.created_date).toLocaleDateString('it-IT', { 
-                              day: 'numeric', 
-                              month: 'long', 
-                              year: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit'
-                            })}
-                          </p>
-                          <div className="flex items-center gap-2">
-                            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#26847F]/20 to-[#26847F]/10 border border-[#26847F]">
-                              <p className="text-lg font-bold text-[#26847F]">{analysis.score_qualita}</p>
+                        
+                        <div className="flex-1 min-w-0">
+                          <div className="flex justify-between items-start gap-2 mb-3">
+                            <p className="text-gray-900 line-clamp-2">
+                              {analysis.nome_alimento}
+                            </p>
+                            <div className="flex items-center gap-2 flex-shrink-0">
+                              <span className="text-xs text-gray-500">
+                                {format(new Date(analysis.created_date), 'HH:mm')}
+                              </span>
                             </div>
-                            <div className="text-xs">
-                              <span className="font-semibold text-gray-900">{analysis.calorie_per_porzione} cal</span>
-                              <span className="text-gray-500 mx-1">•</span>
-                              <span className="text-gray-600">P: {analysis.proteine_g}g C: {analysis.carboidrati_g}g G: {analysis.grassi_g}g</span>
+                          </div>
+
+                          <div className="flex items-center gap-1 mb-3">
+                            <div className="inline-flex items-center justify-center w-8 h-8 rounded-full bg-gradient-to-br from-[#26847F]/20 to-[#26847F]/10 border border-[#26847F]">
+                              <span className="text-lg font-bold text-[#26847F]">{analysis.score_qualita}</span>
+                            </div>
+                            <span className="font-bold text-gray-900 text-2xl ml-2">
+                              {analysis.calorie_per_porzione}
+                            </span>
+                            <span className="text-xs text-gray-500">kcal</span>
+                          </div>
+
+                          <div className="flex gap-4 text-xs">
+                            <div className="flex items-center gap-1">
+                              <Zap className="w-4 h-4 text-red-600" />
+                              <span className="text-red-600 font-semibold">{analysis.proteine_g}g</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Wheat className="w-4 h-4 text-amber-600" />
+                              <span className="text-amber-600 font-semibold">{analysis.carboidrati_g}g</span>
+                            </div>
+                            <div className="flex items-center gap-1">
+                              <Droplet className="w-4 h-4 text-blue-600" />
+                              <span className="text-blue-600 font-semibold">{analysis.grassi_g}g</span>
                             </div>
                           </div>
                         </div>
