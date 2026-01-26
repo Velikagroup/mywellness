@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine, Image, ChevronDown, ClipboardList } from 'lucide-react';
+import { X, Camera, FlipHorizontal, RotateCcw, UtensilsCrossed, Scale, ScanLine, Image, ChevronDown, ClipboardList, Zap, Wheat, Droplet } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
@@ -7,6 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { createLocalizedPageUrl } from '@/components/i18n/LanguageContext';
 import RecentMealsHistory from '@/components/meals/RecentMealsHistory';
+import { format } from 'date-fns';
 
 export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const navigate = useNavigate();
