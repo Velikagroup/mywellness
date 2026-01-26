@@ -342,15 +342,21 @@ export default function BodyScanPage() {
                       alt="Front" 
                     />
                     <div className="flex-1">
-                      <div className="flex items-center gap-3 mb-2">
+                      <div className="flex items-center gap-3 mb-2 justify-between">
                         <div className="flex items-center gap-2">
                           <Cake className="w-5 h-5 text-green-600" />
                           <span className="font-bold text-gray-900 text-lg">{scan.body_age_estimate}y</span>
                         </div>
+                        {progressIcon && React.createElement(progressIcon, { className: `w-5 h-5 ${progressColor}` })}
                         <p className="text-xs text-gray-500">
                           {format(new Date(scan.created_date), 'dd MMM', { locale: it })}
                         </p>
                       </div>
+                      {(improvementScore !== 0) && (
+                        <div className={`text-xs font-bold ${progressColor} mb-2`}>
+                          {progressLabel}
+                        </div>
+                      )}
                       <div className="grid grid-cols-3 md:grid-cols-4 gap-2 text-xs mb-2">
                         <div className="flex items-center gap-1">
                           <Percent className="w-3 h-3 text-orange-600" />
