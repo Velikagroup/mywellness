@@ -702,6 +702,11 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 <FlipHorizontal className="w-6 h-6 text-white" />
               </button>
             )}
+            <button
+              className="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors text-white font-semibold text-lg"
+            >
+              ?
+            </button>
           </div>
         </div>
       </div>
@@ -858,7 +863,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {mode === 'nutrition_table' && cameraActive && !capturedImage && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               {/* Camera frame for table - più stretto e lungo */}
-              <div className="relative w-72 h-80 border-2 border-white/80 rounded-3xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
+              <div className="relative w-72 h-[500px] border-2 border-white/80 rounded-3xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="flex flex-col items-center gap-4 z-10">
                   <UtensilsCrossed className="w-16 h-16 text-white/90" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Inquadra la tabella nutrizionale</p>
