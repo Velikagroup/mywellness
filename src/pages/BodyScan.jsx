@@ -295,14 +295,42 @@ export default function BodyScanPage() {
           <h2 className="text-xl font-bold text-gray-900 mb-4">Storico Scansioni</h2>
           <div className="space-y-3">
             <AnimatePresence>
-              {olderScans.map((scan, index) => (
+              {olderScans.map((scan, index) => {
+                // Compara con la scansione precedente
+                const previousScan = index > 0 ? olderScans[index - 1] : latestScan;
+                const ageChange = previousScan.body_age_estimate - scan.body_age_estimate; // positivo = miglioramento
+                const fatChange = previousScan.body_fat_percentage - scan.body_fat_percentage; // positivo = miglioramento
+                const muscleChange = scan.muscle_definition_score - previousScan.muscle_definition_score; // positivo = miglioramento
+                const improvementScore = ageChange * 0.3 + fatChange * 0.35 + muscleChange * 0.35;
+                
+                let bgColor = 'bg-white';
+                let borderColor = 'border-gray-200';
+                let progressColor = 'text-gray-700';
+                let progressIcon = null;
+                let progressLabel = 'Stabile';
+                
+                if (improvementScore > 2) {
+                  bgColor = 'bg-green-50';
+                  borderColor = 'border-green-300';
+                  progressColor = 'text-green-700';
+                  progressIcon = TrendingUp;
+                  progressLabel = `Migliorato di ${improvementScore.toFixed(1)}`;
+                } else if (improvementScore < -2) {
+                  bgColor = 'bg-red-50';
+                  borderColor = 'border-red-300';
+                  progressColor = 'text-red-700';
+                  progressIcon = TrendingDown;
+                  progressLabel = `Peggiorato di ${Math.abs(improvementScore).toFixed(1)}`;
+                }
+                
+                return (
                 <motion.div
                   key={scan.id}
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ delay: index * 0.05 }}
-                  className="water-glass-effect border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
+                  className={`water-glass-effect border-2 ${borderColor} rounded-xl overflow-hidden hover:shadow-lg transition-all ${bgColor}`}
                 >
                   <button
                     onClick={() => setExpandedHistoryId(expandedHistoryId === scan.id ? null : scan.id)}
