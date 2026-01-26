@@ -80,7 +80,7 @@ export default function MealsAndMacrosCard({
               <p className="text-xs font-bold text-red-700">{todayMacros.consumed.protein}g</p>
             </div>
           </div>
-          <p className="text-xs text-gray-600 mt-1 font-medium">Proteine</p>
+          <p className="text-xs text-gray-600 mt-1 font-medium">{t('nutrition.protein') || 'Proteine'}</p>
         </div>
 
         {/* Carboidrati */}
@@ -105,7 +105,7 @@ export default function MealsAndMacrosCard({
               <p className="text-xs font-bold text-amber-700">{todayMacros.consumed.carbs}g</p>
             </div>
           </div>
-          <p className="text-xs text-gray-600 mt-1 font-medium">Carboidrati</p>
+          <p className="text-xs text-gray-600 mt-1 font-medium">{t('nutrition.carbs') || 'Carboidrati'}</p>
         </div>
 
         {/* Grassi */}
@@ -130,7 +130,7 @@ export default function MealsAndMacrosCard({
               <p className="text-xs font-bold text-violet-700">{todayMacros.consumed.fat}g</p>
             </div>
           </div>
-          <p className="text-xs text-gray-600 mt-1 font-medium">Grassi</p>
+          <p className="text-xs text-gray-600 mt-1 font-medium">{t('nutrition.fat') || 'Grassi'}</p>
         </div>
       </div>
 
