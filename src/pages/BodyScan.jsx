@@ -497,5 +497,15 @@ export default function BodyScanPage() {
                           </div>
                         </div>
                       </motion.div>
-                    )}
-                  </AnimatePresence>
+                      )}
+                      </AnimatePresence>
+                      </motion.div>
+                      );
+                      })}
+                      </AnimatePresence>
+                      </div>
+                      </div>
+                      )}
+                      </div>
+                      );
+                      }
