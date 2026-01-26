@@ -832,7 +832,14 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {/* Body Scan Photo Indicators */}
           {mode === 'bodyscan' && (
            <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10 flex gap-4">
-             {['front', 'side', 'back'].map((step) => (
+             {['front', 'side', 'back'].map((step) => {
+               const stepLabels = {
+                 front: t('bodyPhotos.front'),
+                 side: t('bodyPhotos.sideLeft'),
+                 back: t('bodyPhotos.back')
+               };
+               
+               return (
                    <div
                      key={step}
                      className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
@@ -858,9 +865,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                       <Camera className="w-6 h-6 text-white" />
                     )}
                   </div>
-                  <span className="text-xs text-white font-medium capitalize">{step}</span>
+                  <span className="text-xs text-white font-medium">{stepLabels[step]}</span>
                 </div>
-              ))}
+               );
+             })}
             </div>
           )}
 
