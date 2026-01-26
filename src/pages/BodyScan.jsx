@@ -401,7 +401,16 @@ export default function BodyScanPage() {
                     />
                   </button>
 
-                  <AnimatePresence>
+                  </motion.div>
+                );
+              })}
+            </AnimatePresence>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
                     {expandedHistoryId === scan.id && (
                       <motion.div
                         initial={{ opacity: 0, height: 0 }}
