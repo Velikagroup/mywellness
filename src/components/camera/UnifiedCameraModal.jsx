@@ -863,20 +863,22 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Weight Mode UI */}
       {mode === 'weight' && (
         <div className="w-full h-full flex items-center justify-center p-6">
-          <div className="w-full max-w-md bg-white/95 backdrop-blur-sm rounded-3xl p-8 shadow-2xl">
+          <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-8">
-              <Scale className="w-16 h-16 mx-auto mb-4 text-[#26847F]" />
+              <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
+                <Scale className="w-10 h-10 text-gray-700" />
+              </div>
               <h2 className="text-2xl font-bold text-gray-900 mb-2">Log Weight</h2>
-              <p className="text-gray-600">Inserisci il tuo peso attuale</p>
+              <p className="text-gray-600 text-sm">Inserisci il tuo peso attuale</p>
             </div>
 
             <div className="space-y-6">
               {/* Unit Toggle */}
-              <div className="flex gap-2 bg-gray-100 p-1 rounded-lg w-full justify-center">
+              <div className="flex gap-3 w-full">
                 <button
                   onClick={() => setWeightKg(weightKg ? lbsToKg(weightKg) : '')}
-                  className={`flex-1 px-4 py-2 rounded-md font-semibold transition-colors ${
-                    weightKg ? (parseFloat(weightKg) < 150 ? 'bg-[#26847F] text-white' : 'bg-transparent text-gray-700') : 'bg-[#26847F] text-white'
+                  className={`flex-1 px-6 py-3 rounded-full font-bold transition-all ${
+                    weightKg ? (parseFloat(weightKg) < 150 ? 'bg-black text-white' : 'bg-gray-100 text-gray-700') : 'bg-black text-white'
                   }`}
                   title="Usa kg"
                 >
@@ -884,8 +886,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 </button>
                 <button
                   onClick={() => setWeightKg(weightKg ? kgToLbs(weightKg) : '')}
-                  className={`flex-1 px-4 py-2 rounded-md font-semibold transition-colors ${
-                    weightKg ? (parseFloat(weightKg) >= 150 ? 'bg-[#26847F] text-white' : 'bg-transparent text-gray-700') : 'bg-transparent text-gray-700'
+                  className={`flex-1 px-6 py-3 rounded-full font-bold transition-all ${
+                    weightKg ? (parseFloat(weightKg) >= 150 ? 'bg-black text-white' : 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700'
                   }`}
                   title="Usa lbs"
                 >
@@ -894,7 +896,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               </div>
 
               <div>
-                <label className="block text-sm font-semibold text-gray-700 mb-2">
+                <label className="block text-sm font-bold text-gray-700 mb-3">
                   Peso
                 </label>
                 <Input
@@ -903,10 +905,10 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
                   placeholder={weightKg && parseFloat(weightKg) >= 150 ? '155' : '70.5'}
-                  className="h-14 text-lg text-center"
+                  className="h-16 text-xl text-center rounded-2xl border-2 border-gray-200 focus:border-black font-semibold"
                 />
                 {weightKg && (
-                  <p className="text-sm text-gray-500 text-center mt-2">
+                  <p className="text-sm text-gray-500 text-center mt-3 font-medium">
                     ≈ {parseFloat(weightKg) >= 150 ? lbsToKg(weightKg) : kgToLbs(weightKg)} {parseFloat(weightKg) >= 150 ? 'kg' : 'lbs'}
                   </p>
                 )}
@@ -915,7 +917,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               <Button
                 onClick={saveWeight}
                 disabled={savingWeight || !weightKg}
-                className="w-full h-14 bg-[#26847F] hover:bg-[#1f6b66] text-white text-lg font-semibold"
+                className="w-full h-14 bg-black hover:bg-gray-900 text-white text-lg font-bold rounded-full shadow-lg"
               >
                 {savingWeight ? 'Salvataggio...' : 'Salva Peso'}
               </Button>
