@@ -445,16 +445,17 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
      }
 
      // Analyze body
-     const result = await base44.functions.invoke('analyzeBodyImage', {
+     const response = await base44.functions.invoke('analyzeBodyImage', {
        frontPhotoUrl: uploadedPhotos.front,
        sidePhotoUrl: uploadedPhotos.side,
        backPhotoUrl: uploadedPhotos.back || null,
-       userId: user.id,
-       height: user.height,
-       weight: user.weight || user.current_weight,
-       age: user.age,
-       gender: user.gender
+       userHeight: user.height,
+       userWeight: user.weight || user.current_weight,
+       userAge: user.age,
+       userGender: user.gender
      });
+     
+     const result = response.data?.scanResult || response.data;
 
       const bodyScanData = {
         ...result,
