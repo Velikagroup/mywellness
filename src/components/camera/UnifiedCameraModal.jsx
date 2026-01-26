@@ -863,17 +863,17 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {mode === 'nutrition_table' && cameraActive && !capturedImage && (
             <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-24">
               {/* Camera frame for table - più stretto e lungo */}
-              <div className="relative w-72 h-[500px] border-[6px] border-white/80 rounded-[48px] flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
+              <div className="relative w-72 h-[500px] border-2 border-white/80 rounded-[48px] flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="flex flex-col items-center gap-4 z-10">
                   <UtensilsCrossed className="w-16 h-16 text-white/90" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Inquadra la tabella nutrizionale</p>
                 </div>
 
                 {/* Corner markers - angoli più marcati */}
-                <div className="absolute top-4 left-4 w-8 h-8 border-t-4 border-l-4 border-white/90 rounded-tl-lg"></div>
-                <div className="absolute top-4 right-4 w-8 h-8 border-t-4 border-r-4 border-white/90 rounded-tr-lg"></div>
-                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-4 border-l-4 border-white/90 rounded-bl-lg"></div>
-                <div className="absolute bottom-4 right-4 w-8 h-8 border-b-4 border-r-4 border-white/90 rounded-br-lg"></div>
+                <div className="absolute top-4 left-4 w-8 h-8 border-t-2 border-l-2 border-white/90 rounded-tl-lg"></div>
+                <div className="absolute top-4 right-4 w-8 h-8 border-t-2 border-r-2 border-white/90 rounded-tr-lg"></div>
+                <div className="absolute bottom-4 left-4 w-8 h-8 border-b-2 border-l-2 border-white/90 rounded-bl-lg"></div>
+                <div className="absolute bottom-4 right-4 w-8 h-8 border-b-2 border-r-2 border-white/90 rounded-br-lg"></div>
               </div>
             </div>
           )}
