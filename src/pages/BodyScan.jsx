@@ -334,7 +334,7 @@ export default function BodyScanPage() {
                 >
                   <button
                     onClick={() => setExpandedHistoryId(expandedHistoryId === scan.id ? null : scan.id)}
-                    className="w-full flex items-center gap-4 p-4 hover:bg-gray-50 transition-colors text-left"
+                    className={`w-full flex items-center gap-4 p-4 transition-colors text-left ${bgColor === 'bg-green-50' ? 'hover:bg-green-100' : bgColor === 'bg-red-50' ? 'hover:bg-red-100' : 'hover:bg-gray-50'}`}
                   >
                     <img 
                       src={scan.front_photo_url} 
