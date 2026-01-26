@@ -49,6 +49,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const [expandedHistoryId, setExpandedHistoryId] = useState(null);
   const [showCalorieHistoryModal, setShowCalorieHistoryModal] = useState(false);
   const [calorieHistory, setCalorieHistory] = useState([]);
+  const [showNutritionHistoryModal, setShowNutritionHistoryModal] = useState(false);
+  const [nutritionHistory, setNutritionHistory] = useState([]);
 
   useEffect(() => {
     if (isOpen && (mode === 'weight')) {
@@ -367,6 +369,25 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       });
 
       setNutritionResult({ ...result, photo_url: file_url });
+      
+      // Salva l'analisi nel database
+      await base44.entities.NutritionAnalysis.create({
+        user_id: user.id,
+        photo_url: file_url,
+        nome_alimento: result.nome_alimento,
+        score_qualita: result.score_qualita,
+        calorie_per_porzione: result.calorie_per_porzione,
+        proteine_g: result.proteine_g,
+        carboidrati_g: result.carboidrati_g,
+        grassi_g: result.grassi_g,
+        zuccheri_g: result.zuccheri_g,
+        sale_g: result.sale_g,
+        fibre_g: result.fibre_g,
+        valutazione: result.valutazione,
+        punti_forti: result.punti_forti,
+        punti_deboli: result.punti_deboli,
+        consiglio: result.consiglio
+      });
     } catch (error) {
       console.error('Error analyzing nutrition table:', error);
       alert('Errore durante l\'analisi. Riprova.');
@@ -504,6 +525,22 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       setShowCalorieHistoryModal(true);
     } catch (error) {
       console.error('Error loading calorie history:', error);
+      alert('Errore durante il caricamento dello storico');
+    }
+  };
+
+  const loadNutritionHistory = async () => {
+    if (!user) return;
+    try {
+      const history = await base44.entities.NutritionAnalysis.filter(
+        { user_id: user.id },
+        '-created_date',
+        20
+      );
+      setNutritionHistory(history);
+      setShowNutritionHistoryModal(true);
+    } catch (error) {
+      console.error('Error loading nutrition history:', error);
       alert('Errore durante il caricamento dello storico');
     }
   };
@@ -691,6 +728,16 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
         >
           Storico Calorie
+        </button>
+      )}
+
+      {/* Nutrition History Button */}
+      {mode === 'nutrition_table' && !nutritionAnalyzing && !nutritionResult && !capturedImage && (
+        <button
+          onClick={loadNutritionHistory}
+          className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
+        >
+          Storico Nutrition
         </button>
       )}
 
@@ -1269,6 +1316,75 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 userId={user?.id}
                 onMealSelect={() => {}}
               />
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Nutrition History Modal */}
+      {showNutritionHistoryModal && (
+        <div className="absolute inset-0 bg-black/90 backdrop-blur-sm z-30 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-gray-200/30">
+            <div className="p-6 border-b border-gray-200/30">
+              <div className="flex items-center justify-between">
+                <h3 className="text-2xl font-bold text-gray-900">Storico Nutrition</h3>
+                <button
+                  onClick={() => {
+                    setShowNutritionHistoryModal(false);
+                    setNutritionHistory([]);
+                  }}
+                  className="p-2 rounded-full hover:bg-gray-100 transition-colors"
+                >
+                  <X className="w-6 h-6 text-gray-600" />
+                </button>
+              </div>
+            </div>
+
+            <div className="p-6 max-h-[70vh] overflow-y-auto">
+              {nutritionHistory.length === 0 ? (
+                <div className="text-center py-12">
+                  <ClipboardList className="w-16 h-16 mx-auto text-gray-300 mb-4" />
+                  <p className="text-gray-600">Nessuna analisi salvata</p>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {nutritionHistory.map((analysis) => (
+                    <div key={analysis.id} className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 transition-all">
+                      <div className="flex gap-4 p-4">
+                        {analysis.photo_url && (
+                          <img 
+                            src={analysis.photo_url} 
+                            alt={analysis.nome_alimento}
+                            className="w-24 h-24 object-cover rounded-lg flex-shrink-0"
+                          />
+                        )}
+                        <div className="flex-1">
+                          <h4 className="font-bold text-gray-900 text-lg mb-1">{analysis.nome_alimento}</h4>
+                          <p className="text-xs text-gray-500 mb-2">
+                            {new Date(analysis.created_date).toLocaleDateString('it-IT', { 
+                              day: 'numeric', 
+                              month: 'long', 
+                              year: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit'
+                            })}
+                          </p>
+                          <div className="flex items-center gap-2">
+                            <div className="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-[#26847F]/20 to-[#26847F]/10 border border-[#26847F]">
+                              <p className="text-lg font-bold text-[#26847F]">{analysis.score_qualita}</p>
+                            </div>
+                            <div className="text-xs">
+                              <span className="font-semibold text-gray-900">{analysis.calorie_per_porzione} cal</span>
+                              <span className="text-gray-500 mx-1">•</span>
+                              <span className="text-gray-600">P: {analysis.proteine_g}g C: {analysis.carboidrati_g}g G: {analysis.grassi_g}g</span>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
         </div>
