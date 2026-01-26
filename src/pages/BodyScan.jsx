@@ -4,8 +4,10 @@ import { ChevronDown, ScanLine, Calendar, TrendingUp, TrendingDown, Percent, Act
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function BodyScanPage() {
+  const { t } = useLanguage();
   const [user, setUser] = useState(null);
   const [bodyScanHistory, setBodyScanHistory] = useState([]);
   const [expandedHistoryId, setExpandedHistoryId] = useState(null);
@@ -70,7 +72,7 @@ export default function BodyScanPage() {
           Body <span className="animated-text-gradient">Scan</span>
         </h1>
         <p className="text-base md:text-xl text-gray-600 max-w-2xl mx-auto">
-          Monitora i tuoi progressi fisici nel tempo
+          {t('bodyScan.subtitle')}
         </p>
       </div>
 
@@ -85,7 +87,7 @@ export default function BodyScanPage() {
           <div className="flex items-center justify-between mb-4">
             <div className="flex items-center gap-2">
               <ScanLine className="w-5 h-5 text-gray-700" />
-              <h2 className="font-bold text-gray-900 text-base">Ultima Scansione Corporea</h2>
+              <h2 className="font-bold text-gray-900 text-base">{t('bodyScan.latestScan')}</h2>
             </div>
             <div className="flex items-center gap-2 text-sm text-gray-600">
               <Calendar className="w-4 h-4" />
@@ -103,7 +105,7 @@ export default function BodyScanPage() {
                     alt="Front" 
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-2 text-center">
-                    Vista Frontale
+                    {t('bodyScan.frontView')}
                   </div>
                 </div>
                 <div className="relative rounded-2xl overflow-hidden water-glass-effect">
@@ -113,7 +115,7 @@ export default function BodyScanPage() {
                     alt="Side" 
                   />
                   <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-2 text-center">
-                    Vista Laterale
+                    {t('bodyScan.sideView')}
                   </div>
                 </div>
                 {latestScan.back_photo_url && (
@@ -124,7 +126,7 @@ export default function BodyScanPage() {
                       alt="Back" 
                     />
                     <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-2 text-center">
-                      Vista Posteriore
+                      {t('bodyScan.backView')}
                     </div>
                   </div>
                 )}
@@ -134,23 +136,23 @@ export default function BodyScanPage() {
               <div>
                 <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-4">
                   <Activity className="w-5 h-5" />
-                  Analisi Composizione Corporea
+                  {t('bodyScan.bodyComposition')}
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Età Biologica - PIÙ IN RISALTO */}
                   <div className="bg-green-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-green-400">
                     <div className="flex items-center gap-2 mb-2">
                       <Cake className="w-5 h-5 text-green-700" />
-                      <p className="text-xs text-green-800 font-bold uppercase tracking-wide">Età Biologica</p>
+                      <p className="text-xs text-green-800 font-bold uppercase tracking-wide">{t('bodyScan.biologicalAge')}</p>
                     </div>
-                    <p className="text-4xl font-black text-green-700">{latestScan.body_age_estimate} <span className="text-lg text-green-600">anni</span></p>
+                    <p className="text-4xl font-black text-green-700">{latestScan.body_age_estimate} <span className="text-lg text-green-600">{t('bodyScan.years')}</span></p>
                   </div>
 
                   {/* Somatotipo */}
                   <div className="bg-purple-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-purple-400">
                     <div className="flex items-center gap-2 mb-2">
                       <User className="w-5 h-5 text-purple-700" />
-                      <p className="text-xs text-purple-800 font-bold uppercase tracking-wide">Somatotipo</p>
+                      <p className="text-xs text-purple-800 font-bold uppercase tracking-wide">{t('bodyScan.somatotype')}</p>
                     </div>
                     <p className="text-2xl font-black text-purple-700 capitalize break-words">{latestScan.somatotype}</p>
                   </div>
@@ -159,7 +161,7 @@ export default function BodyScanPage() {
                   <div className="bg-orange-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-orange-400">
                     <div className="flex items-center gap-2 mb-2">
                       <Percent className="w-5 h-5 text-orange-700" />
-                      <p className="text-xs text-orange-800 font-bold uppercase tracking-wide">Body Fat %</p>
+                      <p className="text-xs text-orange-800 font-bold uppercase tracking-wide">{t('bodyScan.bodyFat')}</p>
                     </div>
                     <p className="text-3xl font-black text-orange-700">{latestScan.body_fat_percentage}%</p>
                   </div>
@@ -168,7 +170,7 @@ export default function BodyScanPage() {
                   <div className="bg-blue-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-blue-400">
                     <div className="flex items-center gap-2 mb-2">
                       <Layers className="w-5 h-5 text-blue-700" />
-                      <p className="text-xs text-blue-800 font-bold uppercase tracking-wide">Definizione</p>
+                      <p className="text-xs text-blue-800 font-bold uppercase tracking-wide">{t('bodyScan.muscleDefinition')}</p>
                     </div>
                     <p className="text-3xl font-black text-blue-700">{latestScan.muscle_definition_score}<span className="text-base text-blue-600">/100</span></p>
                   </div>
@@ -180,7 +182,7 @@ export default function BodyScanPage() {
                 <div>
                   <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-4">
                     <Eye className="w-5 h-5" />
-                    Analisi Tessutale
+                    {t('bodyScan.tissueAnalysis')}
                   </h3>
                   <div className="grid grid-cols-3 gap-3">
                     {latestScan.skin_texture && (() => {
@@ -265,7 +267,7 @@ export default function BodyScanPage() {
                 
                 return (
                   <div className={`rounded-2xl p-4 ${bgStyle} border-2 ${borderColor}`}>
-                    <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-2">📊 Valutazione Posturale</p>
+                    <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-2">📊 {t('bodyScan.posturalAssessment')}</p>
                     <p className="text-sm text-gray-700 leading-relaxed">{latestScan.posture_assessment}</p>
                   </div>
                 );
@@ -277,13 +279,9 @@ export default function BodyScanPage() {
                   <div className="bg-red-100/60 backdrop-blur-md rounded-2xl p-4 border-2 border-red-400">
                     <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <TrendingDown className="w-4 h-4" />
-                      Aree Critiche
+                      {t('bodyScan.criticalAreas')}
                     </p>
-                    <ul className="space-y-1">
-                      {latestScan.problem_areas.map((area, idx) => (
-                        <li key={idx} className="text-sm text-gray-700">• {area}</li>
-                      ))}
-                    </ul>
+...
                   </div>
                 )}
 
@@ -291,7 +289,7 @@ export default function BodyScanPage() {
                   <div className="bg-green-100/60 backdrop-blur-md rounded-2xl p-4 border-2 border-green-400">
                     <p className="text-xs font-bold text-green-700 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <TrendingUp className="w-4 h-4" />
-                      Punti di Forza
+                      {t('bodyScan.strengths')}
                     </p>
                     <ul className="space-y-1">
                       {latestScan.strong_areas.map((area, idx) => (
@@ -306,15 +304,15 @@ export default function BodyScanPage() {
       ) : (
         <div className="bg-white rounded-2xl shadow-lg p-12 text-center mb-8">
           <ScanLine className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-          <p className="text-gray-600 text-lg mb-2">Nessun Body Scan ancora</p>
-          <p className="text-gray-500 text-sm">Usa il pulsante + in basso per fare la tua prima scansione</p>
+          <p className="text-gray-600 text-lg mb-2">{t('bodyScan.noBodyScan')}</p>
+          <p className="text-gray-500 text-sm">{t('bodyScan.useButtonBelow')}</p>
         </div>
       )}
 
       {/* Storico */}
       {olderScans.length > 0 && (
         <div>
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Storico Scansioni</h2>
+          <h2 className="text-xl font-bold text-gray-900 mb-4">{t('bodyScan.scanHistory')}</h2>
           <div className="space-y-3">
             <AnimatePresence>
               {olderScans.map((scan, index) => {
@@ -329,20 +327,20 @@ export default function BodyScanPage() {
                 let borderColor = 'border-gray-200';
                 let progressColor = 'text-gray-700';
                 let progressIcon = null;
-                let progressLabel = 'Stabile';
+                let progressLabel = t('bodyScan.stable');
                 
                 if (improvementScore > 2) {
                   bgColor = 'bg-green-50';
                   borderColor = 'border-green-300';
                   progressColor = 'text-green-700';
                   progressIcon = TrendingUp;
-                  progressLabel = `Migliorato di ${improvementScore.toFixed(1)}`;
+                  progressLabel = `${t('bodyScan.improved')} ${improvementScore.toFixed(1)}`;
                 } else if (improvementScore < -2) {
                   bgColor = 'bg-red-50';
                   borderColor = 'border-red-300';
                   progressColor = 'text-red-700';
                   progressIcon = TrendingDown;
-                  progressLabel = `Peggiorato di ${Math.abs(improvementScore).toFixed(1)}`;
+                  progressLabel = `${t('bodyScan.declined')} ${Math.abs(improvementScore).toFixed(1)}`;
                 }
                 
                 return (
@@ -397,19 +395,19 @@ export default function BodyScanPage() {
                         <div className="grid grid-cols-3 gap-2 text-xs pt-2 border-t border-gray-300">
                           {scan.skin_texture && (
                             <div className="flex flex-col">
-                              <p className="text-gray-500 text-xs mb-1">Texture</p>
+                              <p className="text-gray-500 text-xs mb-1">{t('bodyScan.texture')}</p>
                               <span className="text-gray-700 font-semibold truncate">{scan.skin_texture}</span>
                             </div>
                           )}
                           {scan.skin_tone && (
                             <div className="flex flex-col">
-                              <p className="text-gray-500 text-xs mb-1">Tono</p>
+                              <p className="text-gray-500 text-xs mb-1">{t('bodyScan.tone')}</p>
                               <span className="text-gray-700 font-semibold truncate">{scan.skin_tone}</span>
                             </div>
                           )}
                           {scan.swelling_percentage !== undefined && (
                             <div className="flex flex-col">
-                              <p className="text-gray-500 text-xs mb-1">Gonfiore</p>
+                              <p className="text-gray-500 text-xs mb-1">{t('bodyScan.swelling')}</p>
                               <span className="text-gray-700 font-semibold">{scan.swelling_percentage}%</span>
                             </div>
                           )}
@@ -436,20 +434,20 @@ export default function BodyScanPage() {
                             <div className="relative rounded-lg overflow-hidden border border-gray-200">
                               <img src={scan.front_photo_url} className="w-full h-48 object-cover" alt="Front" />
                               <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-1.5 text-center">
-                                Frontale
+                                {t('bodyScan.frontView')}
                               </div>
                             </div>
                             <div className="relative rounded-lg overflow-hidden border border-gray-200">
                               <img src={scan.side_photo_url} className="w-full h-48 object-cover" alt="Side" />
                               <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-1.5 text-center">
-                                Laterale
+                                {t('bodyScan.sideView')}
                               </div>
                             </div>
                             {scan.back_photo_url && (
                               <div className="relative rounded-lg overflow-hidden border border-gray-200">
                                 <img src={scan.back_photo_url} className="w-full h-48 object-cover" alt="Back" />
                                 <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-1.5 text-center">
-                                  Posteriore
+                                  {t('bodyScan.backView')}
                                 </div>
                               </div>
                             )}
@@ -460,28 +458,28 @@ export default function BodyScanPage() {
                               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                                 <div className="flex items-center gap-1 mb-1">
                                   <User className="w-3 h-3 text-purple-600" />
-                                  <p className="text-xs text-gray-600">Somatotipo</p>
+                                  <p className="text-xs text-gray-600">{t('bodyScan.somatotype')}</p>
                                 </div>
                                 <p className="text-lg font-bold text-gray-900 capitalize">{scan.somatotype}</p>
                               </div>
                               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                                 <div className="flex items-center gap-1 mb-1">
                                   <Percent className="w-3 h-3 text-orange-600" />
-                                  <p className="text-xs text-gray-600">Body Fat</p>
+                                  <p className="text-xs text-gray-600">{t('bodyScan.bodyFat')}</p>
                                 </div>
                                 <p className="text-lg font-bold text-orange-600">{scan.body_fat_percentage}%</p>
                               </div>
                               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                                 <div className="flex items-center gap-1 mb-1">
                                   <Layers className="w-3 h-3 text-blue-600" />
-                                  <p className="text-xs text-gray-600">Definizione</p>
+                                  <p className="text-xs text-gray-600">{t('bodyScan.muscleDefinition')}</p>
                                 </div>
                                 <p className="text-lg font-bold text-blue-600">{scan.muscle_definition_score}/100</p>
                               </div>
                               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
                                 <div className="flex items-center gap-1 mb-1">
                                   <Cake className="w-3 h-3 text-green-600" />
-                                  <p className="text-xs text-gray-600">Età Bio.</p>
+                                  <p className="text-xs text-gray-600">{t('bodyScan.biologicalAge')}</p>
                                 </div>
                                 <p className="text-lg font-bold text-green-600">{scan.body_age_estimate}y</p>
                               </div>
@@ -489,7 +487,7 @@ export default function BodyScanPage() {
 
                             {scan.posture_assessment && (
                               <div className="bg-gray-50 border border-gray-200 rounded-lg p-3">
-                                <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-2">Postura</p>
+                                <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-2">{t('bodyScan.posturalAssessment')}</p>
                                 <p className="text-sm text-gray-700 leading-relaxed">{scan.posture_assessment}</p>
                               </div>
                             )}
@@ -497,17 +495,13 @@ export default function BodyScanPage() {
                             <div className="grid grid-cols-2 gap-3">
                               {scan.problem_areas && scan.problem_areas.length > 0 && (
                                 <div className="bg-red-50 border border-red-200 rounded-lg p-3">
-                                  <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-2">Aree Critiche</p>
-                                  <ul className="space-y-1">
-                                    {scan.problem_areas.map((area, idx) => (
-                                      <li key={idx} className="text-sm text-red-800">• {area}</li>
-                                    ))}
-                                  </ul>
+                                  <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-2">{t('bodyScan.criticalAreas')}</p>
+...
                                 </div>
                               )}
                               {scan.strong_areas && scan.strong_areas.length > 0 && (
                                 <div className="bg-green-50 border border-green-200 rounded-lg p-3">
-                                  <p className="text-xs font-bold text-green-700 uppercase tracking-wide mb-2">Punti di Forza</p>
+                                  <p className="text-xs font-bold text-green-700 uppercase tracking-wide mb-2">{t('bodyScan.strengths')}</p>
                                   <ul className="space-y-1">
                                     {scan.strong_areas.map((area, idx) => (
                                       <li key={idx} className="text-sm text-green-800">• {area}</li>
