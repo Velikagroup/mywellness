@@ -113,41 +113,41 @@ export default function BodyScanPage() {
 
               {/* Metriche Scientifiche Primarie */}
               <div className="mb-6">
-                <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                  <Activity className="w-4 h-4" />
+                <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
+                  <Activity className="w-5 h-5" />
                   Analisi Composizione Corporea
                 </h3>
-                <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="bg-white border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <User className="w-4 h-4 text-purple-600" />
-                      <p className="text-xs text-gray-600">Somatotipo</p>
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <User className="w-5 h-5 text-purple-600" />
+                      <p className="text-xs text-gray-600 font-semibold">Somatotipo</p>
                     </div>
-                    <p className="text-xl font-bold text-gray-900 capitalize">{latestScan.somatotype}</p>
+                    <p className="text-3xl font-bold text-gray-900 capitalize">{latestScan.somatotype}</p>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Percent className="w-4 h-4 text-orange-600" />
-                      <p className="text-xs text-gray-600">Body Fat %</p>
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Percent className="w-5 h-5 text-orange-600" />
+                      <p className="text-xs text-gray-600 font-semibold">Body Fat %</p>
                     </div>
-                    <p className="text-xl font-bold text-orange-600">{latestScan.body_fat_percentage}%</p>
+                    <p className="text-3xl font-bold text-orange-600">{latestScan.body_fat_percentage}%</p>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Layers className="w-4 h-4 text-blue-600" />
-                      <p className="text-xs text-gray-600">Definizione</p>
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Layers className="w-5 h-5 text-blue-600" />
+                      <p className="text-xs text-gray-600 font-semibold">Definizione</p>
                     </div>
-                    <p className="text-xl font-bold text-blue-600">{latestScan.muscle_definition_score}<span className="text-sm text-gray-500">/100</span></p>
+                    <p className="text-3xl font-bold text-blue-600">{latestScan.muscle_definition_score}<span className="text-base text-gray-500">/100</span></p>
                   </div>
 
-                  <div className="bg-white border border-gray-200 rounded-lg p-3">
-                    <div className="flex items-center gap-2 mb-1">
-                      <Cake className="w-4 h-4 text-green-600" />
-                      <p className="text-xs text-gray-600">Età Biologica</p>
+                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Cake className="w-5 h-5 text-green-600" />
+                      <p className="text-xs text-gray-600 font-semibold">Età Biologica</p>
                     </div>
-                    <p className="text-xl font-bold text-green-600">{latestScan.body_age_estimate} <span className="text-sm text-gray-500">anni</span></p>
+                    <p className="text-3xl font-bold text-green-600">{latestScan.body_age_estimate} <span className="text-base text-gray-500">anni</span></p>
                   </div>
                 </div>
               </div>
