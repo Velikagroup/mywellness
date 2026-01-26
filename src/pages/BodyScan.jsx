@@ -245,7 +245,7 @@ export default function BodyScanPage() {
               {/* Aree Problematiche e Punti di Forza */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {latestScan.problem_areas && latestScan.problem_areas.length > 0 && (
-                  <div className="water-glass-effect rounded-2xl p-4 border-2 border-red-400/20">
+                  <div className="bg-red-100/60 backdrop-blur-md rounded-2xl p-4 border-2 border-red-400">
                     <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <TrendingDown className="w-4 h-4" />
                       Aree Critiche
@@ -259,7 +259,7 @@ export default function BodyScanPage() {
                 )}
 
                 {latestScan.strong_areas && latestScan.strong_areas.length > 0 && (
-                  <div className="water-glass-effect rounded-2xl p-4 border-2 border-green-400/20">
+                  <div className="bg-green-100/60 backdrop-blur-md rounded-2xl p-4 border-2 border-green-400">
                     <p className="text-xs font-bold text-green-700 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <TrendingUp className="w-4 h-4" />
                       Punti di Forza
