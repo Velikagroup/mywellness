@@ -309,7 +309,10 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                         </div>
 
                         <Button
-                          onClick={() => setShowIngredientSelector(log.id)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setShowIngredientSelector(log.id);
+                          }}
                           className="w-full mt-4 h-12 bg-black hover:bg-gray-900 text-white font-semibold rounded-full"
                         >
                           <Plus className="w-4 h-4 mr-2" />
