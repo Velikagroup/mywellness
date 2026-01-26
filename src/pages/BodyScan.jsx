@@ -118,36 +118,40 @@ export default function BodyScanPage() {
                   Analisi Composizione Corporea
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                  {/* Età Biologica - PIÙ IN RISALTO */}
+                  <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500 rounded-xl p-5 shadow-lg">
                     <div className="flex items-center gap-2 mb-2">
-                      <User className="w-5 h-5 text-purple-600" />
-                      <p className="text-xs text-gray-600 font-semibold">Somatotipo</p>
+                      <Cake className="w-5 h-5 text-green-700" />
+                      <p className="text-xs text-green-800 font-bold uppercase tracking-wide">Età Biologica</p>
                     </div>
-                    <p className="text-3xl font-bold text-gray-900 capitalize">{latestScan.somatotype}</p>
+                    <p className="text-4xl font-black text-green-700">{latestScan.body_age_estimate} <span className="text-lg text-green-600">anni</span></p>
                   </div>
 
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                  {/* Somatotipo */}
+                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 rounded-xl p-5">
                     <div className="flex items-center gap-2 mb-2">
-                      <Percent className="w-5 h-5 text-orange-600" />
-                      <p className="text-xs text-gray-600 font-semibold">Body Fat %</p>
+                      <User className="w-5 h-5 text-purple-700" />
+                      <p className="text-xs text-purple-800 font-bold uppercase tracking-wide">Somatotipo</p>
                     </div>
-                    <p className="text-3xl font-bold text-orange-600">{latestScan.body_fat_percentage}%</p>
+                    <p className="text-3xl font-black text-purple-700 capitalize break-words">{latestScan.somatotype}</p>
                   </div>
 
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                  {/* Body Fat */}
+                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl p-5">
                     <div className="flex items-center gap-2 mb-2">
-                      <Layers className="w-5 h-5 text-blue-600" />
-                      <p className="text-xs text-gray-600 font-semibold">Definizione</p>
+                      <Percent className="w-5 h-5 text-orange-700" />
+                      <p className="text-xs text-orange-800 font-bold uppercase tracking-wide">Body Fat %</p>
                     </div>
-                    <p className="text-3xl font-bold text-blue-600">{latestScan.muscle_definition_score}<span className="text-base text-gray-500">/100</span></p>
+                    <p className="text-3xl font-black text-orange-700">{latestScan.body_fat_percentage}%</p>
                   </div>
 
-                  <div className="bg-white border-2 border-gray-200 rounded-xl p-5">
+                  {/* Definizione */}
+                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-5">
                     <div className="flex items-center gap-2 mb-2">
-                      <Cake className="w-5 h-5 text-green-600" />
-                      <p className="text-xs text-gray-600 font-semibold">Età Biologica</p>
+                      <Layers className="w-5 h-5 text-blue-700" />
+                      <p className="text-xs text-blue-800 font-bold uppercase tracking-wide">Definizione</p>
                     </div>
-                    <p className="text-3xl font-bold text-green-600">{latestScan.body_age_estimate} <span className="text-base text-gray-500">anni</span></p>
+                    <p className="text-3xl font-black text-blue-700">{latestScan.muscle_definition_score}<span className="text-base text-blue-600">/100</span></p>
                   </div>
                 </div>
               </div>
