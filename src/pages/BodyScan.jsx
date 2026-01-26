@@ -57,27 +57,26 @@ export default function BodyScanPage() {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="mb-8"
+          className="mb-8 space-y-4"
         >
-          <div className="bg-white rounded-xl border-2 border-gray-200 overflow-hidden">
-            {/* Header con data */}
-            <div className="p-4 border-b border-gray-200">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <ScanLine className="w-5 h-5 text-gray-700" />
-                  <h2 className="font-bold text-gray-900 text-lg">Ultima Scansione Corporea</h2>
-                </div>
-                <div className="flex items-center gap-2 text-sm text-gray-600">
-                  <Calendar className="w-4 h-4" />
-                  <span>{format(new Date(latestScan.created_date), 'dd/MM/yyyy')}</span>
-                </div>
+          {/* Header con data */}
+          <div className="water-glass-effect rounded-2xl p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <ScanLine className="w-5 h-5 text-gray-700" />
+                <h2 className="font-bold text-gray-900 text-lg">Ultima Scansione Corporea</h2>
+              </div>
+              <div className="flex items-center gap-2 text-sm text-gray-600">
+                <Calendar className="w-4 h-4" />
+                <span>{format(new Date(latestScan.created_date), 'dd/MM/yyyy')}</span>
               </div>
             </div>
+          </div>
 
-            <div className="p-6">
+          <div className="space-y-4">
               {/* Foto */}
-              <div className="grid grid-cols-3 gap-4 mb-6">
-                <div className="relative rounded-lg overflow-hidden border border-gray-200">
+              <div className="grid grid-cols-3 gap-4">
+                <div className="relative rounded-2xl overflow-hidden water-glass-effect">
                   <img 
                     src={latestScan.front_photo_url} 
                     className="w-full h-64 object-cover" 
@@ -87,7 +86,7 @@ export default function BodyScanPage() {
                     Vista Frontale
                   </div>
                 </div>
-                <div className="relative rounded-lg overflow-hidden border border-gray-200">
+                <div className="relative rounded-2xl overflow-hidden water-glass-effect">
                   <img 
                     src={latestScan.side_photo_url} 
                     className="w-full h-64 object-cover" 
@@ -98,7 +97,7 @@ export default function BodyScanPage() {
                   </div>
                 </div>
                 {latestScan.back_photo_url && (
-                  <div className="relative rounded-lg overflow-hidden border border-gray-200">
+                  <div className="relative rounded-2xl overflow-hidden water-glass-effect">
                     <img 
                       src={latestScan.back_photo_url} 
                       className="w-full h-64 object-cover" 
@@ -112,14 +111,16 @@ export default function BodyScanPage() {
               </div>
 
               {/* Metriche Scientifiche Primarie */}
-              <div className="mb-6">
-                <h3 className="text-base font-bold text-gray-900 mb-4 flex items-center gap-2">
-                  <Activity className="w-5 h-5" />
-                  Analisi Composizione Corporea
-                </h3>
+              <div>
+                <div className="water-glass-effect rounded-2xl p-4 mb-4">
+                  <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
+                    <Activity className="w-5 h-5" />
+                    Analisi Composizione Corporea
+                  </h3>
+                </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Età Biologica - PIÙ IN RISALTO */}
-                  <div className="bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-500 rounded-xl p-5 shadow-lg">
+                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-green-400/30">
                     <div className="flex items-center gap-2 mb-2">
                       <Cake className="w-5 h-5 text-green-700" />
                       <p className="text-xs text-green-800 font-bold uppercase tracking-wide">Età Biologica</p>
@@ -128,7 +129,7 @@ export default function BodyScanPage() {
                   </div>
 
                   {/* Somatotipo */}
-                  <div className="bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-300 rounded-xl p-5">
+                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-purple-400/20">
                     <div className="flex items-center gap-2 mb-2">
                       <User className="w-5 h-5 text-purple-700" />
                       <p className="text-xs text-purple-800 font-bold uppercase tracking-wide">Somatotipo</p>
@@ -137,7 +138,7 @@ export default function BodyScanPage() {
                   </div>
 
                   {/* Body Fat */}
-                  <div className="bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-300 rounded-xl p-5">
+                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-orange-400/20">
                     <div className="flex items-center gap-2 mb-2">
                       <Percent className="w-5 h-5 text-orange-700" />
                       <p className="text-xs text-orange-800 font-bold uppercase tracking-wide">Body Fat %</p>
@@ -146,7 +147,7 @@ export default function BodyScanPage() {
                   </div>
 
                   {/* Definizione */}
-                  <div className="bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-300 rounded-xl p-5">
+                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-blue-400/20">
                     <div className="flex items-center gap-2 mb-2">
                       <Layers className="w-5 h-5 text-blue-700" />
                       <p className="text-xs text-blue-800 font-bold uppercase tracking-wide">Definizione</p>
@@ -158,29 +159,31 @@ export default function BodyScanPage() {
 
               {/* Metriche Secondarie */}
               {(latestScan.skin_texture || latestScan.skin_tone || latestScan.swelling_percentage !== undefined) && (
-                <div className="mb-6">
-                  <h3 className="text-sm font-bold text-gray-900 mb-3 flex items-center gap-2">
-                    <Eye className="w-4 h-4" />
-                    Analisi Tessutale
-                  </h3>
+                <div>
+                  <div className="water-glass-effect rounded-2xl p-4 mb-4">
+                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Analisi Tessutale
+                    </h3>
+                  </div>
                   <div className="grid grid-cols-3 gap-3">
                     {latestScan.skin_texture && (
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                        <p className="text-xs text-gray-600 mb-1">Texture Pelle</p>
+                      <div className="water-glass-effect rounded-2xl p-3 text-center">
+                        <p className="text-xs text-gray-700 mb-1 font-semibold">Texture Pelle</p>
                         <p className="text-sm font-bold text-gray-900">{latestScan.skin_texture}</p>
                       </div>
                     )}
                     {latestScan.skin_tone && (
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                        <p className="text-xs text-gray-600 mb-1">Tono Cutaneo</p>
+                      <div className="water-glass-effect rounded-2xl p-3 text-center">
+                        <p className="text-xs text-gray-700 mb-1 font-semibold">Tono Cutaneo</p>
                         <p className="text-sm font-bold text-gray-900">{latestScan.skin_tone}</p>
                       </div>
                     )}
                     {latestScan.swelling_percentage !== undefined && (
-                      <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
+                      <div className="water-glass-effect rounded-2xl p-3 text-center">
                         <div className="flex items-center justify-center gap-1 mb-1">
-                          <Droplets className="w-3 h-3 text-blue-500" />
-                          <p className="text-xs text-gray-600">Gonfiore</p>
+                          <Droplets className="w-3 h-3 text-blue-600" />
+                          <p className="text-xs text-gray-700 font-semibold">Gonfiore</p>
                         </div>
                         <p className="text-sm font-bold text-gray-900">{latestScan.swelling_percentage}%</p>
                       </div>
@@ -191,16 +194,16 @@ export default function BodyScanPage() {
 
               {/* Postura */}
               {latestScan.posture_assessment && (
-                <div className="bg-white border border-gray-200 rounded-lg p-4 mb-4">
+                <div className="water-glass-effect rounded-2xl p-4">
                   <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-2">📊 Valutazione Posturale</p>
                   <p className="text-sm text-gray-700 leading-relaxed">{latestScan.posture_assessment}</p>
                 </div>
               )}
 
               {/* Aree Problematiche e Punti di Forza */}
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 {latestScan.problem_areas && latestScan.problem_areas.length > 0 && (
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="water-glass-effect rounded-2xl p-4 border-2 border-red-400/20">
                     <p className="text-xs font-bold text-red-700 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <TrendingDown className="w-4 h-4" />
                       Aree Critiche
@@ -214,7 +217,7 @@ export default function BodyScanPage() {
                 )}
 
                 {latestScan.strong_areas && latestScan.strong_areas.length > 0 && (
-                  <div className="bg-white border border-gray-200 rounded-lg p-4">
+                  <div className="water-glass-effect rounded-2xl p-4 border-2 border-green-400/20">
                     <p className="text-xs font-bold text-green-700 uppercase tracking-wide mb-2 flex items-center gap-2">
                       <TrendingUp className="w-4 h-4" />
                       Punti di Forza
@@ -228,7 +231,6 @@ export default function BodyScanPage() {
                 )}
               </div>
             </div>
-          </div>
         </motion.div>
       ) : (
         <div className="bg-white rounded-2xl shadow-lg p-12 text-center mb-8">
