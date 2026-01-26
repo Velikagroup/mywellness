@@ -75,8 +75,9 @@ export default function IngredientQuantityModal({ isOpen, ingredient, onClose, o
   if (!ingredient) return null;
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-md bg-white">
+    <Dialog open={isOpen} onOpenChange={onClose} modal>
+      <DialogContent className="max-w-md bg-white z-[200]" aria-describedby="ingredient-quantity-description">
+        <p id="ingredient-quantity-description" className="sr-only">Inserisci la quantità per questo ingrediente</p>
         <DialogHeader className="border-b border-gray-200 pb-4">
           <div className="flex items-center gap-3">
             <button
