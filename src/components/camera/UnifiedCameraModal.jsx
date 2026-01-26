@@ -716,7 +716,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                : 'bg-white/20 text-white backdrop-blur-sm'
            }`}
          >
-           <ClipboardList className="w-6 h-6" />
+           <UtensilsCrossed className="w-6 h-6" />
            <span className="text-xs font-medium">Nutrition</span>
          </button>
 
