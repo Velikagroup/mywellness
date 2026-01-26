@@ -1064,7 +1064,16 @@ export const translations = {
       saving: "Salvataggio...",
       weightSaved: "Peso e massa grassa aggiornati!",
       weightUnit: "Peso",
-      enterValidWeight: "Inserisci un peso valido"
+      enterValidWeight: "Inserisci un peso valido",
+      // Nutrition Analysis Modal
+      noAnalysisSaved: "Nessuna analisi salvata",
+      qualityScore: "Score Qualità",
+      nutritionalInfo: "Informazioni Nutrizionali",
+      positiveAspects: "Punti Positivi",
+      negativeAspects: "Punti Negativi",
+      advice: "Consiglio",
+      retake: "Rifai",
+      new: "Nuovo"
     },
     settings: {
       title: "Impostazioni Account",
@@ -3215,7 +3224,16 @@ export const translations = {
       saving: "Saving...",
       weightSaved: "Weight and body fat updated!",
       weightUnit: "Weight",
-      enterValidWeight: "Enter a valid weight"
+      enterValidWeight: "Enter a valid weight",
+      // Nutrition Analysis Modal
+      noAnalysisSaved: "No analysis saved",
+      qualityScore: "Quality Score",
+      nutritionalInfo: "Nutritional Information",
+      positiveAspects: "Positive Aspects",
+      negativeAspects: "Negative Aspects",
+      advice: "Advice",
+      retake: "Retake",
+      new: "New"
     },
     settings: {
       title: "Account Settings",
@@ -5277,7 +5295,16 @@ export const translations = {
       saving: "Guardando...",
       weightSaved: "¡Peso y grasa corporal actualizados!",
       weightUnit: "Peso",
-      enterValidWeight: "Introduce un peso válido"
+      enterValidWeight: "Introduce un peso válido",
+      // Nutrition Analysis Modal
+      noAnalysisSaved: "Ningún análisis guardado",
+      qualityScore: "Puntuación de Calidad",
+      nutritionalInfo: "Información Nutricional",
+      positiveAspects: "Aspectos Positivos",
+      negativeAspects: "Aspectos Negativos",
+      advice: "Consejo",
+      retake: "Repetir",
+      new: "Nuevo"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -7357,7 +7384,16 @@ export const translations = {
       saving: "Salvando...",
       weightSaved: "Peso e gordura corporal atualizados!",
       weightUnit: "Peso",
-      enterValidWeight: "Digite um peso válido"
+      enterValidWeight: "Digite um peso válido",
+      // Nutrition Analysis Modal
+      noAnalysisSaved: "Nenhuma análise salva",
+      qualityScore: "Pontuação de Qualidade",
+      nutritionalInfo: "Informações Nutricionais",
+      positiveAspects: "Aspectos Positivos",
+      negativeAspects: "Aspectos Negativos",
+      advice: "Conselho",
+      retake: "Refazer",
+      new: "Novo"
     },
     settings: {
       title: "Configurações da Conta",
@@ -9437,7 +9473,16 @@ export const translations = {
       saving: "Speichern...",
       weightSaved: "Gewicht und Körperfett aktualisiert!",
       weightUnit: "Gewicht",
-      enterValidWeight: "Geben Sie ein gültiges Gewicht ein"
+      enterValidWeight: "Geben Sie ein gültiges Gewicht ein",
+      // Nutrition Analysis Modal
+      noAnalysisSaved: "Keine Analyse gespeichert",
+      qualityScore: "Qualitätsbewertung",
+      nutritionalInfo: "Nährwertinformationen",
+      positiveAspects: "Positive Aspekte",
+      negativeAspects: "Negative Aspekte",
+      advice: "Empfehlung",
+      retake: "Wiederholen",
+      new: "Neu"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -11517,7 +11562,16 @@ export const translations = {
       saving: "Sauvegarde...",
       weightSaved: "Poids et masse grasse mis à jour!",
       weightUnit: "Poids",
-      enterValidWeight: "Entrez un poids valide"
+      enterValidWeight: "Entrez un poids valide",
+      // Nutrition Analysis Modal
+      noAnalysisSaved: "Aucune analyse enregistrée",
+      qualityScore: "Score de Qualité",
+      nutritionalInfo: "Informations Nutritionnelles",
+      positiveAspects: "Aspects Positifs",
+      negativeAspects: "Aspects Négatifs",
+      advice: "Conseil",
+      retake: "Refaire",
+      new: "Nouveau"
     },
     settings: {
       title: "Paramètres du Compte",

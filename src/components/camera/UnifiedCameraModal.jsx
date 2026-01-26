@@ -1045,29 +1045,29 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 <div className="inline-flex items-center justify-center w-20 h-20 rounded-full bg-gradient-to-br from-[#26847F]/20 to-[#26847F]/10 border-2 border-[#26847F]">
                   <p className="text-3xl font-bold text-[#26847F]">{nutritionResult.score_qualita}</p>
                 </div>
-                <p className="text-sm text-gray-500 mt-3 font-medium">Score Qualità</p>
+                <p className="text-sm text-gray-500 mt-3 font-medium">{t('dashboard.qualityScore')}</p>
               </div>
 
               <div className="border-t border-gray-200 mb-6"></div>
 
               <div className="mb-6">
-                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">Informazioni Nutrizionali</p>
+                <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-3">{t('dashboard.nutritionalInfo')}</p>
                 <div className="grid grid-cols-2 gap-3">
                   <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                     <p className="text-xl font-bold text-gray-900">{nutritionResult.calorie_per_porzione}</p>
-                    <p className="text-xs text-gray-600 mt-1">Calorie</p>
+                    <p className="text-xs text-gray-600 mt-1">{t('meals.calories')}</p>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                     <p className="text-xl font-bold text-gray-900">{nutritionResult.proteine_g}g</p>
-                    <p className="text-xs text-gray-600 mt-1">Proteine</p>
+                    <p className="text-xs text-gray-600 mt-1">{t('nutrition.protein')}</p>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                     <p className="text-xl font-bold text-gray-900">{nutritionResult.carboidrati_g}g</p>
-                    <p className="text-xs text-gray-600 mt-1">Carboidrati</p>
+                    <p className="text-xs text-gray-600 mt-1">{t('nutrition.carbs')}</p>
                   </div>
                   <div className="bg-gray-50 rounded-lg p-3 text-center border border-gray-200">
                     <p className="text-xl font-bold text-gray-900">{nutritionResult.grassi_g}g</p>
-                    <p className="text-xs text-gray-600 mt-1">Grassi</p>
+                    <p className="text-xs text-gray-600 mt-1">{t('nutrition.fat')}</p>
                   </div>
                 </div>
               </div>
@@ -1080,7 +1080,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
               {nutritionResult.punti_forti && nutritionResult.punti_forti.length > 0 && (
                 <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-2">Punti Positivi</p>
+                  <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-2">{t('dashboard.positiveAspects')}</p>
                   <ul className="space-y-1">
                     {nutritionResult.punti_forti.map((punto, idx) => (
                       <li key={idx} className="text-sm text-green-800">✓ {punto}</li>
@@ -1091,7 +1091,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
               {nutritionResult.punti_deboli && nutritionResult.punti_deboli.length > 0 && (
                 <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">Punti Negativi</p>
+                  <p className="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">{t('dashboard.negativeAspects')}</p>
                   <ul className="space-y-1">
                     {nutritionResult.punti_deboli.map((punto, idx) => (
                       <li key={idx} className="text-sm text-red-800">✗ {punto}</li>
@@ -1102,7 +1102,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
               {nutritionResult.consiglio && (
                 <div className="mb-6 bg-amber-50 border border-amber-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-amber-700 uppercase tracking-wide mb-2">Consiglio</p>
+                  <p className="text-xs font-medium text-amber-700 uppercase tracking-wide mb-2">{t('dashboard.advice')}</p>
                   <p className="text-sm text-amber-900">{nutritionResult.consiglio}</p>
                 </div>
               )}
@@ -1114,7 +1114,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   className="flex-1 border-gray-300 hover:bg-gray-50"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Rifai
+                  {t('dashboard.retake')}
                 </Button>
                 <Button
                   onClick={() => {
@@ -1124,7 +1124,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   }}
                   className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
-                  Nuovo
+                  {t('dashboard.new')}
                 </Button>
               </div>
               </div>
@@ -1377,7 +1377,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               {nutritionHistory.length === 0 ? (
                 <div className="text-center py-12">
                   <ClipboardList className="w-16 h-16 mx-auto text-gray-300 mb-4" />
-                  <p className="text-gray-600">Nessuna analisi salvata</p>
+                  <p className="text-gray-600">{t('dashboard.noAnalysisSaved')}</p>
                 </div>
               ) : (
                 <div className="space-y-3">
