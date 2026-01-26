@@ -456,11 +456,46 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
        gender: user.gender
      });
 
-      setBodyScanResult({
+      const bodyScanData = {
         ...result,
         photos: uploadedPhotos,
         timestamp: new Date().toISOString()
-      });
+      };
+      
+      setBodyScanResult(bodyScanData);
+      
+      // Salva direttamente senza mostrare l'anteprima
+      setSavingBodyScan(true);
+      try {
+        await base44.entities.BodyScanResult.create({
+         user_id: user.id,
+         front_photo_url: bodyScanData.photos.front,
+         side_photo_url: bodyScanData.photos.side,
+         back_photo_url: bodyScanData.photos.back || null,
+         somatotype: bodyScanData.somatotype,
+         body_fat_percentage: bodyScanData.body_fat_percentage,
+         muscle_definition_score: bodyScanData.muscle_definition_score,
+         body_age_estimate: bodyScanData.body_age_estimate,
+         posture_assessment: bodyScanData.posture_assessment,
+         problem_areas: bodyScanData.problem_areas,
+         strong_areas: bodyScanData.strong_areas,
+         skin_texture: bodyScanData.skin_texture,
+         skin_tone: bodyScanData.skin_tone,
+         swelling_percentage: bodyScanData.swelling_percentage
+        });
+        setSavingBodyScan(false);
+        onClose();
+        // Piccola attesa per permettere la chiusura del modal, poi redirect e reload
+        await new Promise(resolve => setTimeout(resolve, 300));
+        navigate(createPageUrl('BodyScan'));
+        // Reload per ottenere i dati aggiornati
+        await new Promise(resolve => setTimeout(resolve, 500));
+        window.location.reload();
+      } catch (error) {
+        console.error('Error saving body scan:', error);
+        alert('Errore durante il salvataggio');
+        setSavingBodyScan(false);
+      }
     } catch (error) {
       console.error('Error analyzing body scan:', error);
       alert('Errore durante l\'analisi. Riprova.');
