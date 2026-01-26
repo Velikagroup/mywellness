@@ -818,7 +818,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               {/* Camera frame for table - senza overlay interno */}
               <div className="relative w-80 h-96 border-[6px] border-white/80 rounded-[48px] flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="flex flex-col items-center gap-4 z-10">
-                  <ClipboardList className="w-16 h-16 text-white/90" strokeWidth={1.5} />
+                  <UtensilsCrossed className="w-16 h-16 text-white/90" strokeWidth={1.5} />
                   <p className="text-white text-sm font-semibold text-center px-4">Inquadra la tabella nutrizionale</p>
                 </div>
 
