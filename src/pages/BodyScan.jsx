@@ -120,7 +120,7 @@ export default function BodyScanPage() {
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Età Biologica - PIÙ IN RISALTO */}
-                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-green-400/30">
+                  <div className="bg-green-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-green-400">
                     <div className="flex items-center gap-2 mb-2">
                       <Cake className="w-5 h-5 text-green-700" />
                       <p className="text-xs text-green-800 font-bold uppercase tracking-wide">Età Biologica</p>
@@ -129,7 +129,7 @@ export default function BodyScanPage() {
                   </div>
 
                   {/* Somatotipo */}
-                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-purple-400/20">
+                  <div className="bg-purple-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-purple-400">
                     <div className="flex items-center gap-2 mb-2">
                       <User className="w-5 h-5 text-purple-700" />
                       <p className="text-xs text-purple-800 font-bold uppercase tracking-wide">Somatotipo</p>
@@ -138,7 +138,7 @@ export default function BodyScanPage() {
                   </div>
 
                   {/* Body Fat */}
-                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-orange-400/20">
+                  <div className="bg-orange-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-orange-400">
                     <div className="flex items-center gap-2 mb-2">
                       <Percent className="w-5 h-5 text-orange-700" />
                       <p className="text-xs text-orange-800 font-bold uppercase tracking-wide">Body Fat %</p>
@@ -147,7 +147,7 @@ export default function BodyScanPage() {
                   </div>
 
                   {/* Definizione */}
-                  <div className="water-glass-effect rounded-2xl p-5 border-2 border-blue-400/20">
+                  <div className="bg-blue-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-blue-400">
                     <div className="flex items-center gap-2 mb-2">
                       <Layers className="w-5 h-5 text-blue-700" />
                       <p className="text-xs text-blue-800 font-bold uppercase tracking-wide">Definizione</p>
