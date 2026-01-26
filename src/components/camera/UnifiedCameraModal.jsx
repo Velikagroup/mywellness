@@ -11,7 +11,7 @@ import { format } from 'date-fns';
 
 export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const navigate = useNavigate();
-  const { t } = useLanguage();
+  const { t, language } = useLanguage();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -228,28 +228,41 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           totGrassi = matchFound.actual_fat;
         } else {
           // Analisi completa con AI
+          const languageInstructions = {
+            it: { lang: 'Italian', example: 'pasta al sugo di lenticchie, dividi in: pasta, lenticchie, pomodoro, olio' },
+            en: { lang: 'English', example: 'pasta with lentil sauce, divide into: pasta, lentils, tomato, oil' },
+            es: { lang: 'Spanish', example: 'pasta con salsa de lentejas, divide en: pasta, lentejas, tomate, aceite' },
+            pt: { lang: 'Portuguese', example: 'massa com molho de lentilhas, divida em: massa, lentilhas, tomate, óleo' },
+            de: { lang: 'German', example: 'Nudeln mit Linsensauce, teile auf in: Nudeln, Linsen, Tomaten, Öl' },
+            fr: { lang: 'French', example: 'pâtes à la sauce aux lentilles, divisez en: pâtes, lentilles, tomate, huile' }
+          };
+
+          const langConfig = languageInstructions[language] || languageInstructions.it;
+
           const result = await base44.integrations.Core.InvokeLLM({
-            prompt: `Analizza questa foto di cibo e IDENTIFICA OGNI SINGOLO INGREDIENTE presente nel piatto.
+            prompt: `Analyze this food photo and IDENTIFY EVERY SINGLE INGREDIENT present in the dish.
+        Respond in ${langConfig.lang} language.
 
-            IMPORTANTE: 
-            - Separa TUTTI gli ingredienti (es: se vedi pasta al sugo di lenticchie, dividi in: pasta, lenticchie, pomodoro, olio, ecc.)
-            - Per ogni ingrediente stima la quantità in grammi basandoti sulla PORZIONE REALE visibile
-            - Calcola i valori nutrizionali per CIASCUN ingrediente separatamente
+        IMPORTANT: 
+        - Separate ALL ingredients (e.g., if you see ${langConfig.example}, etc.)
+        - For each ingredient, estimate the quantity in grams based on the REAL visible portion
+        - Calculate nutritional values for EACH ingredient separately
+        - All ingredient names MUST be in ${langConfig.lang}
 
-            Fornisci i dati in questo formato JSON preciso:
-            {
-              "nome_piatto": "nome del piatto completo",
-              "ingredienti": [
-                {
-                  "name": "nome ingrediente",
-                  "grams": numero,
-                  "calories": numero,
-                  "protein": numero,
-                  "carbs": numero,
-                  "fat": numero
-                }
-              ]
-            }`,
+        Provide data in this precise JSON format:
+        {
+        "nome_piatto": "full dish name in ${langConfig.lang}",
+        "ingredienti": [
+        {
+        "name": "ingredient name in ${langConfig.lang}",
+        "grams": number,
+        "calories": number,
+        "protein": number,
+        "carbs": number,
+        "fat": number
+        }
+        ]
+        }`,
             file_urls: [file_url],
             response_json_schema: {
               type: "object",
