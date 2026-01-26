@@ -112,12 +112,10 @@ export default function BodyScanPage() {
 
               {/* Metriche Scientifiche Primarie */}
               <div>
-                <div className="water-glass-effect rounded-2xl p-4 mb-4">
-                  <h3 className="text-base font-bold text-gray-900 flex items-center gap-2">
-                    <Activity className="w-5 h-5" />
-                    Analisi Composizione Corporea
-                  </h3>
-                </div>
+                <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-4">
+                  <Activity className="w-5 h-5" />
+                  Analisi Composizione Corporea
+                </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   {/* Età Biologica - PIÙ IN RISALTO */}
                   <div className="bg-green-100/60 backdrop-blur-md rounded-2xl p-5 border-2 border-green-400">
@@ -160,12 +158,10 @@ export default function BodyScanPage() {
               {/* Metriche Secondarie */}
               {(latestScan.skin_texture || latestScan.skin_tone || latestScan.swelling_percentage !== undefined) && (
                 <div>
-                  <div className="water-glass-effect rounded-2xl p-4 mb-4">
-                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                      <Eye className="w-4 h-4" />
-                      Analisi Tessutale
-                    </h3>
-                  </div>
+                  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-4">
+                    <Eye className="w-4 h-4" />
+                    Analisi Tessutale
+                  </h3>
                   <div className="grid grid-cols-3 gap-3">
                     {latestScan.skin_texture && (() => {
                       const goodTextures = ['liscia', 'uniforme', 'sana', 'elastica', 'idratata', 'smooth', 'healthy'];
