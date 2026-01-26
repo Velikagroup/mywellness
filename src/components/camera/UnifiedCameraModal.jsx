@@ -697,28 +697,28 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
       {/* Mode Selector Buttons */}
       <div className="absolute bottom-32 left-1/2 -translate-x-1/2 z-10 flex gap-3">
         <button
-           onClick={() => setMode('calories')}
-           className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
-             mode === 'calories' 
-               ? 'bg-black text-white scale-110' 
-               : 'bg-white/20 text-white backdrop-blur-sm'
-           }`}
-         >
-           <UtensilsCrossed className="w-6 h-6" />
-           <span className="text-xs font-medium">Calories</span>
-         </button>
+          onClick={() => setMode('calories')}
+          className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
+            mode === 'calories' 
+              ? 'bg-black text-white scale-110' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}
+        >
+          <UtensilsCrossed className="w-6 h-6" strokeWidth={2} />
+          <span className="text-xs font-medium">Calories</span>
+        </button>
 
-         <button
-           onClick={() => setMode('nutrition_table')}
-           className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
-             mode === 'nutrition_table' 
-               ? 'bg-black text-white scale-110' 
-               : 'bg-white/20 text-white backdrop-blur-sm'
-           }`}
-         >
-           <UtensilsCrossed className="w-6 h-6" />
-           <span className="text-xs font-medium">Nutrition</span>
-         </button>
+        <button
+          onClick={() => setMode('nutrition_table')}
+          className={`flex flex-col items-center gap-1 p-3 rounded-xl transition-all ${
+            mode === 'nutrition_table' 
+              ? 'bg-black text-white scale-110' 
+              : 'bg-white/20 text-white backdrop-blur-sm'
+          }`}
+        >
+          <UtensilsCrossed className="w-6 h-6" strokeWidth={2} />
+          <span className="text-xs font-medium">Nutrition</span>
+        </button>
 
          <button
            onClick={() => setMode('weight')}
