@@ -302,7 +302,7 @@ export default function BodyScanPage() {
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -10 }}
                   transition={{ delay: index * 0.05 }}
-                  className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
+                  className="water-glass-effect border-2 border-gray-200 rounded-xl overflow-hidden hover:border-gray-300 hover:shadow-lg transition-all"
                 >
                   <button
                     onClick={() => setExpandedHistoryId(expandedHistoryId === scan.id ? null : scan.id)}
