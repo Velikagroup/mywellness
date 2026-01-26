@@ -6,10 +6,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import IngredientSelector from './IngredientSelector';
 import IngredientQuantityModal from './IngredientQuantityModal';
+import { useLanguage } from '../i18n/LanguageContext';
 
 const ITEMS_PER_PAGE = 5;
 
 export default function RecentMealsHistory({ userId, onMealSelect }) {
+  const { t } = useLanguage();
   const [mealLogs, setMealLogs] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expandedMealId, setExpandedMealId] = useState(null);
@@ -153,7 +155,7 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
   if (mealLogs.length === 0) {
     return (
       <div className="text-center py-8 text-gray-500">
-        <p>Nessun pasto scannerizzato ancora</p>
+        <p>{t('dashboard.noMealsScanned')}</p>
       </div>
     );
   }
@@ -259,31 +261,31 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
 
                       {/* Informazioni Nutrizionali */}
                       <div className="bg-gray-50 p-4 rounded-lg">
-                        <div className="flex items-center gap-2 mb-3">
-                          <Flame className="w-4 h-4 text-orange-500" />
-                          <p className="text-sm text-gray-600">Calorie</p>
-                        </div>
-                        <p className="text-3xl font-bold text-gray-900 mb-4">{Math.round(mealIngredients[log.id].totals.calories)}</p>
+                      <div className="flex items-center gap-2 mb-3">
+                      <Flame className="w-4 h-4 text-orange-500" />
+                      <p className="text-sm text-gray-600">{t('meals.calories')}</p>
+                      </div>
+                      <p className="text-3xl font-bold text-gray-900 mb-4">{Math.round(mealIngredients[log.id].totals.calories)}</p>
 
-                        <div className="grid grid-cols-3 gap-3">
-                          <div className="bg-white p-3 rounded-lg">
-                            <p className="text-xs text-gray-600 mb-1">Proteina</p>
-                            <p className="text-lg font-bold text-red-600">{mealIngredients[log.id].totals.protein.toFixed(1)}g</p>
-                          </div>
-                          <div className="bg-white p-3 rounded-lg">
-                            <p className="text-xs text-gray-600 mb-1">Carboidrati</p>
-                            <p className="text-lg font-bold text-amber-600">{mealIngredients[log.id].totals.carbs.toFixed(1)}g</p>
-                          </div>
-                          <div className="bg-white p-3 rounded-lg">
-                            <p className="text-xs text-gray-600 mb-1">Grassi</p>
-                            <p className="text-lg font-bold text-blue-600">{mealIngredients[log.id].totals.fat.toFixed(1)}g</p>
-                          </div>
-                        </div>
+                      <div className="grid grid-cols-3 gap-3">
+                      <div className="bg-white p-3 rounded-lg">
+                        <p className="text-xs text-gray-600 mb-1">{t('nutrition.protein')}</p>
+                        <p className="text-lg font-bold text-red-600">{mealIngredients[log.id].totals.protein.toFixed(1)}g</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg">
+                        <p className="text-xs text-gray-600 mb-1">{t('nutrition.carbs')}</p>
+                        <p className="text-lg font-bold text-amber-600">{mealIngredients[log.id].totals.carbs.toFixed(1)}g</p>
+                      </div>
+                      <div className="bg-white p-3 rounded-lg">
+                        <p className="text-xs text-gray-600 mb-1">{t('nutrition.fat')}</p>
+                        <p className="text-lg font-bold text-blue-600">{mealIngredients[log.id].totals.fat.toFixed(1)}g</p>
+                      </div>
+                      </div>
                       </div>
 
                       {/* Ingredienti */}
                       <div>
-                        <h3 className="font-bold text-gray-900 mb-3 text-sm">Ingredienti ({mealIngredients[log.id].ingredients.length})</h3>
+                        <h3 className="font-bold text-gray-900 mb-3 text-sm">{t('meals.ingredients')} ({mealIngredients[log.id].ingredients.length})</h3>
 
                         <div className="space-y-3">
                           {mealIngredients[log.id].ingredients.length > 0 ? (
@@ -304,7 +306,7 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                               </div>
                             ))
                           ) : (
-                            <p className="text-gray-500 text-sm text-center py-4">Nessun ingrediente aggiunto</p>
+                            <p className="text-gray-500 text-sm text-center py-4">{t('dashboard.noIngredients')}</p>
                           )}
                         </div>
 
@@ -316,7 +318,7 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
                           className="w-full mt-4 h-12 bg-black hover:bg-gray-900 text-white font-semibold rounded-full"
                         >
                           <Plus className="w-4 h-4 mr-2" />
-                          Aggiungi ingrediente
+                          {t('dashboard.addIngredient')}
                         </Button>
                       </div>
                     </div>
@@ -335,7 +337,7 @@ export default function RecentMealsHistory({ userId, onMealSelect }) {
             className="bg-black hover:bg-gray-900 text-white rounded-full px-6 py-3 font-semibold flex items-center gap-2"
           >
             <Plus className="w-5 h-5" />
-            Carica altri 5
+            {t('dashboard.loadMore')}
           </Button>
         </div>
       )}

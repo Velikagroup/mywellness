@@ -1073,7 +1073,12 @@ export const translations = {
       negativeAspects: "Punti Negativi",
       advice: "Consiglio",
       retake: "Rifai",
-      new: "Nuovo"
+      new: "Nuovo",
+      // Recent Meals History
+      noMealsScanned: "Nessun pasto scannerizzato ancora",
+      noIngredients: "Nessun ingrediente aggiunto",
+      addIngredient: "Aggiungi ingrediente",
+      loadMore: "Carica altri 5"
     },
     settings: {
       title: "Impostazioni Account",
@@ -3233,7 +3238,12 @@ export const translations = {
       negativeAspects: "Negative Aspects",
       advice: "Advice",
       retake: "Retake",
-      new: "New"
+      new: "New",
+      // Recent Meals History
+      noMealsScanned: "No meals scanned yet",
+      noIngredients: "No ingredients added",
+      addIngredient: "Add ingredient",
+      loadMore: "Load 5 more"
     },
     settings: {
       title: "Account Settings",
@@ -5304,7 +5314,12 @@ export const translations = {
       negativeAspects: "Aspectos Negativos",
       advice: "Consejo",
       retake: "Repetir",
-      new: "Nuevo"
+      new: "Nuevo",
+      // Recent Meals History
+      noMealsScanned: "Ninguna comida escaneada todavía",
+      noIngredients: "Ningún ingrediente añadido",
+      addIngredient: "Añadir ingrediente",
+      loadMore: "Cargar 5 más"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -7393,7 +7408,12 @@ export const translations = {
       negativeAspects: "Aspectos Negativos",
       advice: "Conselho",
       retake: "Refazer",
-      new: "Novo"
+      new: "Novo",
+      // Recent Meals History
+      noMealsScanned: "Nenhuma refeição escaneada ainda",
+      noIngredients: "Nenhum ingrediente adicionado",
+      addIngredient: "Adicionar ingrediente",
+      loadMore: "Carregar mais 5"
     },
     settings: {
       title: "Configurações da Conta",
@@ -9482,7 +9502,12 @@ export const translations = {
       negativeAspects: "Negative Aspekte",
       advice: "Empfehlung",
       retake: "Wiederholen",
-      new: "Neu"
+      new: "Neu",
+      // Recent Meals History
+      noMealsScanned: "Noch keine Mahlzeiten gescannt",
+      noIngredients: "Keine Zutaten hinzugefügt",
+      addIngredient: "Zutat hinzufügen",
+      loadMore: "5 weitere laden"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -11571,7 +11596,12 @@ export const translations = {
       negativeAspects: "Aspects Négatifs",
       advice: "Conseil",
       retake: "Refaire",
-      new: "Nouveau"
+      new: "Nouveau",
+      // Recent Meals History
+      noMealsScanned: "Aucun repas scanné encore",
+      noIngredients: "Aucun ingrédient ajouté",
+      addIngredient: "Ajouter un ingrédient",
+      loadMore: "Charger 5 de plus"
     },
     settings: {
       title: "Paramètres du Compte",
