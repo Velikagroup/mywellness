@@ -1017,7 +1017,20 @@ export const translations = {
       waistCircumferencePlaceholder: "Es: 85.5",
       hipCircumference: "Circonferenza Fianchi (cm)",
       hipCircumferencePlaceholder: "Es: 95.5",
-      calculate: "Calcola"
+      calculate: "Calcola",
+      // NEAT modal
+      activityLevel: "Livello di Attività (NEAT)",
+      activityLevelDesc: "Seleziona il tuo livello di attività quotidiana per calcolare il NEAT (Non-Exercise Activity Thermogenesis) corretto",
+      sedentary: "Sedentario",
+      sedentaryDesc: "Lavoro da scrivania, poco movimento",
+      lightlyActive: "Poco Attivo",
+      lightlyActiveDesc: "Attività leggera, cammino occasionale",
+      moderatelyActive: "Moderatamente Attivo",
+      moderatelyActiveDesc: "Movimento regolare, alcune passeggiate",
+      veryActive: "Molto Attivo",
+      veryActiveDesc: "Lavoro fisico o sport regolare",
+      professionalAthlete: "Atleta",
+      professionalAthleteDesc: "Allenamento intenso quotidiano"
     },
     settings: {
       title: "Impostazioni Account",
@@ -3121,7 +3134,20 @@ export const translations = {
       waistCircumferencePlaceholder: "E.g.: 85.5",
       hipCircumference: "Hip Circumference (cm)",
       hipCircumferencePlaceholder: "E.g.: 95.5",
-      calculate: "Calculate"
+      calculate: "Calculate",
+      // NEAT modal
+      activityLevel: "Activity Level (NEAT)",
+      activityLevelDesc: "Select your daily activity level to accurately calculate NEAT (Non-Exercise Activity Thermogenesis)",
+      sedentary: "Sedentary",
+      sedentaryDesc: "Desk job, little movement",
+      lightlyActive: "Lightly Active",
+      lightlyActiveDesc: "Light activity, occasional walking",
+      moderatelyActive: "Moderately Active",
+      moderatelyActiveDesc: "Regular movement, some walks",
+      veryActive: "Very Active",
+      veryActiveDesc: "Physical work or regular sports",
+      professionalAthlete: "Professional Athlete",
+      professionalAthleteDesc: "Intense daily training"
     },
     settings: {
       title: "Account Settings",
@@ -5136,7 +5162,20 @@ export const translations = {
       waistCircumferencePlaceholder: "Ej: 85.5",
       hipCircumference: "Circunferencia de las Caderas (cm)",
       hipCircumferencePlaceholder: "Ej: 95.5",
-      calculate: "Calcular"
+      calculate: "Calcular",
+      // NEAT modal
+      activityLevel: "Nivel de Actividad (NEAT)",
+      activityLevelDesc: "Seleccione su nivel de actividad diaria para calcular correctamente el NEAT (Termogénesis por Actividad No Relacionada con el Ejercicio)",
+      sedentary: "Sedentario",
+      sedentaryDesc: "Trabajo de escritorio, poco movimiento",
+      lightlyActive: "Poco Activo",
+      lightlyActiveDesc: "Actividad ligera, caminatas ocasionales",
+      moderatelyActive: "Moderadamente Activo",
+      moderatelyActiveDesc: "Movimiento regular, algunas caminatas",
+      veryActive: "Muy Activo",
+      veryActiveDesc: "Trabajo físico o deporte regular",
+      professionalAthlete: "Atleta Profesional",
+      professionalAthleteDesc: "Entrenamiento intenso diario"
     },
     settings: {
       title: "Configuración de Cuenta",
@@ -7169,7 +7208,20 @@ export const translations = {
       waistCircumferencePlaceholder: "Ex: 85.5",
       hipCircumference: "Circunferência dos Quadris (cm)",
       hipCircumferencePlaceholder: "Ex: 95.5",
-      calculate: "Calcular"
+      calculate: "Calcular",
+      // NEAT modal
+      activityLevel: "Nível de Atividade (NEAT)",
+      activityLevelDesc: "Selecione seu nível de atividade diária para calcular corretamente o NEAT (Termogênese por Atividade Não Relacionada ao Exercício)",
+      sedentary: "Sedentário",
+      sedentaryDesc: "Trabalho de mesa, pouco movimento",
+      lightlyActive: "Pouco Ativo",
+      lightlyActiveDesc: "Atividade leve, caminhadas ocasionais",
+      moderatelyActive: "Moderadamente Ativo",
+      moderatelyActiveDesc: "Movimento regular, algumas caminhadas",
+      veryActive: "Muito Ativo",
+      veryActiveDesc: "Trabalho físico ou esporte regular",
+      professionalAthlete: "Atleta Profissional",
+      professionalAthleteDesc: "Treino intenso diário"
     },
     settings: {
       title: "Configurações da Conta",
@@ -9202,7 +9254,20 @@ export const translations = {
       waistCircumferencePlaceholder: "Z.B.: 85.5",
       hipCircumference: "Hüftumfang (cm)",
       hipCircumferencePlaceholder: "Z.B.: 95.5",
-      calculate: "Berechnen"
+      calculate: "Berechnen",
+      // NEAT modal
+      activityLevel: "Aktivitätsniveau (NEAT)",
+      activityLevelDesc: "Wählen Sie Ihr tägliches Aktivitätsniveau, um den NEAT (Nicht-Übungs-Aktivitäts-Thermogenese) korrekt zu berechnen",
+      sedentary: "Sitzend",
+      sedentaryDesc: "Schreibtischarbeit, wenig Bewegung",
+      lightlyActive: "Leicht Aktiv",
+      lightlyActiveDesc: "Leichte Aktivität, gelegentliches Gehen",
+      moderatelyActive: "Mäßig Aktiv",
+      moderatelyActiveDesc: "Regelmäßige Bewegung, einige Spaziergänge",
+      veryActive: "Sehr Aktiv",
+      veryActiveDesc: "Körperliche Arbeit oder regelmäßiger Sport",
+      professionalAthlete: "Profisportler",
+      professionalAthleteDesc: "Intensives tägliches Training"
     },
     settings: {
       title: "Kontoeinstellungen",
@@ -11235,7 +11300,20 @@ export const translations = {
       waistCircumferencePlaceholder: "Ex: 85.5",
       hipCircumference: "Circonférence des Hanches (cm)",
       hipCircumferencePlaceholder: "Ex: 95.5",
-      calculate: "Calculer"
+      calculate: "Calculer",
+      // NEAT modal
+      activityLevel: "Niveau d'Activité (NEAT)",
+      activityLevelDesc: "Sélectionnez votre niveau d'activité quotidienne pour calculer correctement le NEAT (Thermogenèse d'Activité Non Liée à l'Exercice)",
+      sedentary: "Sédentaire",
+      sedentaryDesc: "Travail de bureau, peu de mouvement",
+      lightlyActive: "Légèrement Actif",
+      lightlyActiveDesc: "Activité légère, marche occasionnelle",
+      moderatelyActive: "Modérément Actif",
+      moderatelyActiveDesc: "Mouvement régulier, quelques promenades",
+      veryActive: "Très Actif",
+      veryActiveDesc: "Travail physique ou sport régulier",
+      professionalAthlete: "Athlète Professionnel",
+      professionalAthleteDesc: "Entraînement intense quotidien"
     },
     settings: {
       title: "Paramètres du Compte",
