@@ -509,28 +509,11 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
     setSavingBodyScan(true);
     try {
-      await base44.entities.BodyScanResult.create({
-       user_id: user.id,
-       front_photo_url: bodyScanResult.photos.front,
-       side_photo_url: bodyScanResult.photos.side,
-       back_photo_url: bodyScanResult.photos.back || null,
-       somatotype: bodyScanResult.somatotype,
-       body_fat_percentage: bodyScanResult.body_fat_percentage,
-       muscle_definition_score: bodyScanResult.muscle_definition_score,
-       body_age_estimate: bodyScanResult.body_age_estimate,
-       posture_assessment: bodyScanResult.posture_assessment,
-       problem_areas: bodyScanResult.problem_areas,
-       strong_areas: bodyScanResult.strong_areas,
-       skin_texture: bodyScanResult.skin_texture,
-       skin_tone: bodyScanResult.skin_tone,
-       swelling_percentage: bodyScanResult.swelling_percentage
-      });
+      // La funzione analyzeBodyImage già salva nel DB, basta chiudere e reindirizzare
       setSavingBodyScan(false);
       onClose();
-      // Piccola attesa per permettere la chiusura del modal, poi redirect e reload
       await new Promise(resolve => setTimeout(resolve, 300));
       navigate(createPageUrl('BodyScan'));
-      // Reload per ottenere i dati aggiornati
       await new Promise(resolve => setTimeout(resolve, 500));
       window.location.reload();
     } catch (error) {
