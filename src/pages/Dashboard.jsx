@@ -958,20 +958,20 @@ export default function Dashboard() {
       <Dialog open={showNEATModal} onOpenChange={setShowNEATModal}>
         <DialogContent className="max-w-md">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">Livello di Attività (NEAT)</DialogTitle>
+            <DialogTitle className="text-xl font-bold text-gray-900">{t('dashboard.activityLevel')}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 pt-4">
             <p className="text-sm text-gray-600">
-              Seleziona il tuo livello di attività quotidiana per calcolare il NEAT (Non-Exercise Activity Thermogenesis) corretto
+              {t('dashboard.activityLevelDesc')}
             </p>
             
             <div className="space-y-3">
               {[
-                { value: 'sedentary', label: 'Sedentario', desc: 'Lavoro da scrivania, poco movimento' },
-                { value: 'lightly_active', label: 'Poco Attivo', desc: 'Attività leggera, cammino occasionale' },
-                { value: 'moderately_active', label: 'Moderatamente Attivo', desc: 'Movimento regolare, alcune passeggiate' },
-                { value: 'very_active', label: 'Molto Attivo', desc: 'Lavoro fisico o sport regolare' },
-                { value: 'professional_athlete', label: 'Atleta', desc: 'Allenamento intenso quotidiano' }
+                { value: 'sedentary', labelKey: 'sedentary', descKey: 'sedentaryDesc' },
+                { value: 'lightly_active', labelKey: 'lightlyActive', descKey: 'lightlyActiveDesc' },
+                { value: 'moderately_active', labelKey: 'moderatelyActive', descKey: 'moderatelyActiveDesc' },
+                { value: 'very_active', labelKey: 'veryActive', descKey: 'veryActiveDesc' },
+                { value: 'professional_athlete', labelKey: 'professionalAthlete', descKey: 'professionalAthleteDesc' }
               ].map((level) => (
                 <button
                   key={level.value}
@@ -985,9 +985,9 @@ export default function Dashboard() {
                   <p className={`font-semibold ${
                     selectedActivityLevel === level.value ? 'text-[#26847F]' : 'text-gray-900'
                   }`}>
-                    {level.label}
+                    {t(`dashboard.${level.labelKey}`)}
                   </p>
-                  <p className="text-xs text-gray-600 mt-1">{level.desc}</p>
+                  <p className="text-xs text-gray-600 mt-1">{t(`dashboard.${level.descKey}`)}</p>
                 </button>
               ))}
             </div>
@@ -998,14 +998,14 @@ export default function Dashboard() {
                 disabled={!selectedActivityLevel}
                 className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
               >
-                Salva
+                {t('common.save')}
               </Button>
               <Button
                 onClick={() => setShowNEATModal(false)}
                 variant="outline"
                 className="flex-1"
               >
-                Annulla
+                {t('common.cancel')}
               </Button>
             </div>
           </div>
