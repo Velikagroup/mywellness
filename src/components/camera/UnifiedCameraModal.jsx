@@ -841,7 +841,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
           {/* Frame Guide per Calories */}
           {mode === 'calories' && cameraActive && !capturedImage && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-24">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               {/* Camera frame con maschera */}
               <div className="relative w-80 h-96 rounded-3xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="absolute inset-0 border-2 border-white/80 rounded-3xl"></div>
@@ -861,7 +861,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
           {/* Frame Guide per Nutrition Table */}
           {mode === 'nutrition_table' && cameraActive && !capturedImage && (
-            <div className="absolute inset-0 flex items-center justify-center pointer-events-none pb-24">
+            <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
               {/* Camera frame for table - più stretto e lungo */}
               <div className="relative w-72 h-[500px] border-2 border-white/80 rounded-3xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="flex flex-col items-center gap-4 z-10">
