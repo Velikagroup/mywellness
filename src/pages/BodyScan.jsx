@@ -60,16 +60,14 @@ export default function BodyScanPage() {
           className="mb-8 space-y-4"
         >
           {/* Header con data */}
-          <div className="water-glass-effect rounded-2xl p-4">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <ScanLine className="w-5 h-5 text-gray-700" />
-                <h2 className="font-bold text-gray-900 text-lg">Ultima Scansione Corporea</h2>
-              </div>
-              <div className="flex items-center gap-2 text-sm text-gray-600">
-                <Calendar className="w-4 h-4" />
-                <span>{format(new Date(latestScan.created_date), 'dd/MM/yyyy')}</span>
-              </div>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <ScanLine className="w-5 h-5 text-gray-700" />
+              <h2 className="font-bold text-gray-900 text-base">Ultima Scansione Corporea</h2>
+            </div>
+            <div className="flex items-center gap-2 text-sm text-gray-600">
+              <Calendar className="w-4 h-4" />
+              <span>{format(new Date(latestScan.created_date), 'dd/MM/yyyy')}</span>
             </div>
           </div>
 
@@ -158,8 +156,8 @@ export default function BodyScanPage() {
               {/* Metriche Secondarie */}
               {(latestScan.skin_texture || latestScan.skin_tone || latestScan.swelling_percentage !== undefined) && (
                 <div>
-                  <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2 mb-4">
-                    <Eye className="w-4 h-4" />
+                  <h3 className="text-base font-bold text-gray-900 flex items-center gap-2 mb-4">
+                    <Eye className="w-5 h-5" />
                     Analisi Tessutale
                   </h3>
                   <div className="grid grid-cols-3 gap-3">
