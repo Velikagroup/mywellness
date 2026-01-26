@@ -158,42 +158,14 @@ export default function BodyScanPage() {
               </div>
 
               {/* Metriche Secondarie */}
-              {(latestScan.skin_texture || latestScan.skin_tone || latestScan.swelling_percentage !== undefined) && (() => {
-                // Calcola lo stato complessivo
-                const goodTextures = ['liscia', 'uniforme', 'sana', 'elastica', 'idratata', 'smooth', 'healthy'];
-                const badTextures = ['ruvida', 'danneggiata', 'secca', 'irregolare', 'rough', 'damaged', 'dry'];
-                const goodTones = ['uniforme', 'sano', 'equilibrato', 'normale', 'healthy', 'even', 'balanced'];
-                const badTones = ['irregolare', 'disomogeneo', 'spento', 'pallido', 'uneven', 'dull', 'unbalanced'];
-                
-                let goodCount = 0;
-                let badCount = 0;
-                
-                if (latestScan.skin_texture) {
-                  if (goodTextures.some(t => latestScan.skin_texture.toLowerCase().includes(t))) goodCount++;
-                  if (badTextures.some(t => latestScan.skin_texture.toLowerCase().includes(t))) badCount++;
-                }
-                if (latestScan.skin_tone) {
-                  if (goodTones.some(t => latestScan.skin_tone.toLowerCase().includes(t))) goodCount++;
-                  if (badTones.some(t => latestScan.skin_tone.toLowerCase().includes(t))) badCount++;
-                }
-                if (latestScan.swelling_percentage !== undefined) {
-                  if (latestScan.swelling_percentage <= 20) goodCount++;
-                  if (latestScan.swelling_percentage > 40) badCount++;
-                }
-                
-                const overallGood = goodCount > badCount;
-                const overallBad = badCount > goodCount;
-                const headerBg = overallGood ? 'bg-green-50' : overallBad ? 'bg-red-50' : 'bg-gray-50';
-                const headerBorder = overallGood ? 'border-green-200' : overallBad ? 'border-red-200' : 'border-gray-200';
-                
-                return (
-                  <div>
-                    <div className={`water-glass-effect rounded-2xl p-4 mb-4 border-2 ${headerBorder} ${headerBg}`}>
-                      <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
-                        <Eye className="w-4 h-4" />
-                        Analisi Tessutale
-                      </h3>
-                    </div>
+              {(latestScan.skin_texture || latestScan.skin_tone || latestScan.swelling_percentage !== undefined) && (
+                <div>
+                  <div className="water-glass-effect rounded-2xl p-4 mb-4">
+                    <h3 className="text-sm font-bold text-gray-900 flex items-center gap-2">
+                      <Eye className="w-4 h-4" />
+                      Analisi Tessutale
+                    </h3>
+                  </div>
                   <div className="grid grid-cols-3 gap-3">
                     {latestScan.skin_texture && (() => {
                       const goodTextures = ['liscia', 'uniforme', 'sana', 'elastica', 'idratata', 'smooth', 'healthy'];
@@ -248,8 +220,7 @@ export default function BodyScanPage() {
                     })()}
                   </div>
                 </div>
-                );
-              })()}
+              )}
 
               {/* Postura */}
               {latestScan.posture_assessment && (
