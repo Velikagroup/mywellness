@@ -76,7 +76,7 @@ export default function BodyScanPage() {
 
             <div className="p-6">
               {/* Foto */}
-              <div className="grid grid-cols-2 gap-4 mb-6">
+              <div className="grid grid-cols-3 gap-4 mb-6">
                 <div className="relative rounded-lg overflow-hidden border border-gray-200">
                   <img 
                     src={latestScan.front_photo_url} 
@@ -97,6 +97,18 @@ export default function BodyScanPage() {
                     Vista Laterale
                   </div>
                 </div>
+                {latestScan.back_photo_url && (
+                  <div className="relative rounded-lg overflow-hidden border border-gray-200">
+                    <img 
+                      src={latestScan.back_photo_url} 
+                      className="w-full h-64 object-cover" 
+                      alt="Back" 
+                    />
+                    <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-2 text-center">
+                      Vista Posteriore
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Metriche Scientifiche Primarie */}
@@ -285,7 +297,7 @@ export default function BodyScanPage() {
                         transition={{ duration: 0.3 }}
                       >
                         <div className="px-4 pb-4 border-t border-gray-200 pt-4">
-                          <div className="grid grid-cols-2 gap-3 mb-4">
+                          <div className="grid grid-cols-3 gap-3 mb-4">
                             <div className="relative rounded-lg overflow-hidden border border-gray-200">
                               <img src={scan.front_photo_url} className="w-full h-48 object-cover" alt="Front" />
                               <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-1.5 text-center">
@@ -298,6 +310,14 @@ export default function BodyScanPage() {
                                 Laterale
                               </div>
                             </div>
+                            {scan.back_photo_url && (
+                              <div className="relative rounded-lg overflow-hidden border border-gray-200">
+                                <img src={scan.back_photo_url} className="w-full h-48 object-cover" alt="Back" />
+                                <div className="absolute bottom-0 left-0 right-0 bg-black/60 backdrop-blur-sm text-white text-xs font-medium py-1.5 text-center">
+                                  Posteriore
+                                </div>
+                              </div>
+                            )}
                           </div>
 
                           <div className="space-y-3">
