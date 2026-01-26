@@ -605,7 +605,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   <>
                     <div className="flex items-center gap-2 mb-3">
                       <Flame className="w-8 h-8 text-orange-500" />
-                      <p className="text-sm font-semibold text-gray-700">Bilancio di oggi</p>
+                      <p className="text-sm font-semibold text-gray-700">{t('nutrition.todayBalance')}</p>
                     </div>
                     <div className="flex items-baseline gap-2 mb-3">
                       <p className={`text-5xl font-['Inter'] font-bold ${calorieColor} leading-tight`} style={{
@@ -624,8 +624,8 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                           : 'bg-red-100/70 text-red-700'
                       }`}>
                         {isWeightLoss 
-                          ? (isCalorieAligned ? 'In forte deficit' : 'In surplus')
-                          : (isCalorieAligned ? 'In surplus' : 'In deficit')
+                          ? (isCalorieAligned ? t('nutrition.inStrongDeficit') : t('nutrition.inSurplus'))
+                          : (isCalorieAligned ? t('nutrition.inSurplus') : t('nutrition.inDeficit'))
                         }
                       </div>
                     )}
@@ -744,7 +744,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                   className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg hover:bg-purple-50 transition-colors cursor-pointer"
                 >
                   <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
-                  <p className="text-xs text-purple-600">Massa Grassa</p>
+                  <p className="text-xs text-purple-600">{t('nutrition.bodyFat')}</p>
                 </button>
               )}
 
@@ -760,7 +760,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                 <div className="flex items-center justify-between text-sm">
                   <span className="font-medium text-gray-700 flex items-center gap-2">
                     <TrendingUp className={isWeightLoss ? "w-4 h-4 text-red-600" : "w-4 h-4 text-green-600"} />
-                    Calorie Consumate
+                    {t('nutrition.caloriesConsumed')}
                   </span>
                   <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>
                     {(() => {
@@ -777,7 +777,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     className="font-medium text-gray-600 text-xs cursor-pointer hover:underline"
                     onClick={onEditCalories}
                   >
-                    Target Calorico: <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>{user.daily_calories || 2000} kcal</span>
+                    {t('nutrition.calorieTarget')}: <span className={`font-bold ${isWeightLoss ? "text-red-500" : "text-green-500"}`}>{user.daily_calories || 2000} kcal</span>
                   </span>
                 </div>
                 <div 
@@ -839,7 +839,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                <div className="flex items-center justify-between text-sm">
                  <span className="font-medium text-gray-700 flex items-center gap-2">
                    <Flame className={isWeightLoss ? "w-4 h-4 text-green-600" : "w-4 h-4 text-red-600"} />
-                   Calorie Bruciate
+                   {t('nutrition.caloriesBurned')}
                  </span>
                  <span className={`font-bold ${isWeightLoss ? "text-green-600" : "text-red-600"}`}>
                    {(() => {
