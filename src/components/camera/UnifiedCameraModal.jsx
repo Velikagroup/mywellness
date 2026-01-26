@@ -862,7 +862,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
       {/* Weight Mode UI */}
       {mode === 'weight' && (
-        <div className="w-full h-full flex items-center justify-center p-6">
+        <div className="w-full h-full flex items-center justify-center p-6 pb-32">
           <div className="w-full max-w-md bg-white rounded-3xl p-8 shadow-2xl">
             <div className="text-center mb-8">
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
@@ -876,20 +876,28 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               {/* Unit Toggle */}
               <div className="flex gap-3 w-full">
                 <button
-                  onClick={() => setWeightKg(weightKg ? lbsToKg(weightKg) : '')}
+                  onClick={() => {
+                    if (weightUnit === 'lbs') {
+                      setWeightKg(weightKg ? lbsToKg(weightKg) : '');
+                    }
+                    setWeightUnit('kg');
+                  }}
                   className={`flex-1 px-6 py-3 rounded-full font-bold transition-all ${
-                    weightKg ? (parseFloat(weightKg) < 150 ? 'bg-black text-white' : 'bg-gray-100 text-gray-700') : 'bg-black text-white'
+                    weightUnit === 'kg' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
                   }`}
-                  title="Usa kg"
                 >
                   kg
                 </button>
                 <button
-                  onClick={() => setWeightKg(weightKg ? kgToLbs(weightKg) : '')}
+                  onClick={() => {
+                    if (weightUnit === 'kg') {
+                      setWeightKg(weightKg ? kgToLbs(weightKg) : '');
+                    }
+                    setWeightUnit('lbs');
+                  }}
                   className={`flex-1 px-6 py-3 rounded-full font-bold transition-all ${
-                    weightKg ? (parseFloat(weightKg) >= 150 ? 'bg-black text-white' : 'bg-gray-100 text-gray-700') : 'bg-gray-100 text-gray-700'
+                    weightUnit === 'lbs' ? 'bg-black text-white' : 'bg-gray-100 text-gray-700'
                   }`}
-                  title="Usa lbs"
                 >
                   lbs
                 </button>
@@ -904,12 +912,12 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   step="0.1"
                   value={weightKg}
                   onChange={(e) => setWeightKg(e.target.value)}
-                  placeholder={weightKg && parseFloat(weightKg) >= 150 ? '155' : '70.5'}
+                  placeholder={weightUnit === 'lbs' ? '155' : '70.5'}
                   className="h-16 text-xl text-center rounded-2xl border-2 border-gray-200 focus:border-black font-semibold"
                 />
                 {weightKg && (
                   <p className="text-sm text-gray-500 text-center mt-3 font-medium">
-                    ≈ {parseFloat(weightKg) >= 150 ? lbsToKg(weightKg) : kgToLbs(weightKg)} {parseFloat(weightKg) >= 150 ? 'kg' : 'lbs'}
+                    ≈ {weightUnit === 'kg' ? kgToLbs(weightKg) : lbsToKg(weightKg)} {weightUnit === 'kg' ? 'lbs' : 'kg'}
                   </p>
                 )}
               </div>
