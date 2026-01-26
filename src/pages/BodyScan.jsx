@@ -365,6 +365,7 @@ export default function BodyScanPage() {
                         </div>
                       </motion.div>
                     )}
+                  </AnimatePresence>
                 </motion.div>
               ))}
             </AnimatePresence>
