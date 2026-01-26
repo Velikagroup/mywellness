@@ -130,7 +130,7 @@ export default function BodyScanPage() {
                       <User className="w-5 h-5 text-purple-700" />
                       <p className="text-xs text-purple-800 font-bold uppercase tracking-wide">Somatotipo</p>
                     </div>
-                    <p className="text-3xl font-black text-purple-700 capitalize break-words">{latestScan.somatotype}</p>
+                    <p className="text-2xl font-black text-purple-700 capitalize break-words">{latestScan.somatotype}</p>
                   </div>
 
                   {/* Body Fat */}
