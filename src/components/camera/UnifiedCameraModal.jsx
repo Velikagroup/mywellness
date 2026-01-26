@@ -813,16 +813,16 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           {mode === 'bodyscan' && (
            <div className="absolute top-32 left-1/2 -translate-x-1/2 z-10 flex gap-4">
              {['front', 'side', 'back'].map((step) => (
-                <div
-                  key={step}
-                  className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
-                    bodyScanPhotos[step] 
-                      ? 'bg-black/80' 
-                      : currentBodyScanStep === step 
-                      ? 'bg-black/80' 
-                      : 'bg-white/20'
-                  } backdrop-blur-sm`}
-                >
+                   <div
+                     key={step}
+                     className={`relative flex flex-col items-center gap-2 p-3 rounded-xl ${
+                       bodyScanPhotos[step] 
+                         ? 'bg-green-500/80 border-2 border-green-400' 
+                         : currentBodyScanStep === step 
+                         ? 'bg-black/80' 
+                         : 'bg-white/20'
+                     } backdrop-blur-sm`}
+                   >
                   {bodyScanPhotos[step] && (
                     <button
                       onClick={() => removeBodyScanPhoto(step)}
