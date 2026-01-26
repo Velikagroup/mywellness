@@ -470,7 +470,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
   const saveBodyScanResult = async () => {
     if (!bodyScanResult || !user) return;
-    
+
     setSavingBodyScan(true);
     try {
       await base44.entities.BodyScanResult.create({
@@ -489,13 +489,19 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
        skin_tone: bodyScanResult.skin_tone,
        swelling_percentage: bodyScanResult.swelling_percentage
       });
-      alert('✅ Body scan salvato con successo!');
+      setSavingBodyScan(false);
       onClose();
+      // Piccola attesa per permettere la chiusura del modal, poi redirect e reload
+      await new Promise(resolve => setTimeout(resolve, 300));
+      navigate(createPageUrl('BodyScan'));
+      // Reload per ottenere i dati aggiornati
+      await new Promise(resolve => setTimeout(resolve, 500));
+      window.location.reload();
     } catch (error) {
       console.error('Error saving body scan:', error);
       alert('Errore durante il salvataggio');
+      setSavingBodyScan(false);
     }
-    setSavingBodyScan(false);
   };
 
   const loadBodyScanHistory = async () => {
