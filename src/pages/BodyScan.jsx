@@ -172,12 +172,16 @@ export default function BodyScanPage() {
                       const badTextures = ['ruvida', 'danneggiata', 'secca', 'irregolare', 'rough', 'damaged', 'dry'];
                       const isGood = goodTextures.some(t => latestScan.skin_texture.toLowerCase().includes(t));
                       const isBad = badTextures.some(t => latestScan.skin_texture.toLowerCase().includes(t));
-                      const bgColor = isGood ? 'bg-green-50' : isBad ? 'bg-red-50' : 'bg-gray-50';
+                      const bgStyle = isGood 
+                        ? 'bg-green-100/60 backdrop-blur-md' 
+                        : isBad 
+                        ? 'bg-red-100/60 backdrop-blur-md' 
+                        : 'water-glass-effect';
                       const textColor = isGood ? 'text-green-700' : isBad ? 'text-red-700' : 'text-gray-900';
-                      const borderColor = isGood ? 'border-green-200' : isBad ? 'border-red-200' : 'border-gray-200';
+                      const borderColor = isGood ? 'border-green-300' : isBad ? 'border-red-300' : 'border-gray-200';
                       
                       return (
-                        <div className={`water-glass-effect rounded-2xl p-3 text-center ${bgColor} border-2 ${borderColor}`}>
+                        <div className={`rounded-2xl p-3 text-center ${bgStyle} border-2 ${borderColor}`}>
                           <p className="text-xs text-gray-700 mb-1 font-semibold">Texture Pelle</p>
                           <p className={`text-sm font-bold ${textColor}`}>{latestScan.skin_texture}</p>
                         </div>
@@ -188,12 +192,16 @@ export default function BodyScanPage() {
                       const badTones = ['irregolare', 'disomogeneo', 'spento', 'pallido', 'uneven', 'dull', 'unbalanced'];
                       const isGood = goodTones.some(t => latestScan.skin_tone.toLowerCase().includes(t));
                       const isBad = badTones.some(t => latestScan.skin_tone.toLowerCase().includes(t));
-                      const bgColor = isGood ? 'bg-green-50' : isBad ? 'bg-red-50' : 'bg-gray-50';
+                      const bgStyle = isGood 
+                        ? 'bg-green-100/60 backdrop-blur-md' 
+                        : isBad 
+                        ? 'bg-red-100/60 backdrop-blur-md' 
+                        : 'water-glass-effect';
                       const textColor = isGood ? 'text-green-700' : isBad ? 'text-red-700' : 'text-gray-900';
-                      const borderColor = isGood ? 'border-green-200' : isBad ? 'border-red-200' : 'border-gray-200';
+                      const borderColor = isGood ? 'border-green-300' : isBad ? 'border-red-300' : 'border-gray-200';
                       
                       return (
-                        <div className={`water-glass-effect rounded-2xl p-3 text-center ${bgColor} border-2 ${borderColor}`}>
+                        <div className={`rounded-2xl p-3 text-center ${bgStyle} border-2 ${borderColor}`}>
                           <p className="text-xs text-gray-700 mb-1 font-semibold">Tono Cutaneo</p>
                           <p className={`text-sm font-bold ${textColor}`}>{latestScan.skin_tone}</p>
                         </div>
@@ -203,13 +211,17 @@ export default function BodyScanPage() {
                       const percentage = latestScan.swelling_percentage;
                       const isGood = percentage <= 20;
                       const isBad = percentage > 40;
-                      const bgColor = isGood ? 'bg-green-50' : isBad ? 'bg-red-50' : 'bg-yellow-50';
+                      const bgStyle = isGood 
+                        ? 'bg-green-100/60 backdrop-blur-md' 
+                        : isBad 
+                        ? 'bg-red-100/60 backdrop-blur-md' 
+                        : 'bg-yellow-100/60 backdrop-blur-md';
                       const textColor = isGood ? 'text-green-700' : isBad ? 'text-red-700' : 'text-yellow-700';
                       const iconColor = isGood ? 'text-green-600' : isBad ? 'text-red-600' : 'text-yellow-600';
-                      const borderColor = isGood ? 'border-green-200' : isBad ? 'border-red-200' : 'border-yellow-200';
+                      const borderColor = isGood ? 'border-green-300' : isBad ? 'border-red-300' : 'border-yellow-300';
                       
                       return (
-                        <div className={`water-glass-effect rounded-2xl p-3 text-center ${bgColor} border-2 ${borderColor}`}>
+                        <div className={`rounded-2xl p-3 text-center ${bgStyle} border-2 ${borderColor}`}>
                           <div className="flex items-center justify-center gap-1 mb-1">
                             <Droplets className={`w-3 h-3 ${iconColor}`} />
                             <p className="text-xs text-gray-700 font-semibold">Gonfiore</p>
