@@ -702,11 +702,6 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 <FlipHorizontal className="w-6 h-6 text-white" />
               </button>
             )}
-            <button
-              className="p-2 rounded-full bg-white/10 backdrop-blur-sm hover:bg-white/20 transition-colors text-white font-semibold text-lg"
-            >
-              ?
-            </button>
           </div>
         </div>
       </div>
