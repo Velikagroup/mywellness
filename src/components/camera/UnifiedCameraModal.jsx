@@ -5,12 +5,13 @@ import { Input } from '@/components/ui/input';
 import { base44 } from '@/api/base44Client';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
-import { createLocalizedPageUrl } from '@/components/i18n/LanguageContext';
+import { createLocalizedPageUrl, useLanguage } from '@/components/i18n/LanguageContext';
 import RecentMealsHistory from '@/components/meals/RecentMealsHistory';
 import { format } from 'date-fns';
 
 export default function UnifiedCameraModal({ isOpen, onClose, user }) {
   const navigate = useNavigate();
+  const { t } = useLanguage();
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const streamRef = useRef(null);
@@ -635,7 +636,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
   const saveWeight = async () => {
     if (!weightKg || !user) {
-      alert('Inserisci un peso valido');
+      alert(t('dashboard.enterValidWeight'));
       return;
     }
 
@@ -663,7 +664,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         console.log('Massa grassa aggiornata nel database');
       }
 
-      alert('✅ Peso e massa grassa aggiornati!');
+      alert('✅ ' + t('dashboard.weightSaved'));
       setWeightKg('');
       setWeightUnit('kg');
 
@@ -741,7 +742,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           }}
           className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
         >
-          Storico Body Scan
+          {t('dashboard.bodyScanHistory')}
         </button>
       )}
 
@@ -751,7 +752,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           onClick={loadCalorieHistory}
           className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
         >
-          Storico Calorie
+          {t('dashboard.calorieHistory')}
         </button>
       )}
 
@@ -761,7 +762,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           onClick={loadNutritionHistory}
           className="absolute bottom-60 left-1/2 -translate-x-1/2 z-10 px-4 py-2 rounded-xl bg-white/20 backdrop-blur-sm text-white text-sm font-medium hover:bg-white/30 transition-all"
         >
-          Storico Nutrition
+          {t('dashboard.nutritionHistory')}
         </button>
       )}
 
@@ -776,7 +777,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           }`}
         >
           <UtensilsCrossed className="w-6 h-6" strokeWidth={2} />
-          <span className="text-xs font-medium">Calories</span>
+          <span className="text-xs font-medium">{t('dashboard.modeCalories')}</span>
         </button>
 
         <button
@@ -788,7 +789,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           }`}
         >
           <UtensilsCrossed className="w-6 h-6" strokeWidth={2} />
-          <span className="text-xs font-medium">Nutrition</span>
+          <span className="text-xs font-medium">{t('dashboard.modeNutrition')}</span>
         </button>
 
          <button
@@ -800,7 +801,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
            }`}
          >
            <Scale className="w-6 h-6" />
-           <span className="text-xs font-medium">Weight</span>
+           <span className="text-xs font-medium">{t('dashboard.modeWeight')}</span>
          </button>
 
          <button
@@ -812,7 +813,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
            }`}
          >
            <ScanLine className="w-6 h-6" />
-           <span className="text-xs font-medium">Body Scan</span>
+           <span className="text-xs font-medium">{t('dashboard.modeBodyScan')}</span>
          </button>
       </div>
 
@@ -871,7 +872,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 <div className="absolute inset-0 border-2 border-white/80 rounded-3xl"></div>
                 <div className="flex flex-col items-center gap-4 z-10">
                   <UtensilsCrossed className="w-16 h-16 text-white/90" strokeWidth={1.5} />
-                  <p className="text-white text-sm font-semibold text-center px-4">Centra il cibo</p>
+                  <p className="text-white text-sm font-semibold text-center px-4">{t('dashboard.centerFood')}</p>
                 </div>
 
                 {/* Corner markers */}
@@ -890,7 +891,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               <div className="relative w-72 h-[500px] border-2 border-white/80 rounded-3xl flex items-center justify-center" style={{boxShadow: '0 0 0 10000px rgba(0,0,0,0.5)'}}>
                 <div className="flex flex-col items-center gap-4 z-10">
                   <UtensilsCrossed className="w-16 h-16 text-white/90" strokeWidth={1.5} />
-                  <p className="text-white text-sm font-semibold text-center px-4">Inquadra la tabella nutrizionale</p>
+                  <p className="text-white text-sm font-semibold text-center px-4">{t('dashboard.frameNutritionTable')}</p>
                 </div>
 
                 {/* Corner markers - angoli più marcati */}
@@ -939,8 +940,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               <div className="w-20 h-20 mx-auto mb-4 rounded-full bg-gray-100 flex items-center justify-center">
                 <Scale className="w-10 h-10 text-gray-700" />
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Log Weight</h2>
-              <p className="text-gray-600 text-sm">Inserisci il tuo peso attuale</p>
+              <h2 className="text-2xl font-bold text-gray-900 mb-2">{t('dashboard.logWeightTitle')}</h2>
+              <p className="text-gray-600 text-sm">{t('dashboard.logWeightDesc')}</p>
             </div>
 
             <div className="space-y-6">
@@ -976,7 +977,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
               <div>
                 <label className="block text-sm font-bold text-gray-700 mb-3">
-                  Peso
+                  {t('dashboard.weightUnit')}
                 </label>
                 <Input
                   type="number"
@@ -998,7 +999,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 disabled={savingWeight || !weightKg}
                 className="w-full h-14 bg-black hover:bg-gray-900 text-white text-lg font-bold rounded-full shadow-lg"
               >
-                {savingWeight ? 'Salvataggio...' : 'Salva Peso'}
+                {savingWeight ? t('dashboard.saving') : t('dashboard.saveWeight')}
               </Button>
             </div>
           </div>
@@ -1011,7 +1012,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
           <div className="text-center text-white">
             <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-lg font-semibold">Analisi tabella nutrizionale...</p>
+            <p className="text-lg font-semibold">{t('dashboard.analyzingTable')}</p>
           </div>
         </div>
       )}
@@ -1130,8 +1131,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
         <div className="absolute inset-0 flex items-center justify-center bg-black/80 backdrop-blur-sm z-20">
           <div className="text-center text-white">
             <div className="w-16 h-16 border-4 border-white/30 border-t-white rounded-full animate-spin mx-auto mb-4" />
-            <p className="text-lg font-semibold">Analisi del corpo in corso...</p>
-            <p className="text-sm text-white/70 mt-2">Attendere prego</p>
+            <p className="text-lg font-semibold">{t('dashboard.analyzingBody')}</p>
+            <p className="text-sm text-white/70 mt-2">{t('dashboard.pleaseWait')}</p>
           </div>
         </div>
       )}
@@ -1151,8 +1152,8 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                 )}
               </div>
               <div className="px-6 py-4">
-                <p className="text-sm text-gray-500 mb-1">Analisi del {new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
-                <h3 className="text-2xl font-bold text-gray-900">Risultati Body Scan</h3>
+                <p className="text-sm text-gray-500 mb-1">{t('dashboard.analysisDate')} {new Date().toLocaleDateString('it-IT', { day: 'numeric', month: 'long', year: 'numeric' })}</p>
+                <h3 className="text-2xl font-bold text-gray-900">{t('dashboard.bodyScanResults')}</h3>
               </div>
             </div>
 
@@ -1160,30 +1161,30 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               {/* Metriche Principali */}
               <div className="grid grid-cols-2 gap-3 mb-6">
                 <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Somatotipo</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.somatotype')}</p>
                   <p className="text-2xl font-bold text-gray-900 capitalize">{bodyScanResult.somatotype}</p>
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Massa Grassa</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.bodyFatPercentage')}</p>
                   <p className="text-2xl font-bold text-gray-900">{bodyScanResult.body_fat_percentage}%</p>
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Definizione Muscolare</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.muscleDefinitionScore')}</p>
                   <p className="text-2xl font-bold text-gray-900">{bodyScanResult.muscle_definition_score}<span className="text-base text-gray-500">/100</span></p>
                 </div>
 
                 <div className="bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">Età Biologica</p>
-                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.body_age_estimate} <span className="text-base text-gray-500">anni</span></p>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-1">{t('dashboard.biologicalAge')}</p>
+                  <p className="text-2xl font-bold text-gray-900">{bodyScanResult.body_age_estimate} <span className="text-base text-gray-500">{t('dashboard.years')}</span></p>
                 </div>
               </div>
 
               {/* Postura */}
               {bodyScanResult.posture_assessment && (
                 <div className="mb-6 bg-white border border-gray-200 rounded-lg p-4">
-                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">Valutazione Posturale</p>
+                  <p className="text-xs font-medium text-gray-500 uppercase tracking-wide mb-2">{t('dashboard.posturalAssessment')}</p>
                   <p className="text-sm text-gray-700 leading-relaxed">{bodyScanResult.posture_assessment}</p>
                 </div>
               )}
@@ -1192,7 +1193,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               <div className="grid grid-cols-2 gap-3 mb-6">
                 {bodyScanResult.problem_areas && bodyScanResult.problem_areas.length > 0 && (
                   <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                    <p className="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">Aree da Migliorare</p>
+                    <p className="text-xs font-medium text-red-700 uppercase tracking-wide mb-2">{t('dashboard.areasToImprove')}</p>
                     <ul className="space-y-1">
                       {bodyScanResult.problem_areas.map((area, idx) => (
                         <li key={idx} className="text-sm text-red-800">• {area}</li>
@@ -1203,7 +1204,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
 
                 {bodyScanResult.strong_areas && bodyScanResult.strong_areas.length > 0 && (
                   <div className="bg-green-50 border border-green-200 rounded-lg p-4">
-                    <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-2">Punti di Forza</p>
+                    <p className="text-xs font-medium text-green-700 uppercase tracking-wide mb-2">{t('dashboard.strengths')}</p>
                     <ul className="space-y-1">
                       {bodyScanResult.strong_areas.map((area, idx) => (
                         <li key={idx} className="text-sm text-green-800">• {area}</li>
@@ -1217,19 +1218,19 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
               <div className="grid grid-cols-3 gap-3 mb-6">
                 {bodyScanResult.skin_texture && (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500 font-medium mb-1">Texture Pelle</p>
+                    <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.skinTexture')}</p>
                     <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_texture}</p>
                   </div>
                 )}
                 {bodyScanResult.skin_tone && (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500 font-medium mb-1">Tono Pelle</p>
+                    <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.skinTone')}</p>
                     <p className="text-sm font-semibold text-gray-900">{bodyScanResult.skin_tone}</p>
                   </div>
                 )}
                 {bodyScanResult.swelling_percentage !== undefined && (
                   <div className="bg-gray-50 border border-gray-200 rounded-lg p-3 text-center">
-                    <p className="text-xs text-gray-500 font-medium mb-1">Gonfiore</p>
+                    <p className="text-xs text-gray-500 font-medium mb-1">{t('dashboard.swelling')}</p>
                     <p className="text-sm font-semibold text-gray-900">{bodyScanResult.swelling_percentage}%</p>
                   </div>
                 )}
@@ -1248,21 +1249,21 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
                   className="flex-1 border-gray-300 hover:bg-gray-50"
                 >
                   <RotateCcw className="w-4 h-4 mr-2" />
-                  Nuovo Scan
+                  {t('dashboard.newScan')}
                 </Button>
                 <Button
                   onClick={saveBodyScanResult}
                   disabled={savingBodyScan}
                   className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
                 >
-                  {savingBodyScan ? 'Salvataggio...' : 'Salva Scan'}
+                  {savingBodyScan ? t('dashboard.saving') : t('dashboard.saveScan')}
                 </Button>
                 <Button
                   onClick={onClose}
                   variant="outline"
                   className="px-6 border-gray-300 hover:bg-gray-50"
                 >
-                  Chiudi
+                  {t('common.close')}
                 </Button>
                 </div>
             </div>
@@ -1317,7 +1318,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-gray-200/30">
             <div className="p-6 border-b border-gray-200/30">
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">Storico Calorie</h3>
+                <h3 className="text-2xl font-bold text-gray-900">{t('dashboard.calorieHistory')}</h3>
                 <button
                   onClick={() => {
                     setShowCalorieHistoryModal(false);
@@ -1351,7 +1352,7 @@ export default function UnifiedCameraModal({ isOpen, onClose, user }) {
           <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl my-auto border border-gray-200/30">
             <div className="p-6 border-b border-gray-200/30">
               <div className="flex items-center justify-between">
-                <h3 className="text-2xl font-bold text-gray-900">Storico Nutrition</h3>
+                <h3 className="text-2xl font-bold text-gray-900">{t('dashboard.nutritionHistory')}</h3>
                 <button
                   onClick={() => {
                     setShowNutritionHistoryModal(false);
