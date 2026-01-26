@@ -235,12 +235,25 @@ export default function BodyScanPage() {
               )}
 
               {/* Postura */}
-              {latestScan.posture_assessment && (
-                <div className="water-glass-effect rounded-2xl p-4">
-                  <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-2">📊 Valutazione Posturale</p>
-                  <p className="text-sm text-gray-700 leading-relaxed">{latestScan.posture_assessment}</p>
-                </div>
-              )}
+              {latestScan.posture_assessment && (() => {
+                const goodPosture = ['buona', 'corretta', 'ottima', 'equilibrata', 'allineata', 'good', 'correct', 'excellent', 'aligned'];
+                const badPosture = ['scorretta', 'sbagliata', 'problematica', 'curva', 'cifosi', 'lordosi', 'scoliosi', 'poor', 'incorrect', 'bad'];
+                const isGood = goodPosture.some(p => latestScan.posture_assessment.toLowerCase().includes(p));
+                const isBad = badPosture.some(p => latestScan.posture_assessment.toLowerCase().includes(p));
+                const bgStyle = isGood 
+                  ? 'bg-green-100/60 backdrop-blur-md' 
+                  : isBad 
+                  ? 'bg-red-100/60 backdrop-blur-md' 
+                  : 'water-glass-effect';
+                const borderColor = isGood ? 'border-green-300' : isBad ? 'border-red-300' : 'border-gray-200';
+                
+                return (
+                  <div className={`rounded-2xl p-4 ${bgStyle} border-2 ${borderColor}`}>
+                    <p className="text-xs font-bold text-gray-900 uppercase tracking-wide mb-2">📊 Valutazione Posturale</p>
+                    <p className="text-sm text-gray-700 leading-relaxed">{latestScan.posture_assessment}</p>
+                  </div>
+                );
+              })()}
 
               {/* Aree Problematiche e Punti di Forza */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
