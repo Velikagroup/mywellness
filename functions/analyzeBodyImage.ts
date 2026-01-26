@@ -25,20 +25,20 @@ Deno.serve(async (req) => {
 
         console.log(`📸 Analyzing body photos for user ${user.id}`);
 
-        const languageInstructions = {
-            it: 'Rispondi in ITALIANO',
-            en: 'Respond in ENGLISH',
-            es: 'Responde en ESPAÑOL',
-            pt: 'Responda em PORTUGUÊS',
-            de: 'Antworte auf DEUTSCH',
-            fr: 'Répondez en FRANÇAIS'
+        const languageMap = {
+            it: { instruction: 'Rispondi in ITALIANO', lang: 'Italian' },
+            en: { instruction: 'Respond in ENGLISH', lang: 'English' },
+            es: { instruction: 'Responde en ESPAÑOL', lang: 'Spanish' },
+            pt: { instruction: 'Responda em PORTUGUÊS', lang: 'Portuguese' },
+            de: { instruction: 'Antworte auf DEUTSCH', lang: 'German' },
+            fr: { instruction: 'Répondez en FRANÇAIS', lang: 'French' }
         };
 
-        const langInstruction = languageInstructions[language] || languageInstructions.it;
+        const langConfig = languageMap[language] || languageMap.it;
 
         // Costruisci il prompt dettagliato per l'AI
         const prompt = `Analyze these body photos in a medical-scientific manner and provide a complete assessment.
-${langInstruction} for ALL text fields (skin_texture, skin_tone, posture_assessment, problem_areas, strong_areas, recommended_diet_focus, recommended_workout_focus).
+${langConfig.instruction} for ALL text fields.
 
 USER DATA:
 - Age: ${userAge || 'unknown'}
@@ -48,25 +48,25 @@ USER DATA:
 
 ANALYSIS REQUIRED - Provide NUMERIC and SPECIFIC values for:
 
-1. SOMATOTYPE: Classify as ectomorph, mesomorph, endomorph or mixed
+1. SOMATOTYPE: Classify as ectomorph, mesomorph, endomorph or mixed (keep in English)
 2. BODY FAT PERCENTAGE: Estimate percentage (0-100)
 3. BODY AGE: Estimate in years (the "biological age" of the body)
 4. MUSCLE DEFINITION SCORE: 0-100
-5. SKIN TEXTURE: Description in ${langInstruction.split(' ')[2]} (smooth/liscia, rough/irregolare, acne-prone/acneica, dry/disidratata, etc)
-6. SKIN TONE: Classification in ${langInstruction.split(' ')[2]} (fair/chiaro, medium/medio, dark/scuro)
+5. SKIN TEXTURE: Description in ${langConfig.lang} (e.g., smooth, rough, acne-prone, dry, elastic, healthy, etc)
+6. SKIN TONE: Classification in ${langConfig.lang} (e.g., fair, medium, dark, even, uneven, healthy, etc)
 7. SWELLING PERCENTAGE: Estimate water retention and swelling (0-100)
-8. POSTURE ASSESSMENT: Very brief description of postural state in ${langInstruction.split(' ')[2]}
-9. PROBLEM AREAS: List of max 3 zones that need attention in ${langInstruction.split(' ')[2]}
-10. STRONG AREAS: List of max 3 well-developed zones in ${langInstruction.split(' ')[2]}
+8. POSTURE ASSESSMENT: Very brief description of postural state in ${langConfig.lang}
+9. PROBLEM AREAS: List of max 3 zones that need attention in ${langConfig.lang}
+10. STRONG AREAS: List of max 3 well-developed zones in ${langConfig.lang}
 
-RECOMMENDED NUTRITIONAL FOCUS in ${langInstruction.split(' ')[2]}:
-Based on observed body composition, suggest 3-4 specific dietary focuses (e.g., "increase protein for muscle development", "reduce simple carbs", etc)
+RECOMMENDED NUTRITIONAL FOCUS in ${langConfig.lang}:
+Based on observed body composition, suggest 3-4 specific dietary focuses
 
-RECOMMENDED WORKOUT FOCUS in ${langInstruction.split(' ')[2]}:
-Based on body composition, suggest 3-4 specific training focuses (e.g., "develop shoulders and chest", "increase cardiovascular endurance", etc)
+RECOMMENDED WORKOUT FOCUS in ${langConfig.lang}:
+Based on body composition, suggest 3-4 specific training focuses
 
 Respond ONLY in valid JSON format, without markdown or comments.
-CRITICAL: All text fields MUST be in ${langInstruction.split(' ')[2]} language.`;
+CRITICAL: All text fields (skin_texture, skin_tone, posture_assessment, problem_areas, strong_areas, recommended_diet_focus, recommended_workout_focus) MUST be in ${langConfig.lang}.`;
 
         console.log('🤖 Calling Core.InvokeLLM for body analysis...');
 
