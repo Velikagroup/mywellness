@@ -675,7 +675,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                     <Button 
                       type="button" 
                       onClick={() => document.getElementById('camera-input').click()}
-                      className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
+                      className="bg-black hover:bg-gray-900 text-white shadow-lg hover:shadow-xl transition-all h-12 rounded-full"
                     >
                       <Camera className="w-4 h-4 mr-2" />
                       {t('photoMealAnalyzer.takePhoto')}
@@ -693,7 +693,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                       type="button" 
                       onClick={() => document.getElementById('gallery-input').click()}
                       variant="outline" 
-                      className="border-2 border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5] transition-all"
+                      className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-all h-12 rounded-full"
                     >
                       <Upload className="w-4 h-4 mr-2" />
                       {t('photoMealAnalyzer.selectFromGallery')}
@@ -719,7 +719,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                       onClick={() => setCameraOpen(true)}
                       variant="outline" 
                       size="sm" 
-                      className="border-[#26847F]/30 text-gray-700 hover:border-[#26847F] hover:bg-[#e9f6f5] w-full sm:w-auto"
+                      className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 w-full sm:w-auto rounded-full"
                     >
                       <Plus className="w-4 h-4 mr-1" />
                       {t('photoMealAnalyzer.addMorePhoto')}
@@ -773,7 +773,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                   {!isAnalyzing && (
                     <Button
                       onClick={analyzePhotos}
-                      className="w-full bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white text-lg py-7 shadow-xl hover:shadow-2xl transition-all font-bold"
+                      className="w-full bg-black hover:bg-gray-900 text-white text-lg py-7 shadow-xl hover:shadow-2xl transition-all font-bold rounded-full"
                       disabled={photos.length === 0}
                     >
                       <Sparkles className="w-5 h-5 mr-2" />
@@ -817,7 +817,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
                 onClick={resetAnalysis}
                 variant="outline"
                 size="sm"
-                className="flex items-center gap-2 border-2 border-gray-200 hover:border-[#26847F] hover:bg-[#e9f6f5] transition-all"
+                className="flex items-center gap-2 border-2 border-gray-300 hover:border-gray-400 hover:bg-gray-50 transition-all rounded-full"
               >
                 <ArrowLeft className="w-4 h-4" />
                 {t('photoMealAnalyzer.backAndReshoot')}
