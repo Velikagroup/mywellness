@@ -833,16 +833,6 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
   return (
     <div className="relative">
-      {isRecalibrateFlow && (
-        <button
-          onClick={() => navigate(createPageUrl('Dashboard'))}
-          className="fixed bottom-6 left-6 z-50 flex items-center gap-2 px-4 py-3 bg-white/90 backdrop-blur-sm hover:bg-white border-2 border-gray-200 rounded-full shadow-lg hover:shadow-xl transition-all text-gray-700 hover:text-[var(--brand-primary)] font-medium"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="hidden sm:inline">{t?.common?.back || 'Back'}</span>
-        </button>
-      )}
-      
       <QuizStepWrapper
         currentStep={currentStep}
         totalSteps={dynamicSteps.length}
