@@ -33,11 +33,12 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     if (monthsRef.current) {
       const scrollTop = monthsRef.current.scrollTop;
       const itemHeight = 40;
-      const index = Math.round(scrollTop / itemHeight);
+      const topPadding = 160; // h-40
+      const index = Math.round((scrollTop - topPadding) / itemHeight);
       setSelectedMonth(Math.max(0, Math.min(index, MONTHS.length - 1)));
       
       // Snap to center
-      const targetScroll = index * itemHeight;
+      const targetScroll = topPadding + index * itemHeight;
       monthsRef.current.scrollTop = targetScroll;
     }
   };
@@ -46,11 +47,12 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     if (daysRef.current) {
       const scrollTop = daysRef.current.scrollTop;
       const itemHeight = 40;
-      const index = Math.round(scrollTop / itemHeight);
+      const topPadding = 160; // h-40
+      const index = Math.round((scrollTop - topPadding) / itemHeight);
       setSelectedDay(Math.max(1, Math.min(index + 1, 31)));
       
       // Snap to center
-      const targetScroll = index * itemHeight;
+      const targetScroll = topPadding + index * itemHeight;
       daysRef.current.scrollTop = targetScroll;
     }
   };
@@ -59,11 +61,12 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     if (yearsRef.current) {
       const scrollTop = yearsRef.current.scrollTop;
       const itemHeight = 40;
-      const index = Math.round(scrollTop / itemHeight);
+      const topPadding = 160; // h-40
+      const index = Math.round((scrollTop - topPadding) / itemHeight);
       setSelectedYear(YEARS[Math.max(0, Math.min(index, YEARS.length - 1))]);
       
       // Snap to center
-      const targetScroll = index * itemHeight;
+      const targetScroll = topPadding + index * itemHeight;
       yearsRef.current.scrollTop = targetScroll;
     }
   };
