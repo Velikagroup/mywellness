@@ -68,16 +68,6 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
         <ArrowLeft className="w-5 h-5" />
         Zurück
       </button>
-    </>
-        {typeof currentStep === 'number' && totalSteps && (
-          <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden">
-            <div 
-              className="h-full bg-gray-800 transition-all duration-300"
-              style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-            />
-          </div>
-        )}
-      </div>
-    </div>
+      </>
   );
 }
