@@ -1,52 +1,68 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
 
-export default function GenderStep({ data, onDataChange, onNext }) {
+export default function GenderStep({ data, onDataChange, onNext, t }) {
   const handleSelection = (gender) => {
     onDataChange({ gender });
-    setTimeout(() => {
-      onNext();
-    }, 300);
   };
 
   return (
-    <div className="space-y-6">
-      <div className="text-center mb-8">
-        <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Qual è il tuo sesso?</h2>
-        <p className="text-gray-600 text-lg">Ci aiuta a calcolare il tuo fabbisogno metabolico con precisione</p>
+    <div className="space-y-8 max-w-md mx-auto px-4">
+      <div className="mb-12">
+        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          {t?.('quiz.gender.title') || 'Elige tu género'}
+        </h2>
+        <p className="text-gray-500 text-sm">
+          {t?.('quiz.gender.subtitle') || 'Esto se usará para calibrar tu plan personalizado.'}
+        </p>
       </div>
 
-      <div className="grid grid-cols-2 gap-6 max-w-md mx-auto">
+      <div className="space-y-3">
         <button
           onClick={() => handleSelection('male')}
-          className={`p-8 rounded-lg border-2 transition-all hover:shadow-lg cursor-pointer ${
+          className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
             data.gender === 'male' 
-              ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] shadow-md' 
-              : 'border-gray-200 hover:border-[var(--brand-primary)]'
+              ? 'bg-gray-800 text-white' 
+              : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
           }`}
         >
-          <div className="text-center">
-            <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">👨</span>
-            </div>
-            <h3 className="font-bold text-lg text-gray-900">Uomo</h3>
-          </div>
+          {t?.('quiz.gender.male') || 'Hombre'}
         </button>
 
         <button
           onClick={() => handleSelection('female')}
-          className={`p-8 rounded-lg border-2 transition-all hover:shadow-lg cursor-pointer ${
+          className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
             data.gender === 'female' 
-              ? 'border-[var(--brand-primary)] bg-[var(--brand-primary-light)] shadow-md' 
-              : 'border-gray-200 hover:border-[var(--brand-primary)]'
+              ? 'bg-gray-800 text-white' 
+              : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
           }`}
         >
-          <div className="text-center">
-            <div className="w-16 h-16 bg-pink-100 rounded-2xl flex items-center justify-center mx-auto mb-4">
-              <span className="text-3xl">👩</span>
-            </div>
-            <h3 className="font-bold text-lg text-gray-900">Donna</h3>
-          </div>
+          {t?.('quiz.gender.female') || 'Mujer'}
+        </button>
+
+        <button
+          onClick={() => handleSelection('other')}
+          className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
+            data.gender === 'other' 
+              ? 'bg-gray-800 text-white' 
+              : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+          }`}
+        >
+          {t?.('quiz.gender.other') || 'Otro'}
+        </button>
+      </div>
+
+      <div className="pt-8">
+        <button
+          onClick={onNext}
+          disabled={!data.gender}
+          className={`w-full py-4 rounded-full text-base font-medium transition-all ${
+            data.gender
+              ? 'bg-gray-800 text-white hover:bg-gray-900'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+        >
+          {t?.('quiz.continue') || 'Continuar'}
         </button>
       </div>
     </div>
