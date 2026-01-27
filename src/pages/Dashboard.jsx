@@ -808,16 +808,19 @@ export default function Dashboard() {
 
       {/* Dialog Modifica BMR */}
       <Dialog open={showEditBMR} onOpenChange={setShowEditBMR}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">{t('upgradeModal.editBMR')}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-gray-900">{t('upgradeModal.editBMR')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <p className="text-sm text-gray-600">
-              {t('upgradeModal.editBMRDesc')}
-            </p>
-            <div>
-              <Label htmlFor="edit-bmr" className="text-sm font-semibold text-gray-700 mb-2 block">
+          <div className="space-y-6 pt-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-900 leading-relaxed">
+                {t('upgradeModal.editBMRDesc')}
+              </p>
+            </div>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <Label htmlFor="edit-bmr" className="text-sm font-bold text-gray-900 mb-3 block">
                 {t('upgradeModal.bmrLabel')}
               </Label>
               <Input
@@ -833,12 +836,21 @@ export default function Dashboard() {
             </div>
             
             {editBMRValue && (
-              <div className="bg-blue-50 p-3 rounded-lg border border-blue-200 space-y-2">
-                <p className="text-xs font-semibold text-blue-900">{t('dashboard.calculatedValues')}</p>
-                <div className="text-sm text-blue-800">
-                  <p>🔥 BMR: <span className="font-bold">{Math.round(parseFloat(editBMRValue))} kcal</span></p>
-                  <p>⚡ NEAT: <span className="font-bold">{Math.round(parseFloat(editBMRValue) * (user?.activity_level === 'sedentary' ? 0.2 : user?.activity_level === 'lightly_active' ? 0.375 : user?.activity_level === 'moderately_active' ? 0.55 : user?.activity_level === 'very_active' ? 0.725 : user?.activity_level === 'professional_athlete' ? 0.9 : 0.375))} kcal</span></p>
-                  <p>💪 Totale: <span className="font-bold">{Math.round(parseFloat(editBMRValue) * (1 + (user?.activity_level === 'sedentary' ? 0.2 : user?.activity_level === 'lightly_active' ? 0.375 : user?.activity_level === 'moderately_active' ? 0.55 : user?.activity_level === 'very_active' ? 0.725 : user?.activity_level === 'professional_athlete' ? 0.9 : 0.375)))} kcal</span></p>
+              <div className="bg-amber-50 border border-amber-200 rounded-lg p-4 space-y-3">
+                <p className="text-sm font-bold text-amber-900 mb-2">{t('dashboard.calculatedValues')}</p>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100">
+                    <span className="text-sm text-gray-700">🔥 BMR</span>
+                    <span className="text-lg font-bold text-gray-900">{Math.round(parseFloat(editBMRValue))} kcal</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100">
+                    <span className="text-sm text-gray-700">⚡ NEAT</span>
+                    <span className="text-lg font-bold text-gray-900">{Math.round(parseFloat(editBMRValue) * (user?.activity_level === 'sedentary' ? 0.2 : user?.activity_level === 'lightly_active' ? 0.375 : user?.activity_level === 'moderately_active' ? 0.55 : user?.activity_level === 'very_active' ? 0.725 : user?.activity_level === 'professional_athlete' ? 0.9 : 0.375))} kcal</span>
+                  </div>
+                  <div className="flex items-center justify-between bg-white rounded-lg p-3 border border-amber-100">
+                    <span className="text-sm text-gray-700">💪 Totale</span>
+                    <span className="text-lg font-bold text-gray-900">{Math.round(parseFloat(editBMRValue) * (1 + (user?.activity_level === 'sedentary' ? 0.2 : user?.activity_level === 'lightly_active' ? 0.375 : user?.activity_level === 'moderately_active' ? 0.55 : user?.activity_level === 'very_active' ? 0.725 : user?.activity_level === 'professional_athlete' ? 0.9 : 0.375)))} kcal</span>
+                  </div>
                 </div>
               </div>
             )}
@@ -847,14 +859,14 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveBMR}
                 disabled={isSavingBMR}
-                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
               >
                 {isSavingBMR ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditBMR(false)}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 h-12 rounded-2xl"
               >
                 {t('upgradeModal.cancel')}
               </Button>
@@ -865,16 +877,19 @@ export default function Dashboard() {
 
       {/* Dialog Modifica Massa Grassa */}
       <Dialog open={showEditBodyFat} onOpenChange={setShowEditBodyFat}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">{t('upgradeModal.editBodyFat')}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-gray-900">{t('upgradeModal.editBodyFat')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <p className="text-sm text-gray-600">
-              {t('upgradeModal.editBodyFatDesc')}
-            </p>
-            <div>
-              <Label htmlFor="edit-bodyfat" className="text-sm font-semibold text-gray-700 mb-2 block">
+          <div className="space-y-6 pt-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-900 leading-relaxed">
+                {t('upgradeModal.editBodyFatDesc')}
+              </p>
+            </div>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <Label htmlFor="edit-bodyfat" className="text-sm font-bold text-gray-900 mb-3 block">
                 {t('upgradeModal.bodyFatLabel')}
               </Label>
               <Input
@@ -889,18 +904,19 @@ export default function Dashboard() {
                 max="60"
               />
             </div>
+            
             <div className="flex gap-3 pt-2">
               <Button
                 onClick={handleSaveBodyFat}
                 disabled={isSavingBodyFat}
-                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
               >
                 {isSavingBodyFat ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditBodyFat(false)}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 h-12 rounded-2xl"
               >
                 {t('upgradeModal.cancel')}
               </Button>
@@ -911,16 +927,19 @@ export default function Dashboard() {
 
       {/* Dialog Modifica Target Calorico */}
       <Dialog open={showEditCalories} onOpenChange={setShowEditCalories}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">{t('upgradeModal.editCalorieTarget')}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-gray-900">{t('upgradeModal.editCalorieTarget')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <p className="text-sm text-gray-600">
-              {t('upgradeModal.editCalorieTargetDesc')}
-            </p>
-            <div>
-              <Label htmlFor="edit-calories" className="text-sm font-semibold text-gray-700 mb-2 block">
+          <div className="space-y-6 pt-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-900 leading-relaxed">
+                {t('upgradeModal.editCalorieTargetDesc')}
+              </p>
+            </div>
+            
+            <div className="bg-white border border-gray-200 rounded-lg p-4">
+              <Label htmlFor="edit-calories" className="text-sm font-bold text-gray-900 mb-3 block">
                 {t('upgradeModal.calorieTargetLabel')}
               </Label>
               <Input
@@ -934,18 +953,19 @@ export default function Dashboard() {
                 max="5000"
               />
             </div>
+            
             <div className="flex gap-3 pt-2">
               <Button
                 onClick={handleSaveCalories}
                 disabled={isSavingCalories}
-                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
               >
                 {isSavingCalories ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditCalories(false)}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 h-12 rounded-2xl"
               >
                 {t('upgradeModal.cancel')}
               </Button>
@@ -956,14 +976,16 @@ export default function Dashboard() {
 
       {/* Dialog Modifica NEAT */}
       <Dialog open={showNEATModal} onOpenChange={setShowNEATModal}>
-        <DialogContent className="max-w-md">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="text-xl font-bold text-gray-900">{t('dashboard.activityLevel')}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold text-gray-900">{t('dashboard.activityLevel')}</DialogTitle>
           </DialogHeader>
-          <div className="space-y-4 pt-4">
-            <p className="text-sm text-gray-600">
-              {t('dashboard.activityLevelDesc')}
-            </p>
+          <div className="space-y-6 pt-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-900 leading-relaxed">
+                {t('dashboard.activityLevelDesc')}
+              </p>
+            </div>
             
             <div className="space-y-3">
               {[
@@ -996,14 +1018,14 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveActivityLevel}
                 disabled={!selectedActivityLevel}
-                className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
               >
                 {t('common.save')}
               </Button>
               <Button
                 onClick={() => setShowNEATModal(false)}
                 variant="outline"
-                className="flex-1"
+                className="flex-1 h-12 rounded-2xl"
               >
                 {t('common.cancel')}
               </Button>

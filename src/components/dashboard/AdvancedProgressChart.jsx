@@ -994,7 +994,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <Button
                       onClick={handleSaveBodyFatCircumferences}
                       disabled={savingBodyFat || !neckCirc || !waistCirc || (user.gender === 'female' && !hipCirc)}
-                      className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white h-12"
+                      className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
                     >
                       <Save className="w-5 h-5 mr-2" />
                       {savingBodyFat ? t('dashboard.saving') : t('dashboard.calculate')}
@@ -1002,7 +1002,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <Button
                       onClick={() => setShowBodyFatModal(false)}
                       variant="outline"
-                      className="flex-1 h-12"
+                      className="flex-1 h-12 rounded-2xl"
                     >
                       {t('common.cancel')}
                     </Button>
