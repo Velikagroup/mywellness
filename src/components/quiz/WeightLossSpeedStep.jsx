@@ -5,6 +5,28 @@ import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 import { AlertCircle } from 'lucide-react';
 
+// Helper functions
+function calculateAge(birthdate) {
+  if (!birthdate) return null;
+  const today = new Date();
+  const birthDate = new Date(birthdate);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+  return age;
+}
+
+function calculateBMR(weight, height, age, gender) {
+  if (!weight || !height || !age || !gender) return 0;
+  if (gender === 'male') {
+    return 10 * weight + 6.25 * height - 5 * age + 5;
+  } else {
+    return 10 * weight + 6.25 * height - 5 * age - 161;
+  }
+}
+
 export default function WeightLossSpeedStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
   
@@ -49,11 +71,15 @@ export default function WeightLossSpeedStep({ data, onDataChange, translations, 
   const weightDiff = Math.abs((data.current_weight || 81) - (data.target_weight || 70));
   const monthsToGoal = Math.ceil((weightDiff / weeklyLoss) / 4.33);
 
-  // Calculate daily calories
-  const bmr = data.bmr || 1800;
+  // Calculate daily calories based on user data
+  const age = data.age || calculateAge(data.birthdate) || 30;
+  const bmr = calculateBMR(data.current_weight || 81, data.height || 174, age, data.gender || 'male');
+  const activityMultiplier = 1.2; // Sedentary default
+  const tdee = bmr * activityMultiplier;
+  
   const calorieDeficitPerWeek = weeklyLoss * 7700; // 7700 kcal = 1 kg
   const dailyDeficit = calorieDeficitPerWeek / 7;
-  const dailyCalories = Math.round(bmr - dailyDeficit);
+  const dailyCalories = Math.round(tdee - dailyDeficit);
 
   // Get messages and icons based on speed
   const getSpeedInfo = () => {
