@@ -41,14 +41,14 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
 
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          {t.quizSelectGender || 'Elige tu género'}
-        </h2>
-        <p className="text-gray-500 text-sm">
-          {t.quizContinueSubtitle || 'Esto se usará para calibrar tu plan personalizado.'}
-        </p>
-      </div>
+            {t.quizSelectGender || 'Elige tu género'}
+          </h2>
+          <p className="text-gray-500 text-sm">
+            {t.quizContinueSubtitle || 'Esto se usará para calibrar tu plan personalizado.'}
+          </p>
+        </div>
 
-      <div className="space-y-3">
+        <div className="space-y-3">
         <button
           onClick={() => handleSelection('male')}
           className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
