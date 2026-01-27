@@ -17,7 +17,6 @@ import WaistCircumferenceStep from './WaistCircumferenceStep';
 import HipCircumferenceStep from './HipCircumferenceStep';
 import CurrentBodyTypeStep from './CurrentBodyTypeStep';
 import TargetZoneStep from './TargetZoneStep';
-import WeightLossSpeedStep from './WeightLossSpeedStep';
 import TargetBodyTypeStep from './TargetBodyTypeStep';
 import QuizStepWrapper from './QuizStepWrapper';
 
