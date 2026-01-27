@@ -162,7 +162,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         {/* Unit Toggle */}
-        <div className="flex items-center gap-3 mb-8 md:-mt-16 md:mb-12">
+        <div className="flex items-center gap-3 mb-8 md:-mt-24 md:mb-12">
           <span className={`text-sm font-medium ${!isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
             {t.imperial || 'Imperial'}
           </span>
