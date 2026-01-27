@@ -12,9 +12,7 @@ import HeightWeightStep from './HeightWeightStep';
 import TargetWeightStep from './TargetWeightStep';
 import WeightDifferenceStep from './WeightDifferenceStep';
 import WeightLossSpeedStep from './WeightLossSpeedStep';
-import NeckCircumferenceStep from './NeckCircumferenceStep';
-import WaistCircumferenceStep from './WaistCircumferenceStep';
-import HipCircumferenceStep from './HipCircumferenceStep';
+
 import CurrentBodyTypeStep from './CurrentBodyTypeStep';
 import TargetZoneStep from './TargetZoneStep';
 import TargetBodyTypeStep from './TargetBodyTypeStep';
