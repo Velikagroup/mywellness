@@ -738,16 +738,21 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
               </LineChart>
             </ResponsiveContainer>
             <div className="absolute top-2 right-8 flex flex-col gap-2">
-              {lineData.length > 0 && user.body_fat_percentage && (
-                <button 
-                  onClick={() => setShowBodyFatModal(true)}
-                  className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg hover:bg-purple-50 transition-colors cursor-pointer"
-                >
-                  <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
-                  <p className="text-xs text-purple-600">{t('nutrition.bodyFat')}</p>
-                </button>
-              )}
-
+              <button 
+                onClick={() => setShowBodyFatModal(true)}
+                className="bg-white/90 backdrop-blur-sm px-3 py-1.5 rounded-lg border-2 border-purple-400 shadow-lg hover:bg-purple-50 transition-colors cursor-pointer flex items-center gap-2"
+              >
+                <div>
+                  {user.body_fat_percentage ? (
+                    <>
+                      <p className="text-sm font-bold text-purple-700">{parseFloat(user.body_fat_percentage).toFixed(1)}%</p>
+                      <p className="text-xs text-purple-600">{t('nutrition.bodyFat')}</p>
+                    </>
+                  ) : (
+                    <HelpCircle className="w-6 h-6 text-purple-600" />
+                  )}
+                </div>
+              </button>
             </div>
           </div>
 
