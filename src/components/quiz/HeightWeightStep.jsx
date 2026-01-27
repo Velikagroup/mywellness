@@ -92,10 +92,13 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     if (onNext) onNext();
   };
 
-  const PickerColumn = ({ items, selectedValue, onScroll, ref }) => {
+  const PickerColumn = ({ items, selectedValue, onScroll, ref, unit, label }) => {
     const selectedIndex = items.indexOf(selectedValue);
     return (
       <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
+        <h3 className="text-center font-semibold text-gray-900 mb-4 absolute top-0 left-0 right-0">
+          {label}
+        </h3>
         <div
           ref={ref}
           onScroll={onScroll}
@@ -109,15 +112,22 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
           {items.map((item, idx) => (
             <div
               key={idx}
-              className="h-10 flex items-center justify-center flex-shrink-0 px-2 snap-center"
+              className="h-10 flex items-center justify-center flex-shrink-0 px-2 snap-center gap-1"
             >
-              <span className={`text-center whitespace-nowrap transition-all font-semibold ${
+              <span className={`text-center transition-all font-semibold ${
                 idx === selectedIndex
                   ? 'text-gray-900 text-base'
                   : 'text-gray-400 text-sm'
               }`}>
                 {item}
               </span>
+              {idx === selectedIndex && (
+                <span className={`transition-all font-medium ${
+                  idx === selectedIndex ? 'text-gray-900 text-sm' : 'text-gray-400 text-xs'
+                }`}>
+                  {unit}
+                </span>
+              )}
             </div>
           ))}
           <div className="h-40" />
@@ -177,29 +187,23 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
 
         {/* Picker Columns */}
         <div className="flex gap-4 w-full max-w-[416px] justify-center h-80 mx-auto mt-8">
-          <div className="flex-1 flex flex-col">
-            <h3 className="text-center font-semibold text-gray-900 mb-4">
-              {t.height || 'Altura'}
-            </h3>
-            <PickerColumn
-              items={heightValues}
-              selectedValue={selectedHeight}
-              onScroll={handleHeightScroll}
-              ref={heightRef}
-            />
-          </div>
+          <PickerColumn
+            items={heightValues}
+            selectedValue={selectedHeight}
+            onScroll={handleHeightScroll}
+            ref={heightRef}
+            unit={isMetric ? 'cm' : 'ft'}
+            label={t.height || 'Altura'}
+          />
 
-          <div className="flex-1 flex flex-col">
-            <h3 className="text-center font-semibold text-gray-900 mb-4">
-              {t.weight || 'Peso'}
-            </h3>
-            <PickerColumn
-              items={weightValues}
-              selectedValue={selectedWeight}
-              onScroll={handleWeightScroll}
-              ref={weightRef}
-            />
-          </div>
+          <PickerColumn
+            items={weightValues}
+            selectedValue={selectedWeight}
+            onScroll={handleWeightScroll}
+            ref={weightRef}
+            unit={isMetric ? 'kg' : 'lbs'}
+            label={t.weight || 'Peso'}
+          />
         </div>
       </div>
 
