@@ -52,7 +52,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations }) 
               : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
           }`}
         >
-          {t.quizOther || 'Otro'}
+          {t.quizOther || 'Altro'}
         </button>
       </div>
 
@@ -62,7 +62,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations }) 
           disabled={!data.gender}
           className={`w-full py-4 rounded-full text-base font-medium transition-all ${
             data.gender
-              ? 'bg-gray-400 text-white hover:bg-gray-500'
+              ? 'bg-black text-white hover:bg-gray-800'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
         >
