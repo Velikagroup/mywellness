@@ -1,13 +1,39 @@
 import React from 'react';
 import { Card } from "@/components/ui/card";
+import { ArrowLeft } from "lucide-react";
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
 
-export default function GenderStep({ data, onDataChange, onNext, t }) {
+export default function GenderStep({ data, onDataChange, onNext, t, currentStep, totalSteps, onPrev }) {
+  const navigate = useNavigate();
+  const urlParams = new URLSearchParams(window.location.search);
+  const isFromHome = !urlParams.get('from');
+
   const handleSelection = (gender) => {
     onDataChange({ gender });
   };
 
   return (
     <div className="space-y-8 max-w-md mx-auto px-4">
+      {/* Progress Bar */}
+      <div className="w-full bg-gray-200 h-1 rounded-full overflow-hidden">
+        <div 
+          className="h-full bg-gray-800 transition-all duration-300"
+          style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+        />
+      </div>
+
+      {/* Back Button - solo se viene da home */}
+      {isFromHome && (
+        <button
+          onClick={() => navigate(createPageUrl('Home'))}
+          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+        >
+          <ArrowLeft className="w-5 h-5" />
+          <span className="text-sm font-medium">{t?.('common.back') || 'Indietro'}</span>
+        </button>
+      )}
+
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           {t?.('quiz.quizSelectGender') || 'Seleziona il tuo sesso:'}

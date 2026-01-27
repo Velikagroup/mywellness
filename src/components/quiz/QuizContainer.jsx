@@ -859,7 +859,11 @@ export default function QuizContainer({ translations, language = 'it' }) {
           data={quizData}
           onDataChange={handleStepData}
           onNext={nextStep}
+          onPrev={prevStep}
+          currentStep={currentStep}
+          totalSteps={dynamicSteps.length}
           translations={translations}
+          t={t}
         />
       </QuizStepWrapper>
     </div>
