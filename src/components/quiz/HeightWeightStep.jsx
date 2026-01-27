@@ -96,7 +96,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     const selectedIndex = items.indexOf(selectedValue);
     return (
       <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
-        <h3 className="text-center font-semibold text-gray-900 absolute left-0 right-0 pointer-events-none" style={{ top: '120px', zIndex: 10 }}>
+        <h3 className="text-center font-semibold text-gray-900 absolute left-0 right-0 pointer-events-none" style={{ top: '110px', zIndex: 10 }}>
           {label}
         </h3>
         <div
