@@ -112,7 +112,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
           {items.map((item, idx) => (
             <div
               key={idx}
-              className="h-10 flex items-center justify-center flex-shrink-0 px-2 snap-center gap-1"
+              className="h-10 flex items-center justify-center flex-shrink-0 px-2 snap-center gap-1.5"
             >
               <span className={`text-center transition-all font-semibold ${
                 idx === selectedIndex
@@ -121,13 +121,11 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
               }`}>
                 {item}
               </span>
-              {idx === selectedIndex && (
-                <span className={`transition-all font-medium ${
-                  idx === selectedIndex ? 'text-gray-900 text-sm' : 'text-gray-400 text-xs'
-                }`}>
-                  {unit}
-                </span>
-              )}
+              <span className={`transition-all font-medium ${
+                idx === selectedIndex ? 'text-gray-900 text-sm' : 'text-gray-400 text-xs'
+              }`}>
+                {unit}
+              </span>
             </div>
           ))}
           <div className="h-40" />
