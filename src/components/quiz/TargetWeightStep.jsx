@@ -125,14 +125,6 @@ export default function TargetWeightStep({ data, onDataChange, translations, cur
           {unit === 'kg' ? (t.quizTargetWeightHintKg || 'Inserisci il peso obiettivo in chilogrammi') : (t.quizTargetWeightHintLbs || 'Inserisci il peso obiettivo in libbre')}
         </p>
       </div>
-
-      <button
-        onClick={() => data.target_weight && data.target_weight > 0 && onNext?.()}
-        disabled={!data.target_weight || data.target_weight <= 0}
-        className="w-full py-4 text-base font-medium transition-all quiz-button-fixed bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
-      >
-        {t.quizContinue || 'Continua'}
-      </button>
     </div>
   );
 }
