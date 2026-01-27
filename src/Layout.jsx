@@ -463,7 +463,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         </DialogContent>
       </Dialog>
 
-      {location.pathname !== createPageUrl('Video') && (
+      {location.pathname !== createPageUrl('Video') && !location.pathname.toLowerCase().includes('quiz') && (
         <div className="fixed top-6 left-1/2 transform -translate-x-1/2 z-50">
           <div className="water-glass-effect rounded-full px-6 py-3">
             <img 
