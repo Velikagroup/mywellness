@@ -475,7 +475,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
         </div>
       )}
 
-      <main className={location.pathname.toLowerCase().includes('quiz') ? 'pt-0 pb-20' : 'pt-28 pb-20'}>
+      <main className={location.pathname.toLowerCase().includes('quiz') ? 'pt-0 pb-0' : 'pt-28 pb-20'}>
         {children}
       </main>
 
