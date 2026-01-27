@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@/components/ui/button';
 import { ArrowRight, ArrowLeft, X } from 'lucide-react';
@@ -45,25 +44,6 @@ export default function OnboardingTour({ user, onComplete }) {
       subtitle: 'Come ci hai scoperti?',
       description: 'Raccontaci come sei arrivato fino a noi. La tua risposta ci aiuta a migliorare.',
       type: 'modal'
-    },
-    {
-      id: 'dashboard_intro',
-      title: 'La Tua Dashboard',
-      description: 'Qui visualizzi tutti i tuoi dati metabolici calcolati con precisione scientifica: BMR, massa grassa, target calorico e progressi. Puoi modificarli manualmente in qualsiasi momento.',
-      target: '.onboarding-technical-stats-wrapper'
-    },
-    {
-      id: 'track_progress',
-      title: 'Traccia i Progressi',
-      description: 'Monitora l\'andamento del tuo peso, registra nuove pesate, visualizza il tuo percorso verso l\'obiettivo con grafici dettagliati, e accedi al piano nutrizionale e alle feature Pro.',
-      target: '.onboarding-dashboard-overview'
-    },
-    {
-      id: 'nutrition_start',
-      title: 'Crea il Tuo Piano',
-      description: 'Sei pronto per iniziare! Clicca qui per generare il tuo piano alimentare personalizzato con l\'intelligenza artificiale.',
-      target: '.onboarding-nutrition-nav-link',
-      final: true
     }
   ];
 
@@ -121,13 +101,15 @@ export default function OnboardingTour({ user, onComplete }) {
         discovery_source: selectedSource,
         discovery_details: sourceDetails,
         current_step: 1,
-        onboarding_completed: false
+        onboarding_completed: true,
+        completed_date: new Date().toISOString()
       });
       
-      setCurrentStep(1);
+      await base44.auth.updateMe({ onboarding_completed: true });
+      onComplete();
     } catch (error) {
       console.error('Error saving discovery source:', error);
-      setCurrentStep(1);
+      onComplete();
     }
     setIsSaving(false);
   };
@@ -550,4 +532,3 @@ export default function OnboardingTour({ user, onComplete }) {
     </>
   );
 }
-
