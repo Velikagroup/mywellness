@@ -17,10 +17,10 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
   };
 
   return (
-    <div className="flex items-center gap-1.5 -mb-2">
+    <div className="fixed top-0 left-0 right-0 z-40 flex items-center gap-1.5 px-4 pt-6 pb-4 bg-white">
       <button
         onClick={handleBack}
-        className="flex-shrink-0 text-gray-600 hover:text-gray-900 transition-colors"
+        className="flex-shrink-0 w-5 h-5 text-gray-600 hover:text-gray-900 transition-colors"
       >
         <ArrowLeft className="w-5 h-5" />
       </button>
