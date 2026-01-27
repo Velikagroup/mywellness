@@ -35,7 +35,7 @@ export default function QuizStepWrapper({
       `}</style>
 
       <div className="min-h-screen bg-white">
-        <div className="flex flex-col items-center pt-[50px] pb-8 px-4">
+        <div className="flex flex-col items-center pt-6 pb-8 px-4">
           <div className="max-w-2xl w-full">
             {children}
 
