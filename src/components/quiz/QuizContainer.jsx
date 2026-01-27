@@ -662,31 +662,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
     );
 
     return (
-      <>
-        <style>{`
-          @keyframes gradientShift {
-            0% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
-            33% { background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%; }
-            66% { background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%; }
-            100% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
-          }
-          
-          .animated-gradient-bg {
-            background: #f9fafb;
-            background-image: 
-              radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%),
-              radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
-              radial-gradient(circle at 70% 60%, #f3e8ff 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
-              radial-gradient(circle at 90% 85%, #faf5ff 0%, transparent 50%);
-            background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
-            animation: gradientShift 45s ease-in-out infinite;
-            background-attachment: fixed;
-          }
-        `}</style>
-        
-        <div className="min-h-screen flex items-center justify-center p-4 animated-gradient-bg">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-white">
           <Card className="max-w-2xl w-full bg-white/90 backdrop-blur-xl border-2 border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
             {/* Progress Bar */}
             <div className="h-2 bg-gray-100 w-full">
@@ -794,27 +770,6 @@ export default function QuizContainer({ translations, language = 'it' }) {
     return (
       <>
         <style>{`
-          @keyframes gradientShift {
-            0% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
-            33% { background-position: 100% 30%, 0% 70%, 100% 40%, 20% 80%, 70% 20%, 0% 60%; }
-            66% { background-position: 0% 70%, 100% 40%, 0% 20%, 80% 30%, 40% 90%, 100% 50%; }
-            100% { background-position: 0% 50%, 100% 20%, 0% 80%, 80% 60%, 30% 40%, 100% 90%; }
-          }
-          
-          .animated-gradient-bg {
-            background: #f9fafb;
-            background-image: 
-              radial-gradient(circle at 10% 20%, #d0e4ff 0%, transparent 50%),
-              radial-gradient(circle at 85% 10%, #c2ebe6 0%, transparent 50%),
-              radial-gradient(circle at 20% 80%, #a8e0d7 0%, transparent 50%),
-              radial-gradient(circle at 70% 60%, #f3e8ff 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, #fce7f3 0%, transparent 60%),
-              radial-gradient(circle at 90% 85%, #faf5ff 0%, transparent 50%);
-            background-size: 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%, 250% 250%;
-            animation: gradientShift 45s ease-in-out infinite;
-            background-attachment: fixed;
-          }
-          
           @keyframes progressFill {
             0% { width: 0%; }
             100% { width: 100%; }
@@ -824,7 +779,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
             animation: progressFill 5s ease-out forwards;
           }
         `}</style>
-        <div className="min-h-screen flex items-center justify-center p-4 animated-gradient-bg">
+        <div className="min-h-screen flex items-center justify-center p-4 bg-white">
           <Card className="max-w-2xl w-full bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl overflow-hidden">
             {/* Progress Bar */}
             <div className="h-2 bg-gray-100 w-full">
