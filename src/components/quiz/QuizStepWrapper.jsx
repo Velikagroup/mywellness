@@ -35,15 +35,23 @@ export default function QuizStepWrapper({
 
         .quiz-button-fixed {
           position: fixed;
-          bottom: 0;
-          left: 0;
-          right: 0;
-          width: 100%;
-          max-width: 416px;
+          bottom: 20px;
           left: 50%;
           transform: translateX(-50%);
-          border-radius: 0;
+          width: calc(100% - 32px);
+          max-width: 384px;
+          border-radius: 50px;
           margin: 0;
+          padding: 16px 24px;
+          z-index: 50;
+        }
+
+        @media (min-width: 768px) {
+          .quiz-button-fixed {
+            bottom: 200px;
+            width: 416px;
+            padding: 16px 24px;
+          }
         }
       `}</style>
 
