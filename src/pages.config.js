@@ -21,7 +21,6 @@ import Meals from './pages/Meals';
 import NotFound from './pages/NotFound';
 import OneTimeOffer from './pages/OneTimeOffer';
 import Privacy from './pages/Privacy';
-import Quiz from './pages/Quiz';
 import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
 import Sfondo from './pages/Sfondo';
@@ -93,7 +92,6 @@ export const PAGES = {
     "NotFound": NotFound,
     "OneTimeOffer": OneTimeOffer,
     "Privacy": Privacy,
-    "Quiz": Quiz,
     "ResetPassword": ResetPassword,
     "Settings": Settings,
     "Sfondo": Sfondo,
