@@ -34,7 +34,7 @@ export default function WeightLossSpeedStep({ data, onDataChange, onNext, transl
   };
 
   return (
-    <div className="space-y-6 pt-20 w-full md:w-[416px] mx-auto px-4 md:px-0">
+    <div className="space-y-6 pt-20 w-full max-w-[416px] mx-auto px-4 md:px-0">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}
