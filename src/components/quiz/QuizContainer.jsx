@@ -8,8 +8,7 @@ import { Sparkles, EyeOff, CheckCircle2, Loader2, ArrowLeft } from "lucide-react
 
 import IntroStep from './IntroStep';
 import BirthdateStep from './BirthdateStep';
-import HeightStep from './HeightStep';
-import CurrentWeightStep from './CurrentWeightStep';
+import HeightWeightStep from './HeightWeightStep';
 import TargetWeightStep from './TargetWeightStep';
 import NeckCircumferenceStep from './NeckCircumferenceStep';
 import WaistCircumferenceStep from './WaistCircumferenceStep';
@@ -70,8 +69,7 @@ function buildDynamicSteps(translations) {
   return [
     { component: IntroStep, label: translations?.quiz?.quizIntroTitle || "Welcome" },
     { component: BirthdateStep, label: translations?.quiz?.quizBirthdateTitle || "Birthdate" },
-    { component: HeightStep, label: translations?.quiz?.quizHeightTitle || "Height" },
-    { component: CurrentWeightStep, label: translations?.quiz?.quizCurrentWeightTitle || "Current Weight" },
+    { component: HeightWeightStep, label: translations?.quiz?.quizHeightWeightTitle || "Height & Weight" },
     { component: TargetWeightStep, label: translations?.quiz?.quizTargetWeightTitle || "Target Weight" },
     { component: NeckCircumferenceStep, label: translations?.quiz?.quizNeckTitle || "Neck Circumference" },
     { component: WaistCircumferenceStep, label: translations?.quiz?.quizWaistTitle || "Waist Circumference" },
@@ -308,8 +306,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
     if (stepComponent === IntroStep) return !!quizData.gender;
     if (stepComponent === BirthdateStep) return !!quizData.birthdate;
-    if (stepComponent === HeightStep) return !!quizData.height && quizData.height > 0;
-    if (stepComponent === CurrentWeightStep) return !!quizData.current_weight && quizData.current_weight > 0;
+    if (stepComponent === HeightWeightStep) return !!quizData.height && quizData.height > 0 && !!quizData.current_weight && quizData.current_weight > 0;
     if (stepComponent === TargetWeightStep) return !!quizData.target_weight && quizData.target_weight > 0;
     if (stepComponent === NeckCircumferenceStep) return true;
     if (stepComponent === WaistCircumferenceStep) return true;
