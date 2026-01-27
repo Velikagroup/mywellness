@@ -94,7 +94,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   };
 
   const PickerColumn = ({ items, selectedIndex, onScroll, ref }) => (
-    <div className="flex-1 flex flex-col items-center relative h-80">
+    <div className="flex-1 flex flex-col items-center relative h-80 -mt-12">
       <div 
         ref={ref}
         onScroll={onScroll}
@@ -124,9 +124,6 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       
       {/* Overlay bianco sopra - blocca il testo che scorre */}
       <div className="absolute top-0 left-0 right-0 bg-white pointer-events-none" style={{ height: '140px' }} />
-      
-      {/* Overlay bianco sotto - blocca il testo che scorre */}
-      <div className="absolute bottom-0 left-0 right-0 bg-white pointer-events-none" style={{ height: '140px' }} />
       
       {/* Pillolina highlight - riga centrale */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-10 border-2 border-gray-300 rounded-2xl pointer-events-none" />
