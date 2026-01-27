@@ -41,8 +41,10 @@ export default function QuizStepWrapper({
           width: calc(100% - 32px);
           max-width: 384px;
           border-radius: 50px;
-          margin: 0;
-          padding: 16px 24px;
+          margin: 0 !important;
+          padding: 16px 24px !important;
+          height: auto !important;
+          min-height: 56px;
           z-index: 50;
         }
 
@@ -50,7 +52,7 @@ export default function QuizStepWrapper({
           .quiz-button-fixed {
             bottom: 200px;
             width: 416px;
-            padding: 16px 24px;
+            padding: 16px 24px !important;
           }
         }
       `}</style>
