@@ -933,72 +933,76 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
 
             {/* Body Fat Modal */}
             <Dialog open={showBodyFatModal} onOpenChange={setShowBodyFatModal}>
-              <DialogContent>
+              <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
                 <DialogHeader>
-                  <DialogTitle className="text-xl font-bold text-gray-900">{t('dashboard.updateBodyFat')}</DialogTitle>
+                  <DialogTitle className="text-2xl font-bold text-gray-900">{t('dashboard.updateBodyFat')}</DialogTitle>
                 </DialogHeader>
-                <div className="space-y-4 pt-4">
-                  <p className="text-sm text-gray-600">
-                    {t('dashboard.updateBodyFatDesc')}
-                  </p>
-
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {t('dashboard.neckCircumference')}
-                    </label>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      value={neckCirc}
-                      onChange={(e) => setNeckCirc(e.target.value)}
-                      placeholder={t('dashboard.neckCircumferencePlaceholder')}
-                      className="h-10"
-                    />
+                <div className="space-y-6 pt-4">
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+                    <p className="text-sm text-blue-900 leading-relaxed">
+                      {t('dashboard.updateBodyFatDesc')}
+                    </p>
                   </div>
 
-                  <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">
-                      {t('dashboard.waistCircumference')}
-                    </label>
-                    <Input
-                      type="number"
-                      step="0.1"
-                      value={waistCirc}
-                      onChange={(e) => setWaistCirc(e.target.value)}
-                      placeholder={t('dashboard.waistCircumferencePlaceholder')}
-                      className="h-10"
-                    />
-                  </div>
-
-                  {user.gender === 'female' && (
-                    <div>
-                      <label className="block text-sm font-semibold text-gray-700 mb-2">
-                        {t('dashboard.hipCircumference')}
+                  <div className="space-y-4">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <label className="block text-sm font-bold text-gray-900 mb-3">
+                        {t('dashboard.neckCircumference')}
                       </label>
                       <Input
                         type="number"
                         step="0.1"
-                        value={hipCirc}
-                        onChange={(e) => setHipCirc(e.target.value)}
-                        placeholder={t('dashboard.hipCircumferencePlaceholder')}
-                        className="h-10"
+                        value={neckCirc}
+                        onChange={(e) => setNeckCirc(e.target.value)}
+                        placeholder={t('dashboard.neckCircumferencePlaceholder')}
+                        className="h-12 text-base"
                       />
                     </div>
-                  )}
 
-                  <div className="flex gap-3 pt-4">
+                    <div className="bg-white border border-gray-200 rounded-lg p-4">
+                      <label className="block text-sm font-bold text-gray-900 mb-3">
+                        {t('dashboard.waistCircumference')}
+                      </label>
+                      <Input
+                        type="number"
+                        step="0.1"
+                        value={waistCirc}
+                        onChange={(e) => setWaistCirc(e.target.value)}
+                        placeholder={t('dashboard.waistCircumferencePlaceholder')}
+                        className="h-12 text-base"
+                      />
+                    </div>
+
+                    {user.gender === 'female' && (
+                      <div className="bg-white border border-gray-200 rounded-lg p-4">
+                        <label className="block text-sm font-bold text-gray-900 mb-3">
+                          {t('dashboard.hipCircumference')}
+                        </label>
+                        <Input
+                          type="number"
+                          step="0.1"
+                          value={hipCirc}
+                          onChange={(e) => setHipCirc(e.target.value)}
+                          placeholder={t('dashboard.hipCircumferencePlaceholder')}
+                          className="h-12 text-base"
+                        />
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="flex gap-3 pt-2">
                     <Button
                       onClick={handleSaveBodyFatCircumferences}
                       disabled={savingBodyFat || !neckCirc || !waistCirc || (user.gender === 'female' && !hipCirc)}
-                      className="flex-1 bg-purple-600 hover:bg-purple-700 text-white"
+                      className="flex-1 bg-[#26847F] hover:bg-[#1f6b66] text-white h-12"
                     >
-                      <Save className="w-4 h-4 mr-2" />
+                      <Save className="w-5 h-5 mr-2" />
                       {savingBodyFat ? t('dashboard.saving') : t('dashboard.calculate')}
                     </Button>
                     <Button
                       onClick={() => setShowBodyFatModal(false)}
                       variant="outline"
-                      className="flex-1"
+                      className="flex-1 h-12"
                     >
                       {t('common.cancel')}
                     </Button>
