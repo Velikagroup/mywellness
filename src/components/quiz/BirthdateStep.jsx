@@ -46,7 +46,8 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const scrollTop = monthsRef.current.scrollTop;
       const itemHeight = 40;
       const topPadding = 160;
-      const index = Math.round((scrollTop - topPadding) / itemHeight);
+      const containerHeight = 320;
+      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
       const newMonth = Math.max(0, Math.min(index, MONTHS.length - 1));
       setSelectedMonth(newMonth);
       
@@ -54,7 +55,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const birthdateStr = `${selectedYear}-${String(newMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
       onDataChange({ birthdate: birthdateStr, age });
       
-      const targetScroll = topPadding + index * itemHeight;
+      const targetScroll = topPadding + newMonth * itemHeight - containerHeight / 2;
       monthsRef.current.scrollTop = targetScroll;
     }
   };
@@ -64,7 +65,8 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const scrollTop = daysRef.current.scrollTop;
       const itemHeight = 40;
       const topPadding = 160;
-      const index = Math.round((scrollTop - topPadding) / itemHeight);
+      const containerHeight = 320;
+      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
       const newDay = Math.max(1, Math.min(index + 1, 31));
       setSelectedDay(newDay);
       
@@ -72,7 +74,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const birthdateStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
       onDataChange({ birthdate: birthdateStr, age });
       
-      const targetScroll = topPadding + index * itemHeight;
+      const targetScroll = topPadding + (newDay - 1) * itemHeight - containerHeight / 2;
       daysRef.current.scrollTop = targetScroll;
     }
   };
@@ -82,7 +84,8 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const scrollTop = yearsRef.current.scrollTop;
       const itemHeight = 40;
       const topPadding = 160;
-      const index = Math.round((scrollTop - topPadding) / itemHeight);
+      const containerHeight = 320;
+      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
       const newYear = YEARS[Math.max(0, Math.min(index, YEARS.length - 1))];
       setSelectedYear(newYear);
       
@@ -90,7 +93,8 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const birthdateStr = `${newYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
       onDataChange({ birthdate: birthdateStr, age });
       
-      const targetScroll = topPadding + index * itemHeight;
+      const yearIndex = YEARS.indexOf(newYear);
+      const targetScroll = topPadding + yearIndex * itemHeight - containerHeight / 2;
       yearsRef.current.scrollTop = targetScroll;
     }
   };
