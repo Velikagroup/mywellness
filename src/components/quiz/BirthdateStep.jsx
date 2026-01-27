@@ -143,7 +143,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       </div>
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
-        <div className="flex gap-2 w-full max-w-[416px] justify-center h-80 mx-auto overflow-hidden mt-8">
+        <div className="flex gap-2 w-full max-w-[416px] justify-center h-80 mx-auto mt-8">
           <PickerColumn 
             items={MONTHS} 
             selectedIndex={selectedMonth}
