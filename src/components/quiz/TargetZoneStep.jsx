@@ -30,7 +30,7 @@ export default function TargetZoneStep({ data, onDataChange, onNext, translation
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-20">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}

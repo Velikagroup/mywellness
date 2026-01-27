@@ -65,7 +65,7 @@ export default function TargetWeightStep({ data, onDataChange, translations, cur
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-20">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}

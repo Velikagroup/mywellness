@@ -17,7 +17,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
   };
 
   return (
-    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-4">
+    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-20">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}

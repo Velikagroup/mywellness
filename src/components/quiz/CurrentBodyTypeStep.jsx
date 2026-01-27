@@ -36,7 +36,7 @@ export default function CurrentBodyTypeStep({ data, onDataChange, onNext, transl
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-20">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}

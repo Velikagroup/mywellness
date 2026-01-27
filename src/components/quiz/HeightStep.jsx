@@ -60,7 +60,7 @@ export default function HeightStep({ data, onDataChange, translations, currentSt
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 pt-20">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}
