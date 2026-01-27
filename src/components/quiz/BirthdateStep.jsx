@@ -170,15 +170,6 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
           </p>
         )}
       </div>
-
-      <div>
-        <Button
-          onClick={handleNext}
-          className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold quiz-button-fixed"
-        >
-          {t.quizContinue || 'Continuar'}
-        </Button>
-      </div>
     </div>
   );
 }
