@@ -68,6 +68,20 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
             {t.quizOther || 'Altro'}
           </button>
         </div>
+
+      <div>
+        <button
+          onClick={onNext}
+          disabled={!data.gender}
+          className={`w-full py-4 text-base font-medium transition-all quiz-button-fixed ${
+            data.gender
+              ? 'bg-black text-white hover:bg-gray-800'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+        >
+          {t.quizContinue || 'Continuar'}
+        </button>
+      </div>
     </div>
   );
 }

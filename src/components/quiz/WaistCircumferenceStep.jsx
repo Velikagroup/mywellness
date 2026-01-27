@@ -95,6 +95,13 @@ export default function WaistCircumferenceStep({ data, onDataChange, translation
         </div>
         <p className="text-xs text-gray-500 mt-2 text-center italic">{t.quizSkipWarning || "Puoi saltare se preferisci, ma il calcolo della massa grassa non sarà disponibile"}</p>
       </div>
+
+      <button
+        onClick={() => onNext?.()}
+        className="w-full py-4 text-base font-medium transition-all quiz-button-fixed bg-black text-white hover:bg-gray-800"
+      >
+        {t.quizContinue || 'Continua'}
+      </button>
     </div>
   );
 }
