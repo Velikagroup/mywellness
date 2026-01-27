@@ -21,7 +21,6 @@ import Meals from './pages/Meals';
 import NotFound from './pages/NotFound';
 import OneTimeOffer from './pages/OneTimeOffer';
 import Privacy from './pages/Privacy';
-import itquiz from './pages/itquiz';
 import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
 import Sfondo from './pages/Sfondo';
@@ -58,6 +57,7 @@ import itblog from './pages/itblog';
 import itblogarticle from './pages/itblogarticle';
 import itcheckout from './pages/itcheckout';
 import itpricing from './pages/itpricing';
+import itquiz from './pages/itquiz';
 import pricing from './pages/pricing';
 import pt from './pages/pt';
 import ptblog from './pages/ptblog';
@@ -92,7 +92,6 @@ export const PAGES = {
     "NotFound": NotFound,
     "OneTimeOffer": OneTimeOffer,
     "Privacy": Privacy,
-    "itquiz": itquiz,
     "ResetPassword": ResetPassword,
     "Settings": Settings,
     "Sfondo": Sfondo,
@@ -129,6 +128,7 @@ export const PAGES = {
     "itblogarticle": itblogarticle,
     "itcheckout": itcheckout,
     "itpricing": itpricing,
+    "itquiz": itquiz,
     "pricing": pricing,
     "pt": pt,
     "ptblog": ptblog,
