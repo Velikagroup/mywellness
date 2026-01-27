@@ -19,7 +19,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
     <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-4">
       {/* Back Button with Progress Bar */}
       {isFromHome && (
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5 -mb-2">
           <button
             onClick={() => navigate(createPageUrl('Home'))}
             className="flex-shrink-0 text-gray-600 hover:text-gray-900 transition-colors"
@@ -37,7 +37,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
         </div>
       )}
 
-        <div className="mb-12">
+        <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
             {t.quizSelectGender || 'Elige tu género'}
           </h2>
