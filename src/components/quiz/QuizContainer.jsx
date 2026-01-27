@@ -651,8 +651,22 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
   const CurrentStepComponent = dynamicSteps[currentStep]?.component;
 
+  console.log('🔍 Quiz Render:', { 
+    currentStep, 
+    hasComponent: !!CurrentStepComponent, 
+    isCalculating, 
+    showBodyFatReveal,
+    totalSteps: dynamicSteps.length 
+  });
+
   if (!CurrentStepComponent && !isCalculating && !showBodyFatReveal) {
-    return null;
+    console.warn('⚠️ No component to render - returning to step 0');
+    setCurrentStep(0);
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-bounce" />
+      </div>
+    );
   }
 
   if (showBodyFatReveal) {
