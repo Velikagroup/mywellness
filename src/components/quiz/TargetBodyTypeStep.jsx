@@ -67,13 +67,10 @@ export default function TargetBodyTypeStep({ data, onDataChange, onNext, transla
         showBackButton={true}
         onBackClick={onPrev}
       />
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
-          <span className="text-2xl">🎯</span>
-        </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">{t.quizTargetBodyTypeTitle || "Come vorresti diventare?"}</h2>
-        <p className="text-gray-600">{t.quizTargetBodyTypeSubtitle || "Scegli il tuo obiettivo fisico desiderato"}</p>
-      </div>
+      <QuizQuestionHeader
+        title={t.quizTargetBodyTypeTitle || "Come vorresti diventare?"}
+        subtitle={t.quizTargetBodyTypeSubtitle || "Scegli il tuo obiettivo fisico desiderato"}
+      />
 
       <div className="grid grid-cols-3 gap-4 max-w-4xl mx-auto">
         {bodyTypes.map((type) => (
