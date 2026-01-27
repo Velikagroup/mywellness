@@ -859,14 +859,14 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveBMR}
                 disabled={isSavingBMR}
-                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-full"
               >
                 {isSavingBMR ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditBMR(false)}
                 variant="outline"
-                className="flex-1 h-12 rounded-2xl"
+                className="flex-1 h-12 rounded-full"
               >
                 {t('upgradeModal.cancel')}
               </Button>
@@ -909,14 +909,14 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveBodyFat}
                 disabled={isSavingBodyFat}
-                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-full"
               >
                 {isSavingBodyFat ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditBodyFat(false)}
                 variant="outline"
-                className="flex-1 h-12 rounded-2xl"
+                className="flex-1 h-12 rounded-full"
               >
                 {t('upgradeModal.cancel')}
               </Button>
@@ -958,14 +958,14 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveCalories}
                 disabled={isSavingCalories}
-                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-full"
               >
                 {isSavingCalories ? t('common.loading') : t('upgradeModal.save')}
               </Button>
               <Button
                 onClick={() => setShowEditCalories(false)}
                 variant="outline"
-                className="flex-1 h-12 rounded-2xl"
+                className="flex-1 h-12 rounded-full"
               >
                 {t('upgradeModal.cancel')}
               </Button>
@@ -1018,14 +1018,14 @@ export default function Dashboard() {
               <Button
                 onClick={handleSaveActivityLevel}
                 disabled={!selectedActivityLevel}
-                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-2xl"
+                className="flex-1 bg-black hover:bg-gray-900 text-white h-12 rounded-full"
               >
                 {t('common.save')}
               </Button>
               <Button
                 onClick={() => setShowNEATModal(false)}
                 variant="outline"
-                className="flex-1 h-12 rounded-2xl"
+                className="flex-1 h-12 rounded-full"
               >
                 {t('common.cancel')}
               </Button>
