@@ -274,7 +274,7 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
   };
 
   return (
-    <div className="min-h-screen animated-gradient-bg">
+    <div className={`min-h-screen ${!location.pathname.toLowerCase().includes('quiz') ? 'animated-gradient-bg' : 'bg-white'}`}>
       <style>{`
         ${fontStyles[fontOption].import}
         
