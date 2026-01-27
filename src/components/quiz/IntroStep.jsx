@@ -49,53 +49,53 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
         </div>
 
         <div className="space-y-3">
-        <button
-          onClick={() => handleSelection('male')}
-          className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
-            data.gender === 'male' 
-              ? 'bg-gray-800 text-white' 
-              : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-          }`}
-        >
-          {t.quizMale || 'Hombre'}
-        </button>
+          <button
+            onClick={() => handleSelection('male')}
+            className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
+              data.gender === 'male' 
+                ? 'bg-gray-800 text-white' 
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+            }`}
+          >
+            {t.quizMale || 'Hombre'}
+          </button>
 
-        <button
-          onClick={() => handleSelection('female')}
-          className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
-            data.gender === 'female' 
-              ? 'bg-gray-800 text-white' 
-              : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-          }`}
-        >
-          {t.quizFemale || 'Mujer'}
-        </button>
+          <button
+            onClick={() => handleSelection('female')}
+            className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
+              data.gender === 'female' 
+                ? 'bg-gray-800 text-white' 
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+            }`}
+          >
+            {t.quizFemale || 'Mujer'}
+          </button>
 
-        <button
-          onClick={() => handleSelection('other')}
-          className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
-            data.gender === 'other' 
-              ? 'bg-gray-800 text-white' 
-              : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
-          }`}
-        >
-          {t.quizOther || 'Altro'}
-        </button>
-      </div>
+          <button
+            onClick={() => handleSelection('other')}
+            className={`w-full p-5 rounded-2xl transition-all font-medium text-base ${
+              data.gender === 'other' 
+                ? 'bg-gray-800 text-white' 
+                : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
+            }`}
+          >
+            {t.quizOther || 'Altro'}
+          </button>
+        </div>
 
-      <div className="pt-8 mt-auto">
-        <button
-          onClick={onNext}
-          disabled={!data.gender}
-          className={`w-full py-4 rounded-full text-base font-medium transition-all ${
-            data.gender
-              ? 'bg-black text-white hover:bg-gray-800'
-              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-          }`}
-        >
-          {t.quizContinue || 'Continuar'}
-        </button>
-      </div>
+        <div className="pt-8 mt-auto">
+          <button
+            onClick={onNext}
+            disabled={!data.gender}
+            className={`w-full py-4 rounded-full text-base font-medium transition-all ${
+              data.gender
+                ? 'bg-black text-white hover:bg-gray-800'
+                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+            }`}
+          >
+            {t.quizContinue || 'Continuar'}
+          </button>
+        </div>
       </div>
     </>
   );
