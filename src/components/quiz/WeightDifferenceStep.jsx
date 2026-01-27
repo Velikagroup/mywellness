@@ -16,53 +16,53 @@ export default function WeightDifferenceStep({ data, translations, currentStep, 
 
   const getMessage = () => {
     if (absDifference <= 3) {
-      if (isLosing) {
-        return {
-          title: `Perdiendo ${absDifference} kg es un objetivo realista. ¡No es nada difícil!`,
-          subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar Cal AI y que no es fácil recuperar el peso.`
-        };
-      } else {
-        return {
-          title: `Ganando ${absDifference} kg es un objetivo realista. ¡No es nada difícil!`,
-          subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar Cal AI y que no es fácil perder el peso ganado.`
-        };
-      }
-    } else if (absDifference <= 8) {
-      if (isLosing) {
-        return {
-          title: `Perdiendo ${absDifference} kg es un objetivo realista. ¡Totalmente alcanzable!`,
-          subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar Cal AI y que no es fácil recuperar el peso.`
-        };
-      } else {
-        return {
-          title: `Ganando ${absDifference} kg es un objetivo realista. ¡Totalmente alcanzable!`,
-          subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar Cal AI y que no es fácil perder el peso ganado.`
-        };
-      }
-    } else if (absDifference <= 15) {
-      if (isLosing) {
-        return {
-          title: `Perdiendo ${absDifference} kg es un objetivo desafiante pero posible.`,
-          subtitle: `Requiere consistencia, pero con el plan personalizado de Cal AI lo conseguirás. El 85% de los usuarios logra su objetivo.`
-        };
-      } else {
-        return {
-          title: `Ganando ${absDifference} kg es un objetivo desafiante pero posible.`,
-          subtitle: `Requiere consistencia, pero con el plan personalizado de Cal AI lo conseguirás. El 85% de los usuarios logra su objetivo.`
-        };
-      }
+    if (isLosing) {
+      return {
+        title: `Perdiendo ${absDifference} kg es un objetivo realista. ¡No es nada difícil!`,
+        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar My Wellness y que no es fácil recuperar el peso.`
+      };
     } else {
-      if (isLosing) {
-        return {
-          title: `Perdiendo ${absDifference} kg es un objetivo ambicioso.`,
-          subtitle: `Será un viaje, pero con dedicación y tu plan personalizado, lo alcanzarás. Muchos usuarios lo han logrado antes que tú.`
-        };
-      } else {
-        return {
-          title: `Ganando ${absDifference} kg es un objetivo ambicioso.`,
-          subtitle: `Será un viaje, pero con dedicación y tu plan personalizado, lo alcanzarás. Muchos usuarios lo han logrado antes que tú.`
-        };
-      }
+      return {
+        title: `Ganando ${absDifference} kg es un objetivo realista. ¡No es nada difícil!`,
+        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar My Wellness y que no es fácil perder el peso ganado.`
+      };
+    }
+    } else if (absDifference <= 8) {
+    if (isLosing) {
+      return {
+        title: `Perdiendo ${absDifference} kg es un objetivo realista. ¡Totalmente alcanzable!`,
+        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar My Wellness y que no es fácil recuperar el peso.`
+      };
+    } else {
+      return {
+        title: `Ganando ${absDifference} kg es un objetivo realista. ¡Totalmente alcanzable!`,
+        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar My Wellness y que no es fácil perder el peso ganado.`
+      };
+    }
+    } else if (absDifference <= 15) {
+    if (isLosing) {
+      return {
+        title: `Perdiendo ${absDifference} kg es un objetivo desafiante pero posible.`,
+        subtitle: `Requiere consistencia, pero con el plan personalizado de My Wellness lo conseguirás. El 85% de los usuarios logra su objetivo.`
+      };
+    } else {
+      return {
+        title: `Ganando ${absDifference} kg es un objetivo desafiante pero posible.`,
+        subtitle: `Requiere consistencia, pero con el plan personalizado de My Wellness lo conseguirás. El 85% de los usuarios logra su objetivo.`
+      };
+    }
+    } else {
+    if (isLosing) {
+      return {
+        title: `Perdiendo ${absDifference} kg es un objetivo ambicioso.`,
+        subtitle: `Será un viaje, pero con dedicación y tu plan personalizado, lo alcanzarás. Muchos usuarios lo han logrado antes que tú.`
+      };
+    } else {
+      return {
+        title: `Ganando ${absDifference} kg es un objetivo ambicioso.`,
+        subtitle: `Será un viaje, pero con dedicación y tu plan personalizado, lo alcanzarás. Muchos usuarios lo han logrado antes que tú.`
+      };
+    }
     }
   };
 

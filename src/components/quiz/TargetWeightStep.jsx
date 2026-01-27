@@ -40,7 +40,7 @@ export default function TargetWeightStep({ data, onDataChange, translations, cur
 
       <QuizQuestionHeader
         title={t.quizTargetWeightTitle || "¿Cuál es tu peso deseado?"}
-        subtitle={t.quizTargetWeightSubtitle || ""}
+        subtitle=""
       />
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 space-y-8">
