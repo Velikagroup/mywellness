@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import QuizHeader from './QuizHeader';
 
-export default function BirthdateStep({ data, onDataChange, translations, currentStep, totalSteps, onNext }) {
+export default function BirthdateStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
   const [selectedMonth, setSelectedMonth] = useState(8);
   const [selectedDay, setSelectedDay] = useState(1);
@@ -126,14 +126,6 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
 
   return (
     <div className="space-y-6 min-h-screen flex flex-col">
-      <div className="sticky top-0 z-10 px-4 pt-4">
-        <div className="water-glass-effect rounded-full overflow-hidden h-2">
-          <div 
-            className="h-full bg-gradient-to-r from-[#26847F] to-[#1f6b66] transition-all duration-300"
-            style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-          />
-        </div>
-      </div>
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}
