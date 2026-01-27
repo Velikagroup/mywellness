@@ -6,7 +6,6 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Sparkles, EyeOff, CheckCircle2, Loader2, ArrowLeft } from "lucide-react";
 
-import WelcomeStep from './WelcomeStep';
 import IntroStep from './IntroStep';
 import BirthdateStep from './BirthdateStep';
 import HeightStep from './HeightStep';
@@ -69,7 +68,6 @@ function calculateBodyFat(gender, height, waist, neck, hip) {
 
 function buildDynamicSteps(translations) {
   return [
-    { component: WelcomeStep, label: translations?.quiz?.quizWelcomeTitle || "Welcome" },
     { component: IntroStep, label: translations?.quiz?.quizIntroTitle || "Welcome" },
     { component: BirthdateStep, label: translations?.quiz?.quizBirthdateTitle || "Birthdate" },
     { component: HeightStep, label: translations?.quiz?.quizHeightTitle || "Height" },
