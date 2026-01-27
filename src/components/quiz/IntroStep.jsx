@@ -16,30 +16,26 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
   };
 
   return (
-    <>
-      {/* Fixed Header with Back Button + Progress Bar */}
-      {(isFromHome || currentStep > 0) && (
-        <div className="fixed top-0 left-0 right-0 flex items-center gap-2 px-4 py-4 bg-white z-50 border-b border-gray-100 max-w-md mx-auto">
+    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-4">
+      {/* Back Button with Progress Bar */}
+      {isFromHome && (
+        <div className="flex items-center gap-2">
           <button
-            onClick={isFromHome ? () => navigate(createPageUrl('Home')) : undefined}
-            className="text-gray-600 hover:text-gray-900 transition-colors flex-shrink-0"
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="flex-shrink-0 text-gray-600 hover:text-gray-900 transition-colors"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          
-          {/* Progress Bar */}
-          {typeof currentStep === 'number' && totalSteps ? (
-            <div className="flex-1 h-0.5 bg-gray-200 rounded-full overflow-hidden">
+          {typeof currentStep === 'number' && totalSteps && (
+            <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gray-800 transition-all duration-300"
                 style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
               />
             </div>
-          ) : null}
+          )}
         </div>
       )}
-
-    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-20">
 
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -85,20 +81,19 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           </button>
         </div>
 
-        <div className="pt-8 mt-auto">
-          <button
-            onClick={onNext}
-            disabled={!data.gender}
-            className={`w-full py-4 rounded-full text-base font-medium transition-all ${
-              data.gender
-                ? 'bg-black text-white hover:bg-gray-800'
-                : 'bg-gray-300 text-gray-500 cursor-not-allowed'
-            }`}
-          >
-            {t.quizContinue || 'Continuar'}
-          </button>
-        </div>
-        </div>
-    </>
+      <div className="pt-8 mt-auto">
+        <button
+          onClick={onNext}
+          disabled={!data.gender}
+          className={`w-full py-4 rounded-full text-base font-medium transition-all ${
+            data.gender
+              ? 'bg-black text-white hover:bg-gray-800'
+              : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+          }`}
+        >
+          {t.quizContinue || 'Continuar'}
+        </button>
+      </div>
+    </div>
   );
 }
