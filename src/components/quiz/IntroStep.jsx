@@ -96,6 +96,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           {t.quizContinue || 'Continuar'}
         </button>
       </div>
-    </div>
+      </div>
+    </>
   );
 }
