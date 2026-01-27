@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 import { Button } from "@/components/ui/button";
+import { Slider } from "@/components/ui/slider";
 
 export default function TargetWeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
@@ -11,8 +12,8 @@ export default function TargetWeightStep({ data, onDataChange, translations, cur
   const MIN_WEIGHT = isMetric ? 40 : 88;
   const MAX_WEIGHT = isMetric ? 150 : 330;
 
-  const handleSliderChange = (e) => {
-    const newWeight = parseInt(e.target.value);
+  const handleSliderChange = (value) => {
+    const newWeight = value[0];
     setSelectedWeight(newWeight);
     onDataChange({ target_weight: newWeight });
   };
@@ -73,20 +74,17 @@ export default function TargetWeightStep({ data, onDataChange, translations, cur
 
         {/* Ruler Slider */}
         <div className="w-full max-w-[320px] relative py-8">
-          <input
-            type="range"
+          <Slider
             min={MIN_WEIGHT}
             max={MAX_WEIGHT}
-            value={selectedWeight}
-            onChange={handleSliderChange}
-            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-400"
-            style={{
-              background: `linear-gradient(to right, #e5e7eb 0%, #e5e7eb ${sliderPercentage}%, #d1d5db ${sliderPercentage}%, #d1d5db 100%)`
-            }}
+            step={1}
+            value={[selectedWeight]}
+            onValueChange={handleSliderChange}
+            className="w-full"
           />
           
           {/* Ruler marks */}
-          <div className="absolute top-12 left-0 right-0 h-16 flex items-start justify-between px-0">
+          <div className="absolute top-12 left-0 right-0 h-16 flex items-start justify-between px-0 pointer-events-none">
             {Array.from({ length: 21 }).map((_, i) => (
               <div key={i} className="flex flex-col items-center">
                 <div className={`bg-gray-400 ${i % 5 === 0 ? 'h-4 w-1' : 'h-2 w-0.5'}`} />
