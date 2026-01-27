@@ -108,7 +108,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
             WebkitOverflowScrolling: 'touch'
           }}
         >
-          <div className="h-40" />
+          <div className="h-40 md:h-24" />
           {items.map((item, idx) => (
             <div
               key={idx}
@@ -128,7 +128,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
               </span>
             </div>
           ))}
-          <div className="h-40" />
+          <div className="h-40 md:h-32" />
         </div>
 
         {/* Overlay bianco sopra */}
