@@ -36,7 +36,7 @@ export default function QuizStepWrapper({
 
       <div className="min-h-screen bg-white">
         <div className="flex flex-col items-center pt-4 pb-8 px-4">
-          <div className="max-w-2xl w-full mt-0">
+          <div className="max-w-[416px] w-full mt-0">
             {children}
 
             {showBackButton && currentStep > 0 && (
