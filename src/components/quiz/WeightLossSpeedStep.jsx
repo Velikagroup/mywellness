@@ -71,24 +71,13 @@ export default function WeightLossSpeedStep({ data, onDataChange, translations, 
   const weightDiff = Math.abs((data.current_weight || 81) - (data.target_weight || 70));
   const monthsToGoal = Math.ceil((weightDiff / weeklyLoss) / 4.33);
 
-  // Calculate daily calories based on user data
-  const age = data.age || calculateAge(data.birthdate) || 30;
-  const bmr = calculateBMR(data.current_weight || 81, data.height || 174, age, data.gender || 'male');
-  const activityMultiplier = 1.5; // Lightly active
-  const tdee = bmr * activityMultiplier;
+  // Calcola calorie basandosi sulla velocità con range specifico
+  const isFemale = data.gender === 'female';
+  const minCalories = 2100; // Massimo per andare lento
+  const maxCalories = isFemale ? 1200 : 1400; // Minimo per andare veloce
   
-  // Calcola calorie basandosi sulla velocità
-  let dailyCalories;
-  if (speedCategory === 'slow') {
-    // Lento: 2000-2200 kcal (deficit minimo 10-15%)
-    dailyCalories = Math.round(tdee * 0.85);
-  } else if (speedCategory === 'fast') {
-    // Veloce: 1400-1600 kcal (deficit ~25-30%)
-    dailyCalories = Math.round(tdee * 0.70);
-  } else {
-    // Moderato: ~1700-1900 kcal (deficit ~20%)
-    dailyCalories = Math.round(tdee * 0.80);
-  }
+  // Calcolo lineare: 0 (lento) = 2100 kcal, 100 (veloce) = 1400/1200 kcal
+  const dailyCalories = Math.round(minCalories - (sliderValue / 100) * (minCalories - maxCalories));
 
   // Get messages and icons based on speed
   const getSpeedInfo = () => {
