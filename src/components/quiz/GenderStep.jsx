@@ -23,10 +23,10 @@ export default function GenderStep({ data, onDataChange, onNext, t, currentStep,
         />
       </div>
 
-      {/* Back Button - solo se viene da home */}
-      {isFromHome && (
+      {/* Back Button - solo dalla seconda domanda in avanti, OPPURE sulla prima se viene da home */}
+      {(currentStep > 0 || isFromHome) && (
         <button
-          onClick={() => navigate(createPageUrl('Home'))}
+          onClick={currentStep > 0 ? onPrev : () => navigate(createPageUrl('Home'))}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="w-5 h-5" />
