@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Input } from "@/components/ui/input";
 import { Scale } from "lucide-react";
 import QuizHeader from './QuizHeader';
+import QuizQuestionHeader from './QuizQuestionHeader';
 
 export default function CurrentWeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
@@ -72,13 +73,15 @@ export default function CurrentWeightStep({ data, onDataChange, translations, cu
         showBackButton={true}
         onBackClick={onPrev}
       />
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+      <div className="flex justify-center mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
           <Scale className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizCurrentWeightTitle || "Qual è il tuo peso attuale?"}</h2>
-        <p className="text-gray-600">{t.quizCurrentWeightSubtitle || "Questo è il tuo punto di partenza nel percorso di benessere"}</p>
       </div>
+      <QuizQuestionHeader 
+        title={t.quizCurrentWeightTitle || "Qual è il tuo peso attuale?"}
+        subtitle={t.quizCurrentWeightSubtitle || "Questo è il tuo punto di partenza nel percorso di benessere"}
+      />
 
       <div className="max-w-md mx-auto">
         {/* Unit Toggle */}
