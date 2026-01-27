@@ -125,7 +125,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   );
 
   return (
-    <div className="space-y-6 min-h-screen flex flex-col">
+    <div className="space-y-6 min-h-screen flex flex-col pt-20">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}
