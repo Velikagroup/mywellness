@@ -153,6 +153,14 @@ export default function HeightStep({ data, onDataChange, translations, currentSt
           {unit === 'cm' ? (t.quizHeightHintCm || 'Inserisci l\'altezza in centimetri') : (t.quizHeightHintFt || 'Inserisci piedi e pollici')}
         </p>
       </div>
+
+      <button
+        onClick={() => data.height && data.height > 0 && onNext?.()}
+        disabled={!data.height || data.height <= 0}
+        className="w-full py-4 text-base font-medium transition-all quiz-button-fixed bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+      >
+        {t.quizContinue || 'Continua'}
+      </button>
     </div>
   );
 }

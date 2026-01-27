@@ -125,6 +125,14 @@ export default function CurrentWeightStep({ data, onDataChange, translations, cu
           {unit === 'kg' ? (t.quizWeightHintKg || 'Inserisci il peso in chilogrammi') : (t.quizWeightHintLbs || 'Inserisci il peso in libbre')}
         </p>
       </div>
+
+      <button
+        onClick={() => data.current_weight && data.current_weight > 0 && onNext?.()}
+        disabled={!data.current_weight || data.current_weight <= 0}
+        className="w-full py-4 text-base font-medium transition-all quiz-button-fixed bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
+      >
+        {t.quizContinue || 'Continua'}
+      </button>
     </div>
   );
 }

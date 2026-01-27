@@ -69,11 +69,11 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           </button>
         </div>
 
-      <div className="pt-8 mt-auto">
+      <div>
         <button
           onClick={onNext}
           disabled={!data.gender}
-          className={`w-full py-4 rounded-full text-base font-medium transition-all ${
+          className={`w-full py-4 text-base font-medium transition-all quiz-button-fixed ${
             data.gender
               ? 'bg-black text-white hover:bg-gray-800'
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
