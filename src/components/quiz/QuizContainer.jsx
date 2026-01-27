@@ -328,8 +328,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (stepComponent === HipCircumferenceStep) return true;
     if (stepComponent === CurrentBodyTypeStep) return !!quizData.current_body_fat_visual;
     if (stepComponent === TargetBodyTypeStep) return !!quizData.target_body_fat_visual;
-        if (stepComponent === TargetZoneStep) return !!quizData.target_zones && quizData.target_zones.length > 0;
-        if (stepComponent === WeightLossSpeedStep) return true; // Always valid - has default
+    if (stepComponent === TargetZoneStep) return !!quizData.target_zones && quizData.target_zones.length > 0;
+    if (stepComponent === WeightLossSpeedStep) return true; // Always valid - has default
+    if (stepComponent === AIComparisonStep) return true;
 
     return true;
   };
