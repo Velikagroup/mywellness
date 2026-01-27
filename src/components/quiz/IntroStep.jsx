@@ -97,6 +97,5 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           </button>
         </div>
       </div>
-    </>
-  );
-}
+    );
+  }
