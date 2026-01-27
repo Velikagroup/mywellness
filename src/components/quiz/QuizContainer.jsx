@@ -11,6 +11,7 @@ import BirthdateStep from './BirthdateStep';
 import HeightWeightStep from './HeightWeightStep';
 import TargetWeightStep from './TargetWeightStep';
 import WeightDifferenceStep from './WeightDifferenceStep';
+import WeightLossSpeedStep from './WeightLossSpeedStep';
 import NeckCircumferenceStep from './NeckCircumferenceStep';
 import WaistCircumferenceStep from './WaistCircumferenceStep';
 import HipCircumferenceStep from './HipCircumferenceStep';
@@ -67,13 +68,14 @@ function calculateBodyFat(gender, height, waist, neck, hip) {
 }
 
 function buildDynamicSteps(translations) {
-  return [
-    { component: IntroStep, label: translations?.quiz?.quizIntroTitle || "Welcome" },
-    { component: BirthdateStep, label: translations?.quiz?.quizBirthdateTitle || "Birthdate" },
-    { component: HeightWeightStep, label: translations?.quiz?.quizHeightWeightTitle || "Height & Weight" },
-    { component: TargetWeightStep, label: translations?.quiz?.quizTargetWeightTitle || "Target Weight" },
-    { component: WeightDifferenceStep, label: translations?.quiz?.quizWeightDifferenceTitle || "Weight Difference" },
-    { component: NeckCircumferenceStep, label: translations?.quiz?.quizNeckTitle || "Neck Circumference" },
+        return [
+          { component: IntroStep, label: translations?.quiz?.quizIntroTitle || "Welcome" },
+          { component: BirthdateStep, label: translations?.quiz?.quizBirthdateTitle || "Birthdate" },
+          { component: HeightWeightStep, label: translations?.quiz?.quizHeightWeightTitle || "Height & Weight" },
+          { component: TargetWeightStep, label: translations?.quiz?.quizTargetWeightTitle || "Target Weight" },
+          { component: WeightDifferenceStep, label: translations?.quiz?.quizWeightDifferenceTitle || "Weight Difference" },
+          { component: WeightLossSpeedStep, label: translations?.quiz?.quizWeightLossSpeedTitle || "Weight Loss Speed" },
+          { component: NeckCircumferenceStep, label: translations?.quiz?.quizNeckTitle || "Neck Circumference" },
     { component: WaistCircumferenceStep, label: translations?.quiz?.quizWaistTitle || "Waist Circumference" },
     { component: HipCircumferenceStep, label: translations?.quiz?.quizHipTitle || "Hip Circumference" },
     { component: CurrentBodyTypeStep, label: translations?.quiz?.quizCurrentBodyTypeTitle || "Current Body Type" },
@@ -316,8 +318,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (stepComponent === HipCircumferenceStep) return true;
     if (stepComponent === CurrentBodyTypeStep) return !!quizData.current_body_fat_visual;
     if (stepComponent === TargetBodyTypeStep) return !!quizData.target_body_fat_visual;
-    if (stepComponent === TargetZoneStep) return !!quizData.target_zones && quizData.target_zones.length > 0;
-    if (stepComponent === WeightLossSpeedStep) return !!quizData.weight_loss_speed;
+        if (stepComponent === TargetZoneStep) return !!quizData.target_zones && quizData.target_zones.length > 0;
+        if (stepComponent === WeightLossSpeedStep) return true; // Always valid - has default
 
     return true;
   };
