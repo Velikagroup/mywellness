@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Circle } from "lucide-react";
+import QuizHeader from './QuizHeader';
 
-export default function WaistCircumferenceStep({ data, onDataChange, translations }) {
+export default function WaistCircumferenceStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
   const [unit, setUnit] = useState('cm');
   const [displayValue, setDisplayValue] = useState('');
@@ -35,6 +36,12 @@ export default function WaistCircumferenceStep({ data, onDataChange, translation
 
   return (
     <div className="space-y-6">
+      <QuizHeader 
+        currentStep={currentStep} 
+        totalSteps={totalSteps}
+        showBackButton={true}
+        onBackClick={onPrev}
+      />
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
           <Circle className="w-8 h-8 text-white" />

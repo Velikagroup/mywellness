@@ -1,4 +1,5 @@
 import React from 'react';
+import QuizHeader from './QuizHeader';
 
 const MALE_BODY_TYPES = [
   { percentage: 8, label: '8%', description: 'Estremamente Definito', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/1acaba3b0_Male-body-fat-8.png' },
@@ -24,7 +25,7 @@ const FEMALE_BODY_TYPES = [
   { percentage: 50, label: '50%', description: 'Obesa Grave', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/61e4d162e_Female-body-fat-50.png' }
 ];
 
-export default function TargetBodyTypeStep({ data, onDataChange, onNext, translations }) {
+export default function TargetBodyTypeStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
 
   const MALE_BODY_TYPES = [
@@ -59,6 +60,12 @@ export default function TargetBodyTypeStep({ data, onDataChange, onNext, transla
 
   return (
     <div className="space-y-6">
+      <QuizHeader 
+        currentStep={currentStep} 
+        totalSteps={totalSteps}
+        showBackButton={true}
+        onBackClick={onPrev}
+      />
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">🎯</span>

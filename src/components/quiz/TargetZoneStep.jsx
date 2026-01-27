@@ -1,6 +1,7 @@
 import React from 'react';
+import QuizHeader from './QuizHeader';
 
-export default function TargetZoneStep({ data, onDataChange, onNext, translations }) {
+export default function TargetZoneStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
   const selectedZones = data.target_zones || [];
 
@@ -30,6 +31,12 @@ export default function TargetZoneStep({ data, onDataChange, onNext, translation
 
   return (
     <div className="space-y-6">
+      <QuizHeader 
+        currentStep={currentStep} 
+        totalSteps={totalSteps}
+        showBackButton={true}
+        onBackClick={onPrev}
+      />
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
           <span className="text-2xl">🎯</span>

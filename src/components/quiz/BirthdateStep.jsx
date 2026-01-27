@@ -1,8 +1,9 @@
 import React from 'react';
 import { Input } from "@/components/ui/input";
 import { Calendar } from "lucide-react";
+import QuizHeader from './QuizHeader';
 
-export default function BirthdateStep({ data, onDataChange, translations }) {
+export default function BirthdateStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
   const handleChange = (e) => {
     const birthdate = e.target.value;
@@ -38,6 +39,12 @@ export default function BirthdateStep({ data, onDataChange, translations }) {
 
   return (
     <div className="space-y-6">
+      <QuizHeader 
+        currentStep={currentStep} 
+        totalSteps={totalSteps}
+        showBackButton={true}
+        onBackClick={onPrev}
+      />
       <div className="text-center mb-8">
         <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
           <Calendar className="w-8 h-8 text-white" />
