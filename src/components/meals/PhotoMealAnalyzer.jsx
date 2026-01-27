@@ -637,7 +637,7 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
       
       {!cameraOpen && (
         <Dialog open={true} onOpenChange={onClose}>
-          <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto bg-white border-2 border-gray-200">
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto bg-white border-2 border-gray-200">
             <DialogHeader className="border-b border-gray-200 pb-4">
               <DialogTitle className="text-center text-2xl">
                 <span className="text-gray-900 font-bold block">
