@@ -74,12 +74,21 @@ export default function WeightLossSpeedStep({ data, onDataChange, translations, 
   // Calculate daily calories based on user data
   const age = data.age || calculateAge(data.birthdate) || 30;
   const bmr = calculateBMR(data.current_weight || 81, data.height || 174, age, data.gender || 'male');
-  const activityMultiplier = 1.2; // Sedentary default
+  const activityMultiplier = 1.5; // Lightly active
   const tdee = bmr * activityMultiplier;
   
-  const calorieDeficitPerWeek = weeklyLoss * 7700; // 7700 kcal = 1 kg
-  const dailyDeficit = calorieDeficitPerWeek / 7;
-  const dailyCalories = Math.round(tdee - dailyDeficit);
+  // Calcola calorie basandosi sulla velocità
+  let dailyCalories;
+  if (speedCategory === 'slow') {
+    // Lento: 2000-2200 kcal (deficit minimo 10-15%)
+    dailyCalories = Math.round(tdee * 0.85);
+  } else if (speedCategory === 'fast') {
+    // Veloce: 1400-1600 kcal (deficit ~25-30%)
+    dailyCalories = Math.round(tdee * 0.70);
+  } else {
+    // Moderato: ~1700-1900 kcal (deficit ~20%)
+    dailyCalories = Math.round(tdee * 0.80);
+  }
 
   // Get messages and icons based on speed
   const getSpeedInfo = () => {
