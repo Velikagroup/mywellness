@@ -18,6 +18,7 @@ import HipCircumferenceStep from './HipCircumferenceStep';
 import CurrentBodyTypeStep from './CurrentBodyTypeStep';
 import TargetZoneStep from './TargetZoneStep';
 import TargetBodyTypeStep from './TargetBodyTypeStep';
+import AIComparisonStep from './AIComparisonStep';
 import QuizStepWrapper from './QuizStepWrapper';
 
 function calculateAge(birthdate) {
