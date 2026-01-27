@@ -96,7 +96,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     const selectedIndex = items.indexOf(selectedValue);
     return (
       <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
-        <h3 className="text-center font-semibold text-gray-900 mb-4 absolute top-0 left-0 right-0">
+        <h3 className="text-center font-semibold text-gray-900 absolute left-0 right-0 pointer-events-none" style={{ top: '-10px', zIndex: 10 }}>
           {label}
         </h3>
         <div
@@ -181,12 +181,6 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
           <span className={`text-sm font-medium ${isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
             {t.metric || 'Métrico'}
           </span>
-        </div>
-
-        {/* Labels */}
-        <div className="flex gap-4 w-full max-w-[416px] justify-center mb-2">
-          <h3 className="flex-1 text-center font-semibold text-gray-900">{t.height || 'Altezza'}</h3>
-          <h3 className="flex-1 text-center font-semibold text-gray-900">{t.weight || 'Peso'}</h3>
         </div>
 
         {/* Picker Columns */}
