@@ -129,8 +129,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}
-        showBackButton={true}
-        onBackClick={onPrev}
+        showBackButton={false}
       />
       
       <div className="text-left px-4 mb-6">
