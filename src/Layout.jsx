@@ -480,56 +480,52 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
       </main>
 
       {!location.pathname.toLowerCase().includes('quiz') && (
-        <div className={`hidden md:flex fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 items-center gap-2 ${showUnifiedCamera ? 'invisible' : ''}`}>
-        <LiquidGlassNav 
-          navItems={allNavItems} 
-          onActionClick={handleActionClick}
-          showActionMenu={showActionMenu}
-          setShowActionMenu={setShowActionMenu}
-        />
-        <button
-          onClick={() => setShowUnifiedCamera(true)}
-          className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0"
-          style={{
-            width: '56px',
-            height: '56px',
-            boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
-            transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-          }}
-          title="Quick Actions"
-        >
-          <Plus className="w-6 h-6" strokeWidth={3} />
-        </button>
-      </div>
+        <>
+          <div className={`hidden md:flex fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 items-center gap-2 ${showUnifiedCamera ? 'invisible' : ''}`}>
+            <LiquidGlassNav 
+              navItems={allNavItems} 
+              onActionClick={handleActionClick}
+              showActionMenu={showActionMenu}
+              setShowActionMenu={setShowActionMenu}
+            />
+            <button
+              onClick={() => setShowUnifiedCamera(true)}
+              className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0"
+              style={{
+                width: '56px',
+                height: '56px',
+                boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
+                transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              }}
+              title="Quick Actions"
+            >
+              <Plus className="w-6 h-6" strokeWidth={3} />
+            </button>
+          </div>
 
-      {!location.pathname.toLowerCase().includes('quiz') && (
-        <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 flex items-center gap-3" data-menu="mobile-nav">
-        <div className="flex-1">
-          <LiquidGlassNav 
-            navItems={allNavItems} 
-            onActionClick={handleActionClick}
-            showActionMenu={showActionMenu}
-            setShowActionMenu={setShowActionMenu}
-          />
-        </div>
-        <button
-          onClick={() => setShowUnifiedCamera(true)}
-          className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0 w-[93px] h-[93px]"
-          style={{
-            boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
-            transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
-          }}
-          title="Quick Actions"
-        >
-          <Plus className="w-10 h-10" strokeWidth={2.5} />
-        </button>
-        </div>
-        )}
-
-        {!location.pathname.toLowerCase().includes('quiz') && (
-        <div className={`hidden md:flex fixed bottom-5 left-1/2 transform -translate-x-1/2 z-50 items-center gap-2 ${showUnifiedCamera ? 'invisible' : ''}`}>
-        </div>
-        )}
+          <div className="md:hidden fixed bottom-6 left-4 right-4 z-50 flex items-center gap-3" data-menu="mobile-nav">
+            <div className="flex-1">
+              <LiquidGlassNav 
+                navItems={allNavItems} 
+                onActionClick={handleActionClick}
+                showActionMenu={showActionMenu}
+                setShowActionMenu={setShowActionMenu}
+              />
+            </div>
+            <button
+              onClick={() => setShowUnifiedCamera(true)}
+              className="rounded-full water-glass-effect text-[#26847F] flex items-center justify-center transition-all hover:scale-110 font-bold flex-shrink-0 w-[93px] h-[93px]"
+              style={{
+                boxShadow: '0 8px 24px 0 rgba(38, 132, 127, 0.3), inset -2px -2px 4px rgba(255, 255, 255, 0.8), inset 2px 2px 4px rgba(38, 132, 127, 0.1)',
+                transition: 'transform 0.9s cubic-bezier(0.25, 0.46, 0.45, 0.94)'
+              }}
+              title="Quick Actions"
+            >
+              <Plus className="w-10 h-10" strokeWidth={2.5} />
+            </button>
+          </div>
+        </>
+      )}
 
 
 
