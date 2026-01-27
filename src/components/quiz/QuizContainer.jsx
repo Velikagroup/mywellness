@@ -762,7 +762,6 @@ export default function QuizContainer({ translations, language = 'it' }) {
             </CardContent>
           </Card>
         </div>
-      </>
     );
   }
 
@@ -814,6 +813,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
             </CardContent>
           </Card>
         </div>
+      </>
     );
   }
 
