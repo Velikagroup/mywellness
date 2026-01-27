@@ -80,6 +80,7 @@ function buildDynamicSteps(translations, quizData) {
         const isLosingWeight = (quizData.target_weight || 0) < (quizData.current_weight || 0);
         if (isLosingWeight) {
           steps.push({ component: WeightLossSpeedStep, label: translations?.quiz?.quizWeightLossSpeedTitle || "Weight Loss Speed" });
+          steps.push({ component: AIComparisonStep, label: translations?.quiz?.aiComparisonTitle || "AI Comparison" });
         }
 
         steps.push(
