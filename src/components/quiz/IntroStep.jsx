@@ -39,18 +39,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           </button>
         )}
 
-      {/* Back Button - solo se viene da home sulla prima domanda */}
-      {isFromHome && (
-        <button
-          onClick={() => navigate(createPageUrl('Home'))}
-          className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
-        >
-          <ArrowLeft className="w-5 h-5" />
-          <span className="text-sm font-medium">{t?.quizBack || t?.back || 'Indietro'}</span>
-        </button>
-      )}
-
-      <div className="mb-12">
+        <div className="mb-12">
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           {t.quizSelectGender || 'Elige tu género'}
         </h2>
