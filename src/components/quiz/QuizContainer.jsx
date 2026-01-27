@@ -10,6 +10,7 @@ import IntroStep from './IntroStep';
 import BirthdateStep from './BirthdateStep';
 import HeightWeightStep from './HeightWeightStep';
 import TargetWeightStep from './TargetWeightStep';
+import WeightDifferenceStep from './WeightDifferenceStep';
 import NeckCircumferenceStep from './NeckCircumferenceStep';
 import WaistCircumferenceStep from './WaistCircumferenceStep';
 import HipCircumferenceStep from './HipCircumferenceStep';
@@ -71,6 +72,7 @@ function buildDynamicSteps(translations) {
     { component: BirthdateStep, label: translations?.quiz?.quizBirthdateTitle || "Birthdate" },
     { component: HeightWeightStep, label: translations?.quiz?.quizHeightWeightTitle || "Height & Weight" },
     { component: TargetWeightStep, label: translations?.quiz?.quizTargetWeightTitle || "Target Weight" },
+    { component: WeightDifferenceStep, label: translations?.quiz?.quizWeightDifferenceTitle || "Weight Difference" },
     { component: NeckCircumferenceStep, label: translations?.quiz?.quizNeckTitle || "Neck Circumference" },
     { component: WaistCircumferenceStep, label: translations?.quiz?.quizWaistTitle || "Waist Circumference" },
     { component: HipCircumferenceStep, label: translations?.quiz?.quizHipTitle || "Hip Circumference" },
@@ -308,6 +310,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (stepComponent === BirthdateStep) return !!quizData.birthdate;
     if (stepComponent === HeightWeightStep) return !!quizData.height && quizData.height > 0 && !!quizData.current_weight && quizData.current_weight > 0;
     if (stepComponent === TargetWeightStep) return !!quizData.target_weight && quizData.target_weight > 0;
+    if (stepComponent === WeightDifferenceStep) return true;
     if (stepComponent === NeckCircumferenceStep) return true;
     if (stepComponent === WaistCircumferenceStep) return true;
     if (stepComponent === HipCircumferenceStep) return true;
