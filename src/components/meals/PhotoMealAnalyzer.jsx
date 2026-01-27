@@ -1047,14 +1047,14 @@ Now analyze the photo with CONSISTENT, REPRODUCIBLE measurements.`;
               onClick={saveWithoutRebalance}
               variant="outline"
               disabled={isSaving}
-              className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-all"
+              className="border-2 border-gray-300 text-gray-700 hover:border-gray-400 hover:bg-gray-50 transition-all h-12 rounded-full"
             >
               {t('photoMealAnalyzer.saveWithoutRebalance')}
               </Button>
               {Math.abs(analysisResult.delta_calories) > 50 && (
                 <Button
                   onClick={saveAndRebalance}
-                  className="bg-gradient-to-r from-[#26847F] to-teal-600 hover:from-[#1f6b66] hover:to-teal-700 text-white shadow-lg hover:shadow-xl transition-all"
+                  className="bg-black hover:bg-gray-900 text-white shadow-lg hover:shadow-xl transition-all h-12 rounded-full"
                   disabled={isSaving}
                 >
                   {isSaving ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />}
