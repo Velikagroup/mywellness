@@ -7,6 +7,7 @@ function PtQuizContent() {
   const { t } = useLanguage();
   
   React.useEffect(() => {
+    document.title = 'Quiz';
     localStorage.setItem('preferred_language', 'pt');
   }, []);
   
