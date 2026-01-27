@@ -17,14 +17,15 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
   };
 
   return (
-    <div className="fixed bottom-20 left-4 right-4 z-40 md:bottom-80 md:left-1/2 md:transform md:-translate-x-1/2">
+    <>
       <style>{`
         .quiz-button-back-fixed {
-          position: absolute;
+          position: fixed;
+          bottom: 20px;
+          left: 4px;
+          right: 4px;
           width: calc(100% - 32px);
           max-width: 384px;
-          left: 0;
-          bottom: 80px;
           border-radius: 50px;
           padding: 16px 24px !important;
           height: auto !important;
@@ -41,6 +42,7 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
           cursor: pointer;
           transition: all 0.2s;
           margin: 0;
+          z-index: 40;
         }
 
         .quiz-button-back-fixed:hover {
@@ -55,6 +57,7 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
             bottom: 260px;
             left: 50%;
             transform: translateX(-50%);
+            right: auto;
           }
         }
       `}</style>
@@ -65,6 +68,7 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
         <ArrowLeft className="w-5 h-5" />
         Zurück
       </button>
+    </>
         {typeof currentStep === 'number' && totalSteps && (
           <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden">
             <div 
