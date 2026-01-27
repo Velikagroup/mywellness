@@ -68,7 +68,6 @@ export default function TargetWeightStep({ data, onDataChange, translations, cur
 
         {/* Goal Label */}
         <div className="text-center">
-          <p className="text-gray-600 text-sm mb-2">{t.quizWeightGoal || 'Perder peso'}</p>
           <p className="text-4xl font-bold text-gray-900">{selectedWeight.toFixed(1)} {isMetric ? 'kg' : 'lbs'}</p>
         </div>
 
