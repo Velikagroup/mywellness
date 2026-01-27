@@ -95,10 +95,11 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
   const PickerColumn = ({ items, selectedValue, onScroll, ref, unit, label }) => {
     const selectedIndex = items.indexOf(selectedValue);
     return (
-      <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
-        <h3 className="text-center font-semibold text-gray-900 mb-4 absolute top-0 left-0 right-0">
+      <div className="flex-1 flex flex-col items-center">
+        <h3 className="text-center font-semibold text-gray-900 mb-4">
           {label}
         </h3>
+        <div className="relative h-80 -mt-12 md:-mt-32">
         <div
           ref={ref}
           onScroll={onScroll}
@@ -139,9 +140,10 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
 
         {/* Pillolina highlight */}
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-10 border-2 border-gray-300 rounded-2xl pointer-events-none" />
-      </div>
-    );
-  };
+        </div>
+        </div>
+        );
+        };
 
   const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
   const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
