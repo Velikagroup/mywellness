@@ -101,7 +101,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
           WebkitOverflowScrolling: 'touch'
         }}
       >
-        <div className="h-20" />
+        <div className="h-40" />
         {items.map((item, idx) => (
           <div
             key={idx}
@@ -116,7 +116,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
             </span>
           </div>
         ))}
-        <div className="h-20" />
+        <div className="h-40" />
       </div>
       
       {/* Pillolina highlight - riga centrale */}
