@@ -51,7 +51,7 @@ export default function AIComparisonStep({ data, onDataChange, translations, cur
             {/* Right bar - Con MyWellness */}
             <div className="flex flex-col items-center">
               <p className="text-sm font-semibold text-gray-700 mb-4">Con MyWellness</p>
-              <div className="w-20 bg-gray-200 rounded-lg overflow-hidden h-32 relative">
+              <div className="w-20 bg-gray-200 rounded-lg overflow-hidden h-32 relative flex flex-col justify-end">
                 <motion.div
                   className="w-full bg-gray-900 rounded-lg"
                   initial={{ height: 0 }}
