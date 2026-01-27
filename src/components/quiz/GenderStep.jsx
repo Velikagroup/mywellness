@@ -8,7 +8,7 @@ export default function GenderStep({ data, onDataChange, onNext, t }) {
 
   return (
     <div className="space-y-8 max-w-md mx-auto px-4">
-      <div className="mb-8">
+      <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           {t?.('quiz.gender.title') || 'Elige tu género'}
         </h2>
