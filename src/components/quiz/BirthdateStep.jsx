@@ -94,7 +94,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   };
 
   const PickerColumn = ({ items, selectedIndex, onScroll, ref }) => (
-    <div className="flex-1 flex flex-col items-center relative h-80 -mt-32">
+    <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
       <div 
         ref={ref}
         onScroll={onScroll}
