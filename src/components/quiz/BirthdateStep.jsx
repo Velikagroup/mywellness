@@ -126,6 +126,9 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       {/* Overlay bianco sopra - blocca il testo che scorre */}
       <div className="absolute top-0 left-0 right-0 bg-white pointer-events-none" style={{ height: '140px' }} />
       
+      {/* Gradiente fade in basso */}
+      <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ height: '140px', background: 'linear-gradient(to bottom, transparent, #ffffff)' }} />
+      
       {/* Pillolina highlight - riga centrale */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-10 border-2 border-gray-300 rounded-2xl pointer-events-none" />
     </div>
