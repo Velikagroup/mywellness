@@ -17,6 +17,9 @@ import CurrentBodyTypeStep from './CurrentBodyTypeStep';
 import TargetZoneStep from './TargetZoneStep';
 import TargetBodyTypeStep from './TargetBodyTypeStep';
 import AIComparisonStep from './AIComparisonStep';
+import ObstaclesStep from './ObstaclesStep';
+import DietSpecificStep from './DietSpecificStep';
+import GoalsStep from './GoalsStep';
 import QuizStepWrapper from './QuizStepWrapper';
 
 function calculateAge(birthdate) {
