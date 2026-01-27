@@ -40,7 +40,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
         )}
 
         <div className="mb-12">
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
           {t.quizSelectGender || 'Elige tu género'}
         </h2>
         <p className="text-gray-500 text-sm">
