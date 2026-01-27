@@ -4,14 +4,10 @@ import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
 export default function BirthdateStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
-  const t = translations?.quiz || {};
-  const [selectedMonth, setSelectedMonth] = useState(8);
-  const [selectedDay, setSelectedDay] = useState(1);
-  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear() - 25);
-
-  const monthsRef = useRef(null);
-  const daysRef = useRef(null);
-  const yearsRef = useRef(null);
+    const t = translations?.quiz || {};
+    const [selectedMonth, setSelectedMonth] = useState(data.birthdate ? new Date(data.birthdate).getMonth() : 8);
+    const [selectedDay, setSelectedDay] = useState(data.birthdate ? new Date(data.birthdate).getDate() : 1);
+    const [selectedYear, setSelectedYear] = useState(data.birthdate ? new Date(data.birthdate).getFullYear() : new Date().getFullYear() - 25);
 
   const MONTHS = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
