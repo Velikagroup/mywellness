@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import QuizHeader from './QuizHeader';
+import QuizQuestionHeader from './QuizQuestionHeader';
 
 export default function BirthdateStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
@@ -131,22 +132,18 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   );
 
   return (
-    <div className="space-y-6 min-h-screen flex flex-col pt-20 w-full max-w-[416px] mx-auto px-4 md:px-0">
+    <div className="space-y-6 w-full max-w-[416px] mx-auto px-4 md:px-0 min-h-[80vh] flex flex-col justify-start pt-20">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}
         showBackButton={true}
         onBackClick={onPrev}
       />
-      
-      <div className="text-left px-4 mb-6">
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">
-          {t.quizBirthdateTitle || "¿Cuándo naciste?"}
-        </h2>
-        <p className="text-gray-500 text-sm">
-          {t.quizBirthdateSubtitle || "Esto se usará para calibrar tu plan personalizado."}
-        </p>
-      </div>
+
+      <QuizQuestionHeader 
+        title={t.quizBirthdateTitle || "¿Cuándo naciste?"}
+        subtitle={t.quizBirthdateSubtitle || "Esto se usará para calibrar tu plan personalizado."}
+      />
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         <div className="flex gap-2 w-full max-w-[416px] justify-center h-80 mx-auto mt-8">
