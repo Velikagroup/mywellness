@@ -16,16 +16,28 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
   };
 
   return (
-    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-8">
-      {/* Progress Bar */}
-      {currentStep !== undefined && totalSteps && (
-        <div className="w-full bg-gray-200 h-1 rounded-full overflow-hidden">
+    <>
+      {/* Progress Bar - Fixed at top */}
+      {typeof currentStep === 'number' && totalSteps ? (
+        <div className="fixed top-0 left-0 right-0 h-1 bg-gray-200 z-50">
           <div 
             className="h-full bg-gray-800 transition-all duration-300"
             style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
           />
         </div>
-      )}
+      ) : null}
+      
+      <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-8">
+        {/* Back Button - solo se viene da home sulla prima domanda */}
+        {isFromHome && (
+          <button
+            onClick={() => navigate(createPageUrl('Home'))}
+            className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <ArrowLeft className="w-5 h-5" />
+            <span className="text-sm font-medium">{t?.quizBack || t?.back || 'Indietro'}</span>
+          </button>
+        )}
 
       {/* Back Button - solo se viene da home sulla prima domanda */}
       {isFromHome && (
