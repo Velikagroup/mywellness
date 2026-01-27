@@ -1,9 +1,10 @@
 import React from 'react';
-import { Sparkles, ArrowLeft } from 'lucide-react';
+import { Sparkles } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { Card } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
+import QuizHeader from './QuizHeader';
 
 export default function IntroStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || translations || {};
@@ -17,25 +18,12 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
 
   return (
     <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-4">
-      {/* Back Button with Progress Bar */}
-      {isFromHome && (
-        <div className="flex items-center gap-1.5 -mb-2">
-          <button
-            onClick={() => navigate(createPageUrl('Home'))}
-            className="flex-shrink-0 text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            <ArrowLeft className="w-5 h-5" />
-          </button>
-          {typeof currentStep === 'number' && totalSteps && (
-            <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden">
-              <div 
-                className="h-full bg-gray-800 transition-all duration-300"
-                style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-              />
-            </div>
-          )}
-        </div>
-      )}
+      <QuizHeader 
+        currentStep={currentStep} 
+        totalSteps={totalSteps}
+        showBackButton={isFromHome}
+        onBackClick={() => navigate(createPageUrl('Home'))}
+      />
 
         <div className="mb-8">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
