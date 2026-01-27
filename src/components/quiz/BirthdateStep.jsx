@@ -17,14 +17,11 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
   const YEARS = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 18 - i);
 
-  useEffect(() => {
-    if (data.birthdate) {
-      const date = new Date(data.birthdate);
-      setSelectedMonth(date.getMonth());
-      setSelectedDay(date.getDate());
-      setSelectedYear(date.getFullYear());
-    }
-  }, []);
+  const updateDate = (month = selectedMonth, day = selectedDay, year = selectedYear) => {
+    const age = calculateAgeForDate(year, month, day);
+    const birthdateStr = `${year}-${String(month + 1).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    onDataChange({ birthdate: birthdateStr, age });
+  };
 
   const calculateAgeForDate = (year, month, day) => {
     const today = new Date();
