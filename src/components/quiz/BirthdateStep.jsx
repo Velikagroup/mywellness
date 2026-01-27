@@ -171,10 +171,10 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
         )}
       </div>
 
-      <div className="px-4 pb-8">
+      <div>
         <Button
           onClick={handleNext}
-          className="w-full bg-gray-900 hover:bg-gray-950 text-white py-6 rounded-full text-base font-semibold"
+          className="w-full bg-gray-900 hover:bg-gray-950 text-white py-6 text-base font-semibold quiz-button-fixed"
         >
           {t.quizContinue || 'Continuar'}
         </Button>
