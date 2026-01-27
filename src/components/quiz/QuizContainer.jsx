@@ -239,17 +239,12 @@ export default function QuizContainer({ translations, language = 'it' }) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        // 🔍 DEV MODE: Permetti preview quiz anche se completato (non reindirizzare)
-        const isDevPreview = window.location.hostname === 'localhost' || 
-                            window.location.hostname.includes('base44.dev') ||
-                            urlParams.get('preview') === 'true';
-        
         if ((isRecapMode || isRecalibrateFlow) && currentUser) {
           // ✅ Modalità ricalibrazione: pulisci localStorage e parti da zero
           localStorage.removeItem(`quizData_${language}`);
           setQuizData({ gender: currentUser.gender || '' });
           setCurrentStep(0);
-        } else if (currentUser && currentUser.quiz_completed && !isRecapMode && !isRecalibrateFlow && !isDevPreview) {
+        } else if (currentUser && currentUser.quiz_completed && !isRecapMode && !isRecalibrateFlow) {
           const hasActiveSubscription = currentUser.subscription_status === 'active' || 
                                         currentUser.subscription_status === 'trial';
           
