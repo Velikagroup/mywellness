@@ -61,19 +61,6 @@ export default function QuizStepWrapper({
         <div className="flex flex-col items-center pt-4 pb-24 px-4">
           <div className="max-w-[416px] w-full mt-0">
             {children}
-
-            {showBackButton && currentStep > 0 && (
-              <div className="mt-6">
-                <Button
-                  variant="ghost"
-                  onClick={onPrev}
-                  className="text-gray-600 hover:text-gray-900 transition-colors"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  {backButtonText}
-                </Button>
-              </div>
-            )}
           </div>
         </div>
       </div>
