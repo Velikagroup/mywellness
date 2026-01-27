@@ -310,7 +310,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
   useEffect(() => {
     localStorage.setItem(`quizData_${language}`, JSON.stringify(quizData));
-    setDynamicSteps(buildDynamicSteps(translations));
+    setDynamicSteps(buildDynamicSteps(translations, quizData));
   }, [quizData, language, translations]);
 
   const isCurrentStepValid = () => {
