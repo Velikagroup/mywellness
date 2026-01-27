@@ -32,6 +32,19 @@ export default function QuizStepWrapper({
           --brand-primary-light: #e9f6f5;
           --brand-primary-dark-text: #1a5753;
         }
+
+        .quiz-button-fixed {
+          position: fixed;
+          bottom: 0;
+          left: 0;
+          right: 0;
+          width: 100%;
+          max-width: 416px;
+          left: 50%;
+          transform: translateX(-50%);
+          border-radius: 0;
+          margin: 0;
+        }
       `}</style>
 
       <div className="min-h-screen bg-white">
