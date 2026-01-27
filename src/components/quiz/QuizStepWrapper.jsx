@@ -34,16 +34,6 @@ export default function QuizStepWrapper({
         }
       `}</style>
 
-      {/* Progress Bar */}
-      {typeof currentStep === 'number' && totalSteps ? (
-        <div className="fixed top-0 left-0 right-0 h-2 bg-gray-200 z-50">
-          <div 
-            className="h-full bg-gray-800 transition-all duration-300"
-            style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-          />
-        </div>
-      ) : null}
-
       <div className="min-h-screen bg-white">
         <div className="flex flex-col items-center pt-4 pb-8 px-4">
           <div className="max-w-2xl w-full mt-0">

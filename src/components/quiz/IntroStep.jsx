@@ -16,24 +16,26 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
   };
 
   return (
-    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-4">
+    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-8">
       {/* Back Button with Progress Bar */}
-      {isFromHome && (
-        <div className="flex items-center gap-2">
+      {(isFromHome || currentStep > 0) && (
+        <div className="flex items-center gap-3">
           <button
-            onClick={() => navigate(createPageUrl('Home'))}
-            className="flex-shrink-0 text-gray-600 hover:text-gray-900 transition-colors"
+            onClick={isFromHome ? () => navigate(createPageUrl('Home')) : undefined}
+            className="text-gray-600 hover:text-gray-900 transition-colors flex-shrink-0"
           >
             <ArrowLeft className="w-5 h-5" />
           </button>
-          {typeof currentStep === 'number' && totalSteps && (
-            <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden">
+          
+          {/* Progress Bar */}
+          {typeof currentStep === 'number' && totalSteps ? (
+            <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gray-800 transition-all duration-300"
                 style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
               />
             </div>
-          )}
+          ) : null}
         </div>
       )}
 
@@ -94,7 +96,6 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
             {t.quizContinue || 'Continuar'}
           </button>
         </div>
-      </div>
-    </div>
-  );
-}
+        </div>
+        );
+        }
