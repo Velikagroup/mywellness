@@ -643,7 +643,7 @@ export default function AdvancedProgressChart({ user, weightHistory = [], onWeig
                     <p className={`text-xs md:text-sm font-semibold ${isAligned ? 'text-green-600' : 'text-red-600'}`}>kg</p>
                   </div>
                 </div>
-                <div className="font-light text-gray-400" style={{ fontSize: '16px' }}>></div>
+                <div className="font-light text-gray-400" style={{ fontSize: '16px' }}>&gt;</div>
                 <div className="text-left">
                   <div className="flex items-baseline gap-0.5 md:gap-1.5">
                     <p className="font-bold bg-gradient-to-r from-teal-600 to-cyan-500 bg-clip-text text-transparent" style={{ fontSize: '16px' }}>{targetWeight.toFixed(1)}</p>
