@@ -118,25 +118,25 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         <div className="flex gap-2 w-full max-w-[416px] justify-center h-80 mx-auto mt-8">
-          <PickerColumn 
-            items={MONTHS} 
-            selectedIndex={selectedMonth}
-            onScroll={handleMonthScroll}
-            ref={monthsRef}
-          />
-          <PickerColumn 
-            items={DAYS} 
-            selectedIndex={selectedDay - 1}
-            onScroll={handleDayScroll}
-            ref={daysRef}
-          />
-          <PickerColumn 
-            items={YEARS} 
-            selectedIndex={YEARS.indexOf(selectedYear)}
-            onScroll={handleYearScroll}
-            ref={yearsRef}
-          />
-        </div>
+            <PickerColumn 
+              items={MONTHS} 
+              selectedIndex={selectedMonth}
+              onSelect={handleSelectMonth}
+              isMonth={true}
+            />
+            <PickerColumn 
+              items={DAYS} 
+              selectedIndex={selectedDay}
+              onSelect={handleSelectDay}
+              isDay={true}
+            />
+            <PickerColumn 
+              items={YEARS} 
+              selectedIndex={selectedYear}
+              onSelect={handleSelectYear}
+              isYear={true}
+            />
+          </div>
 
         {calculateAge() >= 18 && (
           <p className="text-sm text-gray-600 text-center mt-6">
