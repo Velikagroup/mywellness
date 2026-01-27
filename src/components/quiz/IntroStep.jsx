@@ -16,17 +16,19 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
   };
 
   return (
-    <div className="space-y-8 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-center">
+    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-8">
       {/* Progress Bar */}
-      <div className="w-full bg-gray-200 h-1 rounded-full overflow-hidden">
-        <div 
-          className="h-full bg-gray-800 transition-all duration-300"
-          style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
-        />
-      </div>
+      {currentStep !== undefined && totalSteps && (
+        <div className="w-full bg-gray-200 h-1 rounded-full overflow-hidden">
+          <div 
+            className="h-full bg-gray-800 transition-all duration-300"
+            style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+          />
+        </div>
+      )}
 
       {/* Back Button - solo se viene da home sulla prima domanda */}
-      {currentStep === 0 && isFromHome && (
+      {isFromHome && (
         <button
           onClick={() => navigate(createPageUrl('Home'))}
           className="flex items-center gap-2 text-gray-600 hover:text-gray-900 transition-colors"
