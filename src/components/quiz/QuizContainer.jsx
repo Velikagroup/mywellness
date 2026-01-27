@@ -88,7 +88,8 @@ function buildDynamicSteps(translations, quizData) {
           { component: HipCircumferenceStep, label: translations?.quiz?.quizHipTitle || "Hip Circumference" },
           { component: CurrentBodyTypeStep, label: translations?.quiz?.quizCurrentBodyTypeTitle || "Current Body Type" },
           { component: TargetZoneStep, label: translations?.quiz?.quizTargetZoneTitle || "Target Zone" },
-          { component: TargetBodyTypeStep, label: translations?.quiz?.quizTargetBodyTypeTitle || "Target Body Type" }
+          { component: TargetBodyTypeStep, label: translations?.quiz?.quizTargetBodyTypeTitle || "Target Body Type" },
+          { component: AIComparisonStep, label: translations?.quiz?.aiComparisonTitle || "AI Comparison" }
         );
 
         return steps;
