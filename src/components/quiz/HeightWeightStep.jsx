@@ -185,6 +185,18 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
           </span>
         </div>
 
+        {/* Selected Values Display */}
+        <div className="flex gap-4 w-full max-w-[416px] justify-center mb-4 mx-auto">
+          <div className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg">
+            <span className="text-lg font-semibold text-gray-900">{selectedHeight}</span>
+            <span className="text-sm font-medium text-gray-600">{isMetric ? 'cm' : 'ft'}</span>
+          </div>
+          <div className="flex-1 flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg">
+            <span className="text-lg font-semibold text-gray-900">{selectedWeight}</span>
+            <span className="text-sm font-medium text-gray-600">{isMetric ? 'kg' : 'lbs'}</span>
+          </div>
+        </div>
+
         {/* Picker Columns */}
         <div className="flex gap-4 w-full max-w-[416px] justify-center h-80 mx-auto mt-8">
           <PickerColumn
