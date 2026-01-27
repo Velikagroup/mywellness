@@ -318,9 +318,6 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (stepComponent === HeightWeightStep) return !!quizData.height && quizData.height > 0 && !!quizData.current_weight && quizData.current_weight > 0;
     if (stepComponent === TargetWeightStep) return !!quizData.target_weight && quizData.target_weight > 0;
     if (stepComponent === WeightDifferenceStep) return true;
-    if (stepComponent === NeckCircumferenceStep) return true;
-    if (stepComponent === WaistCircumferenceStep) return true;
-    if (stepComponent === HipCircumferenceStep) return true;
     if (stepComponent === CurrentBodyTypeStep) return !!quizData.current_body_fat_visual;
     if (stepComponent === TargetBodyTypeStep) return !!quizData.target_body_fat_visual;
     if (stepComponent === TargetZoneStep) return !!quizData.target_zones && quizData.target_zones.length > 0;
