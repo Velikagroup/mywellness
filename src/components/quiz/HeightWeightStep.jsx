@@ -160,7 +160,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
         subtitle={t.quizHeightWeightSubtitle || "Esto se usará para calibrar tu plan personalizado."}
       />
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 md:pt-8">
         {/* Unit Toggle */}
         <div className="flex items-center gap-3 mb-8 md:-mt-24 md:mb-12">
           <span className={`text-sm font-medium ${!isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
