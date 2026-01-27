@@ -164,13 +164,18 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
         {/* Unit Toggle */}
-        <div className="flex items-center gap-3 mb-8 md:-mt-6 md:mb-12">
-          <span className={`text-sm font-medium ${!isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
-            {t.imperial || 'Imperial'}
-          </span>
+        <div className="flex items-center gap-2 mb-8 md:-mt-6 md:mb-12 justify-center">
+          <div className="text-right">
+            <span className={`text-sm font-medium block ${!isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
+              {t.imperial || 'Imperial'}
+            </span>
+            <span className={`text-xs ${!isMetric ? 'text-gray-700' : 'text-gray-400'}`}>
+              lbs / ft'
+            </span>
+          </div>
           <button
             onClick={handleUnitToggle}
-            className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors ${
+            className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors mx-2 ${
               isMetric ? 'bg-gray-900' : 'bg-gray-900'
             }`}
           >
@@ -180,9 +185,14 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
               }`}
             />
           </button>
-          <span className={`text-sm font-medium ${isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
-            {t.metric || 'Métrico'}
-          </span>
+          <div className="text-left">
+            <span className={`text-sm font-medium block ${isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
+              {t.metric || 'Métrico'}
+            </span>
+            <span className={`text-xs ${isMetric ? 'text-gray-700' : 'text-gray-400'}`}>
+              kg / cm
+            </span>
+          </div>
         </div>
 
         {/* Picker Columns */}
