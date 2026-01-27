@@ -1,5 +1,6 @@
 import React from 'react';
 import QuizHeader from './QuizHeader';
+import QuizQuestionHeader from './QuizQuestionHeader';
 
 const MALE_BODY_TYPES = [
   { percentage: 8, label: '8%', description: 'Estremamente Definito', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/1acaba3b0_Male-body-fat-8.png' },
