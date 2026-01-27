@@ -183,6 +183,12 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
           </span>
         </div>
 
+        {/* Labels */}
+        <div className="flex gap-4 w-full max-w-[416px] justify-center mb-2">
+          <h3 className="flex-1 text-center font-semibold text-gray-900">{t.height || 'Altezza'}</h3>
+          <h3 className="flex-1 text-center font-semibold text-gray-900">{t.weight || 'Peso'}</h3>
+        </div>
+
         {/* Picker Columns */}
         <div className="flex gap-4 w-full max-w-[416px] justify-center h-80 mx-auto mt-8 md:mt-20">
           <PickerColumn
