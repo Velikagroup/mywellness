@@ -71,13 +71,21 @@ export default function WeightLossSpeedStep({ data, onDataChange, translations, 
   const weightDiff = Math.abs((data.current_weight || 81) - (data.target_weight || 70));
   const monthsToGoal = Math.ceil((weightDiff / weeklyLoss) / 4.33);
 
-  // Calcola calorie basandosi sulla velocità con range specifico
+  // Calcola calorie basandosi sulla velocità con range specifico per ogni categoria
   const isFemale = data.gender === 'female';
-  const minCalories = 2100; // Massimo per andare lento
-  const maxCalories = isFemale ? 1200 : 1400; // Minimo per andare veloce
+  const maxCaloriesFast = isFemale ? 1200 : 1400;
   
-  // Calcolo lineare: 0 (lento) = 2100 kcal, 100 (veloce) = 1400/1200 kcal
-  const dailyCalories = Math.round(minCalories - (sliderValue / 100) * (minCalories - maxCalories));
+  let dailyCalories;
+  if (sliderValue < 40) {
+    // Lento: 2100 -> 2000 kcal
+    dailyCalories = Math.round(2100 - (sliderValue / 40) * 100);
+  } else if (sliderValue < 65) {
+    // Moderato: 2000 -> 1950 kcal
+    dailyCalories = Math.round(2000 - ((sliderValue - 40) / 25) * 50);
+  } else {
+    // Veloce: 1950 -> 1400/1200 kcal
+    dailyCalories = Math.round(1950 - ((sliderValue - 65) / 35) * (1950 - maxCaloriesFast));
+  }
 
   // Get messages and icons based on speed
   const getSpeedInfo = () => {
