@@ -48,57 +48,50 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   };
 
   const WheelPicker = ({ items, selectedIndex, onSelect }) => {
+    const itemHeight = 48;
+    const visibleItems = 5;
+    const totalHeight = itemHeight * visibleItems;
+    
     return (
-      <div className="flex-1 perspective">
-        <style>{`
-          @keyframes wheelRotate {
-            0% { transform: rotateX(0deg); }
-            100% { transform: rotateX(360deg); }
-          }
-          .wheel-item {
-            transform-style: preserve-3d;
-            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-          }
-        `}</style>
-        <div className="h-56 flex items-center justify-center relative" style={{ perspective: '1000px' }}>
+      <div className="flex-1 flex flex-col items-center">
+        <div 
+          className="relative overflow-hidden"
+          style={{ height: `${totalHeight}px` }}
+        >
           <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-            <div className="text-center">
-              {items.map((item, idx) => {
-                const angle = ((idx - selectedIndex) * 30) * (Math.PI / 180);
-                const isSelected = idx === selectedIndex;
-                const distance = 80;
-                const yOffset = Math.sin(angle) * distance;
-                const zOffset = Math.cos(angle) * distance - distance;
-                const rotateAngle = (idx - selectedIndex) * 30;
-                
-                return (
-                  <button
-                    key={idx}
-                    onClick={() => onSelect(idx)}
-                    className="wheel-item absolute transition-all duration-300"
-                    style={{
-                      transform: `translateY(${yOffset}px) translateZ(${zOffset}px) rotateZ(${-rotateAngle}deg)`,
-                      opacity: isSelected ? 1 : 0.4,
-                      fontSize: isSelected ? '18px' : '14px',
-                      fontWeight: isSelected ? '600' : '400',
-                      color: isSelected ? '#111827' : '#d1d5db',
-                      pointerEvents: 'auto'
-                    }}
-                  >
-                    {item}
-                  </button>
-                );
-              })}
+            <div className="px-3 py-2 bg-gray-200 rounded-full text-gray-900 font-semibold text-base">
+              {items[selectedIndex]}
             </div>
           </div>
-          <div className="absolute top-1/2 left-0 right-0 h-12 border-t-2 border-b-2 border-gray-300 pointer-events-none transform -translate-y-1/2" />
+          
+          <div className="space-y-0 pointer-events-auto">
+            {items.map((item, idx) => (
+              <button
+                key={idx}
+                onClick={() => onSelect(idx)}
+                className="w-full transition-all"
+                style={{
+                  height: `${itemHeight}px`,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  opacity: idx === selectedIndex ? 1 : 0.3,
+                  fontSize: idx === selectedIndex ? '18px' : '14px',
+                  fontWeight: idx === selectedIndex ? '600' : '400',
+                  color: idx === selectedIndex ? '#111827' : '#d1d5db'
+                }}
+              >
+                {item}
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     );
   };
 
   return (
-    <div className="space-y-6 min-h-screen flex flex-col px-4">
+    <div className="space-y-8 max-w-md mx-auto px-4 min-h-screen flex flex-col">
       <QuizHeader 
         currentStep={currentStep} 
         totalSteps={totalSteps}
@@ -106,7 +99,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
         onBackClick={onPrev}
       />
       
-      <div className="text-center mb-8">
+      <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
           {t.quizBirthdateTitle || "¿Cuándo naciste?"}
         </h2>
@@ -115,8 +108,8 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
         </p>
       </div>
 
-      <div className="flex-1 flex flex-col items-center justify-center max-w-md mx-auto w-full">
-        <div className="flex gap-1 w-full justify-center">
+      <div className="flex-1 flex flex-col items-center justify-center">
+        <div className="flex gap-3 w-full justify-center">
           <WheelPicker 
             items={MONTHS} 
             selectedIndex={selectedMonth} 
@@ -141,10 +134,10 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
         )}
       </div>
 
-      <div className="pb-8 max-w-md mx-auto w-full">
+      <div className="pt-8">
         <Button
           onClick={handleNext}
-          className="w-full bg-gray-900 hover:bg-gray-950 text-white py-3 rounded-full text-base font-semibold"
+          className="w-full bg-gray-900 hover:bg-gray-950 text-white py-4 rounded-full text-base font-semibold"
         >
           {t.quizContinue || 'Continuar'}
         </Button>
