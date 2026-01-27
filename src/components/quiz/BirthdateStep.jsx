@@ -71,41 +71,32 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     if (onNext) onNext();
   };
 
-  const PickerColumn = ({ items, selectedIndex, onScroll, ref }) => (
-    <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
-      <div 
-        ref={ref}
-        onScroll={onScroll}
-        className="w-full h-full overflow-y-scroll scrollbar-hide snap-y snap-mandatory"
-        style={{
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch'
-        }}
-      >
+  const PickerColumn = ({ items, selectedIndex, onSelect, isMonth = false, isDay = false, isYear = false }) => (
+    <div className="flex-1 flex flex-col items-center relative h-80">
+      <div className="w-full h-full overflow-hidden relative flex flex-col">
         <div className="h-40" />
         {items.map((item, idx) => (
-          <div
+          <button
             key={idx}
-            className="h-10 flex items-center justify-center flex-shrink-0 px-2 snap-center"
-          >
-            <span className={`text-center whitespace-nowrap transition-all font-semibold ${
-              idx === selectedIndex
+            onClick={() => onSelect(isMonth ? idx : isDay ? item : item)}
+            className={`h-10 flex items-center justify-center flex-shrink-0 px-2 cursor-pointer transition-all font-semibold ${
+              idx === selectedIndex || (isDay && item === selectedIndex) || (isYear && item === selectedIndex)
                 ? 'text-gray-900 text-base'
                 : 'text-gray-400 text-sm'
-            }`}>
-              {item}
-            </span>
-          </div>
+            }`}
+          >
+            {item}
+          </button>
         ))}
         <div className="h-40" />
       </div>
-      
-      {/* Overlay bianco sopra - blocca il testo che scorre */}
+
+      {/* Overlay bianco sopra */}
       <div className="absolute top-0 left-0 right-0 bg-white pointer-events-none" style={{ height: '140px' }} />
-      
+
       {/* Gradiente fade in basso */}
       <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ height: '140px', background: 'linear-gradient(to bottom, transparent, #ffffff)' }} />
-      
+
       {/* Pillolina highlight - riga centrale */}
       <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-10 border-2 border-gray-300 rounded-2xl pointer-events-none" />
     </div>
