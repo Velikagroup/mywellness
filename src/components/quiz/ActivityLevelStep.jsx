@@ -1,4 +1,5 @@
 import React from 'react';
+import QuizQuestionHeader from './QuizQuestionHeader';
 
 const ACTIVITY_LEVELS = [
   {
@@ -41,13 +42,15 @@ export default function ActivityLevelStep({ data, onDataChange, nextStep }) {
 
   return (
     <div className="space-y-6">
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center mx-auto mb-4">
+      <div className="flex justify-center mb-4">
+        <div className="w-16 h-16 bg-[var(--brand-primary)] rounded-lg flex items-center justify-center">
           <span className="text-2xl">🏃</span>
         </div>
-        <h2 className="text-2xl font-bold text-gray-900 mb-2">Qual è il tuo livello di attività quotidiana?</h2>
-        <p className="text-gray-600">Questo ci aiuta a calcolare il tuo fabbisogno calorico giornaliero</p>
       </div>
+      <QuizQuestionHeader 
+        title="Qual è il tuo livello di attività quotidiana?"
+        subtitle="Questo ci aiuta a calcolare il tuo fabbisogno calorico giornaliero"
+      />
 
       <div className="space-y-4 max-w-2xl mx-auto">
         {ACTIVITY_LEVELS.map((level) => (
