@@ -841,7 +841,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
         isValid={isCurrentStepValid()}
         nextButtonText={t?.common?.next || 'Next'}
         backButtonText={t?.common?.back || 'Back'}
-        showBackButton={currentStep > 0}
+        showBackButton={currentStep > 1}
         showNextButton={true}
         translations={translations}
       >

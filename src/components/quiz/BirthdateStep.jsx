@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
 import QuizHeader from './QuizHeader';
 
-export default function BirthdateStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
+export default function BirthdateStep({ data, onDataChange, translations, currentStep, totalSteps, onNext }) {
   const t = translations?.quiz || {};
   const [selectedMonth, setSelectedMonth] = useState(8);
   const [selectedDay, setSelectedDay] = useState(1);
