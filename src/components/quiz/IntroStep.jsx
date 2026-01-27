@@ -5,6 +5,7 @@ import { Card } from "@/components/ui/card";
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import QuizHeader from './QuizHeader';
+import QuizQuestionHeader from './QuizQuestionHeader';
 
 export default function IntroStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || translations || {};
@@ -25,14 +26,10 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
         onBackClick={() => navigate(createPageUrl('Home'))}
       />
 
-        <div className="mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">
-            {t.quizSelectGender || 'Elige tu género'}
-          </h2>
-          <p className="text-gray-500 text-sm">
-            {t.quizContinueSubtitle || 'Esto se usará para calibrar tu plan personalizado.'}
-          </p>
-        </div>
+        <QuizQuestionHeader 
+          title={t.quizSelectGender || 'Elige tu género'}
+          subtitle={t.quizContinueSubtitle || 'Esto se usará para calibrar tu plan personalizado.'}
+        />
 
         <div className="space-y-3">
           <button
