@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Input } from "@/components/ui/input";
 import { Ruler } from "lucide-react";
 import QuizHeader from './QuizHeader';
+import QuizQuestionHeader from './QuizQuestionHeader';
 
 export default function HeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
@@ -67,13 +68,15 @@ export default function HeightStep({ data, onDataChange, translations, currentSt
         showBackButton={true}
         onBackClick={onPrev}
       />
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
+      <div className="flex justify-center mb-4">
+        <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center shadow-lg">
           <Ruler className="w-8 h-8 text-white" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizHeightTitle || "Qual è la tua altezza?"}</h2>
-        <p className="text-gray-600">{t.quizHeightSubtitle || "Necessaria per calcolare il tuo BMI e il fabbisogno calorico"}</p>
       </div>
+      <QuizQuestionHeader 
+        title={t.quizHeightTitle || "Qual è la tua altezza?"}
+        subtitle={t.quizHeightSubtitle || "Necessaria per calcolare il tuo BMI e il fabbisogno calorico"}
+      />
 
       <div className="max-w-md mx-auto">
         {/* Unit Toggle */}
