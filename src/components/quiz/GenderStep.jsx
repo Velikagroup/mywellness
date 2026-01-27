@@ -10,10 +10,10 @@ export default function GenderStep({ data, onDataChange, onNext, t }) {
     <div className="space-y-8 max-w-md mx-auto px-4">
       <div>
         <h2 className="text-2xl font-bold text-gray-900 mb-2">
-          {t?.('quiz.gender.title') || 'Elige tu género'}
+          {t?.('quiz.quizSelectGender') || 'Seleziona il tuo sesso:'}
         </h2>
         <p className="text-gray-500 text-sm">
-          {t?.('quiz.gender.subtitle') || 'Esto se usará para calibrar tu plan personalizado.'}
+          {t?.('quiz.quizContinueSubtitle') || 'Questo verrà utilizzato per calibrare il tuo piano personalizzato.'}
         </p>
       </div>
 
@@ -26,7 +26,7 @@ export default function GenderStep({ data, onDataChange, onNext, t }) {
               : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
           }`}
         >
-          {t?.('quiz.gender.male') || 'Hombre'}
+          {t?.('quiz.quizMale') || 'Uomo'}
         </button>
 
         <button
@@ -37,7 +37,7 @@ export default function GenderStep({ data, onDataChange, onNext, t }) {
               : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
           }`}
         >
-          {t?.('quiz.gender.female') || 'Mujer'}
+          {t?.('quiz.quizFemale') || 'Donna'}
         </button>
 
         <button
@@ -48,7 +48,7 @@ export default function GenderStep({ data, onDataChange, onNext, t }) {
               : 'bg-gray-100 text-gray-900 hover:bg-gray-200'
           }`}
         >
-          {t?.('quiz.gender.other') || 'Otro'}
+          {t?.('quiz.quizOther') || 'Altro'}
         </button>
       </div>
 
@@ -62,7 +62,7 @@ export default function GenderStep({ data, onDataChange, onNext, t }) {
               : 'bg-gray-300 text-gray-500 cursor-not-allowed'
           }`}
         >
-          {t?.('quiz.continue') || 'Continuar'}
+          {t?.('quiz.quizContinue') || 'Continua'}
         </button>
       </div>
     </div>
