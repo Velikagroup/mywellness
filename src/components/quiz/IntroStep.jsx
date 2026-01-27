@@ -16,10 +16,10 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
   };
 
   return (
-    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-8">
-      {/* Back Button with Progress Bar */}
+    <>
+      {/* Fixed Header with Back Button + Progress Bar */}
       {(isFromHome || currentStep > 0) && (
-        <div className="flex items-center gap-3">
+        <div className="fixed top-0 left-0 right-0 flex items-center gap-2 px-4 py-4 bg-white z-50 border-b border-gray-100 max-w-md mx-auto">
           <button
             onClick={isFromHome ? () => navigate(createPageUrl('Home')) : undefined}
             className="text-gray-600 hover:text-gray-900 transition-colors flex-shrink-0"
@@ -29,7 +29,7 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           
           {/* Progress Bar */}
           {typeof currentStep === 'number' && totalSteps ? (
-            <div className="flex-1 h-1 bg-gray-200 rounded-full overflow-hidden">
+            <div className="flex-1 h-0.5 bg-gray-200 rounded-full overflow-hidden">
               <div 
                 className="h-full bg-gray-800 transition-all duration-300"
                 style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
@@ -38,6 +38,8 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           ) : null}
         </div>
       )}
+
+    <div className="space-y-6 max-w-md mx-auto px-4 min-h-[80vh] flex flex-col justify-start pt-20">
 
         <div className="mb-12">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">
@@ -97,5 +99,6 @@ export default function IntroStep({ data, onDataChange, onNext, translations, cu
           </button>
         </div>
         </div>
-        );
-        }
+    </>
+  );
+}
