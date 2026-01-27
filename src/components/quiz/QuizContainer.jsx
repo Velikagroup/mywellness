@@ -85,12 +85,15 @@ function buildDynamicSteps(translations, quizData) {
         }
 
         steps.push(
-          { component: CurrentBodyTypeStep, label: translations?.quiz?.quizCurrentBodyTypeTitle || "Current Body Type" },
-          { component: TargetZoneStep, label: translations?.quiz?.quizTargetZoneTitle || "Target Zone" },
-          { component: TargetBodyTypeStep, label: translations?.quiz?.quizTargetBodyTypeTitle || "Target Body Type" }
-        );
+                  { component: CurrentBodyTypeStep, label: translations?.quiz?.quizCurrentBodyTypeTitle || "Current Body Type" },
+                  { component: TargetZoneStep, label: translations?.quiz?.quizTargetZoneTitle || "Target Zone" },
+                  { component: TargetBodyTypeStep, label: translations?.quiz?.quizTargetBodyTypeTitle || "Target Body Type" },
+                  { component: ObstaclesStep, label: translations?.quiz?.quizObstaclesTitle || "Obstacles" },
+                  { component: DietSpecificStep, label: translations?.quiz?.quizDietSpecificTitle || "Diet" },
+                  { component: GoalsStep, label: translations?.quiz?.quizGoalsTitle || "Goals" }
+                );
 
-        return steps;
+                return steps;
 }
 
 export default function QuizContainer({ translations, language = 'it' }) {
