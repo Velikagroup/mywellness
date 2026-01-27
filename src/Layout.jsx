@@ -92,6 +92,12 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
   const pathsWithoutLayout = [
     createPageUrl('Quiz'),
+    '/itquiz',
+    '/enquiz',
+    '/esquiz',
+    '/ptquiz',
+    '/dequiz',
+    '/frquiz',
     createPageUrl('itquiz'),
     createPageUrl('enquiz'),
     createPageUrl('esquiz'),
