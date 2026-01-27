@@ -1,138 +1,119 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { Input } from "@/components/ui/input";
-import { Target } from "lucide-react";
+import React, { useState, useEffect } from 'react';
 import QuizHeader from './QuizHeader';
+import QuizQuestionHeader from './QuizQuestionHeader';
+import { Button } from "@/components/ui/button";
 
-export default function TargetWeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev }) {
+export default function TargetWeightStep({ data, onDataChange, translations, currentStep, totalSteps, onPrev, onNext }) {
   const t = translations?.quiz || {};
-  const [unit, setUnit] = useState('kg');
-  const [displayValue, setDisplayValue] = useState('');
-  const isTypingRef = useRef(false);
+  const [isMetric, setIsMetric] = useState(true);
+  const [selectedWeight, setSelectedWeight] = useState(data.target_weight || 75);
 
-  useEffect(() => {
-    // Non aggiornare se l'utente sta digitando
-    if (isTypingRef.current) return;
-    
-    if (data.target_weight) {
-      if (unit === 'kg') {
-        setDisplayValue(data.target_weight.toString());
-      } else {
-        setDisplayValue((data.target_weight * 2.20462).toFixed(1));
-      }
-    } else {
-      setDisplayValue('');
-    }
-  }, [unit]);
+  const MIN_WEIGHT = isMetric ? 40 : 88;
+  const MAX_WEIGHT = isMetric ? 150 : 330;
 
-  const handleChange = (e) => {
-    let value = e.target.value;
-    
-    // Sostituisci virgola con punto per gestire input europeo
-    value = value.replace(',', '.');
-    
-    isTypingRef.current = true;
-    setDisplayValue(value);
-    
-    const numValue = parseFloat(value);
-    if (isNaN(numValue) || value === '') {
-      onDataChange({ target_weight: '' });
-      return;
-    }
-    
-    if (unit === 'kg') {
-      onDataChange({ target_weight: numValue });
-    } else {
-      const kg = numValue / 2.20462;
-      onDataChange({ target_weight: parseFloat(kg.toFixed(1)) });
-    }
+  const handleSliderChange = (e) => {
+    const newWeight = parseInt(e.target.value);
+    setSelectedWeight(newWeight);
+    onDataChange({ target_weight: newWeight });
   };
 
-  const handleBlur = () => {
-    isTypingRef.current = false;
+  const handleUnitToggle = () => {
+    setIsMetric(!isMetric);
   };
 
-  const handleUnitChange = (newUnit) => {
-    isTypingRef.current = false;
-    
-    if (data.target_weight) {
-      if (newUnit === 'kg') {
-        setDisplayValue(data.target_weight.toString());
-      } else {
-        setDisplayValue((data.target_weight * 2.20462).toFixed(1));
-      }
-    }
-    setUnit(newUnit);
+  const handleNext = () => {
+    onDataChange({ target_weight: selectedWeight });
+    if (onNext) onNext();
   };
+
+  const sliderPercentage = ((selectedWeight - MIN_WEIGHT) / (MAX_WEIGHT - MIN_WEIGHT)) * 100;
 
   return (
-    <div className="space-y-6 pt-20 w-full max-w-[416px] mx-auto px-4 md:px-0">
-      <QuizHeader 
-        currentStep={currentStep} 
+    <div className="space-y-6 w-full max-w-[416px] mx-auto px-4 md:px-0 min-h-[80vh] flex flex-col justify-start pt-20">
+      <QuizHeader
+        currentStep={currentStep}
         totalSteps={totalSteps}
         showBackButton={true}
         onBackClick={onPrev}
       />
-      <div className="text-center mb-8">
-        <div className="w-16 h-16 bg-gradient-to-br from-[var(--brand-primary)] to-teal-600 rounded-2xl flex items-center justify-center mx-auto mb-4 shadow-lg">
-          <Target className="w-8 h-8 text-white" />
-        </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-2">{t.quizTargetWeightTitle || "Qual è il tuo peso obiettivo?"}</h2>
-        <p className="text-gray-600">{t.quizTargetWeightSubtitle || "Il peso che desideri raggiungere"}</p>
-      </div>
 
-      <div className="max-w-md mx-auto">
+      <QuizQuestionHeader
+        title={t.quizTargetWeightTitle || "¿Cuál es tu peso deseado?"}
+        subtitle={t.quizTargetWeightSubtitle || ""}
+      />
+
+      <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8 space-y-8">
         {/* Unit Toggle */}
-        <div className="flex justify-center mb-6">
-          <div className="inline-flex bg-gray-100 rounded-full p-1 shadow-inner">
-            <button
-              onClick={() => handleUnitChange('kg')}
-              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                unit === 'kg' 
-                  ? 'bg-white text-[var(--brand-primary)] shadow-md' 
-                  : 'text-gray-500 hover:text-gray-700'
+        <div className="flex items-center gap-3">
+          <span className={`text-sm font-medium ${!isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
+            {t.imperial || 'Imperial'}
+          </span>
+          <button
+            onClick={handleUnitToggle}
+            className={`relative inline-flex h-7 w-14 items-center rounded-full transition-colors ${
+              isMetric ? 'bg-gray-900' : 'bg-gray-900'
+            }`}
+          >
+            <span
+              className={`inline-block h-6 w-6 transform rounded-full bg-white transition-transform ${
+                isMetric ? 'translate-x-7' : 'translate-x-0.5'
               }`}
-            >
-              {t.unitKg || "Chilogrammi"}
-            </button>
-            <button
-              onClick={() => handleUnitChange('lbs')}
-              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all duration-300 ${
-                unit === 'lbs' 
-                  ? 'bg-white text-[var(--brand-primary)] shadow-md' 
-                  : 'text-gray-500 hover:text-gray-700'
-              }`}
-            >
-              {t.unitLbs || "Libbre"}
-            </button>
-          </div>
-        </div>
-
-        <div className="relative">
-          <Input
-            type="text"
-            placeholder={unit === 'kg' ? "65.0" : "143.0"}
-            value={displayValue}
-            onChange={handleChange}
-            onBlur={handleBlur}
-            className="text-center text-2xl h-16 border-2 border-gray-200 focus:border-[var(--brand-primary)] pr-12 shadow-sm"
-            inputMode="decimal"
-          />
-          <span className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-500 font-medium">
-            {unit}
+            />
+          </button>
+          <span className={`text-sm font-medium ${isMetric ? 'text-gray-900' : 'text-gray-500'}`}>
+            {t.metric || 'Métrico'}
           </span>
         </div>
-        <p className="text-sm text-gray-500 mt-2 text-center">
-          {unit === 'kg' ? (t.quizTargetWeightHintKg || 'Inserisci il peso obiettivo in chilogrammi') : (t.quizTargetWeightHintLbs || 'Inserisci il peso obiettivo in libbre')}
-        </p>
+
+        {/* Goal Label */}
+        <div className="text-center">
+          <p className="text-gray-600 text-sm mb-2">{t.quizWeightGoal || 'Perder peso'}</p>
+          <p className="text-4xl font-bold text-gray-900">{selectedWeight.toFixed(1)} {isMetric ? 'kg' : 'lbs'}</p>
+        </div>
+
+        {/* Ruler Slider */}
+        <div className="w-full max-w-[320px] relative py-8">
+          <input
+            type="range"
+            min={MIN_WEIGHT}
+            max={MAX_WEIGHT}
+            value={selectedWeight}
+            onChange={handleSliderChange}
+            className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer accent-gray-400"
+            style={{
+              background: `linear-gradient(to right, #e5e7eb 0%, #e5e7eb ${sliderPercentage}%, #d1d5db ${sliderPercentage}%, #d1d5db 100%)`
+            }}
+          />
+          
+          {/* Ruler marks */}
+          <div className="absolute top-12 left-0 right-0 h-16 flex items-start justify-between px-0">
+            {Array.from({ length: 21 }).map((_, i) => (
+              <div key={i} className="flex flex-col items-center">
+                <div className={`bg-gray-400 ${i % 5 === 0 ? 'h-4 w-1' : 'h-2 w-0.5'}`} />
+              </div>
+            ))}
+          </div>
+
+          {/* Highlighted ruler section */}
+          <div 
+            className="absolute top-12 h-16 bg-gray-300 bg-opacity-40 pointer-events-none"
+            style={{
+              left: `${sliderPercentage - 15}%`,
+              width: '30%',
+              borderRadius: '4px'
+            }}
+          />
+        </div>
       </div>
 
-      <button
-        onClick={() => data.target_weight && data.target_weight > 0 && onNext?.()}
-        disabled={!data.target_weight || data.target_weight <= 0}
-        className="w-full py-4 text-base font-medium transition-all quiz-button-fixed bg-black text-white hover:bg-gray-800 disabled:bg-gray-300 disabled:text-gray-500 disabled:cursor-not-allowed"
-      >
-        {t.quizContinue || 'Continua'}
-      </button>
+      <div>
+        <Button
+          onClick={handleNext}
+          className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold quiz-button-fixed"
+        >
+          {t.quizContinue || 'Continuar'}
+        </Button>
+      </div>
     </div>
   );
 }
