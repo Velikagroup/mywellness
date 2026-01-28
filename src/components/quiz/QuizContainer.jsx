@@ -731,6 +731,22 @@ export default function QuizContainer({ translations, language = 'it' }) {
             </p>
           </div>
 
+          {/* Body Fat Box */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 relative overflow-hidden text-center">
+            <div className="relative z-10">
+              <p className="text-lg font-bold text-gray-900 mb-2">
+                {t?.quiz?.quizDiscoverBodyFat || 'Scopri la tua massa grassa'}
+              </p>
+              <div className="text-4xl font-black text-gray-400 blur-xl">
+                24.5%
+              </div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
+                <EyeOff className="w-6 h-6 text-gray-600" />
+                <p className="text-sm font-medium text-gray-600">{t?.quiz?.quizLoginToSee || 'Accedi per vedere'}</p>
+              </div>
+            </div>
+          </div>
+
           {/* Personalized Type Section */}
           <div className="space-y-3">
             <div className="text-center">
@@ -800,32 +816,16 @@ export default function QuizContainer({ translations, language = 'it' }) {
                 </div>
               </div>
             </div>
-            </div>
+          </div>
+        </div>
 
-            {/* Body Fat Box */}
-            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 relative overflow-hidden text-center">
-            <div className="relative z-10">
-              <p className="text-lg font-bold text-gray-900 mb-2">
-                {t?.quiz?.quizDiscoverBodyFat || 'Scopri la tua massa grassa'}
-              </p>
-              <div className="text-4xl font-black text-gray-400 blur-xl">
-                24.5%
-              </div>
-              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
-                <EyeOff className="w-6 h-6 text-gray-600" />
-                <p className="text-sm font-medium text-gray-600">{t?.quiz?.quizLoginToSee || 'Accedi per vedere'}</p>
-              </div>
-            </div>
-            </div>
-            </div>
-
-            {/* Fixed CTA Button */}
-            <div className="fixed bottom-5 left-0 right-0 px-4 z-50">
-            <Button
+        {/* Fixed CTA Button - Mobile: 20px, Desktop: 200px */}
+        <div className="fixed bottom-5 md:bottom-[200px] left-1/2 transform -translate-x-1/2 px-4 z-50 w-full max-w-md">
+          <Button
             onClick={handleRevealBodyFat}
             disabled={isSaving}
-            className="w-full max-w-md mx-auto h-14 bg-gray-900 hover:bg-gray-950 text-white text-base font-bold rounded-full"
-            >
+            className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white text-base font-bold rounded-full"
+          >
             {isSaving ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
@@ -834,10 +834,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
             ) : (
               t?.quiz?.quizDiscoverNow || 'Scoprilo subito'
             )}
-            </Button>
-            </div>
-            </div>
-            );
+          </Button>
+        </div>
+      </div>
+    );
   }
 
   if (isCalculating) {
