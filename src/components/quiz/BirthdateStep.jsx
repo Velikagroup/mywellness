@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
+import { Plus, Minus } from 'lucide-react';
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
@@ -9,17 +10,10 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   const [selectedDay, setSelectedDay] = useState(1);
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear() - 25);
 
-  const monthsRef = useRef(null);
-  const daysRef = useRef(null);
-  const yearsRef = useRef(null);
-
   const MONTHS = [
     'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
     'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
   ];
-
-  const DAYS = Array.from({ length: 31 }, (_, i) => i + 1);
-  const YEARS = Array.from({ length: 100 }, (_, i) => new Date().getFullYear() - 18 - i);
 
   useEffect(() => {
     if (data.birthdate) {
@@ -30,28 +24,31 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     }
   }, []);
 
-  // Setup iniziale dello scroll per posizionare i valori al centro
-  useEffect(() => {
-    setTimeout(() => {
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
+  const updateMonth = (delta) => {
+    const newMonth = Math.max(0, Math.min(selectedMonth + delta, MONTHS.length - 1));
+    setSelectedMonth(newMonth);
+    const age = calculateAgeForDate(selectedYear, newMonth, selectedDay);
+    const birthdateStr = `${selectedYear}-${String(newMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+    onDataChange({ birthdate: birthdateStr, age });
+  };
 
-      if (monthsRef.current) {
-        const scroll = topPadding + selectedMonth * itemHeight - containerHeight / 2;
-        monthsRef.current.scrollTop = scroll;
-      }
-      if (daysRef.current) {
-        const scroll = topPadding + (selectedDay - 1) * itemHeight - containerHeight / 2;
-        daysRef.current.scrollTop = scroll;
-      }
-      if (yearsRef.current) {
-        const yearIndex = YEARS.indexOf(selectedYear);
-        const scroll = topPadding + yearIndex * itemHeight - containerHeight / 2;
-        yearsRef.current.scrollTop = scroll;
-      }
-    }, 0);
-  }, []);
+  const updateDay = (delta) => {
+    const newDay = Math.max(1, Math.min(selectedDay + delta, 31));
+    setSelectedDay(newDay);
+    const age = calculateAgeForDate(selectedYear, selectedMonth, newDay);
+    const birthdateStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
+    onDataChange({ birthdate: birthdateStr, age });
+  };
+
+  const updateYear = (delta) => {
+    const minYear = new Date().getFullYear() - 100;
+    const maxYear = new Date().getFullYear() - 18;
+    const newYear = Math.max(minYear, Math.min(selectedYear + delta, maxYear));
+    setSelectedYear(newYear);
+    const age = calculateAgeForDate(newYear, selectedMonth, selectedDay);
+    const birthdateStr = `${newYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+    onDataChange({ birthdate: birthdateStr, age });
+  };
 
   const calculateAgeForDate = (year, month, day) => {
     const today = new Date();
@@ -64,62 +61,7 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     return age;
   };
 
-  const handleMonthScroll = () => {
-    if (monthsRef.current) {
-      const container = monthsRef.current;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = container.scrollTop + containerHeight / 2;
-      const index = Math.round((centerY - topPadding) / itemHeight);
-      const newMonth = Math.max(0, Math.min(index, MONTHS.length - 1));
-      
-      if (newMonth !== selectedMonth) {
-        setSelectedMonth(newMonth);
-        const age = calculateAgeForDate(selectedYear, newMonth, selectedDay);
-        const birthdateStr = `${selectedYear}-${String(newMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-        onDataChange({ birthdate: birthdateStr, age });
-      }
-    }
-  };
 
-  const handleDayScroll = () => {
-    if (daysRef.current) {
-      const container = daysRef.current;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = container.scrollTop + containerHeight / 2;
-      const index = Math.round((centerY - topPadding) / itemHeight);
-      const newDay = Math.max(1, Math.min(index + 1, 31));
-      
-      if (newDay !== selectedDay) {
-        setSelectedDay(newDay);
-        const age = calculateAgeForDate(selectedYear, selectedMonth, newDay);
-        const birthdateStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
-        onDataChange({ birthdate: birthdateStr, age });
-      }
-    }
-  };
-
-  const handleYearScroll = () => {
-    if (yearsRef.current) {
-      const container = yearsRef.current;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = container.scrollTop + containerHeight / 2;
-      const index = Math.round((centerY - topPadding) / itemHeight);
-      const newYear = YEARS[Math.max(0, Math.min(index, YEARS.length - 1))];
-      
-      if (newYear !== selectedYear) {
-        setSelectedYear(newYear);
-        const age = calculateAgeForDate(newYear, selectedMonth, selectedDay);
-        const birthdateStr = `${newYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-        onDataChange({ birthdate: birthdateStr, age });
-      }
-    }
-  };
 
   const calculateAge = () => {
     const today = new Date();
@@ -143,43 +85,26 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     if (onNext) onNext();
   };
 
-  const PickerColumn = ({ items, selectedIndex, onScroll, ref }) => (
-    <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
-      <div 
-        ref={ref}
-        onScroll={onScroll}
-        className="w-full h-full overflow-y-scroll scrollbar-hide snap-y snap-mandatory"
-        style={{
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch'
-        }}
+  const Stepper = ({ label, value, onIncrement, onDecrement, isMonth = false }) => (
+    <div className="flex flex-col items-center gap-3">
+      <span className="text-xs text-gray-500 uppercase font-semibold">{label}</span>
+      <button
+        onClick={onIncrement}
+        className="p-2 hover:bg-gray-100 rounded-lg transition"
       >
-        <div className="h-40" />
-        {items.map((item, idx) => (
-          <div
-            key={idx}
-            className="h-10 flex items-center justify-center flex-shrink-0 px-2 snap-center"
-          >
-            <span className={`text-center whitespace-nowrap transition-all font-semibold ${
-              idx === selectedIndex
-                ? 'text-gray-900 text-base'
-                : 'text-gray-400 text-sm'
-            }`}>
-              {item}
-            </span>
-          </div>
-        ))}
-        <div className="h-40" />
+        <Plus className="w-5 h-5 text-gray-600" />
+      </button>
+      <div className="px-6 py-3 bg-gray-50 rounded-full border-2 border-gray-300 min-w-[100px] text-center">
+        <span className="text-lg font-semibold text-gray-900">
+          {isMonth ? MONTHS[value] : value}
+        </span>
       </div>
-      
-      {/* Overlay bianco sopra - blocca il testo che scorre */}
-      <div className="absolute top-0 left-0 right-0 bg-white pointer-events-none" style={{ height: '140px' }} />
-      
-      {/* Gradiente fade in basso */}
-      <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ height: '140px', background: 'linear-gradient(to bottom, transparent, #ffffff)' }} />
-      
-      {/* Pillolina highlight - riga centrale */}
-      <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-10 border-2 border-gray-300 rounded-2xl pointer-events-none" />
+      <button
+        onClick={onDecrement}
+        className="p-2 hover:bg-gray-100 rounded-lg transition"
+      >
+        <Minus className="w-5 h-5 text-gray-600" />
+      </button>
     </div>
   );
 
@@ -198,24 +123,25 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       />
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
-         <div className="flex gap-2 w-full max-w-[416px] justify-center h-80 mx-auto mt-8">
-           <PickerColumn 
-             items={MONTHS} 
-             selectedIndex={selectedMonth}
-             onScroll={handleMonthScroll}
-             ref={monthsRef}
+         <div className="flex gap-6 w-full max-w-[416px] justify-center mx-auto mt-12">
+           <Stepper
+             label={t.month || 'Mes'}
+             value={selectedMonth}
+             onIncrement={() => updateMonth(1)}
+             onDecrement={() => updateMonth(-1)}
+             isMonth={true}
            />
-           <PickerColumn 
-             items={DAYS} 
-             selectedIndex={selectedDay - 1}
-             onScroll={handleDayScroll}
-             ref={daysRef}
+           <Stepper
+             label={t.day || 'Día'}
+             value={selectedDay}
+             onIncrement={() => updateDay(1)}
+             onDecrement={() => updateDay(-1)}
            />
-           <PickerColumn 
-             items={YEARS} 
-             selectedIndex={YEARS.indexOf(selectedYear)}
-             onScroll={handleYearScroll}
-             ref={yearsRef}
+           <Stepper
+             label={t.year || 'Año'}
+             value={selectedYear}
+             onIncrement={() => updateYear(1)}
+             onDecrement={() => updateYear(-1)}
            />
          </div>
 
