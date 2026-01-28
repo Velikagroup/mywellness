@@ -112,43 +112,43 @@ export default function PostQuizSubscription() {
   const features = [
     {
       icon: '🧬',
-      title: t?.subscription?.feature1Title || 'Età biologica del tuo corpo',
-      subtitle: t?.subscription?.feature1Subtitle || 'Scopri la tua vera età biologica'
+      title: t('subscription.feature1Title'),
+      subtitle: t('subscription.feature1Subtitle')
     },
     {
       icon: '📊',
-      title: t?.subscription?.feature2Title || 'Percentuale di massa grassa',
-      subtitle: t?.subscription?.feature2Subtitle || 'Monitoraggio preciso della composizione corporea'
+      title: t('subscription.feature2Title'),
+      subtitle: t('subscription.feature2Subtitle')
     },
     {
       icon: '💪',
-      title: t?.subscription?.feature3Title || 'Scoperta del tuo somatotipo',
-      subtitle: t?.subscription?.feature3Subtitle || 'Piano personalizzato sul tuo corpo'
+      title: t('subscription.feature3Title'),
+      subtitle: t('subscription.feature3Subtitle')
     },
     {
       icon: '📸',
-      title: t?.subscription?.feature4Title || 'Scan cibi ed etichette',
-      subtitle: t?.subscription?.feature4Subtitle || 'Traccia calorie con una foto'
+      title: t('subscription.feature4Title'),
+      subtitle: t('subscription.feature4Subtitle')
     }
   ];
 
   const timelineSteps = [
     {
       icon: Lock,
-      title: t?.subscription?.timelineToday || 'Today',
-      subtitle: t?.subscription?.timelineTodayText || "Unlock all the app's features like AI calorie scanning and more.",
+      title: t('subscription.timelineToday'),
+      subtitle: t('subscription.timelineTodayText'),
       color: 'text-orange-500'
     },
     {
       icon: Bell,
-      title: t?.subscription?.timeline2Days || 'In 2 Days - Reminder',
-      subtitle: t?.subscription?.timeline2DaysText || "We'll send you a reminder that your trial is ending soon.",
+      title: t('subscription.timeline2Days'),
+      subtitle: t('subscription.timeline2DaysText'),
       color: 'text-orange-500'
     },
     {
       icon: Crown,
-      title: t?.subscription?.timeline3Days || 'In 3 Days - Billing Starts',
-      subtitle: t?.subscription?.timeline3DaysText || "You'll be charged on {date} unless you cancel anytime before.",
+      title: t('subscription.timeline3Days'),
+      subtitle: t('subscription.timeline3DaysText', { date: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toLocaleDateString() }),
       color: 'text-gray-900'
     }
   ];
@@ -160,13 +160,13 @@ export default function PostQuizSubscription() {
           onClick={() => setShowReminderScreen(false)}
           className="self-start text-gray-600 mb-8"
         >
-          ← {t?.subscription?.back || 'Back'}
+          ← {t('subscription.back')}
         </button>
 
         <div className="flex-1 flex flex-col items-center justify-between max-w-md mx-auto w-full">
           <div className="space-y-8 text-center w-full">
             <h1 className="text-3xl font-bold text-gray-900 px-4">
-              {t?.subscription?.reminderTitle || "We'll send you a reminder before your free trial ends"}
+              {t('subscription.reminderTitle')}
             </h1>
 
             <div className="relative py-12">
@@ -190,10 +190,10 @@ export default function PostQuizSubscription() {
               disabled={isLoading}
               className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
             >
-              {isLoading ? t?.common?.loading : (t?.subscription?.continueForFree || 'Continue for FREE')}
+              {isLoading ? t('common.loading') : t('subscription.continueForFree')}
             </Button>
             <p className="text-center text-sm text-gray-500">
-              {t?.subscription?.yearlyPrice || '3 days free, then 49,99 € per year (4,16 €/month)'}
+              {t('subscription.yearlyPrice')}
             </p>
           </div>
         </div>
@@ -207,15 +207,15 @@ export default function PostQuizSubscription() {
         onClick={() => navigate(createPageUrl('Dashboard'))}
         className="self-start text-gray-600 mb-8"
       >
-        ← {t?.subscription?.back || 'Back'}
+        ← {t('subscription.back')}
       </button>
 
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full space-y-8">
         <div className="space-y-4 text-center">
           <h1 className="text-3xl font-bold text-gray-900">
             {selectedPlan === 'yearly' 
-              ? (t?.subscription?.trialTitle || 'Start your 3-day FREE trial to continue.')
-              : (t?.subscription?.unlockTitle || 'Unlock MyWellness to reach your goals faster.')}
+              ? t('subscription.trialTitle')
+              : t('subscription.unlockTitle')}
           </h1>
         </div>
 
@@ -294,7 +294,7 @@ export default function PostQuizSubscription() {
               }`}
             >
               <div className="text-left space-y-1">
-                <p className="font-semibold text-gray-900">{t?.subscription?.monthly || 'Monthly'}</p>
+                <p className="font-semibold text-gray-900">{t('subscription.monthly')}</p>
                 <p className="text-2xl font-bold text-gray-900">9,99 €<span className="text-sm font-normal">/mo</span></p>
               </div>
               {selectedPlan === 'monthly' && (
@@ -313,10 +313,10 @@ export default function PostQuizSubscription() {
               }`}
             >
               <div className="absolute -top-2 right-2 bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-full">
-                {t?.subscription?.threeDaysFree || '3 DAYS FREE'}
+                {t('subscription.threeDaysFree')}
               </div>
               <div className="text-left space-y-1">
-                <p className="font-semibold text-gray-900">{t?.subscription?.yearly || 'Yearly'}</p>
+                <p className="font-semibold text-gray-900">{t('subscription.yearly')}</p>
                 <p className="text-2xl font-bold text-gray-900">4,16 €<span className="text-sm font-normal">/mo</span></p>
               </div>
               {selectedPlan === 'yearly' && (
@@ -342,18 +342,18 @@ export default function PostQuizSubscription() {
               disabled={isLoading}
               className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
             >
-              {isLoading ? (
-                t?.common?.loading || 'Loading...'
-              ) : selectedPlan === 'yearly' ? (
-                t?.subscription?.startTrial || 'Start My 3-Day Free Trial'
-              ) : (
-                t?.subscription?.startJourney || 'Start My Journey'
-              )}
+              {isLoading ? 
+                t('common.loading')
+              : selectedPlan === 'yearly' ? 
+                t('subscription.startTrial')
+              : 
+                t('subscription.startJourney')
+              }
             </Button>
             <p className="text-center text-sm text-gray-500">
               {selectedPlan === 'yearly'
-                ? (t?.subscription?.yearlyPrice || '3 days free, then 49,99 € per year (4,16 €/month)')
-                : (t?.subscription?.monthlyPrice || 'Just 9,99 € per month')}
+                ? t('subscription.yearlyPrice')
+                : t('subscription.monthlyPrice')}
             </p>
           </div>
         </div>
