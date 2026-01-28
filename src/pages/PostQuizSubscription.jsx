@@ -290,7 +290,7 @@ export default function PostQuizSubscription() {
 
           <div className="fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4 bg-white">
             <Button
-              onClick={() => handleCheckout('yearly')}
+              onClick={() => handleCreateTrialOnly()}
               disabled={isLoading}
               className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
             >
