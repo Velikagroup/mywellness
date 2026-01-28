@@ -5,7 +5,6 @@ import { base44 } from '@/api/base44Client';
 import { Button } from '@/components/ui/button';
 import { Check, Bell, Lock, Crown, Sparkles } from 'lucide-react';
 import { useLanguage } from '@/components/i18n/LanguageContext';
-import PaymentModal from '@/components/payment/PaymentModal';
 
 export default function PostQuizSubscription() {
   const navigate = useNavigate();
