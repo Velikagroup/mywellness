@@ -2,9 +2,8 @@
 export const PLANS = {
   TRIAL: 'trial',
   STANDARD: 'standard',
-  BASE: 'base',
-  PRO: 'pro',
-  PREMIUM: 'premium'
+  MONTHLY: 'monthly',
+  YEARLY: 'yearly'
 };
 
 export const PLAN_FEATURES = {
@@ -24,6 +23,8 @@ export const PLAN_FEATURES = {
     workout_modification: false,
     progress_photo_analysis: false,
     priority_support: false,
+    calorie_balance: false,
+    smartwatch_sync: false,
     meal_plan_generations_per_month: 0,
     workout_plan_generations_per_month: 0
   },
@@ -48,50 +49,8 @@ export const PLAN_FEATURES = {
     meal_plan_generations_per_month: 0,
     workout_plan_generations_per_month: 0
   },
-  [PLANS.BASE]: {
-    name: 'Base',
-    dashboard: true,
-    meal_plan: true,
-    recipes_with_images: true,
-    bmr_calculation: true,
-    shopping_list: true,
-    weight_tracking: true,
-    ingredient_substitution: true,
-    workout_plan: false,
-    meal_photo_analysis: false,
-    auto_rebalance: false,
-    workout_tracking: false,
-    workout_modification: false,
-    progress_photo_analysis: false,
-    priority_support: false,
-    calorie_balance: true,
-    smartwatch_sync: false,
-    meal_plan_generations_per_month: 4,
-    workout_plan_generations_per_month: 0
-  },
-  [PLANS.PRO]: {
-    name: 'Pro',
-    dashboard: true,
-    meal_plan: true,
-    recipes_with_images: true,
-    bmr_calculation: true,
-    shopping_list: true,
-    weight_tracking: true,
-    ingredient_substitution: true,
-    workout_plan: true,
-    meal_photo_analysis: true,
-    auto_rebalance: true,
-    workout_tracking: true,
-    workout_modification: false,
-    progress_photo_analysis: false,
-    priority_support: false,
-    calorie_balance: true,
-    smartwatch_sync: false,
-    meal_plan_generations_per_month: 8,
-    workout_plan_generations_per_month: 4
-  },
-  [PLANS.PREMIUM]: {
-    name: 'Premium',
+  [PLANS.MONTHLY]: {
+    name: 'Monthly',
     dashboard: true,
     meal_plan: true,
     recipes_with_images: true,
@@ -106,6 +65,28 @@ export const PLAN_FEATURES = {
     workout_modification: true,
     progress_photo_analysis: true,
     priority_support: true,
+    calorie_balance: true,
+    smartwatch_sync: true,
+    meal_plan_generations_per_month: -1, // -1 = illimitato
+    workout_plan_generations_per_month: -1 // -1 = illimitato
+  },
+  [PLANS.YEARLY]: {
+    name: 'Yearly',
+    dashboard: true,
+    meal_plan: true,
+    recipes_with_images: true,
+    bmr_calculation: true,
+    shopping_list: true,
+    weight_tracking: true,
+    ingredient_substitution: true,
+    workout_plan: true,
+    meal_photo_analysis: true,
+    auto_rebalance: true,
+    workout_tracking: true,
+    workout_modification: true,
+    progress_photo_analysis: true,
+    priority_support: true,
+    calorie_balance: true,
     smartwatch_sync: true,
     meal_plan_generations_per_month: -1, // -1 = illimitato
     workout_plan_generations_per_month: -1 // -1 = illimitato
@@ -114,7 +95,7 @@ export const PLAN_FEATURES = {
 
 // Funzione per verificare se l'utente ha accesso a una feature
 export const hasFeatureAccess = (userPlan, featureName) => {
-  const plan = userPlan || PLANS.BASE;
+  const plan = userPlan || PLANS.MONTHLY;
   return PLAN_FEATURES[plan]?.[featureName] || false;
 };
 
@@ -129,7 +110,7 @@ export const getGenerationLimit = (userPlan, planType) => {
 
 // Funzione per ottenere il nome del piano
 export const getPlanName = (planId) => {
-  return PLAN_FEATURES[planId]?.name || 'Base';
+  return PLAN_FEATURES[planId]?.name || 'Monthly';
 };
 
 // Componente React per mostrare upgrade prompt
@@ -139,15 +120,15 @@ export const UpgradePrompt = ({ requiredPlan, featureName, onUpgradeClick }) => 
       <div className="w-16 h-16 bg-gradient-to-br from-purple-100 to-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
         <span className="text-3xl">🔒</span>
       </div>
-      <h3 className="text-xl font-bold text-gray-900 mb-2">Feature {requiredPlan === PLANS.PRO ? 'Pro' : 'Premium'}</h3>
+      <h3 className="text-xl font-bold text-gray-900 mb-2">Feature Premium</h3>
       <p className="text-gray-600 mb-4">
-        {featureName} è disponibile con il piano {requiredPlan === PLANS.PRO ? 'Pro' : 'Premium'}
+        {featureName} è disponibile con l'abbonamento
       </p>
       <button
         onClick={onUpgradeClick}
         className="inline-block bg-[#26847F] hover:bg-[#1f6b66] text-white px-6 py-3 rounded-lg font-semibold transition-all"
       >
-        Upgrade a {requiredPlan === PLANS.PRO ? 'Pro' : 'Premium'}
+        Attiva Abbonamento
       </button>
     </div>
   );

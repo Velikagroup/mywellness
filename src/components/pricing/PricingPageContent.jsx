@@ -219,78 +219,54 @@ export default function PricingPageContent() {
       isFree: true
     },
     {
-      id: 'base',
-      name: t('pricing.planBase'),
-      priceMonthly: 19,
-      priceAnnual: 15.2,
-      stripePriceIdMonthly: "price_1SNDMW2OXBs6ZYwlp5UgCO8Y",
-      stripePriceIdAnnual: "price_1SNDMW2OXBs6ZYwlUfiZP4Su",
-      icon: Target,
-      iconColor: "text-blue-600",
-      iconBg: "bg-blue-100",
-      description: t('pricing.planBaseDesc'),
-      features: [
-        t('pricing.featureBase1'),
-        t('pricing.featureBase2'),
-        t('pricing.featureBase3'),
-        t('pricing.featureBase4'),
-        t('pricing.featureBase5'),
-        t('pricing.featureBase6'), 
-        t('pricing.featureBase7'),
-        t('pricing.tableCalorieBalance')
-      ],
-      cta: t('pricing.startFree'),
-      popular: false
-    },
-    {
-      id: 'pro',
-      name: t('pricing.planPro'),
-      priceMonthly: 29,
-      priceAnnual: 23.2,
-      stripePriceIdMonthly: "price_1SNDMX2OXBs6ZYwlx6jXOgFf",
-      stripePriceIdAnnual: "price_1SNDMX2OXBs6ZYwlvGtzkQKA",
+      id: 'monthly',
+      name: 'MyWellness',
+      priceMonthly: 9.99,
+      priceAnnual: 9.99,
+      stripePriceIdMonthly: "price_1SuOAq2OXBs6ZYwlxkJ6LnU6",
+      stripePriceIdAnnual: "price_1SuOAq2OXBs6ZYwlxkJ6LnU6",
       icon: Zap,
       iconColor: "text-[var(--brand-primary)]",
       iconBg: "bg-[var(--brand-primary-light)]",
-      description: t('pricing.planProDesc'),
+      description: 'Piano completo mensile con tutte le funzionalità',
       features: [
-        t('pricing.featurePro1'),
-        t('pricing.featurePro2'),
-        t('pricing.featurePro3'),
-        t('pricing.featurePro4'),
-        t('pricing.featurePro5'),
-        t('pricing.featurePro6'),
-        t('pricing.featurePro7'),
-        t('pricing.featurePro8'),
-        t('pricing.featurePro9'),
-        t('pricing.tableCalorieBalance')
-      ],
-      cta: t('pricing.startFree'),
-      popular: true
-    },
-    {
-      id: 'premium',
-      name: t('pricing.planPremium'),
-      priceMonthly: 39,
-      priceAnnual: 31.2,
-      stripePriceIdMonthly: "price_1SNDMX2OXBs6ZYwlKR7FIudX",
-      stripePriceIdAnnual: "price_1SNDMY2OXBs6ZYwlcZzmNSnk",
-      icon: Crown,
-      iconColor: "text-purple-600",
-      iconBg: "bg-purple-100",
-      description: t('pricing.planPremiumDesc'),
-      features: [
-        t('pricing.featurePremium1'),
-        t('pricing.featurePremium2'),
-        t('pricing.featurePremium3'),
-        t('pricing.featurePremium4'),
-        t('pricing.featurePremium5'),
-        t('pricing.featurePremium6'),
-        t('pricing.featurePremium7'),
-        t('pricing.tableSmartwatchSync')
+        'Piano alimentare personalizzato',
+        'Piano di allenamento personalizzato',
+        'Analisi foto pasti e progresso',
+        'Ribilanciamento automatico',
+        'Lista della spesa intelligente',
+        'Tracking calorie e macros',
+        'Sincronizzazione smartwatch',
+        'Supporto prioritario',
+        'Generazioni illimitate'
       ],
       cta: t('pricing.startFree'),
       popular: false
+    },
+    {
+      id: 'yearly',
+      name: 'MyWellness Annual',
+      priceMonthly: 4.16,
+      priceAnnual: 49.99,
+      stripePriceIdMonthly: "price_1SuOAr2OXBs6ZYwlteMU5EVp",
+      stripePriceIdAnnual: "price_1SuOAr2OXBs6ZYwlteMU5EVp",
+      icon: Crown,
+      iconColor: "text-purple-600",
+      iconBg: "bg-purple-100",
+      description: 'Piano completo annuale - Risparmia €69.89/anno',
+      features: [
+        'Piano alimentare personalizzato',
+        'Piano di allenamento personalizzato',
+        'Analisi foto pasti e progresso',
+        'Ribilanciamento automatico',
+        'Lista della spesa intelligente',
+        'Tracking calorie e macros',
+        'Sincronizzazione smartwatch',
+        'Supporto prioritario',
+        'Generazioni illimitate'
+      ],
+      cta: t('pricing.startFree'),
+      popular: true
     }
   ];
 
@@ -332,11 +308,9 @@ export default function PricingPageContent() {
   const testimonials = translations[language].pricing.testimonials;
 
   const handleSelectPlan = async (planId) => {
-    let planType = 'base';
-    if (planId.toLowerCase().includes('pro')) {
-      planType = 'pro';
-    } else if (planId.toLowerCase().includes('premium')) {
-      planType = 'premium';
+    let planType = 'monthly';
+    if (planId.toLowerCase().includes('yearly')) {
+      planType = 'yearly';
     }
 
     setSelectedPlan(planId);
@@ -354,8 +328,8 @@ export default function PricingPageContent() {
       const ttclid = urlParams.get('ttclid');
       const ttp = urlParams.get('ttp');
 
-      const planPrices = { base: 19, pro: 29, premium: 39 };
-      const price = planPrices[planType] || 19;
+      const planPrices = { monthly: 9.99, yearly: 49.99 };
+      const price = planPrices[planType] || 9.99;
 
       await base44.functions.invoke('sendTikTokEvent', {
         event: 'AddToCart',
@@ -962,7 +936,7 @@ export default function PricingPageContent() {
           </div>
 
           {/* Pricing Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-6 md:gap-6 mb-16">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 md:gap-6 mb-16">
             {plans.map((plan, index) => (
               <Card 
                 key={plan.id}
