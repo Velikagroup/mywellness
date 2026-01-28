@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
+import { Plus, Minus } from 'lucide-react';
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
@@ -64,90 +65,61 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     return age;
   };
 
-  const handleMonthScroll = () => {
+  const updateMonth = (delta) => {
+    const newMonth = Math.max(0, Math.min(selectedMonth + delta, MONTHS.length - 1));
+    setSelectedMonth(newMonth);
+    const age = calculateAgeForDate(selectedYear, newMonth, selectedDay);
+    const birthdateStr = `${selectedYear}-${String(newMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+    onDataChange({ birthdate: birthdateStr, age });
+    scrollToMonth(newMonth);
+  };
+
+  const updateDay = (delta) => {
+    const newDay = Math.max(1, Math.min(selectedDay + delta, 31));
+    setSelectedDay(newDay);
+    const age = calculateAgeForDate(selectedYear, selectedMonth, newDay);
+    const birthdateStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
+    onDataChange({ birthdate: birthdateStr, age });
+    scrollToDay(newDay);
+  };
+
+  const updateYear = (delta) => {
+    const newYear = Math.max(Math.min(...YEARS), Math.min(selectedYear + delta, Math.max(...YEARS)));
+    setSelectedYear(newYear);
+    const age = calculateAgeForDate(newYear, selectedMonth, selectedDay);
+    const birthdateStr = `${newYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
+    onDataChange({ birthdate: birthdateStr, age });
+    scrollToYear(newYear);
+  };
+
+  const scrollToMonth = (month) => {
     if (monthsRef.current) {
-      const container = monthsRef.current;
-      const centerY = container.scrollTop + container.clientHeight / 2;
-      
-      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-      
-      items.forEach((item, idx) => {
-        const itemTop = item.offsetTop;
-        const itemCenter = itemTop + item.clientHeight / 2;
-        const distance = Math.abs(itemCenter - centerY);
-        
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
-        }
-      });
-      
-      const newMonth = Math.max(0, Math.min(closestIndex, MONTHS.length - 1));
-      setSelectedMonth(newMonth);
-      
-      const age = calculateAgeForDate(selectedYear, newMonth, selectedDay);
-      const birthdateStr = `${selectedYear}-${String(newMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-      onDataChange({ birthdate: birthdateStr, age });
+      const itemHeight = 40;
+      const topPadding = 160;
+      const containerHeight = 320;
+      const scroll = topPadding + month * itemHeight - containerHeight / 2;
+      monthsRef.current.scrollTop = scroll;
     }
   };
 
-  const handleDayScroll = () => {
+  const scrollToDay = (day) => {
     if (daysRef.current) {
-      const container = daysRef.current;
-      const centerY = container.scrollTop + container.clientHeight / 2;
-      
-      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-      
-      items.forEach((item, idx) => {
-        const itemTop = item.offsetTop;
-        const itemCenter = itemTop + item.clientHeight / 2;
-        const distance = Math.abs(itemCenter - centerY);
-        
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
-        }
-      });
-      
-      const newDay = Math.max(1, Math.min(closestIndex, 31));
-      setSelectedDay(newDay);
-      
-      const age = calculateAgeForDate(selectedYear, selectedMonth, newDay);
-      const birthdateStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
-      onDataChange({ birthdate: birthdateStr, age });
+      const itemHeight = 40;
+      const topPadding = 160;
+      const containerHeight = 320;
+      const scroll = topPadding + (day - 1) * itemHeight - containerHeight / 2;
+      daysRef.current.scrollTop = scroll;
     }
   };
 
-  const handleYearScroll = () => {
+  const scrollToYear = (year) => {
     if (yearsRef.current) {
-      const container = yearsRef.current;
-      const centerY = container.scrollTop + container.clientHeight / 2;
-      
-      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-      
-      items.forEach((item, idx) => {
-        const itemTop = item.offsetTop;
-        const itemCenter = itemTop + item.clientHeight / 2;
-        const distance = Math.abs(itemCenter - centerY);
-        
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
-        }
-      });
-      
-      const newYear = YEARS[Math.max(0, Math.min(closestIndex, YEARS.length - 1))];
-      setSelectedYear(newYear);
-      
-      const age = calculateAgeForDate(newYear, selectedMonth, selectedDay);
-      const birthdateStr = `${newYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
-      onDataChange({ birthdate: birthdateStr, age });
+      const itemHeight = 40;
+      const topPadding = 160;
+      const containerHeight = 320;
+      const yearIndex = YEARS.indexOf(year);
+      const scroll = topPadding + yearIndex * itemHeight - containerHeight / 2;
+      yearsRef.current.scrollTop = scroll;
     }
   };
 
@@ -228,26 +200,61 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       />
 
       <div className="flex-1 flex flex-col items-center justify-center px-4 pb-8">
-        <div className="flex gap-2 w-full max-w-[416px] justify-center h-80 mx-auto mt-8">
-          <PickerColumn 
-            items={MONTHS} 
-            selectedIndex={selectedMonth}
-            onScroll={handleMonthScroll}
-            ref={monthsRef}
-          />
-          <PickerColumn 
-            items={DAYS} 
-            selectedIndex={selectedDay - 1}
-            onScroll={handleDayScroll}
-            ref={daysRef}
-          />
-          <PickerColumn 
-            items={YEARS} 
-            selectedIndex={YEARS.indexOf(selectedYear)}
-            onScroll={handleYearScroll}
-            ref={yearsRef}
-          />
-        </div>
+         <div className="flex gap-2 w-full max-w-[416px] justify-center mx-auto mt-8">
+           {/* Mese */}
+           <div className="flex-1 flex flex-col items-center gap-2">
+             <button onClick={() => updateMonth(1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Plus className="w-5 h-5 text-gray-600" />
+             </button>
+             <div className="h-80 relative">
+               <PickerColumn 
+                 items={MONTHS} 
+                 selectedIndex={selectedMonth}
+                 onScroll={() => {}}
+                 ref={monthsRef}
+               />
+             </div>
+             <button onClick={() => updateMonth(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Minus className="w-5 h-5 text-gray-600" />
+             </button>
+           </div>
+
+           {/* Giorno */}
+           <div className="flex-1 flex flex-col items-center gap-2">
+             <button onClick={() => updateDay(1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Plus className="w-5 h-5 text-gray-600" />
+             </button>
+             <div className="h-80 relative">
+               <PickerColumn 
+                 items={DAYS} 
+                 selectedIndex={selectedDay - 1}
+                 onScroll={() => {}}
+                 ref={daysRef}
+               />
+             </div>
+             <button onClick={() => updateDay(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Minus className="w-5 h-5 text-gray-600" />
+             </button>
+           </div>
+
+           {/* Anno */}
+           <div className="flex-1 flex flex-col items-center gap-2">
+             <button onClick={() => updateYear(1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Plus className="w-5 h-5 text-gray-600" />
+             </button>
+             <div className="h-80 relative">
+               <PickerColumn 
+                 items={YEARS} 
+                 selectedIndex={YEARS.indexOf(selectedYear)}
+                 onScroll={() => {}}
+                 ref={yearsRef}
+               />
+             </div>
+             <button onClick={() => updateYear(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Minus className="w-5 h-5 text-gray-600" />
+             </button>
+           </div>
+         </div>
 
         {calculateAge() >= 18 && (
           <p className="text-sm text-gray-600 text-center mt-6">
