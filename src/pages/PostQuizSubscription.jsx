@@ -117,81 +117,62 @@ export default function PostQuizSubscription() {
           ? 'price_1SubPS2OXBs6ZYwlrhculB4e'
           : 'price_1SubPS2OXBs6ZYwlbjszSDt9';
 
-      // Se piano annuale, crea subscription con trial (€0 iniziale)
-      if (plan === 'yearly') {
-        const response = await base44.functions.invoke('stripeCreateTrialSubscription', {
-          priceId
-        });
+      if (!stripeRef.current || !walletAvailable) {
+        alert('Wallet non disponibile');
+        setIsLoading(false);
+        return;
+      }
 
-        const data = response?.data || response;
+      const amount = plan === 'yearly' ? 4999 : 999;
+      const paymentRequest = stripeRef.current.paymentRequest({
+        country: 'IT',
+        currency: 'eur',
+        total: {
+          label: 'MyWellness Subscription',
+          amount: amount,
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
 
-        if (data?.success) {
-          console.log('✅ Trial creato:', data.subscription_id);
-          navigate(createPageUrl('ThankYou'), { replace: true });
-        } else {
-          console.error('❌ Errore risposta:', data);
-          alert('Errore nella creazione del trial. Riprova.');
-          setIsLoading(false);
-        }
-      } else {
-        // Se piano mensile, apri Apple Pay
-        if (!stripeRef.current || !walletAvailable) {
-          alert('Wallet non disponibile');
-          setIsLoading(false);
-          return;
-        }
-
-        const amount = 999;
-        const paymentRequest = stripeRef.current.paymentRequest({
-          country: 'IT',
-          currency: 'eur',
-          total: {
-            label: 'MyWellness Subscription',
-            amount: amount,
-          },
-          requestPayerName: true,
-          requestPayerEmail: true,
-        });
-
-        paymentRequest.on('paymentmethod', (e) => {
-          base44.functions.invoke('stripePaymentIntent', {
-            priceId,
-            hasTrial: false
-          }).then((response) => {
-            const data = response?.data || response;
-            if (!data?.success) {
-              e.complete('fail');
-              setIsLoading(false);
-              return;
-            }
-
-            return stripeRef.current.confirmCardPayment(
-              data.clientSecret,
-              { payment_method: e.paymentMethod.id },
-              { handleActions: false }
-            ).then(({ paymentIntent, error }) => {
-              if (error) {
-                e.complete('fail');
-                setIsLoading(false);
-              } else {
-                e.complete('success');
-                navigate(createPageUrl('ThankYou'), { replace: true });
-              }
-            });
-          }).catch(() => {
+      paymentRequest.on('paymentmethod', (e) => {
+        base44.functions.invoke('stripePaymentIntent', {
+          priceId,
+          hasTrial: plan === 'yearly'
+        }).then((response) => {
+          const data = response?.data || response;
+          if (!data?.success) {
             e.complete('fail');
             setIsLoading(false);
-          });
-        });
-
-        paymentRequest.canMakePayment().then((result) => {
-          if (result) {
-            paymentRequest.show();
-          } else {
-            setIsLoading(false);
+            return;
           }
+
+          return stripeRef.current.confirmCardPayment(
+            data.clientSecret,
+            { payment_method: e.paymentMethod.id },
+            { handleActions: false }
+          ).then(({ paymentIntent, error }) => {
+            if (error) {
+              e.complete('fail');
+              setIsLoading(false);
+            } else {
+              e.complete('success');
+              navigate(createPageUrl('ThankYou'), { replace: true });
+            }
+          });
+        }).catch(() => {
+          e.complete('fail');
+          setIsLoading(false);
         });
-      }
+      });
+
+      paymentRequest.canMakePayment().then((result) => {
+        if (result) {
+          paymentRequest.show();
+        } else {
+          setIsLoading(false);
+        }
+      });
     } catch (error) {
       console.error('Errore:', error);
       alert('Errore durante il checkout. Riprova.');
