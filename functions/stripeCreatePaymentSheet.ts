@@ -48,6 +48,17 @@ Deno.serve(async (req) => {
         // Crea o recupera customer Stripe
         let stripeCustomerId = user.stripe_customer_id;
         
+        if (stripeCustomerId) {
+            try {
+                // Verifica che il customer esista
+                await stripe.customers.retrieve(stripeCustomerId);
+                console.log(`✅ Customer found: ${stripeCustomerId}`);
+            } catch (error) {
+                console.warn(`⚠️ Customer ${stripeCustomerId} not found, creating new one...`);
+                stripeCustomerId = null;
+            }
+        }
+        
         if (!stripeCustomerId) {
             console.log('🆕 Creating new Stripe customer...');
             const customer = await stripe.customers.create({
