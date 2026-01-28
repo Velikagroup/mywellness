@@ -66,16 +66,25 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
 
   const handleMonthScroll = () => {
     if (monthsRef.current) {
-      const scrollTop = monthsRef.current.scrollTop;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      // L'elemento al centro è a: scrollTop + containerHeight/2 dal top del content
-      const centerY = scrollTop + containerHeight / 2;
-      // Quale elemento è a questa posizione? (contando il padding)
-      const rawIndex = (centerY - topPadding) / itemHeight;
-      const index = Math.round(rawIndex);
-      const newMonth = Math.max(0, Math.min(index, MONTHS.length - 1));
+      const container = monthsRef.current;
+      const centerY = container.scrollTop + container.clientHeight / 2;
+      
+      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
+      let closestIndex = 0;
+      let closestDistance = Infinity;
+      
+      items.forEach((item, idx) => {
+        const itemTop = item.offsetTop;
+        const itemCenter = itemTop + item.clientHeight / 2;
+        const distance = Math.abs(itemCenter - centerY);
+        
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestIndex = idx;
+        }
+      });
+      
+      const newMonth = Math.max(0, Math.min(closestIndex, MONTHS.length - 1));
       setSelectedMonth(newMonth);
       
       const age = calculateAgeForDate(selectedYear, newMonth, selectedDay);
