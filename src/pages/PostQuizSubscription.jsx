@@ -14,7 +14,7 @@ export default function PostQuizSubscription() {
   const [showReminderScreen, setShowReminderScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timelineProgress, setTimelineProgress] = useState(0);
-  const [stripeReady, setStripeReady] = useState(false);
+  const [walletAvailable, setWalletAvailable] = useState(false);
   const stripeRef = React.useRef(null);
 
   useEffect(() => {
@@ -36,27 +36,43 @@ export default function PostQuizSubscription() {
           return;
         }
 
-        // Se Stripe è già caricato
-        if (window.Stripe) {
-          stripeRef.current = window.Stripe(key);
-          setStripeReady(true);
-          return;
-        }
-
-        // Altrimenti carica lo script
-        const script = document.createElement('script');
-        script.src = 'https://js.stripe.com/v3/';
-        script.async = true;
-        script.onload = () => {
+        // Carica Stripe script
+        const loadStripe = () => {
           if (window.Stripe) {
             stripeRef.current = window.Stripe(key);
-            setStripeReady(true);
+            checkWalletAvailability();
+            return;
           }
+
+          const script = document.createElement('script');
+          script.src = 'https://js.stripe.com/v3/';
+          script.async = true;
+          script.onload = () => {
+            if (window.Stripe) {
+              stripeRef.current = window.Stripe(key);
+              checkWalletAvailability();
+            }
+          };
+          document.head.appendChild(script);
         };
-        script.onerror = () => {
-          console.error('Failed to load Stripe');
+
+        const checkWalletAvailability = () => {
+          if (!stripeRef.current) return;
+
+          const paymentRequest = stripeRef.current.paymentRequest({
+            country: 'IT',
+            currency: 'eur',
+            total: { label: 'MyWellness', amount: 1000 }
+          });
+
+          paymentRequest.canMakePayment().then((result) => {
+            setWalletAvailable(!!result);
+          }).catch(() => {
+            setWalletAvailable(false);
+          });
         };
-        document.head.appendChild(script);
+
+        loadStripe();
       } catch (error) {
         console.error('Error loading data:', error);
         navigate(createPageUrl('Quiz'), { replace: true });
