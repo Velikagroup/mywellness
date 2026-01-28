@@ -157,7 +157,7 @@ export default function PostQuizSubscription() {
               setIsLoading(false);
             } else {
               e.complete('success');
-              navigate(createPageUrl('ThankYou'), { replace: true });
+              navigate(createPageUrl('Dashboard'), { replace: true });
             }
           });
         }).catch(() => {
