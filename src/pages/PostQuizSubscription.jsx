@@ -72,14 +72,14 @@ export default function PostQuizSubscription() {
   }, [selectedPlan]);
 
   const handleStartTrial = async () => {
-    if (selectedPlan === 'yearly') {
-      // Mostra schermata reminder per yearly
-      setShowReminderScreen(true);
-    } else {
-      // Avvia checkout per monthly
-      await handleCheckout('monthly');
-    }
-  };
+      if (selectedPlan === 'yearly') {
+        // Mostra schermata reminder per yearly
+        setShowReminderScreen(true);
+      } else {
+        // Avvia Apple Pay per monthly
+        await handleApplePayPayment('monthly');
+      }
+    };
 
   const handleApplePayPayment = async (plan) => {
     setIsLoading(true);
