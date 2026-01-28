@@ -17,6 +17,23 @@ export default function QuizStepWrapper({
   showNextButton = true,
   translations
 }) {
+  // Calcola progresso con peso decrescente per step
+  const calculateWeightedProgress = () => {
+    // Crea pesi decrescenti: prime domande pesano di più, ultime di meno
+    const weights = Array.from({ length: totalSteps }, (_, i) => {
+      // Formula esponenziale decrescente
+      const normalizedPos = i / (totalSteps - 1);
+      return Math.pow(1 - normalizedPos, 0.5) * 2 + 0.5;
+    });
+    
+    const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+    const currentWeight = weights.slice(0, currentStep).reduce((sum, w) => sum + w, 0);
+    
+    return Math.round((currentWeight / totalWeight) * 100);
+  };
+  
+  const progressValue = calculateWeightedProgress();
+  
   return (
     <>
       <style>{`
