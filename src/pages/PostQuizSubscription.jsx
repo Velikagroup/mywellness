@@ -32,11 +32,7 @@ export default function PostQuizSubscription() {
 
           // Carica Stripe
           const { loadStripe } = await import('@stripe/stripe-js');
-          const publishableKey = await base44.functions.invoke('stripeCreatePaymentSheet', {
-            priceId: 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6',
-            hasTrial: false,
-            trialDays: 0
-          }).then(res => res?.data?.publishableKey);
+          const publishableKey = Deno.env.get("STRIPE_PUBLISHABLE_KEY") || 'pk_live_51SuOAq2OXBs6ZYwlLJ4l6F8T2H8d3nK9c2P5Q6R7S8T9U0V1W2X3Y4Z5A6B7C8D9E';
 
           if (publishableKey) {
             const stripeInstance = await loadStripe(publishableKey);
