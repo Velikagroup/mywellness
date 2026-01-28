@@ -123,9 +123,13 @@ export default function PostQuizSubscription() {
           priceId
         });
 
-        if (response?.data?.success) {
+        const data = response?.data || response;
+
+        if (data?.success) {
+          console.log('✅ Trial creato:', data.subscription_id);
           navigate(createPageUrl('ThankYou'), { replace: true });
         } else {
+          console.error('❌ Errore risposta:', data);
           alert('Errore nella creazione del trial. Riprova.');
           setIsLoading(false);
         }
