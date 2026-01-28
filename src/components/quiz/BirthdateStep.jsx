@@ -47,16 +47,14 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
+      const centerPos = scrollTop + containerHeight / 2;
+      const index = Math.round((centerPos - topPadding) / itemHeight);
       const newMonth = Math.max(0, Math.min(index, MONTHS.length - 1));
       setSelectedMonth(newMonth);
       
       const age = calculateAgeForDate(selectedYear, newMonth, selectedDay);
       const birthdateStr = `${selectedYear}-${String(newMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
       onDataChange({ birthdate: birthdateStr, age });
-      
-      const targetScroll = topPadding + newMonth * itemHeight - containerHeight / 2;
-      monthsRef.current.scrollTop = targetScroll;
     }
   };
 
@@ -66,16 +64,14 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
+      const centerPos = scrollTop + containerHeight / 2;
+      const index = Math.round((centerPos - topPadding) / itemHeight);
       const newDay = Math.max(1, Math.min(index + 1, 31));
       setSelectedDay(newDay);
       
       const age = calculateAgeForDate(selectedYear, selectedMonth, newDay);
       const birthdateStr = `${selectedYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(newDay).padStart(2, '0')}`;
       onDataChange({ birthdate: birthdateStr, age });
-      
-      const targetScroll = topPadding + (newDay - 1) * itemHeight - containerHeight / 2;
-      daysRef.current.scrollTop = targetScroll;
     }
   };
 
@@ -85,17 +81,14 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
+      const centerPos = scrollTop + containerHeight / 2;
+      const index = Math.round((centerPos - topPadding) / itemHeight);
       const newYear = YEARS[Math.max(0, Math.min(index, YEARS.length - 1))];
       setSelectedYear(newYear);
       
       const age = calculateAgeForDate(newYear, selectedMonth, selectedDay);
       const birthdateStr = `${newYear}-${String(selectedMonth + 1).padStart(2, '0')}-${String(selectedDay).padStart(2, '0')}`;
       onDataChange({ birthdate: birthdateStr, age });
-      
-      const yearIndex = YEARS.indexOf(newYear);
-      const targetScroll = topPadding + yearIndex * itemHeight - containerHeight / 2;
-      yearsRef.current.scrollTop = targetScroll;
     }
   };
 

@@ -38,15 +38,11 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
+      const centerPos = scrollTop + containerHeight / 2;
+      const index = Math.round((centerPos - topPadding) / itemHeight);
       const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-      const newHeight = isMetric 
-        ? heightValues[Math.max(0, Math.min(index, heightValues.length - 1))]
-        : heightValues[Math.max(0, Math.min(index, heightValues.length - 1))];
+      const newHeight = heightValues[Math.max(0, Math.min(index, heightValues.length - 1))];
       setSelectedHeight(newHeight);
-
-      const targetScroll = topPadding + index * itemHeight - containerHeight / 2;
-      heightRef.current.scrollTop = targetScroll;
     }
   };
 
@@ -56,18 +52,36 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const index = Math.round((scrollTop + containerHeight / 2 - topPadding) / itemHeight);
+      const centerPos = scrollTop + containerHeight / 2;
+      const index = Math.round((centerPos - topPadding) / itemHeight);
       const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
       const newWeight = weightValues[Math.max(0, Math.min(index, weightValues.length - 1))];
       setSelectedWeight(newWeight);
-
-      const targetScroll = topPadding + index * itemHeight - containerHeight / 2;
-      weightRef.current.scrollTop = targetScroll;
     }
   };
 
   const handleUnitToggle = () => {
     setIsMetric(!isMetric);
+    // Resetta lo scroll dei ref quando cambi unità
+    setTimeout(() => {
+      if (heightRef.current && weightRef.current) {
+        const itemHeight = 40;
+        const topPadding = 160;
+        const containerHeight = 320;
+        
+        const heightValues = !isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
+        const heightIndex = heightValues.indexOf(selectedHeight);
+        if (heightIndex !== -1) {
+          heightRef.current.scrollTop = topPadding + heightIndex * itemHeight - containerHeight / 2;
+        }
+        
+        const weightValues = !isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
+        const weightIndex = weightValues.indexOf(selectedWeight);
+        if (weightIndex !== -1) {
+          weightRef.current.scrollTop = topPadding + weightIndex * itemHeight - containerHeight / 2;
+        }
+      }
+    }, 0);
   };
 
   const handleNext = () => {
