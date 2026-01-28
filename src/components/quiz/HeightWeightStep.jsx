@@ -64,8 +64,9 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const centerPos = scrollTop + containerHeight / 2;
-      const index = Math.round((centerPos - topPadding) / itemHeight);
+      const centerY = scrollTop + containerHeight / 2;
+      const rawIndex = (centerY - topPadding) / itemHeight;
+      const index = Math.round(rawIndex);
       const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
       const newHeight = heightValues[Math.max(0, Math.min(index, heightValues.length - 1))];
       setSelectedHeight(newHeight);
@@ -78,8 +79,9 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const centerPos = scrollTop + containerHeight / 2;
-      const index = Math.round((centerPos - topPadding) / itemHeight);
+      const centerY = scrollTop + containerHeight / 2;
+      const rawIndex = (centerY - topPadding) / itemHeight;
+      const index = Math.round(rawIndex);
       const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
       const newWeight = weightValues[Math.max(0, Math.min(index, weightValues.length - 1))];
       setSelectedWeight(newWeight);

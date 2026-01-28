@@ -70,8 +70,11 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const centerPos = scrollTop + containerHeight / 2;
-      const index = Math.round((centerPos - topPadding) / itemHeight);
+      // L'elemento al centro è a: scrollTop + containerHeight/2 dal top del content
+      const centerY = scrollTop + containerHeight / 2;
+      // Quale elemento è a questa posizione? (contando il padding)
+      const rawIndex = (centerY - topPadding) / itemHeight;
+      const index = Math.round(rawIndex);
       const newMonth = Math.max(0, Math.min(index, MONTHS.length - 1));
       setSelectedMonth(newMonth);
       
@@ -87,8 +90,10 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const centerPos = scrollTop + containerHeight / 2;
-      const index = Math.round((centerPos - topPadding) / itemHeight);
+      const centerY = scrollTop + containerHeight / 2;
+      const rawIndex = (centerY - topPadding) / itemHeight;
+      const index = Math.round(rawIndex);
+      // Days sono 1-31 (non 0-indexed come i mesi)
       const newDay = Math.max(1, Math.min(index + 1, 31));
       setSelectedDay(newDay);
       
@@ -104,8 +109,9 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
-      const centerPos = scrollTop + containerHeight / 2;
-      const index = Math.round((centerPos - topPadding) / itemHeight);
+      const centerY = scrollTop + containerHeight / 2;
+      const rawIndex = (centerY - topPadding) / itemHeight;
+      const index = Math.round(rawIndex);
       const newYear = YEARS[Math.max(0, Math.min(index, YEARS.length - 1))];
       setSelectedYear(newYear);
       
