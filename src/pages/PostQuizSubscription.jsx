@@ -160,7 +160,17 @@ export default function PostQuizSubscription() {
 
   if (showReminderScreen) {
     return (
-      <div className="min-h-screen bg-white p-6 flex flex-col pb-28">
+        <>
+        <PaymentModal
+          isOpen={showPaymentModal}
+          clientSecret={clientSecret}
+          onClose={() => setShowPaymentModal(false)}
+          onSuccess={() => {
+            alert('✅ Pagamento completato! Benvenuto in MyWellness');
+            navigate(createPageUrl('Dashboard'), { replace: true });
+          }}
+        />
+        <div className="min-h-screen bg-white p-6 flex flex-col pb-28">
         <button
           onClick={() => setShowReminderScreen(false)}
           className="self-start text-gray-600 mb-8"
