@@ -63,12 +63,12 @@ export default function DietSpecificStep({ data, onDataChange, onNext, translati
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 p-5">
+      <div className="fixed bottom-0 left-0 right-0 bg-white p-5">
         <div className="max-w-[416px] mx-auto px-4 md:px-0">
           <Button
             onClick={handleNext}
             disabled={!selectedDiet}
-            className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold quiz-button-fixed"
+            className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold rounded-xl h-14"
           >
             {t.quizContinue || 'Continuar'}
           </Button>
