@@ -24,7 +24,7 @@ export default function AIComparisonStep({ data, onDataChange, translations, cur
       />
 
       <QuizQuestionHeader
-        title={t.aiComparisonTitle || "Perderai il doppio di peso con MyWellness che per conto tuo"}
+        title={t.aiComparisonTitle || t.doubleYourWeight || "Perderai il doppio di peso con MyWellness che per conto tuo"}
         subtitle=""
       />
 
@@ -66,7 +66,7 @@ export default function AIComparisonStep({ data, onDataChange, translations, cur
           {/* Subtitle text */}
           <div className="text-center">
             <p className="text-sm text-gray-600">
-              {t.aiComparisonSubtitle || "MyWellness lo hace fácil y te acompaña te hace responsable."}
+              {t.aiComparisonSubtitle || t.myWellnessSuccess || "MyWellness lo rende facile e ti accompagna nel tuo viaggio, rendendoti responsabile."}
             </p>
           </div>
         </div>
