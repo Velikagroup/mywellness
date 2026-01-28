@@ -69,11 +69,6 @@ export default function PostQuizSubscription() {
   };
 
   const handleCheckout = (plan) => {
-    if (!window.Stripe) {
-      alert('Stripe non caricato');
-      return;
-    }
-
     setIsLoading(true);
 
     const priceId = plan === 'yearly' 
@@ -81,19 +76,17 @@ export default function PostQuizSubscription() {
       : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
 
     const amount = plan === 'yearly' ? 49900 : 9990;
-    const currency = 'eur';
 
-    // Usa .then() SENZA async/await per mantenere il call stack sincronizzato
+    // Setup e mostra nel contesto sincrono del click
     base44.functions.invoke('getStripePublishableKey')
       .then((keyRes) => {
         const stripeKey = keyRes?.data?.key || keyRes?.key;
         if (!stripeKey) throw new Error('Stripe key not found');
 
         const stripe = window.Stripe(stripeKey);
-
         const paymentRequest = stripe.paymentRequest({
           country: 'IT',
-          currency: currency,
+          currency: 'eur',
           total: {
             label: 'MyWellness Subscription',
             amount: amount,
@@ -102,7 +95,6 @@ export default function PostQuizSubscription() {
           requestPayerEmail: true,
         });
 
-        // Setup listener prima di show()
         paymentRequest.on('paymentmethod', (e) => {
           base44.functions.invoke('stripePaymentIntent', {
             priceId,
@@ -120,7 +112,6 @@ export default function PostQuizSubscription() {
               if (error) {
                 e.complete('fail');
                 alert(`Errore: ${error.message}`);
-                setIsLoading(false);
               } else {
                 e.complete('success');
                 navigate(createPageUrl('ThankYou'), { replace: true });
@@ -130,18 +121,13 @@ export default function PostQuizSubscription() {
             console.error('Error:', error);
             e.complete('fail');
             alert(`Errore: ${error.message}`);
-            setIsLoading(false);
-          });
+          }).finally(() => setIsLoading(false));
         });
 
-        // Mostra il payment sheet
-        return paymentRequest.canMakePayment().then((result) => {
-          if (result) {
-            paymentRequest.show();
-          } else {
-            setIsLoading(false);
-            alert('Apple Pay o Google Pay non disponibile');
-          }
+        // Chiama show() direttamente senza aspettare canMakePayment()
+        paymentRequest.show().catch(() => {
+          setIsLoading(false);
+          alert('Apple Pay o Google Pay non disponibile');
         });
       })
       .catch((error) => {
