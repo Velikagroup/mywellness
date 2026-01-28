@@ -149,7 +149,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
           if (currentUser) {
             const dataToSave = JSON.parse(quizDataToSave);
             await base44.auth.updateMe(dataToSave);
-            
+
             const today = new Date().toISOString().split('T')[0];
             try {
               await base44.entities.WeightHistory.create({
@@ -160,64 +160,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
             } catch (weightError) {
               console.warn('⚠️ Weight already exists or error:', weightError);
             }
-            
-            const trialEndsAt = new Date();
-            trialEndsAt.setDate(trialEndsAt.getDate() + 7);
-            
-            const affiliateCode = localStorage.getItem('affiliateCode');
-            
-            const updateData = {
-              subscription_status: 'trial',
-              subscription_plan: 'trial',
-              trial_ends_at: trialEndsAt.toISOString()
-            };
-            
-            if (affiliateCode) {
-              updateData.referred_by_affiliate_code = affiliateCode;
-              
-              try {
-                const affiliateLinks = await base44.entities.AffiliateLink.filter({ 
-                  affiliate_code: affiliateCode.toUpperCase() 
-                });
-                
-                if (affiliateLinks.length > 0) {
-                  const affiliateLink = affiliateLinks[0];
-                  
-                  await base44.entities.AffiliateCredit.create({
-                    affiliate_link_id: affiliateLink.id,
-                    referrer_user_id: affiliateLink.user_id,
-                    referred_user_id: currentUser.id,
-                    referred_user_email: currentUser.email,
-                    credit_type: 'signup',
-                    credit_amount: 0,
-                    status: 'pending'
-                  });
-                  
-                  await base44.entities.AffiliateLink.update(affiliateLink.id, {
-                    total_referrals: (affiliateLink.total_referrals || 0) + 1
-                  });
-                }
-              } catch (affError) {
-                console.warn('⚠️ Affiliate tracking error:', affError);
-              }
-            }
-            
-            await base44.auth.updateMe(updateData);
-
-            try {
-              await base44.functions.invoke('sendStandardFreeWelcome', {
-                userId: currentUser.id,
-                userEmail: currentUser.email,
-                userName: currentUser.full_name || 'User'
-              });
-            } catch (emailError) {
-              console.error('⚠️ Email error:', emailError);
-            }
 
             localStorage.removeItem(`quizDataToSave_${language}`);
             localStorage.removeItem('needsTrialSetup');
             localStorage.removeItem(`quizData_${language}`);
-            localStorage.removeItem('affiliateCode');
 
             // Redirect alla pagina subscription localizzata
             const langPageMap = {

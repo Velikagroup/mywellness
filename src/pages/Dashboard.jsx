@@ -80,11 +80,28 @@ export default function Dashboard() {
       const currentUser = await base44.auth.me();
       console.log('👤 User loaded:', currentUser.id, 'subscription:', currentUser.subscription_status);
       
-      // ✅ Se l'utente non ha subscription attiva, rimanda alla pagina pricing
-      if (!currentUser.subscription_status || 
-          (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial')) {
-        console.warn('⚠️ User has no active subscription, redirecting to Pricing');
-        navigate(createPageUrl('pricing'), { replace: true });
+      // ✅ Se l'utente ha completato il quiz ma non ha subscription, rimanda a PostQuizSubscription
+      if (currentUser.quiz_completed && (!currentUser.subscription_status || 
+          (currentUser.subscription_status !== 'active' && currentUser.subscription_status !== 'trial'))) {
+        console.warn('⚠️ User completed quiz but no subscription, redirecting to PostQuizSubscription');
+        const userLanguage = currentUser.preferred_language || 'it';
+        const langPageMap = {
+          it: 'itpostquizsubscription',
+          en: 'enpostquizsubscription',
+          es: 'espostquizsubscription',
+          pt: 'ptpostquizsubscription',
+          de: 'depostquizsubscription',
+          fr: 'frpostquizsubscription'
+        };
+        const targetPage = langPageMap[userLanguage] || 'itpostquizsubscription';
+        navigate(createPageUrl(targetPage), { replace: true });
+        return;
+      }
+      
+      // Se non ha completato il quiz, rimanda al quiz
+      if (!currentUser.quiz_completed) {
+        console.warn('⚠️ User has not completed quiz, redirecting to Quiz');
+        navigate(createPageUrl('Quiz'), { replace: true });
         return;
       }
       
