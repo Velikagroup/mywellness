@@ -331,7 +331,7 @@ export default function PostQuizSubscription() {
           {selectedPlan === 'yearly' && (
             <div className="flex items-center justify-center gap-2 text-gray-900">
               <Check className="w-5 h-5" />
-              <p className="font-semibold">{t?.subscription?.noPaymentNow || 'No Payment Due Now'}</p>
+              <p className="font-semibold">{t('subscription.noPaymentNow')}</p>
             </div>
           )}
 
