@@ -23,35 +23,36 @@ Deno.serve(async (req) => {
             apiVersion: '2023-10-16',
         });
 
-        console.log('🔍 Cercando tutti i prezzi attivi su Stripe...');
+        console.log('🔍 Cercando TUTTI i prodotti su Stripe (attivi + inattivi)...');
 
-        // Recupero tutti i prodotti attivi
-        const allProducts = await stripe.products.list({ limit: 100, active: true });
+        // Recupero TUTTI i prodotti (sia attivi che inattivi)
+        const allProducts = await stripe.products.list({ limit: 100 });
         
         const result = {
             total_products: allProducts.data.length,
             products: []
         };
 
-        // Per ogni prodotto, recupero i prezzi
+        // Per ogni prodotto, recupero TUTTI i prezzi (sia attivi che inattivi)
         for (const product of allProducts.data) {
-            const prices = await stripe.prices.list({ product: product.id, limit: 100, active: true });
+            const prices = await stripe.prices.list({ product: product.id, limit: 100 });
             
-            if (prices.data.length > 0) {
-                result.products.push({
-                    product_id: product.id,
-                    product_name: product.name,
-                    plan_id: product.metadata?.plan_id,
-                    prices: prices.data.map(p => ({
-                        price_id: p.id,
-                        amount: p.unit_amount,
-                        currency: p.currency,
-                        type: p.type,
-                        interval: p.recurring?.interval || 'one-time',
-                        trial_days: p.recurring?.trial_period_days || 'none'
-                    }))
-                });
-            }
+            result.products.push({
+                product_id: product.id,
+                product_name: product.name,
+                status: product.active ? '🟢 ATTIVO' : '🔴 INATTIVO',
+                plan_id: product.metadata?.plan_id,
+                created: new Date(product.created * 1000).toLocaleDateString('it-IT'),
+                prices: prices.data.map(p => ({
+                    price_id: p.id,
+                    amount: p.unit_amount,
+                    currency: p.currency,
+                    status: p.active ? '🟢 ATTIVO' : '🔴 INATTIVO',
+                    type: p.type,
+                    interval: p.recurring?.interval || 'one-time',
+                    trial_days: p.recurring?.trial_period_days || 'none'
+                }))
+            });
         }
 
         console.log(JSON.stringify(result, null, 2));
