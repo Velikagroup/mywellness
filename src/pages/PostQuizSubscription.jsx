@@ -1,52 +1,38 @@
-import React, { useState, useEffect, useRef } from 'react';
-      import { useNavigate } from 'react-router-dom';
-      import { createPageUrl } from '@/utils';
-      import { base44 } from '@/api/base44Client';
-      import { Button } from '@/components/ui/button';
-      import { Check, Bell, Lock, Crown, Sparkles, Apple } from 'lucide-react';
-      import { useLanguage } from '@/components/i18n/LanguageContext';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { createPageUrl } from '@/utils';
+import { base44 } from '@/api/base44Client';
+import { Button } from '@/components/ui/button';
+import { Check, Bell, Lock, Crown, Sparkles } from 'lucide-react';
+import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function PostQuizSubscription() {
   const navigate = useNavigate();
   const { t } = useLanguage();
   const [user, setUser] = useState(null);
-    const [selectedPlan, setSelectedPlan] = useState('monthly');
-    const [showReminderScreen, setShowReminderScreen] = useState(false);
-    const [isLoading, setIsLoading] = useState(false);
-    const [timelineProgress, setTimelineProgress] = useState(0);
-    const [stripe, setStripe] = useState(null);
-    const [elements, setElements] = useState(null);
-    const stripeRef = useRef(null);
-    const elementsRef = useRef(null);
+  const [selectedPlan, setSelectedPlan] = useState('monthly');
+  const [showReminderScreen, setShowReminderScreen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [timelineProgress, setTimelineProgress] = useState(0);
 
   useEffect(() => {
-      const loadUser = async () => {
-        try {
-          const currentUser = await base44.auth.me();
-          setUser(currentUser);
-
-          // Se ha già una subscription attiva, vai alla dashboard
-          if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
-            navigate(createPageUrl('Dashboard'), { replace: true });
-          }
-
-          // Carica Stripe
-          const { loadStripe } = await import('@stripe/stripe-js');
-          const publishableKey = Deno.env.get("STRIPE_PUBLISHABLE_KEY") || 'pk_live_51SuOAq2OXBs6ZYwlLJ4l6F8T2H8d3nK9c2P5Q6R7S8T9U0V1W2X3Y4Z5A6B7C8D9E';
-
-          if (publishableKey) {
-            const stripeInstance = await loadStripe(publishableKey);
-            stripeRef.current = stripeInstance;
-            setStripe(stripeInstance);
-          }
-        } catch (error) {
-          console.error('Error loading user:', error);
-          navigate(createPageUrl('Quiz'), { replace: true });
+    const loadUser = async () => {
+      try {
+        const currentUser = await base44.auth.me();
+        setUser(currentUser);
+        
+        // Se ha già una subscription attiva, vai alla dashboard
+        if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
+          navigate(createPageUrl('Dashboard'), { replace: true });
         }
-      };
-
-      loadUser();
-    }, [navigate]);
+      } catch (error) {
+        console.error('Error loading user:', error);
+        navigate(createPageUrl('Quiz'), { replace: true });
+      }
+    };
+    
+    loadUser();
+  }, [navigate]);
 
   // Animazione timeline quando yearly è selezionato
   useEffect(() => {
@@ -68,89 +54,50 @@ export default function PostQuizSubscription() {
   }, [selectedPlan]);
 
   const handleStartTrial = async () => {
-      if (selectedPlan === 'yearly') {
-        // Mostra schermata reminder per yearly
-        setShowReminderScreen(true);
-      } else {
-        // Avvia Apple Pay per monthly
-        await handleApplePayPayment('monthly');
-      }
-    };
+    if (selectedPlan === 'yearly') {
+      // Mostra schermata reminder per yearly
+      setShowReminderScreen(true);
+    } else {
+      // Avvia checkout per monthly
+      await handleCheckout('monthly');
+    }
+  };
 
-  const handleApplePayPayment = async (plan) => {
+  const handleCheckout = async (plan) => {
     setIsLoading(true);
     try {
+      // Price IDs da Stripe
       const priceId = plan === 'yearly' 
-        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
-        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
-
-      // Crea Setup Intent
+        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp' // €49.99/anno con 3 giorni trial
+        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6'; // €9.99/mese senza trial
+      
+      console.log('🔄 Creating checkout session for:', plan, priceId);
+      
+      // Crea Checkout Session
       const response = await base44.functions.invoke('stripeCreatePaymentSheet', {
         priceId,
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
 
+      console.log('✅ Checkout response:', response);
       const data = response?.data || response;
+
       if (!data?.success) {
-        throw new Error(data?.error || 'Setup failed');
+        throw new Error(data?.error || 'Checkout failed');
       }
 
-      // Usa Payment Request API per Apple Pay / Google Pay
-      const paymentRequest = stripeRef.current?.paymentRequest({
-        country: 'IT',
-        currency: 'eur',
-        total: {
-          label: plan === 'yearly' 
-            ? `MyWellness - ${t('subscription.yearly')}`
-            : `MyWellness - ${t('subscription.monthly')}`,
-          amount: data.amount
-        },
-        requestPayerName: true,
-        requestPayerEmail: true,
-      });
-
-      if (!paymentRequest) {
-        throw new Error('Payment Request not available');
+      // Redirect diretto all'URL di Stripe Checkout
+      if (data?.url) {
+        console.log('🔄 Redirecting to:', data.url);
+        window.location.href = data.url;
+      } else {
+        throw new Error('No checkout URL received');
       }
-
-      paymentRequest.on('paymentmethod', async (ev) => {
-        try {
-          // Confirma il Setup Intent con il payment method
-          const result = await stripeRef.current?.confirmSetupIntent(
-            data.setupIntentClientSecret,
-            {
-              payment_method: ev.paymentMethod.id
-            }
-          );
-
-          if (result.error) {
-            ev.complete('fail');
-            throw new Error(result.error.message);
-          }
-
-          ev.complete('success');
-
-          // Crea la subscription
-          await base44.functions.invoke('stripeCreateSubscriptionAfterPayment', {
-            customerId: data.customerId,
-            priceId: data.priceId,
-            paymentMethodId: ev.paymentMethod.id
-          });
-
-          navigate(createPageUrl('Dashboard'), { replace: true });
-        } catch (error) {
-          console.error('Payment error:', error);
-          ev.complete('fail');
-          alert('Pagamento fallito: ' + error.message);
-        }
-      });
-
-      paymentRequest.show();
-
+      
     } catch (error) {
-      console.error('❌ Payment error:', error);
-      alert(error.message || 'Errore durante il pagamento');
+      console.error('❌ Checkout error:', error);
+      alert(t?.checkout?.error || `Errore durante il checkout: ${error.message}`);
       setIsLoading(false);
     }
   };
@@ -240,12 +187,12 @@ export default function PostQuizSubscription() {
 
           <div className="fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4 bg-white">
             <Button
-                  onClick={() => handleApplePayPayment('yearly')}
-                  disabled={isLoading}
-                  className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
-                >
-                  {isLoading ? t('common.loading') : t('subscription.continueForFree')}
-                </Button>
+              onClick={() => handleCheckout('yearly')}
+              disabled={isLoading}
+              className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
+            >
+              {isLoading ? t('common.loading') : t('subscription.continueForFree')}
+            </Button>
             <p className="text-center text-sm text-gray-500">
               {t('subscription.yearlyPrice')}
             </p>

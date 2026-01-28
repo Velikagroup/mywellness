@@ -134,16 +134,15 @@ export default function QuizContainer({ translations, language = 'it' }) {
       const needsTrialSetup = localStorage.getItem('needsTrialSetup');
       
       if (quizDataToSave && needsTrialSetup) {
+        setIsLoadingUser(true);
+        
         try {
           const isAuthenticated = await base44.auth.isAuthenticated();
           
           if (!isAuthenticated) {
-            localStorage.removeItem(`quizDataToSave_${language}`);
-            localStorage.removeItem('needsTrialSetup');
+            setIsLoadingUser(false);
             return;
           }
-          
-          setIsLoadingUser(true);
           
           const currentUser = await base44.auth.me();
           
@@ -210,8 +209,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        // Se ha completato il quiz e ha subscription attiva/trial → Dashboard (SOLO se non in recalibrate)
-        if (currentUser && currentUser.quiz_completed && !isRecalibrateFlow) {
+        // Se ha completato il quiz e ha subscription attiva/trial → Dashboard
+        if (currentUser && currentUser.quiz_completed) {
           const hasActiveSubscription = currentUser.subscription_status === 'active' || 
                                         currentUser.subscription_status === 'trial';
           
@@ -238,6 +237,13 @@ export default function QuizContainer({ translations, language = 'it' }) {
       } catch (error) {
         if (error?.response?.status === 401 || error?.message?.includes('401')) {
           setUser(null);
+          // ✅ Se non autenticato da app iOS, apri browser esterno per login
+          const isCapacitor = window.location.protocol === 'capacitor:' || window.Capacitor !== undefined;
+          if (isCapacitor) {
+            console.log('📱 App iOS - apertura browser per login');
+            const quizUrl = 'https://projectmywellness.com' + createPageUrl('Quiz');
+            window.open(quizUrl, '_system');
+          }
         } else {
           console.error('Error loading user:', error);
           setUser(null);
