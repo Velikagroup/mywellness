@@ -113,14 +113,18 @@ export default function PostQuizSubscription() {
     setIsLoading(true);
     try {
       const priceId = 'price_1SubPS2OXBs6ZYwlrhculB4e';
-      const response = await base44.functions.invoke('stripeCreateTrialSubscription', {
-        priceId
+      const response = await base44.functions.invoke('stripePaymentIntent', {
+        priceId,
+        hasTrial: true
       });
 
       const data = response?.data || response;
 
       if (data?.success) {
         console.log('✅ Trial creato:', data.subscription_id);
+        navigate(createPageUrl('Dashboard'), { replace: true });
+      } else if (data?.clientSecret) {
+        // Se ha clientSecret ma no success, significa che il trial è stato creato
         navigate(createPageUrl('Dashboard'), { replace: true });
       } else {
         console.error('❌ Errore:', data);
