@@ -118,8 +118,8 @@ export default function PostQuizSubscription() {
     setIsLoading(true);
 
     const priceId = plan === 'yearly' 
-      ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
-      : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
+        ? 'price_1SubPS2OXBs6ZYwlrhculB4e'
+        : 'price_1SubPS2OXBs6ZYwlbjszSDt9';
 
     const amount = plan === 'yearly' ? 49900 : 9990;
 
