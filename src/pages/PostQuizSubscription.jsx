@@ -415,12 +415,12 @@ export default function PostQuizSubscription() {
           <div className="space-y-2">
             <Button
               onClick={() => handleCheckout(selectedPlan)}
-              disabled={isLoading || !stripeReady}
+              disabled={isLoading || !walletAvailable}
               className="w-full h-14 bg-gray-900 hover:bg-gray-950 disabled:opacity-50 text-white font-bold rounded-full"
             >
               {isLoading ? 
                 t('common.loading')
-              : !stripeReady ?
+              : !walletAvailable ?
                 'Caricamento...'
               : selectedPlan === 'yearly' ? 
                 t('subscription.startTrial')
