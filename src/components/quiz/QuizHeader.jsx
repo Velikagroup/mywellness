@@ -18,10 +18,10 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
 
   // Calcola progresso con peso decrescente per step
   const calculateWeightedProgress = () => {
-    // Crea pesi decrescenti ESTREMAMENTE aggressivi
+    // Prime domande pesano MOLTO, ultime pesano poco
     const weights = Array.from({ length: totalSteps }, (_, i) => {
-      const normalizedPos = i / (totalSteps - 1);
-      return Math.pow(1 - normalizedPos, 0.005) * 20 + 0.02;
+      const normalizedPos = i / Math.max(1, totalSteps - 1);
+      return Math.pow(1 - normalizedPos, 3) * 100 + 0.5;
     });
     
     const totalWeight = weights.reduce((sum, w) => sum + w, 0);
