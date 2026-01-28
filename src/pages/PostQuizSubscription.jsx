@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { createPageUrl } from '@/utils';
-import { base44 } from '@/api/base44Client';
-import { Button } from '@/components/ui/button';
-import { Check, Bell, Lock, Crown, Sparkles } from 'lucide-react';
-import { useLanguage } from '@/components/i18n/LanguageContext';
+import React, { useState, useEffect, useRef } from 'react';
+      import { useNavigate } from 'react-router-dom';
+      import { createPageUrl } from '@/utils';
+      import { base44 } from '@/api/base44Client';
+      import { Button } from '@/components/ui/button';
+      import { Check, Bell, Lock, Crown, Sparkles, Apple } from 'lucide-react';
+      import { useLanguage } from '@/components/i18n/LanguageContext';
 
 export default function PostQuizSubscription() {
   const navigate = useNavigate();
