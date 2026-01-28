@@ -244,12 +244,12 @@ export default function PostQuizSubscription() {
 
           <div className="fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4 bg-white">
             <Button
-              onClick={() => handleCheckout('yearly')}
-              disabled={isLoading}
-              className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
-            >
-              {isLoading ? t('common.loading') : t('subscription.continueForFree')}
-            </Button>
+                  onClick={() => handleApplePayPayment('yearly')}
+                  disabled={isLoading}
+                  className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
+                >
+                  {isLoading ? t('common.loading') : t('subscription.continueForFree')}
+                </Button>
             <p className="text-center text-sm text-gray-500">
               {t('subscription.yearlyPrice')}
             </p>
