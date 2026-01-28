@@ -121,7 +121,7 @@ export default function PostQuizSubscription() {
         ? 'price_1SubPS2OXBs6ZYwlrhculB4e'
         : 'price_1SubPS2OXBs6ZYwlbjszSDt9';
 
-    const amount = plan === 'yearly' ? 49900 : 9990;
+    const amount = plan === 'yearly' ? 4999 : 999;
 
     const paymentRequest = stripeRef.current.paymentRequest({
       country: 'IT',
