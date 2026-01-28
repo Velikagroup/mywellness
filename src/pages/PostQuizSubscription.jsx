@@ -147,17 +147,10 @@ export default function PostQuizSubscription() {
     });
 
     // Mostra il wallet SUBITO nel call stack del click
-    paymentRequest.canMakePayment().then((result) => {
-      if (result) {
-        paymentRequest.show();
-      } else {
-        setIsLoading(false);
-        alert('Apple Pay o Google Pay non disponibile su questo dispositivo');
-      }
-    }).catch((error) => {
+    paymentRequest.show().catch((error) => {
       setIsLoading(false);
       console.error('Payment request error:', error);
-      alert('Errore nel caricamento del wallet');
+      alert('Wallet non disponibile su questo dispositivo');
     });
   };
 
