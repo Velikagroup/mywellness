@@ -821,7 +821,10 @@ export const translations = {
       monthlyPrice: "Solo 9,99 € al mese",
       noPaymentNow: "Nessun Pagamento Richiesto Ora",
       reminderTitle: "Ti invieremo un promemoria prima che il tuo trial gratuito finisca",
-      continueForFree: "Continua GRATIS"
+      continueForFree: "Continua GRATIS",
+      monthly: "Mensile",
+      yearly: "Annuale",
+      threeDaysFree: "3 GIORNI GRATIS"
     },
     nav: {
       dashboard: "Dashboard",
@@ -2458,7 +2461,10 @@ export const translations = {
       monthlyPrice: "Just €9.99 per month",
       noPaymentNow: "No Payment Due Now",
       reminderTitle: "We'll send you a reminder before your free trial ends",
-      continueForFree: "Continue for FREE"
+      continueForFree: "Continue for FREE",
+      monthly: "Monthly",
+      yearly: "Yearly",
+      threeDaysFree: "3 DAYS FREE"
     },
     home: {
       aiPowered: "Powered by Artificial Intelligence",
@@ -4705,7 +4711,10 @@ export const translations = {
       monthlyPrice: "Solo 9,99 € al mes",
       noPaymentNow: "Sin Pago Ahora",
       reminderTitle: "Te enviaremos un recordatorio antes de que termine tu prueba gratuita",
-      continueForFree: "Continuar GRATIS"
+      continueForFree: "Continuar GRATIS",
+      monthly: "Mensual",
+      yearly: "Anual",
+      threeDaysFree: "3 DÍAS GRATIS"
     },
     home: {
       aiPowered: "Impulsado por Inteligencia Artificial",
@@ -6848,7 +6857,10 @@ export const translations = {
       monthlyPrice: "Apenas €9,99 por mês",
       noPaymentNow: "Sem Pagamento Agora",
       reminderTitle: "Enviaremos um lembrete antes que seu teste gratuito termine",
-      continueForFree: "Continuar GRÁTIS"
+      continueForFree: "Continuar GRÁTIS",
+      monthly: "Mensal",
+      yearly: "Anual",
+      threeDaysFree: "3 DIAS GRÁTIS"
     },
     home: {
       aiPowered: "Impulsionado por Inteligência Artificial",
@@ -9013,7 +9025,10 @@ export const translations = {
       monthlyPrice: "Nur 9,99 € pro Monat",
       noPaymentNow: "Jetzt Keine Zahlung Fällig",
       reminderTitle: "Wir senden Ihnen eine Erinnerung bevor Ihre kostenlose Testversion endet",
-      continueForFree: "KOSTENLOS Fortfahren"
+      continueForFree: "KOSTENLOS Fortfahren",
+      monthly: "Monatlich",
+      yearly: "Jährlich",
+      threeDaysFree: "3 TAGE KOSTENLOS"
     },
     home: {
       aiPowered: "Angetrieben von Künstlicher Intelligenz",
@@ -11178,7 +11193,10 @@ export const translations = {
       monthlyPrice: "Seulement 9,99 € par mois",
       noPaymentNow: "Aucun Paiement Maintenant",
       reminderTitle: "Nous vous enverrons un rappel avant la fin de votre essai gratuit",
-      continueForFree: "Continuer GRATUITEMENT"
+      continueForFree: "Continuer GRATUITEMENT",
+      monthly: "Mensuel",
+      yearly: "Annuel",
+      threeDaysFree: "3 JOURS GRATUITS"
     },
     home: {
       aiPowered: "Propulsé par Intelligence Artificielle",

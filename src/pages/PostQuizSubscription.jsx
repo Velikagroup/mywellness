@@ -288,7 +288,7 @@ export default function PostQuizSubscription() {
               }`}
             >
               <div className="text-left space-y-1">
-                <p className="font-semibold text-gray-900">Monthly</p>
+                <p className="font-semibold text-gray-900">{t?.subscription?.monthly || 'Monthly'}</p>
                 <p className="text-2xl font-bold text-gray-900">9,99 €<span className="text-sm font-normal">/mo</span></p>
               </div>
               {selectedPlan === 'monthly' && (
@@ -307,10 +307,10 @@ export default function PostQuizSubscription() {
               }`}
             >
               <div className="absolute -top-2 right-2 bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-full">
-                3 DAYS FREE
+                {t?.subscription?.threeDaysFree || '3 DAYS FREE'}
               </div>
               <div className="text-left space-y-1">
-                <p className="font-semibold text-gray-900">Yearly</p>
+                <p className="font-semibold text-gray-900">{t?.subscription?.yearly || 'Yearly'}</p>
                 <p className="text-2xl font-bold text-gray-900">4,16 €<span className="text-sm font-normal">/mo</span></p>
               </div>
               {selectedPlan === 'yearly' && (
