@@ -56,7 +56,7 @@ export default function ObstaclesStep({ data, onDataChange, onNext, translations
         ))}
       </div>
 
-      <div className="fixed bottom-[200px] left-0 right-0 p-5">
+      <div className="fixed bottom-5 md:bottom-[200px] left-0 right-0 p-5">
         <div className="max-w-[416px] mx-auto px-4 md:px-0">
           <Button
             onClick={handleNext}
