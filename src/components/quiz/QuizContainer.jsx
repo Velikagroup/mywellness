@@ -20,6 +20,7 @@ import AIComparisonStep from './AIComparisonStep';
 import ObstaclesStep from './ObstaclesStep';
 import DietSpecificStep from './DietSpecificStep';
 import GoalsStep from './GoalsStep';
+import WeightPotentialStep from './WeightPotentialStep';
 import QuizStepWrapper from './QuizStepWrapper';
 
 function calculateAge(birthdate) {
@@ -90,7 +91,8 @@ function buildDynamicSteps(translations, quizData) {
                   { component: TargetBodyTypeStep, label: translations?.quiz?.quizTargetBodyTypeTitle || "Target Body Type" },
                   { component: ObstaclesStep, label: translations?.quiz?.quizObstaclesTitle || "Obstacles" },
                   { component: DietSpecificStep, label: translations?.quiz?.quizDietSpecificTitle || "Diet" },
-                  { component: GoalsStep, label: translations?.quiz?.quizGoalsTitle || "Goals" }
+                  { component: GoalsStep, label: translations?.quiz?.quizGoalsTitle || "Goals" },
+                  { component: WeightPotentialStep, label: translations?.quiz?.quizWeightPotentialTitle || "Weight Potential" }
                 );
 
                 return steps;
