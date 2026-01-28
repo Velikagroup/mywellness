@@ -3,7 +3,6 @@ import { Button } from "@/components/ui/button";
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 import { motion } from 'framer-motion';
-import { Heart } from 'lucide-react';
 
 export default function WeightPotentialStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
@@ -106,8 +105,12 @@ export default function WeightPotentialStep({ data, onDataChange, onNext, transl
                 animate={{ scale: animateChart ? 1 : 0, opacity: animateChart ? 1 : 0 }}
                 transition={{ duration: 0.4, delay: 2.2 }}
               >
-                <circle cx="350" cy="30" r="12" fill="white" />
-                <Heart className="w-4 h-4 text-[#26847F] fill-[#26847F]" style={{ transform: 'translate(342px, 22px)' }} />
+                <circle cx="350" cy="30" r="14" fill="white" />
+                <path
+                  d="M 350 24 C 346 20 340 20 338 24 C 336 20 330 20 326 24 C 322 28 322 34 326 38 L 338 50 L 350 38 C 354 34 354 28 350 24 Z"
+                  fill="#26847F"
+                  transform="translate(12, -20)"
+                />
               </motion.g>
 
               {/* X-axis labels */}
@@ -125,7 +128,7 @@ export default function WeightPotentialStep({ data, onDataChange, onNext, transl
 
           <p className="text-sm text-gray-600 text-center leading-relaxed px-2">
             {t.quizWeightPotentialDescription || 
-              "Secondo i dati storici di MyWellness, la perdita di peso può essere lenta all'inizio, ma dopo pochi giorni puoi bruciare grasso come un matto!"}
+              "Secondo i dati storici di MyWellness, la perdita di peso può essere lenta all'inizio, ma dopo pochi giorni potrai vedere risultati sorprendenti!"}
           </p>
         </div>
       </div>
