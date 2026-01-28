@@ -11933,7 +11933,8 @@ export const translations = {
       continueForFree: "Continuer GRATUITEMENT",
       monthly: "Mensuel",
       yearly: "Annuel",
-      threeDaysFree: "3 JOURS GRATUITS"
+      threeDaysFree: "3 JOURS GRATUITS",
+      justPerMonth: "Seulement {price} par mois"
     },
     home: {
       aiPowered: "Propulsé par Intelligence Artificielle",
