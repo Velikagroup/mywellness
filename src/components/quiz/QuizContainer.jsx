@@ -708,20 +708,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
     }
 
     return (
-      <div className="min-h-screen flex items-center justify-center p-4 bg-white">
+      <div className="min-h-screen flex items-center justify-center p-4 bg-white pb-32">
         <div className="max-w-md w-full space-y-6 py-8">
-          {/* Progress Bar */}
-          <div className="h-2 bg-gray-100 w-full rounded-full">
-            <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 w-full rounded-full" />
-          </div>
-
-          {/* Check Icon */}
-          <div className="flex justify-center">
-            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
-              <CheckCircle2 className="w-7 h-7 text-white" />
-            </div>
-          </div>
-
           {/* Title */}
           <div className="text-center space-y-2">
             <h1 className="text-3xl font-bold text-gray-900 leading-tight">
@@ -745,7 +733,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
 
           {/* Personalized Type Section */}
           <div className="space-y-3">
-            <div>
+            <div className="text-center">
               <h2 className="text-xl font-bold text-gray-900">
                 {t?.quiz?.quizPersonalizedType || 'Tipo personalizado'}
               </h2>
@@ -755,9 +743,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
             </div>
 
             {/* Blurred Macros Grid */}
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-4 justify-items-center">
               {/* Calories */}
-              <div className="relative">
+              <div className="relative flex flex-col items-center">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">🔥</span>
                   <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizCalories || 'Calorías'}</span>
@@ -771,7 +759,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
               </div>
 
               {/* Carbs */}
-              <div className="relative">
+              <div className="relative flex flex-col items-center">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">🌾</span>
                   <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizCarbs || 'Hidratos'}</span>
@@ -785,7 +773,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
               </div>
 
               {/* Protein */}
-              <div className="relative">
+              <div className="relative flex flex-col items-center">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">🥩</span>
                   <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizProtein || 'Proteína'}</span>
@@ -799,7 +787,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
               </div>
 
               {/* Fats */}
-              <div className="relative">
+              <div className="relative flex flex-col items-center">
                 <div className="flex items-center gap-2 mb-2">
                   <span className="text-xl">🥑</span>
                   <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizFats || 'Grasas'}</span>
@@ -812,10 +800,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
                 </div>
               </div>
             </div>
-          </div>
+            </div>
 
-          {/* Body Fat Box */}
-          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 relative overflow-hidden">
+            {/* Body Fat Box */}
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 relative overflow-hidden text-center">
             <div className="relative z-10">
               <p className="text-lg font-bold text-gray-900 mb-2">
                 {t?.quiz?.quizDiscoverBodyFat || 'Scopri la tua massa grassa'}
@@ -828,14 +816,16 @@ export default function QuizContainer({ translations, language = 'it' }) {
                 <p className="text-sm font-medium text-gray-600">{t?.quiz?.quizLoginToSee || 'Accedi per vedere'}</p>
               </div>
             </div>
-          </div>
+            </div>
+            </div>
 
-          {/* CTA Button */}
-          <Button
+            {/* Fixed CTA Button */}
+            <div className="fixed bottom-5 left-0 right-0 px-4 z-50">
+            <Button
             onClick={handleRevealBodyFat}
             disabled={isSaving}
-            className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white text-base font-bold rounded-xl mt-6"
-          >
+            className="w-full max-w-md mx-auto h-14 bg-gray-900 hover:bg-gray-950 text-white text-base font-bold rounded-full"
+            >
             {isSaving ? (
               <>
                 <Loader2 className="w-5 h-5 mr-2 animate-spin" />
@@ -844,10 +834,10 @@ export default function QuizContainer({ translations, language = 'it' }) {
             ) : (
               t?.quiz?.quizDiscoverNow || 'Scoprilo subito'
             )}
-          </Button>
-        </div>
-      </div>
-    );
+            </Button>
+            </div>
+            </div>
+            );
   }
 
   if (isCalculating) {

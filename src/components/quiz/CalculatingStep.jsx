@@ -46,7 +46,7 @@ export default function CalculatingStep({ translations }) {
       <div className="max-w-md w-full space-y-8 text-center">
         {/* Percentage */}
         <div className="space-y-2">
-          <h1 className="text-7xl font-black text-gray-900">
+          <h1 className="text-7xl font-semibold text-gray-900">
             {progress}%
           </h1>
           <p className="text-xl font-bold text-gray-900">
@@ -57,7 +57,7 @@ export default function CalculatingStep({ translations }) {
         {/* Progress Bar */}
         <div className="w-full bg-gray-200 rounded-full h-3 overflow-hidden">
           <div 
-            className="h-full bg-gradient-to-r from-pink-400 via-purple-400 to-blue-400 transition-all duration-300 ease-out rounded-full"
+            className="h-full bg-gradient-to-r from-[#26847F] to-teal-400 transition-all duration-300 ease-out rounded-full"
             style={{ width: `${progress}%` }}
           />
         </div>
