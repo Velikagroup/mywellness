@@ -3,19 +3,19 @@ import { Button } from "@/components/ui/button";
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
-const DIETS = [
-  { id: 'low_carb', icon: '🥗', label: 'Low Carb' },
-  { id: 'soft_low_carb', icon: '🥙', label: 'Soft Low Carb' },
-  { id: 'ketogenic', icon: '🥑', label: 'Chetogenica' },
-  { id: 'carnivore', icon: '🥩', label: 'Carnivore' },
-  { id: 'vegetarian', icon: '🥦', label: 'Vegetariana' },
-  { id: 'vegan', icon: '🌱', label: 'Vegana' },
-  { id: 'paleo', icon: '🍖', label: 'Paleo' },
-  { id: 'mediterranean', icon: '🫒', label: 'Mediterranea' }
-];
-
 export default function DietSpecificStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
+
+  const DIETS = [
+    { id: 'low_carb', icon: '🥗', label: 'Low Carb' },
+    { id: 'soft_low_carb', icon: '🥙', label: 'Soft Low Carb' },
+    { id: 'ketogenic', icon: '🥑', label: t.dietKeto || 'Ketogenic' },
+    { id: 'carnivore', icon: '🥩', label: t.dietCarnivore || 'Carnivore' },
+    { id: 'vegetarian', icon: '🥦', label: t.dietVegetarian || 'Vegetarian' },
+    { id: 'vegan', icon: '🌱', label: t.dietVegan || 'Vegan' },
+    { id: 'paleo', icon: '🍖', label: t.dietPaleo || 'Paleo' },
+    { id: 'mediterranean', icon: '🫒', label: t.dietMediterranean || 'Mediterranean' }
+  ];
   const [selectedDiet, setSelectedDiet] = useState(data.diet_type || null);
 
   useEffect(() => {
@@ -42,7 +42,7 @@ export default function DietSpecificStep({ data, onDataChange, onNext, translati
         onBackClick={onPrev}
       />
       <QuizQuestionHeader
-        title={t.quizDietSpecificTitle || "¿Sigues alguna dieta específica?"}
+        title={t.dietSpecificQuestion || "Do you follow a specific diet?"}
         subtitle={t.quizDietSpecificSubtitle || ""}
       />
 

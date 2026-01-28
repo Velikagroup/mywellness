@@ -3,16 +3,16 @@ import { Button } from "@/components/ui/button";
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
-const OBSTACLES = [
-  { id: 'consistency', icon: '📊', label: 'Falta de consistencia' },
-  { id: 'eating_habits', icon: '🍔', label: 'Hábitos alimentarios poco saludables' },
-  { id: 'support', icon: '🤝', label: 'Falta de apoyo' },
-  { id: 'busy', icon: '📅', label: 'Horario ocupado' },
-  { id: 'motivation', icon: '🍎', label: 'Falta de inspiración para las comidas' }
-];
-
 export default function ObstaclesStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
+
+  const OBSTACLES = [
+    { id: 'consistency', icon: '📊', label: t.obstacleConsistency || 'Lack of consistency' },
+    { id: 'eating_habits', icon: '🍔', label: t.obstacleUnhealthy || 'Unhealthy eating habits' },
+    { id: 'support', icon: '🤝', label: t.obstacleSupport || 'Lack of support' },
+    { id: 'busy', icon: '📅', label: t.obstacleBusy || 'Busy schedule' },
+    { id: 'motivation', icon: '🍎', label: t.obstacleInspiration || 'Lack of meal inspiration' }
+  ];
   const [selectedObstacles, setSelectedObstacles] = useState(data.main_obstacles || []);
 
   const handleSelection = (id) => {
@@ -35,8 +35,8 @@ export default function ObstaclesStep({ data, onDataChange, onNext, translations
         onBackClick={onPrev}
       />
       <QuizQuestionHeader
-        title={t.quizObstaclesTitle || "¿Qué te impide alcanzar tus objetivos?"}
-        subtitle={t.quizObstaclesSubtitle || ""}
+        title={t.obstaclesTitle || "What prevents you from reaching your goals?"}
+        subtitle={t.obstaclesSubtitle || ""}
       />
 
       <div className="flex-1 flex flex-col gap-3 mt-8">

@@ -22,13 +22,13 @@ export default function WeightPotentialStep({ data, onDataChange, onNext, transl
           onBackClick={onPrev}
         />
         <QuizQuestionHeader
-          title={t.quizWeightPotentialTitle || "Hai un grande potenziale per raggiungere il tuo obiettivo"}
+          title={t.greatPotentialToReach || "You have great potential to reach your goal"}
           subtitle=""
         />
 
         <div className="mt-12 bg-gray-50 rounded-2xl p-6 border border-gray-100">
           <h3 className="text-center text-gray-700 font-semibold mb-8">
-            {t.quizWeightTransition || "Transizione del tuo peso"}
+            {t.weightTransition || "Your weight transition"}
           </h3>
 
           {/* Chart */}
@@ -115,20 +115,20 @@ export default function WeightPotentialStep({ data, onDataChange, onNext, transl
 
               {/* X-axis labels */}
               <text x="70" y="140" textAnchor="middle" fontSize="12" fill="#6b7280">
-                {t.quiz3Days || "3 giorni"}
+                3 {t.daysLabel || "days"}
               </text>
               <text x="190" y="140" textAnchor="middle" fontSize="12" fill="#6b7280">
-                {t.quiz7Days || "7 giorni"}
+                7 {t.daysLabel || "days"}
               </text>
               <text x="350" y="140" textAnchor="middle" fontSize="12" fill="#6b7280">
-                {t.quiz30Days || "30 giorni"}
+                30 {t.daysLabel || "days"}
               </text>
             </svg>
           </div>
 
           <p className="text-sm text-gray-600 text-center leading-relaxed px-2">
-            {t.quizWeightPotentialDescription || 
-              "Secondo i dati storici di MyWellness, la perdita di peso può essere lenta all'inizio, ma dopo pochi giorni potrai vedere risultati sorprendenti!"}
+            {t.weightLossSlowAtFirst || 
+              "According to MyWellness historical data, weight loss may be slow at first, but after a few days you'll see surprising results!"}
           </p>
         </div>
       </div>

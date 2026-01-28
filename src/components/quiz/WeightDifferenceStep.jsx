@@ -15,54 +15,28 @@ export default function WeightDifferenceStep({ data, translations, currentStep, 
   const absDifference = Math.abs(Math.round(weightDifference));
 
   const getMessage = () => {
+    const verb = isLosing ? (t.losingWeight || 'Losing') : (t.gainingWeight || 'Gaining');
+    
     if (absDifference <= 3) {
-    if (isLosing) {
       return {
-        title: `Perdiendo ${absDifference} kg es un objetivo realista. ¡No es nada difícil!`,
-        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar MyWellness y que no es fácil recuperar el peso.`
+        title: `${verb} ${absDifference} kg ${t.isRealisticGoalNotDifficult || 'is a realistic goal. Not difficult at all!'}`,
+        subtitle: t.usersSayChangeEvident || '90% of users say the change is evident after using MyWellness and that it\'s not easy to regain the weight.'
       };
-    } else {
-      return {
-        title: `Ganando ${absDifference} kg es un objetivo realista. ¡No es nada difícil!`,
-        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar MyWellness y que no es fácil perder el peso ganado.`
-      };
-    }
     } else if (absDifference <= 8) {
-    if (isLosing) {
       return {
-        title: `Perdiendo ${absDifference} kg es un objetivo realista. ¡Totalmente alcanzable!`,
-        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar MyWellness y que no es fácil recuperar el peso.`
+        title: `${verb} ${absDifference} kg ${t.isRealisticGoalTotallyAchievable || 'is a realistic goal. Totally achievable!'}`,
+        subtitle: t.usersSayChangeEvident || '90% of users say the change is evident after using MyWellness and that it\'s not easy to regain the weight.'
       };
-    } else {
-      return {
-        title: `Ganando ${absDifference} kg es un objetivo realista. ¡Totalmente alcanzable!`,
-        subtitle: `El 90% de los usuarios dice que el cambio es evidente tras usar MyWellness y que no es fácil perder el peso ganado.`
-      };
-    }
     } else if (absDifference <= 15) {
-    if (isLosing) {
       return {
-        title: `Perdiendo ${absDifference} kg es un objetivo desafiante pero posible.`,
-        subtitle: `Requiere consistencia, pero con el plan personalizado de MyWellness lo conseguirás. El 85% de los usuarios logra su objetivo.`
+        title: `${verb} ${absDifference} kg ${t.isChallengingButPossible || 'is a challenging but achievable goal.'}`,
+        subtitle: t.requiresConsistency || 'Requires consistency, but with MyWellness\'s personalized plan you\'ll make it. 85% of users achieve their goal.'
       };
     } else {
       return {
-        title: `Ganando ${absDifference} kg es un objetivo desafiante pero posible.`,
-        subtitle: `Requiere consistencia, pero con el plan personalizado de MyWellness lo conseguirás. El 85% de los usuarios logra su objetivo.`
+        title: `${verb} ${absDifference} kg ${t.isAmbitiousGoal || 'is an ambitious goal.'}`,
+        subtitle: t.willBeJourney || 'It will be a journey, but with dedication and your personalized plan, you\'ll reach it. Many users have done it before you.'
       };
-    }
-    } else {
-    if (isLosing) {
-      return {
-        title: `Perdiendo ${absDifference} kg es un objetivo ambicioso.`,
-        subtitle: `Será un viaje, pero con dedicación y tu plan personalizado, lo alcanzarás. Muchos usuarios lo han logrado antes que tú.`
-      };
-    } else {
-      return {
-        title: `Ganando ${absDifference} kg es un objetivo ambicioso.`,
-        subtitle: `Será un viaje, pero con dedicación y tu plan personalizado, lo alcanzarás. Muchos usuarios lo han logrado antes que tú.`
-      };
-    }
     }
   };
 

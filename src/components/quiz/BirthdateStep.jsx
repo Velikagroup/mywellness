@@ -11,8 +11,18 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear() - 25);
 
   const MONTHS = [
-    'Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio',
-    'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'
+    t.monthJan || 'January',
+    t.monthFeb || 'February',
+    t.monthMar || 'March',
+    t.monthApr || 'April',
+    t.monthMay || 'May',
+    t.monthJun || 'June',
+    t.monthJul || 'July',
+    t.monthAug || 'August',
+    t.monthSep || 'September',
+    t.monthOct || 'October',
+    t.monthNov || 'November',
+    t.monthDec || 'December'
   ];
 
   useEffect(() => {
