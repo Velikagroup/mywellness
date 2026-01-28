@@ -18,39 +18,6 @@ export default function PostQuizSubscription() {
   const prRef = useRef(null);
 
   useEffect(() => {
-    // Carica Stripe.js da CDN
-    const loadStripe = async () => {
-      if (!stripeRef.current && !window.Stripe) {
-        const script = document.createElement('script');
-        script.src = 'https://js.stripe.com/v3/';
-        script.async = true;
-        script.onload = async () => {
-          try {
-            const res = await base44.functions.invoke('getStripePublishableKey');
-            const key = res?.data?.key || res?.key;
-            if (key && window.Stripe) {
-              stripeRef.current = window.Stripe(key);
-            }
-          } catch (error) {
-            console.error('Error loading Stripe key:', error);
-          }
-        };
-        document.head.appendChild(script);
-      } else if (window.Stripe && !stripeRef.current) {
-        try {
-          const res = await base44.functions.invoke('getStripePublishableKey');
-          const key = res?.data?.key || res?.key;
-          if (key) {
-            stripeRef.current = window.Stripe(key);
-          }
-        } catch (error) {
-          console.error('Error loading Stripe key:', error);
-        }
-      }
-    };
-
-    loadStripe();
-
     const loadUser = async () => {
       try {
         const currentUser = await base44.auth.me();
@@ -66,6 +33,14 @@ export default function PostQuizSubscription() {
     };
     
     loadUser();
+
+    // Carica Stripe.js
+    if (!window.Stripe) {
+      const script = document.createElement('script');
+      script.src = 'https://js.stripe.com/v3/';
+      script.async = true;
+      document.head.appendChild(script);
+    }
   }, [navigate]);
 
   // Animazione timeline quando yearly è selezionato
@@ -100,6 +75,21 @@ export default function PostQuizSubscription() {
   const handleCheckout = async (plan) => {
     setIsLoading(true);
     try {
+      // Aspetta che Stripe sia disponibile
+      if (!window.Stripe) {
+        throw new Error('Stripe not loaded');
+      }
+
+      // Ottieni la chiave pubblica e inizializza Stripe
+      const keyRes = await base44.functions.invoke('getStripePublishableKey');
+      const stripeKey = keyRes?.data?.key || keyRes?.key;
+      
+      if (!stripeKey) {
+        throw new Error('Stripe key not found');
+      }
+
+      const stripe = window.Stripe(stripeKey);
+
       const priceId = plan === 'yearly' 
         ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
         : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
@@ -119,13 +109,8 @@ export default function PostQuizSubscription() {
         throw new Error(data?.error || 'Payment Intent failed');
       }
 
-      // Aspetta che Stripe.js sia caricato
-      if (!stripeRef.current) {
-        throw new Error('Stripe not loaded');
-      }
-
       // Crea Payment Request
-      const paymentRequest = stripeRef.current.paymentRequest({
+      const paymentRequest = stripe.paymentRequest({
         country: 'IT',
         currency: data.currency,
         total: {
@@ -136,11 +121,9 @@ export default function PostQuizSubscription() {
         requestPayerEmail: true,
       });
 
-      prRef.current = paymentRequest;
-
       // Gestisci il pagamento
       paymentRequest.on('paymentmethod', async (e) => {
-        const { error: confirmError } = await stripeRef.current.confirmCardPayment(
+        const { error: confirmError } = await stripe.confirmCardPayment(
           data.clientSecret,
           { payment_method: e.paymentMethod.id },
           { handleActions: false }
@@ -150,6 +133,7 @@ export default function PostQuizSubscription() {
           e.complete('fail');
           console.error('Payment failed:', confirmError);
           alert(`Pagamento fallito: ${confirmError.message}`);
+          setIsLoading(false);
         } else {
           e.complete('success');
           console.log('✅ Payment successful');
@@ -157,12 +141,12 @@ export default function PostQuizSubscription() {
         }
       });
 
-      // Verifica se Payment Request è disponibile e apri Apple Pay/Google Pay
+      // Verifica se Payment Request è disponibile
       const canMakePayment = await paymentRequest.canMakePayment();
       if (canMakePayment) {
         paymentRequest.show();
       } else {
-        throw new Error('Apple Pay o Google Pay non disponibile');
+        throw new Error('Payment method not available');
       }
 
     } catch (error) {
