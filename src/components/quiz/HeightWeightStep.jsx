@@ -1,5 +1,6 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
+import { Plus, Minus } from 'lucide-react';
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
@@ -58,39 +59,28 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     }, 0);
   }, [isMetric]);
 
-  const handleHeightScroll = () => {
-    if (heightRef.current) {
-      const container = heightRef.current;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = container.scrollTop + containerHeight / 2;
-      const index = Math.round((centerY - topPadding) / itemHeight);
-      const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-      const newHeight = heightValues[Math.max(0, Math.min(index, heightValues.length - 1))];
-      
-      if (newHeight !== selectedHeight) {
-        setSelectedHeight(newHeight);
-      }
-    }
-  };
-
-  const handleWeightScroll = () => {
-    if (weightRef.current) {
-      const container = weightRef.current;
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
-      const centerY = container.scrollTop + containerHeight / 2;
-      const index = Math.round((centerY - topPadding) / itemHeight);
-      const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
-      const newWeight = weightValues[Math.max(0, Math.min(index, weightValues.length - 1))];
-      
-      if (newWeight !== selectedWeight) {
-        setSelectedWeight(newWeight);
-      }
-    }
-  };
+  const Stepper = ({ label, value, onIncrement, onDecrement, unit }) => (
+    <div className="flex flex-col items-center gap-3">
+      <span className="text-xs text-gray-500 uppercase font-semibold">{label}</span>
+      <button
+        onClick={onIncrement}
+        className="p-2 hover:bg-gray-100 rounded-lg transition"
+      >
+        <Plus className="w-5 h-5 text-gray-600" />
+      </button>
+      <div className="px-6 py-3 bg-gray-50 rounded-full border-2 border-gray-300 min-w-[110px] text-center">
+        <span className="text-lg font-semibold text-gray-900">
+          {value} <span className="text-sm text-gray-500">{unit}</span>
+        </span>
+      </div>
+      <button
+        onClick={onDecrement}
+        className="p-2 hover:bg-gray-100 rounded-lg transition"
+      >
+        <Minus className="w-5 h-5 text-gray-600" />
+      </button>
+    </div>
+  );
 
   const handleUnitToggle = () => {
     setIsMetric(!isMetric);
@@ -229,24 +219,21 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
           </span>
         </div>
 
-        {/* Picker Columns */}
-         <div className="flex gap-4 w-full max-w-[416px] justify-center h-80 mx-auto mt-8 md:mt-20">
-           <PickerColumn
-             items={heightValues}
-             selectedValue={selectedHeight}
-             onScroll={handleHeightScroll}
-             ref={heightRef}
-             unit={isMetric ? 'cm' : 'ft'}
+        {/* Stepper Controls */}
+         <div className="flex gap-8 w-full max-w-[416px] justify-center mx-auto mt-12">
+           <Stepper
              label={t.height || 'Altura'}
+             value={selectedHeight}
+             unit={isMetric ? 'cm' : 'ft'}
+             onIncrement={() => updateHeight(1)}
+             onDecrement={() => updateHeight(-1)}
            />
-
-           <PickerColumn
-             items={weightValues}
-             selectedValue={selectedWeight}
-             onScroll={handleWeightScroll}
-             ref={weightRef}
-             unit={isMetric ? 'kg' : 'lbs'}
+           <Stepper
              label={t.weight || 'Peso'}
+             value={selectedWeight}
+             unit={isMetric ? 'kg' : 'lbs'}
+             onIncrement={() => updateWeight(1)}
+             onDecrement={() => updateWeight(-1)}
            />
          </div>
       </div>
