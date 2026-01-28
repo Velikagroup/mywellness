@@ -134,15 +134,16 @@ export default function QuizContainer({ translations, language = 'it' }) {
       const needsTrialSetup = localStorage.getItem('needsTrialSetup');
       
       if (quizDataToSave && needsTrialSetup) {
-        setIsLoadingUser(true);
-        
         try {
           const isAuthenticated = await base44.auth.isAuthenticated();
           
           if (!isAuthenticated) {
-            setIsLoadingUser(false);
+            localStorage.removeItem(`quizDataToSave_${language}`);
+            localStorage.removeItem('needsTrialSetup');
             return;
           }
+          
+          setIsLoadingUser(true);
           
           const currentUser = await base44.auth.me();
           
