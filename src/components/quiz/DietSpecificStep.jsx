@@ -4,7 +4,6 @@ import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
 const DIETS = [
-  { id: 'classic', icon: '🍽️', label: 'Clásica' },
   { id: 'low_carb', icon: '🥗', label: 'Low Carb' },
   { id: 'soft_low_carb', icon: '🥙', label: 'Soft Low Carb' },
   { id: 'ketogenic', icon: '🥑', label: 'Chetogenica' },
