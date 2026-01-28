@@ -190,15 +190,10 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
 
   const mainNavItems = [
     { name: t('nav.dashboard'), icon: Home, path: 'Dashboard' },
-    { name: t('nav.nutrition'), icon: Utensils, path: 'Meals', requiresFeature: 'meal_plan' },
-    { name: t('nav.workouts'), icon: Dumbbell, path: 'Workouts', requiresFeature: 'workout_plan' },
+    { name: t('nav.nutrition'), icon: Utensils, path: 'Meals' },
+    { name: t('nav.workouts'), icon: Dumbbell, path: 'Workouts' },
     { name: t('nav.settings'), icon: SettingsIcon, path: 'Settings' }
-  ].filter(item => {
-    if (item.requiresFeature && user) {
-      return hasFeatureAccess(user.subscription_plan, item.requiresFeature);
-    }
-    return true;
-  });
+  ];
 
   const hasManagementAccess = user && (user.role === 'admin' || user.custom_role === 'customer_support');
 
