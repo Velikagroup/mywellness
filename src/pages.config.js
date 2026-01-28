@@ -20,6 +20,7 @@ import LandingCheckout from './pages/LandingCheckout';
 import Meals from './pages/Meals';
 import NotFound from './pages/NotFound';
 import OneTimeOffer from './pages/OneTimeOffer';
+import PostQuizSubscription from './pages/PostQuizSubscription';
 import Privacy from './pages/Privacy';
 import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
@@ -35,27 +36,32 @@ import de from './pages/de';
 import deblog from './pages/deblog';
 import deblogarticle from './pages/deblogarticle';
 import decheckout from './pages/decheckout';
+import depostquizsubscription from './pages/depostquizsubscription';
 import depricing from './pages/depricing';
 import dequiz from './pages/dequiz';
 import en from './pages/en';
 import encheckout from './pages/encheckout';
+import enpostquizsubscription from './pages/enpostquizsubscription';
 import enquiz from './pages/enquiz';
 import es from './pages/es';
 import esblog from './pages/esblog';
 import esblogarticle from './pages/esblogarticle';
 import escheckout from './pages/escheckout';
+import espostquizsubscription from './pages/espostquizsubscription';
 import espricing from './pages/espricing';
 import esquiz from './pages/esquiz';
 import fr from './pages/fr';
 import frblog from './pages/frblog';
 import frblogarticle from './pages/frblogarticle';
 import frcheckout from './pages/frcheckout';
+import frpostquizsubscription from './pages/frpostquizsubscription';
 import frpricing from './pages/frpricing';
 import frquiz from './pages/frquiz';
 import it from './pages/it';
 import itblog from './pages/itblog';
 import itblogarticle from './pages/itblogarticle';
 import itcheckout from './pages/itcheckout';
+import itpostquizsubscription from './pages/itpostquizsubscription';
 import itpricing from './pages/itpricing';
 import itquiz from './pages/itquiz';
 import pricing from './pages/pricing';
@@ -63,15 +69,9 @@ import pt from './pages/pt';
 import ptblog from './pages/ptblog';
 import ptblogarticle from './pages/ptblogarticle';
 import ptcheckout from './pages/ptcheckout';
+import ptpostquizsubscription from './pages/ptpostquizsubscription';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
-import PostQuizSubscription from './pages/PostQuizSubscription';
-import itpostquizsubscription from './pages/itpostquizsubscription';
-import enpostquizsubscription from './pages/enpostquizsubscription';
-import espostquizsubscription from './pages/espostquizsubscription';
-import ptpostquizsubscription from './pages/ptpostquizsubscription';
-import depostquizsubscription from './pages/depostquizsubscription';
-import frpostquizsubscription from './pages/frpostquizsubscription';
 import __Layout from './Layout.jsx';
 
 
@@ -98,6 +98,7 @@ export const PAGES = {
     "Meals": Meals,
     "NotFound": NotFound,
     "OneTimeOffer": OneTimeOffer,
+    "PostQuizSubscription": PostQuizSubscription,
     "Privacy": Privacy,
     "ResetPassword": ResetPassword,
     "Settings": Settings,
@@ -113,27 +114,32 @@ export const PAGES = {
     "deblog": deblog,
     "deblogarticle": deblogarticle,
     "decheckout": decheckout,
+    "depostquizsubscription": depostquizsubscription,
     "depricing": depricing,
     "dequiz": dequiz,
     "en": en,
     "encheckout": encheckout,
+    "enpostquizsubscription": enpostquizsubscription,
     "enquiz": enquiz,
     "es": es,
     "esblog": esblog,
     "esblogarticle": esblogarticle,
     "escheckout": escheckout,
+    "espostquizsubscription": espostquizsubscription,
     "espricing": espricing,
     "esquiz": esquiz,
     "fr": fr,
     "frblog": frblog,
     "frblogarticle": frblogarticle,
     "frcheckout": frcheckout,
+    "frpostquizsubscription": frpostquizsubscription,
     "frpricing": frpricing,
     "frquiz": frquiz,
     "it": it,
     "itblog": itblog,
     "itblogarticle": itblogarticle,
     "itcheckout": itcheckout,
+    "itpostquizsubscription": itpostquizsubscription,
     "itpricing": itpricing,
     "itquiz": itquiz,
     "pricing": pricing,
@@ -141,15 +147,9 @@ export const PAGES = {
     "ptblog": ptblog,
     "ptblogarticle": ptblogarticle,
     "ptcheckout": ptcheckout,
+    "ptpostquizsubscription": ptpostquizsubscription,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
-    "PostQuizSubscription": PostQuizSubscription,
-    "itpostquizsubscription": itpostquizsubscription,
-    "enpostquizsubscription": enpostquizsubscription,
-    "espostquizsubscription": espostquizsubscription,
-    "ptpostquizsubscription": ptpostquizsubscription,
-    "depostquizsubscription": depostquizsubscription,
-    "frpostquizsubscription": frpostquizsubscription,
 }
 
 export const pagesConfig = {

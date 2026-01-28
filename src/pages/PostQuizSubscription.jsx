@@ -149,7 +149,7 @@ export default function PostQuizSubscription() {
 
   if (showReminderScreen) {
     return (
-      <div className="min-h-screen bg-white p-6 flex flex-col">
+      <div className="min-h-screen bg-white p-6 flex flex-col pb-28">
         <button
           onClick={() => setShowReminderScreen(false)}
           className="self-start text-gray-600 mb-8"
@@ -178,7 +178,7 @@ export default function PostQuizSubscription() {
             </div>
           </div>
 
-          <div className="w-full space-y-4">
+          <div className="fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4 bg-white">
             <Button
               onClick={() => handleCheckout('yearly')}
               disabled={isLoading}
@@ -196,7 +196,7 @@ export default function PostQuizSubscription() {
   }
 
   return (
-    <div className="min-h-screen bg-white p-6 flex flex-col">
+    <div className="min-h-screen bg-white p-6 flex flex-col pb-28">
       <button
         onClick={() => navigate(createPageUrl('Dashboard'))}
         className="self-start text-gray-600 mb-8"
@@ -211,25 +211,27 @@ export default function PostQuizSubscription() {
           </h1>
         </div>
 
-        {/* Features List */}
-        <div className="space-y-4">
-          {features.map((feature, index) => (
-            <div key={index} className="flex items-start gap-3">
-              <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-900 flex items-center justify-center">
-                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+        {/* Features List - mostrato SOLO se monthly */}
+        {selectedPlan === 'monthly' && (
+          <div className="space-y-4">
+            {features.map((feature, index) => (
+              <div key={index} className="flex items-start gap-3">
+                <div className="flex-shrink-0 w-6 h-6 rounded-full bg-gray-900 flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                </div>
+                <div className="flex-1">
+                  <p className="font-bold text-gray-900 flex items-center gap-2">
+                    <span className="text-xl">{feature.icon}</span>
+                    {feature.title}
+                  </p>
+                  <p className="text-sm text-gray-600">{feature.subtitle}</p>
+                </div>
               </div>
-              <div className="flex-1">
-                <p className="font-bold text-gray-900 flex items-center gap-2">
-                  <span className="text-xl">{feature.icon}</span>
-                  {feature.title}
-                </p>
-                <p className="text-sm text-gray-600">{feature.subtitle}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
 
-        {/* Animated Timeline (only for yearly) */}
+        {/* Animated Timeline - mostrato SOLO se yearly */}
         {selectedPlan === 'yearly' && (
           <div className="space-y-1 py-4">
             <h2 className="text-xl font-bold text-center mb-6">
@@ -275,78 +277,80 @@ export default function PostQuizSubscription() {
           </div>
         )}
 
-        {/* Plan Selection */}
-        <div className="grid grid-cols-2 gap-4">
-          <button
-            onClick={() => setSelectedPlan('monthly')}
-            className={`relative p-4 rounded-2xl border-2 transition-all ${
-              selectedPlan === 'monthly'
-                ? 'border-gray-900 bg-gray-50'
-                : 'border-gray-200 bg-white'
-            }`}
-          >
-            <div className="text-left space-y-1">
-              <p className="font-semibold text-gray-900">Monthly</p>
-              <p className="text-2xl font-bold text-gray-900">9,99 €<span className="text-sm font-normal">/mo</span></p>
-            </div>
-            {selectedPlan === 'monthly' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
-                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+        {/* Plan Selection - Fixed a 20px dal basso quando yearly */}
+        <div className={selectedPlan === 'yearly' ? 'fixed bottom-20 left-6 right-6 max-w-md mx-auto space-y-4' : 'space-y-4'}>
+          <div className="grid grid-cols-2 gap-4">
+            <button
+              onClick={() => setSelectedPlan('monthly')}
+              className={`relative p-4 rounded-2xl border-2 transition-all ${
+                selectedPlan === 'monthly'
+                  ? 'border-gray-900 bg-gray-50'
+                  : 'border-gray-200 bg-white'
+              }`}
+            >
+              <div className="text-left space-y-1">
+                <p className="font-semibold text-gray-900">Monthly</p>
+                <p className="text-2xl font-bold text-gray-900">9,99 €<span className="text-sm font-normal">/mo</span></p>
               </div>
-            )}
-          </button>
+              {selectedPlan === 'monthly' && (
+                <div className="absolute top-4 right-4 w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                </div>
+              )}
+            </button>
 
-          <button
-            onClick={() => setSelectedPlan('yearly')}
-            className={`relative p-4 rounded-2xl border-2 transition-all ${
-              selectedPlan === 'yearly'
-                ? 'border-gray-900 bg-gray-50'
-                : 'border-gray-200 bg-white'
-            }`}
-          >
-            <div className="absolute -top-2 right-2 bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-full">
-              3 DAYS FREE
-            </div>
-            <div className="text-left space-y-1">
-              <p className="font-semibold text-gray-900">Yearly</p>
-              <p className="text-2xl font-bold text-gray-900">4,16 €<span className="text-sm font-normal">/mo</span></p>
-            </div>
-            {selectedPlan === 'yearly' && (
-              <div className="absolute top-4 right-4 w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
-                <Check className="w-4 h-4 text-white" strokeWidth={3} />
+            <button
+              onClick={() => setSelectedPlan('yearly')}
+              className={`relative p-4 rounded-2xl border-2 transition-all ${
+                selectedPlan === 'yearly'
+                  ? 'border-gray-900 bg-gray-50'
+                  : 'border-gray-200 bg-white'
+              }`}
+            >
+              <div className="absolute -top-2 right-2 bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-full">
+                3 DAYS FREE
               </div>
-            )}
-          </button>
-        </div>
-
-        {/* No Payment Badge */}
-        {selectedPlan === 'yearly' && (
-          <div className="flex items-center justify-center gap-2 text-gray-900">
-            <Check className="w-5 h-5" />
-            <p className="font-semibold">{t?.subscription?.noPaymentNow || 'No Payment Due Now'}</p>
+              <div className="text-left space-y-1">
+                <p className="font-semibold text-gray-900">Yearly</p>
+                <p className="text-2xl font-bold text-gray-900">4,16 €<span className="text-sm font-normal">/mo</span></p>
+              </div>
+              {selectedPlan === 'yearly' && (
+                <div className="absolute top-4 right-4 w-6 h-6 bg-gray-900 rounded-full flex items-center justify-center">
+                  <Check className="w-4 h-4 text-white" strokeWidth={3} />
+                </div>
+              )}
+            </button>
           </div>
-        )}
 
-        {/* CTA Button */}
-        <div className="space-y-2">
-          <Button
-            onClick={handleStartTrial}
-            disabled={isLoading}
-            className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
-          >
-            {isLoading ? (
-              t?.common?.loading || 'Loading...'
-            ) : selectedPlan === 'yearly' ? (
-              t?.subscription?.startTrial || 'Start My 3-Day Free Trial'
-            ) : (
-              t?.subscription?.startJourney || 'Start My Journey'
-            )}
-          </Button>
-          <p className="text-center text-sm text-gray-500">
-            {selectedPlan === 'yearly'
-              ? (t?.subscription?.yearlyPrice || '3 days free, then 49,99 € per year (4,16 €/month)')
-              : (t?.subscription?.monthlyPrice || 'Just 9,99 € per month')}
-          </p>
+          {/* No Payment Badge */}
+          {selectedPlan === 'yearly' && (
+            <div className="flex items-center justify-center gap-2 text-gray-900">
+              <Check className="w-5 h-5" />
+              <p className="font-semibold">{t?.subscription?.noPaymentNow || 'No Payment Due Now'}</p>
+            </div>
+          )}
+
+          {/* CTA Button */}
+          <div className="space-y-2">
+            <Button
+              onClick={handleStartTrial}
+              disabled={isLoading}
+              className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
+            >
+              {isLoading ? (
+                t?.common?.loading || 'Loading...'
+              ) : selectedPlan === 'yearly' ? (
+                t?.subscription?.startTrial || 'Start My 3-Day Free Trial'
+              ) : (
+                t?.subscription?.startJourney || 'Start My Journey'
+              )}
+            </Button>
+            <p className="text-center text-sm text-gray-500">
+              {selectedPlan === 'yearly'
+                ? (t?.subscription?.yearlyPrice || '3 days free, then 49,99 € per year (4,16 €/month)')
+                : (t?.subscription?.monthlyPrice || 'Just 9,99 € per month')}
+            </p>
+          </div>
         </div>
       </div>
     </div>
