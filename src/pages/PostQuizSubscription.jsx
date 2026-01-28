@@ -19,22 +19,43 @@ export default function PostQuizSubscription() {
 
   useEffect(() => {
     // Carica Stripe.js da CDN
-    if (!stripeRef.current) {
-      const script = document.createElement('script');
-      script.src = 'https://js.stripe.com/v3/';
-      script.async = true;
-      script.onload = () => {
-        stripeRef.current = window.Stripe(Deno.env.get?.('STRIPE_PUBLISHABLE_KEY') || window.STRIPE_PUBLISHABLE_KEY);
-      };
-      document.head.appendChild(script);
-    }
+    const loadStripe = async () => {
+      if (!stripeRef.current && !window.Stripe) {
+        const script = document.createElement('script');
+        script.src = 'https://js.stripe.com/v3/';
+        script.async = true;
+        script.onload = async () => {
+          try {
+            const res = await base44.functions.invoke('getStripePublishableKey');
+            const key = res?.data?.key || res?.key;
+            if (key && window.Stripe) {
+              stripeRef.current = window.Stripe(key);
+            }
+          } catch (error) {
+            console.error('Error loading Stripe key:', error);
+          }
+        };
+        document.head.appendChild(script);
+      } else if (window.Stripe && !stripeRef.current) {
+        try {
+          const res = await base44.functions.invoke('getStripePublishableKey');
+          const key = res?.data?.key || res?.key;
+          if (key) {
+            stripeRef.current = window.Stripe(key);
+          }
+        } catch (error) {
+          console.error('Error loading Stripe key:', error);
+        }
+      }
+    };
+
+    loadStripe();
 
     const loadUser = async () => {
       try {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        // Se ha già una subscription attiva, vai alla dashboard
         if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
           navigate(createPageUrl('Dashboard'), { replace: true });
         }

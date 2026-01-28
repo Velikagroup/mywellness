@@ -92,7 +92,7 @@ Deno.serve(async (req) => {
             amount,
             currency: price.currency || 'eur',
             customer: stripeCustomerId,
-            payment_method_types: ['card', 'apple_pay', 'google_pay'],
+            payment_method_types: ['card'],
             metadata: {
                 user_id: user.id,
                 price_id: priceId,
