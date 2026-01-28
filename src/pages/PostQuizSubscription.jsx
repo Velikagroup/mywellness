@@ -84,14 +84,12 @@ export default function PostQuizSubscription() {
       const amount = plan === 'yearly' ? 49900 : 9990;
       const currency = 'eur';
 
-      // Ottieni chiave Stripe
       const keyRes = await base44.functions.invoke('getStripePublishableKey');
       const stripeKey = keyRes?.data?.key || keyRes?.key;
       if (!stripeKey) throw new Error('Stripe key not found');
 
       const stripe = window.Stripe(stripeKey);
 
-      // Crea Payment Request
       const paymentRequest = stripe.paymentRequest({
         country: 'IT',
         currency: currency,
@@ -103,10 +101,15 @@ export default function PostQuizSubscription() {
         requestPayerEmail: true,
       });
 
-      // Mostra Apple Pay/Google Pay SENZA aspettare canMakePayment
-      paymentRequest.show();
+      // Verifica disponibilità PRIMA di show()
+      const canMakePayment = await paymentRequest.canMakePayment();
+      if (!canMakePayment) {
+        setIsLoading(false);
+        alert('Apple Pay o Google Pay non disponibile su questo dispositivo');
+        return;
+      }
 
-      // Setup listener per il pagamento
+      // Setup listener PRIMA di show()
       paymentRequest.on('paymentmethod', async (e) => {
         try {
           const response = await base44.functions.invoke('stripePaymentIntent', {
@@ -139,6 +142,9 @@ export default function PostQuizSubscription() {
           setIsLoading(false);
         }
       });
+
+      // Mostra Apple Pay/Google Pay DOPO canMakePayment()
+      await paymentRequest.show();
 
     } catch (error) {
       console.error('Error:', error);
