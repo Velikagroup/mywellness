@@ -207,7 +207,9 @@ export default function PostQuizSubscription() {
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full space-y-8">
         <div className="space-y-4 text-center">
           <h1 className="text-3xl font-bold text-gray-900">
-            {t?.subscription?.unlockTitle || 'Unlock MyWellness to reach your goals faster.'}
+            {selectedPlan === 'yearly' 
+              ? (t?.subscription?.trialTitle || 'Start your 3-day FREE trial to continue.')
+              : (t?.subscription?.unlockTitle || 'Unlock MyWellness to reach your goals faster.')}
           </h1>
         </div>
 
@@ -234,9 +236,6 @@ export default function PostQuizSubscription() {
         {/* Animated Timeline - mostrato SOLO se yearly */}
         {selectedPlan === 'yearly' && (
           <div className="space-y-1 py-4">
-            <h2 className="text-xl font-bold text-center mb-6">
-              {t?.subscription?.trialTitle || 'Start your 3-day FREE trial to continue.'}
-            </h2>
             {timelineSteps.map((step, index) => {
               const StepIcon = step.icon;
               const isActive = timelineProgress >= (index * 33.33);
@@ -278,7 +277,7 @@ export default function PostQuizSubscription() {
         )}
 
         {/* Plan Selection - Fixed a 20px dal basso quando yearly */}
-        <div className={selectedPlan === 'yearly' ? 'fixed bottom-20 left-6 right-6 max-w-md mx-auto space-y-4' : 'space-y-4'}>
+        <div className={selectedPlan === 'yearly' ? 'fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4' : 'space-y-4'}>
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => setSelectedPlan('monthly')}
