@@ -133,16 +133,12 @@ export default function WeightPotentialStep({ data, onDataChange, onNext, transl
         </div>
       </div>
 
-      <div className="fixed bottom-5 md:bottom-[200px] left-0 right-0 p-5">
-        <div className="max-w-[416px] mx-auto px-4 md:px-0">
-          <Button
-            onClick={onNext}
-            className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold rounded-full h-14"
-          >
-            {t.quizContinue || 'Continua'}
-          </Button>
-        </div>
-      </div>
+      <Button
+        onClick={onNext}
+        className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold quiz-button-fixed"
+      >
+        {t.quizContinue || 'Continua'}
+      </Button>
     </div>
   );
 }
