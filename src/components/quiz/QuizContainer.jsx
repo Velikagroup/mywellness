@@ -210,8 +210,8 @@ export default function QuizContainer({ translations, language = 'it' }) {
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
-        // Se ha completato il quiz e ha subscription attiva/trial → Dashboard
-        if (currentUser && currentUser.quiz_completed) {
+        // Se ha completato il quiz e ha subscription attiva/trial → Dashboard (SOLO se non in recalibrate)
+        if (currentUser && currentUser.quiz_completed && !isRecalibrateFlow) {
           const hasActiveSubscription = currentUser.subscription_status === 'active' || 
                                         currentUser.subscription_status === 'trial';
           
