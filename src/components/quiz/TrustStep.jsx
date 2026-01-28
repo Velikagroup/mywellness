@@ -52,7 +52,7 @@ export default function TrustStep({ data, onDataChange, onNext, translations, cu
 
         {/* Subtitle */}
         <p className="text-base text-gray-500 px-4">
-          {t.quizTrustSubtitle || 'Ahora personalicemos Cal AI para ti...'}
+          {t.quizTrustSubtitle || 'Ahora personalicemos MyWellness para ti...'}
         </p>
 
         {/* Privacy Box */}
