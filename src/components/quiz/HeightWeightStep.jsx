@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
+import { Plus, Minus } from 'lucide-react';
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
@@ -58,55 +59,45 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     }, 0);
   }, [isMetric]);
 
-  const handleHeightScroll = () => {
+  const updateHeight = (delta) => {
+    const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
+    const currentIndex = heightValues.indexOf(selectedHeight);
+    const newIndex = Math.max(0, Math.min(currentIndex + delta, heightValues.length - 1));
+    const newHeight = heightValues[newIndex];
+    setSelectedHeight(newHeight);
+    scrollToHeight(newHeight);
+  };
+
+  const updateWeight = (delta) => {
+    const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
+    const currentIndex = weightValues.indexOf(selectedWeight);
+    const newIndex = Math.max(0, Math.min(currentIndex + delta, weightValues.length - 1));
+    const newWeight = weightValues[newIndex];
+    setSelectedWeight(newWeight);
+    scrollToWeight(newWeight);
+  };
+
+  const scrollToHeight = (height) => {
     if (heightRef.current) {
-      const container = heightRef.current;
-      const centerY = container.scrollTop + container.clientHeight / 2;
-      
-      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-      
-      items.forEach((item, idx) => {
-        const itemTop = item.offsetTop;
-        const itemCenter = itemTop + item.clientHeight / 2;
-        const distance = Math.abs(itemCenter - centerY);
-        
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
-        }
-      });
-      
+      const itemHeight = 40;
+      const topPadding = 160;
+      const containerHeight = 320;
       const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-      const newHeight = heightValues[Math.max(0, Math.min(closestIndex, heightValues.length - 1))];
-      setSelectedHeight(newHeight);
+      const index = heightValues.indexOf(height);
+      const scroll = topPadding + index * itemHeight - containerHeight / 2;
+      heightRef.current.scrollTop = scroll;
     }
   };
 
-  const handleWeightScroll = () => {
+  const scrollToWeight = (weight) => {
     if (weightRef.current) {
-      const container = weightRef.current;
-      const centerY = container.scrollTop + container.clientHeight / 2;
-      
-      const items = Array.from(container.querySelectorAll('div[class*="h-10"]'));
-      let closestIndex = 0;
-      let closestDistance = Infinity;
-      
-      items.forEach((item, idx) => {
-        const itemTop = item.offsetTop;
-        const itemCenter = itemTop + item.clientHeight / 2;
-        const distance = Math.abs(itemCenter - centerY);
-        
-        if (distance < closestDistance) {
-          closestDistance = distance;
-          closestIndex = idx;
-        }
-      });
-      
+      const itemHeight = 40;
+      const topPadding = 160;
+      const containerHeight = 320;
       const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
-      const newWeight = weightValues[Math.max(0, Math.min(closestIndex, weightValues.length - 1))];
-      setSelectedWeight(newWeight);
+      const index = weightValues.indexOf(weight);
+      const scroll = topPadding + index * itemHeight - containerHeight / 2;
+      weightRef.current.scrollTop = scroll;
     }
   };
 
@@ -248,25 +239,47 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
         </div>
 
         {/* Picker Columns */}
-        <div className="flex gap-4 w-full max-w-[416px] justify-center h-80 mx-auto mt-8 md:mt-20">
-          <PickerColumn
-            items={heightValues}
-            selectedValue={selectedHeight}
-            onScroll={handleHeightScroll}
-            ref={heightRef}
-            unit={isMetric ? 'cm' : 'ft'}
-            label={t.height || 'Altura'}
-          />
+         <div className="flex gap-4 w-full max-w-[416px] justify-center mx-auto mt-8 md:mt-20">
+           {/* Altezza */}
+           <div className="flex-1 flex flex-col items-center gap-2">
+             <button onClick={() => updateHeight(1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Plus className="w-5 h-5 text-gray-600" />
+             </button>
+             <div className="h-80 relative">
+               <PickerColumn
+                 items={heightValues}
+                 selectedValue={selectedHeight}
+                 onScroll={() => {}}
+                 ref={heightRef}
+                 unit={isMetric ? 'cm' : 'ft'}
+                 label={t.height || 'Altura'}
+               />
+             </div>
+             <button onClick={() => updateHeight(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Minus className="w-5 h-5 text-gray-600" />
+             </button>
+           </div>
 
-          <PickerColumn
-            items={weightValues}
-            selectedValue={selectedWeight}
-            onScroll={handleWeightScroll}
-            ref={weightRef}
-            unit={isMetric ? 'kg' : 'lbs'}
-            label={t.weight || 'Peso'}
-          />
-        </div>
+           {/* Peso */}
+           <div className="flex-1 flex flex-col items-center gap-2">
+             <button onClick={() => updateWeight(1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Plus className="w-5 h-5 text-gray-600" />
+             </button>
+             <div className="h-80 relative">
+               <PickerColumn
+                 items={weightValues}
+                 selectedValue={selectedWeight}
+                 onScroll={() => {}}
+                 ref={weightRef}
+                 unit={isMetric ? 'kg' : 'lbs'}
+                 label={t.weight || 'Peso'}
+               />
+             </div>
+             <button onClick={() => updateWeight(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
+               <Minus className="w-5 h-5 text-gray-600" />
+             </button>
+           </div>
+         </div>
       </div>
 
       <div>
