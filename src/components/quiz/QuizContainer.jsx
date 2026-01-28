@@ -742,7 +742,7 @@ export default function QuizContainer({ translations, language = 'it' }) {
               </div>
               <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
                 <EyeOff className="w-6 h-6 text-gray-600" />
-                <p className="text-sm font-medium text-gray-600">{t?.quiz?.quizLoginToSee || 'Accedi per vedere'}</p>
+                <p className="text-sm font-medium text-gray-600">{t?.quiz?.quizLoginToDiscover || 'Accedi per scoprire'}</p>
               </div>
             </div>
           </div>
