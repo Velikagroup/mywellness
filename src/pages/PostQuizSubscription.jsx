@@ -66,23 +66,27 @@ export default function PostQuizSubscription() {
   const handleCheckout = async (plan) => {
     setIsLoading(true);
     try {
+      // Price IDs - AGGIORNARE con gli ID reali dopo aver eseguito stripeSetupNewProducts
       const priceId = plan === 'yearly' 
-        ? 'price_yearly_id' // Sostituire con ID reale
-        : 'price_monthly_id'; // Sostituire con ID reale
+        ? 'price_YEARLY_ID_HERE' // €49.99/anno con 3 giorni trial
+        : 'price_MONTHLY_ID_HERE'; // €9.99/mese senza trial
       
       const { data: publishableKey } = await base44.functions.invoke('getStripePublishableKey');
       const stripe = window.Stripe(publishableKey);
       
       // Crea Payment Sheet per Apple/Google Pay
-      const { data: session } = await base44.functions.invoke('stripeCreateTrialSubscription', {
+      const { data } = await base44.functions.invoke('stripeCreatePaymentSheet', {
         priceId,
-        userId: user.id,
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
       
-      // Redirect a Stripe Payment Sheet
-      await stripe.redirectToCheckout({ sessionId: session.id });
+      if (!data.success) {
+        throw new Error(data.error);
+      }
+      
+      // Redirect a Stripe Checkout (supporta Apple/Google Pay)
+      await stripe.redirectToCheckout({ sessionId: data.sessionId });
       
     } catch (error) {
       console.error('Checkout error:', error);
