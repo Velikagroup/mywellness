@@ -24,6 +24,7 @@ import WeightPotentialStep from './WeightPotentialStep';
 import TrustStep from './TrustStep';
 import ReferralCodeStep from './ReferralCodeStep';
 import ReadyToGenerateStep from './ReadyToGenerateStep';
+import CalculatingStep from './CalculatingStep';
 import QuizStepWrapper from './QuizStepWrapper';
 
 function calculateAge(birthdate) {
@@ -692,164 +693,166 @@ export default function QuizContainer({ translations, language = 'it' }) {
   }
 
   if (showBodyFatReveal) {
-    const bodyFat = calculateBodyFat(
-      quizData.gender, quizData.height, quizData.waist_circumference,
-      quizData.neck_circumference, quizData.hip_circumference
-    );
+    const isLosingWeight = (quizData.target_weight || 0) < (quizData.current_weight || 0);
+    const weightDifference = Math.abs((quizData.current_weight || 0) - (quizData.target_weight || 0));
+
+    // Calculate target date if losing weight
+    let targetDate = null;
+    if (isLosingWeight && quizData.weight_loss_speed) {
+      const weeksToGoal = weightDifference / (quizData.weight_loss_speed === 'very_fast' ? 1 : 
+                                               quizData.weight_loss_speed === 'moderate' ? 0.75 : 0.5);
+      const daysToGoal = Math.round(weeksToGoal * 7);
+      const futureDate = new Date();
+      futureDate.setDate(futureDate.getDate() + daysToGoal);
+      targetDate = futureDate;
+    }
 
     return (
       <div className="min-h-screen flex items-center justify-center p-4 bg-white">
-          <Card className="max-w-2xl w-full bg-white/90 backdrop-blur-xl border-2 border-gray-200/50 shadow-2xl rounded-3xl overflow-hidden">
-            {/* Progress Bar */}
-            <div className="h-2 bg-gray-100 w-full">
-              <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 w-full rounded-r-full" />
+        <div className="max-w-md w-full space-y-6 py-8">
+          {/* Progress Bar */}
+          <div className="h-2 bg-gray-100 w-full rounded-full">
+            <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 w-full rounded-full" />
+          </div>
+
+          {/* Check Icon */}
+          <div className="flex justify-center">
+            <div className="w-12 h-12 bg-black rounded-full flex items-center justify-center">
+              <CheckCircle2 className="w-7 h-7 text-white" />
             </div>
-            <CardContent className="p-8 md:p-12">
-              <div className="text-center mb-8">
-                <div className="relative w-24 h-24 mx-auto mb-6">
-                  <div className="w-24 h-24 rounded-full flex items-center justify-center shadow-2xl" style={{ background: 'linear-gradient(135deg, #26847F 0%, #14b8a6 100%)' }}>
-                    <Sparkles className="w-12 h-12 text-white" />
-                  </div>
-                </div>
-                
-                <h1 className="text-3xl md:text-4xl font-black mb-3">
-                  <span className="text-transparent bg-gradient-to-r from-[var(--brand-primary)] to-teal-600 bg-clip-text">
-                    {t?.quiz?.quizBodyFatTitle || 'Your Body Fat'}
-                  </span>
-                </h1>
-                
-                <p className="text-base text-gray-700 font-medium max-w-lg mx-auto leading-relaxed">
-                  {t?.quiz?.quizBodyFatSubtitle || 'Calculated with scientific US Navy formula'}
-                </p>
-              </div>
+          </div>
 
-              <div className="relative py-12 mb-8">
-                <div className="text-center space-y-6">
-                  <p className="text-2xl font-bold text-gray-900">
-                    {t?.quiz?.quizBodyFatText || 'Your body fat is:'}
-                  </p>
-                  
-                  <div className="relative inline-block">
-                    <div className="text-7xl font-black text-gray-400 blur-xl select-none px-8">
-                      {bodyFat !== null ? `${bodyFat.toFixed(1)}%` : 'N/A'}
-                    </div>
-                  </div>
-                  
-                  <div className="flex items-center justify-center gap-2 text-gray-600">
-                    <EyeOff className="w-5 h-5" />
-                    <p className="text-sm">{t?.quiz?.quizUnlockText || 'Log in to see your result'}</p>
-                  </div>
-                </div>
-              </div>
+          {/* Title */}
+          <div className="text-center space-y-2">
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">
+              {t?.quiz?.quizPlanReadyTitle || '¡Enhorabuena tu plan personalizado está listo!'}
+            </h1>
+          </div>
 
-              <div className="grid md:grid-cols-2 gap-4 mb-8">
-                <div className="bg-gradient-to-br from-blue-50 to-cyan-50 p-4 md:p-6 rounded-2xl border-2 border-blue-200/50 shadow-lg">
-                  <div className="flex items-center gap-3 mb-2 md:mb-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-blue-500 rounded-full flex items-center justify-center">
-                      <CheckCircle2 className="w-4 h-4 md:w-6 md:h-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-blue-900 text-sm md:text-base">{t?.quiz?.quizAnalysisComplete || 'Analysis Complete'}</h4>
-                  </div>
-                  <p className="text-xs md:text-sm text-blue-800">
-                    {t?.quiz?.quizAnalysisCompleteDesc || 'We analyzed your physical data with scientific precision'}
-                  </p>
+          {/* Weight Goal */}
+          <div className="text-center space-y-2 py-4">
+            <p className="text-lg font-bold text-gray-900">
+              {isLosingWeight 
+                ? (t?.quiz?.quizShouldLose || 'Deberías perder:')
+                : (t?.quiz?.quizShouldGain || 'Deberías ganar:')}
+            </p>
+            <p className="text-base font-medium text-gray-700">
+              {isLosingWeight && targetDate
+                ? `${t?.quiz?.quizLose || 'Pierde'} ${weightDifference.toFixed(0)} kg ${t?.quiz?.quizFor || 'para'} ${targetDate.toLocaleDateString('es-ES', { month: 'long', day: 'numeric' })}`
+                : `${weightDifference.toFixed(0)} kg`}
+            </p>
+          </div>
+
+          {/* Personalized Type Section */}
+          <div className="space-y-3">
+            <div>
+              <h2 className="text-xl font-bold text-gray-900">
+                {t?.quiz?.quizPersonalizedType || 'Tipo personalizado'}
+              </h2>
+              <p className="text-sm text-gray-500">
+                {t?.quiz?.quizCanEditAnytime || 'Puedes editar esto en cualquier momento'}
+              </p>
+            </div>
+
+            {/* Blurred Macros Grid */}
+            <div className="grid grid-cols-2 gap-4">
+              {/* Calories */}
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🔥</span>
+                  <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizCalories || 'Calorías'}</span>
                 </div>
-                
-                <div className="bg-gradient-to-br from-green-50 to-emerald-50 p-4 md:p-6 rounded-2xl border-2 border-green-200/50 shadow-lg">
-                  <div className="flex items-center gap-3 mb-2 md:mb-3">
-                    <div className="w-8 h-8 md:w-10 md:h-10 bg-green-500 rounded-full flex items-center justify-center">
-                      <Sparkles className="w-4 h-4 md:w-6 md:h-6 text-white" />
-                    </div>
-                    <h4 className="font-bold text-green-900 text-sm md:text-base">{t?.quiz?.quizPlanReady || 'Personalized Plan'}</h4>
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full border-8 border-gray-200 flex items-center justify-center">
+                    <span className="text-xl font-bold text-gray-400 blur-sm">1526</span>
                   </div>
-                  <p className="text-xs md:text-sm text-green-800">
-                    {t?.quiz?.quizPlanReadyDesc || 'We will create a custom path for you based on this data'}
-                  </p>
+                  <EyeOff className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
                 </div>
               </div>
 
-              <Button
-                onClick={handleRevealBodyFat}
-                disabled={isSaving}
-                style={{ backgroundColor: '#26847F', borderColor: '#26847F' }}
-                className="w-full h-16 text-xl font-bold text-white rounded-2xl shadow-2xl hover:shadow-3xl transition-all hover:scale-105 border-0 hover:opacity-90"
-              >
-                {isSaving ? (
-                  <>
-                    <Loader2 className="w-6 h-6 mr-3 animate-spin" />
-                    {t?.quiz?.quizSaving || 'Saving...'}
-                  </>
-                ) : (
-                  <>
-                    {t?.quiz?.quizRevealButton || 'Discover Your Body Fat'}
-                    <Sparkles className="w-5 h-5 ml-3" />
-                  </>
-                )}
-              </Button>
-
-              <div className="mt-8 text-center">
-                <div className="inline-flex items-center gap-2 bg-gradient-to-r from-[var(--brand-primary-light)] to-teal-50 px-6 py-3 rounded-full border border-[var(--brand-primary)]/20">
-                  <span className="w-2 h-2 bg-green-500 rounded-full"></span>
-                  <p className="text-xs text-gray-700 font-medium">
-                    {t?.quiz?.quizScientificMethod || 'Scientifically validated US Navy method'}
-                  </p>
+              {/* Carbs */}
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🌾</span>
+                  <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizCarbs || 'Hidratos'}</span>
+                </div>
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full border-8 border-orange-200 flex items-center justify-center">
+                    <span className="text-xl font-bold text-gray-400 blur-sm">142g</span>
+                  </div>
+                  <EyeOff className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
                 </div>
               </div>
-            </CardContent>
-          </Card>
+
+              {/* Protein */}
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🥩</span>
+                  <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizProtein || 'Proteína'}</span>
+                </div>
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full border-8 border-red-200 flex items-center justify-center">
+                    <span className="text-xl font-bold text-gray-400 blur-sm">144g</span>
+                  </div>
+                  <EyeOff className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
+                </div>
+              </div>
+
+              {/* Fats */}
+              <div className="relative">
+                <div className="flex items-center gap-2 mb-2">
+                  <span className="text-xl">🥑</span>
+                  <span className="text-sm font-semibold text-gray-900">{t?.quiz?.quizFats || 'Grasas'}</span>
+                </div>
+                <div className="relative">
+                  <div className="w-24 h-24 rounded-full border-8 border-blue-200 flex items-center justify-center">
+                    <span className="text-xl font-bold text-gray-400 blur-sm">42g</span>
+                  </div>
+                  <EyeOff className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-6 h-6 text-gray-400" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Body Fat Box */}
+          <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl p-6 relative overflow-hidden">
+            <div className="relative z-10">
+              <p className="text-lg font-bold text-gray-900 mb-2">
+                {t?.quiz?.quizDiscoverBodyFat || 'Scopri la tua massa grassa'}
+              </p>
+              <div className="text-4xl font-black text-gray-400 blur-xl">
+                24.5%
+              </div>
+              <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 flex items-center gap-2">
+                <EyeOff className="w-6 h-6 text-gray-600" />
+                <p className="text-sm font-medium text-gray-600">{t?.quiz?.quizLoginToSee || 'Accedi per vedere'}</p>
+              </div>
+            </div>
+          </div>
+
+          {/* CTA Button */}
+          <Button
+            onClick={handleRevealBodyFat}
+            disabled={isSaving}
+            className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white text-base font-bold rounded-xl mt-6"
+          >
+            {isSaving ? (
+              <>
+                <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                {t?.quiz?.quizSaving || 'Guardando...'}
+              </>
+            ) : (
+              t?.quiz?.quizDiscoverNow || 'Scoprilo subito'
+            )}
+          </Button>
         </div>
+      </div>
     );
   }
 
   if (isCalculating) {
     return (
-      <>
-        <style>{`
-          @keyframes progressFill {
-            0% { width: 0%; }
-            100% { width: 100%; }
-          }
-          
-          .progress-bar-animated {
-            animation: progressFill 5s ease-out forwards;
-          }
-        `}</style>
-        <div className="min-h-screen flex items-center justify-center p-4 bg-white">
-          <Card className="max-w-2xl w-full bg-white/80 backdrop-blur-sm border-gray-200/50 shadow-lg rounded-xl overflow-hidden">
-            {/* Progress Bar */}
-            <div className="h-2 bg-gray-100 w-full">
-              <div className="h-full bg-gradient-to-r from-[var(--brand-primary)] to-teal-400 progress-bar-animated rounded-r-full" />
-            </div>
-            <CardHeader className="text-center">
-              <div className="w-24 h-24 mx-auto mb-4 relative">
-                <div className="absolute inset-0 bg-gradient-to-r from-[var(--brand-primary)] to-teal-500 rounded-full animate-pulse"></div>
-                <div className="absolute inset-2 bg-white rounded-full flex items-center justify-center">
-                  <Sparkles className="w-12 h-12 text-[var(--brand-primary)] animate-spin" />
-                </div>
-              </div>
-              <CardTitle className="text-2xl font-bold text-gray-900">
-                {t?.quiz?.quizProcessing || 'Processing...'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-6 p-8">
-              <div className="space-y-4">
-                <div className="flex items-center justify-center gap-3 text-gray-700">
-                  <div className="w-2 h-2 bg-[var(--brand-primary)] rounded-full animate-bounce"></div>
-                  <p className="text-lg font-medium">{t?.quiz?.quizCalcBodyFat || 'Calculating body fat'}</p>
-                </div>
-                <div className="flex items-center justify-center gap-3 text-gray-700">
-                  <div className="w-2 h-2 bg-teal-500 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  <p className="text-lg font-medium">{t?.quiz?.quizCalcMetabolism || 'Analyzing basal metabolism'}</p>
-                </div>
-                <div className="flex items-center justify-center gap-3 text-gray-700">
-                  <div className="w-2 h-2 bg-[var(--brand-primary)] rounded-full animate-bounce" style={{ animationDelay: '0.4s' }}></div>
-                  <p className="text-lg font-medium">{t?.quiz?.quizPreparingPlan || 'Preparing personalized nutrition plan'}</p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </>
+      <CalculatingStep translations={translations} />
     );
   }
 
