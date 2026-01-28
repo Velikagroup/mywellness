@@ -127,6 +127,13 @@ var e=ttq._i[t]||[],n=0;n<ttq.methods.length;n++)ttq.setAndDefer(e,ttq.methods[n
     createPageUrl('ptcheckout'),
     createPageUrl('decheckout'),
     createPageUrl('frcheckout'),
+    // PostQuizSubscription localized pages
+    createPageUrl('itpostquizsubscription'),
+    createPageUrl('enpostquizsubscription'),
+    createPageUrl('espostquizsubscription'),
+    createPageUrl('ptpostquizsubscription'),
+    createPageUrl('depostquizsubscription'),
+    createPageUrl('frpostquizsubscription'),
     // Localized pricing pages
     createPageUrl('itpricing'),
     createPageUrl('espricing'),

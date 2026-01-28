@@ -262,8 +262,17 @@ export default function QuizContainer({ translations, language = 'it' }) {
             navigate(createPageUrl('Dashboard'), { replace: true });
             return;
           } else {
-            // Se ha completato quiz ma NO subscription → vai a PostQuizSubscription
-            navigate(createPageUrl('PostQuizSubscription'), { replace: true });
+            // Se ha completato quiz ma NO subscription → vai a PostQuizSubscription localizzata
+            const langPageMap = {
+              it: 'itpostquizsubscription',
+              en: 'enpostquizsubscription',
+              es: 'espostquizsubscription',
+              pt: 'ptpostquizsubscription',
+              de: 'depostquizsubscription',
+              fr: 'frpostquizsubscription'
+            };
+            const targetPage = langPageMap[language] || 'itpostquizsubscription';
+            navigate(createPageUrl(targetPage), { replace: true });
             return;
           }
         }
@@ -618,8 +627,17 @@ export default function QuizContainer({ translations, language = 'it' }) {
       localStorage.removeItem(`quizDataToSave_${language}`);
       localStorage.removeItem('needsTrialSetup');
 
-      // Vai alla pagina di subscription
-      navigate(createPageUrl('PostQuizSubscription'), { replace: true });
+      // Vai alla pagina di subscription localizzata
+      const langPageMap = {
+        it: 'itpostquizsubscription',
+        en: 'enpostquizsubscription',
+        es: 'espostquizsubscription',
+        pt: 'ptpostquizsubscription',
+        de: 'depostquizsubscription',
+        fr: 'frpostquizsubscription'
+      };
+      const targetPage = langPageMap[language] || 'itpostquizsubscription';
+      navigate(createPageUrl(targetPage), { replace: true });
       
     } catch (error) {
       console.error("Error saving quiz data:", error);
