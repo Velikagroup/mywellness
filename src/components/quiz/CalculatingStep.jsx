@@ -10,8 +10,7 @@ export default function CalculatingStep({ translations }) {
     { id: 'calories', label: t.quizCalories || 'Calorías' },
     { id: 'carbs', label: t.quizCarbs || 'Hidratos' },
     { id: 'protein', label: t.quizProtein || 'Proteína' },
-    { id: 'fats', label: t.quizFats || 'Grasas' },
-    { id: 'score', label: t.quizHealthScore || 'Puntuación de salud' }
+    { id: 'fats', label: t.quizFats || 'Grasas' }
   ];
 
   useEffect(() => {
