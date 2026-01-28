@@ -16,6 +16,23 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
     }
   };
 
+  // Calcola progresso con peso decrescente per step
+  const calculateWeightedProgress = () => {
+    // Crea pesi decrescenti: prime domande pesano di più, ultime di meno
+    const weights = Array.from({ length: totalSteps }, (_, i) => {
+      // Formula esponenziale decrescente
+      const normalizedPos = i / (totalSteps - 1);
+      return Math.pow(1 - normalizedPos, 0.5) * 2 + 0.5;
+    });
+    
+    const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+    const currentWeight = weights.slice(0, currentStep + 1).reduce((sum, w) => sum + w, 0);
+    
+    return Math.round((currentWeight / totalWeight) * 100);
+  };
+
+  const progressValue = calculateWeightedProgress();
+
   return (
     <div className="fixed top-0 left-0 right-0 z-40 bg-white pt-6 pb-4">
       <div className="w-full max-w-[416px] mx-auto px-4 flex items-center gap-1.5">
@@ -29,7 +46,7 @@ export default function QuizHeader({ currentStep, totalSteps, showBackButton = f
           <div className="flex-grow h-0.5 bg-gray-200 rounded-full overflow-hidden">
             <div 
               className="h-full bg-gray-800 transition-all duration-300"
-              style={{ width: `${((currentStep + 1) / totalSteps) * 100}%` }}
+              style={{ width: `${progressValue}%` }}
             />
           </div>
         )}
