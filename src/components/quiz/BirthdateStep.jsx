@@ -30,6 +30,29 @@ export default function BirthdateStep({ data, onDataChange, translations, curren
     }
   }, []);
 
+  // Setup iniziale dello scroll per posizionare i valori al centro
+  useEffect(() => {
+    setTimeout(() => {
+      const itemHeight = 40;
+      const topPadding = 160;
+      const containerHeight = 320;
+
+      if (monthsRef.current) {
+        const scroll = topPadding + selectedMonth * itemHeight - containerHeight / 2;
+        monthsRef.current.scrollTop = scroll;
+      }
+      if (daysRef.current) {
+        const scroll = topPadding + (selectedDay - 1) * itemHeight - containerHeight / 2;
+        daysRef.current.scrollTop = scroll;
+      }
+      if (yearsRef.current) {
+        const yearIndex = YEARS.indexOf(selectedYear);
+        const scroll = topPadding + yearIndex * itemHeight - containerHeight / 2;
+        yearsRef.current.scrollTop = scroll;
+      }
+    }, 0);
+  }, []);
+
   const calculateAgeForDate = (year, month, day) => {
     const today = new Date();
     const birth = new Date(year, month, day);

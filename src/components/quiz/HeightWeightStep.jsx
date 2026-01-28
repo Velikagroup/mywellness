@@ -32,6 +32,32 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     }
   }, []);
 
+  // Setup iniziale dello scroll per posizionare i valori al centro
+  useEffect(() => {
+    setTimeout(() => {
+      const itemHeight = 40;
+      const topPadding = 160;
+      const containerHeight = 320;
+
+      if (heightRef.current) {
+        const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
+        const heightIndex = heightValues.indexOf(selectedHeight);
+        if (heightIndex !== -1) {
+          const scroll = topPadding + heightIndex * itemHeight - containerHeight / 2;
+          heightRef.current.scrollTop = scroll;
+        }
+      }
+      if (weightRef.current) {
+        const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
+        const weightIndex = weightValues.indexOf(selectedWeight);
+        if (weightIndex !== -1) {
+          const scroll = topPadding + weightIndex * itemHeight - containerHeight / 2;
+          weightRef.current.scrollTop = scroll;
+        }
+      }
+    }, 0);
+  }, [isMetric]);
+
   const handleHeightScroll = () => {
     if (heightRef.current) {
       const scrollTop = heightRef.current.scrollTop;
