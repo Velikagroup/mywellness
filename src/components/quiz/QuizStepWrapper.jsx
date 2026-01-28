@@ -17,6 +17,29 @@ export default function QuizStepWrapper({
   showNextButton = true,
   translations
 }) {
+  // Calculate step weights - first steps have more weight, last steps have less
+  const calculateStepWeights = () => {
+    const weights = [];
+    for (let i = 0; i < totalSteps; i++) {
+      // Exponential decay: first steps have much more weight
+      // Formula: weight = e^(-k * i) where k controls the decay rate
+      const k = 0.15; // Decay rate
+      const weight = Math.exp(-k * i);
+      weights.push(weight);
+    }
+    return weights;
+  };
+
+  // Calculate cumulative progress with weighted steps
+  const calculateProgress = () => {
+    const weights = calculateStepWeights();
+    const totalWeight = weights.reduce((sum, w) => sum + w, 0);
+    const currentWeight = weights.slice(0, currentStep + 1).reduce((sum, w) => sum + w, 0);
+    return (currentWeight / totalWeight) * 100;
+  };
+
+  const progress = calculateProgress();
+
   return (
     <>
       <style>{`
@@ -58,7 +81,14 @@ export default function QuizStepWrapper({
       `}</style>
 
       <div className="min-h-screen bg-white">
-        <div className="flex flex-col items-center pt-4 pb-24 px-4">
+        {/* Progress bar at top */}
+        <div className="fixed top-0 left-0 right-0 z-50 bg-white px-4 pt-4 pb-3">
+          <div className="max-w-[416px] mx-auto">
+            <Progress value={progress} className="h-2" />
+          </div>
+        </div>
+
+        <div className="flex flex-col items-center pt-12 pb-24 px-4">
           <div className="max-w-[416px] w-full mt-0">
             {children}
           </div>
