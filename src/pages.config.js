@@ -69,7 +69,6 @@ import LandingCheckout from './pages/LandingCheckout';
 import Meals from './pages/Meals';
 import NotFound from './pages/NotFound';
 import OneTimeOffer from './pages/OneTimeOffer';
-import PostQuizSubscription from './pages/PostQuizSubscription';
 import Privacy from './pages/Privacy';
 import ResetPassword from './pages/ResetPassword';
 import Settings from './pages/Settings';
@@ -121,6 +120,7 @@ import ptcheckout from './pages/ptcheckout';
 import ptpostquizsubscription from './pages/ptpostquizsubscription';
 import ptpricing from './pages/ptpricing';
 import ptquiz from './pages/ptquiz';
+import PostQuizSubscription from './pages/PostQuizSubscription';
 import __Layout from './Layout.jsx';
 
 
@@ -147,7 +147,6 @@ export const PAGES = {
     "Meals": Meals,
     "NotFound": NotFound,
     "OneTimeOffer": OneTimeOffer,
-    "PostQuizSubscription": PostQuizSubscription,
     "Privacy": Privacy,
     "ResetPassword": ResetPassword,
     "Settings": Settings,
@@ -199,6 +198,7 @@ export const PAGES = {
     "ptpostquizsubscription": ptpostquizsubscription,
     "ptpricing": ptpricing,
     "ptquiz": ptquiz,
+    "PostQuizSubscription": PostQuizSubscription,
 }
 
 export const pagesConfig = {

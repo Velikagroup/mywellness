@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -14,8 +14,21 @@ export default function PostQuizSubscription() {
   const [showReminderScreen, setShowReminderScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timelineProgress, setTimelineProgress] = useState(0);
+  const stripeRef = useRef(null);
+  const prRef = useRef(null);
 
   useEffect(() => {
+    // Carica Stripe.js da CDN
+    if (!stripeRef.current) {
+      const script = document.createElement('script');
+      script.src = 'https://js.stripe.com/v3/';
+      script.async = true;
+      script.onload = () => {
+        stripeRef.current = window.Stripe(Deno.env.get?.('STRIPE_PUBLISHABLE_KEY') || window.STRIPE_PUBLISHABLE_KEY);
+      };
+      document.head.appendChild(script);
+    }
+
     const loadUser = async () => {
       try {
         const currentUser = await base44.auth.me();
@@ -66,38 +79,74 @@ export default function PostQuizSubscription() {
   const handleCheckout = async (plan) => {
     setIsLoading(true);
     try {
-      // Price IDs da Stripe
       const priceId = plan === 'yearly' 
-        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp' // €49.99/anno con 3 giorni trial
-        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6'; // €9.99/mese senza trial
+        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
+        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
       
-      console.log('🔄 Creating checkout session for:', plan, priceId);
+      console.log('🔄 Creating PaymentIntent for:', plan, priceId);
       
-      // Crea Checkout Session
-      const response = await base44.functions.invoke('stripeCreatePaymentSheet', {
+      // Crea PaymentIntent
+      const response = await base44.functions.invoke('stripePaymentIntent', {
         priceId,
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
 
-      console.log('✅ Checkout response:', response);
       const data = response?.data || response;
 
       if (!data?.success) {
-        throw new Error(data?.error || 'Checkout failed');
+        throw new Error(data?.error || 'Payment Intent failed');
       }
 
-      // Redirect diretto all'URL di Stripe Checkout
-      if (data?.url) {
-        console.log('🔄 Redirecting to:', data.url);
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL received');
+      // Aspetta che Stripe.js sia caricato
+      if (!stripeRef.current) {
+        throw new Error('Stripe not loaded');
       }
-      
+
+      // Crea Payment Request
+      const paymentRequest = stripeRef.current.paymentRequest({
+        country: 'IT',
+        currency: data.currency,
+        total: {
+          label: 'MyWellness Subscription',
+          amount: data.amount,
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      prRef.current = paymentRequest;
+
+      // Gestisci il pagamento
+      paymentRequest.on('paymentmethod', async (e) => {
+        const { error: confirmError } = await stripeRef.current.confirmCardPayment(
+          data.clientSecret,
+          { payment_method: e.paymentMethod.id },
+          { handleActions: false }
+        );
+
+        if (confirmError) {
+          e.complete('fail');
+          console.error('Payment failed:', confirmError);
+          alert(`Pagamento fallito: ${confirmError.message}`);
+        } else {
+          e.complete('success');
+          console.log('✅ Payment successful');
+          navigate(createPageUrl('ThankYou'), { replace: true });
+        }
+      });
+
+      // Verifica se Payment Request è disponibile e apri Apple Pay/Google Pay
+      const canMakePayment = await paymentRequest.canMakePayment();
+      if (canMakePayment) {
+        paymentRequest.show();
+      } else {
+        throw new Error('Apple Pay o Google Pay non disponibile');
+      }
+
     } catch (error) {
-      console.error('❌ Checkout error:', error);
-      alert(t?.checkout?.error || `Errore durante il checkout: ${error.message}`);
+      console.error('❌ Payment error:', error);
+      alert(t?.checkout?.error || `Errore: ${error.message}`);
       setIsLoading(false);
     }
   };
