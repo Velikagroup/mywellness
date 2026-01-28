@@ -14,39 +14,49 @@ export default function PostQuizSubscription() {
   const [showReminderScreen, setShowReminderScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timelineProgress, setTimelineProgress] = useState(0);
-  const [stripeKey, setStripeKey] = useState(null);
+  const [stripeReady, setStripeReady] = useState(false);
   const stripeRef = React.useRef(null);
 
   useEffect(() => {
     const loadInitialData = async () => {
       try {
-        // Load user
         const currentUser = await base44.auth.me();
         setUser(currentUser);
         
         if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
           navigate(createPageUrl('Dashboard'), { replace: true });
+          return;
         }
 
-        // Pre-load Stripe key
         const keyRes = await base44.functions.invoke('getStripePublishableKey');
         const key = keyRes?.data?.key || keyRes?.key;
-        if (key) {
-          setStripeKey(key);
-          
-          // Load Stripe.js and initialize
-          if (!window.Stripe) {
-            const script = document.createElement('script');
-            script.src = 'https://js.stripe.com/v3/';
-            script.async = true;
-            script.onload = () => {
-              stripeRef.current = window.Stripe(key);
-            };
-            document.head.appendChild(script);
-          } else {
-            stripeRef.current = window.Stripe(key);
-          }
+        
+        if (!key) {
+          console.error('Stripe key not found');
+          return;
         }
+
+        // Se Stripe è già caricato
+        if (window.Stripe) {
+          stripeRef.current = window.Stripe(key);
+          setStripeReady(true);
+          return;
+        }
+
+        // Altrimenti carica lo script
+        const script = document.createElement('script');
+        script.src = 'https://js.stripe.com/v3/';
+        script.async = true;
+        script.onload = () => {
+          if (window.Stripe) {
+            stripeRef.current = window.Stripe(key);
+            setStripeReady(true);
+          }
+        };
+        script.onerror = () => {
+          console.error('Failed to load Stripe');
+        };
+        document.head.appendChild(script);
       } catch (error) {
         console.error('Error loading data:', error);
         navigate(createPageUrl('Quiz'), { replace: true });
