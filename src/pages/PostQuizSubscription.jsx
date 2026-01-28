@@ -71,28 +71,34 @@ export default function PostQuizSubscription() {
         ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp' // €49.99/anno con 3 giorni trial
         : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6'; // €9.99/mese senza trial
       
-      const { data: publishableKey } = await base44.functions.invoke('getStripePublishableKey');
-      const stripe = window.Stripe(publishableKey);
+      console.log('🔄 Creating checkout session for:', plan, priceId);
       
-      // Crea Payment Sheet per Apple/Google Pay
-      const { data } = await base44.functions.invoke('stripeCreatePaymentSheet', {
+      // Crea Checkout Session
+      const response = await base44.functions.invoke('stripeCreatePaymentSheet', {
         priceId,
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
       
-      if (!data.success) {
-        throw new Error(data.error);
+      console.log('✅ Checkout response:', response);
+      
+      if (!response?.success) {
+        throw new Error(response?.error || 'Checkout failed');
       }
       
-      // Redirect a Stripe Checkout (supporta Apple/Google Pay)
-      await stripe.redirectToCheckout({ sessionId: data.sessionId });
+      // Redirect diretto all'URL di Stripe Checkout
+      if (response.url) {
+        console.log('🔄 Redirecting to:', response.url);
+        window.location.href = response.url;
+      } else {
+        throw new Error('No checkout URL received');
+      }
       
     } catch (error) {
-      console.error('Checkout error:', error);
-      alert(t?.checkout?.error || 'Errore durante il checkout');
+      console.error('❌ Checkout error:', error);
+      alert(t?.checkout?.error || `Errore durante il checkout: ${error.message}`);
+      setIsLoading(false);
     }
-    setIsLoading(false);
   };
 
   if (!user) {
