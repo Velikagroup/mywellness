@@ -68,7 +68,7 @@ export default function PostQuizSubscription() {
     }
   };
 
-  const handleCheckout = async (plan) => {
+  const handleCheckout = (plan) => {
     if (!window.Stripe) {
       alert('Stripe non caricato');
       return;
@@ -76,81 +76,79 @@ export default function PostQuizSubscription() {
 
     setIsLoading(true);
 
-    try {
-      const priceId = plan === 'yearly' 
-        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
-        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
+    const priceId = plan === 'yearly' 
+      ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
+      : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
 
-      const amount = plan === 'yearly' ? 49900 : 9990;
-      const currency = 'eur';
+    const amount = plan === 'yearly' ? 49900 : 9990;
+    const currency = 'eur';
 
-      const keyRes = await base44.functions.invoke('getStripePublishableKey');
-      const stripeKey = keyRes?.data?.key || keyRes?.key;
-      if (!stripeKey) throw new Error('Stripe key not found');
+    // Usa .then() SENZA async/await per mantenere il call stack sincronizzato
+    base44.functions.invoke('getStripePublishableKey')
+      .then((keyRes) => {
+        const stripeKey = keyRes?.data?.key || keyRes?.key;
+        if (!stripeKey) throw new Error('Stripe key not found');
 
-      const stripe = window.Stripe(stripeKey);
+        const stripe = window.Stripe(stripeKey);
 
-      const paymentRequest = stripe.paymentRequest({
-        country: 'IT',
-        currency: currency,
-        total: {
-          label: 'MyWellness Subscription',
-          amount: amount,
-        },
-        requestPayerName: true,
-        requestPayerEmail: true,
-      });
+        const paymentRequest = stripe.paymentRequest({
+          country: 'IT',
+          currency: currency,
+          total: {
+            label: 'MyWellness Subscription',
+            amount: amount,
+          },
+          requestPayerName: true,
+          requestPayerEmail: true,
+        });
 
-      // Verifica disponibilità PRIMA di show()
-      const canMakePayment = await paymentRequest.canMakePayment();
-      if (!canMakePayment) {
-        setIsLoading(false);
-        alert('Apple Pay o Google Pay non disponibile su questo dispositivo');
-        return;
-      }
-
-      // Setup listener PRIMA di show()
-      paymentRequest.on('paymentmethod', async (e) => {
-        try {
-          const response = await base44.functions.invoke('stripePaymentIntent', {
+        // Setup listener prima di show()
+        paymentRequest.on('paymentmethod', (e) => {
+          base44.functions.invoke('stripePaymentIntent', {
             priceId,
             hasTrial: plan === 'yearly',
             trialDays: plan === 'yearly' ? 3 : 0
-          });
+          }).then((response) => {
+            const data = response?.data || response;
+            if (!data?.success) throw new Error(data?.error || 'Payment Intent failed');
 
-          const data = response?.data || response;
-          if (!data?.success) throw new Error(data?.error || 'Payment Intent failed');
-
-          const { paymentIntent, error } = await stripe.confirmCardPayment(
-            data.clientSecret,
-            { payment_method: e.paymentMethod.id },
-            { handleActions: false }
-          );
-
-          if (error) {
+            return stripe.confirmCardPayment(
+              data.clientSecret,
+              { payment_method: e.paymentMethod.id },
+              { handleActions: false }
+            ).then(({ paymentIntent, error }) => {
+              if (error) {
+                e.complete('fail');
+                alert(`Errore: ${error.message}`);
+                setIsLoading(false);
+              } else {
+                e.complete('success');
+                navigate(createPageUrl('ThankYou'), { replace: true });
+              }
+            });
+          }).catch((error) => {
+            console.error('Error:', error);
             e.complete('fail');
             alert(`Errore: ${error.message}`);
             setIsLoading(false);
+          });
+        });
+
+        // Mostra il payment sheet
+        return paymentRequest.canMakePayment().then((result) => {
+          if (result) {
+            paymentRequest.show();
           } else {
-            e.complete('success');
-            navigate(createPageUrl('ThankYou'), { replace: true });
+            setIsLoading(false);
+            alert('Apple Pay o Google Pay non disponibile');
           }
-        } catch (error) {
-          console.error('Error:', error);
-          e.complete('fail');
-          alert(`Errore: ${error.message}`);
-          setIsLoading(false);
-        }
+        });
+      })
+      .catch((error) => {
+        console.error('Error:', error);
+        alert(`Errore: ${error.message}`);
+        setIsLoading(false);
       });
-
-      // Mostra Apple Pay/Google Pay DOPO canMakePayment()
-      await paymentRequest.show();
-
-    } catch (error) {
-      console.error('Error:', error);
-      alert(`Errore: ${error.message}`);
-      setIsLoading(false);
-    }
   };
 
   if (!user) {
