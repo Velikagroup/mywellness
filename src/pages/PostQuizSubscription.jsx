@@ -276,8 +276,8 @@ export default function PostQuizSubscription() {
           </div>
         )}
 
-        {/* Plan Selection - Fixed a 20px dal basso quando yearly */}
-        <div className={selectedPlan === 'yearly' ? 'fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4' : 'space-y-4'}>
+        {/* Plan Selection - SEMPRE Fixed a 20px dal basso */}
+        <div className="fixed bottom-5 left-6 right-6 max-w-md mx-auto space-y-4 bg-white">
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => setSelectedPlan('monthly')}
