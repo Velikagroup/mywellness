@@ -81,41 +81,80 @@ export default function PostQuizSubscription() {
     }
   };
 
-  const handleCheckout = async (plan) => {
+  const handleApplePayPayment = async (plan) => {
     setIsLoading(true);
     try {
-      // Price IDs da Stripe
       const priceId = plan === 'yearly' 
-        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp' // €49.99/anno con 3 giorni trial
-        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6'; // €9.99/mese senza trial
-      
-      console.log('🔄 Creating checkout session for:', plan, priceId);
-      
-      // Crea Checkout Session
+        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
+        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
+
+      // Crea Setup Intent
       const response = await base44.functions.invoke('stripeCreatePaymentSheet', {
         priceId,
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
 
-      console.log('✅ Checkout response:', response);
       const data = response?.data || response;
-
       if (!data?.success) {
-        throw new Error(data?.error || 'Checkout failed');
+        throw new Error(data?.error || 'Setup failed');
       }
 
-      // Redirect diretto all'URL di Stripe Checkout
-      if (data?.url) {
-        console.log('🔄 Redirecting to:', data.url);
-        window.location.href = data.url;
-      } else {
-        throw new Error('No checkout URL received');
+      // Usa Payment Request API per Apple Pay / Google Pay
+      const paymentRequest = stripeRef.current?.paymentRequest({
+        country: 'IT',
+        currency: 'eur',
+        total: {
+          label: plan === 'yearly' 
+            ? `MyWellness - ${t('subscription.yearly')}`
+            : `MyWellness - ${t('subscription.monthly')}`,
+          amount: data.amount
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      if (!paymentRequest) {
+        throw new Error('Payment Request not available');
       }
-      
+
+      paymentRequest.on('paymentmethod', async (ev) => {
+        try {
+          // Confirma il Setup Intent con il payment method
+          const result = await stripeRef.current?.confirmSetupIntent(
+            data.setupIntentClientSecret,
+            {
+              payment_method: ev.paymentMethod.id
+            }
+          );
+
+          if (result.error) {
+            ev.complete('fail');
+            throw new Error(result.error.message);
+          }
+
+          ev.complete('success');
+
+          // Crea la subscription
+          await base44.functions.invoke('stripeCreateSubscriptionAfterPayment', {
+            customerId: data.customerId,
+            priceId: data.priceId,
+            paymentMethodId: ev.paymentMethod.id
+          });
+
+          navigate(createPageUrl('Dashboard'), { replace: true });
+        } catch (error) {
+          console.error('Payment error:', error);
+          ev.complete('fail');
+          alert('Pagamento fallito: ' + error.message);
+        }
+      });
+
+      paymentRequest.show();
+
     } catch (error) {
-      console.error('❌ Checkout error:', error);
-      alert(t?.checkout?.error || `Errore durante il checkout: ${error.message}`);
+      console.error('❌ Payment error:', error);
+      alert(error.message || 'Errore durante il pagamento');
       setIsLoading(false);
     }
   };
