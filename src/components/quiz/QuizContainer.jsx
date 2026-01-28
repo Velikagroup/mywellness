@@ -541,8 +541,17 @@ export default function QuizContainer({ translations, language = 'it' }) {
       localStorage.setItem('needsTrialSetup', 'true');
       localStorage.setItem('preferred_language', language);
       
-      // Redirect to login
-      const nextUrl = window.location.origin + createPageUrl('Quiz');
+      // Redirect to login con pagina quiz localizzata corretta
+      const langQuizMap = {
+        it: 'itquiz',
+        en: 'enquiz',
+        es: 'esquiz',
+        pt: 'ptquiz',
+        de: 'dequiz',
+        fr: 'frquiz'
+      };
+      const quizPage = langQuizMap[language] || 'itquiz';
+      const nextUrl = window.location.origin + createPageUrl(quizPage);
       base44.auth.redirectToLogin(nextUrl);
       return;
     }
