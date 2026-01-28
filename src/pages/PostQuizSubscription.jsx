@@ -66,10 +66,10 @@ export default function PostQuizSubscription() {
   const handleCheckout = async (plan) => {
     setIsLoading(true);
     try {
-      // Price IDs - AGGIORNARE con gli ID reali dopo aver eseguito stripeSetupNewProducts
+      // Price IDs da Stripe
       const priceId = plan === 'yearly' 
-        ? 'price_YEARLY_ID_HERE' // €49.99/anno con 3 giorni trial
-        : 'price_MONTHLY_ID_HERE'; // €9.99/mese senza trial
+        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp' // €49.99/anno con 3 giorni trial
+        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6'; // €9.99/mese senza trial
       
       const { data: publishableKey } = await base44.functions.invoke('getStripePublishableKey');
       const stripe = window.Stripe(publishableKey);
