@@ -231,60 +231,7 @@ export default function Dashboard() {
     }
   }, [user, isLoading]);
 
-  // ✅ Nutrition unlock prompt per utenti standard (aspetta che terms e onboarding finiscano)
-  useEffect(() => {
-    if (!user || isLoading) return;
-    
-    // ⏳ Se terms modal o onboarding è ancora in corso, non avviare i timer
-    if (showTermsModal || showOnboarding) {
-      console.log('⏳ Terms o onboarding in corso, nutrition unlock rinviato');
-      return;
-    }
-    
-    const isStandard = user.subscription_plan === 'standard' || 
-                       user.subscription_plan === 'trial' || 
-                       !user.subscription_plan;
-    
-    console.log('🔔 Nutrition unlock check:', { 
-      plan: user.subscription_plan, 
-      isStandard,
-      showNutritionUnlock,
-      showUpgradeCheckout,
-      showOnboarding
-    });
-    
-    if (!isStandard) {
-      console.log('❌ User has premium plan, skipping nutrition unlock');
-      return;
-    }
-
-    // Non mostrare se il checkout è già aperto
-    if (showUpgradeCheckout) {
-      console.log('🛑 Checkout is open, skipping nutrition unlock');
-      return;
-    }
-
-    console.log('✅ User is standard/trial - activating nutrition unlock');
-
-    const showPrompt = () => {
-      // Verifica di nuovo prima di mostrare
-      if (!showUpgradeCheckout) {
-        console.log('📢 Opening nutrition unlock prompt');
-        setShowNutritionUnlock(true);
-      }
-    };
-
-    // Mostra dopo 5 secondi al caricamento (solo se onboarding completato)
-    const initialTimeout = setTimeout(showPrompt, 5000);
-
-    // Ripeti ogni 30 secondi dopo il primo
-    const interval = setInterval(showPrompt, 30000);
-
-    return () => {
-      clearTimeout(initialTimeout);
-      clearInterval(interval);
-    };
-  }, [user, isLoading, showUpgradeCheckout, showOnboarding, showTermsModal]);
+  // ✅ Nutrition unlock prompt RIMOSSO - tutti i piani hanno accesso completo
 
   const handleMealUpdate = (updatedMeal) => {
     const updatedMeals = todayMeals.map(m => m.id === updatedMeal.id ? updatedMeal : m);
@@ -794,10 +741,7 @@ export default function Dashboard() {
         onClose={() => setShowCalorieMeter(false)}
       />
 
-      <NutritionUnlockPrompt
-        isOpen={showNutritionUnlock}
-        onClose={() => setShowNutritionUnlock(false)}
-      />
+
 
       <UpgradeCheckoutModal
         isOpen={showUpgradeCheckout}
