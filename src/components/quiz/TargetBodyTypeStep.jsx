@@ -57,6 +57,9 @@ export default function TargetBodyTypeStep({ data, onDataChange, onNext, transla
 
   const handleSelection = (percentage) => {
     onDataChange({ target_body_fat_visual: percentage });
+    setTimeout(() => {
+      if (onNext) onNext();
+    }, 300);
   };
 
   return (
