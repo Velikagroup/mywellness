@@ -22,7 +22,6 @@ export default function QuizStepWrapper({
     const weights = [];
     for (let i = 0; i < totalSteps; i++) {
       // Exponential decay: first steps have much more weight
-      // Formula: weight = e^(-k * i) where k controls the decay rate
       const k = 0.15; // Decay rate
       const weight = Math.exp(-k * i);
       weights.push(weight);
@@ -38,7 +37,10 @@ export default function QuizStepWrapper({
     return (currentWeight / totalWeight) * 100;
   };
 
-  const progress = calculateProgress();
+  // Clone children and pass progress to them
+  const childrenWithProgress = React.cloneElement(children, {
+    progressPercentage: calculateProgress()
+  });
 
   return (
     <>
@@ -81,16 +83,9 @@ export default function QuizStepWrapper({
       `}</style>
 
       <div className="min-h-screen bg-white">
-        {/* Progress bar at top */}
-        <div className="fixed top-0 left-0 right-0 z-50 bg-white px-4 pt-4 pb-3">
-          <div className="max-w-[416px] mx-auto">
-            <Progress value={progress} className="h-2" />
-          </div>
-        </div>
-
-        <div className="flex flex-col items-center pt-12 pb-24 px-4">
+        <div className="flex flex-col items-center pt-4 pb-24 px-4">
           <div className="max-w-[416px] w-full mt-0">
-            {children}
+            {childrenWithProgress}
           </div>
         </div>
       </div>
