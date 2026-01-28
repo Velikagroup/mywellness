@@ -17,6 +17,6 @@ Deno.serve(async (req) => {
     }
     
     return Response.json({ 
-        publishableKey: publishableKey 
+        key: publishableKey 
     });
 });
