@@ -79,17 +79,18 @@ export default function PostQuizSubscription() {
         hasTrial: plan === 'yearly',
         trialDays: plan === 'yearly' ? 3 : 0
       });
-      
+
       console.log('✅ Checkout response:', response);
-      
-      if (!response?.success) {
-        throw new Error(response?.error || 'Checkout failed');
+      const data = response?.data || response;
+
+      if (!data?.success) {
+        throw new Error(data?.error || 'Checkout failed');
       }
-      
+
       // Redirect diretto all'URL di Stripe Checkout
-      if (response.url) {
-        console.log('🔄 Redirecting to:', response.url);
-        window.location.href = response.url;
+      if (data?.url) {
+        console.log('🔄 Redirecting to:', data.url);
+        window.location.href = data.url;
       } else {
         throw new Error('No checkout URL received');
       }
