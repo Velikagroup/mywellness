@@ -419,7 +419,13 @@ export default function PostQuizSubscription() {
           {/* CTA Button */}
           <div className="space-y-2">
             <Button
-              onClick={() => handleCheckout(selectedPlan)}
+              onClick={() => {
+                if (selectedPlan === 'yearly') {
+                  handleStartTrial();
+                } else {
+                  handleCheckout(selectedPlan);
+                }
+              }}
               disabled={isLoading || !walletAvailable}
               className="w-full h-14 bg-gray-900 hover:bg-gray-950 disabled:opacity-50 text-white font-bold rounded-full"
             >
