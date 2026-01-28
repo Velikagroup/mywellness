@@ -1,682 +1,77 @@
-import { createClientFromRequest } from 'npm:@base44/sdk@0.8.4';
+import { createClientFromRequest } from 'npm:@base44/sdk@0.8.6';
 import Stripe from 'npm:stripe@14.10.0';
 
 Deno.serve(async (req) => {
-    console.log('🚀 stripeCreateTrialSubscription - Start');
-    
-    const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
-    
-    if (!stripeSecretKey) {
-        console.error('❌ STRIPE_SECRET_KEY not configured!');
-        return Response.json({ 
-            success: false,
-            error: 'Stripe configuration missing. Please contact support.' 
-        }, { status: 500 });
-    }
-    
-    const stripe = new Stripe(stripeSecretKey, {
-        apiVersion: '2023-10-16',
-    });
-    
-    console.log('✅ Stripe initialized');
-    
     try {
         const base44 = createClientFromRequest(req);
         const user = await base44.auth.me();
 
         if (!user) {
-            console.error('❌ User not authenticated');
-            return Response.json({ success: false, error: 'Unauthorized' }, { status: 401 });
+            return Response.json({ error: 'Unauthorized' }, { status: 401 });
         }
 
-        console.log('✅ User authenticated:', user.email);
+        const { priceId } = await req.json();
 
-        const body = await req.json();
-        const { 
-            cardData,
-            paymentMethodId,
-            planType = 'base',
-            billingPeriod = 'monthly',
-            orderBumpSelected = false,
-            appliedCouponCode = null,
-            trafficSource = null,
-            billingInfo,
-            skipTrial = false,
-            affiliateDiscountPercent = null
-        } = body;
-
-        console.log('📋 Request body parsed:', { planType, billingPeriod, orderBumpSelected, appliedCouponCode, skipTrial, affiliateDiscountPercent });
-
-        // 🎫 VERIFICA SE IL COUPON È LIFETIME_FREE
-        let isLifetimeFree = false;
-        let lifetimePlan = null;
-        
-        if (appliedCouponCode) {
-            const coupons = await base44.asServiceRole.entities.Coupon.filter({ 
-                code: appliedCouponCode.toUpperCase() 
-            });
-            
-            if (coupons && coupons.length > 0) {
-                const coupon = coupons[0];
-                
-                if (coupon.discount_type === 'lifetime_free') {
-                    console.log('🎉 LIFETIME FREE COUPON DETECTED!');
-                    
-                    // Verifica che il coupon sia assegnato a questo utente
-                    if (coupon.assigned_to_email && coupon.assigned_to_email.toLowerCase() !== user.email.toLowerCase()) {
-                        return Response.json({
-                            success: false,
-                            error: 'Questo coupon non è assegnato a te.'
-                        }, { status: 403 });
-                    }
-                    
-                    if (coupon.used_by && coupon.used_by !== user.id) {
-                        return Response.json({
-                            success: false,
-                            error: 'Questo coupon è già stato utilizzato.'
-                        }, { status: 403 });
-                    }
-                    
-                    isLifetimeFree = true;
-                    lifetimePlan = coupon.assigned_plan || 'premium';
-                    
-                    console.log(`✅ Lifetime free access granted: ${lifetimePlan} plan`);
-                    
-                    // Aggiorna l'utente con accesso lifetime gratuito
-                    await base44.asServiceRole.entities.User.update(user.id, {
-                        subscription_status: 'active',
-                        subscription_plan: lifetimePlan,
-                        stripe_subscription_id: null,
-                        stripe_customer_id: null,
-                        is_lifetime_free: true,
-                        lifetime_coupon_code: appliedCouponCode,
-                        traffic_source: trafficSource || 'direct',
-                        quiz_completed: true
-                    });
-                    
-                    // Marca il coupon come usato
-                    await base44.asServiceRole.entities.Coupon.update(coupon.id, {
-                        used_by: user.id,
-                        used_at: new Date().toISOString()
-                    });
-                    
-                    console.log('✅ User upgraded to lifetime free access');
-
-                    // 📊 TikTok Event: Purchase (lifetime free)
-                    (async () => {
-                        try {
-                            const nameParts = (user.full_name || '').split(' ');
-                            const firstName = nameParts[0] || '';
-                            const lastName = nameParts.slice(1).join(' ') || '';
-
-                            await base44.functions.invoke('sendTikTokEvent', {
-                                event: 'Purchase',
-                                email: user.email,
-                                phone: user.phone_number,
-                                external_id: user.id,
-                                value: 0,
-                                currency: 'EUR',
-                                content_id: lifetimePlan,
-                                content_type: 'subscription',
-                                content_name: `MyWellness ${lifetimePlan} (Lifetime Free)`,
-                                url: 'https://app.projectmywellness.com/checkout',
-                                first_name: firstName,
-                                last_name: lastName,
-                                city: user.billing_city,
-                                country: user.billing_country,
-                                zip: user.billing_zip
-                            });
-                            console.log('✅ TikTok Purchase tracked (lifetime free)');
-                        } catch (e) {
-                            console.warn('⚠️ TikTok tracking error:', e);
-                        }
-                    })();
-
-                    // Invia email lifetime usando SendGrid e template
-                    (async () => {
-                        try {
-                            const sendGridApiKey = Deno.env.get('SENDGRID_API_KEY');
-                            const appUrl = 'https://app.projectmywellness.com';
-                            
-                            if (!sendGridApiKey) {
-                                console.error('❌ SENDGRID_API_KEY not configured');
-                                return;
-                            }
-
-                            const emailHtml = `
-<!DOCTYPE html>
-<html>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <style>
-        body { margin: 0; padding: 0; font-family: 'Inter', -apple-system, sans-serif; }
-        @media only screen and (max-width: 600px) {
-            .container { width: 100% !important; border-radius: 0 !important; }
-            .content { padding: 30px 20px !important; }
-        }
-    </style>
-</head>
-<body>
-    <table width="100%" cellpadding="0" cellspacing="0" border="0" style="background-color: #fafafa; padding: 20px 0;">
-        <tr>
-            <td align="center">
-                <table class="container" width="100%" cellpadding="0" cellspacing="0" border="0" style="max-width: 600px; background: white; border-radius: 16px; overflow: hidden;">
-                    <tr>
-                        <td style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 40px 30px; text-align: center;">
-                            <h1 style="color: white; margin: 0; font-size: 32px; font-weight: 800;">🎁 Accesso Lifetime GRATUITO!</h1>
-                        </td>
-                    </tr>
-                    <tr>
-                        <td class="content" style="padding: 40px 30px;">
-                            <p style="font-size: 18px; color: #333; margin-bottom: 20px;">Ciao ${user.full_name || 'Utente'}! 👋</p>
-                            <p style="color: #555; line-height: 1.8; margin-bottom: 25px;">
-                                Hai attivato un <strong>accesso GRATUITO A VITA</strong> al piano <strong style="text-transform: uppercase;">${lifetimePlan}</strong>! 🎉
-                            </p>
-                            <div style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 25px; border-radius: 15px; margin-bottom: 25px; border-left: 5px solid #f59e0b;">
-                                <h3 style="color: #92400e; margin: 0 0 15px 0;">✨ Nessun Pagamento, Mai</h3>
-                                <p style="color: #78350f; margin: 0; line-height: 1.6;">
-                                    Il tuo accesso è <strong>completamente gratuito per sempre</strong>. Nessun addebito, nessun trial, nessun rinnovo!
-                                </p>
-                            </div>
-                            <div style="text-align: center; margin: 35px 0;">
-                                <a href="${appUrl}/Dashboard" style="display: inline-block; background: linear-gradient(135deg, #26847F 0%, #14b8a6 100%); color: white; text-decoration: none; padding: 16px 40px; border-radius: 50px; font-weight: 700; font-size: 16px;">
-                                    Vai alla Dashboard →
-                                </a>
-                            </div>
-                        </td>
-                    </tr>
-                </table>
-                <table width="100%" style="max-width: 600px; margin-top: 20px;">
-                    <tr>
-                        <td align="center" style="padding: 20px; color: #999999;">
-                            <p style="margin: 5px 0; font-size: 12px;">&copy; VELIKA GROUP LLC. All Rights Reserved.</p>
-                        </td>
-                    </tr>
-                </table>
-            </td>
-        </tr>
-    </table>
-</body>
-</html>`;
-
-                            const response = await fetch('https://api.sendgrid.com/v3/mail/send', {
-                                method: 'POST',
-                                headers: {
-                                    'Authorization': `Bearer ${sendGridApiKey}`,
-                                    'Content-Type': 'application/json'
-                                },
-                                body: JSON.stringify({
-                                    personalizations: [{ to: [{ email: user.email, name: user.full_name }] }],
-                                    from: { email: 'info@projectmywellness.com', name: 'MyWellness' },
-                                    reply_to: { email: 'info@projectmywellness.com' },
-                                    subject: '🎁 Il Tuo Accesso Lifetime GRATUITO è Attivo!',
-                                    content: [{ type: 'text/html', value: emailHtml }]
-                                })
-                            });
-
-                            if (response.ok) {
-                                console.log('✅ Lifetime email sent via SendGrid');
-                            }
-                        } catch (emailError) {
-                            console.error('⚠️ Email error:', emailError);
-                        }
-                    })();
-                    
-                    return Response.json({
-                        success: true,
-                        isLifetimeFree: true,
-                        plan: lifetimePlan,
-                        message: 'Accesso lifetime gratuito attivato!'
-                    });
-                }
-            }
+        if (!priceId) {
+            return Response.json({ error: 'Missing priceId' }, { status: 400 });
         }
 
-        // NORMALE FLUSSO STRIPE
-        if (!cardData && !paymentMethodId) {
-            console.error('❌ Missing payment information');
-            return Response.json({ success: false, error: 'Missing payment information' }, { status: 400 });
+        const stripeSecretKey = Deno.env.get("STRIPE_SECRET_KEY");
+        if (!stripeSecretKey) {
+            return Response.json({ error: 'STRIPE_SECRET_KEY not configured' }, { status: 500 });
         }
 
-        const PRICE_IDS = {
-            base: {
-                monthly: 'price_1SXADj2OXBs6ZYwlY8id3Yhy',
-                yearly: 'price_1SXADj2OXBs6ZYwlywQCp6oR'
-            },
-            pro: {
-                monthly: 'price_1SXADj2OXBs6ZYwlqdFI6aUU',
-                yearly: 'price_1SXADk2OXBs6ZYwl0zZsxETJ'
-            },
-            premium: {
-                monthly: 'price_1SXADk2OXBs6ZYwlxiqqQqVA',
-                yearly: 'price_1SXADl2OXBs6ZYwl0PlnAeX9'
-            }
-        };
+        const stripe = new Stripe(stripeSecretKey, {
+            apiVersion: '2023-10-16',
+        });
 
-        const selectedPriceId = PRICE_IDS[planType]?.[billingPeriod];
-        
-        if (!selectedPriceId) {
-            console.error('❌ Invalid plan/billing combination');
-            return Response.json({ 
-                success: false,
-                error: `Invalid plan/billing combination: ${planType}/${billingPeriod}` 
-            }, { status: 400 });
-        }
+        // Cerca o crea un customer Stripe
+        let customerId = user.stripe_customer_id;
 
-        console.log(`💳 Using Price ID: ${selectedPriceId}`);
-
-        let stripeCustomerId = user.stripe_customer_id;
-        
-        if (!stripeCustomerId) {
-            console.log('🆕 Creating new Stripe customer...');
+        if (!customerId) {
             const customer = await stripe.customers.create({
                 email: user.email,
-                name: billingInfo?.name || user.full_name,
                 metadata: {
                     user_id: user.id,
-                    base44_app: 'mywellness'
-                },
-                address: billingInfo ? {
-                    line1: billingInfo.address,
-                    city: billingInfo.city,
-                    postal_code: billingInfo.zip,
-                    country: billingInfo.country
-                } : undefined
-            });
-            stripeCustomerId = customer.id;
-            
-            await base44.asServiceRole.entities.User.update(user.id, {
-                stripe_customer_id: stripeCustomerId
-            });
-            
-            console.log(`✅ Customer created: ${stripeCustomerId}`);
-        } else {
-            console.log('✅ Using existing customer:', stripeCustomerId);
-        }
-
-        let finalPaymentMethodId;
-
-        if (paymentMethodId) {
-            console.log('💳 Using digital wallet payment method:', paymentMethodId);
-            finalPaymentMethodId = paymentMethodId;
-        } else {
-            console.log('💳 Creating card payment method...');
-            const paymentMethod = await stripe.paymentMethods.create({
-                type: 'card',
-                card: {
-                    number: cardData.number,
-                    exp_month: cardData.exp_month,
-                    exp_year: cardData.exp_year,
-                    cvc: cardData.cvc,
-                },
-                billing_details: {
-                    name: billingInfo?.name,
-                    email: billingInfo?.email,
-                    address: billingInfo ? {
-                        line1: billingInfo.address,
-                        city: billingInfo.city,
-                        postal_code: billingInfo.zip,
-                        country: billingInfo.country
-                    } : undefined
+                    full_name: user.full_name
                 }
             });
-            
-            finalPaymentMethodId = paymentMethod.id;
-            console.log(`✅ Card payment method created: ${finalPaymentMethodId}`);
+            customerId = customer.id;
+
+            // Salva il customer ID nell'utente
+            await base44.auth.updateMe({
+                stripe_customer_id: customerId
+            });
         }
 
-        console.log('📌 Attaching payment method to customer...');
-        await stripe.paymentMethods.attach(finalPaymentMethodId, {
-            customer: stripeCustomerId,
+        // Crea la subscription con 3 giorni di trial (€0 iniziale)
+        const subscription = await stripe.subscriptions.create({
+            customer: customerId,
+            items: [
+                {
+                    price: priceId
+                }
+            ],
+            trial_period_days: 3,
+            metadata: {
+                user_id: user.id
+            }
         });
 
-        console.log('📌 Setting default payment method...');
-        await stripe.customers.update(stripeCustomerId, {
-            invoice_settings: {
-                default_payment_method: finalPaymentMethodId,
-            },
-        });
-
-        console.log('✅ Payment method attached and set as default');
-
-        let finalSubscription;
-        let subscriptionSchedule = null;
-
-        if (skipTrial) {
-            console.log('🔄 Creating IMMEDIATE paid subscription (no trial)...');
-            
-            // 🎁 Create Stripe coupon if affiliate discount applies
-            let stripeCouponId = null;
-            if (affiliateDiscountPercent && affiliateDiscountPercent > 0) {
-                console.log(`🎁 Creating ${affiliateDiscountPercent}% affiliate discount coupon...`);
-                const stripeCoupon = await stripe.coupons.create({
-                    percent_off: affiliateDiscountPercent,
-                    duration: 'once',
-                    name: `Affiliate Discount ${affiliateDiscountPercent}%`,
-                    metadata: {
-                        user_id: user.id,
-                        referred_by: user.referred_by || 'unknown',
-                        type: 'affiliate_first_month'
-                    }
-                });
-                stripeCouponId = stripeCoupon.id;
-                console.log(`✅ Stripe coupon created: ${stripeCouponId}`);
-            }
-            
-            // Crea direttamente una subscription attiva a pagamento
-            // IMPORTANTE: default_payment_method per addebitare subito
-            const subscriptionParams = {
-                customer: stripeCustomerId,
-                items: [{ price: selectedPriceId }],
-                default_payment_method: finalPaymentMethodId, // 🔥 ADDEBITA SUBITO con questo metodo
-                payment_behavior: 'error_if_incomplete', // 🔥 ERRORE se pagamento fallisce
-                expand: ['latest_invoice.payment_intent'],
-                metadata: {
-                    user_id: user.id,
-                    subscription_type: 'paid',
-                    plan_type: planType,
-                    billing_period: billingPeriod,
-                    traffic_source: trafficSource || 'direct',
-                    coupon_code: appliedCouponCode || 'none',
-                    affiliate_discount_applied: affiliateDiscountPercent ? 'true' : 'false'
-                }
-            };
-            
-            // Apply coupon if exists
-            if (stripeCouponId) {
-                subscriptionParams.coupon = stripeCouponId;
-            }
-            
-            finalSubscription = await stripe.subscriptions.create(subscriptionParams);
-
-            console.log(`✅ Paid subscription created: ${finalSubscription.id}`);
-            console.log(`💰 Invoice status: ${finalSubscription.latest_invoice?.status}`);
-            console.log(`💳 Payment intent status: ${finalSubscription.latest_invoice?.payment_intent?.status}`);
-            
-            // Conferma il pagamento se necessario
-            const paymentIntent = finalSubscription.latest_invoice?.payment_intent;
-            if (paymentIntent) {
-                if (paymentIntent.status === 'requires_payment_method') {
-                    console.log('🔄 Confirming payment with payment method...');
-                    await stripe.paymentIntents.confirm(paymentIntent.id, {
-                        payment_method: finalPaymentMethodId
-                    });
-                } else if (paymentIntent.status === 'requires_confirmation') {
-                    console.log('🔄 Confirming payment intent...');
-                    await stripe.paymentIntents.confirm(paymentIntent.id);
-                }
-                console.log(`✅ Payment confirmed, amount: €${paymentIntent.amount / 100}`);
-                
-                // 🔗 AFFILIATE: Traccia commissione per pagamento immediato
-                const affiliateCode = user.referred_by_affiliate_code || user.referred_by;
-                if (affiliateCode && paymentIntent.amount > 0) {
-                    try {
-                        console.log(`🔗 Tracking affiliate commission for code: ${affiliateCode}`);
-                        const affiliateLinks = await base44.asServiceRole.entities.AffiliateLink.filter({
-                            affiliate_code: affiliateCode
-                        });
-
-                        if (affiliateLinks.length > 0) {
-                            const affiliateLink = affiliateLinks[0];
-                            const paidAmount = paymentIntent.amount / 100;
-                            const commissionAmount = paidAmount * 0.10; // 10%
-
-                            // Crea credito commissione
-                            await base44.asServiceRole.entities.AffiliateCredit.create({
-                                affiliate_user_id: affiliateLink.user_id,
-                                referred_user_id: user.id,
-                                stripe_payment_intent_id: paymentIntent.id,
-                                amount_paid: paidAmount,
-                                commission_amount: commissionAmount,
-                                commission_status: 'available',
-                                payment_date: new Date().toISOString()
-                            });
-
-                            // Aggiorna totali affiliate link
-                            await base44.asServiceRole.entities.AffiliateLink.update(affiliateLink.id, {
-                                total_referrals: (affiliateLink.total_referrals || 0) + 1,
-                                total_earned: (affiliateLink.total_earned || 0) + commissionAmount,
-                                available_balance: (affiliateLink.available_balance || 0) + commissionAmount
-                            });
-
-                            console.log(`✅ Affiliate commission tracked: €${commissionAmount.toFixed(2)} for ${affiliateLink.user_id}`);
-                        } else {
-                            console.warn(`⚠️ Affiliate link not found for code: ${affiliateCode}`);
-                        }
-                    } catch (affiliateError) {
-                        console.error('⚠️ Affiliate tracking error:', affiliateError.message);
-                    }
-                }
-            }
-
-        } else {
-            console.log('🔄 Creating TRIAL subscription (3 days, €0)...');
-            
-            // Crea prima il trial a €0 per 3 giorni
-            const trialSubscription = await stripe.subscriptions.create({
-                customer: stripeCustomerId,
-                items: [{ price: 'price_1SVOUk2OXBs6ZYwlA3zq3ZPq' }],
-                payment_behavior: 'default_incomplete',
-                cancel_at_period_end: true,
-                metadata: {
-                    user_id: user.id,
-                    subscription_type: 'trial',
-                    converts_to_plan: planType,
-                    converts_to_price: selectedPriceId,
-                    billing_period: billingPeriod,
-                    traffic_source: trafficSource || 'direct',
-                    coupon_code: appliedCouponCode || 'none'
-                }
-            });
-
-            console.log(`✅ Trial subscription created: ${trialSubscription.id}`);
-            
-            // Schedula la subscription vera dopo 3 giorni
-            const scheduledDate = Math.floor(Date.now() / 1000) + (3 * 24 * 60 * 60);
-            subscriptionSchedule = await stripe.subscriptionSchedules.create({
-                customer: stripeCustomerId,
-                start_date: scheduledDate,
-                end_behavior: 'release',
-                phases: [
-                    {
-                        items: [{ price: selectedPriceId }],
-                        iterations: 1
-                    }
-                ],
-                metadata: {
-                    user_id: user.id,
-                    plan_type: planType,
-                    billing_period: billingPeriod,
-                    converted_from_trial: 'true'
-                }
-            });
-
-            console.log(`✅ Subscription scheduled for after trial: ${subscriptionSchedule.id}`);
-            finalSubscription = trialSubscription;
-        }
-
-        console.log(`✅ Subscription created: ${finalSubscription.id}`);
-
-        let orderBumpPaymentIntent = null;
-        if (orderBumpSelected) {
-            console.log('💰 Processing order bump...');
-            const orderBumpPrice = 1999;
-            orderBumpPaymentIntent = await stripe.paymentIntents.create({
-                amount: orderBumpPrice,
-                currency: 'eur',
-                customer: stripeCustomerId,
-                payment_method: finalPaymentMethodId,
-                off_session: true,
-                confirm: true,
-                description: 'Mastery AI Wellness - Video Corso',
-                metadata: {
-                    user_id: user.id,
-                    type: 'order_bump',
-                    traffic_source: trafficSource || 'direct'
-                }
-            });
-            
-            console.log(`✅ Order Bump payment created: ${orderBumpPaymentIntent.id}`);
-        }
-
-        console.log('💾 Updating user record...');
-        
-        if (skipTrial) {
-            // Pagamento immediato - piano attivo subito
-            await base44.asServiceRole.entities.User.update(user.id, {
-                subscription_status: 'active',
-                subscription_plan: planType,
-                trial_ends_at: null,
-                stripe_subscription_id: finalSubscription.id,
-                stripe_subscription_schedule_id: null,
-                stripe_customer_id: stripeCustomerId,
-                traffic_source: trafficSource || 'direct',
-                applied_coupon_code: appliedCouponCode || null,
-                phone_number: body.phoneNumber || user.phone_number,
-                billing_name: billingInfo?.name || user.full_name,
-                billing_address: billingInfo?.address,
-                billing_city: billingInfo?.city,
-                billing_zip: billingInfo?.zip,
-                billing_country: billingInfo?.country,
-                company_name: billingInfo?.companyName,
-                tax_id: billingInfo?.taxId,
-                pec_sdi: billingInfo?.pecSdi,
-                billing_type: billingInfo?.billingType || 'private',
-                quiz_completed: true
-            });
-        } else {
-            const trialEndsAt = new Date();
-            trialEndsAt.setDate(trialEndsAt.getDate() + 3);
-            
-            await base44.asServiceRole.entities.User.update(user.id, {
-                subscription_status: 'trial',
-                subscription_plan: 'trial',
-                target_plan_after_trial: planType,
-                trial_ends_at: trialEndsAt.toISOString(),
-                stripe_subscription_id: finalSubscription.id,
-                stripe_subscription_schedule_id: subscriptionSchedule?.id,
-                stripe_customer_id: stripeCustomerId,
-                traffic_source: trafficSource || 'direct',
-                applied_coupon_code: appliedCouponCode || null,
-                phone_number: body.phoneNumber || user.phone_number,
-                billing_name: billingInfo?.name || user.full_name,
-                billing_address: billingInfo?.address,
-                billing_city: billingInfo?.city,
-                billing_zip: billingInfo?.zip,
-                billing_country: billingInfo?.country,
-                company_name: billingInfo?.companyName,
-                tax_id: billingInfo?.taxId,
-                pec_sdi: billingInfo?.pecSdi,
-                billing_type: billingInfo?.billingType || 'private',
-                quiz_completed: true
-            });
-        }
-
-        console.log('✅ User updated with subscription data');
-
-        // 📊 TikTok Event: Purchase
-        if (skipTrial && finalSubscription?.latest_invoice?.payment_intent) {
-            (async () => {
-                try {
-                    const paymentIntent = finalSubscription.latest_invoice.payment_intent;
-                    const amount = paymentIntent.amount / 100;
-                    
-                    const nameParts = (billingInfo?.name || user.full_name || '').split(' ');
-                    const firstName = nameParts[0] || '';
-                    const lastName = nameParts.slice(1).join(' ') || '';
-                    
-                    await base44.functions.invoke('sendTikTokEvent', {
-                        event: 'Purchase',
-                        email: user.email,
-                        phone: body.phoneNumber,
-                        external_id: user.id,
-                        value: amount,
-                        currency: 'EUR',
-                        content_id: planType,
-                        content_type: 'subscription',
-                        content_name: `MyWellness ${planType}`,
-                        url: 'https://app.projectmywellness.com/checkout',
-                        first_name: firstName,
-                        last_name: lastName,
-                        city: billingInfo?.city,
-                        country: billingInfo?.country,
-                        zip: billingInfo?.zip
-                    });
-                    console.log('✅ TikTok Purchase tracked');
-                } catch (e) {
-                    console.warn('⚠️ TikTok tracking error:', e);
-                }
-            })();
-        }
-
-        // 🎫 MARCA COUPON COME USATO (se applicabile)
-        if (appliedCouponCode) {
-            try {
-                console.log(`🎫 Marking coupon ${appliedCouponCode} as used...`);
-                const coupons = await base44.asServiceRole.entities.Coupon.filter({ 
-                    code: appliedCouponCode.toUpperCase() 
-                });
-                
-                if (coupons && coupons.length > 0) {
-                    const coupon = coupons[0];
-                    await base44.asServiceRole.entities.Coupon.update(coupon.id, {
-                        used_by: user.id,
-                        used_at: new Date().toISOString()
-                    });
-                    console.log(`✅ Coupon marked as used`);
-                }
-            } catch (couponError) {
-                console.error('⚠️ Coupon marking error (non-critical):', couponError.message);
-            }
-        }
-
-        // 📧 INVIA EMAIL DI BENVENUTO usando sendPlanWelcome
-        try {
-            console.log('📧 Sending welcome email via sendPlanWelcome...');
-            
-            const emailResponse = await base44.functions.invoke('sendPlanWelcome', {
-                userId: user.id,
-                userEmail: user.email,
-                userName: user.full_name || 'Utente',
-                plan: planType // base, pro, premium
-            });
-            
-            if (emailResponse.success) {
-                console.log(`✅ ${planType} welcome email sent successfully`);
-            } else {
-                console.error('❌ Welcome email failed:', emailResponse.error);
-            }
-        } catch (emailError) {
-            console.error('⚠️ Email error (non-critical):', emailError.message);
-        }
-
-        console.log('✅ Subscription setup completed successfully');
+        console.log('✅ Trial subscription creata:', subscription.id);
 
         return Response.json({
             success: true,
-            subscription: {
-                id: finalSubscription.id,
-                status: finalSubscription.status,
-                trial_end: skipTrial ? null : finalSubscription.current_period_end,
-                scheduled_conversion: subscriptionSchedule?.id,
-                immediate_payment: skipTrial
-            },
-            orderBump: orderBumpPaymentIntent ? {
-                id: orderBumpPaymentIntent.id,
-                status: orderBumpPaymentIntent.status
-            } : null
+            subscription_id: subscription.id,
+            customer_id: customerId,
+            status: subscription.status,
+            trial_ends_at: subscription.trial_end ? new Date(subscription.trial_end * 1000).toISOString() : null
         });
 
     } catch (error) {
-        console.error('❌ Stripe subscription error:', error);
-        console.error('❌ Error message:', error.message);
-        console.error('❌ Error stack:', error.stack);
-        
+        console.error('❌ Errore creazione trial subscription:', error.message);
         return Response.json({ 
-            success: false,
-            error: error.message || 'Unknown error',
-            details: error.toString()
+            error: error.message 
         }, { status: 500 });
     }
 });
