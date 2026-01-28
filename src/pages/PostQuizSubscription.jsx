@@ -374,6 +374,15 @@ export default function PostQuizSubscription() {
           </div>
         </div>
       </div>
+      <PaymentModal
+        isOpen={showPaymentModal}
+        clientSecret={clientSecret}
+        onClose={() => setShowPaymentModal(false)}
+        onSuccess={() => {
+          alert('✅ Pagamento completato! Benvenuto in MyWellness');
+          navigate(createPageUrl('Dashboard'), { replace: true });
+        }}
+      />
     </div>
   );
 }
