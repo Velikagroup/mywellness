@@ -353,11 +353,12 @@ export default function PostQuizSubscription() {
           <div className="grid grid-cols-2 gap-4">
             <button
               onClick={() => setSelectedPlan('monthly')}
+              disabled={isLoading}
               className={`relative p-4 rounded-2xl border-2 transition-all ${
                 selectedPlan === 'monthly'
                   ? 'border-gray-900 bg-gray-50'
                   : 'border-gray-200 bg-white'
-              }`}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <div className="text-left space-y-1">
                 <p className="font-semibold text-gray-900">{t('subscription.monthly')}</p>
@@ -372,11 +373,12 @@ export default function PostQuizSubscription() {
 
             <button
               onClick={() => setSelectedPlan('yearly')}
+              disabled={isLoading}
               className={`relative p-4 rounded-2xl border-2 transition-all ${
                 selectedPlan === 'yearly'
                   ? 'border-gray-900 bg-gray-50'
                   : 'border-gray-200 bg-white'
-              }`}
+              } ${isLoading ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               <div className="absolute -top-2 right-2 bg-gray-900 text-white text-xs font-bold px-3 py-1 rounded-full">
                 {t('subscription.threeDaysFree')}
@@ -404,12 +406,14 @@ export default function PostQuizSubscription() {
           {/* CTA Button */}
           <div className="space-y-2">
             <Button
-              onClick={handleStartTrial}
-              disabled={isLoading}
-              className="w-full h-14 bg-gray-900 hover:bg-gray-950 text-white font-bold rounded-full"
+              onClick={() => handleCheckout(selectedPlan)}
+              disabled={isLoading || !stripeReady}
+              className="w-full h-14 bg-gray-900 hover:bg-gray-950 disabled:opacity-50 text-white font-bold rounded-full"
             >
               {isLoading ? 
                 t('common.loading')
+              : !stripeReady ?
+                'Caricamento...'
               : selectedPlan === 'yearly' ? 
                 t('subscription.startTrial')
               : 
