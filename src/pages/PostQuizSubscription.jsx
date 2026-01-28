@@ -160,7 +160,7 @@ export default function PostQuizSubscription() {
           onClick={() => setShowReminderScreen(false)}
           className="self-start text-gray-600 mb-8"
         >
-          ← {t?.common?.back || 'Back'}
+          ← {t?.subscription?.back || 'Back'}
         </button>
 
         <div className="flex-1 flex flex-col items-center justify-between max-w-md mx-auto w-full">
@@ -207,7 +207,7 @@ export default function PostQuizSubscription() {
         onClick={() => navigate(createPageUrl('Dashboard'))}
         className="self-start text-gray-600 mb-8"
       >
-        ← {t?.common?.back || 'Back'}
+        ← {t?.subscription?.back || 'Back'}
       </button>
 
       <div className="flex-1 flex flex-col max-w-md mx-auto w-full space-y-8">
