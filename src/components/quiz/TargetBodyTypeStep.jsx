@@ -28,13 +28,6 @@ const FEMALE_BODY_TYPES = [
 
 export default function TargetBodyTypeStep({ data, onDataChange, onNext, translations, currentStep, totalSteps, onPrev }) {
   const t = translations?.quiz || {};
-  
-  React.useEffect(() => {
-    if (data.target_body_fat_visual && data.target_body_fat_visual !== undefined) {
-      const timer = setTimeout(() => onNext?.(), 300);
-      return () => clearTimeout(timer);
-    }
-  }, [data.target_body_fat_visual, onNext]);
 
   const MALE_BODY_TYPES = [
     { percentage: 8, label: '8%', description: t.bodyTypeMale8 || 'Estremamente Definito', image: 'https://qtrypzzcjebvfcihiynt.supabase.co/storage/v1/object/public/base44-prod/public/68d44c626cc2c19cca9c750d/1acaba3b0_Male-body-fat-8.png' },
