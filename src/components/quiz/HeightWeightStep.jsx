@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Button } from "@/components/ui/button";
-import { Plus, Minus } from 'lucide-react';
 import QuizHeader from './QuizHeader';
 import QuizQuestionHeader from './QuizQuestionHeader';
 
@@ -59,45 +58,37 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     }, 0);
   }, [isMetric]);
 
-  const updateHeight = (delta) => {
-    const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-    const currentIndex = heightValues.indexOf(selectedHeight);
-    const newIndex = Math.max(0, Math.min(currentIndex + delta, heightValues.length - 1));
-    const newHeight = heightValues[newIndex];
-    setSelectedHeight(newHeight);
-    scrollToHeight(newHeight);
-  };
-
-  const updateWeight = (delta) => {
-    const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
-    const currentIndex = weightValues.indexOf(selectedWeight);
-    const newIndex = Math.max(0, Math.min(currentIndex + delta, weightValues.length - 1));
-    const newWeight = weightValues[newIndex];
-    setSelectedWeight(newWeight);
-    scrollToWeight(newWeight);
-  };
-
-  const scrollToHeight = (height) => {
+  const handleHeightScroll = () => {
     if (heightRef.current) {
+      const container = heightRef.current;
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
+      const centerY = container.scrollTop + containerHeight / 2;
+      const index = Math.round((centerY - topPadding) / itemHeight);
       const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-      const index = heightValues.indexOf(height);
-      const scroll = topPadding + index * itemHeight - containerHeight / 2;
-      heightRef.current.scrollTop = scroll;
+      const newHeight = heightValues[Math.max(0, Math.min(index, heightValues.length - 1))];
+      
+      if (newHeight !== selectedHeight) {
+        setSelectedHeight(newHeight);
+      }
     }
   };
 
-  const scrollToWeight = (weight) => {
+  const handleWeightScroll = () => {
     if (weightRef.current) {
+      const container = weightRef.current;
       const itemHeight = 40;
       const topPadding = 160;
       const containerHeight = 320;
+      const centerY = container.scrollTop + containerHeight / 2;
+      const index = Math.round((centerY - topPadding) / itemHeight);
       const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
-      const index = weightValues.indexOf(weight);
-      const scroll = topPadding + index * itemHeight - containerHeight / 2;
-      weightRef.current.scrollTop = scroll;
+      const newWeight = weightValues[Math.max(0, Math.min(index, weightValues.length - 1))];
+      
+      if (newWeight !== selectedWeight) {
+        setSelectedWeight(newWeight);
+      }
     }
   };
 
@@ -239,46 +230,24 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
         </div>
 
         {/* Picker Columns */}
-         <div className="flex gap-4 w-full max-w-[416px] justify-center mx-auto mt-8 md:mt-20">
-           {/* Altezza */}
-           <div className="flex-1 flex flex-col items-center gap-2">
-             <button onClick={() => updateHeight(1)} className="p-2 hover:bg-gray-100 rounded-lg">
-               <Plus className="w-5 h-5 text-gray-600" />
-             </button>
-             <div className="h-80 relative">
-               <PickerColumn
-                 items={heightValues}
-                 selectedValue={selectedHeight}
-                 onScroll={() => {}}
-                 ref={heightRef}
-                 unit={isMetric ? 'cm' : 'ft'}
-                 label={t.height || 'Altura'}
-               />
-             </div>
-             <button onClick={() => updateHeight(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
-               <Minus className="w-5 h-5 text-gray-600" />
-             </button>
-           </div>
+         <div className="flex gap-4 w-full max-w-[416px] justify-center h-80 mx-auto mt-8 md:mt-20">
+           <PickerColumn
+             items={heightValues}
+             selectedValue={selectedHeight}
+             onScroll={handleHeightScroll}
+             ref={heightRef}
+             unit={isMetric ? 'cm' : 'ft'}
+             label={t.height || 'Altura'}
+           />
 
-           {/* Peso */}
-           <div className="flex-1 flex flex-col items-center gap-2">
-             <button onClick={() => updateWeight(1)} className="p-2 hover:bg-gray-100 rounded-lg">
-               <Plus className="w-5 h-5 text-gray-600" />
-             </button>
-             <div className="h-80 relative">
-               <PickerColumn
-                 items={weightValues}
-                 selectedValue={selectedWeight}
-                 onScroll={() => {}}
-                 ref={weightRef}
-                 unit={isMetric ? 'kg' : 'lbs'}
-                 label={t.weight || 'Peso'}
-               />
-             </div>
-             <button onClick={() => updateWeight(-1)} className="p-2 hover:bg-gray-100 rounded-lg">
-               <Minus className="w-5 h-5 text-gray-600" />
-             </button>
-           </div>
+           <PickerColumn
+             items={weightValues}
+             selectedValue={selectedWeight}
+             onScroll={handleWeightScroll}
+             ref={weightRef}
+             unit={isMetric ? 'kg' : 'lbs'}
+             label={t.weight || 'Peso'}
+           />
          </div>
       </div>
 
