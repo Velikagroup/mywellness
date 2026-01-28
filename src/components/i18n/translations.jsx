@@ -922,7 +922,8 @@ export const translations = {
       continueForFree: "Continua GRATIS",
       monthly: "Mensile",
       yearly: "Annuale",
-      threeDaysFree: "3 GIORNI GRATIS"
+      threeDaysFree: "3 GIORNI GRATIS",
+      justPerMonth: "Solo {price} al mese"
     },
     nav: {
       dashboard: "Dashboard",
@@ -2660,7 +2661,8 @@ export const translations = {
       continueForFree: "Continue for FREE",
       monthly: "Monthly",
       yearly: "Yearly",
-      threeDaysFree: "3 DAYS FREE"
+      threeDaysFree: "3 DAYS FREE",
+      justPerMonth: "Just €{price} per month"
     },
     home: {
       aiPowered: "Powered by Artificial Intelligence",
@@ -5008,7 +5010,8 @@ export const translations = {
       continueForFree: "Continuar GRATIS",
       monthly: "Mensual",
       yearly: "Anual",
-      threeDaysFree: "3 DÍAS GRATIS"
+      threeDaysFree: "3 DÍAS GRATIS",
+      justPerMonth: "Solo {price} al mes"
     },
     home: {
       aiPowered: "Impulsado por Inteligencia Artificial",
@@ -7300,7 +7303,8 @@ export const translations = {
       continueForFree: "Continuar GRÁTIS",
       monthly: "Mensal",
       yearly: "Anual",
-      threeDaysFree: "3 DIAS GRÁTIS"
+      threeDaysFree: "3 DIAS GRÁTIS",
+      justPerMonth: "Apenas €{price} por mês"
     },
     home: {
       aiPowered: "Impulsionado por Inteligência Artificial",
@@ -9614,7 +9618,8 @@ export const translations = {
       continueForFree: "KOSTENLOS Fortfahren",
       monthly: "Monatlich",
       yearly: "Jährlich",
-      threeDaysFree: "3 TAGE KOSTENLOS"
+      threeDaysFree: "3 TAGE KOSTENLOS",
+      justPerMonth: "Nur {price} pro Monat"
     },
     home: {
       aiPowered: "Angetrieben von Künstlicher Intelligenz",
