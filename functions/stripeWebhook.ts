@@ -489,6 +489,7 @@ Deno.serve(async (req) => {
                 console.log(`📋 Subscription ${event.type}:`, subscription.id);
                 console.log('Subscription status:', subscription.status);
                 console.log('Current period end:', subscription.current_period_end);
+                console.log('Trial end:', subscription.trial_end);
 
                 const customerId = subscription.customer;
                 const users = await base44.asServiceRole.entities.User.filter({ stripe_customer_id: customerId });
@@ -509,6 +510,19 @@ Deno.serve(async (req) => {
                         console.warn('⚠️ Error parsing period end date:', dateError.message);
                     }
 
+                    // ✅ Trial end date conversion
+                    let trialEnd = null;
+                    try {
+                        if (subscription.trial_end && typeof subscription.trial_end === 'number' && subscription.trial_end > 0) {
+                            const dateObj = new Date(subscription.trial_end * 1000);
+                            if (!isNaN(dateObj.getTime())) {
+                                trialEnd = dateObj.toISOString();
+                            }
+                        }
+                    } catch (dateError) {
+                        console.warn('⚠️ Error parsing trial end date:', dateError.message);
+                    }
+
                     const updateData = {
                         stripe_subscription_id: subscription.id,
                         subscription_status: subscription.status === 'active' ? 'active' :
@@ -521,18 +535,28 @@ Deno.serve(async (req) => {
                         updateData.subscription_period_end = periodEnd;
                     }
 
+                    // Aggiungi trial_ends_at se esiste
+                    if (trialEnd && subscription.status === 'trialing') {
+                        updateData.trial_ends_at = trialEnd;
+                    } else if (subscription.status === 'active' && user.trial_ends_at) {
+                        // Se passa da trial ad attivo, rimuovi trial_ends_at
+                        updateData.trial_ends_at = null;
+                    }
+
                     // Determine plan from price
                     if (subscription.items?.data?.[0]?.price) {
                         const priceId = subscription.items.data[0].price.id;
                         const PRICE_MAP = {
-                            // Nuovi prezzi senza trial
+                            // Nuovi prezzi 2025 (trial solo su annuale)
+                            'price_REPLACE_MONTHLY': 'base',
+                            'price_REPLACE_ANNUAL': 'base',
+                            // Vecchi prezzi (per retrocompatibilità)
                             'price_1SXADj2OXBs6ZYwlY8id3Yhy': 'base',
                             'price_1SXADj2OXBs6ZYwlywQCp6oR': 'base',
                             'price_1SXADj2OXBs6ZYwlqdFI6aUU': 'pro',
                             'price_1SXADk2OXBs6ZYwl0zZsxETJ': 'pro',
                             'price_1SXADk2OXBs6ZYwlxiqqQqVA': 'premium',
                             'price_1SXADl2OXBs6ZYwl0PlnAeX9': 'premium',
-                            // Vecchi prezzi (per retrocompatibilità)
                             'price_1SNDMW2OXBs6ZYwlp5UgCO8Y': 'base',
                             'price_1SNDMW2OXBs6ZYwlUfiZP4Su': 'base',
                             'price_1SNDMX2OXBs6ZYwlx6jXOgFf': 'pro',
@@ -548,6 +572,39 @@ Deno.serve(async (req) => {
 
                     await base44.asServiceRole.entities.User.update(user.id, updateData);
                     console.log(`✅ Subscription updated for user ${user.id}`);
+
+                    // 📧 Invia email benvenuto trial se è una nuova subscription con trial
+                    if (event.type === 'customer.subscription.created' && subscription.status === 'trialing') {
+                        try {
+                            console.log('📧 Sending trial welcome email...');
+                            await base44.asServiceRole.functions.invoke('sendTrialWelcome', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                userName: user.full_name
+                            });
+                            console.log('✅ Trial welcome email sent');
+                        } catch (emailError) {
+                            console.error('⚠️ Trial welcome email failed:', emailError.message);
+                        }
+                    }
+
+                    // 📧 Se passa da trial ad attivo, invia email conferma
+                    if (event.type === 'customer.subscription.updated' && 
+                        subscription.status === 'active' && 
+                        user.subscription_status === 'trial') {
+                        try {
+                            console.log('📧 Sending trial to active confirmation email...');
+                            await base44.asServiceRole.functions.invoke('sendPlanWelcome', {
+                                userId: user.id,
+                                userEmail: user.email,
+                                userName: user.full_name,
+                                plan: updateData.subscription_plan || 'base'
+                            });
+                            console.log('✅ Trial to active confirmation sent');
+                        } catch (emailError) {
+                            console.error('⚠️ Trial to active email failed:', emailError.message);
+                        }
+                    }
                 }
                 break;
             }
