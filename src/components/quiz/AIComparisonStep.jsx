@@ -36,7 +36,7 @@ export default function AIComparisonStep({ data, onDataChange, translations, cur
           <div className="flex gap-6 items-flex-end justify-center h-48">
             {/* Left bar - Sin MyWellness */}
             <div className="flex flex-col items-center">
-              <p className="text-sm font-semibold text-gray-700 mb-4">Sin MyWellness</p>
+              <p className="text-sm font-semibold text-gray-700 mb-4">{t.aiComparisonWithout || "Senza MyWellness"}</p>
               <div className="w-20 bg-gray-200 rounded-lg overflow-hidden h-32 relative flex flex-col justify-end">
                 <motion.div
                   className="w-full bg-gray-400 rounded-lg"
@@ -50,7 +50,7 @@ export default function AIComparisonStep({ data, onDataChange, translations, cur
 
             {/* Right bar - Con MyWellness */}
             <div className="flex flex-col items-center">
-              <p className="text-sm font-semibold text-gray-700 mb-4">Con MyWellness</p>
+              <p className="text-sm font-semibold text-gray-700 mb-4">{t.aiComparisonWith || "Con MyWellness"}</p>
               <div className="w-20 bg-gray-200 rounded-lg overflow-hidden h-32 relative flex flex-col justify-end">
                 <motion.div
                   className="w-full bg-gray-900 rounded-lg"
