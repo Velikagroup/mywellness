@@ -109,6 +109,31 @@ export default function PostQuizSubscription() {
     }
   };
 
+  const handleCreateTrialOnly = async () => {
+    setIsLoading(true);
+    try {
+      const priceId = 'price_1SubPS2OXBs6ZYwlrhculB4e';
+      const response = await base44.functions.invoke('stripeCreateTrialSubscription', {
+        priceId
+      });
+
+      const data = response?.data || response;
+
+      if (data?.success) {
+        console.log('✅ Trial creato:', data.subscription_id);
+        navigate(createPageUrl('Dashboard'), { replace: true });
+      } else {
+        console.error('❌ Errore:', data);
+        alert('Errore nella creazione del trial. Riprova.');
+        setIsLoading(false);
+      }
+    } catch (error) {
+      console.error('Errore:', error);
+      alert('Errore durante la creazione del trial. Riprova.');
+      setIsLoading(false);
+    }
+  };
+
   const handleCheckout = async (plan) => {
     setIsLoading(true);
 
