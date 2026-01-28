@@ -55,12 +55,12 @@ export default function GoalsStep({ data, onDataChange, onNext, translations, cu
         ))}
       </div>
 
-      <div className="fixed bottom-0 left-0 right-0 bg-white p-5">
+      <div className="fixed bottom-[200px] left-0 right-0 p-5">
         <div className="max-w-[416px] mx-auto px-4 md:px-0">
           <Button
             onClick={handleNext}
             disabled={selectedGoals.length === 0}
-            className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold rounded-xl h-14"
+            className="w-full bg-gray-900 hover:bg-gray-950 text-white text-base font-semibold rounded-full h-14"
           >
             {t.quizContinue || 'Continuar'}
           </Button>
