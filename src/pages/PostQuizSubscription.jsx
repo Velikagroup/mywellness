@@ -20,23 +20,37 @@ export default function PostQuizSubscription() {
     const elementsRef = useRef(null);
 
   useEffect(() => {
-    const loadUser = async () => {
-      try {
-        const currentUser = await base44.auth.me();
-        setUser(currentUser);
-        
-        // Se ha già una subscription attiva, vai alla dashboard
-        if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
-          navigate(createPageUrl('Dashboard'), { replace: true });
+      const loadUser = async () => {
+        try {
+          const currentUser = await base44.auth.me();
+          setUser(currentUser);
+
+          // Se ha già una subscription attiva, vai alla dashboard
+          if (currentUser.subscription_status === 'active' || currentUser.subscription_status === 'trial') {
+            navigate(createPageUrl('Dashboard'), { replace: true });
+          }
+
+          // Carica Stripe
+          const { loadStripe } = await import('@stripe/stripe-js');
+          const publishableKey = await base44.functions.invoke('stripeCreatePaymentSheet', {
+            priceId: 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6',
+            hasTrial: false,
+            trialDays: 0
+          }).then(res => res?.data?.publishableKey);
+
+          if (publishableKey) {
+            const stripeInstance = await loadStripe(publishableKey);
+            stripeRef.current = stripeInstance;
+            setStripe(stripeInstance);
+          }
+        } catch (error) {
+          console.error('Error loading user:', error);
+          navigate(createPageUrl('Quiz'), { replace: true });
         }
-      } catch (error) {
-        console.error('Error loading user:', error);
-        navigate(createPageUrl('Quiz'), { replace: true });
-      }
-    };
-    
-    loadUser();
-  }, [navigate]);
+      };
+
+      loadUser();
+    }, [navigate]);
 
   // Animazione timeline quando yearly è selezionato
   useEffect(() => {
