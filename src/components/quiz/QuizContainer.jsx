@@ -337,6 +337,9 @@ export default function QuizContainer({ translations, language = 'it' }) {
     if (stepComponent === TargetZoneStep) return !!quizData.target_zones && quizData.target_zones.length > 0;
     if (stepComponent === WeightLossSpeedStep) return true; // Always valid - has default
     if (stepComponent === AIComparisonStep) return true;
+    if (stepComponent === TrustStep) return true;
+    if (stepComponent === ReferralCodeStep) return true;
+    if (stepComponent === ReadyToGenerateStep) return true;
 
     return true;
   };
