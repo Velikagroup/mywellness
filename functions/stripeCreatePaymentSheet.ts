@@ -79,6 +79,7 @@ Deno.serve(async (req) => {
             ],
             success_url: `https://app.projectmywellness.com/Dashboard?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `https://app.projectmywellness.com/PostQuizSubscription`,
+            payment_method_types: ['apple_pay', 'google_pay', 'card'],
             metadata: {
                 user_id: user.id,
                 has_trial: hasTrial ? 'true' : 'false'
