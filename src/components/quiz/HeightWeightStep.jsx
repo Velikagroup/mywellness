@@ -10,10 +10,6 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
   const [selectedHeight, setSelectedHeight] = useState(174);
   const [selectedWeight, setSelectedWeight] = useState(81);
 
-  const heightRef = useRef(null);
-  const weightRef = useRef(null);
-
-  // Genera range di altezze e pesi
   const HEIGHT_VALUES = Array.from({ length: 100 }, (_, i) => 130 + i); // 130-229 cm
   const WEIGHT_VALUES = Array.from({ length: 150 }, (_, i) => 30 + i); // 30-179 kg
   const HEIGHT_VALUES_FT = Array.from({ length: 76 }, (_, i) => {
@@ -21,8 +17,8 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     const feet = Math.floor(inches / 12);
     const inch = inches % 12;
     return `${feet}'${inch}"`;
-  }); // 4'2" - 10'1"
-  const WEIGHT_VALUES_LB = Array.from({ length: 330 }, (_, i) => 66 + i); // 66-395 lbs
+  });
+  const WEIGHT_VALUES_LB = Array.from({ length: 330 }, (_, i) => 66 + i);
 
   useEffect(() => {
     if (data.height) {
@@ -33,31 +29,21 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     }
   }, []);
 
-  // Setup iniziale dello scroll per posizionare i valori al centro
-  useEffect(() => {
-    setTimeout(() => {
-      const itemHeight = 40;
-      const topPadding = 160;
-      const containerHeight = 320;
+  const updateHeight = (delta) => {
+    const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
+    const currentIndex = heightValues.indexOf(selectedHeight);
+    const newIndex = Math.max(0, Math.min(currentIndex + delta, heightValues.length - 1));
+    const newHeight = heightValues[newIndex];
+    setSelectedHeight(newHeight);
+  };
 
-      if (heightRef.current) {
-        const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-        const heightIndex = heightValues.indexOf(selectedHeight);
-        if (heightIndex !== -1) {
-          const scroll = topPadding + heightIndex * itemHeight - containerHeight / 2;
-          heightRef.current.scrollTop = scroll;
-        }
-      }
-      if (weightRef.current) {
-        const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
-        const weightIndex = weightValues.indexOf(selectedWeight);
-        if (weightIndex !== -1) {
-          const scroll = topPadding + weightIndex * itemHeight - containerHeight / 2;
-          weightRef.current.scrollTop = scroll;
-        }
-      }
-    }, 0);
-  }, [isMetric]);
+  const updateWeight = (delta) => {
+    const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
+    const currentIndex = weightValues.indexOf(selectedWeight);
+    const newIndex = Math.max(0, Math.min(currentIndex + delta, weightValues.length - 1));
+    const newWeight = weightValues[newIndex];
+    setSelectedWeight(newWeight);
+  };
 
   const Stepper = ({ label, value, onIncrement, onDecrement, unit }) => (
     <div className="flex flex-col items-center gap-3">
@@ -84,26 +70,6 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
 
   const handleUnitToggle = () => {
     setIsMetric(!isMetric);
-    // Resetta lo scroll dei ref quando cambi unità
-    setTimeout(() => {
-      if (heightRef.current && weightRef.current) {
-        const itemHeight = 40;
-        const topPadding = 160;
-        const containerHeight = 320;
-        
-        const heightValues = !isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
-        const heightIndex = heightValues.indexOf(selectedHeight);
-        if (heightIndex !== -1) {
-          heightRef.current.scrollTop = topPadding + heightIndex * itemHeight - containerHeight / 2;
-        }
-        
-        const weightValues = !isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
-        const weightIndex = weightValues.indexOf(selectedWeight);
-        if (weightIndex !== -1) {
-          weightRef.current.scrollTop = topPadding + weightIndex * itemHeight - containerHeight / 2;
-        }
-      }
-    }, 0);
   };
 
   const handleNext = () => {
@@ -128,56 +94,7 @@ export default function HeightWeightStep({ data, onDataChange, translations, cur
     if (onNext) onNext();
   };
 
-  const PickerColumn = ({ items, selectedValue, onScroll, ref, unit, label }) => {
-    const selectedIndex = items.indexOf(selectedValue);
-    return (
-      <div className="flex-1 flex flex-col items-center relative h-80 -mt-12 md:-mt-32">
-        <h3 className="text-center font-semibold text-gray-900 absolute left-0 right-0 pointer-events-none" style={{ top: '110px', zIndex: 10 }}>
-          {label}
-        </h3>
-        <div
-          ref={ref}
-          onScroll={onScroll}
-          className="w-full h-full overflow-y-scroll scrollbar-hide snap-y snap-mandatory"
-          style={{
-            scrollBehavior: 'smooth',
-            WebkitOverflowScrolling: 'touch'
-          }}
-        >
-          <div className="h-40 md:h-24" />
-          {items.map((item, idx) => (
-            <div
-              key={idx}
-              className="h-10 flex items-center justify-center flex-shrink-0 px-2 snap-center gap-1.5"
-            >
-              <span className={`text-center transition-all font-semibold ${
-                idx === selectedIndex
-                  ? 'text-gray-900 text-base'
-                  : 'text-gray-400 text-sm'
-              }`}>
-                {item}
-              </span>
-              <span className={`transition-all font-medium ${
-                idx === selectedIndex ? 'text-gray-900 text-sm' : 'text-gray-400 text-xs'
-              }`}>
-                {unit}
-              </span>
-            </div>
-          ))}
-          <div className="h-40 md:h-32" />
-        </div>
 
-        {/* Overlay bianco sopra */}
-        <div className="absolute top-0 left-0 right-0 bg-white pointer-events-none" style={{ height: '140px' }} />
-
-        {/* Gradiente fade in basso */}
-        <div className="absolute bottom-0 left-0 right-0 pointer-events-none" style={{ height: '140px', background: 'linear-gradient(to bottom, transparent, #ffffff)' }} />
-
-        {/* Pillolina highlight */}
-        <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full h-10 border-2 border-gray-300 rounded-2xl pointer-events-none" />
-      </div>
-    );
-  };
 
   const heightValues = isMetric ? HEIGHT_VALUES : HEIGHT_VALUES_FT;
   const weightValues = isMetric ? WEIGHT_VALUES : WEIGHT_VALUES_LB;
