@@ -68,74 +68,92 @@ export default function PostQuizSubscription() {
     }
   };
 
-  const handleCheckout = async (plan) => {
-    setIsLoading(true);
-    try {
-      if (!window.Stripe) {
-        throw new Error('Stripe not loaded');
-      }
+  const handleCheckout = (plan) => {
+    if (!window.Stripe) {
+      alert('Stripe non caricato');
+      return;
+    }
 
-      const keyRes = await base44.functions.invoke('getStripePublishableKey');
+    setIsLoading(true);
+
+    // Carica chiave e crea Payment Request SUBITO DOPO IL CLICK - NO AWAIT PRIMA DI show()
+    const priceId = plan === 'yearly' 
+      ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
+      : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
+
+    const amount = plan === 'yearly' ? 49900 : 9990; // in centesimi
+    const currency = 'eur';
+
+    // Ottieni Stripe key (dovrebbe essere già available)
+    base44.functions.invoke('getStripePublishableKey').then((keyRes) => {
       const stripeKey = keyRes?.data?.key || keyRes?.key;
       if (!stripeKey) throw new Error('Stripe key not found');
 
       const stripe = window.Stripe(stripeKey);
 
-      const priceId = plan === 'yearly' 
-        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
-        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
-
-      // Crea Payment Intent
-      const response = await base44.functions.invoke('stripePaymentIntent', {
-        priceId,
-        hasTrial: plan === 'yearly',
-        trialDays: plan === 'yearly' ? 3 : 0
-      });
-
-      const data = response?.data || response;
-      if (!data?.success) throw new Error(data?.error || 'Payment Intent failed');
-
-      // Crea Payment Request per Apple Pay / Google Pay
+      // Crea Payment Request IMMEDIATAMENTE
       const paymentRequest = stripe.paymentRequest({
         country: 'IT',
-        currency: data.currency,
+        currency: currency,
         total: {
           label: 'MyWellness Subscription',
-          amount: data.amount,
+          amount: amount,
         },
         requestPayerName: true,
         requestPayerEmail: true,
       });
 
-      paymentRequest.on('paymentmethod', async (e) => {
-        const { paymentIntent, error } = await stripe.confirmCardPayment(
-          data.clientSecret,
-          { payment_method: e.paymentMethod.id },
-          { handleActions: false }
-        );
-
-        if (error) {
-          e.complete('fail');
-          alert(`Errore: ${error.message}`);
-          setIsLoading(false);
+      // SUBITO - Mostra il payment sheet PRIMA di qualsiasi async
+      paymentRequest.canMakePayment().then((result) => {
+        if (result) {
+          paymentRequest.show();
         } else {
-          e.complete('success');
-          navigate(createPageUrl('ThankYou'), { replace: true });
+          setIsLoading(false);
+          alert('Apple Pay o Google Pay non disponibile');
         }
       });
 
-      const canMakePayment = await paymentRequest.canMakePayment();
-      if (canMakePayment) {
-        paymentRequest.show();
-      } else {
-        throw new Error('Apple Pay o Google Pay non disponibile');
-      }
+      // Setup listener per quando l'utente completa il pagamento in Apple Pay
+      paymentRequest.on('paymentmethod', async (e) => {
+        try {
+          // ORA posso fare async per creare il Payment Intent
+          const response = await base44.functions.invoke('stripePaymentIntent', {
+            priceId,
+            hasTrial: plan === 'yearly',
+            trialDays: plan === 'yearly' ? 3 : 0
+          });
 
-    } catch (error) {
-      console.error('Error:', error);
+          const data = response?.data || response;
+          if (!data?.success) throw new Error(data?.error || 'Payment Intent failed');
+
+          // Conferma il pagamento
+          const { paymentIntent, error } = await stripe.confirmCardPayment(
+            data.clientSecret,
+            { payment_method: e.paymentMethod.id },
+            { handleActions: false }
+          );
+
+          if (error) {
+            e.complete('fail');
+            alert(`Errore: ${error.message}`);
+            setIsLoading(false);
+          } else {
+            e.complete('success');
+            navigate(createPageUrl('ThankYou'), { replace: true });
+          }
+        } catch (error) {
+          console.error('Error:', error);
+          e.complete('fail');
+          alert(`Errore: ${error.message}`);
+          setIsLoading(false);
+        }
+      });
+
+    }).catch((error) => {
+      console.error('Error loading Stripe:', error);
       alert(`Errore: ${error.message}`);
       setIsLoading(false);
-    }
+    });
   };
 
   if (!user) {
