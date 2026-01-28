@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { createPageUrl } from '@/utils';
 import { base44 } from '@/api/base44Client';
@@ -14,8 +14,6 @@ export default function PostQuizSubscription() {
   const [showReminderScreen, setShowReminderScreen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [timelineProgress, setTimelineProgress] = useState(0);
-  const [checkoutSessions, setCheckoutSessions] = useState({ monthly: null, yearly: null });
-  const [sessionLoading, setSessionLoading] = useState(true);
 
   useEffect(() => {
     const loadUser = async () => {
@@ -31,36 +29,16 @@ export default function PostQuizSubscription() {
         navigate(createPageUrl('Quiz'), { replace: true });
       }
     };
-    
-    const preloadCheckoutSessions = async () => {
-      try {
-        // Crea sessioni monthly e yearly in parallelo
-        const [monthlyRes, yearlyRes] = await Promise.all([
-          base44.functions.invoke('stripeCreatePaymentSheet', {
-            priceId: 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6',
-            hasTrial: false,
-            trialDays: 0
-          }),
-          base44.functions.invoke('stripeCreatePaymentSheet', {
-            priceId: 'price_1SuOAr2OXBs6ZYwlteMU5EVp',
-            hasTrial: true,
-            trialDays: 3
-          })
-        ]);
 
-        setCheckoutSessions({
-          monthly: monthlyRes?.data?.url || monthlyRes?.url,
-          yearly: yearlyRes?.data?.url || yearlyRes?.url
-        });
-      } catch (error) {
-        console.error('Error preloading checkout sessions:', error);
-      } finally {
-        setSessionLoading(false);
-      }
-    };
+    // Carica Stripe.js
+    if (!window.Stripe) {
+      const script = document.createElement('script');
+      script.src = 'https://js.stripe.com/v3/';
+      script.async = true;
+      document.head.appendChild(script);
+    }
     
     loadUser();
-    preloadCheckoutSessions();
   }, [navigate]);
 
   // Animazione timeline quando yearly è selezionato
@@ -90,16 +68,74 @@ export default function PostQuizSubscription() {
     }
   };
 
-  const handleCheckout = (plan) => {
-    const checkoutUrl = plan === 'yearly' ? checkoutSessions.yearly : checkoutSessions.monthly;
-    
-    if (!checkoutUrl) {
-      alert(t?.checkout?.error || 'Errore nel caricamento del checkout');
-      return;
-    }
+  const handleCheckout = async (plan) => {
+    setIsLoading(true);
+    try {
+      if (!window.Stripe) {
+        throw new Error('Stripe not loaded');
+      }
 
-    // Redirect sincronamente al click per evitare errori Apple Pay
-    window.location.href = checkoutUrl;
+      const keyRes = await base44.functions.invoke('getStripePublishableKey');
+      const stripeKey = keyRes?.data?.key || keyRes?.key;
+      if (!stripeKey) throw new Error('Stripe key not found');
+
+      const stripe = window.Stripe(stripeKey);
+
+      const priceId = plan === 'yearly' 
+        ? 'price_1SuOAr2OXBs6ZYwlteMU5EVp'
+        : 'price_1SuOAq2OXBs6ZYwlxkJ6LnU6';
+
+      // Crea Payment Intent
+      const response = await base44.functions.invoke('stripePaymentIntent', {
+        priceId,
+        hasTrial: plan === 'yearly',
+        trialDays: plan === 'yearly' ? 3 : 0
+      });
+
+      const data = response?.data || response;
+      if (!data?.success) throw new Error(data?.error || 'Payment Intent failed');
+
+      // Crea Payment Request per Apple Pay / Google Pay
+      const paymentRequest = stripe.paymentRequest({
+        country: 'IT',
+        currency: data.currency,
+        total: {
+          label: 'MyWellness Subscription',
+          amount: data.amount,
+        },
+        requestPayerName: true,
+        requestPayerEmail: true,
+      });
+
+      paymentRequest.on('paymentmethod', async (e) => {
+        const { paymentIntent, error } = await stripe.confirmCardPayment(
+          data.clientSecret,
+          { payment_method: e.paymentMethod.id },
+          { handleActions: false }
+        );
+
+        if (error) {
+          e.complete('fail');
+          alert(`Errore: ${error.message}`);
+          setIsLoading(false);
+        } else {
+          e.complete('success');
+          navigate(createPageUrl('ThankYou'), { replace: true });
+        }
+      });
+
+      const canMakePayment = await paymentRequest.canMakePayment();
+      if (canMakePayment) {
+        paymentRequest.show();
+      } else {
+        throw new Error('Apple Pay o Google Pay non disponibile');
+      }
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert(`Errore: ${error.message}`);
+      setIsLoading(false);
+    }
   };
 
   if (!user) {
