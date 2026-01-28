@@ -110,9 +110,8 @@ export default function PostQuizSubscription() {
   };
 
   const handleCheckout = (plan) => {
-    if (!stripeReady || !stripeRef.current) {
-      setIsLoading(false);
-      alert('Stripe non è ancora caricato. Riprova tra un momento.');
+    if (!stripeRef.current || !walletAvailable) {
+      alert('Wallet non disponibile');
       return;
     }
 
@@ -124,63 +123,56 @@ export default function PostQuizSubscription() {
 
     const amount = plan === 'yearly' ? 49900 : 9990;
 
-    try {
-      const paymentRequest = stripeRef.current.paymentRequest({
-        country: 'IT',
-        currency: 'eur',
-        total: {
-          label: 'MyWellness Subscription',
-          amount: amount,
-        },
-        requestPayerName: true,
-        requestPayerEmail: true,
-      });
+    const paymentRequest = stripeRef.current.paymentRequest({
+      country: 'IT',
+      currency: 'eur',
+      total: {
+        label: 'MyWellness Subscription',
+        amount: amount,
+      },
+      requestPayerName: true,
+      requestPayerEmail: true,
+    });
 
-      paymentRequest.on('paymentmethod', (e) => {
-        base44.functions.invoke('stripePaymentIntent', {
-          priceId,
-          hasTrial: plan === 'yearly',
-          trialDays: plan === 'yearly' ? 3 : 0
-        }).then((response) => {
-          const data = response?.data || response;
-          if (!data?.success) {
-            e.complete('fail');
-            setIsLoading(false);
-            alert(`Errore: ${data?.error || 'Payment Intent failed'}`);
-            return;
-          }
-
-          return stripeRef.current.confirmCardPayment(
-            data.clientSecret,
-            { payment_method: e.paymentMethod.id },
-            { handleActions: false }
-          ).then(({ paymentIntent, error }) => {
-            if (error) {
-              e.complete('fail');
-              setIsLoading(false);
-              alert(`Errore: ${error.message}`);
-            } else {
-              e.complete('success');
-              navigate(createPageUrl('ThankYou'), { replace: true });
-            }
-          });
-        }).catch((error) => {
-          console.error('Payment error:', error);
+    paymentRequest.on('paymentmethod', (e) => {
+      base44.functions.invoke('stripePaymentIntent', {
+        priceId,
+        hasTrial: plan === 'yearly',
+        trialDays: plan === 'yearly' ? 3 : 0
+      }).then((response) => {
+        const data = response?.data || response;
+        if (!data?.success) {
           e.complete('fail');
           setIsLoading(false);
-          alert(`Errore nel pagamento: ${error.message}`);
-        });
-      });
+          return;
+        }
 
-      paymentRequest.show().catch((error) => {
+        return stripeRef.current.confirmCardPayment(
+          data.clientSecret,
+          { payment_method: e.paymentMethod.id },
+          { handleActions: false }
+        ).then(({ paymentIntent, error }) => {
+          if (error) {
+            e.complete('fail');
+            setIsLoading(false);
+          } else {
+            e.complete('success');
+            navigate(createPageUrl('ThankYou'), { replace: true });
+          }
+        });
+      }).catch(() => {
+        e.complete('fail');
         setIsLoading(false);
-        console.error('Payment request error:', error);
       });
-    } catch (error) {
-      setIsLoading(false);
-      console.error('Error:', error);
-      alert('Errore: ' + error.message);
-    }
+    });
+
+    paymentRequest.canMakePayment().then((result) => {
+      if (result) {
+        paymentRequest.show();
+      } else {
+        setIsLoading(false);
+      }
+    });
   };
 
   if (!user) {
