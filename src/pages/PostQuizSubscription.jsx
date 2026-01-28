@@ -170,6 +170,7 @@ export default function PostQuizSubscription() {
             navigate(createPageUrl('Dashboard'), { replace: true });
           }}
         />
+        </>
         <div className="min-h-screen bg-white p-6 flex flex-col pb-28">
         <button
           onClick={() => setShowReminderScreen(false)}
